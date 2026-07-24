@@ -85,10 +85,25 @@ my $Updated = $Directory->TenantUpdate(
 is( $Updated->{Data}->{Version}, 2, 'tenant update increments optimistic version' );
 is(
     $Directory->TenantUpdate(
+        Subject => $AdminA, TenantID => $TenantA, Status => 'suspended', ExpectedVersion => 2, UserID => 1,
+    )->{Error},
+    'TENANT_DEACTIVATION_REQUIRES_PLATFORM_ADMIN',
+    'ordinary tenant administrator cannot deactivate its own tenant',
+);
+is(
+    $Directory->TenantUpdate(
         Subject => $AdminA, TenantID => $TenantA, Name => 'Stale', ExpectedVersion => 1, UserID => 1,
     )->{Error},
     'VERSION_CONFLICT',
     'stale tenant update is rejected',
+);
+
+is(
+    $Directory->MembershipRevoke(
+        Subject => $AdminA, TenantID => $TenantA, MemberUserID => 1, Role => 'tenant_admin', UserID => 1,
+    )->{Error},
+    'LAST_TENANT_ADMIN',
+    'last active tenant administrator cannot revoke itself',
 );
 
 ok(

@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 our @ObjectDependencies = (
     'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB',
@@ -68,6 +68,8 @@ sub TenantUpdate {
     return $Self->_Error('VERSION_CONFLICT') if $Current->{Version} != $Param{ExpectedVersion};
     $Param{Name}   //= $Current->{Name};
     $Param{Status} //= $Current->{Status};
+    return $Self->_Error('TENANT_DEACTIVATION_REQUIRES_PLATFORM_ADMIN')
+        if $Param{Status} ne 'active' && ( $Auth->{Reason} // q{} ) ne 'ALLOW_PLATFORM_ADMIN';
     my $Validation = $Self->_TenantValuesValidate(%Param);
     return $Validation if !$Validation->{Success};
     my @Values = ( $Param{Name}, $Param{Status}, $Param{UserID}, $Param{TenantID}, $Param{ExpectedVersion} );
@@ -96,6 +98,23 @@ sub MembershipRevoke {
     return $Auth if !$Auth->{Success};
     return $Self->_Error('ROLE_INVALID') if !$ValidRole{ $Param{Role} // q{} };
     return $Self->_Error('MEMBER_USER_ID_INVALID') if !$Self->_PositiveInteger( $Param{MemberUserID} );
+    if ( $Param{Role} eq 'tenant_admin' ) {
+        my ( $TenantID, $MemberUserID ) = @Param{qw(TenantID MemberUserID)};
+        my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+        $DBObject->Prepare(
+            SQL => "SELECT status FROM d724_tenant_agent_role WHERE tenant_id = ? AND user_id = ? AND role_name = 'tenant_admin'",
+            Bind => [ \$TenantID, \$MemberUserID ], Limit => 1,
+        );
+        my ($TargetStatus) = $DBObject->FetchrowArray();
+        if ( ( $TargetStatus // q{} ) eq 'active' ) {
+            $DBObject->Prepare(
+                SQL => "SELECT COUNT(*) FROM d724_tenant_agent_role WHERE tenant_id = ? AND role_name = 'tenant_admin' AND status = 'active'",
+                Bind => [ \$TenantID ],
+            );
+            my ($AdminCount) = $DBObject->FetchrowArray();
+            return $Self->_Error('LAST_TENANT_ADMIN') if $AdminCount <= 1;
+        }
+    }
     my @Values = ( $Param{UserID}, $Param{TenantID}, $Param{MemberUserID}, $Param{Role} );
     my @Bind = map { \$_ } @Values;
     my $Success = $Kernel::OM->Get('Kernel::System::DB')->Do(
@@ -175,7 +194,9 @@ sub _MembershipUpsert {
     my ( $Self, %Param ) = @_;
     return $Self->_Error('ROLE_INVALID') if !$ValidRole{ $Param{Role} // q{} };
     return $Self->_Error('MEMBER_USER_ID_INVALID') if !$Self->_UserExists( $Param{MemberUserID} );
-    return $Self->_Error('TENANT_NOT_FOUND') if !$Self->_TenantRowGet( TenantID => $Param{TenantID} );
+    my $Tenant = $Self->_TenantRowGet( TenantID => $Param{TenantID} );
+    return $Self->_Error('TENANT_NOT_FOUND') if !$Tenant;
+    return $Self->_Error('TENANT_NOT_ACTIVE') if $Tenant->{Status} ne 'active';
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     my ( $TenantID, $MemberUserID, $Role ) = @Param{qw(TenantID MemberUserID Role)};
     $DBObject->Prepare(
@@ -213,7 +234,11 @@ sub _Authorize {
         Subject => $Param{Subject}, Resource => { TenantID => $Param{TenantID} }, Action => $Param{Action},
     );
     return $Self->_Error( 'FORBIDDEN', $Decision->{Reason} ) if !$Decision->{Allowed};
-    return { Success => 1 };
+    return {
+        Success    => 1,
+        Reason     => $Decision->{Reason},
+        MatchedRole => $Decision->{MatchedRole},
+    };
 }
 
 sub _TenantValuesValidate {
