@@ -7,6 +7,7 @@ package Kernel::System::D724::TicketAudit;
 use v5.24;
 use strict;
 use warnings;
+use Digest::SHA qw(sha256_hex);
 
 our $VERSION = '0.1.0';
 our @ObjectDependencies = (
@@ -89,8 +90,12 @@ sub MutationRun {
             );
             my $Audit = $Self->_AuditRecord(
                 TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
-                Action => $Param{Action}, Version => $Version, FromState => $From, ToState => $To,
-                Details => { field => lc $Param{Field}, ticket_number => $After{TicketNumber} // q{}, version => $Version },
+                Action => $Param{Action}, Version => $Version,
+                FromState => $Self->_StateToken($From), ToState => $Self->_StateToken($To),
+                Details => {
+                    field => lc $Param{Field}, ticket_number => $After{TicketNumber} // q{}, version => $Version,
+                    from_value => $From, to_value => $To,
+                },
             );
             return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
             return { Success => 1, Value => $Value };
@@ -188,6 +193,12 @@ sub _CacheClear {
 }
 
 sub _Enabled { return $Kernel::OM->Get('Kernel::Config')->Get('D724::TicketAudit::Enabled') ? 1 : 0 }
+sub _StateToken {
+    my ( $Self, $Value ) = @_;
+    $Value //= q{};
+    return $Value if length $Value <= 50;
+    return 'sha256:' . substr( sha256_hex($Value), 0, 40 );
+}
 sub _Log { my ( $Self, $Message ) = @_; $Kernel::OM->Get('Kernel::System::Log')->Log( Priority => 'error', Message => $Message ); return }
 sub _Error { my ( $Self, $Error ) = @_; return { Success => 0, Error => $Error } }
 

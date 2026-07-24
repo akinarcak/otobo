@@ -93,6 +93,11 @@ is(
     [qw(ticket.created ticket.state.updated ticket.title.updated ticket.customer.updated)],
     'failed/no-op updates leave no orphan event and successful mutations emit one event each',
 );
+like( $Events->{Data}->[3]->{ToState}, qr{\Asha256:[0-9a-f]{40}\z}, 'long customer state uses deterministic hash token' );
+is(
+    $Events->{Data}->[3]->{Details}->{to_value}, "$Tenant|ticket-test-user-2",
+    'full customer mutation value remains available in normalized details',
+);
 ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket tenant audit chain verifies' );
 
 ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket fixture is removed' );
