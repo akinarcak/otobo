@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724Request</Name><Version>0.1.2</Version><Framework>11.1.x</Framework>
+    <Name>D724Request</Name><Version>0.1.3</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe request, approval, and fulfillment orchestration for D724 ESM.</Description>

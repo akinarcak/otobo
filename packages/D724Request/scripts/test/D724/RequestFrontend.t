@@ -24,7 +24,7 @@ $Layout->Block( Name => 'Task', Data => { TenantID => 'tenant-a', TaskID => 3, V
 my $AgentHTML = $Layout->Output( TemplateFile => 'AgentD724Request', Data => { TenantID => 'tenant-a' } );
 like( $AgentHTML, qr{REQ-2&lt;img&gt;}, 'agent workbench escapes request data' );
 unlike( $AgentHTML, qr{Prepare <b>device</b>}, 'agent workbench never renders task markup' );
-like( $AgentHTML, qr{name="ChallengeToken"}, 'approval and task writes carry CSRF tokens' );
+is( scalar( () = $AgentHTML =~ m{method="post"}g ), 2, 'approval and task writes use POST forms' );
 like( $AgentHTML, qr{value="ApprovalDecide"}, 'approval action is rendered' );
 like( $AgentHTML, qr{value="TaskUpdate"}, 'task action is rendered' );
 

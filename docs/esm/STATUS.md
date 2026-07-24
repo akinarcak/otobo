@@ -43,7 +43,7 @@ Son dogrulama: `2026-07-24`
   - CSRF challenge token ve optimistic update formlari,
   - bes test dosyasi, 59 paket testi, sonuc `PASS`,
   - authenticated customer HTTP katalog ve dinamik form smoke testleri.
-- GPL-3.0 `D724Request 0.1.2` OPM paketi:
+- GPL-3.0 `D724Request 0.1.3` OPM paketi:
   - sunucu-tarafli dinamik cevap validasyonu ve workflow snapshot'i,
   - tenant/requester kapsamli idempotent form submission,
   - tenant-role onayi ve optimistic-lock durum gecisleri,
