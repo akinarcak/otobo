@@ -9,7 +9,7 @@ use strict;
 use warnings;
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
 my $OriginalTicketTitleUpdate = \&Kernel::System::Ticket::TicketTitleUpdate;
