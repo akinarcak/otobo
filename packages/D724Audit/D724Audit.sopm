@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724Audit</Name><Version>0.1.1</Version><Framework>11.1.x</Framework>
+    <Name>D724Audit</Name><Version>0.1.2</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe, tamper-evident normalized audit events and NDJSON export for D724 ESM.</Description>
@@ -38,7 +38,9 @@
     <DatabaseUpgrade Type="post">
         <TableAlter Name="d724_audit_event" Version="0.1.1">
             <ColumnAdd Name="dedupe_key" Required="false" Size="128" Type="VARCHAR" />
-            <Unique Name="d724_audit_dedupe"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="dedupe_key" /></Unique>
+        </TableAlter>
+        <TableAlter Name="d724_audit_event" Version="0.1.2">
+            <UniqueCreate Name="d724_audit_dedupe"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="dedupe_key" /></UniqueCreate>
         </TableAlter>
     </DatabaseUpgrade>
     <DatabaseUninstall Type="pre"><TableDrop Name="d724_audit_event" /><TableDrop Name="d724_audit_head" /></DatabaseUninstall>

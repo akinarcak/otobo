@@ -11,7 +11,7 @@ sub Run {
     my %T=map {$_=>$E{$_}?1:0} qw(d724_audit_head d724_audit_event); my %C=(Tenants=>0,Events=>0);
     if($T{d724_audit_head}){$DB->Prepare(SQL=>'SELECT COUNT(*) FROM d724_audit_head');($C{Tenants})=$DB->FetchrowArray()}
     if($T{d724_audit_event}){$DB->Prepare(SQL=>'SELECT COUNT(*) FROM d724_audit_event');($C{Events})=$DB->FetchrowArray()}
-    my $OK=!(grep{!$_}values %T); my $S={Success=>$OK?1:0,Package=>'D724Audit',Version=>'0.1.1',Tables=>\%T,Counts=>\%C};
+    my $OK=!(grep{!$_}values %T); my $S={Success=>$OK?1:0,Package=>'D724Audit',Version=>'0.1.2',Tables=>\%T,Counts=>\%C};
     $Self->Print($Self->GetOption('json')?$Kernel::OM->Get('Kernel::System::JSON')->Encode(Data=>$S,SortKeys=>1,Pretty=>1):"D724 audit status\nEvents: $C{Events}\nStatus: ".($OK?'OK':'FAILED')."\n");
     return $OK?$Self->ExitCodeOk():$Self->ExitCodeError();
 }
