@@ -18,6 +18,7 @@ $Helper->ConfigSettingChange( Key => 'D724::TenantGuard::Enabled', Value => 1 );
 $Helper->ConfigSettingChange( Key => 'D724::TenantGuard::AllowPlatformAdmin', Value => 1 );
 
 my $Directory = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory');
+my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 my $Platform = { ID => 'platform-test', Roles => ['platform_admin'], TenantIDs => ['bootstrap'] };
 my $Suffix = $Helper->GetRandomID();
 my $TenantA = "directory-a-$Suffix";
@@ -166,8 +167,13 @@ is(
     'AUDIT_WRITE_FAILED',
     'membership grant fails closed when its audit event cannot be written',
 );
-my $MembershipC = $Directory->MembershipList( Subject => $Platform, TenantID => $TenantC );
-is( $MembershipC->{Data}, [], 'failed audited grant is rolled back completely' );
+my $AuditorRole = 'auditor';
+$DBObject->Prepare(
+    SQL => 'SELECT COUNT(*) FROM d724_tenant_agent_role WHERE tenant_id = ? AND user_id = 1 AND role_name = ?',
+    Bind => [ \$TenantC, \$AuditorRole ],
+);
+my ($MembershipCountC) = $DBObject->FetchrowArray();
+is( $MembershipCountC, 0, 'failed audited grant is rolled back completely' );
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
 my $GrantC = $Directory->MembershipGrant(
     Subject => $Platform, TenantID => $TenantC, MemberUserID => 1, Role => 'auditor', UserID => 1,
@@ -182,9 +188,13 @@ is(
     'AUDIT_WRITE_FAILED',
     'membership revoke fails closed when its audit event cannot be written',
 );
-$MembershipC = $Directory->MembershipList( Subject => $Platform, TenantID => $TenantC );
-is( $MembershipC->{Data}->[0]->{Status}, 'active', 'failed audited revoke restores active membership' );
-is( $MembershipC->{Data}->[0]->{Version}, 1, 'failed audited revoke restores membership version' );
+$DBObject->Prepare(
+    SQL => 'SELECT status, version FROM d724_tenant_agent_role WHERE tenant_id = ? AND user_id = 1 AND role_name = ?',
+    Bind => [ \$TenantC, \$AuditorRole ], Limit => 1,
+);
+my ( $MembershipStatusC, $MembershipVersionC ) = $DBObject->FetchrowArray();
+is( $MembershipStatusC, 'active', 'failed audited revoke restores active membership' );
+is( $MembershipVersionC, 1, 'failed audited revoke restores membership version' );
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
 my $RevokeC = $Directory->MembershipRevoke(
     Subject => $Platform, TenantID => $TenantC, MemberUserID => 1, Role => 'auditor', UserID => 1,
