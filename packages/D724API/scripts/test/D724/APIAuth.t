@@ -1,0 +1,83 @@
+# --
+# Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
+# SPDX-License-Identifier: GPL-3.0-only
+# --
+use v5.24;
+use strict;
+use warnings;
+use Test2::V0;
+use Kernel::System::UnitTest::RegisterOM;
+
+$Kernel::OM->ObjectParamAdd( 'Kernel::System::UnitTest::Helper' => { RestoreDatabase => 1 } );
+my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
+my $DB     = $Kernel::OM->Get('Kernel::System::DB');
+my $API    = $Kernel::OM->Get('Kernel::System::D724::APIAuth');
+my $Tenant = 'api-' . lc $Helper->GetRandomID();
+my $Other  = 'api-other-' . lc $Helper->GetRandomID();
+
+$Helper->ConfigSettingChange( Key => 'D724::API::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::API::BcryptCost', Value => 9 );
+$Helper->ConfigSettingChange( Key => 'D724::API::TokenTTLMax', Value => 900 );
+$Helper->ConfigSettingChange( Key => 'D724::API::RateLimitMax', Value => 100 );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::TenantGuard::Enabled', Value => 1 );
+
+for my $TenantID ( $Tenant, $Other ) {
+    my @Values = ( $TenantID, "API Test $TenantID", 1, 1 ); my @Bind = map { \$_ } @Values;
+    ok( $DB->Do(
+        SQL => "INSERT INTO d724_tenant (key_name, name, status, version, create_time, create_by, change_time, change_by) VALUES (?, ?, 'active', 1, current_timestamp, ?, current_timestamp, ?)",
+        Bind => \@Bind,
+    ), "tenant fixture $TenantID created" );
+}
+
+my $Admin = { ID => 'api-admin', TenantIDs => [$Tenant], RoleBindings => { $Tenant => ['tenant_admin'] } };
+my $Created = $API->ClientCreate(
+    Subject => $Admin, TenantID => $Tenant, Name => 'Acceptance Integration', Role => 'requester',
+    UserID => 1, TokenTTL => 60, RateLimit => 2, ClientID => "integration-$Tenant",
+);
+ok( $Created->{Success}, 'tenant administrator creates API client' );
+like( $Created->{Data}->{ClientSecret}, qr{\A[a-zA-Z0-9]{64}\z}, 'secret is high-entropy opaque material returned once' );
+
+my $ClientID = $Created->{Data}->{ClientID}; my $Secret = $Created->{Data}->{ClientSecret};
+$DB->Prepare( SQL => 'SELECT secret_hash FROM d724_api_client WHERE client_id = ?', Bind => [ \$ClientID ], Limit => 1 );
+my ($StoredHash) = $DB->FetchrowArray();
+like( $StoredHash, qr{\ABCRYPT:9:}, 'client secret is stored as bcrypt' );
+isnt( $StoredHash, $Secret, 'plaintext secret is never stored' );
+
+is( $API->TokenIssue( ClientID => $ClientID, ClientSecret => 'wrong-secret' )->{Error}, 'INVALID_CLIENT', 'wrong secret has generic client error' );
+my $Issued = $API->TokenIssue( ClientID => $ClientID, ClientSecret => $Secret );
+ok( $Issued->{Success}, 'valid client credentials issue token' );
+is( $Issued->{Data}->{TokenType}, 'Bearer', 'token type is bearer' );
+is( $Issued->{Data}->{ExpiresIn}, 60, 'configured short lifetime is returned' );
+my $Token = $Issued->{Data}->{AccessToken};
+like( $Token, qr{\A[a-zA-Z0-9]{64}\z}, 'opaque access token has expected format' );
+
+$DB->Prepare( SQL => 'SELECT token_hash FROM d724_api_token WHERE client_id = ?', Bind => [ \$ClientID ], Limit => 1 );
+my ($TokenHash) = $DB->FetchrowArray();
+isnt( $TokenHash, $Token, 'plaintext bearer token is never stored' );
+is( length $TokenHash, 64, 'only SHA-256 token digest is stored' );
+ok( $API->TokenValidate( AccessToken => $Token )->{Success}, 'active token validates' );
+is( $API->TokenValidate( AccessToken => 'x' x 64 )->{Error}, 'TOKEN_INVALID', 'unknown well-formed token fails closed' );
+
+is( $API->Authorize( AccessToken => $Token, TenantID => $Other, Action => 'case.read' )->{Error}, 'CROSS_TENANT', 'token cannot cross tenant' );
+is( $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'case.update' )->{Error}, 'FORBIDDEN', 'requester role cannot update cases' );
+my $ReadOne = $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'case.read' );
+ok( $ReadOne->{Success}, 'first authorized request succeeds' );
+is( $ReadOne->{Data}->{Remaining}, 1, 'first request consumes one rate unit' );
+my $ReadTwo = $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'catalog.read' );
+ok( $ReadTwo->{Success}, 'second authorized request succeeds' );
+is( $ReadTwo->{Data}->{Remaining}, 0, 'second request consumes final rate unit' );
+is( $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'case.read' )->{Error}, 'RATE_LIMITED', 'atomic per-minute limit fails closed' );
+
+ok( $API->TokenRevoke( AccessToken => $Token )->{Success}, 'token revocation succeeds' );
+is( $API->TokenValidate( AccessToken => $Token )->{Error}, 'TOKEN_INVALID', 'revoked token is immediately invalid' );
+
+my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit')->List( Subject => $Admin, TenantID => $Tenant, Limit => 100 );
+is( [ map { $_->{Action} } grep { $_->{ObjectType} eq 'api_client' } @{ $Audit->{Data} } ], ['api.client.created'], 'client creation has tenant audit evidence' );
+
+{
+    local $Kernel::OM->Get('Kernel::Config')->{'D724::API::Enabled'} = 0;
+    is( $API->TokenIssue( ClientID => $ClientID, ClientSecret => $Secret )->{Error}, 'API_DISABLED', 'disabled API fails closed' );
+}
+
+done_testing;

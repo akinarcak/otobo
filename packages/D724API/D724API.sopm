@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otobo_package version="1.0">
+    <Name>D724API</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-bound OAuth client credentials, opaque access tokens and atomic API rate limits for D724 ESM.</Description>
+    <Description Lang="tr">D724 ESM icin tenant-bazli OAuth client credentials, opaque access token ve atomik API rate limit.</Description>
+    <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
+    <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.1">D724TenantDirectory</PackageRequired>
+    <PackageRequired Version="0.2.0">D724Audit</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="d724_api_client">
+            <Column Name="client_id" Required="true" PrimaryKey="true" Size="128" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="secret_hash" Required="true" Size="255" Type="VARCHAR" />
+            <Column Name="role_name" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="token_ttl" Required="true" Type="INTEGER" />
+            <Column Name="rate_limit" Required="true" Type="INTEGER" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Type="INTEGER" />
+            <Index Name="d724_api_client_tenant"><IndexColumn Name="tenant_id" /><IndexColumn Name="status" /></Index>
+            <ForeignKey ForeignTable="d724_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="d724_api_token">
+            <Column Name="token_hash" Required="true" PrimaryKey="true" Size="64" Type="VARCHAR" />
+            <Column Name="client_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="expires_at" Required="true" Type="DATE" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="last_used_time" Required="false" Type="DATE" />
+            <Index Name="d724_api_token_client"><IndexColumn Name="client_id" /><IndexColumn Name="status" /><IndexColumn Name="expires_at" /></Index>
+            <ForeignKey ForeignTable="d724_api_client"><Reference Local="client_id" Foreign="client_id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="d724_api_rate">
+            <Column Name="client_id" Required="true" PrimaryKey="true" Size="128" Type="VARCHAR" />
+            <Column Name="window_start" Required="true" PrimaryKey="true" Type="DATE" />
+            <Column Name="request_count" Required="true" Default="0" Type="INTEGER" />
+            <ForeignKey ForeignTable="d724_api_client"><Reference Local="client_id" Foreign="client_id" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUninstall Type="pre"><TableDrop Name="d724_api_rate" /><TableDrop Name="d724_api_token" /><TableDrop Name="d724_api_client" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/D724API.xml" />
+        <File Permission="644" Location="Kernel/System/D724/APIAuth.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/APIClientCreate.pm" />
+        <File Permission="644" Location="scripts/test/D724/APIAuth.t" />
+    </Filelist>
+</otobo_package>
