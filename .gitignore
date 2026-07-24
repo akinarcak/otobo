@@ -126,3 +126,6 @@ Test
 
 # files created by PackagePrep script
 *.pp_backup
+# D724 ESM local development secrets and state.
+development/d724/.env
+development/d724/.runtime/

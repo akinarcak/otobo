@@ -1,0 +1,33 @@
+name: D724 ESM foundation
+
+on:
+  pull_request:
+    paths:
+      - 'development/d724/**'
+      - 'docs/esm/**'
+      - '.github/workflows/d724-foundation.yml'
+  push:
+    branches:
+      - 'codex/esm-*'
+    paths:
+      - 'development/d724/**'
+      - 'docs/esm/**'
+      - '.github/workflows/d724-foundation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Check whitespace
+        run: git diff --check HEAD^
+
+      - name: Validate foundation and Compose model
+        shell: pwsh
+        run: ./development/d724/Test-Foundation.ps1 -RequireDocker

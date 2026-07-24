@@ -1,0 +1,94 @@
+name: d724-esm
+
+services:
+  db:
+    image: mariadb:lts-noble
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${D724_DB_ROOT_PASSWORD:?Copy .env.example to .env and set D724_DB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    command:
+      - --max-allowed-packet=136314880
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-log-file-size=268435456
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  redis:
+    image: redis:8-bookworm
+    user: redis:redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", ""]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  elastic:
+    image: rotheross/otobo-elasticsearch:latest-11_1
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: ${D724_ELASTIC_JAVA_OPTS:--Xms512m -Xmx512m}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cat/health >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+  web:
+    image: d724/esm:dev
+    build:
+      context: ../..
+      dockerfile: otobo.web.dockerfile
+      target: otobo-web
+      args:
+        DOCKER_TAG: dev
+        GIT_BRANCH: ${D724_GIT_BRANCH:-local}
+        GIT_COMMIT: ${D724_GIT_COMMIT:-unknown}
+        GIT_REPO: ${D724_GIT_REPO:-local}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elastic:
+        condition: service_healthy
+    command: ["web", "development"]
+    ports:
+      - "127.0.0.1:${D724_HTTP_PORT:-8080}:5000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5000/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - otobo-app:/opt/otobo
+      - otobo-update:/opt/otobo_update
+
+  daemon:
+    image: d724/esm:dev
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    command: ["daemon"]
+    volumes:
+      - otobo-app:/opt/otobo
+
+volumes:
+  mariadb-data:
+  elasticsearch-data:
+  otobo-app:
+  otobo-update:
