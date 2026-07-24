@@ -8,7 +8,8 @@
 - [x] `SEC-01a`: tenant threat modeli, varsayilan-reddet `D724TenantGuard 0.1.1`, karar/scope API'leri ve 78 negatif-pozitif test (`2026-07-24`).
 - [x] `CAT-01`: tenant-guarded Service/Offering/CatalogItem semasi ve repository API'si; 30 MariaDB entegrasyon testi (`2026-07-24`).
 - [x] `CAT-02a`: authenticated customer portal katalog listeleme, item detayi ve validated dinamik form render'i (`2026-07-24`).
-- [ ] `CAT-02b`: tenant-admin katalog/form yonetim arayuzu.
+- [x] `SEC-02`: kalici tenant/agent directory, tenant-bazli role bindings, tek-seferlik bootstrap ve lockout korumalari (`2026-07-24`).
+- [x] `CAT-02b`: directory-derived tenant-admin katalog/form yonetim arayuzu, CSRF ve optimistic update kontrolleri (`2026-07-24`).
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
@@ -61,10 +62,9 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 ## Ilk backlog sirasi
 
-1. `CAT-02b`: tenant-admin katalog ve form yonetim arayuzu
-2. `FLOW-01`: form submission, onay + fulfillment orkestrasyonu
-3. `SLA-01`: commitment motoru ve takvim hesaplari
-4. `AUD-01`: normalize audit event ve disari aktarim
-5. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
-6. `OBS-01`: metrikler, dashboard ve alarm esikleri
-7. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari
+1. `FLOW-01`: form submission, onay + fulfillment orkestrasyonu
+2. `SLA-01`: commitment motoru ve takvim hesaplari
+3. `AUD-01`: normalize audit event ve disari aktarim
+4. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
+5. `OBS-01`: metrikler, dashboard ve alarm esikleri
+6. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari

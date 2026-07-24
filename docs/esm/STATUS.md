@@ -15,15 +15,22 @@ Son dogrulama: `2026-07-24`
   - `Admin::D724::FoundationStatus --json` tanilama komutu,
   - paket deployment kontrolu `OK`,
   - iki test dosyasi, 15 test, sonuc `PASS`.
-- GPL-3.0 `D724TenantGuard 0.1.1` OPM paketi:
+- GPL-3.0 `D724TenantGuard 0.2.0` OPM paketi:
   - varsayilan-reddet action/role matrisi,
   - exact ve buyuk/kucuk harf duyarli tenant siniri,
   - query'ler icin fail-closed `ScopeGet`,
   - varsayilan kapali global platform admin gecisi,
   - karar neden kodlari ve JSON tanilama komutu,
-  - iki test dosyasi, 78 test, sonuc `PASS`,
+  - tenant-bazli role bindings ile multi-tenant privilege bleed engeli,
+  - iki test dosyasi, 86 test, sonuc `PASS`,
   - ayni tenant karari `ALLOW_ROLE_ACTION`, capraz tenant karari `DENY_CROSS_TENANT`.
-- GPL-3.0 `D724Catalog 0.2.4` OPM paketi:
+- GPL-3.0 `D724TenantDirectory 0.1.2` OPM paketi:
+  - kalici tenant ve agent-role membership tablolari,
+  - directory-derived agent policy context'i,
+  - one-time confirmed bootstrap ve audited membership grant komutlari,
+  - last tenant-admin revoke ve tenant self-deactivation lockout engelleri,
+  - iki test dosyasi, 24 test, sonuc `PASS`.
+- GPL-3.0 `D724Catalog 0.3.0` OPM paketi:
   - Service, ServiceOffering ve CatalogItem MariaDB semasi,
   - tenant-guarded create/get/list/update repository API'si,
   - tenant icinde benzersiz key, lifecycle ve optimistic version kontrolu,
@@ -31,7 +38,10 @@ Son dogrulama: `2026-07-24`
   - authenticated customer session'dan tenant tureten katalog portal modulu,
   - yalnizca tam aktif hierarchy listeleme ve parent availability kontrolu,
   - HTML escape ve gercek OTOBO template render testleri,
-  - dort test dosyasi, 53 paket testi, sonuc `PASS`,
+  - tenant directory context'inden beslenen agent yonetim ekrani,
+  - Service/Offering/Item lifecycle ve JSON form semasi yonetimi,
+  - CSRF challenge token ve optimistic update formlari,
+  - bes test dosyasi, 59 paket testi, sonuc `PASS`,
   - authenticated customer HTTP katalog ve dinamik form smoke testleri.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
@@ -48,7 +58,7 @@ Son dogrulama: `2026-07-24`
 Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 
 - tenant/organizasyon policy siniri ve veri sizintisi testleri,
-- tenant-admin katalog/form yonetim arayuzu ve form submission,
+- form submission, onay ve fulfillment orkestrasyonu,
 - talep, onay ve fulfillment orkestrasyonu,
 - SLA/OLA taahhut motoru,
 - audit event modeli ve disari aktarim,
@@ -57,4 +67,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `CAT-02b` tenant-admin katalog/form yonetim arayuzudur; ardindan `FLOW-01` form submission, onay ve fulfillment orkestrasyonunu ekleyecektir. Katalog repository ve customer portal `SEC-01b` policy adapter'larini kullanir.
+Bir sonraki urun kapisi `FLOW-01` guvenli form submission, onay ve fulfillment orkestrasyonudur. Katalog repository, customer portal ve agent yonetim ekrani tenant policy/directory context'ini kullanir.
