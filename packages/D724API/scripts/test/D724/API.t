@@ -98,6 +98,14 @@ is(
     'REQUESTER_NOT_FOUND',
     'request read validates requester ownership context before lookup',
 );
+is(
+    $API->WebhookSubscriptionCreate(
+        AccessToken => $Token, TenantID => $Tenant, Key => 'forbidden-hook', Name => 'Forbidden',
+        EndpointKey => 'missing', EventPatterns => ['request.*'],
+    )->{Error},
+    'FORBIDDEN',
+    'requester integration cannot administer webhook subscriptions',
+);
 
 my $ClientID = $Created->{Data}->{ClientID};
 ok( $DB->Do( SQL => 'DELETE FROM d724_api_rate WHERE client_id = ?', Bind => [ \$ClientID ] ), 'rate fixtures removed' );

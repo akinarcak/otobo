@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.0';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::DB', 'Kernel::System::JSON', 'Kernel::System::Main',
 );
@@ -113,15 +113,19 @@ sub StatusData {
         : undef;
     my $ContractOK = $OpenAPI && !$@ && ref $Contract eq 'HASH'
         && ( $Contract->{openapi} // q{} ) eq '3.1.0' ? 1 : 0;
+    my $WebhookContractOK = $ContractOK
+        && ref $Contract->{paths}->{'/webhook-subscriptions'} eq 'HASH'
+        && ref $Contract->{paths}->{'/webhook-subscriptions/{subscription_id}'} eq 'HASH' ? 1 : 0;
     my $PSGI = $Main->FileRead(
         Location => "$Home/bin/psgi-bin/otobo.psgi", Mode => 'utf8', Result => 'SCALAR',
     );
     my $MountOK = $PSGI && ${$PSGI} =~ m{mount[ ]+'/api/v1'}smx ? 1 : 0;
+    my $WebhookMountOK = $MountOK && ${$PSGI} =~ m{/webhook-subscriptions}smx ? 1 : 0;
 
     my $Success = !@Missing && $RetentionValid && $Count{RateWindowUnique}
         && !$Count{QueryErrors} && !$Count{InvalidTenantClients}
         && !$Count{InvalidSecretHashes} && !$Count{InvalidTokenHashes}
-        && !$Count{DuplicateRateWindows} && $ContractOK && $MountOK;
+        && !$Count{DuplicateRateWindows} && $ContractOK && $MountOK && $WebhookContractOK && $WebhookMountOK;
     return {
         Success => $Success ? 1 : 0, Package => 'D724API', Version => $VERSION,
         Enabled => $Config->Get('D724::API::Enabled') ? 1 : 0,
@@ -129,7 +133,10 @@ sub StatusData {
         Retention => {
             Valid => $RetentionValid, TokenDays => 0 + $TokenDays, RateHours => 0 + $RateHours,
         },
-        Transport => { CanonicalMount => $MountOK, OpenAPI31 => $ContractOK },
+        Transport => {
+            CanonicalMount => $MountOK, OpenAPI31 => $ContractOK,
+            WebhookContract => $WebhookContractOK, WebhookMount => $WebhookMountOK,
+        },
     };
 }
 

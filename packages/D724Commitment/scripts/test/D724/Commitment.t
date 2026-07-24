@@ -372,7 +372,7 @@ $IntegratedTask = $AssignedRequest->{Tasks}->[0];
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::WebhookAllowedHosts', Value => ['hooks.example.test'] );
 $Helper->ConfigSettingChange(
     Key => 'D724::Commitment::WebhookEndpoints',
-    Value => { 'audit-hook' => { URL => 'https://hooks.example.test/d724', Secret => '0123456789abcdef0123456789abcdef' } },
+    Value => { 'audit-hook::URL' => 'https://hooks.example.test/d724', 'audit-hook::Secret' => '0123456789abcdef0123456789abcdef' },
 );
 my %WebhookCall;
 {

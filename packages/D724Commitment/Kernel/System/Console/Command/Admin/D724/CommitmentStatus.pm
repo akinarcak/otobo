@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.4.0';
+our $VERSION = '0.4.1';
 
 our @ObjectDependencies = ('Kernel::System::DB', 'Kernel::System::JSON');
 
@@ -66,7 +66,7 @@ sub Run {
         ( $Counts{LifetimeAttempts}, $Counts{ReplayedEscalations} ) = $DBObject->FetchrowArray();
     }
     my $Success = !( grep { !$_ } values %Tables );
-    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.4.0', Tables => \%Tables, Counts => \%Counts };
+    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.4.1', Tables => \%Tables, Counts => \%Counts };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }

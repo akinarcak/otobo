@@ -8,11 +8,12 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.5.0';
+our $VERSION = '0.6.0';
 our @ObjectDependencies = (
     'Kernel::System::CustomerUser',
     'Kernel::System::D724::APIAuth',
     'Kernel::System::D724::Request',
+    'Kernel::System::D724::Webhook',
     'Kernel::System::DB',
 );
 
@@ -210,6 +211,61 @@ sub RequestTaskUpdate {
     };
 }
 
+sub WebhookSubscriptionCreate {
+    my ( $Self, %Param ) = @_;
+    my $Authorization = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Authorization if !$Authorization->{Success};
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Webhook')->SubscriptionCreate(
+        Subject => $Authorization->{Data}->{Subject}, TenantID => $Authorization->{Data}->{TenantID},
+        Key => $Param{Key}, Name => $Param{Name}, EndpointKey => $Param{EndpointKey},
+        EventPatterns => $Param{EventPatterns},
+        ( defined $Param{StartSequence} ? ( StartSequence => $Param{StartSequence} ) : () ),
+    );
+    return $Result if !$Result->{Success};
+    return { Success => 1, Data => $Self->_WebhookSubscriptionProject( $Result->{Data} ), Meta => $Self->_Meta($Authorization) };
+}
+
+sub WebhookSubscriptionList {
+    my ( $Self, %Param ) = @_;
+    my $Authorization = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Authorization if !$Authorization->{Success};
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Webhook')->SubscriptionList(
+        Subject => $Authorization->{Data}->{Subject}, TenantID => $Authorization->{Data}->{TenantID},
+    );
+    return $Result if !$Result->{Success};
+    return { Success => 1, Data => [ map { $Self->_WebhookSubscriptionProject($_) } @{ $Result->{Data} } ], Meta => $Self->_Meta($Authorization) };
+}
+
+sub WebhookSubscriptionGet {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('SUBSCRIPTION_ID_INVALID') if ( $Param{SubscriptionID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    my $Authorization = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Authorization if !$Authorization->{Success};
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Webhook')->SubscriptionGet(
+        Subject => $Authorization->{Data}->{Subject}, TenantID => $Authorization->{Data}->{TenantID}, SubscriptionID => $Param{SubscriptionID},
+    );
+    return $Result if !$Result->{Success};
+    return { Success => 1, Data => $Self->_WebhookSubscriptionProject( $Result->{Data} ), Meta => $Self->_Meta($Authorization) };
+}
+
+sub WebhookSubscriptionUpdate {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('SUBSCRIPTION_ID_INVALID') if ( $Param{SubscriptionID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    my $Authorization = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Authorization if !$Authorization->{Success};
+    my %Update;
+    $Update{Name} = $Param{Name} if exists $Param{Name};
+    $Update{EndpointKey} = $Param{EndpointKey} if exists $Param{EndpointKey};
+    $Update{EventPatterns} = $Param{EventPatterns} if exists $Param{EventPatterns};
+    $Update{Status} = $Param{Status} if exists $Param{Status};
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Webhook')->SubscriptionUpdate(
+        Subject => $Authorization->{Data}->{Subject}, TenantID => $Authorization->{Data}->{TenantID},
+        SubscriptionID => $Param{SubscriptionID}, ExpectedVersion => $Param{ExpectedVersion}, %Update,
+    );
+    return $Result if !$Result->{Success};
+    return { Success => 1, Data => $Self->_WebhookSubscriptionProject( $Result->{Data} ), Meta => $Self->_Meta($Authorization) };
+}
+
 sub _Authorize {
     my ( $Self, %Param ) = @_;
     return $Kernel::OM->Get('Kernel::System::D724::APIAuth')->Authorize(
@@ -271,6 +327,16 @@ sub _RequestProject {
         tasks           => \@Tasks,
         created_at      => $Request->{CreateTime},
         changed_at      => $Request->{ChangeTime},
+    };
+}
+
+sub _WebhookSubscriptionProject {
+    my ( $Self, $Data ) = @_;
+    return {
+        id => 0 + $Data->{SubscriptionID}, tenant_id => $Data->{TenantID}, key => $Data->{Key}, name => $Data->{Name},
+        endpoint_key => $Data->{EndpointKey}, event_patterns => $Data->{EventPatterns}, status => $Data->{Status},
+        cursor_sequence => 0 + $Data->{CursorSequence}, version => 0 + $Data->{Version},
+        created_at => $Data->{CreateTime}, changed_at => $Data->{ChangeTime},
     };
 }
 

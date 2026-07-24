@@ -2,15 +2,44 @@
 
 ## Kapsam
 
-`D724Commitment 0.4.0`, SLA/OLA escalation outbox'indaki webhook aksiyonlarini
+`D724Commitment 0.4.1`, SLA/OLA escalation outbox'indaki webhook aksiyonlarini
 tenant-safe, tekrar denenebilir ve denetlenebilir bicimde teslim eder. Endpoint
 URL ve secret veritabaninda tutulmaz; policy yalniz adlandirilmis endpoint
 anahtarini tasir. Deployment konfigurasyonu bu anahtari URL/secret kaydina
 cozer ve URL'nin HTTPS host'u exact allow-list'te olmak zorundadir.
 
-Bu dilim genel lifecycle subscription API'si degildir. Request, incident,
-change ve diger domain olaylari icin yonetilebilir abonelikler ayni teslimat
-cekirdeginin uzerinde sonraki dilimde eklenecektir.
+`D724Webhook 0.1.0` ayni teslimat cekirdeginin uzerine genel lifecycle
+aboneliklerini ekler. Ayri bir retry motoru veya teslimat tablosu yoktur.
+
+## Endpoint konfigurasyonu
+
+Endpoint URL ve secret API veya abonelik tablosunda tutulmaz. Deployment,
+`D724::Commitment::WebhookEndpoints` hash'ine `endpoint::URL` ve
+`endpoint::Secret` alanlarini; `WebhookAllowedHosts` listesine exact HTTPS
+host'u yazar. Ornek endpoint anahtari `lifecycle` icin alanlar
+`lifecycle::URL` ve `lifecycle::Secret` olur. Secret en az 32 karakterdir.
+
+## Lifecycle abonelikleri
+
+Tenant administrator su canonical endpoint'leri kullanir:
+
+- `POST|GET /otobo/api/v1/webhook-subscriptions`
+- `GET|PATCH /otobo/api/v1/webhook-subscriptions/{subscription_id}`
+
+Create kontrati `key`, `name`, `endpoint_key` ve 1-20 `event_patterns` ister.
+Pattern exact action (`request.created`) veya prefix wildcard (`request.*`)
+olabilir. URL/secret istemci tarafindan verilemez. `start_sequence` atlanirsa
+abonelik tenant audit head'inden baslar; acik catch-up cursor'u `0..head`
+araliginda olmalidir. Update `expected_version` ile optimistic lock uygular ve
+aboneligi `active|inactive` yapabilir.
+
+Tarayici immutable `d724_audit_event` zincirini tenant + subscription cursor'u
+ile sirali okur. Eslesen olay `(tenant, subscription, audit sequence)` icin
+ortak `d724_escalation_outbox` tablosuna tek kayit yazar; outbox yazimi ve cursor
+ilerlemesi ayni transaction'dadir. Crash sonrasi cursor geri kalirsa unique
+anahtar mevcut delivery'yi idempotent replay olarak tanir. Payload schema v1;
+tenant, subscription ID/key ve normalize event identity/state/hash/details
+alanlarini tasir.
 
 ## HTTP teslimati
 
@@ -79,5 +108,9 @@ toplamlarini raporlar.
 MariaDB kabul testi yapildi (`2026-07-25`): outbox `51` icin cross-tenant replay
 `FORBIDDEN`, stale attempt `VERSION_CONFLICT`, dead→retry→delivered basarili,
 attempt/replay/lifetime sayaclari `1/1/4` ve tek audit olayi dogrulandi.
-Son paketle tum D724 regresyonu 32 dosya ve 641 assertion olarak birlikte
-gecti; web, daemon, MariaDB ve Redis servisleri saglikli kaldi.
+`Accept-WebhookSubscription.pl` gercek canonical HTTP uzerinde requester create
+`403`, tanimsiz endpoint `422`, tenant-admin create/list/get/disable
+`201/200/200/200` ve stale update `409` kanitladi. Audit sequence `116`, shared
+outbox `74` ile tek kez teslim edildi. Son paketlerle tum D724 regresyonu 34
+dosya ve 690 assertion olarak birlikte gecti; web, daemon, MariaDB ve Redis
+servisleri saglikli kaldi.

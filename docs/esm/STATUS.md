@@ -90,7 +90,7 @@ Son dogrulama: `2026-07-25`
   - authenticated HTTP akisi `REQ-0000000042`: iki hedef paused, onaydan sonra uc hedef running, ilk yanit ve fulfillment sonunda uc hedef met.
   - atomik lease, exponential retry ve dead-letter escalation dispatcher,
   - tenant-role OTOBO email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
-- GPL-3.0 `D724API 0.4.0` OPM paketi:
+- GPL-3.0 `D724API 0.6.0` OPM paketi:
   - tenant-bazli bcrypt client credentials ve yalniz SHA-256 digest'i saklanan kisa omurlu opaque bearer token,
   - varsayilan-reddet role/action karari ve DB-atomik istemci/dakika rate limit,
   - tenant-admin client create ile auditli, optimistic-version ve idempotent client revoke; tum tokenlarin aninda iptali,
@@ -107,7 +107,15 @@ Son dogrulama: `2026-07-25`
   - token issue/revoke olaylarinda secret veya tam digest icermeyen audit fingerprint'i,
   - 30 gun token digest / 48 saat rate-window retention, confirmed cleanup komutu ve stale backlog metrikleri,
   - gercek HTTP rotation kabulunde version `2`; eski token/secret `401/401`, yeni secret/token `200/200`.
-- Dokuz D724 paketinde toplam 31 test dosyasi ve 608 test birlikte `PASS`.
+  - tenant-admin webhook subscription create/list/get/update, optimistic version ve requester default-deny endpoint'leri,
+  - canonical OpenAPI 3.1 webhook subscription semalari ve route contract'i.
+- GPL-3.0 `D724Webhook 0.1.0` OPM paketi:
+  - tenant-safe subscription repository, exact/prefix event filtreleri ve audit-head baslangic cursor'u,
+  - immutable audit scanner ile ortak D724Commitment outbox'ina transaction-atomic queue + cursor ilerlemesi,
+  - `(tenant, subscription, audit sequence)` exactly-once teslimat ve crash-window idempotent recovery,
+  - endpoint URL/secret icin deployment-only `endpoint::URL` / `endpoint::Secret` SysConfig modeli,
+  - gercek HTTP kabulunde `403/422/201/200/200/200/409`, audit sequence `116`, outbox `74`, teslim `delivered`.
+- On D724 paketinde toplam 34 test dosyasi ve 690 test birlikte `PASS`.
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
@@ -118,6 +126,7 @@ Son dogrulama: `2026-07-25`
 - Son OPM SHA-256 kaniti: Audit 0.2.0 `44604ad6aeb20d5e9eda2c25b28423f2eb6082037d06061f154b8fab13d4446d`, TenantDirectory 0.2.1 `024cfa1cc1298bd00459cc6cb88ecc99e868caac1beb9fa434dd814d06be7b28`, Catalog 0.5.2 `90dfeb6309bcaa89bcffe9acff4ec7e92031afff4bec7eb34bb313343a2795e5`, Request 0.4.6 `c8b5ddb9a9a0aed10e43094f9748ea7a6aca2089f41c0097236f6b57a7c51f46`, Commitment 0.3.8 `19bb3331b3efee9c3d143673fc7537720d3d98f11fc3bf69fa24f3c9229eb94c`.
 - TicketAudit 0.6.1 OPM SHA-256: `a574c4e22fef7520c7d86a7ab418f13243ae8e8963e742150b1c6d097e3d9e29`.
 - D724API 0.4.0 OPM SHA-256: `801c8dae38c478b1b65e214e79198a46b69083576eade30eddef96fb5fad8ceb`.
+- Son entegrasyon OPM SHA-256 kaniti: Commitment 0.4.1 `4eff743d0f69fbeb9903b664d654522da8404703ebd72de17d9aa66a151cfe69`, Webhook 0.1.0 `9f1510ed1dff1280a57952e938841143af3203e2a8dc6e97db6f0334335fb705`, API 0.6.0 `5797b3aae4a0336cfa5214a62babaed3c5254999252e56dbda0a18dfc5bae4f7`.
 - Kalici ticket-policy kabulunde `demo.agent` (UserID `47`) kendi `d724-demo` scope'unda yalniz TicketID `9` / `D724AUD20260724001` sonucunu gordu; `CustomerIDRaw` bypass'i reddedildi ve Generic Interface ortak erisimi basarili oldu.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
@@ -143,4 +152,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `API-01c-webhook/SEC-01b`: genel lifecycle webhook subscription API'si, route latency/error metrikleri ve load testleri; daemon/report/cache/Elasticsearch policy adapter'lari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
+Bir sonraki urun kapisi `API-01d-ops/SEC-01b`: route latency/error metrikleri, webhook throughput/backlog alarmlari ve load testleri; daemon/report/cache/Elasticsearch policy adapter'lari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.

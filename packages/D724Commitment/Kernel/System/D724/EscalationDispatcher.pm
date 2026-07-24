@@ -12,7 +12,7 @@ use warnings;
 use Digest::SHA qw(hmac_sha256_hex sha256_hex);
 use URI ();
 
-our $VERSION = '0.4.0';
+our $VERSION = '0.4.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::DB',
@@ -86,6 +86,53 @@ sub Dispatch {
     return { Success => 1, Counts => \%Counts };
 }
 
+sub QueueWebhook {
+    my ( $Self, %Param ) = @_;
+    return { Success => 0, Error => 'TENANT_ID_INVALID' }
+        if ( $Param{TenantID} // q{} ) !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}\z}smx;
+    return { Success => 0, Error => 'SOURCE_SEQUENCE_INVALID' }
+        if ( $Param{SourceSequence} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return { Success => 0, Error => 'ACTION_KEY_INVALID' }
+        if ( $Param{ActionKey} // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx;
+    return { Success => 0, Error => 'WEBHOOK_KEY_INVALID' }
+        if ( $Param{EndpointKey} // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx;
+    return { Success => 0, Error => 'PAYLOAD_INVALID' }
+        if ref $Param{Payload} ne 'HASH' || ( $Param{Payload}->{TenantID} // q{} ) ne $Param{TenantID};
+    my $At = $Self->_TimeNormalize( $Param{At} );
+    return { Success => 0, Error => 'TIME_INVALID' } if !$At;
+    my %Payload = ( %{ $Param{Payload} }, Target => $Param{EndpointKey} );
+    my $PayloadJSON = $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => \%Payload, SortKeys => 1 );
+    return { Success => 0, Error => 'PAYLOAD_TOO_LARGE' } if length $PayloadJSON > 8000;
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    $DB->Prepare(
+        SQL => 'SELECT id, payload_json FROM d724_escalation_outbox WHERE tenant_id = ? AND commitment_event_id = ? AND action_key = ?',
+        Bind => [ \$Param{TenantID}, \$Param{SourceSequence}, \$Param{ActionKey} ], Limit => 1,
+    );
+    my ( $ExistingID, $ExistingPayload ) = $DB->FetchrowArray();
+    if ($ExistingID) {
+        return { Success => 0, Error => 'IDEMPOTENCY_CONFLICT' } if $ExistingPayload ne $PayloadJSON;
+        return { Success => 1, Data => { OutboxID => 0 + $ExistingID }, IdempotentReplay => 1 };
+    }
+    my ( $CommitmentID, $Status, $Attempts, $Error ) = ( 0, 'pending', 0, q{} );
+    my @Values = (
+        $Param{TenantID}, $CommitmentID, $Param{SourceSequence}, $Param{ActionKey},
+        'webhook', $PayloadJSON, $Status, $Attempts, $At, $Error,
+    );
+    my @Bind = map { \$_ } @Values;
+    my $Inserted = $DB->Do(
+        SQL => 'INSERT INTO d724_escalation_outbox (tenant_id, commitment_id, commitment_event_id, action_key, action_type, payload_json, status, attempt_count, available_time, last_error, create_time, change_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp, current_timestamp)',
+        Bind => \@Bind,
+    );
+    $DB->Prepare(
+        SQL => 'SELECT id, payload_json FROM d724_escalation_outbox WHERE tenant_id = ? AND commitment_event_id = ? AND action_key = ?',
+        Bind => [ \$Param{TenantID}, \$Param{SourceSequence}, \$Param{ActionKey} ], Limit => 1,
+    );
+    my ( $ID, $StoredPayload ) = $DB->FetchrowArray();
+    return { Success => 0, Error => 'QUEUE_WRITE_FAILED' } if !$ID;
+    return { Success => 0, Error => 'IDEMPOTENCY_CONFLICT' } if $StoredPayload ne $PayloadJSON;
+    return { Success => 1, Data => { OutboxID => 0 + $ID }, IdempotentReplay => $Inserted ? 0 : 1 };
+}
+
 sub Replay {
     my ( $Self, %Param ) = @_;
     return { Success => 0, Error => 'OUTBOX_ID_INVALID' }
@@ -107,10 +154,10 @@ sub Replay {
     my $OK = eval {
         die "TRANSACTION_START_FAILED\n" if $OwnTransaction && !$DB->BeginWork();
         $DB->Prepare(
-            SQL => 'SELECT commitment_id, status, attempt_count, replay_count FROM d724_escalation_outbox WHERE tenant_id = ? AND id = ?',
+            SQL => 'SELECT commitment_id, status, attempt_count, replay_count, payload_json FROM d724_escalation_outbox WHERE tenant_id = ? AND id = ?',
             Bind => [ \$Param{TenantID}, \$Param{OutboxID} ], Limit => 1,
         );
-        my ( $CommitmentID, $Status, $Attempts, $ReplayCount ) = $DB->FetchrowArray();
+        my ( $CommitmentID, $Status, $Attempts, $ReplayCount, $PayloadJSON ) = $DB->FetchrowArray();
         if ( !$CommitmentID ) { $Result = { Success => 0, Error => 'NOT_FOUND' } }
         elsif ( $Status ne 'dead' ) { $Result = { Success => 0, Error => 'REPLAY_STATE_INVALID' } }
         elsif ( $Attempts != $Param{ExpectedAttemptCount} ) { $Result = { Success => 0, Error => 'VERSION_CONFLICT' } }
@@ -130,10 +177,15 @@ sub Replay {
             else {
                 my $ActorID = $Param{Subject}->{ID};
                 my $ActorType = $ActorID =~ m{\Aintegration:}smx ? 'integration' : 'agent';
+                my $Payload = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $PayloadJSON );
+                $Payload = {} if ref $Payload ne 'HASH';
+                my $CorrelationID = $CommitmentID
+                    ? "commitment:$CommitmentID"
+                    : 'audit:' . ( ref $Payload->{Event} eq 'HASH' ? $Payload->{Event}->{UUID} // $Param{OutboxID} : $Param{OutboxID} );
                 my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit')->Record(
                     TenantID => $Param{TenantID}, ActorType => $ActorType, ActorID => $ActorID,
                     Action => 'commitment.escalation_replayed', ObjectType => 'escalation_outbox', ObjectID => $Param{OutboxID},
-                    CorrelationID => "commitment:$CommitmentID", DedupeKey => "escalation:$Param{OutboxID}:replay:" . ( $ReplayCount + 1 ),
+                    CorrelationID => $CorrelationID, DedupeKey => "escalation:$Param{OutboxID}:replay:" . ( $ReplayCount + 1 ),
                     FromState => 'dead', ToState => 'retry', Outcome => 'success',
                     Details => { commitment_id => $CommitmentID, previous_attempt_count => $Attempts, replay_count => $ReplayCount + 1 },
                 );
@@ -233,8 +285,10 @@ sub _Webhook {
     my $Key = $Row->{Payload}->{Target} // q{};
     return { Success => 0, Error => 'WEBHOOK_KEY_INVALID' } if $Key !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx;
     my $Config = $Kernel::OM->Get('Kernel::Config');
-    my $Endpoints = $Config->Get('D724::Commitment::WebhookEndpoints') // {};
-    my $Endpoint = ref $Endpoints eq 'HASH' ? $Endpoints->{$Key} : undef;
+    my $Endpoints = $Self->_WebhookEndpointMap(
+        $Config->Get('D724::Commitment::WebhookEndpoints'),
+    );
+    my $Endpoint = $Endpoints->{$Key};
     return { Success => 0, Error => 'WEBHOOK_NOT_CONFIGURED' } if ref $Endpoint ne 'HASH';
     my $URI = URI->new( $Endpoint->{URL} // q{} );
     my %Allowed = map { lc($_) => 1 } @{ $Config->Get('D724::Commitment::WebhookAllowedHosts') // [] };
@@ -257,6 +311,22 @@ sub _Webhook {
     return ( $Response{Status} // q{} ) =~ m{\A2[0-9][0-9]}smx
         ? { Success => 1, DeliveryRef => "webhook:$Row->{ID}", ResponseCode => $Response{Status} }
         : { Success => 0, Error => 'WEBHOOK_HTTP_' . ( $Response{Status} // '0' ) };
+}
+
+sub _WebhookEndpointMap {
+    my ( $Self, $Configured ) = @_;
+    my %Endpoints;
+    if ( ref $Configured eq 'HASH' ) {
+        for my $ConfigKey ( keys %{$Configured} ) {
+            if ( ref $Configured->{$ConfigKey} eq 'HASH' ) {
+                $Endpoints{$ConfigKey} = $Configured->{$ConfigKey};
+            }
+            elsif ( $ConfigKey =~ m{\A([a-z][a-z0-9_-]{0,63})::(URL|Secret)\z}smx ) {
+                $Endpoints{$1}->{$2} = $Configured->{$ConfigKey};
+            }
+        }
+    }
+    return \%Endpoints;
 }
 
 sub _TimeNormalize {

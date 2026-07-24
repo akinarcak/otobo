@@ -1,6 +1,6 @@
 # API-01 - Tenant-safe integration API
 
-## Implemented contract (`D724API 0.4.0`)
+## Implemented contract (`D724API 0.6.0`)
 
 The API is a GPL-3.0 package and uses OTOBO's supported public frontend
 registration. Its canonical versioned base URL is:
@@ -126,6 +126,19 @@ Repeating the exact approval or task transition with its original expected
 version returns `200` and `Idempotent-Replayed: true` without another mutation
 or audit append. A stale version with a different target returns `409`.
 
+### Lifecycle webhook subscriptions
+
+- `GET|POST /otobo/api/v1/webhook-subscriptions`
+- `GET|PATCH /otobo/api/v1/webhook-subscriptions/{subscription_id}`
+
+Only a role passing `tenant.manage` can administer subscriptions. The bearer
+token tenant is authoritative and every get/list/update predicate includes it.
+Create accepts a deployment-configured `endpoint_key`, a stable key/name,
+exact or prefix-wildcard event patterns, and an optional audit start cursor.
+Arbitrary URLs and secrets are never accepted by the API. Update requires
+`expected_version`; stale writes return `409`. Full delivery semantics and
+receiver verification are specified in `WEBHOOK-01.md`.
+
 ## Security invariants
 
 - Default-deny `D724TenantGuard` authorization runs before rate consumption and data access.
@@ -176,13 +189,16 @@ are retained.
   `200/200/200`, and the final requester-owned GET returned `fulfilled`;
 - exactly four lifecycle audit events retained actor type `integration`, while
   approval and task replays appended no duplicates;
-- all 31 D724 test files and 616 assertions passed together.
+- `Accept-WebhookSubscription.pl` returned requester/tanimsiz-endpoint/create/
+  list/get/disable/stale statuses `403/422/201/200/200/200/409`; audit sequence
+  `116` became shared outbox delivery `74` exactly once;
+- all 34 D724 test files and 690 assertions passed together.
 
 ## Remaining API-01 work
 
-General lifecycle webhook subscription API, per-route latency/error metrics,
-retention scheduling, and concurrent load tests remain open. The shared
-canonical JSON/HMAC delivery and dead-letter replay contract is complete in
-`WEBHOOK-01`.
+Per-route latency/error metrics, retention scheduling, webhook throughput/
+backlog alarms, and concurrent load tests remain open. The lifecycle
+subscription, canonical JSON/HMAC delivery, and dead-letter replay contracts
+are complete in `WEBHOOK-01`.
 Until TLS termination is deployed, this test endpoint must stay on the private
 network and must not be exposed to the public Internet.

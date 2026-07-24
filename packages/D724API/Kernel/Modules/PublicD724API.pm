@@ -128,6 +128,49 @@ sub Run {
         );
         return $Self->_Result( Result => $Result, Replay => $Result->{IdempotentReplay} ? 1 : 0 );
     }
+    if ( $Route eq 'webhook_subscriptions' ) {
+        if ( $Method eq 'GET' ) {
+            my $Result = $Kernel::OM->Get('Kernel::System::D724::API')->WebhookSubscriptionList(
+                AccessToken => $Bearer, TenantID => $TenantID,
+            );
+            return $Self->_Result( Result => $Result );
+        }
+        return $Self->_Respond( Code => 405, Error => 'METHOD_NOT_ALLOWED' ) if $Method ne 'POST';
+        my $Payload = $Self->_JSONPayload();
+        return $Payload if ref $Payload ne 'HASH';
+        my $Result = $Kernel::OM->Get('Kernel::System::D724::API')->WebhookSubscriptionCreate(
+            AccessToken => $Bearer, TenantID => $TenantID, Key => $Payload->{key}, Name => $Payload->{name},
+            EndpointKey => $Payload->{endpoint_key}, EventPatterns => $Payload->{event_patterns},
+            ( exists $Payload->{start_sequence} ? ( StartSequence => $Payload->{start_sequence} ) : () ),
+        );
+        return $Self->_Result(
+            Result => $Result, SuccessCode => 201,
+            Location => $Result->{Success} ? 'webhook-subscriptions/' . $Result->{Data}->{id} : undef,
+        );
+    }
+    if ( $Route eq 'webhook_subscription' ) {
+        if ( $Method eq 'GET' ) {
+            my $Result = $Kernel::OM->Get('Kernel::System::D724::API')->WebhookSubscriptionGet(
+                AccessToken => $Bearer, TenantID => $TenantID,
+                SubscriptionID => $Request->GetParam( Param => 'subscription_id' ) // q{},
+            );
+            return $Self->_Result( Result => $Result );
+        }
+        return $Self->_Respond( Code => 405, Error => 'METHOD_NOT_ALLOWED' ) if $Method ne 'PATCH';
+        my $Payload = $Self->_JSONPayload();
+        return $Payload if ref $Payload ne 'HASH';
+        my %Update;
+        $Update{Name} = $Payload->{name} if exists $Payload->{name};
+        $Update{EndpointKey} = $Payload->{endpoint_key} if exists $Payload->{endpoint_key};
+        $Update{EventPatterns} = $Payload->{event_patterns} if exists $Payload->{event_patterns};
+        $Update{Status} = $Payload->{status} if exists $Payload->{status};
+        my $Result = $Kernel::OM->Get('Kernel::System::D724::API')->WebhookSubscriptionUpdate(
+            AccessToken => $Bearer, TenantID => $TenantID,
+            SubscriptionID => $Request->GetParam( Param => 'subscription_id' ) // q{},
+            ExpectedVersion => $Payload->{expected_version}, %Update,
+        );
+        return $Self->_Result( Result => $Result );
+    }
     return $Self->_Respond( Code => 404, Error => 'ROUTE_NOT_FOUND' );
 }
 
@@ -182,6 +225,9 @@ sub _Result {
             LIMIT_INVALID => 400, CURSOR_INVALID => 400, TICKET_ID_INVALID => 400,
             REQUEST_ID_INVALID => 400, CATALOG_ITEM_ID_INVALID => 400,
             TASK_ID_INVALID => 400, TASK_STATUS_INVALID => 400,
+            SUBSCRIPTION_ID_INVALID => 400, KEY_INVALID => 400, NAME_INVALID => 400,
+            ENDPOINT_KEY_INVALID => 400, EVENT_PATTERNS_INVALID => 400, EVENT_PATTERN_INVALID => 400,
+            STATUS_INVALID => 400,
             DECISION_INVALID => 400, VERSION_REQUIRED => 400, COMMENT_INVALID => 400,
             REQUESTER_LOGIN_INVALID => 400, ANSWERS_INVALID => 400,
             IDEMPOTENCY_KEY_INVALID => 400, NOT_AVAILABLE => 400,
@@ -189,6 +235,7 @@ sub _Result {
             ANSWER_TOO_LONG => 400, ANSWER_OPTION_INVALID => 400,
             APPROVER_ROLE_REQUIRED => 403, INTEGRATION_SUBJECT_INVALID => 403,
             COMMITMENT_SYNC_FAILED => 503,
+            WEBHOOK_DISABLED => 503, ENDPOINT_NOT_CONFIGURED => 422,
             API_DISABLED => 503, DATABASE_ERROR => 503, RATE_DATABASE_ERROR => 503,
             REQUEST_DISABLED => 503, TRANSACTION_FAILED => 503, AUDIT_WRITE_FAILED => 503,
         );
