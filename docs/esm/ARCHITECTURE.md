@@ -21,7 +21,8 @@ OTOBO Core + D724 ESM Packages ---- Event Outbox
 ### Cekirdek paketler
 
 - `D724ServicePortfolio`: hizmet, teklif, sahiplik ve yasam dongusu
-- `D724Catalog`: dinamik form, uygunluk, onay ve fulfillment
+- `D724Catalog`: hizmet/teklif/katalog ogesi, dinamik form ve uygunluk
+- `D724Request`: idempotent talep, rol-bazli onay ve fulfillment gorev durum makinesi
 - `D724Commitment`: SLA/OLA/UC, takvim ve eskalasyon
 - `D724TenantGuard`: organizasyon kapsami ve veri erisim politikasi
 - `D724Audit`: normalize, eklemeli denetim olaylari ve kanit disari aktarimi

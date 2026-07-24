@@ -30,7 +30,7 @@ Son dogrulama: `2026-07-24`
   - one-time confirmed bootstrap ve audited membership grant komutlari,
   - last tenant-admin revoke ve tenant self-deactivation lockout engelleri,
   - iki test dosyasi, 24 test, sonuc `PASS`.
-- GPL-3.0 `D724Catalog 0.3.0` OPM paketi:
+- GPL-3.0 `D724Catalog 0.3.3` OPM paketi:
   - Service, ServiceOffering ve CatalogItem MariaDB semasi,
   - tenant-guarded create/get/list/update repository API'si,
   - tenant icinde benzersiz key, lifecycle ve optimistic version kontrolu,
@@ -43,6 +43,14 @@ Son dogrulama: `2026-07-24`
   - CSRF challenge token ve optimistic update formlari,
   - bes test dosyasi, 59 paket testi, sonuc `PASS`,
   - authenticated customer HTTP katalog ve dinamik form smoke testleri.
+- GPL-3.0 `D724Request 0.1.2` OPM paketi:
+  - sunucu-tarafli dinamik cevap validasyonu ve workflow snapshot'i,
+  - tenant/requester kapsamli idempotent form submission,
+  - tenant-role onayi ve optimistic-lock durum gecisleri,
+  - fulfillment gorevleri, basarisizlik ve otomatik fulfilled sonucu,
+  - musteri makbuzu ve agent onay/fulfillment workbench'i,
+  - oturumlu HTTP submit sonrasi `REQ-*` makbuzu ve agent gorunurluk testi.
+- Bes D724 paketinde toplam 14 test dosyasi ve 227 test birlikte `PASS`.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen
@@ -58,8 +66,6 @@ Son dogrulama: `2026-07-24`
 Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 
 - tenant/organizasyon policy siniri ve veri sizintisi testleri,
-- form submission, onay ve fulfillment orkestrasyonu,
-- talep, onay ve fulfillment orkestrasyonu,
 - SLA/OLA taahhut motoru,
 - audit event modeli ve disari aktarim,
 - portal ve agent urun deneyimi,
@@ -67,4 +73,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `FLOW-01` guvenli form submission, onay ve fulfillment orkestrasyonudur. Katalog repository, customer portal ve agent yonetim ekrani tenant policy/directory context'ini kullanir.
+Bir sonraki urun kapisi `SLA-01` calisma takvimi, duraklatma kurali ve eskalasyon iceren taahhut motorudur. Katalog, request, customer portal ve agent workbench tenant policy/directory context'ini kullanir.
