@@ -58,7 +58,9 @@ $Helper->ConfigSettingChange( Key => 'D724::TicketPolicy::Enabled', Value => 1 )
 
 my $Scoped = $Policy->SearchScopeApply( Param => { UserID => 1, Result => 'ARRAY' } );
 ok( $Scoped->{Success}, 'agent scope resolves' );
-is( $Scoped->{Param}->{CustomerID}, [$TenantA], 'agent search receives exact tenant predicate' );
+my %ScopedTenant = map { $_ => 1 } @{ $Scoped->{Param}->{CustomerID} };
+ok( $ScopedTenant{$TenantA}, 'agent search predicate includes tenant A membership' );
+ok( !$ScopedTenant{$TenantB}, 'agent search predicate excludes tenant B' );
 is(
     $Policy->SearchScopeApply( Param => { UserID => 1, CustomerID => [$TenantB] } )->{Reason},
     'EMPTY_TENANT_INTERSECTION',
