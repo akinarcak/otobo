@@ -10,18 +10,20 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB',
+    'Kernel::System::JSON',
     'Kernel::System::Log',
 );
 
 my %ValidStatus = map { $_ => 1 } qw(draft active suspended retired);
 my %ValidFulfillmentType = map { $_ => 1 } qw(manual process integration);
 my %ValidRequestType = map { $_ => 1 } qw(service_request incident access information);
+my %ValidFieldType = map { $_ => 1 } qw(text textarea select multiselect checkbox date datetime number email);
 
 sub new {
     my ($Type) = @_;
@@ -89,6 +91,104 @@ sub CatalogItemUpdate {
     return $Self->_Update( Entity => 'CatalogItem', %Param );
 }
 
+sub CatalogItemSchemaSet {
+    my ( $Self, %Param ) = @_;
+
+    my $Authorization = $Self->_Authorize(
+        Action        => 'catalog.manage',
+        RequireUserID => 1,
+        Subject       => $Param{Subject},
+        TenantID      => $Param{TenantID},
+        UserID        => $Param{UserID},
+    );
+    return $Authorization if !$Authorization->{Success};
+    return $Self->_Error( Error => 'ID_INVALID' )
+        if !$Self->_PositiveInteger( $Param{CatalogItemID} );
+    return $Self->_Error( Error => 'VERSION_REQUIRED' )
+        if defined $Param{ExpectedVersion} && !$Self->_PositiveInteger( $Param{ExpectedVersion} );
+
+    my $Item = $Self->_RowGet(
+        ID       => $Param{CatalogItemID},
+        Meta     => $Self->_MetaGet( Entity => 'CatalogItem' ),
+        TenantID => $Param{TenantID},
+    );
+    return $Self->_Error( Error => 'NOT_FOUND' ) if !$Item;
+
+    my $SchemaValidation = $Self->_SchemaValidate( Schema => $Param{Schema} );
+    return $SchemaValidation if !$SchemaValidation->{Success};
+    my $SchemaJSON = $Kernel::OM->Get('Kernel::System::JSON')->Encode(
+        Data     => $Param{Schema},
+        SortKeys => 1,
+    );
+
+    my $Current = $Self->_SchemaRowGet(
+        CatalogItemID => $Param{CatalogItemID},
+        TenantID      => $Param{TenantID},
+    );
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    if (!$Current) {
+        return $Self->_Error( Error => 'VERSION_CONFLICT' )
+            if defined $Param{ExpectedVersion};
+        my @Values = ( $Param{TenantID}, $Param{CatalogItemID}, $SchemaJSON, $Param{UserID}, $Param{UserID} );
+        my @Bind = map { \$_ } @Values;
+        my $Success = $DBObject->Do(
+            SQL => 'INSERT INTO d724_catalog_item_schema '
+                . '(tenant_id, catalog_item_id, schema_json, version, create_time, create_by, change_time, change_by) '
+                . 'VALUES (?, ?, ?, 1, current_timestamp, ?, current_timestamp, ?)',
+            Bind => \@Bind,
+        );
+        return $Self->_Error( Error => 'DATABASE_ERROR' ) if !$Success;
+    }
+    else {
+        return $Self->_Error( Error => 'VERSION_REQUIRED' ) if !defined $Param{ExpectedVersion};
+        return $Self->_Error( Error => 'VERSION_CONFLICT' )
+            if $Current->{Version} != $Param{ExpectedVersion};
+        my @Values = ( $SchemaJSON, $Param{UserID}, $Param{TenantID}, $Param{CatalogItemID}, $Param{ExpectedVersion} );
+        my @Bind = map { \$_ } @Values;
+        my $Success = $DBObject->Do(
+            SQL => 'UPDATE d724_catalog_item_schema SET schema_json = ?, version = version + 1, '
+                . 'change_time = current_timestamp, change_by = ? '
+                . 'WHERE tenant_id = ? AND catalog_item_id = ? AND version = ?',
+            Bind => \@Bind,
+        );
+        return $Self->_Error( Error => 'DATABASE_ERROR' ) if !$Success;
+    }
+
+    my $Updated = $Self->_SchemaRowGet(
+        CatalogItemID => $Param{CatalogItemID},
+        TenantID      => $Param{TenantID},
+    );
+    my $Expected = $Current ? $Param{ExpectedVersion} + 1 : 1;
+    return $Self->_Error( Error => 'VERSION_CONFLICT' )
+        if !$Updated || $Updated->{Version} != $Expected || $Updated->{SchemaJSON} ne $SchemaJSON;
+    delete $Updated->{SchemaJSON};
+    $Updated->{Schema} = $Param{Schema};
+    return { Success => 1, Data => $Updated };
+}
+
+sub CatalogItemSchemaGet {
+    my ( $Self, %Param ) = @_;
+
+    my $Authorization = $Self->_Authorize(
+        Action   => 'catalog.read',
+        Subject  => $Param{Subject},
+        TenantID => $Param{TenantID},
+    );
+    return $Authorization if !$Authorization->{Success};
+    return $Self->_Error( Error => 'ID_INVALID' )
+        if !$Self->_PositiveInteger( $Param{CatalogItemID} );
+    my $Current = $Self->_SchemaRowGet(
+        CatalogItemID => $Param{CatalogItemID},
+        TenantID      => $Param{TenantID},
+    );
+    return $Self->_Error( Error => 'NOT_FOUND' ) if !$Current;
+    my $Schema = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $Current->{SchemaJSON} );
+    return $Self->_Error( Error => 'SCHEMA_CORRUPT' ) if ref $Schema ne 'HASH';
+    delete $Current->{SchemaJSON};
+    $Current->{Schema} = $Schema;
+    return { Success => 1, Data => $Current };
+}
+
 sub _Create {
     my ( $Self, %Param ) = @_;
 
@@ -97,6 +197,7 @@ sub _Create {
 
     my $Authorization = $Self->_Authorize(
         Action   => 'catalog.manage',
+        RequireUserID => 1,
         Subject  => $Param{Subject},
         TenantID => $Param{TenantID},
         UserID   => $Param{UserID},
@@ -276,6 +377,7 @@ sub _Update {
 
     my $Authorization = $Self->_Authorize(
         Action   => 'catalog.manage',
+        RequireUserID => 1,
         Subject  => $Param{Subject},
         TenantID => $Param{TenantID},
         UserID   => $Param{UserID},
@@ -353,7 +455,8 @@ sub _Authorize {
 
     return $Self->_Error( Error => 'CATALOG_DISABLED' )
         if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Catalog::Enabled');
-    return $Self->_Error( Error => 'USER_ID_INVALID' ) if !$Self->_PositiveInteger( $Param{UserID} );
+    return $Self->_Error( Error => 'USER_ID_INVALID' )
+        if $Param{RequireUserID} && !$Self->_PositiveInteger( $Param{UserID} );
 
     my $Guard = $Kernel::OM->Get('Kernel::System::D724::TenantGuard');
     if ($Param{RequireScope}) {
@@ -427,6 +530,63 @@ sub _ParentExists {
     );
     my ($ID) = $DBObject->FetchrowArray();
     return $ID ? 1 : 0;
+}
+
+sub _SchemaValidate {
+    my ( $Self, %Param ) = @_;
+
+    my $Schema = $Param{Schema};
+    return $Self->_Error( Error => 'SCHEMA_INVALID' ) if ref $Schema ne 'HASH';
+    return $Self->_Error( Error => 'SCHEMA_VERSION_INVALID' )
+        if !$Self->_PositiveInteger( $Schema->{version} );
+    return $Self->_Error( Error => 'SCHEMA_FIELDS_INVALID' )
+        if ref $Schema->{fields} ne 'ARRAY' || @{ $Schema->{fields} } > 50;
+    my %Keys;
+    for my $Field ( @{ $Schema->{fields} } ) {
+        return $Self->_Error( Error => 'SCHEMA_FIELD_INVALID' ) if ref $Field ne 'HASH';
+        return $Self->_Error( Error => 'SCHEMA_FIELD_KEY_INVALID' )
+            if !defined $Field->{key} || $Field->{key} !~ m{\A[a-z][a-z0-9_]{0,63}\z}smx || $Keys{ $Field->{key} }++;
+        return $Self->_Error( Error => 'SCHEMA_FIELD_LABEL_INVALID' )
+            if !defined $Field->{label} || !length $Field->{label} || length $Field->{label} > 200;
+        return $Self->_Error( Error => 'SCHEMA_FIELD_TYPE_INVALID' )
+            if !$ValidFieldType{ $Field->{type} // q{} };
+        return $Self->_Error( Error => 'SCHEMA_FIELD_REQUIRED_INVALID' )
+            if defined $Field->{required} && $Field->{required} !~ m{\A[01]\z}smx;
+        if ( $Field->{type} eq 'select' || $Field->{type} eq 'multiselect' ) {
+            return $Self->_Error( Error => 'SCHEMA_FIELD_OPTIONS_INVALID' )
+                if ref $Field->{options} ne 'ARRAY' || !@{ $Field->{options} } || @{ $Field->{options} } > 100;
+            my %OptionValues;
+            for my $Option ( @{ $Field->{options} } ) {
+                return $Self->_Error( Error => 'SCHEMA_FIELD_OPTIONS_INVALID' )
+                    if ref $Option ne 'HASH'
+                    || !defined $Option->{value} || $Option->{value} !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{0,99}\z}smx
+                    || !defined $Option->{label} || !length $Option->{label} || length $Option->{label} > 200
+                    || $OptionValues{ $Option->{value} }++;
+            }
+        }
+        elsif ( exists $Field->{options} ) {
+            return $Self->_Error( Error => 'SCHEMA_FIELD_OPTIONS_INVALID' );
+        }
+    }
+    return { Success => 1 };
+}
+
+sub _SchemaRowGet {
+    my ( $Self, %Param ) = @_;
+
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    $DBObject->Prepare(
+        SQL => 'SELECT catalog_item_id, tenant_id, schema_json, version, create_time, create_by, change_time, change_by '
+            . 'FROM d724_catalog_item_schema WHERE catalog_item_id = ? AND tenant_id = ?',
+        Bind  => [ \$Param{CatalogItemID}, \$Param{TenantID} ],
+        Limit => 1,
+    );
+    my @Row = $DBObject->FetchrowArray();
+    return if !@Row;
+    my @Columns = qw(CatalogItemID TenantID SchemaJSON Version CreateTime CreateBy ChangeTime ChangeBy);
+    my %Data;
+    @Data{@Columns} = @Row;
+    return \%Data;
 }
 
 sub _RowGet {

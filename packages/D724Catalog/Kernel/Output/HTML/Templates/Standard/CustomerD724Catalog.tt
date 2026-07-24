@@ -1,0 +1,55 @@
+# --
+# D724 ESM is an enterprise service management platform based on OTOBO.
+# Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
+# SPDX-License-Identifier: GPL-3.0-only
+# --
+
+<div id="oooContent" class="MainBox ARIARole MainContent">
+    <div id="oooHeader"><h1>[% Translate("Service Catalog") | html %]</h1></div>
+    <div id="oooMainBox">
+[% RenderBlockStart("Service") %]
+        <section class="WidgetSimple">
+            <div class="Header"><h2>[% Data.Name | html %]</h2></div>
+            <div class="Content"><p>[% Data.Description | html %]</p></div>
+        </section>
+[% RenderBlockEnd("Service") %]
+[% RenderBlockStart("Offering") %]
+        <div class="WidgetSimple">
+            <div class="Header"><h3>[% Data.Name | html %]</h3></div>
+            <div class="Content"><p>[% Data.Description | html %]</p></div>
+        </div>
+[% RenderBlockEnd("Offering") %]
+[% RenderBlockStart("CatalogItem") %]
+        <div class="WidgetSimple">
+            <div class="Content">
+                <h4><a href="[% Env("Baselink") %]Action=CustomerD724Catalog;Subaction=Item;CatalogItemID=[% Data.CatalogItemID | uri %]">[% Data.Name | html %]</a></h4>
+                <p>[% Data.Description | html %]</p>
+            </div>
+        </div>
+[% RenderBlockEnd("CatalogItem") %]
+[% RenderBlockStart("ItemDetail") %]
+        <div class="WidgetSimple">
+            <div class="Header"><h2>[% Data.Name | html %]</h2></div>
+            <div class="Content"><p>[% Data.Description | html %]</p><form><fieldset class="TableLike FixedLabel"></fieldset></form></div>
+        </div>
+[% RenderBlockEnd("ItemDetail") %]
+[% RenderBlockStart("FormField") %]
+        <div class="Row">
+            <label for="D724_[% Data.key | html %]">[% Data.label | html %][% IF Data.required %] *[% END %]</label>
+[% IF Data.type == 'textarea' %]
+            <textarea id="D724_[% Data.key | html %]" name="[% Data.key | html %]"[% IF Data.required %] required[% END %]></textarea>
+[% ELSIF Data.type == 'select' || Data.type == 'multiselect' %]
+            <select id="D724_[% Data.key | html %]" name="[% Data.key | html %]"[% IF Data.type == 'multiselect' %] multiple[% END %][% IF Data.required %] required[% END %]>
+[% FOREACH Option IN Data.options %]
+                <option value="[% Option.value | html %]">[% Option.label | html %]</option>
+[% END %]
+            </select>
+[% ELSIF Data.type == 'checkbox' %]
+            <input id="D724_[% Data.key | html %]" name="[% Data.key | html %]" type="checkbox" value="1"/>
+[% ELSE %]
+            <input id="D724_[% Data.key | html %]" name="[% Data.key | html %]" type="[% IF Data.type == 'datetime' %]datetime-local[% ELSE %][% Data.type | html %][% END %]"[% IF Data.required %] required[% END %]/>
+[% END %]
+        </div>
+[% RenderBlockEnd("FormField") %]
+    </div>
+</div>

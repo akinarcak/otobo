@@ -38,14 +38,14 @@ sub Run {
     my $DBObject     = $Kernel::OM->Get('Kernel::System::DB');
     my %Existing     = map { $_ => 1 } $DBObject->ListTables();
     my %Tables       = map { $_ => $Existing{$_} ? 1 : 0 }
-        qw(d724_service d724_service_offering d724_catalog_item);
+        qw(d724_service d724_service_offering d724_catalog_item d724_catalog_item_schema);
     my $Enabled = $ConfigObject->Get('D724::Catalog::Enabled') ? 1 : 0;
     my $Success = $Enabled && !grep { !$Tables{$_} } keys %Tables;
     my $Status  = {
         Success => $Success ? 1 : 0,
         Enabled => $Enabled,
         Package => 'D724Catalog',
-        Version => '0.1.0',
+        Version => '0.2.0',
         Tables  => \%Tables,
     };
 

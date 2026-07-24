@@ -112,10 +112,64 @@ my $Item = $Catalog->CatalogItemCreate(
 );
 ok( $Item->{Success}, 'catalog item is created under own offering' );
 
+my $FormSchema = {
+    version => 1,
+    fields  => [
+        { key => 'justification', label => 'Business justification', type => 'textarea', required => 1 },
+        {
+            key => 'device_type', label => 'Device type', type => 'select', required => 1,
+            options => [
+                { value => 'standard', label => 'Standard' },
+                { value => 'developer', label => 'Developer' },
+            ],
+        },
+    ],
+};
+my $SchemaCreated = $Catalog->CatalogItemSchemaSet(
+    %BaseA,
+    CatalogItemID => $Item->{Data}->{CatalogItemID},
+    Schema        => $FormSchema,
+);
+ok( $SchemaCreated->{Success}, 'dynamic form schema is created' );
+is( $SchemaCreated->{Data}->{Version}, 1, 'new form schema starts at version 1' );
+my $SchemaRead = $Catalog->CatalogItemSchemaGet(
+    Subject => $ReaderA, TenantID => 'tenant-a', CatalogItemID => $Item->{Data}->{CatalogItemID},
+);
+is( $SchemaRead->{Data}->{Schema}, $FormSchema, 'customer-style read needs no agent UserID' );
+my $SchemaUpdated = $Catalog->CatalogItemSchemaSet(
+    %BaseA,
+    CatalogItemID  => $Item->{Data}->{CatalogItemID},
+    ExpectedVersion => 1,
+    Schema         => { %{$FormSchema}, version => 2 },
+);
+is( $SchemaUpdated->{Data}->{Version}, 2, 'schema update uses optimistic versioning' );
+is(
+    $Catalog->CatalogItemSchemaSet(
+        %BaseA, CatalogItemID => $Item->{Data}->{CatalogItemID}, ExpectedVersion => 1,
+        Schema => { %{$FormSchema}, version => 3 },
+    )->{Error},
+    'VERSION_CONFLICT',
+    'stale schema update is rejected',
+);
+is(
+    $Catalog->CatalogItemSchemaSet(
+        %BaseA, CatalogItemID => $Item->{Data}->{CatalogItemID}, ExpectedVersion => 2,
+        Schema => { version => 3, fields => [ { key => 'bad', label => 'Bad', type => 'script' } ] },
+    )->{Error},
+    'SCHEMA_FIELD_TYPE_INVALID',
+    'executable or unknown field types are rejected',
+);
+is(
+    $Catalog->CatalogItemSchemaGet(
+        Subject => $ReaderA, TenantID => 'tenant-b', CatalogItemID => $Item->{Data}->{CatalogItemID},
+    )->{Error},
+    'FORBIDDEN',
+    'schema read cannot cross tenant boundary',
+);
+
 my $List = $Catalog->ServiceList(
     Subject  => $ReaderA,
     TenantID => 'tenant-a',
-    UserID   => 1,
     Status   => 'active',
 );
 is( scalar @{ $List->{Data} }, 1, 'list is tenant and status scoped' );
