@@ -3,6 +3,8 @@ param(
     [ValidateSet('Validate', 'Build', 'Up', 'Setup', 'Smoke', 'Logs', 'Down')]
     [string] $Action = 'Validate',
 
+    [switch] $EnableSearch,
+
     [switch] $RemoveVolumes
 )
 
@@ -23,7 +25,11 @@ function Assert-Command {
 function Invoke-Compose {
     param([Parameter(ValueFromRemainingArguments)][string[]] $Arguments)
 
-    & docker compose --project-directory $ComposeDirectory --env-file $EnvironmentFile -f $ComposeFile @Arguments
+    $ProfileArguments = @()
+    if ($EnableSearch) {
+        $ProfileArguments = @('--profile', 'search')
+    }
+    & docker compose --project-directory $ComposeDirectory --env-file $EnvironmentFile -f $ComposeFile @ProfileArguments @Arguments
     if ($LASTEXITCODE -ne 0) {
         throw "docker compose failed with exit code $LASTEXITCODE."
     }
@@ -78,13 +84,18 @@ switch ($Action) {
         }
 
         $HttpPort = Get-EnvironmentValue -Name 'D724_HTTP_PORT' -Default '8080'
-        Invoke-Compose exec -T web bin/docker/quick_setup.pl `
-            --db-password $DatabasePassword `
-            --http-type http `
-            --http-port $HttpPort `
-            --fqdn localhost `
-            --activate-elasticsearch `
-            --add-admin-user
+        $SetupArguments = @(
+            'exec', '-T', 'web', 'bin/docker/quick_setup.pl',
+            '--db-password', $DatabasePassword,
+            '--http-type', 'http',
+            '--http-port', $HttpPort,
+            '--fqdn', 'localhost',
+            '--add-admin-user'
+        )
+        if ($EnableSearch) {
+            $SetupArguments += '--activate-elasticsearch'
+        }
+        Invoke-Compose @SetupArguments
     }
     'Smoke' {
         Invoke-Compose ps

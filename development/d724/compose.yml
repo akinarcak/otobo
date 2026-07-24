@@ -32,6 +32,7 @@ services:
       retries: 10
 
   elastic:
+    profiles: ["search"]
     image: rotheross/otobo-elasticsearch:latest-11_1
     restart: unless-stopped
     environment:
@@ -62,8 +63,6 @@ services:
       db:
         condition: service_healthy
       redis:
-        condition: service_healthy
-      elastic:
         condition: service_healthy
     command: ["web", "development"]
     ports:

@@ -22,6 +22,13 @@ Copy-Item .env.example .env
 
 Open `http://127.0.0.1:8080/`. `Setup` uses OTOBO's development-only `quick_setup.pl`; it must never be used as a production provisioning mechanism.
 
+Elasticsearch is optional because its image and memory footprint are substantial. Enable it consistently for `Up`, `Setup`, and later commands when full-text search is required:
+
+```powershell
+./Invoke-D724Dev.ps1 Up -EnableSearch
+./Invoke-D724Dev.ps1 Setup -EnableSearch
+```
+
 ## Daily commands
 
 ```powershell
