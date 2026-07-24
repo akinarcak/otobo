@@ -6,14 +6,14 @@
     </Setting>
     <Setting Name="D724::API::TokenTTLMax" Required="1" Valid="1">
         <Description Translatable="1">Maximum OAuth client-credentials access token lifetime in seconds.</Description>
-        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="Integer" ValueMin="60" ValueMax="3600">900</Item></Value>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String">900</Item></Value>
     </Setting>
     <Setting Name="D724::API::RateLimitMax" Required="1" Valid="1">
         <Description Translatable="1">Maximum configured requests per client per minute.</Description>
-        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="Integer" ValueMin="1" ValueMax="10000">600</Item></Value>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String">600</Item></Value>
     </Setting>
     <Setting Name="D724::API::BcryptCost" Required="1" Valid="1">
         <Description Translatable="1">Bcrypt cost for API client secrets.</Description>
-        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="Integer" ValueMin="9" ValueMax="16">12</Item></Value>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String">12</Item></Value>
     </Setting>
 </otobo_config>

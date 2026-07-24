@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724API</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Name>D724API</Name><Version>0.1.1</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-bound OAuth client credentials, opaque access tokens and atomic API rate limits for D724 ESM.</Description>
@@ -37,9 +37,11 @@
             <ForeignKey ForeignTable="d724_api_client"><Reference Local="client_id" Foreign="client_id" /></ForeignKey>
         </TableCreate>
         <TableCreate Name="d724_api_rate">
-            <Column Name="client_id" Required="true" PrimaryKey="true" Size="128" Type="VARCHAR" />
-            <Column Name="window_start" Required="true" PrimaryKey="true" Type="DATE" />
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="client_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="window_start" Required="true" Type="DATE" />
             <Column Name="request_count" Required="true" Default="0" Type="INTEGER" />
+            <Unique Name="d724_api_rate_window"><UniqueColumn Name="client_id" /><UniqueColumn Name="window_start" /></Unique>
             <ForeignKey ForeignTable="d724_api_client"><Reference Local="client_id" Foreign="client_id" /></ForeignKey>
         </TableCreate>
     </DatabaseInstall>
@@ -48,6 +50,8 @@
         <File Permission="644" Location="Kernel/Config/Files/XML/D724API.xml" />
         <File Permission="644" Location="Kernel/System/D724/APIAuth.pm" />
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/APIClientCreate.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/APIStatus.pm" />
         <File Permission="644" Location="scripts/test/D724/APIAuth.t" />
+        <File Permission="644" Location="scripts/test/D724/APIStatus.t" />
     </Filelist>
 </otobo_package>
