@@ -88,17 +88,21 @@ sub _ClaimedGet {
     my ( $Self, %Param ) = @_;
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     $DB->Prepare(
-        SQL => "SELECT id, tenant_id, commitment_id, action_type, payload_json, attempt_count FROM d724_escalation_outbox WHERE id = ? AND status = 'processing' AND lease_token = ?",
+        SQL => "SELECT id, tenant_id, commitment_id, action_key, action_type, payload_json, attempt_count FROM d724_escalation_outbox WHERE id = ? AND status = 'processing' AND lease_token = ?",
         Bind => [ \$Param{ID}, \$Param{Token} ], Limit => 1,
     );
     my @Row = $DB->FetchrowArray(); return if !@Row;
-    my $Payload = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $Row[4] );
-    return if ref $Payload ne 'HASH' || ( $Payload->{TenantID} // q{} ) ne $Row[1];
-    return { ID => $Row[0], TenantID => $Row[1], CommitmentID => $Row[2], ActionType => $Row[3], Payload => $Payload, AttemptCount => $Row[5] };
+    my $Payload = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $Row[5] );
+    return {
+        ID => $Row[0], TenantID => $Row[1], CommitmentID => $Row[2], ActionKey => $Row[3], ActionType => $Row[4],
+        Payload => ref $Payload eq 'HASH' ? $Payload : {}, AttemptCount => $Row[6],
+        PayloadInvalid => ref $Payload ne 'HASH' || ( $Payload->{TenantID} // q{} ) ne $Row[1] ? 1 : 0,
+    };
 }
 
 sub _Deliver {
     my ( $Self, %Param ) = @_;
+    return { Success => 0, Error => 'PAYLOAD_TENANT_INVALID' } if $Param{Row}->{PayloadInvalid};
     my $Type = $Param{Row}->{ActionType};
     if ( ref $Param{Handlers} eq 'HASH' && ref $Param{Handlers}->{$Type} eq 'CODE' ) {
         return $Param{Handlers}->{$Type}->( $Param{Row} );

@@ -229,16 +229,38 @@ $MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $T
 ($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
 is( $ResponseObjective->{Escalations}->[0]->{Status}, 'retry', 'retry state is visible in commitment evidence' );
 is( $ResponseObjective->{Escalations}->[0]->{AttemptCount}, 1, 'failed attempt is counted once' );
+my $NestedClaimed;
 my $SuccessfulDispatch = $Dispatcher->Dispatch(
     At => '2026-07-27 09:35:00', WorkerID => 'test-worker-b',
-    Handlers => { notify_role => sub { return { Success => 1, DeliveryRef => 'test:notification:1', ResponseCode => 'QUEUED' } } },
+    Handlers => { notify_role => sub {
+        $NestedClaimed = $Dispatcher->Dispatch(
+            At => '2026-07-27 09:35:00', WorkerID => 'test-worker-racing',
+            Handlers => { notify_role => sub { die 'leased action must not reach racing worker' } },
+        )->{Counts}->{Claimed};
+        return { Success => 1, DeliveryRef => 'test:notification:1', ResponseCode => 'QUEUED' };
+    } },
 );
 is( $SuccessfulDispatch->{Counts}->{Delivered}, 1, 'retry is delivered by a later dispatcher run' );
+is( $NestedClaimed, 0, 'active lease prevents a racing worker from claiming the same action' );
 $MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
 ($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
 is( $ResponseObjective->{Escalations}->[0]->{Status}, 'delivered', 'delivery evidence becomes terminal' );
 is( $ResponseObjective->{Escalations}->[0]->{DeliveryRef}, 'test:notification:1', 'delivery reference is retained for audit' );
 is( $Dispatcher->Dispatch( At => '2026-07-27 09:36:00', WorkerID => 'test-worker-c', Handlers => {} )->{Counts}->{Claimed}, 0, 'delivered action is never claimed again' );
+my $EscalationID = $ResponseObjective->{Escalations}->[0]->{EscalationID};
+my ( $Retry, $Attempt, $Available, $Empty ) = ( 'retry', 2, '2026-07-27 09:37:00', q{} );
+$DBObject->Do(
+    SQL => 'UPDATE d724_escalation_outbox SET status = ?, attempt_count = ?, available_time = ?, processed_time = NULL, delivery_ref = ?, response_code = ? WHERE id = ?',
+    Bind => [ \$Retry, \$Attempt, \$Available, \$Empty, \$Empty, \$EscalationID ],
+);
+my $DeadDispatch = $Dispatcher->Dispatch(
+    At => '2026-07-27 09:37:00', WorkerID => 'test-worker-dead',
+    Handlers => { notify_role => sub { return { Success => 0, Error => 'TEST_PERMANENT_FAILURE' } } },
+);
+is( $DeadDispatch->{Counts}->{Dead}, 1, 'maximum attempt moves action to dead-letter state' );
+$MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
+($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
+is( $ResponseObjective->{Escalations}->[0]->{Status}, 'dead', 'dead-letter state remains visible in audit evidence' );
 my $ResponseSignal = $Commitment->Signal(
     UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID}, PolicyKey => 'premium-multi',
     Signal => 'first_response', RequestStatus => 'in_fulfillment', At => '2026-07-27 09:45:00',
