@@ -8,9 +8,10 @@ use v5.24;
 use strict;
 use warnings;
 use Kernel::System::Ticket::Article::Backend::MIMEBase ();
+use Kernel::GenericInterface::Operation::Ticket::Common ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.5.3';
+our $VERSION = '0.6.0';
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
 my $OriginalTicketSearch      = Kernel::System::Ticket::TicketSearch->can('TicketSearch');
@@ -23,6 +24,7 @@ my $OriginalTicketOwnerSet    = \&Kernel::System::Ticket::TicketOwnerSet;
 my $OriginalResponsibleSet    = \&Kernel::System::Ticket::TicketResponsibleSet;
 my $OriginalTicketPrioritySet = \&Kernel::System::Ticket::TicketPrioritySet;
 my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate;
+my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Common->can('CheckAccessPermissions');
 
 {
     no warnings 'redefine'; ## no critic
@@ -76,6 +78,21 @@ my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIME
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ArticleCreateRun(
             ArticleBackend => $Self, Original => $OriginalArticleCreate, Param => \%Param,
         );
+    };
+
+    *Kernel::GenericInterface::Operation::Ticket::Common::CheckAccessPermissions = sub {
+        my ( $Self, %Param ) = @_;
+        my $CoreAccess = $OriginalGIAccessCheck->( $Self, %Param );
+        return if !$CoreAccess;
+        return $CoreAccess if !$Kernel::OM->Get('Kernel::Config')->Get('D724::TicketPolicy::Enabled');
+
+        my %Identity = $Param{UserType} eq 'Customer'
+            ? ( CustomerUserID => $Param{UserID} )
+            : ( UserID => $Param{UserID} );
+        my $Policy = $Kernel::OM->Get('Kernel::System::D724::TicketPolicy')->TicketAccessCheck(
+            TicketID => $Param{TicketID}, %Identity,
+        );
+        return $Policy->{Success} ? 1 : undef;
     };
 }
 

@@ -97,4 +97,14 @@ is(
     'unknown or unbound ticket fails closed',
 );
 
+my $GICommon = bless {}, 'Kernel::GenericInterface::Operation::Ticket::Common';
+ok(
+    $GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[0] ),
+    'Generic Interface common adapter permits core-authorized same-tenant read',
+);
+ok(
+    !$GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[1] ),
+    'Generic Interface common adapter denies cross-tenant get/history/update access',
+);
+
 done_testing;
