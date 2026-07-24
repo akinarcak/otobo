@@ -11,7 +11,7 @@ use JSON::PP ();
 use URI::Escape qw(uri_escape_utf8);
 use Kernel::System::ObjectManager;
 
-my $BaseURL = $ARGV[0] // 'http://127.0.0.1:5000/otobo/public.pl?Action=PublicD724API';
+my $BaseURL = $ARGV[0] // 'http://127.0.0.1:5000/otobo/api/v1';
 die "Acceptance URL must use http(s)\n" if $BaseURL !~ m{\Ahttps?://}smx;
 my $TenantID = 'd724-demo';
 my $ClientID = 'accept-' . time() . '-' . $$;
@@ -29,6 +29,12 @@ $DB->Prepare(
 );
 my ($TicketID) = $DB->FetchrowArray();
 die "No active demo ticket exists\n" if !$TicketID;
+$DB->Prepare(
+    SQL => "SELECT id FROM d724_catalog_item WHERE tenant_id = ? AND key_name = 'request-laptop' AND status = 'active'",
+    Bind => [ \$TenantID ], Limit => 1,
+);
+my ($CatalogItemID) = $DB->FetchrowArray();
+die "No active demo catalog item exists\n" if !$CatalogItemID;
 
 my $Created = $Auth->ClientCreate(
     Subject => $Admin, TenantID => $TenantID, Name => 'HTTP acceptance client',
@@ -46,7 +52,7 @@ eval {
     $Form =~ s/ClientSecret=/client_secret=/;
     $Form = 'grant_type=client_credentials&' . $Form;
     my $TokenResponse = $HTTP->post(
-        "$BaseURL&Route=token",
+        "$BaseURL/oauth/token",
         { headers => { 'Content-Type' => 'application/x-www-form-urlencoded' }, content => $Form },
     );
     $Evidence{token_status} = 0 + $TokenResponse->{status};
@@ -56,7 +62,7 @@ eval {
     die "Token response invalid\n" if ( $Token // q{} ) !~ m{\A[a-zA-Z0-9]{64}\z}smx;
 
     my $Headers = { Authorization => "Bearer $Token" };
-    my $ListResponse = $HTTP->get( "$BaseURL&Route=tickets&limit=100", { headers => $Headers } );
+    my $ListResponse = $HTTP->get( "$BaseURL/tickets?limit=100", { headers => $Headers } );
     $Evidence{list_status} = 0 + $ListResponse->{status};
     die "List HTTP status $ListResponse->{status}\n" if $ListResponse->{status} != 200;
     my $ListJSON = JSON::PP::decode_json( $ListResponse->{content} );
@@ -66,15 +72,77 @@ eval {
     $Evidence{list_count} = 0 + @Items;
     $Evidence{tenant_isolated} = JSON::PP::true;
 
-    my $GetResponse = $HTTP->get( "$BaseURL&Route=ticket&ticket_id=$TicketID", { headers => $Headers } );
+    my $GetResponse = $HTTP->get( "$BaseURL/tickets/$TicketID", { headers => $Headers } );
     $Evidence{get_status} = 0 + $GetResponse->{status};
     die "Get HTTP status $GetResponse->{status}\n" if $GetResponse->{status} != 200;
     my $GetJSON = JSON::PP::decode_json( $GetResponse->{content} );
     die "Get returned wrong ticket\n" if $GetJSON->{data}->{id} != $TicketID;
 
-    my $HiddenResponse = $HTTP->get( "$BaseURL&Route=ticket&ticket_id=999999999", { headers => $Headers } );
+    my $HiddenResponse = $HTTP->get( "$BaseURL/tickets/999999999", { headers => $Headers } );
     $Evidence{hidden_status} = 0 + $HiddenResponse->{status};
     die "Unknown ticket was not hidden\n" if $HiddenResponse->{status} != 404;
+
+    my $RequestPayload = JSON::PP->new->canonical->encode({
+        catalog_item_id => 0 + $CatalogItemID,
+        requester_login => 'demo.customer',
+        answers => {
+            employee => 'API Acceptance User', device_profile => 'standard',
+            justification => 'Canonical API idempotency acceptance',
+        },
+    });
+    my $IdempotencyKey = 'api-accept-d724-demo-v1-0001';
+    my $WriteHeaders = {
+        %{$Headers}, 'Content-Type' => 'application/json',
+        'Idempotency-Key' => $IdempotencyKey,
+    };
+    my $CreateResponse = $HTTP->post(
+        "$BaseURL/requests", { headers => $WriteHeaders, content => $RequestPayload },
+    );
+    $Evidence{request_create_status} = 0 + $CreateResponse->{status};
+    die "Request create HTTP status $CreateResponse->{status}\n"
+        if $CreateResponse->{status} != 201 && $CreateResponse->{status} != 200;
+    my $CreateJSON = JSON::PP::decode_json( $CreateResponse->{content} );
+    my $RequestID = $CreateJSON->{data}->{id};
+    die "Request create response invalid\n" if !$RequestID;
+
+    my $ReplayResponse = $HTTP->post(
+        "$BaseURL/requests", { headers => $WriteHeaders, content => $RequestPayload },
+    );
+    $Evidence{request_replay_status} = 0 + $ReplayResponse->{status};
+    die "Request replay HTTP status $ReplayResponse->{status}\n" if $ReplayResponse->{status} != 200;
+    my $ReplayJSON = JSON::PP::decode_json( $ReplayResponse->{content} );
+    die "Idempotent replay returned a different request\n" if $ReplayJSON->{data}->{id} != $RequestID;
+    die "Idempotent replay header missing\n"
+        if lc( $ReplayResponse->{headers}->{'idempotent-replayed'} // q{} ) ne 'true';
+
+    my $ConflictPayload = JSON::PP->new->canonical->encode({
+        catalog_item_id => 0 + $CatalogItemID,
+        requester_login => 'demo.customer',
+        answers => {
+            employee => 'API Acceptance User', device_profile => 'standard',
+            justification => 'Different payload must conflict',
+        },
+    });
+    my $ConflictResponse = $HTTP->post(
+        "$BaseURL/requests", { headers => $WriteHeaders, content => $ConflictPayload },
+    );
+    $Evidence{request_conflict_status} = 0 + $ConflictResponse->{status};
+    die "Idempotency conflict HTTP status $ConflictResponse->{status}\n" if $ConflictResponse->{status} != 409;
+
+    my $RequestGet = $HTTP->get(
+        "$BaseURL/requests/$RequestID?requester_login=demo.customer", { headers => $Headers },
+    );
+    $Evidence{request_get_status} = 0 + $RequestGet->{status};
+    die "Request get HTTP status $RequestGet->{status}\n" if $RequestGet->{status} != 200;
+    my $RequestJSON = JSON::PP::decode_json( $RequestGet->{content} );
+    die "Request get returned wrong tenant\n" if $RequestJSON->{data}->{tenant_id} ne $TenantID;
+    $Evidence{request_id} = 0 + $RequestID;
+
+    my $OpenAPI = $HTTP->get("$BaseURL/openapi.json");
+    $Evidence{openapi_status} = 0 + $OpenAPI->{status};
+    die "OpenAPI HTTP status $OpenAPI->{status}\n" if $OpenAPI->{status} != 200;
+    my $OpenAPIJSON = JSON::PP::decode_json( $OpenAPI->{content} );
+    die "OpenAPI version mismatch\n" if $OpenAPIJSON->{openapi} ne '3.1.0';
     1;
 } or $Failure = $@ || 'Unknown acceptance failure';
 
@@ -84,7 +152,7 @@ my $Revoked = $Auth->ClientRevoke(
 $Failure ||= "Client revocation failed: $Revoked->{Error}" if !$Revoked->{Success};
 if ( $Token && $Revoked->{Success} ) {
     my $After = $HTTP->get(
-        "$BaseURL&Route=tickets&limit=1",
+        "$BaseURL/tickets?limit=1",
         { headers => { Authorization => "Bearer $Token" } },
     );
     $Evidence{revoked_token_status} = 0 + $After->{status};

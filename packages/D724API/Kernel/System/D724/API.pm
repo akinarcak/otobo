@@ -8,9 +8,11 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 our @ObjectDependencies = (
+    'Kernel::System::CustomerUser',
     'Kernel::System::D724::APIAuth',
+    'Kernel::System::D724::Request',
     'Kernel::System::DB',
 );
 
@@ -98,6 +100,66 @@ sub TicketGet {
     };
 }
 
+sub RequestCreate {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('CATALOG_ITEM_ID_INVALID')
+        if ( $Param{CatalogItemID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('REQUESTER_LOGIN_INVALID')
+        if !length( $Param{RequesterLogin} // q{} ) || length $Param{RequesterLogin} > 200;
+    return $Self->_Error('ANSWERS_INVALID') if ref $Param{Answers} ne 'HASH';
+
+    my $Authorization = $Self->_Authorize( %Param, Action => 'case.create' );
+    return $Authorization if !$Authorization->{Success};
+    my $TenantID = $Authorization->{Data}->{TenantID};
+    my $Customer = $Self->_CustomerValidate(
+        TenantID => $TenantID, RequesterLogin => $Param{RequesterLogin},
+    );
+    return $Customer if !$Customer->{Success};
+
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Request')->CustomerSubmit(
+        CustomerUserID => $Param{RequesterLogin},
+        CustomerID     => $TenantID,
+        CatalogItemID  => $Param{CatalogItemID},
+        Answers        => $Param{Answers},
+        IdempotencyKey => $Param{IdempotencyKey},
+    );
+    return $Result if !$Result->{Success};
+    return {
+        Success          => 1,
+        Data             => $Self->_RequestProject( $Result->{Data} ),
+        IdempotentReplay => $Result->{IdempotentReplay} ? 1 : 0,
+        Meta             => $Self->_Meta($Authorization),
+    };
+}
+
+sub RequestGet {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('REQUEST_ID_INVALID')
+        if ( $Param{RequestID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('REQUESTER_LOGIN_INVALID')
+        if !length( $Param{RequesterLogin} // q{} ) || length $Param{RequesterLogin} > 200;
+
+    my $Authorization = $Self->_Authorize( %Param, Action => 'case.read' );
+    return $Authorization if !$Authorization->{Success};
+    my $TenantID = $Authorization->{Data}->{TenantID};
+    my $Customer = $Self->_CustomerValidate(
+        TenantID => $TenantID, RequesterLogin => $Param{RequesterLogin},
+    );
+    return $Customer if !$Customer->{Success};
+
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Request')->CustomerGet(
+        CustomerUserID => $Param{RequesterLogin},
+        CustomerID     => $TenantID,
+        RequestID      => $Param{RequestID},
+    );
+    return $Result if !$Result->{Success};
+    return {
+        Success => 1,
+        Data    => $Self->_RequestProject( $Result->{Data} ),
+        Meta    => $Self->_Meta($Authorization),
+    };
+}
+
 sub _Authorize {
     my ( $Self, %Param ) = @_;
     return $Kernel::OM->Get('Kernel::System::D724::APIAuth')->Authorize(
@@ -119,6 +181,46 @@ sub _TicketRow {
         tenant_id   => $Row[6],
         created_at  => $Row[7],
         changed_at  => $Row[8],
+    };
+}
+
+sub _CustomerValidate {
+    my ( $Self, %Param ) = @_;
+    my %Customer = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserDataGet(
+        User => $Param{RequesterLogin},
+    );
+    return $Self->_Error('REQUESTER_NOT_FOUND')
+        if !%Customer
+        || ( $Customer{UserCustomerID} // q{} ) ne $Param{TenantID}
+        || ( defined $Customer{ValidID} && $Customer{ValidID} != 1 );
+    return { Success => 1 };
+}
+
+sub _RequestProject {
+    my ( $Self, $Request ) = @_;
+    my @Approvals = map {
+        {
+            id => 0 + $_->{ApprovalID}, sequence => 0 + $_->{Sequence},
+            role => $_->{ApproverRole}, status => $_->{Status}, version => 0 + $_->{Version},
+        }
+    } @{ $Request->{Approvals} // [] };
+    my @Tasks = map {
+        {
+            id => 0 + $_->{TaskID}, key => $_->{Key}, name => $_->{Name},
+            type => $_->{Type}, status => $_->{Status}, version => 0 + $_->{Version},
+        }
+    } @{ $Request->{Tasks} // [] };
+    return {
+        id              => 0 + $Request->{RequestID},
+        number          => $Request->{RequestNumber},
+        tenant_id       => $Request->{TenantID},
+        catalog_item_id => 0 + $Request->{CatalogItemID},
+        status          => $Request->{Status},
+        version         => 0 + $Request->{Version},
+        approvals       => \@Approvals,
+        tasks           => \@Tasks,
+        created_at      => $Request->{CreateTime},
+        changed_at      => $Request->{ChangeTime},
     };
 }
 

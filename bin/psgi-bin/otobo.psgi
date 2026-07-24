@@ -705,6 +705,57 @@ my $OTOBOApp = builder {
         )->to_app;
     };
 
+    # D724 ESM canonical API mount. The implementation remains package-owned;
+    # this fork-level adapter only maps stable resource paths to OTOBO's
+    # supported Public frontend extension point.
+    mount '/api/v1' => builder {
+
+        enable $RedirectToHTTPS;
+
+        enable 'OTOBO::PerformanceLog',
+            interface => 'Public';
+
+        enable $CheckPublicInterfaceMiddleware;
+
+        my $PublicAPIApp = Kernel::System::Web::InterfacePublic->new(
+            Debug => 0,
+        )->to_app;
+
+        sub {
+            my ($Env) = @_;
+            my %APIEnv = %{$Env};
+            my $Path = $APIEnv{PATH_INFO} // q{};
+            my ( $Route, $PathQuery );
+            if ( $Path eq '/oauth/token' ) {
+                $Route = 'token';
+            }
+            elsif ( $Path eq '/tickets' ) {
+                $Route = 'tickets';
+            }
+            elsif ( $Path =~ m{\A/tickets/([1-9][0-9]*)\z}smx ) {
+                ( $Route, $PathQuery ) = ( 'ticket', "ticket_id=$1" );
+            }
+            elsif ( $Path eq '/requests' ) {
+                $Route = 'requests';
+            }
+            elsif ( $Path =~ m{\A/requests/([1-9][0-9]*)\z}smx ) {
+                ( $Route, $PathQuery ) = ( 'request', "request_id=$1" );
+            }
+            elsif ( $Path eq '/openapi.json' ) {
+                $Route = 'openapi';
+            }
+            else {
+                $Route = 'not_found';
+            }
+
+            my $OriginalQuery = $APIEnv{QUERY_STRING} // q{};
+            $APIEnv{QUERY_STRING} = join '&', grep { length }
+                'Action=PublicD724API', "Route=$Route", $PathQuery // q{}, $OriginalQuery;
+            $APIEnv{PATH_INFO} = q{};
+            return $PublicAPIApp->(\%APIEnv);
+        };
+    };
+
     # redirect to Frontend::DefaultInterface when in doubt
     mount '/' => $RedirectOtoboApp;
 };

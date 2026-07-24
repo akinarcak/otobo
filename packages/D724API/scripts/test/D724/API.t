@@ -74,6 +74,30 @@ is( $API->TicketGet( AccessToken => $Token, TenantID => $Tenant, TicketID => $Ti
 is( $API->TicketList( AccessToken => $Token, TenantID => $Other, Limit => 10 )->{Error}, 'CROSS_TENANT', 'caller cannot select another tenant' );
 is( $API->TicketList( AccessToken => $Token, TenantID => $Tenant, Limit => 101 )->{Error}, 'LIMIT_INVALID', 'oversized page fails before database access' );
 is( $API->TicketList( AccessToken => $Token, TenantID => $Tenant, AfterID => '1 OR 1=1' )->{Error}, 'CURSOR_INVALID', 'cursor injection is rejected' );
+is(
+    $API->RequestCreate(
+        AccessToken => $Token, TenantID => $Tenant, CatalogItemID => 1,
+        RequesterLogin => "missing-$Suffix", Answers => {}, IdempotencyKey => "api-write-$Suffix-0001",
+    )->{Error},
+    'REQUESTER_NOT_FOUND',
+    'request write requires a real customer account in the token tenant',
+);
+is(
+    $API->RequestCreate(
+        AccessToken => $Token, TenantID => $Other, CatalogItemID => 1,
+        RequesterLogin => "missing-$Suffix", Answers => {}, IdempotencyKey => "api-write-$Suffix-0002",
+    )->{Error},
+    'CROSS_TENANT',
+    'request write cannot select another tenant',
+);
+is(
+    $API->RequestGet(
+        AccessToken => $Token, TenantID => $Tenant, RequestID => 1,
+        RequesterLogin => "missing-$Suffix",
+    )->{Error},
+    'REQUESTER_NOT_FOUND',
+    'request read validates requester ownership context before lookup',
+);
 
 my $ClientID = $Created->{Data}->{ClientID};
 ok( $DB->Do( SQL => 'DELETE FROM d724_api_rate WHERE client_id = ?', Bind => [ \$ClientID ] ), 'rate fixtures removed' );

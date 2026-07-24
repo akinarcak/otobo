@@ -1,0 +1,130 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "D724 ESM API",
+    "version": "1.0.0",
+    "description": "Tenant-isolated integration API for D724 ESM. GPL-3.0-only server implementation."
+  },
+  "servers": [{ "url": "/otobo/api/v1" }],
+  "tags": [
+    { "name": "Authentication" },
+    { "name": "Tickets" },
+    { "name": "Requests" }
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "tags": ["Authentication"],
+        "operationId": "issueToken",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": ["grant_type", "client_id", "client_secret"],
+                "properties": {
+                  "grant_type": { "type": "string", "const": "client_credentials" },
+                  "client_id": { "type": "string", "minLength": 8, "maxLength": 128 },
+                  "client_secret": { "type": "string", "writeOnly": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Opaque bearer token", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TokenEnvelope" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/tickets": {
+      "get": {
+        "tags": ["Tickets"],
+        "operationId": "listTickets",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 50 } },
+          { "name": "after_id", "in": "query", "schema": { "type": "integer", "minimum": 0, "default": 0 } }
+        ],
+        "responses": {
+          "200": { "description": "Tenant-scoped ticket page", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TicketListEnvelope" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/tickets/{ticket_id}": {
+      "get": {
+        "tags": ["Tickets"],
+        "operationId": "getTicket",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "ticket_id", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 1 } }],
+        "responses": {
+          "200": { "description": "Tenant-scoped ticket", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TicketEnvelope" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/requests": {
+      "post": {
+        "tags": ["Requests"],
+        "operationId": "createRequest",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string", "minLength": 16, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]+$" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RequestCreate" } } }
+        },
+        "responses": {
+          "201": { "description": "Request created", "headers": { "Location": { "schema": { "type": "string" } }, "Idempotent-Replayed": { "schema": { "type": "boolean" } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RequestEnvelope" } } } },
+          "200": { "description": "Idempotent replay", "headers": { "Idempotent-Replayed": { "schema": { "type": "boolean", "const": true } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RequestEnvelope" } } } },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/requests/{request_id}": {
+      "get": {
+        "tags": ["Requests"],
+        "operationId": "getRequest",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "request_id", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 1 } },
+          { "name": "requester_login", "in": "query", "required": true, "schema": { "type": "string", "maxLength": 200 } }
+        ],
+        "responses": {
+          "200": { "description": "Requester-owned request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RequestEnvelope" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": { "operationId": "getOpenAPI", "responses": { "200": { "description": "OpenAPI 3.1 document" } } }
+    }
+  },
+  "components": {
+    "securitySchemes": { "bearerAuth": { "type": "http", "scheme": "bearer" } },
+    "schemas": {
+      "Error": { "type": "object", "required": ["success", "error"], "properties": { "success": { "type": "boolean", "const": false }, "error": { "type": "object", "required": ["code"], "properties": { "code": { "type": "string" } } } } },
+      "TokenEnvelope": { "type": "object", "required": ["success", "data"], "properties": { "success": { "type": "boolean", "const": true }, "data": { "type": "object", "required": ["access_token", "token_type", "expires_in", "tenant_id", "role"], "properties": { "access_token": { "type": "string", "writeOnly": true }, "token_type": { "type": "string", "const": "Bearer" }, "expires_in": { "type": "integer" }, "tenant_id": { "type": "string" }, "role": { "type": "string" } } } } },
+      "Ticket": { "type": "object", "required": ["id", "number", "title", "tenant_id", "state"], "properties": { "id": { "type": "integer" }, "number": { "type": "string" }, "title": { "type": "string" }, "queue": { "type": "string" }, "state": { "type": "string" }, "priority": { "type": "string" }, "tenant_id": { "type": "string" }, "created_at": { "type": "string" }, "changed_at": { "type": "string" } } },
+      "TicketEnvelope": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "$ref": "#/components/schemas/Ticket" } } },
+      "TicketListEnvelope": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Ticket" } }, "count": { "type": "integer" }, "next_cursor": { "type": ["integer", "null"] } } } } },
+      "RequestCreate": { "type": "object", "additionalProperties": false, "required": ["catalog_item_id", "requester_login", "answers"], "properties": { "catalog_item_id": { "type": "integer", "minimum": 1 }, "requester_login": { "type": "string", "maxLength": 200 }, "answers": { "type": "object" } } },
+      "Request": { "type": "object", "required": ["id", "number", "tenant_id", "catalog_item_id", "status", "version"], "properties": { "id": { "type": "integer" }, "number": { "type": "string" }, "tenant_id": { "type": "string" }, "catalog_item_id": { "type": "integer" }, "status": { "type": "string" }, "version": { "type": "integer" }, "approvals": { "type": "array", "items": { "type": "object" } }, "tasks": { "type": "array", "items": { "type": "object" } }, "created_at": { "type": "string" }, "changed_at": { "type": "string" } } },
+      "RequestEnvelope": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "$ref": "#/components/schemas/Request" } } }
+    },
+    "responses": {
+      "BadRequest": { "description": "Invalid input", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "Unauthorized": { "description": "Invalid, expired, or revoked credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "NotFound": { "description": "Object absent or outside the caller scope", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "Conflict": { "description": "Idempotency key or optimistic version conflict", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "RateLimited": { "description": "Per-client minute limit exceeded", "headers": { "Retry-After": { "schema": { "type": "integer" } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+    }
+  }
+}

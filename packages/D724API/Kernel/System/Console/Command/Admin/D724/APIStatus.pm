@@ -4,7 +4,7 @@
 # --
 package Kernel::System::Console::Command::Admin::D724::APIStatus;
 use v5.24; use strict; use warnings; use parent qw(Kernel::System::Console::BaseCommand);
-our $VERSION = '0.2.3'; our @ObjectDependencies = ('Kernel::Config','Kernel::System::DB','Kernel::System::JSON');
+our $VERSION = '0.3.0'; our @ObjectDependencies = ('Kernel::Config','Kernel::System::DB','Kernel::System::JSON','Kernel::System::Main');
 sub Configure { my ($Self)=@_; $Self->Description('Validate D724 API authorization storage and invariants.'); $Self->AddOption(Name=>'json',Description=>'Print JSON.',Required=>0,HasValue=>0); return }
 sub StatusData {
     my ($Self)=@_; my $DB=$Kernel::OM->Get('Kernel::System::DB'); my %Table=map { $_=>1 } $DB->ListTables();
@@ -20,8 +20,12 @@ sub StatusData {
         $DB->Prepare(SQL=>"SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='d724_api_rate' AND index_name='d724_api_rate_window'"); my ($IndexColumns)=$DB->FetchrowArray(); $Count{RateWindowUnique}=($IndexColumns//0)==2?1:0;
     }
     $_//=0 for values %Count;
-    my $Success=!@Missing && $Count{RateWindowUnique} && !$Count{QueryErrors} && !$Count{InvalidTenantClients} && !$Count{InvalidSecretHashes} && !$Count{InvalidTokenHashes} && !$Count{DuplicateRateWindows};
-    return {Success=>$Success?1:0,Package=>'D724API',Version=>$VERSION,Enabled=>$Kernel::OM->Get('Kernel::Config')->Get('D724::API::Enabled')?1:0,MissingTables=>\@Missing,Counts=>\%Count};
+    my $Config=$Kernel::OM->Get('Kernel::Config'); my $Home=$Config->Get('Home'); my $Main=$Kernel::OM->Get('Kernel::System::Main');
+    my $OpenAPI=$Main->FileRead(Location=>"$Home/var/httpd/htdocs/d724/api/openapi-v1.json",Mode=>'utf8',Result=>'SCALAR');
+    my $Contract=$OpenAPI?eval{$Kernel::OM->Get('Kernel::System::JSON')->Decode(Data=>${$OpenAPI})}:undef; my $ContractOK=$OpenAPI && !$@ && ref $Contract eq 'HASH' && ($Contract->{openapi}//q{}) eq '3.1.0';
+    my $PSGI=$Main->FileRead(Location=>"$Home/bin/psgi-bin/otobo.psgi",Mode=>'utf8',Result=>'SCALAR'); my $MountOK=$PSGI && ${$PSGI}=~m{mount[ ]+'/api/v1'}smx?1:0;
+    my $Success=!@Missing && $Count{RateWindowUnique} && !$Count{QueryErrors} && !$Count{InvalidTenantClients} && !$Count{InvalidSecretHashes} && !$Count{InvalidTokenHashes} && !$Count{DuplicateRateWindows} && $ContractOK && $MountOK;
+    return {Success=>$Success?1:0,Package=>'D724API',Version=>$VERSION,Enabled=>$Config->Get('D724::API::Enabled')?1:0,MissingTables=>\@Missing,Counts=>\%Count,Transport=>{CanonicalMount=>$MountOK,OpenAPI31=>$ContractOK?1:0}};
 }
 sub Run { my ($Self)=@_; my $S=$Self->StatusData(); if($Self->GetOption('json')){$Self->Print($Kernel::OM->Get('Kernel::System::JSON')->Encode(Data=>$S,SortKeys=>1,Pretty=>1)."\n")}else{$Self->Print("D724API $VERSION: ".($S->{Success}?'OK':'FAILED')."\n")} return $S->{Success}?$Self->ExitCodeOk():$Self->ExitCodeError() }
 1;
