@@ -24,7 +24,8 @@ die "acceptance ticket not found\n" if !$TicketID;
 my @Visible = $Ticket->TicketSearch(
     UserID => $UserID, Result => 'ARRAY', TicketNumber => $TN, Limit => 10,
 );
-die "scoped ticket search failed\n" if @Visible != 1 || $Visible[0] != $TicketID;
+die "scoped ticket search failed: user=$UserID ticket=$TicketID visible=" . join( q{,}, @Visible ) . "\n"
+    if @Visible != 1 || $Visible[0] != $TicketID;
 
 my $Policy = $Kernel::OM->Get('Kernel::System::D724::TicketPolicy');
 my $Access = $Policy->TicketAccessCheck( UserID => $UserID, TicketID => $TicketID );
