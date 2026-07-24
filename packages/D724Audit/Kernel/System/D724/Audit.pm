@@ -68,8 +68,8 @@ sub Record {
         my $UUID = sha256_hex( join q{|}, $Param{TenantID}, $Sequence, $At, $Param{ActorID}, $Param{Action}, $Param{ObjectType}, $Param{ObjectID}, $PreviousHash );
         my %Canonical = (
             tenant_id => $Param{TenantID}, sequence => $Sequence, event_uuid => $UUID, event_time => $At,
-            actor_type => $Param{ActorType}, actor_id => $Param{ActorID}, action => $Param{Action},
-            object_type => $Param{ObjectType}, object_id => $Param{ObjectID}, correlation_id => $Param{CorrelationID} // q{},
+            actor_type => "$Param{ActorType}", actor_id => "$Param{ActorID}", action => "$Param{Action}",
+            object_type => "$Param{ObjectType}", object_id => "$Param{ObjectID}", correlation_id => defined $Param{CorrelationID} ? "$Param{CorrelationID}" : q{},
             from_state => $Param{FromState} // q{}, to_state => $Param{ToState} // q{}, outcome => $Param{Outcome} // 'success',
             source_ip_hash => $SourceHash, details => $Details->{Data}, previous_hash => $PreviousHash,
         );
