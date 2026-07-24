@@ -44,6 +44,9 @@ sub Run {
             %Context, CatalogItemID => $ItemID,
             IdempotencyKey => $WebRequest->GetParam( Param => 'IdempotencyKey' ), Answers => \%Answers,
         );
+        if ( $Result->{Success} ) {
+            $Result = $Request->CustomerGet( %Context, RequestID => $Result->{Data}->{RequestID} );
+        }
     }
     else {
         $Result = $Request->CustomerGet( %Context, RequestID => $WebRequest->GetParam( Param => 'RequestID' ) );

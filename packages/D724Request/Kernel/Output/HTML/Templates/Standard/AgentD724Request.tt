@@ -11,6 +11,9 @@
   <section class="WidgetSimple">
     <div class="Header"><h2>[% Data.RequestNumber | html %] — [% Data.Status | html %]</h2></div>
     <div class="Content"><p>[% Translate("Requester") | html %]: [% Data.RequesterID | html %]</p>
+[% RenderBlockStart("Commitment") %]
+      <p><strong>[% Translate("Commitment") | html %]: [% Data.Status | html %]</strong> — [% Translate("Warning") | html %]: [% Data.WarningTime | html %] — [% Translate("Due") | html %]: [% Data.DueTime | html %]</p>
+[% RenderBlockEnd("Commitment") %]
 [% RenderBlockStart("Approval") %]
       <form action="[% Env("CGIHandle") %]" method="post">
         <input type="hidden" name="Action" value="AgentD724Request"/><input type="hidden" name="Subaction" value="ApprovalDecide"/>

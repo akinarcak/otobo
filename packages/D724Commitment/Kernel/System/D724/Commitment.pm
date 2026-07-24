@@ -9,8 +9,9 @@ package Kernel::System::D724::Commitment;
 use v5.24;
 use strict;
 use warnings;
+use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -107,20 +108,24 @@ sub Start {
     my $WarningSeconds = int( $Policy->{TargetSeconds} * $Policy->{WarningPercent} / 100 );
     my $Warning = $Self->_Destination( StartTime => $Start, Seconds => $WarningSeconds, CalendarID => $Policy->{CalendarID} );
     return $Self->_Error('CALENDAR_CALCULATION_FAILED') if !$Due || !$Warning;
+    my %Pause = map { $_ => 1 } @{ $Policy->{PauseStatuses} };
+    my $InitialStatus = $Pause{ $Param{RequestStatus} // q{} } ? 'paused' : 'running';
+    my $RunningSince = $InitialStatus eq 'running' ? $Start : undef;
+    my $PausedAt     = $InitialStatus eq 'paused'  ? $Start : undef;
     my @Values = (
-        $Param{TenantID}, $Param{RequestID}, $Policy->{PolicyID}, 'running', $Policy->{TargetSeconds}, 0,
-        $Policy->{CalendarID}, $Policy->{WarningPercent}, $Start, $Start, $Warning, $Due, $Param{Actor}, $Param{Actor},
+        $Param{TenantID}, $Param{RequestID}, $Policy->{PolicyID}, $InitialStatus, $Policy->{TargetSeconds}, 0,
+        $Policy->{CalendarID}, $Policy->{WarningPercent}, $Start, $RunningSince, $PausedAt, $Warning, $Due, $Param{Actor}, $Param{Actor},
     );
     my @Bind = map { \$_ } @Values;
     my $OK = $Kernel::OM->Get('Kernel::System::DB')->Do(
         SQL => 'INSERT INTO d724_commitment_instance (tenant_id, request_id, policy_id, status, target_seconds, consumed_seconds, calendar_id, warning_percent, '
-            . 'start_time, running_since, warning_time, due_time, version, create_time, create_by, change_time, change_by) '
-            . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, current_timestamp, ?, current_timestamp, ?)', Bind => \@Bind,
+            . 'start_time, running_since, paused_at, warning_time, due_time, version, create_time, create_by, change_time, change_by) '
+            . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, current_timestamp, ?, current_timestamp, ?)', Bind => \@Bind,
     );
     return $Self->_Error('DATABASE_ERROR') if !$OK;
     my $Instance = $Self->_InstanceRowGet( TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
     return $Self->_Error('DATABASE_ERROR') if !$Instance;
-    $Self->_EventAdd( %{$Instance}, EventType => 'started', EventTime => $Start, FromStatus => q{}, ToStatus => 'running', Actor => $Param{Actor}, Reason => q{} );
+    $Self->_EventAdd( %{$Instance}, EventType => 'started', EventTime => $Start, FromStatus => q{}, ToStatus => $InitialStatus, Actor => $Param{Actor}, Reason => $InitialStatus eq 'paused' ? 'initial_request_status:' . $Param{RequestStatus} : q{} );
     return { Success => 1, Data => $Self->_Aggregate(%{$Instance}), IdempotentReplay => 0 };
 }
 
@@ -136,6 +141,24 @@ sub AgentGetByRequest {
 sub Pause { my ( $Self, %Param ) = @_; return $Self->_Transition( %Param, Operation => 'pause' ) }
 sub Resume { my ( $Self, %Param ) = @_; return $Self->_Transition( %Param, Operation => 'resume' ) }
 sub Complete { my ( $Self, %Param ) = @_; return $Self->_Transition( %Param, Operation => 'complete' ) }
+sub Cancel { my ( $Self, %Param ) = @_; return $Self->_Transition( %Param, Operation => 'cancel' ) }
+
+sub CustomerGetByRequest {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('COMMITMENT_DISABLED') if !$Self->_Enabled();
+    return $Self->_Error('CUSTOMER_USER_MISSING') if !length( $Param{CustomerUserID} // q{} );
+    return $Self->_Error('CUSTOMER_TENANT_MISSING') if !length( $Param{CustomerID} // q{} );
+    my $RequesterID = 'customer:' . sha256_hex( $Param{CustomerUserID} );
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    $DBObject->Prepare(
+        SQL => 'SELECT id FROM d724_request WHERE tenant_id = ? AND id = ? AND requester_id = ?',
+        Bind => [ \$Param{CustomerID}, \$Param{RequestID}, \$RequesterID ], Limit => 1,
+    );
+    return $Self->_Error('NOT_FOUND') if !$DBObject->FetchrowArray();
+    my $Instance = $Self->_InstanceRowGet( TenantID => $Param{CustomerID}, RequestID => $Param{RequestID} );
+    return $Self->_Error('NOT_FOUND') if !$Instance;
+    return { Success => 1, Data => $Self->_Aggregate(%{$Instance}) };
+}
 
 sub RequestStatusSync {
     my ( $Self, %Param ) = @_;
@@ -222,7 +245,7 @@ sub _Transition {
         my $WarningThreshold = int( $Instance->{TargetSeconds} * $Instance->{WarningPercent} / 100 );
         $Warning = $Consumed >= $WarningThreshold ? $At : $Self->_Destination( StartTime => $At, Seconds => $WarningThreshold - $Consumed, CalendarID => $Instance->{CalendarID} );
     }
-    else {
+    elsif ( $Param{Operation} eq 'complete' ) {
         return $Self->_Error('TRANSITION_INVALID') if $Instance->{Status} =~ m{\A(?:met|breached|cancelled)\z}smx;
         if ( $Instance->{Status} =~ m{\A(?:running|warning)\z}smx ) {
             $Consumed = $Self->_ConsumedAt( Instance => $Instance, At => $At );
@@ -230,6 +253,14 @@ sub _Transition {
         }
         if ( $Consumed >= $Instance->{TargetSeconds} ) { $NewStatus = 'breached'; $BreachedAt = $At }
         else { $NewStatus = 'met'; $MetAt = $At }
+    }
+    else {
+        return $Self->_Error('TRANSITION_INVALID') if $Instance->{Status} =~ m{\A(?:met|breached|cancelled)\z}smx;
+        if ( $Instance->{Status} =~ m{\A(?:running|warning)\z}smx ) {
+            $Consumed = $Self->_ConsumedAt( Instance => $Instance, At => $At );
+            return $Self->_Error('CALENDAR_CALCULATION_FAILED') if !defined $Consumed;
+        }
+        $NewStatus = 'cancelled';
     }
     my $Actor = $Auth->{Subject}->{ID};
     my @Values = ( $NewStatus, $Consumed, $RunningSince, $PausedAt, $Warning, $Due, $BreachedAt, $MetAt, $Actor, $Param{TenantID}, $Param{CommitmentID}, $Param{ExpectedVersion} );
@@ -241,7 +272,8 @@ sub _Transition {
     return $Self->_Error('DATABASE_ERROR') if !$OK;
     my $Updated = $Self->_InstanceRowGet( TenantID => $Param{TenantID}, CommitmentID => $Param{CommitmentID} );
     return $Self->_Error('VERSION_CONFLICT') if !$Updated || $Updated->{Version} != $Param{ExpectedVersion} + 1;
-    $Self->_EventAdd( %{$Updated}, EventType => $Param{Operation} eq 'complete' ? $NewStatus : $Param{Operation} . 'd', EventTime => $At, FromStatus => $Instance->{Status}, ToStatus => $NewStatus, Actor => $Actor, Reason => $Param{Reason} // q{}, ConsumedSeconds => $Consumed );
+    my $EventType = $Param{Operation} eq 'complete' ? $NewStatus : $Param{Operation} eq 'cancel' ? 'cancelled' : $Param{Operation} . 'd';
+    $Self->_EventAdd( %{$Updated}, EventType => $EventType, EventTime => $At, FromStatus => $Instance->{Status}, ToStatus => $NewStatus, Actor => $Actor, Reason => $Param{Reason} // q{}, ConsumedSeconds => $Consumed );
     return { Success => 1, Data => $Self->_Aggregate(%{$Updated}) };
 }
 

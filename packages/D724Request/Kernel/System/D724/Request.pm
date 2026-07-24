@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.3';
+our $VERSION = '0.1.4';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -117,6 +117,15 @@ sub CustomerSubmit {
             SQL => 'UPDATE d724_request SET request_number = ?, status = ?, change_time = current_timestamp, change_by = ? '
                 . 'WHERE tenant_id = ? AND id = ?', Bind => \@FinalizeBind,
         );
+    if ( $Workflow->{commitment} ) {
+        my $Commitment = $Self->_CommitmentObject();
+        return $Self->_InitializationFail( TenantID => $TenantID, RequestID => $RequestID, Actor => $Actor ) if !$Commitment;
+        my $Started = $Commitment->Start(
+            TenantID => $TenantID, RequestID => $RequestID, PolicyKey => $Workflow->{commitment}->{policy_key},
+            Actor => $Actor, RequestStatus => $FinalStatus,
+        );
+        return $Self->_InitializationFail( TenantID => $TenantID, RequestID => $RequestID, Actor => $Actor ) if !$Started->{Success};
+    }
     return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $RequestID ), IdempotentReplay => 0 };
 }
 
@@ -130,6 +139,13 @@ sub CustomerGet {
     return $Context if !$Context->{Success};
     my $Data = $Self->_RequestAggregate( TenantID => $Context->{TenantID}, RequestID => $Param{RequestID} );
     return $Self->_Error('NOT_FOUND') if !$Data || $Data->{RequesterID} ne $Context->{Subject}->{ID};
+    my $Commitment = $Self->_CommitmentObject();
+    if ($Commitment) {
+        my $Result = $Commitment->CustomerGetByRequest(
+            CustomerUserID => $Param{CustomerUserID}, CustomerID => $Param{CustomerID}, RequestID => $Param{RequestID},
+        );
+        $Data->{Commitment} = $Result->{Data} if $Result->{Success};
+    }
     return { Success => 1, Data => $Data };
 }
 
@@ -146,7 +162,13 @@ sub AgentList {
     );
     my @Data;
     while ( my ($ID) = $DBObject->FetchrowArray() ) {
-        push @Data, $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $ID );
+        my $Data = $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $ID );
+        my $Commitment = $Self->_CommitmentObject();
+        if ($Commitment) {
+            my $Result = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $TenantID, RequestID => $ID );
+            $Data->{Commitment} = $Result->{Data} if $Result->{Success};
+        }
+        push @Data, $Data;
     }
     return { Success => 1, Data => \@Data };
 }
@@ -188,6 +210,22 @@ sub ApprovalDecide {
         SQL => "UPDATE d724_request SET status = ?, version = version + 1, change_time = current_timestamp, change_by = ? WHERE tenant_id = ? AND id = ? AND status = 'awaiting_approval'",
         Bind => \@RequestBind,
     );
+    my $Commitment = $Self->_CommitmentObject();
+    if ($Commitment) {
+        my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
+        if ( $Current->{Success} ) {
+            my $Synced = $Param{Decision} eq 'rejected'
+                ? $Commitment->Cancel(
+                    UserID => $Param{UserID}, TenantID => $Param{TenantID}, CommitmentID => $Current->{Data}->{CommitmentID},
+                    ExpectedVersion => $Current->{Data}->{Version}, Reason => 'request_rejected',
+                )
+                : $Commitment->RequestStatusSync(
+                    UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID},
+                    ExpectedVersion => $Current->{Data}->{Version}, RequestStatus => $RequestStatus,
+                );
+            return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Synced->{Success};
+        }
+    }
     my @TaskValues = ( $TaskStatus, $Actor, $Param{TenantID}, $Param{RequestID} );
     my @TaskBind = map { \$_ } @TaskValues;
     $DBObject->Do(
@@ -234,6 +272,9 @@ sub TaskUpdate {
             SQL => "UPDATE d724_request SET status = 'fulfillment_failed', version = version + 1, change_time = current_timestamp, change_by = ? WHERE tenant_id = ? AND id = ? AND status = 'in_fulfillment'",
             Bind => \@RequestBind,
         );
+        $Self->_CommitmentSync(
+            UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Task->{RequestID}, RequestStatus => 'fulfillment_failed',
+        );
     }
     if ( $Param{Status} eq 'completed' ) {
         my $RequestID = $Task->{RequestID};
@@ -249,6 +290,17 @@ sub TaskUpdate {
                 SQL => "UPDATE d724_request SET status = 'fulfilled', version = version + 1, change_time = current_timestamp, change_by = ? WHERE tenant_id = ? AND id = ?",
                 Bind => \@RequestBind,
             );
+            my $Commitment = $Self->_CommitmentObject();
+            if ($Commitment) {
+                my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $RequestID );
+                if ( $Current->{Success} ) {
+                    my $Completed = $Commitment->Complete(
+                        UserID => $Param{UserID}, TenantID => $Param{TenantID}, CommitmentID => $Current->{Data}->{CommitmentID},
+                        ExpectedVersion => $Current->{Data}->{Version}, Reason => 'request_fulfilled',
+                    );
+                    return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Completed->{Success};
+                }
+            }
         }
     }
     return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Task->{RequestID} ) };
@@ -305,10 +357,30 @@ sub _AnswersValidate {
 sub _WorkflowNormalize {
     my ( $Self, %Param ) = @_;
     my $Workflow = $Param{Schema}->{workflow} // {};
-    return {
+    my $Normalized = {
         approval => $Workflow->{approval} // { required => 0 },
         fulfillment => $Workflow->{fulfillment} // [ { key => 'fulfill', name => 'Fulfill request', type => 'manual' } ],
     };
+    $Normalized->{commitment} = $Workflow->{commitment} if $Workflow->{commitment};
+    return $Normalized;
+}
+
+sub _CommitmentObject {
+    my ($Self) = @_;
+    return if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Commitment::Enabled');
+    my $Object = eval { $Kernel::OM->Get('Kernel::System::D724::Commitment') };
+    return $@ ? undef : $Object;
+}
+
+sub _CommitmentSync {
+    my ( $Self, %Param ) = @_;
+    my $Commitment = $Self->_CommitmentObject();
+    return { Success => 1, NoChange => 1 } if !$Commitment;
+    my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
+    return { Success => 1, NoChange => 1 } if !$Current->{Success};
+    return $Commitment->RequestStatusSync(
+        %Param, ExpectedVersion => $Current->{Data}->{Version},
+    );
 }
 
 sub _RequestByIdempotency {

@@ -117,6 +117,7 @@ my $FormSchema = {
     workflow => {
         approval => { required => 1, approver_role => 'tenant_admin' },
         fulfillment => [ { key => 'prepare', name => 'Prepare device', type => 'manual' } ],
+        commitment => { policy_key => 'standard-resolution' },
     },
     fields  => [
         { key => 'justification', label => 'Business justification', type => 'textarea', required => 1 },
@@ -170,6 +171,14 @@ is(
     )->{Error},
     'SCHEMA_APPROVAL_INVALID',
     'approval workflow only accepts privileged approver roles',
+);
+is(
+    $Catalog->CatalogItemSchemaSet(
+        %BaseA, CatalogItemID => $Item->{Data}->{CatalogItemID}, ExpectedVersion => 2,
+        Schema => { version => 3, fields => [], workflow => { commitment => { policy_key => '../foreign' } } },
+    )->{Error},
+    'SCHEMA_COMMITMENT_INVALID',
+    'commitment policy references use strict tenant-local keys',
 );
 is(
     $Catalog->CatalogItemSchemaGet(

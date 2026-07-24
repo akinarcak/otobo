@@ -1,0 +1,26 @@
+<div class="MainBox ARIARole MainContent">
+  <h1>[% Translate("D724 Commitments") | html %]</h1>
+  <form action="[% Env("CGIHandle") %]" method="get"><input type="hidden" name="Action" value="AdminD724Commitment"/>
+    <label for="TenantID">[% Translate("Tenant") | html %]</label><select id="TenantID" name="TenantID" onchange="this.form.submit()">
+[% RenderBlockStart("TenantOption") %]<option value="[% Data.TenantID | html %]" [% Data.Selected | html %]>[% Data.TenantID | html %]</option>[% RenderBlockEnd("TenantOption") %]
+    </select>
+  </form>
+  <section class="WidgetSimple"><div class="Header"><h2>[% Translate("New policy") | html %]</h2></div><div class="Content">
+    <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AdminD724Commitment"/><input type="hidden" name="Subaction" value="PolicySave"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+      <input name="Key" required pattern="[a-z][a-z0-9_-]{0,63}" placeholder="standard-resolution"/>
+      <input name="Name" required maxlength="200" placeholder="[% Translate("Policy name") | html %]"/>
+      <input name="CalendarID" type="number" min="0" max="9" value="0" required/><input name="TargetSeconds" type="number" min="1" max="31536000" required placeholder="14400"/>
+      <input name="WarningPercent" type="number" min="1" max="99" value="80" required/><input name="PauseStatuses" placeholder="waiting_customer, pending_vendor"/>
+      <select name="Status"><option value="active">active</option><option value="inactive">inactive</option></select><button type="submit">[% Translate("Create") | html %]</button>
+    </form>
+  </div></section>
+[% RenderBlockStart("PolicyRow") %]
+  <section class="WidgetSimple"><div class="Header"><h2>[% Data.Key | html %]</h2></div><div class="Content">
+    <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AdminD724Commitment"/><input type="hidden" name="Subaction" value="PolicySave"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="PolicyID" value="[% Data.PolicyID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
+      <input name="Name" value="[% Data.Name | html %]" required maxlength="200"/><input name="CalendarID" type="number" min="0" max="9" value="[% Data.CalendarID | html %]" required/>
+      <input name="TargetSeconds" type="number" min="1" max="31536000" value="[% Data.TargetSeconds | html %]" required/><input name="WarningPercent" type="number" min="1" max="99" value="[% Data.WarningPercent | html %]" required/>
+      <input name="PauseStatuses" value="[% Data.PauseStatusesText | html %]"/><select name="Status"><option value="[% Data.Status | html %]">[% Data.Status | html %]</option><option value="active">active</option><option value="inactive">inactive</option></select><button type="submit">[% Translate("Update") | html %]</button>
+    </form>
+  </div></section>
+[% RenderBlockEnd("PolicyRow") %]
+</div>

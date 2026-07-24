@@ -17,7 +17,7 @@ is( $ExitCode, 0, 'request status succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
 ok( $Status->{Success}, 'request schema is healthy' );
 is( $Status->{Package}, 'D724Request', 'status identifies package' );
-is( $Status->{Version}, '0.1.3', 'status identifies version' );
+is( $Status->{Version}, '0.1.4', 'status identifies version' );
 is( [ sort keys %{ $Status->{Tables} } ], [qw(d724_request d724_request_approval d724_request_task)], 'all request tables reported' );
 
 done_testing;

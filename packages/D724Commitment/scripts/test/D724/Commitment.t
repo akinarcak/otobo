@@ -167,6 +167,41 @@ is(
     'FORBIDDEN', 'agent cannot read another tenant commitment',
 );
 
+my $IntegratedSchema = $Catalog->CatalogItemSchemaSet(
+    %CatalogCall, CatalogItemID => $Item->{Data}->{CatalogItemID}, ExpectedVersion => 1,
+    Schema => {
+        version => 2, fields => [],
+        workflow => {
+            commitment => { policy_key => 'standard-resolution' },
+            fulfillment => [ { key => 'fulfill', name => 'Fulfill request', type => 'manual' } ],
+        },
+    },
+);
+ok( $IntegratedSchema->{Success}, 'catalog workflow references tenant-local commitment policy' );
+my $Integrated = $RequestObject->CustomerSubmit(
+    CustomerUserID => "customer-$Suffix\@example.test", CustomerID => $TenantA,
+    CatalogItemID => $Item->{Data}->{CatalogItemID}, IdempotencyKey => "commit-$Suffix-integrated-0001", Answers => {},
+);
+ok( $Integrated->{Success}, 'request submission automatically starts commitment' );
+my $CustomerIntegrated = $RequestObject->CustomerGet(
+    CustomerUserID => "customer-$Suffix\@example.test", CustomerID => $TenantA, RequestID => $Integrated->{Data}->{RequestID},
+);
+is( $CustomerIntegrated->{Data}->{Commitment}->{Status}, 'running', 'customer request view includes its commitment' );
+my ($AgentIntegrated) = grep { $_->{RequestID} == $Integrated->{Data}->{RequestID} } @{
+    $RequestObject->AgentList( UserID => $AdminID, TenantID => $TenantA )->{Data}
+};
+is( $AgentIntegrated->{Commitment}->{Policy}->{Key}, 'standard-resolution', 'agent list includes policy and due data' );
+my $IntegratedTask = $Integrated->{Data}->{Tasks}->[0];
+my $Fulfilled = $RequestObject->TaskUpdate(
+    UserID => $AdminID, TenantID => $TenantA, TaskID => $IntegratedTask->{TaskID},
+    ExpectedVersion => $IntegratedTask->{Version}, Status => 'completed', Comment => 'Done',
+);
+ok( $Fulfilled->{Success}, 'request fulfillment completes through normal task API' );
+is(
+    $Commitment->AgentGetByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $Integrated->{Data}->{RequestID} )->{Data}->{Status},
+    'met', 'request fulfillment automatically records commitment as met',
+);
+
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::Enabled', Value => 0 );
 is(
     $Commitment->PolicyList( Subject => $Subject, TenantID => $TenantA )->{Error},

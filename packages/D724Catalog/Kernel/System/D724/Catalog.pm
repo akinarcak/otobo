@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.3.3';
+our $VERSION = '0.3.4';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -581,7 +581,7 @@ sub _SchemaValidate {
     if ( defined $Schema->{workflow} ) {
         my $Workflow = $Schema->{workflow};
         return $Self->_Error( Error => 'SCHEMA_WORKFLOW_INVALID' ) if ref $Workflow ne 'HASH';
-        my %WorkflowAllowed = map { $_ => 1 } qw(approval fulfillment);
+        my %WorkflowAllowed = map { $_ => 1 } qw(approval fulfillment commitment);
         for my $Key ( keys %{$Workflow} ) {
             return $Self->_Error( Error => 'SCHEMA_WORKFLOW_PROPERTY_UNKNOWN' ) if !$WorkflowAllowed{$Key};
         }
@@ -608,6 +608,13 @@ sub _SchemaValidate {
                     || !length( $Task->{name} // q{} ) || length $Task->{name} > 200
                     || ( $Task->{type} // q{} ) !~ m{\A(?:manual|process|integration)\z}smx;
             }
+        }
+        if ( defined $Workflow->{commitment} ) {
+            my $Commitment = $Workflow->{commitment};
+            return $Self->_Error( Error => 'SCHEMA_COMMITMENT_INVALID' )
+                if ref $Commitment ne 'HASH'
+                || ( grep { $_ ne 'policy_key' } keys %{$Commitment} )
+                || ( $Commitment->{policy_key} // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx;
         }
     }
     return { Success => 1 };

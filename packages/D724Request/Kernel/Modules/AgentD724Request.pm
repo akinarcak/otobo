@@ -52,6 +52,9 @@ sub Run {
     return $Layout->NoPermission( WithHeader => 'yes' ) if !$List->{Success};
     for my $Request ( @{ $List->{Data} } ) {
         $Layout->Block( Name => 'Request', Data => $Request );
+        if ( $Request->{Commitment} ) {
+            $Layout->Block( Name => 'Commitment', Data => $Request->{Commitment} );
+        }
         for my $Approval ( @{ $Request->{Approvals} } ) {
             next if $Approval->{Status} ne 'pending';
             $Layout->Block( Name => 'Approval', Data => { %{$Approval}, RequestID => $Request->{RequestID}, TenantID => $TenantID } );
