@@ -39,6 +39,7 @@ if (!%Company) {
 my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
 my %CustomerUser = $CustomerUserObject->CustomerUserDataGet( User => $Login );
 if (!%CustomerUser) {
+    $Kernel::OM->Get('Kernel::Config')->Set( Key => 'CheckEmailAddresses', Value => 0 );
     my $Created = $CustomerUserObject->CustomerUserAdd(
         Source         => 'CustomerUser',
         UserFirstname  => 'D724',
