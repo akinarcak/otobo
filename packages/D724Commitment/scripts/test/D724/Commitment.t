@@ -10,6 +10,7 @@ use warnings;
 use utf8;
 use Test2::V0;
 use Kernel::System::UnitTest::RegisterOM;
+use Kernel::System::Email ();
 use Kernel::System::WebUserAgent ();
 
 $Kernel::OM->ObjectParamAdd( 'Kernel::System::UnitTest::Helper' => { RestoreDatabase => 1 } );
@@ -50,7 +51,7 @@ for my $Tenant ( $TenantA, $TenantB ) {
         SQL => 'INSERT INTO d724_tenant (key_name, name, status, version, create_time, create_by, change_time, change_by) VALUES (?, ?, ?, ?, current_timestamp, ?, current_timestamp, ?)', Bind => \@Bind,
     ) || die 'Could not create tenant';
 }
-for my $Role ( [ $TenantA, $AdminID, 'tenant_admin' ], [ $TenantB, $OtherID, 'agent' ] ) {
+for my $Role ( [ $TenantA, $AdminID, 'tenant_admin' ], [ $TenantA, $AdminID, 'service_owner' ], [ $TenantB, $OtherID, 'agent' ] ) {
     my @Values = ( @{$Role}, 'active', $AdminID, $AdminID ); my @Bind = map { \$_ } @Values;
     $DBObject->Do(
         SQL => 'INSERT INTO d724_tenant_agent_role (tenant_id, user_id, role_name, status, create_time, create_by, change_time, change_by) VALUES (?, ?, ?, ?, current_timestamp, ?, current_timestamp, ?)', Bind => \@Bind,
@@ -306,6 +307,18 @@ my ($AgentIntegrated) = grep { $_->{RequestID} == $Integrated->{Data}->{RequestI
 };
 is( $AgentIntegrated->{Commitment}->{Policy}->{Key}, 'standard-resolution', 'agent list includes policy and due data' );
 my $IntegratedTask = $Integrated->{Data}->{Tasks}->[0];
+my %EmailCall;
+{
+    no warnings 'redefine';
+    local *Kernel::System::Email::Send = sub { my ( $Self, %Param ) = @_; %EmailCall = %Param; return 1 };
+    my $Notification = $Dispatcher->_NotifyRole( {
+        ID => 9000, TenantID => $TenantA,
+        Payload => { RequestID => $Integrated->{Data}->{RequestID}, Target => 'service_owner', Trigger => 'warning', ObjectiveKey => 'resolution', DueTime => '2026-07-27 17:00:00' },
+    } );
+    ok( $Notification->{Success}, 'role notification adapter queues email through OTOBO transport' );
+}
+like( $EmailCall{To}, qr{\Qcommit-admin-$Suffix\E\@example\.test}, 'role notification resolves recipients only from tenant membership' );
+is( $EmailCall{CustomHeaders}->{'X-D724-Tenant'}, $TenantA, 'notification carries tenant audit header' );
 my $Assignment = $Dispatcher->_Assign( {
     ID => 9001, TenantID => $TenantA,
     Payload => { RequestID => $Integrated->{Data}->{RequestID}, Target => 'resolver-escalation' },
