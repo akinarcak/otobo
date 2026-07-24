@@ -12,10 +12,12 @@ use warnings;
 use Digest::SHA qw(hmac_sha256_hex sha256_hex);
 use URI ();
 
-our $VERSION = '0.3.9';
+our $VERSION = '0.4.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::DB',
+    'Kernel::System::D724::Audit',
+    'Kernel::System::D724::TenantGuard',
     'Kernel::System::Email',
     'Kernel::System::JSON',
     'Kernel::System::User',
@@ -49,7 +51,7 @@ sub Dispatch {
         my $Token = sha256_hex( join q{:}, $Worker, $ID, $At, rand() );
         my $LeaseUntil = $Self->_AddSeconds( Time => $At, Seconds => 60 );
         $DB->Do(
-            SQL => "UPDATE d724_escalation_outbox SET status = 'processing', lease_token = ?, lease_until = ?, attempt_count = attempt_count + 1, change_time = current_timestamp WHERE id = ? AND status IN ('pending','retry') AND available_time <= ?",
+            SQL => "UPDATE d724_escalation_outbox SET status = 'processing', lease_token = ?, lease_until = ?, attempt_count = attempt_count + 1, lifetime_attempt_count = lifetime_attempt_count + 1, change_time = current_timestamp WHERE id = ? AND status IN ('pending','retry') AND available_time <= ?",
             Bind => [ \$Token, \$LeaseUntil, \$ID, \$At ],
         );
         my $Row = $Self->_ClaimedGet( ID => $ID, Token => $Token );
@@ -82,6 +84,75 @@ sub Dispatch {
         $Counts{ $Dead ? 'Dead' : 'Retried' }++;
     }
     return { Success => 1, Counts => \%Counts };
+}
+
+sub Replay {
+    my ( $Self, %Param ) = @_;
+    return { Success => 0, Error => 'OUTBOX_ID_INVALID' }
+        if ( $Param{OutboxID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return { Success => 0, Error => 'ATTEMPT_COUNT_REQUIRED' }
+        if ( $Param{ExpectedAttemptCount} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(
+        Subject => $Param{Subject}, Resource => { TenantID => $Param{TenantID} }, Action => 'tenant.manage',
+    );
+    return { Success => 0, Error => 'FORBIDDEN', Reason => $Decision->{Reason} } if !$Decision->{Allowed};
+    my $At = $Self->_TimeNormalize( $Param{At} );
+    return { Success => 0, Error => 'TIME_INVALID' } if !$At;
+
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    my $Handle = $DB->Connect();
+    return { Success => 0, Error => 'TRANSACTION_CONNECTION_FAILED' } if !$Handle;
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
+    my $Result;
+    my $OK = eval {
+        die "TRANSACTION_START_FAILED\n" if $OwnTransaction && !$DB->BeginWork();
+        $DB->Prepare(
+            SQL => 'SELECT commitment_id, status, attempt_count, replay_count FROM d724_escalation_outbox WHERE tenant_id = ? AND id = ?',
+            Bind => [ \$Param{TenantID}, \$Param{OutboxID} ], Limit => 1,
+        );
+        my ( $CommitmentID, $Status, $Attempts, $ReplayCount ) = $DB->FetchrowArray();
+        if ( !$CommitmentID ) { $Result = { Success => 0, Error => 'NOT_FOUND' } }
+        elsif ( $Status ne 'dead' ) { $Result = { Success => 0, Error => 'REPLAY_STATE_INVALID' } }
+        elsif ( $Attempts != $Param{ExpectedAttemptCount} ) { $Result = { Success => 0, Error => 'VERSION_CONFLICT' } }
+        else {
+            my $Updated = $DB->Do(
+                SQL => "UPDATE d724_escalation_outbox SET status = 'retry', attempt_count = 0, replay_count = replay_count + 1, available_time = ?, processed_time = NULL, lease_token = '', lease_until = NULL, delivery_ref = '', response_code = '', last_error = '', change_time = current_timestamp WHERE tenant_id = ? AND id = ? AND status = 'dead' AND attempt_count = ?",
+                Bind => [ \$At, \$Param{TenantID}, \$Param{OutboxID}, \$Param{ExpectedAttemptCount} ],
+            );
+            $DB->Prepare(
+                SQL => 'SELECT status, attempt_count, replay_count FROM d724_escalation_outbox WHERE tenant_id = ? AND id = ?',
+                Bind => [ \$Param{TenantID}, \$Param{OutboxID} ], Limit => 1,
+            );
+            my ( $UpdatedStatus, $UpdatedAttempts, $UpdatedReplayCount ) = $DB->FetchrowArray();
+            if ( !$Updated || ( $UpdatedStatus // q{} ) ne 'retry' || $UpdatedAttempts != 0 || $UpdatedReplayCount != $ReplayCount + 1 ) {
+                $Result = { Success => 0, Error => 'VERSION_CONFLICT' };
+            }
+            else {
+                my $ActorID = $Param{Subject}->{ID};
+                my $ActorType = $ActorID =~ m{\Aintegration:}smx ? 'integration' : 'agent';
+                my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit')->Record(
+                    TenantID => $Param{TenantID}, ActorType => $ActorType, ActorID => $ActorID,
+                    Action => 'commitment.escalation_replayed', ObjectType => 'escalation_outbox', ObjectID => $Param{OutboxID},
+                    CorrelationID => "commitment:$CommitmentID", DedupeKey => "escalation:$Param{OutboxID}:replay:" . ( $ReplayCount + 1 ),
+                    FromState => 'dead', ToState => 'retry', Outcome => 'success',
+                    Details => { commitment_id => $CommitmentID, previous_attempt_count => $Attempts, replay_count => $ReplayCount + 1 },
+                );
+                $Result = $Audit->{Success}
+                    ? { Success => 1, Data => { OutboxID => 0 + $Param{OutboxID}, Status => 'retry', AttemptCount => 0, ReplayCount => $ReplayCount + 1, AvailableTime => $At } }
+                    : { Success => 0, Error => 'AUDIT_WRITE_FAILED' };
+            }
+        }
+        if ($OwnTransaction) {
+            die "TRANSACTION_COMMIT_FAILED\n" if $Result->{Success} && !$Handle->commit();
+            die "TRANSACTION_ROLLBACK_FAILED\n" if !$Result->{Success} && !$DB->Rollback();
+        }
+        1;
+    };
+    if (!$OK) {
+        eval { $DB->Rollback() } if $OwnTransaction && !$Handle->{AutoCommit};
+        return { Success => 0, Error => 'TRANSACTION_FAILED' };
+    }
+    return $Result;
 }
 
 sub _ClaimedGet {
@@ -172,10 +243,16 @@ sub _Webhook {
     my $Secret = $Endpoint->{Secret} // q{};
     return { Success => 0, Error => 'WEBHOOK_SECRET_INVALID' } if length $Secret < 32;
     my $JSON = $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Row->{Payload}, SortKeys => 1 );
-    my $Signature = hmac_sha256_hex( $JSON, $Secret );
+    my $Timestamp = $Self->_TimeNormalize( $Row->{At} );
+    return { Success => 0, Error => 'WEBHOOK_TIMESTAMP_INVALID' } if !$Timestamp;
+    my $Signature = hmac_sha256_hex( "v1.$Timestamp.$Row->{ID}.$JSON", $Secret );
     my %Response = $Kernel::OM->Get('Kernel::System::WebUserAgent')->Request(
-        URL => $URI->as_string, Type => 'POST', Data => [ payload => $JSON ], NoLog => 1,
-        Header => { 'X-D724-Signature-256' => "sha256=$Signature", 'X-D724-Delivery-ID' => $Row->{ID} },
+        URL => $URI->as_string, Type => 'POST', RawData => $JSON, NoLog => 1,
+        Header => {
+            'X-D724-Signature-256' => "sha256=$Signature", 'X-D724-Signature-Version' => 'v1',
+            'X-D724-Signature-Timestamp' => $Timestamp, 'X-D724-Delivery-ID' => $Row->{ID},
+            'X-D724-Tenant' => $Row->{TenantID}, 'Content-Type' => 'application/json',
+        },
     );
     return ( $Response{Status} // q{} ) =~ m{\A2[0-9][0-9]}smx
         ? { Success => 1, DeliveryRef => "webhook:$Row->{ID}", ResponseCode => $Response{Status} }

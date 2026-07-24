@@ -30,9 +30,9 @@ Katalog workflow'u varsayilan policy'ye ek olarak sadece validate edilmis cevapl
 
 ## Escalation teslimi
 
-`D724Commitment 0.3.0` dispatcher'i pending/retry kayitlarini atomik lease ile sahiplenir. Yarisan worker ayni action'i alamaz; gecici hata 60 saniyeden baslayan ussel backoff ile yeniden denenir ve maksimum deneme sonunda kayit `dead` olur. `attempt_count`, son hata, response code, islenme zamani ve delivery reference commitment kanitinda saklanir.
+`D724Commitment 0.4.0` dispatcher'i pending/retry kayitlarini atomik lease ile sahiplenir. Yarisan worker ayni action'i alamaz; gecici hata 60 saniyeden baslayan ussel backoff ile yeniden denenir ve maksimum deneme sonunda kayit `dead` olur. `attempt_count`, `lifetime_attempt_count`, `replay_count`, son hata, response code, islenme zamani ve delivery reference commitment kanitinda saklanir.
 
-`notify_role`, alicilari sadece action tenant'indaki aktif directory rol uyeliklerinden cozer ve OTOBO email transport'una tenant/delivery basliklariyla kuyruklar. `assignment`, ayni tenant ve request'teki aktif fulfillment gorevini hedef gruba atar. `webhook`, policy icinde URL kabul etmez: adlandirilmis endpoint SysConfig/secret store'dan cozulur, yalnizca exact allow-list'teki HTTPS host'una gider ve payload HMAC-SHA256 ile imzalanir.
+`notify_role`, alicilari sadece action tenant'indaki aktif directory rol uyeliklerinden cozer ve OTOBO email transport'una tenant/delivery basliklariyla kuyruklar. `assignment`, ayni tenant ve request'teki aktif fulfillment gorevini hedef gruba atar. `webhook`, policy icinde URL kabul etmez: adlandirilmis endpoint SysConfig/secret store'dan cozulur, yalnizca exact allow-list'teki HTTPS host'una canonical JSON gonderir; version, UTC timestamp, delivery ID ve exact body HMAC-SHA256 ile birlikte imzalanir. Ayrintili receiver sozlesmesi `docs/esm/integrations/WEBHOOK-01.md` dosyasindadir.
 
 ## Dogrulama
 
@@ -42,4 +42,4 @@ Katalog workflow'u varsayilan policy'ye ek olarak sadece validate edilmis cevapl
 
 ## Acik kapsam
 
-UC hedefi, dead-letter replay yonetim ekrani ve notification/webhook teslim metrikleri sonraki operasyon kapisindadir. Bu nedenle genel `SLA-01` henuz tamamen kapanmis sayilmaz.
+UC hedefi ve dead-letter replay yonetim ekrani sonraki operasyon kapisindadir. Onayli console replay, transaction-atomic audit ve notification/webhook teslim metrikleri tamamlanmistir. Bu nedenle genel `SLA-01` henuz tamamen kapanmis sayilmaz.

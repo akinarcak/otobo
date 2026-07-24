@@ -180,7 +180,9 @@ are retained.
 
 ## Remaining API-01 work
 
-Signed outbound webhook API contract, per-route latency/error metrics,
-retention scheduling, and concurrent load tests remain open.
+General lifecycle webhook subscription API, per-route latency/error metrics,
+retention scheduling, and concurrent load tests remain open. The shared
+canonical JSON/HMAC delivery and dead-letter replay contract is complete in
+`WEBHOOK-01`.
 Until TLS termination is deployed, this test endpoint must stay on the private
 network and must not be exposed to the public Internet.

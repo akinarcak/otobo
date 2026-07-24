@@ -8,6 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 use utf8;
+use Digest::SHA qw(hmac_sha256_hex);
 use Test2::V0;
 use Kernel::System::UnitTest::RegisterOM;
 use Kernel::System::Email ();
@@ -262,6 +263,44 @@ is( $DeadDispatch->{Counts}->{Dead}, 1, 'maximum attempt moves action to dead-le
 $MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
 ($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
 is( $ResponseObjective->{Escalations}->[0]->{Status}, 'dead', 'dead-letter state remains visible in audit evidence' );
+is(
+    $Dispatcher->Replay(
+        Subject => $OtherSubject, TenantID => $TenantA, OutboxID => $EscalationID,
+        ExpectedAttemptCount => 3, At => '2026-07-27 09:38:00',
+    )->{Error},
+    'FORBIDDEN', 'another tenant cannot replay a dead-letter delivery',
+);
+is(
+    $Dispatcher->Replay(
+        Subject => $Subject, TenantID => $TenantA, OutboxID => $EscalationID,
+        ExpectedAttemptCount => 2, At => '2026-07-27 09:38:00',
+    )->{Error},
+    'VERSION_CONFLICT', 'dead-letter replay uses the attempt count as an optimistic lock',
+);
+my $Replayed = $Dispatcher->Replay(
+    Subject => $Subject, TenantID => $TenantA, OutboxID => $EscalationID,
+    ExpectedAttemptCount => 3, At => '2026-07-27 09:38:00',
+);
+ok( $Replayed->{Success}, 'tenant administrator requeues a dead-letter delivery' );
+is( $Replayed->{Data}->{ReplayCount}, 1, 'dead-letter replay count advances without losing history' );
+is(
+    $Dispatcher->Replay(
+        Subject => $Subject, TenantID => $TenantA, OutboxID => $EscalationID,
+        ExpectedAttemptCount => 3, At => '2026-07-27 09:38:00',
+    )->{Error},
+    'REPLAY_STATE_INVALID', 'a non-dead delivery cannot be replayed again',
+);
+my $ReplayDispatch = $Dispatcher->Dispatch(
+    At => '2026-07-27 09:38:00', WorkerID => 'test-worker-replay',
+    Handlers => { notify_role => sub { return { Success => 1, DeliveryRef => 'test:replay:1', ResponseCode => 'QUEUED' } } },
+);
+is( $ReplayDispatch->{Counts}->{Delivered}, 1, 'requeued delivery returns through the normal leased dispatcher' );
+$MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
+($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
+is( $ResponseObjective->{Escalations}->[0]->{Status}, 'delivered', 'replayed delivery reaches a terminal delivered state' );
+is( $ResponseObjective->{Escalations}->[0]->{ReplayCount}, 1, 'commitment evidence exposes replay count' );
+is( $ResponseObjective->{Escalations}->[0]->{AttemptCount}, 1, 'current replay-cycle attempt count restarts from zero' );
+ok( $ResponseObjective->{Escalations}->[0]->{LifetimeAttemptCount} >= 3, 'lifetime attempts remain monotonic across replay' );
 my $ResponseSignal = $Commitment->Signal(
     UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID}, PolicyKey => 'premium-multi',
     Signal => 'first_response', RequestStatus => 'in_fulfillment', At => '2026-07-27 09:45:00',
@@ -342,13 +381,22 @@ my %WebhookCall;
         my ( $Self, %Param ) = @_; %WebhookCall = %Param; return ( Status => '202 Accepted', Content => \q{} );
     };
     my $Webhook = $Dispatcher->_Webhook( {
-        ID => 9002, TenantID => $TenantA,
+        ID => 9002, TenantID => $TenantA, At => '2026-07-27 12:34:56',
         Payload => { TenantID => $TenantA, RequestID => $Integrated->{Data}->{RequestID}, Target => 'audit-hook', Trigger => 'warning', ObjectiveKey => 'resolution' },
     } );
     ok( $Webhook->{Success}, 'allow-listed HTTPS webhook is delivered' );
 }
 like( $WebhookCall{Header}->{'X-D724-Signature-256'}, qr{\Asha256=[0-9a-f]{64}\z}, 'webhook carries an HMAC SHA-256 signature' );
+is( $WebhookCall{Header}->{'X-D724-Signature-Version'}, 'v1', 'webhook declares its signature contract version' );
+is( $WebhookCall{Header}->{'X-D724-Signature-Timestamp'}, '2026-07-27 12:34:56', 'webhook signature includes a replay-window timestamp' );
 is( $WebhookCall{Header}->{'X-D724-Delivery-ID'}, 9002, 'webhook carries stable delivery identifier' );
+is( $WebhookCall{Header}->{'X-D724-Tenant'}, $TenantA, 'webhook carries the tenant boundary as signed-delivery context' );
+is(
+    $WebhookCall{Header}->{'X-D724-Signature-256'},
+    'sha256=' . hmac_sha256_hex( 'v1.2026-07-27 12:34:56.9002.' . $WebhookCall{RawData}, '0123456789abcdef0123456789abcdef' ),
+    'receiver can verify version, timestamp, delivery ID, and canonical payload as one signed message',
+);
+is( $WebhookCall{Header}->{'Content-Type'}, 'application/json', 'webhook sends canonical JSON instead of form encoding' );
 is(
     $Dispatcher->_Webhook( { ID => 9003, TenantID => $TenantA, Payload => { TenantID => $TenantA, RequestID => 1, Target => 'missing-hook' } } )->{Error},
     'WEBHOOK_NOT_CONFIGURED', 'unknown webhook key fails closed without arbitrary URL access',

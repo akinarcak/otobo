@@ -24,6 +24,7 @@ use List::Util qw(first);
 
 # CPAN modules
 use HTTP::Headers  ();
+use HTTP::Request  ();
 use LWP::UserAgent ();
 
 # OTOBO modules
@@ -104,6 +105,16 @@ alternatively, you can use an arrayref like this:
         Data => [ Attribute => 'Value', Attribute => 'OtherValue' ],
         SkipSSLVerification => 1, # (optional)
         NoLog               => 1, # (optional)
+    );
+
+For an exact raw request body, for example canonical JSON, use C<RawData>.
+C<Data> and C<RawData> are mutually exclusive:
+
+    my %Response = $WebUserAgentObject->Request(
+        URL     => 'https://example.com/webhook',
+        Type    => 'POST',
+        RawData => '{"event":"request.approved"}',
+        Header  => { 'Content-Type' => 'application/json' },
     );
 
 returns
@@ -225,8 +236,21 @@ sub Request {
 
     else {
 
+        if ( defined $Param{RawData} ) {
+            if ( ref $Param{RawData} || defined $Param{Data} ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => 'WebUserAgent request: RawData must be a scalar and cannot be combined with Data.',
+                );
+                return ( Status => 0 );
+            }
+            my $Request = HTTP::Request->new( $Param{Type}, $Param{URL} );
+            $Request->content( $Param{RawData} );
+            $Response = $UserAgent->request($Request);
+        }
+
         # check for Data param
-        if ( !IsArrayRefWithData( $Param{Data} ) && !IsHashRefWithData( $Param{Data} ) ) {
+        elsif ( !IsArrayRefWithData( $Param{Data} ) && !IsHashRefWithData( $Param{Data} ) ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  =>
@@ -236,7 +260,9 @@ sub Request {
         }
 
         # perform post request plus data
-        $Response = $UserAgent->post( $Param{URL}, $Param{Data} );
+        else {
+            $Response = $UserAgent->post( $Param{URL}, $Param{Data} );
+        }
     }
 
     if ( !$Response->is_success() ) {

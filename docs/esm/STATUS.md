@@ -136,11 +136,11 @@ Son dogrulama: `2026-07-25`
 Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 
 - tenant/organizasyon policy siniri ve veri sizintisi testleri,
-- UC hedefi, dead-letter replay arayuzu ve escalation teslim metrikleri,
+- UC hedefi ve dead-letter replay yonetim arayuzu (onayli console replay ve teslim metrikleri tamamlandi),
 - tum domain adapter'larinda atomik audit completeness, retention/legal hold ve dis WORM arsivi,
 - portal ve agent urun deneyimi,
 - SSO/SCIM ve entegrasyon sozlesmeleri,
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `API-01c-webhook/SEC-01b`: lifecycle write API, imzali webhook, route latency/error metrikleri ve load testleri; daemon/report/cache/Elasticsearch policy adapter'lari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
+Bir sonraki urun kapisi `API-01c-webhook/SEC-01b`: genel lifecycle webhook subscription API'si, route latency/error metrikleri ve load testleri; daemon/report/cache/Elasticsearch policy adapter'lari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.

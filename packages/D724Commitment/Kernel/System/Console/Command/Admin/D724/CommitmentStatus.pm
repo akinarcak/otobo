@@ -11,6 +11,8 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
+our $VERSION = '0.4.0';
+
 our @ObjectDependencies = ('Kernel::System::DB', 'Kernel::System::JSON');
 
 sub Configure {
@@ -25,7 +27,12 @@ sub Run {
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     my %Existing = map { $_ => 1 } $DBObject->ListTables();
     my %Tables = map { $_ => $Existing{$_} ? 1 : 0 } qw(d724_commitment_policy d724_commitment_objective d724_commitment_instance d724_commitment_event d724_escalation_outbox);
-    my %Counts = ( Policies => 0, Objectives => 0, Active => 0, Breached => 0, PendingEscalations => 0, DeadEscalations => 0 );
+    my %Counts = (
+        Policies => 0, Objectives => 0, Active => 0, Breached => 0,
+        PendingEscalations => 0, RetryEscalations => 0, ProcessingEscalations => 0,
+        DeliveredEscalations => 0, DeadEscalations => 0, DeliveredWebhooks => 0,
+        DeadWebhooks => 0, LifetimeAttempts => 0, ReplayedEscalations => 0,
+    );
     if ( $Tables{d724_commitment_policy} ) {
         $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_commitment_policy WHERE status = 'active'" );
         ($Counts{Policies}) = $DBObject->FetchrowArray();
@@ -45,14 +52,26 @@ sub Run {
         ($Counts{PendingEscalations}) = $DBObject->FetchrowArray();
         $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status = 'dead'" );
         ($Counts{DeadEscalations}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status = 'retry'" );
+        ($Counts{RetryEscalations}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status = 'processing'" );
+        ($Counts{ProcessingEscalations}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status = 'delivered'" );
+        ($Counts{DeliveredEscalations}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE action_type = 'webhook' AND status = 'delivered'" );
+        ($Counts{DeliveredWebhooks}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE action_type = 'webhook' AND status = 'dead'" );
+        ($Counts{DeadWebhooks}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => 'SELECT COALESCE(SUM(lifetime_attempt_count), 0), COALESCE(SUM(replay_count), 0) FROM d724_escalation_outbox' );
+        ( $Counts{LifetimeAttempts}, $Counts{ReplayedEscalations} ) = $DBObject->FetchrowArray();
     }
     my $Success = !( grep { !$_ } values %Tables );
-    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.3.8', Tables => \%Tables, Counts => \%Counts };
+    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.4.0', Tables => \%Tables, Counts => \%Counts };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
     else {
-        $Self->Print("D724 commitment status\nActive policies: $Counts{Policies}\nObjectives: $Counts{Objectives}\nActive commitments: $Counts{Active}\nBreached: $Counts{Breached}\nPending escalations: $Counts{PendingEscalations}\nDead escalations: $Counts{DeadEscalations}\n");
+        $Self->Print("D724 commitment status\nActive policies: $Counts{Policies}\nObjectives: $Counts{Objectives}\nActive commitments: $Counts{Active}\nBreached: $Counts{Breached}\nPending escalations: $Counts{PendingEscalations}\nDelivered escalations: $Counts{DeliveredEscalations}\nDead escalations: $Counts{DeadEscalations}\nReplayed escalations: $Counts{ReplayedEscalations}\n");
         $Self->Print( $Success ? "Status: OK\n" : "Status: FAILED\n" );
     }
     return $Success ? $Self->ExitCodeOk() : $Self->ExitCodeError();

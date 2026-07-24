@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.3.9';
+our $VERSION = '0.4.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -632,7 +632,7 @@ sub _Aggregate {
     }
     $Data{Events} = \@Events;
     $DBObject->Prepare(
-        SQL => 'SELECT id, commitment_event_id, action_key, action_type, payload_json, status, attempt_count, available_time, processed_time, last_error, delivery_ref, response_code FROM d724_escalation_outbox WHERE tenant_id = ? AND commitment_id = ? ORDER BY id',
+        SQL => 'SELECT id, commitment_event_id, action_key, action_type, payload_json, status, attempt_count, lifetime_attempt_count, replay_count, available_time, processed_time, last_error, delivery_ref, response_code FROM d724_escalation_outbox WHERE tenant_id = ? AND commitment_id = ? ORDER BY id',
         Bind => [ \$Param{TenantID}, \$Param{CommitmentID} ],
     );
     my @Escalations;
@@ -641,8 +641,9 @@ sub _Aggregate {
         next if ref $Payload ne 'HASH';
         push @Escalations, {
             EscalationID => $Row[0], EventID => $Row[1], ActionKey => $Row[2], ActionType => $Row[3], Payload => $Payload,
-            Status => $Row[5], AttemptCount => $Row[6], AvailableTime => $Row[7], ProcessedTime => $Row[8], LastError => $Row[9],
-            DeliveryRef => $Row[10], ResponseCode => $Row[11],
+            Status => $Row[5], AttemptCount => $Row[6], LifetimeAttemptCount => $Row[7], ReplayCount => $Row[8],
+            AvailableTime => $Row[9], ProcessedTime => $Row[10], LastError => $Row[11],
+            DeliveryRef => $Row[12], ResponseCode => $Row[13],
         };
     }
     $Data{Escalations} = \@Escalations; return \%Data;
