@@ -30,11 +30,11 @@ my %Structure = $Kernel::OM->Get('Kernel::System::Package')->PackageParse(
 die "Invalid package metadata\n"
     if !$Structure{Name}->{Content} || !$Structure{Version}->{Content};
 $Structure{Home} = $ModuleDirectory;
+my $PackageName    = $Structure{Name}->{Content};
+my $PackageVersion = $Structure{Version}->{Content};
 my $Package = $Kernel::OM->Get('Kernel::System::Package')->PackageBuild(%Structure);
 die "Package build failed\n" if !$Package;
 
-my $PackageName    = $Structure{Name}->{Content};
-my $PackageVersion = $Structure{Version}->{Content};
 my $Filename       = "$PackageName-$PackageVersion.opm";
 my $Location = File::Spec->catfile( $TargetDirectory, $Filename );
 my $Written = $Main->FileWrite(
