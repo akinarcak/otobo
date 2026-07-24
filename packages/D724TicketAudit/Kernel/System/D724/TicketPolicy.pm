@@ -8,8 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $ObjectManagerDisabled = 1;
-our $VERSION = '0.5.1';
+our $VERSION = '0.5.2';
 
 our @ObjectDependencies = (
     'Kernel::System::CustomerUser',
