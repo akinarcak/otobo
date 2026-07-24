@@ -45,6 +45,11 @@ ok(
     )->{Success},
     'tenant A administrator grants tenant A role',
 );
+my $GrantReplay = $Directory->MembershipGrant(
+    Subject => $AdminA, TenantID => $TenantA, MemberUserID => 1, Role => 'tenant_admin', UserID => 1,
+);
+ok( $GrantReplay->{Success} && $GrantReplay->{IdempotentReplay}, 'active membership grant is idempotent' );
+is( $GrantReplay->{Data}->{Version}, 1, 'idempotent grant does not advance membership version' );
 ok(
     $Directory->MembershipGrant(
         Subject => $AdminB, TenantID => $TenantB, MemberUserID => 1, Role => 'requester', UserID => 1,
@@ -112,6 +117,11 @@ ok(
     )->{Success},
     'tenant membership role can be revoked',
 );
+my $RevokeReplay = $Directory->MembershipRevoke(
+    Subject => $AdminB, TenantID => $TenantB, MemberUserID => 1, Role => 'requester', UserID => 1,
+);
+ok( $RevokeReplay->{Success} && $RevokeReplay->{IdempotentReplay}, 'revoked membership replay is idempotent' );
+is( $RevokeReplay->{Data}->{Version}, 2, 'idempotent revoke does not advance membership version' );
 my $AfterRevoke = $Directory->ContextGet( UserID => 1 );
 ok( !exists $AfterRevoke->{Subject}->{RoleBindings}->{$TenantB}, 'revoked role disappears from context' );
 is(
@@ -124,5 +134,23 @@ is(
     'ALREADY_BOOTSTRAPPED',
     'bootstrap is impossible after a tenant exists',
 );
+
+my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit');
+my $AuditA = $Audit->List( Subject => $AdminA, TenantID => $TenantA, Limit => 100 );
+is(
+    [ map { $_->{Action} } @{ $AuditA->{Data} } ],
+    [qw(tenant.created tenant.membership.granted tenant.updated)],
+    'tenant A directory mutations emit ordered audit events',
+);
+is( [ map { $_->{Sequence} } @{ $AuditA->{Data} } ], [ 1 .. 3 ], 'tenant A directory chain is contiguous' );
+ok( $Audit->Verify( Subject => $AdminA, TenantID => $TenantA )->{Valid}, 'tenant A directory chain verifies' );
+my $AuditB = $Audit->List( Subject => $AdminB, TenantID => $TenantB, Limit => 100 );
+is(
+    [ map { $_->{Action} } @{ $AuditB->{Data} } ],
+    [qw(tenant.created tenant.membership.granted tenant.membership.revoked)],
+    'tenant B grant and revoke emit one event each despite retries',
+);
+ok( $Audit->Verify( Subject => $AdminB, TenantID => $TenantB )->{Valid}, 'tenant B directory chain verifies' );
+is( $Audit->List( Subject => $AdminA, TenantID => $TenantB )->{Error}, 'FORBIDDEN', 'directory audit cannot cross tenant boundary' );
 
 done_testing;

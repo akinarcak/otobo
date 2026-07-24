@@ -11,10 +11,9 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.3';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = (
     'Kernel::Config',
-    'Kernel::System::D724::TenantDirectory',
     'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB',
     'Kernel::System::JSON',
@@ -181,7 +180,9 @@ sub _Authorize {
     return $Self->_Error('AUDIT_DISABLED') if !$Self->_Enabled();
     my $Subject = $Param{Subject};
     if ( ref $Subject ne 'HASH' && $Param{UserID} ) {
-        my $Context = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->ContextGet( UserID => $Param{UserID} );
+        my $Directory = eval { $Kernel::OM->Get('Kernel::System::D724::TenantDirectory') };
+        return $Self->_Error('DIRECTORY_NOT_AVAILABLE') if $@ || !$Directory;
+        my $Context = $Directory->ContextGet( UserID => $Param{UserID} );
         return $Context if !$Context->{Success}; $Subject = $Context->{Subject};
     }
     my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(

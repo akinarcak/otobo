@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
     <Name>D724Catalog</Name>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
     <Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
     <URL>https://github.com/akinarcak/otobo</URL>
@@ -10,8 +10,8 @@
     <Description Lang="tr">D724 ESM icin tenant guvenli hizmet portfoyu ve katalog repository'si.</Description>
     <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
     <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
-    <PackageRequired Version="0.1.1">D724TenantDirectory</PackageRequired>
-    <PackageRequired Version="0.1.3">D724Audit</PackageRequired>
+    <PackageRequired Version="0.2.0">D724TenantDirectory</PackageRequired>
+    <PackageRequired Version="0.2.0">D724Audit</PackageRequired>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsVisible>1</PackageIsVisible>
     <DatabaseInstall Type="post">

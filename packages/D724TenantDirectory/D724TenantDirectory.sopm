@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
     <Name>D724TenantDirectory</Name>
-    <Version>0.1.2</Version>
+    <Version>0.2.0</Version>
     <Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
     <URL>https://github.com/akinarcak/otobo</URL>
@@ -10,6 +10,7 @@
     <Description Lang="tr">D724 ESM icin kalici tenant ve tenant-bazli agent rol dizini.</Description>
     <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
     <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.0">D724Audit</PackageRequired>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsVisible>1</PackageIsVisible>
     <DatabaseInstall Type="post">
@@ -34,6 +35,7 @@
             <Column Name="user_id" Required="true" Type="INTEGER" />
             <Column Name="role_name" Required="true" Size="30" Type="VARCHAR" />
             <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
             <Column Name="create_time" Required="true" Type="DATE" />
             <Column Name="create_by" Required="true" Type="INTEGER" />
             <Column Name="change_time" Required="true" Type="DATE" />
@@ -48,6 +50,11 @@
             <ForeignKey ForeignTable="users"><Reference Local="change_by" Foreign="id" /></ForeignKey>
         </TableCreate>
     </DatabaseInstall>
+    <DatabaseUpgrade Type="post">
+        <TableAlter Name="d724_tenant_agent_role" Version="0.2.0">
+            <ColumnAdd Name="version" Required="true" Default="1" Type="INTEGER" />
+        </TableAlter>
+    </DatabaseUpgrade>
     <DatabaseUninstall Type="pre">
         <TableDrop Name="d724_tenant_agent_role" />
         <TableDrop Name="d724_tenant" />
@@ -59,5 +66,6 @@
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/TenantMembershipGrant.pm" />
         <File Permission="644" Location="scripts/test/D724/TenantDirectory.t" />
         <File Permission="644" Location="scripts/test/D724/TenantDirectoryStatus.t" />
+        <File Permission="644" Location="scripts/test/D724/TenantDirectoryTransaction.t" />
     </Filelist>
 </otobo_package>
