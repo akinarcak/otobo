@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.2';
+our $VERSION = '0.1.3';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -52,7 +52,9 @@ sub Record {
     my $JSON = $Kernel::OM->Get('Kernel::System::JSON');
     my $DetailsJSON = $JSON->Encode( Data => $Details->{Data}, SortKeys => 1 );
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
-    my $OwnTransaction = $DB->{dbh}->{AutoCommit} ? 1 : 0;
+    my $Handle = $DB->Connect();
+    return $Self->_Error('AUDIT_DB_UNAVAILABLE') if !$Handle;
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
     eval {
         $DB->BeginWork() if $OwnTransaction;
         my ( $Zero, $Version ) = ( '0' x 64, 1 );
@@ -72,7 +74,7 @@ sub Record {
         );
         my ( $ExistingSequence, $ExistingUUID, $ExistingHash, $ExistingPreviousHash ) = $DB->FetchrowArray();
         if ( defined $ExistingSequence ) {
-            $DB->{dbh}->commit() if $OwnTransaction;
+            $Handle->commit() if $OwnTransaction;
             return { Success => 1, IdempotentReplay => 1, Data => {
                 Sequence => $ExistingSequence, EventUUID => $ExistingUUID,
                 EventHash => $ExistingHash, PreviousHash => $ExistingPreviousHash,
@@ -103,7 +105,7 @@ sub Record {
             SQL => 'UPDATE d724_audit_head SET last_sequence = ?, last_hash = ?, version = version + 1, change_time = current_timestamp WHERE tenant_id = ?',
             Bind => [ \$Sequence, \$EventHash, \$Param{TenantID} ],
         );
-        $DB->{dbh}->commit() if $OwnTransaction;
+        $Handle->commit() if $OwnTransaction;
         return { Success => 1, IdempotentReplay => 0, Data => { Sequence => $Sequence, EventUUID => $UUID, EventHash => $EventHash, PreviousHash => $PreviousHash } };
     } or do {
         my $Error = $@ || 'AUDIT_WRITE_FAILED'; eval { $DB->Rollback() } if $OwnTransaction;

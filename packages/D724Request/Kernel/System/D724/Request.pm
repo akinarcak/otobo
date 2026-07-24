@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.4.1';
+our $VERSION = '0.4.2';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -485,11 +485,13 @@ sub _TransactionRun {
     my ( $Self, %Param ) = @_;
     return $Self->_Error('TRANSACTION_CODE_INVALID') if ref $Param{Code} ne 'CODE';
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    my $Handle = $DB->Connect();
+    return $Self->_Error('TRANSACTION_CONNECTION_FAILED') if !$Handle;
 
     # OTOBO unit tests and callers may already own the surrounding transaction.
     # In that case this operation joins it; the outer owner remains responsible
     # for commit/rollback. Normal web and console requests enter with AutoCommit.
-    return $Param{Code}->() if !$DB->{dbh}->{AutoCommit};
+    return $Param{Code}->() if !$Handle->{AutoCommit};
 
     my $Result;
     my $OK = eval {
@@ -497,7 +499,7 @@ sub _TransactionRun {
         $Result = $Param{Code}->();
         die "TRANSACTION_RESULT_INVALID\n" if ref $Result ne 'HASH' || !exists $Result->{Success};
         if ( $Result->{Success} ) {
-            die "TRANSACTION_COMMIT_FAILED\n" if !$DB->{dbh}->commit();
+            die "TRANSACTION_COMMIT_FAILED\n" if !$Handle->commit();
         }
         else {
             die "TRANSACTION_ROLLBACK_FAILED\n" if !$DB->Rollback();
@@ -506,7 +508,7 @@ sub _TransactionRun {
     };
     if ( !$OK ) {
         my $Failure = $@ || 'TRANSACTION_FAILED';
-        eval { $DB->Rollback() } if !$DB->{dbh}->{AutoCommit};
+        eval { $DB->Rollback() } if !$Handle->{AutoCommit};
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error', Message => "D724 request transaction failed: $Failure",
         );
