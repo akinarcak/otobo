@@ -59,7 +59,7 @@ for my $Case (@Matrix) {
     );
     is( $Decision->{Allowed}, $Allowed, "$Name: allowed" );
     is( $Decision->{Reason}, $Reason, "$Name: reason" );
-    is( $Decision->{PolicyVersion}, '1.0.0', "$Name: policy version" );
+    is( $Decision->{PolicyVersion}, '1.1.0', "$Name: policy version" );
 }
 
 is(
@@ -129,6 +129,59 @@ my $Scope = $Guard->ScopeGet(
 ok( $Scope->{Success}, 'valid tenant scope succeeds' );
 is( $Scope->{TenantIDs}, [ 'tenant-a', 'tenant-b' ], 'tenant scope is unique and sorted' );
 ok( !$Scope->{Unrestricted}, 'ordinary scope is never unrestricted' );
+
+my $BoundSubject = {
+    ID           => 'multi-tenant-agent',
+    TenantIDs    => [ 'tenant-a', 'tenant-b' ],
+    RoleBindings => {
+        'tenant-a' => ['tenant_admin'],
+        'tenant-b' => ['requester'],
+    },
+};
+my $BoundAdminA = $Guard->DecisionGet(
+    Subject => $BoundSubject, Resource => { TenantID => 'tenant-a' }, Action => 'catalog.manage',
+);
+ok( $BoundAdminA->{Allowed}, 'tenant-bound admin manages only its assigned tenant' );
+is( $BoundAdminA->{MatchedRole}, 'tenant_admin', 'tenant-bound decision reports matched role' );
+is(
+    $Guard->DecisionGet(
+        Subject => $BoundSubject, Resource => { TenantID => 'tenant-b' }, Action => 'catalog.manage',
+    )->{Reason},
+    'DENY_ROLE_NOT_GRANTED',
+    'admin privilege from tenant A never bleeds into tenant B',
+);
+ok(
+    $Guard->DecisionGet(
+        Subject => $BoundSubject, Resource => { TenantID => 'tenant-b' }, Action => 'catalog.read',
+    )->{Allowed},
+    'tenant B requester grant still applies in tenant B',
+);
+is(
+    $Guard->ScopeGet( Subject => $BoundSubject )->{TenantIDs},
+    [ 'tenant-a', 'tenant-b' ],
+    'scope derives all tenant role bindings',
+);
+is(
+    $Guard->DecisionGet(
+        Subject => { %{$BoundSubject}, TenantIDs => ['tenant-a'] },
+        Resource => { TenantID => 'tenant-a' }, Action => 'catalog.read',
+    )->{Reason},
+    'DENY_TENANT_SCOPE_MISMATCH',
+    'declared tenant scope cannot omit a role binding',
+);
+is(
+    $Guard->ScopeGet( Subject => { ID => 'empty-bindings', RoleBindings => {} } )->{Reason},
+    'DENY_ROLE_BINDINGS_EMPTY',
+    'empty role bindings fail closed',
+);
+is(
+    $Guard->DecisionGet(
+        Subject => { ID => 'bad-bindings', RoleBindings => { 'tenant-a' => 'tenant_admin' } },
+        Resource => { TenantID => 'tenant-a' }, Action => 'catalog.read',
+    )->{Reason},
+    'DENY_ROLE_BINDING_INVALID',
+    'malformed role binding fails closed',
+);
 
 my $InvalidScope = $Guard->ScopeGet(
     Subject => {

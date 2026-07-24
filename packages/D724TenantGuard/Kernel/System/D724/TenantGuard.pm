@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -69,14 +69,29 @@ sub DecisionGet {
     return $Deny->('DENY_SUBJECT_MISSING') if ref $Subject ne 'HASH';
     return $Deny->('DENY_SUBJECT_ID_MISSING') if !$Self->_IdentifierValid( $Subject->{ID} );
 
-    my $Roles = $Subject->{Roles};
-    return $Deny->('DENY_SUBJECT_ROLES_MISSING') if ref $Roles ne 'ARRAY' || !@{$Roles};
+    my $Roles        = $Subject->{Roles};
+    my $RoleBindings = $Subject->{RoleBindings};
+    return $Deny->('DENY_SUBJECT_ROLES_MISSING')
+        if ref $RoleBindings ne 'HASH' && ( ref $Roles ne 'ARRAY' || !@{$Roles} );
+    return $Deny->('DENY_ROLE_BINDINGS_EMPTY')
+        if ref $RoleBindings eq 'HASH' && !keys %{$RoleBindings};
 
-    my $SubjectTenantIDs = $Subject->{TenantIDs};
-    return $Deny->('DENY_SUBJECT_TENANT_MISSING')
-        if ref $SubjectTenantIDs ne 'ARRAY' || !@{$SubjectTenantIDs};
+    my $SubjectTenantIDs = ref $RoleBindings eq 'HASH'
+        ? [ keys %{$RoleBindings} ]
+        : $Subject->{TenantIDs};
+    return $Deny->('DENY_SUBJECT_TENANT_MISSING') if ref $SubjectTenantIDs ne 'ARRAY' || !@{$SubjectTenantIDs};
     for my $TenantID ( @{$SubjectTenantIDs} ) {
         return $Deny->('DENY_TENANT_IDENTIFIER_INVALID') if !$Self->_IdentifierValid($TenantID);
+        return $Deny->('DENY_ROLE_BINDING_INVALID')
+            if ref $RoleBindings eq 'HASH'
+            && ( ref $RoleBindings->{$TenantID} ne 'ARRAY' || !@{ $RoleBindings->{$TenantID} } );
+    }
+    if ( ref $RoleBindings eq 'HASH' && defined $Subject->{TenantIDs} ) {
+        return $Deny->('DENY_TENANT_SCOPE_MISMATCH') if ref $Subject->{TenantIDs} ne 'ARRAY';
+        my %Declared = map { $_ => 1 } @{ $Subject->{TenantIDs} };
+        my %Bound    = map { $_ => 1 } keys %{$RoleBindings};
+        return $Deny->('DENY_TENANT_SCOPE_MISMATCH')
+            if join( q{|}, sort keys %Declared ) ne join( q{|}, sort keys %Bound );
     }
 
     my $Resource = $Param{Resource};
@@ -86,7 +101,8 @@ sub DecisionGet {
     return $Deny->('DENY_TENANT_IDENTIFIER_INVALID')
         if !$Self->_IdentifierValid( $Resource->{TenantID} );
 
-    my %Roles = map { $_ => 1 } @{$Roles};
+    my %Roles;
+    %Roles = map { $_ => 1 } @{$Roles} if ref $Roles eq 'ARRAY';
     if (
         $Roles{platform_admin}
         && $ConfigObject->Get('D724::TenantGuard::AllowPlatformAdmin')
@@ -102,7 +118,10 @@ sub DecisionGet {
     my %SubjectTenants = map { $_ => 1 } @{$SubjectTenantIDs};
     return $Deny->('DENY_CROSS_TENANT') if !$SubjectTenants{ $Resource->{TenantID} };
 
-    for my $Role ( @{$Roles} ) {
+    my $ResourceRoles = ref $RoleBindings eq 'HASH'
+        ? $RoleBindings->{ $Resource->{TenantID} }
+        : $Roles;
+    for my $Role ( @{ $ResourceRoles // [] } ) {
         next if !$RoleActions{$Role};
         next if !$RoleActions{$Role}->{$Action};
 
@@ -145,18 +164,36 @@ sub ScopeGet {
         TenantIDs     => [],
     } if !$Self->_IdentifierValid( $Subject->{ID} );
 
-    my $Roles = $Subject->{Roles};
+    my $Roles        = $Subject->{Roles};
+    my $RoleBindings = $Subject->{RoleBindings};
     return {
         Success       => 0,
         Reason        => 'DENY_SUBJECT_ROLES_MISSING',
         PolicyVersion => $PolicyVersion,
         TenantIDs     => [],
-    } if ref $Roles ne 'ARRAY' || !@{$Roles};
+    } if ref $RoleBindings ne 'HASH' && ( ref $Roles ne 'ARRAY' || !@{$Roles} );
 
-    my %Roles = map { $_ => 1 } @{$Roles};
+    return {
+        Success       => 0,
+        Reason        => 'DENY_ROLE_BINDINGS_EMPTY',
+        PolicyVersion => $PolicyVersion,
+        TenantIDs     => [],
+    } if ref $RoleBindings eq 'HASH' && !keys %{$RoleBindings};
+
+    my %Roles;
+    %Roles = map { $_ => 1 } @{$Roles} if ref $Roles eq 'ARRAY';
     my $KnownRole = $Roles{platform_admin};
     for my $Role ( keys %Roles ) {
         $KnownRole = 1 if $RoleActions{$Role};
+    }
+    if ( ref $RoleBindings eq 'HASH' ) {
+        for my $TenantID ( keys %{$RoleBindings} ) {
+            my $TenantRoles = $RoleBindings->{$TenantID};
+            next if ref $TenantRoles ne 'ARRAY';
+            for my $Role ( @{$TenantRoles} ) {
+                $KnownRole = 1 if $RoleActions{$Role};
+            }
+        }
     }
     return {
         Success       => 0,
@@ -165,7 +202,7 @@ sub ScopeGet {
         TenantIDs     => [],
     } if !$KnownRole;
 
-    my $TenantIDs = $Subject->{TenantIDs};
+    my $TenantIDs = ref $RoleBindings eq 'HASH' ? [ keys %{$RoleBindings} ] : $Subject->{TenantIDs};
     return {
         Success       => 0,
         Reason        => 'DENY_SUBJECT_TENANT_MISSING',
@@ -181,7 +218,29 @@ sub ScopeGet {
             PolicyVersion => $PolicyVersion,
             TenantIDs     => [],
         } if !$Self->_IdentifierValid($TenantID);
+        return {
+            Success       => 0,
+            Reason        => 'DENY_ROLE_BINDING_INVALID',
+            PolicyVersion => $PolicyVersion,
+            TenantIDs     => [],
+        } if ref $RoleBindings eq 'HASH'
+            && ( ref $RoleBindings->{$TenantID} ne 'ARRAY' || !@{ $RoleBindings->{$TenantID} } );
         $TenantIDs{$TenantID} = 1;
+    }
+    if ( ref $RoleBindings eq 'HASH' && defined $Subject->{TenantIDs} ) {
+        return {
+            Success       => 0,
+            Reason        => 'DENY_TENANT_SCOPE_MISMATCH',
+            PolicyVersion => $PolicyVersion,
+            TenantIDs     => [],
+        } if ref $Subject->{TenantIDs} ne 'ARRAY';
+        my %Declared = map { $_ => 1 } @{ $Subject->{TenantIDs} };
+        return {
+            Success       => 0,
+            Reason        => 'DENY_TENANT_SCOPE_MISMATCH',
+            PolicyVersion => $PolicyVersion,
+            TenantIDs     => [],
+        } if join( q{|}, sort keys %Declared ) ne join( q{|}, sort keys %TenantIDs );
     }
 
     my $Unrestricted =
