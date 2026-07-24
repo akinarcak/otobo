@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.4.0';
+our $VERSION = '0.4.1';
 our @ObjectDependencies = ( 'Kernel::Config', 'Kernel::System::DB', 'Kernel::System::JSON' );
 
 sub Configure {
@@ -45,7 +45,7 @@ sub Run {
         }
     }
     my $Status = {
-        Success => $Table && !$Unbound ? 1 : 0, Package => 'D724TicketAudit', Version => '0.4.0',
+        Success => $Table && !$Unbound ? 1 : 0, Package => 'D724TicketAudit', Version => '0.4.1',
         Enabled => $Kernel::OM->Get('Kernel::Config')->Get('D724::TicketAudit::Enabled') ? 1 : 0,
         Tables => { d724_ticket_scope => $Table }, Counts => {
             Tickets => $Tickets, Tenants => $Tenants, CoreTickets => $CoreTickets,
@@ -57,7 +57,7 @@ sub Run {
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, Pretty => 1, SortKeys => 1 ) . "\n" );
     }
-    else { $Self->Print("D724TicketAudit 0.4.0: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n") }
+    else { $Self->Print("D724TicketAudit 0.4.1: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n") }
     return $Status->{Success} ? $Self->ExitCodeOk() : $Self->ExitCodeError();
 }
 

@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.4.0';
+our $VERSION = '0.4.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
