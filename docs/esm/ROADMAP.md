@@ -5,6 +5,8 @@
 - [x] `FOUND-01`: kaynak koddan Docker image, Compose gelistirme profili, statik smoke testi ve GitHub Actions kalite kapisi (`2026-07-24`).
 - [x] Ozel test sunucusunda izole temel kurulum: MariaDB, Redis, OTOBO web ve daemon; HTTP ve konsol smoke testleri (`2026-07-24`).
 - [x] `FOUND-02`: kurulabilir `D724Foundation 0.1.0` paketi, SysConfig, JSON tanilama komutu ve 15 paket testi (`2026-07-24`).
+- [x] `SEC-01a`: tenant threat modeli, varsayilan-reddet `D724TenantGuard 0.1.1`, karar/scope API'leri ve 78 negatif-pozitif test (`2026-07-24`).
+- [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
 
@@ -56,11 +58,11 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 ## Ilk backlog sirasi
 
-1. `SEC-01`: tenant policy servisinin threat modeli ve test matrisi
-2. `CAT-01`: Service/Offering/CatalogItem semasi ve yonetim API'si
-3. `CAT-02`: portal katalog listeleme ve dinamik form
-4. `FLOW-01`: onay + fulfillment orkestrasyonu
-5. `SLA-01`: commitment motoru ve takvim hesaplari
-6. `AUD-01`: normalize audit event ve disari aktarim
+1. `CAT-01`: tenant-guarded Service/Offering/CatalogItem semasi, repository ve yonetim API'si (`SEC-01b` ilk adapter'i)
+2. `CAT-02`: portal katalog listeleme ve dinamik form
+3. `FLOW-01`: onay + fulfillment orkestrasyonu
+4. `SLA-01`: commitment motoru ve takvim hesaplari
+5. `AUD-01`: normalize audit event ve disari aktarim
+6. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari
 7. `OBS-01`: metrikler, dashboard ve alarm esikleri
 8. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari
