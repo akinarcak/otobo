@@ -5,12 +5,16 @@
 use v5.24;
 use strict;
 use warnings;
+use Capture::Tiny qw(capture);
 use Test2::V0;
 use Kernel::System::UnitTest::RegisterOM;
 
 my $Command = $Kernel::OM->Get('Kernel::System::Console::Command::Admin::D724::TicketAuditStatus');
-my $DB = $Kernel::OM->Get('Kernel::System::DB');
-ok( $DB->TableExists( Table => 'd724_ticket_scope' ), 'ticket scope table exists' );
-is( $Command->Run(), 0, 'ticket audit status command succeeds' );
-is( $Command->VERSION(), '0.1.0', 'ticket audit status command exposes package version' );
+my ( $JSON, undef, $ExitCode ) = capture { return $Command->Execute('--json') };
+is( $ExitCode, 0, 'ticket audit status command succeeds' );
+my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
+ok( $Status->{Success}, 'ticket audit schema is healthy' );
+is( $Status->{Package}, 'D724TicketAudit', 'status identifies package' );
+is( $Status->{Version}, '0.1.0', 'status identifies version' );
+ok( $Status->{Tables}->{d724_ticket_scope}, 'ticket scope table is reported' );
 done_testing;

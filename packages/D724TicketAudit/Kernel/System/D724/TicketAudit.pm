@@ -110,7 +110,7 @@ sub _ScopeLock {
     my ( $Self, %Param ) = @_;
     my $TicketID = $Param{TicketID};
     $Kernel::OM->Get('Kernel::System::DB')->Prepare(
-        SQL => 'SELECT tenant_id, version, status FROM d724_ticket_scope WHERE ticket_id = ? FOR UPDATE', Bind => [ \$TicketID ], Limit => 1,
+        SQL => 'SELECT tenant_id, version, status FROM d724_ticket_scope WHERE ticket_id = ? FOR UPDATE', Bind => [ \$TicketID ],
     );
     my @Row = $Kernel::OM->Get('Kernel::System::DB')->FetchrowArray();
     return if !defined $Row[0];

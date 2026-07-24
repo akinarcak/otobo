@@ -22,7 +22,8 @@ sub Configure {
 sub Run {
     my ($Self) = @_;
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
-    my $Table = $DB->TableExists( Table => 'd724_ticket_scope' ) ? 1 : 0;
+    my %Existing = map { $_ => 1 } $DB->ListTables();
+    my $Table = $Existing{d724_ticket_scope} ? 1 : 0;
     my ( $Tickets, $Tenants ) = ( 0, 0 );
     if ($Table) {
         $DB->Prepare( SQL => 'SELECT COUNT(*), COUNT(DISTINCT tenant_id) FROM d724_ticket_scope' );
