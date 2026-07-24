@@ -60,6 +60,20 @@ die "Could not set demo customer password\n" if !$CustomerUserObject->SetPasswor
 my $Catalog = $Kernel::OM->Get('Kernel::System::D724::Catalog');
 my $Subject = { ID => 'demo-seeder', Roles => ['tenant_admin'], TenantIDs => [$TenantID] };
 my %Write   = ( Subject => $Subject, TenantID => $TenantID, UserID => $UserID );
+my $Commitment = eval { $Kernel::OM->Get('Kernel::System::D724::Commitment') };
+if ($Commitment) {
+    my $Policies = $Commitment->PolicyList( Subject => $Subject, TenantID => $TenantID );
+    die "Could not list demo commitment policies\n" if !$Policies->{Success};
+    my ($Policy) = grep { $_->{Key} eq 'standard-resolution' } @{ $Policies->{Data} };
+    if (!$Policy) {
+        my $Result = $Commitment->PolicyCreate(
+            %Write, Key => 'standard-resolution', Name => 'Standard Request Resolution',
+            CalendarID => 0, TargetSeconds => 28_800, WarningPercent => 75,
+            PauseStatuses => ['awaiting_approval'], Status => 'active',
+        );
+        die "Could not create demo commitment policy: $Result->{Error}\n" if !$Result->{Success};
+    }
+}
 my $Services = $Catalog->ServiceList( Subject => $Subject, TenantID => $TenantID );
 die "Could not list demo services\n" if !$Services->{Success};
 my ($Service) = grep { $_->{Key} eq 'digital-workplace' } @{ $Services->{Data} };
@@ -100,12 +114,18 @@ if (!$Item) {
 my $ExistingSchema = $Catalog->CatalogItemSchemaGet(
     Subject => $Subject, TenantID => $TenantID, CatalogItemID => $Item->{CatalogItemID},
 );
+my $DesiredWorkflow = {
+    approval => { required => 1, approver_role => 'tenant_admin' },
+    fulfillment => [ { key => 'prepare', name => 'Prepare and deliver laptop', type => 'manual' } ],
+    commitment => { policy_key => 'standard-resolution' },
+};
 if (!$ExistingSchema->{Success}) {
     my $Result = $Catalog->CatalogItemSchemaSet(
         %Write,
         CatalogItemID => $Item->{CatalogItemID},
         Schema => {
             version => 1,
+            workflow => $DesiredWorkflow,
             fields  => [
                 { key => 'employee', label => 'Employee', type => 'text', required => 1 },
                 {
@@ -121,5 +141,15 @@ if (!$ExistingSchema->{Success}) {
     );
     die "Could not create demo schema: $Result->{Error}\n" if !$Result->{Success};
 }
+elsif ( !$ExistingSchema->{Data}->{Schema}->{workflow}->{commitment} ) {
+    my $Schema = $ExistingSchema->{Data}->{Schema};
+    $Schema->{version}++;
+    $Schema->{workflow} = $DesiredWorkflow;
+    my $Result = $Catalog->CatalogItemSchemaSet(
+        %Write, CatalogItemID => $Item->{CatalogItemID},
+        ExpectedVersion => $ExistingSchema->{Data}->{Version}, Schema => $Schema,
+    );
+    die "Could not upgrade demo schema: $Result->{Error}\n" if !$Result->{Success};
+}
 
-say "D724 demo catalog seeded for tenant $TenantID and customer login $Login.";
+say "D724 demo catalog and commitment policy seeded for tenant $TenantID and customer login $Login.";

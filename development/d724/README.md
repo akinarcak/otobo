@@ -41,10 +41,11 @@ Elasticsearch is optional because its image and memory footprint are substantial
 
 ## Tenant-safe demo catalog
 
-After installing `D724Catalog`, copy `Seed-D724Demo.pl` into the web container and
+After installing `D724Catalog`, `D724Request`, and `D724Commitment`, copy `Seed-D724Demo.pl` into the web container and
 run it as the `otobo` user with `D724_DEMO_CUSTOMER_PASSWORD` supplied only through
 the process environment. The script is idempotent and creates customer login
-`demo.customer`, tenant `d724-demo`, and a sample laptop request form. Never commit
+`demo.customer`, tenant `d724-demo`, a sample laptop approval/fulfillment form, and
+an eight-business-hour resolution policy with a 75% warning threshold. Never commit
 or print the supplied password. The Perl invocation must include OTOBO's bundled
 libraries: `perl -I. -IKernel/cpan-lib -ICustom /tmp/Seed-D724Demo.pl`.
 
