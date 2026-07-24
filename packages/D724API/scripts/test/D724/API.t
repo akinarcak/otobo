@@ -81,6 +81,7 @@ ok( $DB->Do( SQL => 'DELETE FROM d724_api_token WHERE client_id = ?', Bind => [ 
 ok( $DB->Do( SQL => 'DELETE FROM d724_api_client WHERE client_id = ?', Bind => [ \$ClientID ] ), 'client fixture removed' );
 for my $TicketID (@TicketIDs) {
     ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$TicketID ] ), "ticket scope $TicketID removed" );
+    ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), "core ticket $TicketID removed" );
 }
 for my $TenantID ( $Tenant, $Other ) {
     ok( $DB->Do( SQL => 'DELETE FROM d724_audit_event WHERE tenant_id = ?', Bind => [ \$TenantID ] ), "audit events $TenantID removed" );
