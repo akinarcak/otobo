@@ -6,7 +6,7 @@ use v5.24; use strict; use warnings; use Test2::V0; use Kernel::System::UnitTest
 my $Command=$Kernel::OM->Get('Kernel::System::Console::Command::Admin::D724::APIStatus');
 my $Status=$Command->StatusData();
 ok($Status->{Success},'API storage status succeeds');
-is($Status->{Version},'0.1.2','status reports package version');
+is($Status->{Version},'0.2.3','status reports package version');
 is($Status->{MissingTables},[],'all API tables exist');
 ok($Status->{Counts}->{RateWindowUnique},'client and minute rate window has composite unique index');
 is($Status->{Counts}->{InvalidTenantClients},0,'all clients reference active tenants');

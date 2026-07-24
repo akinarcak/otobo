@@ -4,7 +4,7 @@
 # --
 package Kernel::System::Console::Command::Admin::D724::APIStatus;
 use v5.24; use strict; use warnings; use parent qw(Kernel::System::Console::BaseCommand);
-our $VERSION = '0.1.2'; our @ObjectDependencies = ('Kernel::Config','Kernel::System::DB','Kernel::System::JSON');
+our $VERSION = '0.2.3'; our @ObjectDependencies = ('Kernel::Config','Kernel::System::DB','Kernel::System::JSON');
 sub Configure { my ($Self)=@_; $Self->Description('Validate D724 API authorization storage and invariants.'); $Self->AddOption(Name=>'json',Description=>'Print JSON.',Required=>0,HasValue=>0); return }
 sub StatusData {
     my ($Self)=@_; my $DB=$Kernel::OM->Get('Kernel::System::DB'); my %Table=map { $_=>1 } $DB->ListTables();
@@ -21,7 +21,7 @@ sub StatusData {
     }
     $_//=0 for values %Count;
     my $Success=!@Missing && $Count{RateWindowUnique} && !$Count{QueryErrors} && !$Count{InvalidTenantClients} && !$Count{InvalidSecretHashes} && !$Count{InvalidTokenHashes} && !$Count{DuplicateRateWindows};
-    return {Success=>$Success?1:0,Package=>'D724API',Version=>'0.1.2',Enabled=>$Kernel::OM->Get('Kernel::Config')->Get('D724::API::Enabled')?1:0,MissingTables=>\@Missing,Counts=>\%Count};
+    return {Success=>$Success?1:0,Package=>'D724API',Version=>$VERSION,Enabled=>$Kernel::OM->Get('Kernel::Config')->Get('D724::API::Enabled')?1:0,MissingTables=>\@Missing,Counts=>\%Count};
 }
-sub Run { my ($Self)=@_; my $S=$Self->StatusData(); if($Self->GetOption('json')){$Self->Print($Kernel::OM->Get('Kernel::System::JSON')->Encode(Data=>$S,SortKeys=>1,Pretty=>1)."\n")}else{$Self->Print('D724API 0.1.2: '.($S->{Success}?'OK':'FAILED')."\n")} return $S->{Success}?$Self->ExitCodeOk():$Self->ExitCodeError() }
+sub Run { my ($Self)=@_; my $S=$Self->StatusData(); if($Self->GetOption('json')){$Self->Print($Kernel::OM->Get('Kernel::System::JSON')->Encode(Data=>$S,SortKeys=>1,Pretty=>1)."\n")}else{$Self->Print("D724API $VERSION: ".($S->{Success}?'OK':'FAILED')."\n")} return $S->{Success}?$Self->ExitCodeOk():$Self->ExitCodeError() }
 1;

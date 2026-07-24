@@ -20,6 +20,7 @@
 - [x] `AUD-01b-directory`: tenant create/update ve membership grant/revoke mutasyonlari icin normalize audit, membership versioning, tenant-row lock ve transaction-atomic rollback (`2026-07-24`).
 - [x] `AUD-01b-ticket-core`: OTOBO ticket create ile title/queue/customer/lock/state/owner/responsible/priority ve DB-backed MIME article create icin immutable tenant scope, transaction-atomic audit ve legacy migration kapisi (`2026-07-24`).
 - [x] `SEC-01b-ticket`: OTOBO TicketSearch sorgu-oncesi tenant filtresi, raw bypass reddi, immutable-scope tekil okuma ve Generic Interface ortak get/history/update tenant kapisi (`2026-07-24`).
+- [x] `API-01a`: tenant-bazli client credentials, bcrypt secret, digest-only opaque token, atomik rate limit, auditli client revoke ve tenant-scope vaka read HTTP API'si (`2026-07-24`).
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
@@ -74,6 +75,6 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 1. `AUD-01b-core`: kalan ticket delete/merge/type/service/SLA/pending ve Chat article, Generic Interface/SLA scheduler mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
 2. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
-3. `API-01`: tenant-safe REST API, OAuth client kimligi, rate limit ve imzali webhook sozlesmeleri
+3. `API-01b`: canonical `/api/v1`, OpenAPI, idempotent write endpoint'leri, secret rotation ve imzali webhook sozlesmeleri
 4. `OBS-01`: metrikler, dashboard ve alarm esikleri
 5. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari

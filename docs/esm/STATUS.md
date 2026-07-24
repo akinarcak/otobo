@@ -90,7 +90,15 @@ Son dogrulama: `2026-07-24`
   - authenticated HTTP akisi `REQ-0000000042`: iki hedef paused, onaydan sonra uc hedef running, ilk yanit ve fulfillment sonunda uc hedef met.
   - atomik lease, exponential retry ve dead-letter escalation dispatcher,
   - tenant-role OTOBO email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
-- Sekiz D724 paketinde toplam 26 test dosyasi ve 486 test birlikte `PASS`.
+- GPL-3.0 `D724API 0.2.3` OPM paketi:
+  - tenant-bazli bcrypt client credentials ve yalniz SHA-256 digest'i saklanan kisa omurlu opaque bearer token,
+  - varsayilan-reddet role/action karari ve DB-atomik istemci/dakika rate limit,
+  - tenant-admin client create ile auditli, optimistic-version ve idempotent client revoke; tum tokenlarin aninda iptali,
+  - OTOBO Public frontend uzerinden token, cursor'lu vaka listesi ve tek vaka JSON endpoint'leri,
+  - immutable `d724_ticket_scope` SQL predicate'i; cross-tenant nesne varligini gizleyen `404`,
+  - `no-store`, `nosniff`, bearer challenge ve `429 Retry-After` guvenlik basliklari,
+  - secret/token yazdirmayan gercek HTTP kabulunde token/list/get `200`, bilinmeyen vaka `404`, revoke sonrasi ayni token `401`.
+- Dokuz D724 paketinde toplam 29 test dosyasi ve 562 test birlikte `PASS`.
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
@@ -125,4 +133,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi genel `SEC-01b/API-01`: daemon/report/cache/Elasticsearch adapter'lari ile OAuth client, operasyon-bazli role/action, rate limit ve surumlu REST kontrati; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
+Bir sonraki urun kapisi `API-01b/SEC-01b`: canonical `/api/v1`, OpenAPI, idempotent write API, secret rotation ve imzali webhook; daemon/report/cache/Elasticsearch policy adapter'lari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
