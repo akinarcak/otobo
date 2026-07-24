@@ -16,6 +16,7 @@ Bu dizin, OTOBO `rel-11_1` tabani uzerinde gelistirilecek ticari ESM urununun ka
 - [ARCHITECTURE.md](ARCHITECTURE.md): teknik sinirlar ve hedef mimari
 - [ROADMAP.md](ROADMAP.md): surumlar, epic'ler ve basari olcutleri
 - [GPL-COMMERCIAL.md](GPL-COMMERCIAL.md): ticari model ve uyum kontrol listesi
+- [STATUS.md](STATUS.md): dogrulanmis mevcut durum ve acik kapsam
 
 ## Gelistirme modeli
 
