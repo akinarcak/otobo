@@ -69,11 +69,20 @@ ok( $ReadTwo->{Success}, 'second authorized request succeeds' );
 is( $ReadTwo->{Data}->{Remaining}, 0, 'second request consumes final rate unit' );
 is( $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'case.read' )->{Error}, 'RATE_LIMITED', 'atomic per-minute limit fails closed' );
 
-ok( $API->TokenRevoke( AccessToken => $Token )->{Success}, 'token revocation succeeds' );
-is( $API->TokenValidate( AccessToken => $Token )->{Error}, 'TOKEN_INVALID', 'revoked token is immediately invalid' );
+ok( $API->TokenRevoke( AccessToken => $Token )->{Success}, 'individual token revocation succeeds' );
+is( $API->TokenValidate( AccessToken => $Token )->{Error}, 'TOKEN_INVALID', 'individually revoked token is immediately invalid' );
+my $SecondIssued = $API->TokenIssue( ClientID => $ClientID, ClientSecret => $Secret );
+ok( $SecondIssued->{Success}, 'second token issued before client revocation' );
+my $SecondToken = $SecondIssued->{Data}->{AccessToken};
+my $Revoked = $API->ClientRevoke( Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID, UserID => 1 );
+ok( $Revoked->{Success}, 'tenant administrator revokes API client' );
+is( $Revoked->{Data}->{Version}, 2, 'client revocation advances optimistic version' );
+is( $API->TokenValidate( AccessToken => $SecondToken )->{Error}, 'TOKEN_INVALID', 'client revocation immediately invalidates every active token' );
+is( $API->ClientRevoke( Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID, UserID => 1 )->{Data}->{Version}, 2, 'client revocation replay is idempotent' );
+is( $API->ClientRevoke( Subject => { %{$Admin}, TenantIDs => [$Other], RoleBindings => { $Other => ['tenant_admin'] } }, TenantID => $Other, ClientID => $ClientID, UserID => 1 )->{Error}, 'CLIENT_NOT_FOUND', 'cross-tenant client lookup is hidden' );
 
 my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit')->List( Subject => $Admin, TenantID => $Tenant, Limit => 100 );
-is( [ map { $_->{Action} } grep { $_->{ObjectType} eq 'api_client' } @{ $Audit->{Data} } ], ['api.client.created'], 'client creation has tenant audit evidence' );
+is( [ map { $_->{Action} } grep { $_->{ObjectType} eq 'api_client' } @{ $Audit->{Data} } ], ['api.client.created', 'api.client.revoked'], 'client lifecycle has tenant audit evidence' );
 
 {
     local $Kernel::OM->Get('Kernel::Config')->{'D724::API::Enabled'} = 0;

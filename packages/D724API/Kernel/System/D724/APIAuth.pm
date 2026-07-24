@@ -10,7 +10,7 @@ use warnings;
 use Digest::SHA qw(sha256_hex);
 use Encode ();
 
-our $VERSION = '0.1.2';
+our $VERSION = '0.2.1';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::D724::Audit', 'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB', 'Kernel::System::Log', 'Kernel::System::Main',
@@ -77,6 +77,60 @@ sub TokenIssue {
         Bind => \@Bind,
     );
     return { Success => 1, Data => { AccessToken => $Token, TokenType => 'Bearer', ExpiresIn => $TTL, TenantID => $Client->{TenantID}, Role => $Client->{Role} } };
+}
+
+sub ClientRevoke {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('API_DISABLED') if !$Self->_Enabled();
+    return $Self->_Error('CLIENT_ID_INVALID')
+        if ( $Param{ClientID} // q{} ) !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{7,127}\z}smx;
+    return $Self->_Error('TENANT_ID_INVALID')
+        if ( $Param{TenantID} // q{} ) !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    return $Self->_Error('USER_ID_INVALID')
+        if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+
+    my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(
+        Subject => $Param{Subject}, Resource => { TenantID => $Param{TenantID} }, Action => 'tenant.manage',
+    );
+    return $Self->_Error( 'FORBIDDEN', $Decision->{Reason} ) if !$Decision->{Allowed};
+    my $Client = $Self->_ClientGet( ClientID => $Param{ClientID} );
+    return $Self->_Error('CLIENT_NOT_FOUND')
+        if !$Client || $Client->{TenantID} ne $Param{TenantID};
+    return { Success => 1, Data => { ClientID => $Client->{ClientID}, Status => 'revoked', Version => $Client->{Version} } }
+        if $Client->{Status} eq 'revoked';
+
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    my $Handle = $DB->Connect();
+    return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $NextVersion = $Client->{Version} + 1;
+    my $OK = eval {
+        $DB->BeginWork() if $Handle->{AutoCommit};
+        my @ClientValues = ( $Param{UserID}, $Client->{ClientID}, $Param{TenantID}, $Client->{Version} );
+        my @ClientBind = map { \$_ } @ClientValues;
+        die "CLIENT_REVOKE_FAILED\n" if !$DB->Do(
+            SQL => "UPDATE d724_api_client SET status = 'revoked', version = version + 1, change_time = current_timestamp, change_by = ? WHERE client_id = ? AND tenant_id = ? AND status = 'active' AND version = ?",
+            Bind => \@ClientBind,
+        );
+        my $ClientID = $Client->{ClientID};
+        die "TOKEN_REVOKE_FAILED\n" if !$DB->Do(
+            SQL => "UPDATE d724_api_token SET status = 'revoked' WHERE client_id = ? AND status = 'active'",
+            Bind => [ \$ClientID ],
+        );
+        my $Audit = $Self->_Audit(
+            TenantID => $Param{TenantID}, ActorID => $Param{Subject}->{ID}, Action => 'api.client.revoked',
+            ClientID => $Client->{ClientID}, DedupeKey => "api-client:$Client->{ClientID}:version:$NextVersion",
+            ToState => 'revoked', Details => { version => $NextVersion },
+        );
+        die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
+        $Handle->commit() if !$Handle->{AutoCommit};
+        1;
+    };
+    if (!$OK) {
+        my $Failure = $@;
+        eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'CLIENT_REVOKE_FAILED' );
+    }
+    return { Success => 1, Data => { ClientID => $Client->{ClientID}, Status => 'revoked', Version => $NextVersion } };
 }
 
 sub TokenValidate {
@@ -147,9 +201,9 @@ sub _ClientValidate {
 
 sub _ClientGet {
     my ( $Self, %Param ) = @_; my $ID = $Param{ClientID}; my $DB = $Kernel::OM->Get('Kernel::System::DB');
-    $DB->Prepare( SQL => 'SELECT client_id, tenant_id, secret_hash, role_name, status, token_ttl, rate_limit FROM d724_api_client WHERE client_id = ?', Bind => [ \$ID ], Limit => 1 );
+    $DB->Prepare( SQL => 'SELECT client_id, tenant_id, secret_hash, role_name, status, token_ttl, rate_limit, version FROM d724_api_client WHERE client_id = ?', Bind => [ \$ID ], Limit => 1 );
     my @Row = $DB->FetchrowArray(); return if !@Row;
-    return { ClientID => $Row[0], TenantID => $Row[1], SecretHash => $Row[2], Role => $Row[3], Status => $Row[4], TokenTTL => $Row[5], RateLimit => $Row[6] };
+    return { ClientID => $Row[0], TenantID => $Row[1], SecretHash => $Row[2], Role => $Row[3], Status => $Row[4], TokenTTL => $Row[5], RateLimit => $Row[6], Version => $Row[7] };
 }
 
 sub _SecretHash {
