@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otobo_config version="2.0" init="Application">
+    <Setting Name="D724::Foundation::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables the D724 ESM foundation services.</Description>
+        <Navigation>Core::D724</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    <Setting Name="D724::Foundation::ProductName" Required="1" Valid="1">
+        <Description Translatable="1">Defines the product name shown by D724 ESM services.</Description>
+        <Navigation>Core::D724</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^.{1,80}$">D724 ESM</Item>
+        </Value>
+    </Setting>
+    <Setting Name="D724::Foundation::Edition" Required="1" Valid="1">
+        <Description Translatable="1">Defines the support and operations edition. All editions remain GPL-3.0.</Description>
+        <Navigation>Core::D724</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="Community">
+                <Item ValueType="Option" Value="Community">Community</Item>
+                <Item ValueType="Option" Value="Professional">Professional</Item>
+                <Item ValueType="Option" Value="Enterprise">Enterprise</Item>
+                <Item ValueType="Option" Value="Managed">Managed</Item>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="D724::Foundation::TelemetryEnabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables privacy-preserving operational telemetry. Disabled by default.</Description>
+        <Navigation>Core::D724</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+</otobo_config>

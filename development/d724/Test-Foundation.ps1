@@ -13,13 +13,32 @@ $RequiredFiles = @(
     'docs/esm/ROADMAP.md',
     'docs/esm/GPL-COMMERCIAL.md',
     'development/d724/compose.yml',
-    'development/d724/.env.example'
+    'development/d724/.env.example',
+    'packages/D724Foundation/D724Foundation.sopm'
 )
 
 $MissingFiles = $RequiredFiles | Where-Object { -not (Test-Path (Join-Path $RepositoryRoot $_)) }
 if ($MissingFiles) {
     throw "Required foundation files are missing: $($MissingFiles -join ', ')"
 }
+
+$PackageDirectory = Join-Path $RepositoryRoot 'packages/D724Foundation'
+$PackageSourcePath = Join-Path $PackageDirectory 'D724Foundation.sopm'
+[xml] $PackageSource = Get-Content $PackageSourcePath -Raw
+if ($PackageSource.otobo_package.Name -ne 'D724Foundation') {
+    throw 'Unexpected package name in D724Foundation.sopm.'
+}
+if ($PackageSource.otobo_package.License -notmatch 'GENERAL PUBLIC LICENSE Version 3') {
+    throw 'D724Foundation must declare GPL version 3.'
+}
+foreach ($File in $PackageSource.otobo_package.Filelist.File) {
+    $PackageFile = Join-Path $PackageDirectory $File.Location
+    if (-not (Test-Path $PackageFile -PathType Leaf)) {
+        throw "Package file list entry is missing: $($File.Location)"
+    }
+}
+
+[xml] (Get-Content (Join-Path $PackageDirectory 'Kernel/Config/Files/XML/D724Foundation.xml') -Raw) | Out-Null
 
 $ComposeText = Get-Content (Join-Path $PSScriptRoot 'compose.yml') -Raw
 if ($ComposeText -notmatch '\$\{D724_BIND_ADDRESS:-127\.0\.0\.1\}') {
