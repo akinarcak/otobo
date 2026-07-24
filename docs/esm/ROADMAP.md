@@ -1,5 +1,11 @@
 # Yol Haritasi
 
+## Gerceklesen
+
+- [x] `FOUND-01`: kaynak koddan Docker image, Compose gelistirme profili, statik smoke testi ve GitHub Actions kalite kapisi (`2026-07-24`).
+- [x] Ozel test sunucusunda izole temel kurulum: MariaDB, Redis, OTOBO web ve daemon; HTTP ve konsol smoke testleri (`2026-07-24`).
+- [ ] `FOUND-02`: ilk D724 OTOBO paket sablonu ve paket testleri.
+
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
 
 ## Faz 0 - temel (hafta 1-4)
@@ -50,13 +56,12 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 ## Ilk backlog sirasi
 
-1. `FOUND-01`: yerel Docker gelistirme profili ve smoke test
-2. `FOUND-02`: D724 paket sablonu ve CI kalite kapilari
-3. `SEC-01`: tenant policy servisinin threat modeli ve test matrisi
-4. `CAT-01`: Service/Offering/CatalogItem semasi ve yonetim API'si
-5. `CAT-02`: portal katalog listeleme ve dinamik form
-6. `FLOW-01`: onay + fulfillment orkestrasyonu
-7. `SLA-01`: commitment motoru ve takvim hesaplari
-8. `AUD-01`: normalize audit event ve disari aktarim
-9. `OBS-01`: metrikler, dashboard ve alarm esikleri
-10. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari
+1. `FOUND-02`: D724 paket sablonu ve paket testleri
+2. `SEC-01`: tenant policy servisinin threat modeli ve test matrisi
+3. `CAT-01`: Service/Offering/CatalogItem semasi ve yonetim API'si
+4. `CAT-02`: portal katalog listeleme ve dinamik form
+5. `FLOW-01`: onay + fulfillment orkestrasyonu
+6. `SLA-01`: commitment motoru ve takvim hesaplari
+7. `AUD-01`: normalize audit event ve disari aktarim
+8. `OBS-01`: metrikler, dashboard ve alarm esikleri
+9. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari

@@ -54,6 +54,20 @@ function Get-EnvironmentValue {
     return $Line.Substring($Line.IndexOf('=') + 1)
 }
 
+function New-RandomSecret {
+    param([int] $ByteCount = 24)
+
+    $Bytes = New-Object byte[] $ByteCount
+    $Generator = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    try {
+        $Generator.GetBytes($Bytes)
+    }
+    finally {
+        $Generator.Dispose()
+    }
+    return [Convert]::ToBase64String($Bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_')
+}
+
 Assert-Command docker
 if (-not (Test-Path $EnvironmentFile)) {
     throw "Missing $EnvironmentFile. Copy .env.example to .env and replace the example password."
@@ -100,6 +114,24 @@ switch ($Action) {
             $SetupArguments += '--activate-elasticsearch'
         }
         Invoke-Compose @SetupArguments
+
+        $AdminPassword = New-RandomSecret
+        $RootPassword = New-RandomSecret
+        Invoke-Compose exec -T web bin/otobo.Console.pl Admin::User::SetPassword admin $AdminPassword
+        Invoke-Compose exec -T web bin/otobo.Console.pl Admin::User::SetPassword root@localhost $RootPassword
+
+        $RuntimeDirectory = Join-Path $ComposeDirectory '.runtime'
+        New-Item -ItemType Directory -Force -Path $RuntimeDirectory | Out-Null
+        $CredentialFile = Join-Path $RuntimeDirectory 'admin-credentials.env'
+        @(
+            "URL=http://$BindAddress`:$HttpPort/otobo/index.pl",
+            'USER=admin',
+            "PASSWORD=$AdminPassword"
+        ) | Set-Content -Encoding UTF8 $CredentialFile
+        if (-not $IsWindows -and (Get-Command chmod -ErrorAction SilentlyContinue)) {
+            & chmod 600 $CredentialFile
+        }
+        Write-Host "Admin credentials were written to $CredentialFile"
     }
     'Smoke' {
         Invoke-Compose ps

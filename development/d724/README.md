@@ -21,6 +21,7 @@ Copy-Item .env.example .env
 ```
 
 Open `http://127.0.0.1:8080/`. `Setup` uses OTOBO's development-only `quick_setup.pl`; it must never be used as a production provisioning mechanism.
+The helper immediately rotates both development default agent passwords and writes the generated admin login to `.runtime/admin-credentials.env`. This file is ignored by Git and must remain private.
 
 Elasticsearch is optional because its image and memory footprint are substantial. Enable it consistently for `Up`, `Setup`, and later commands when full-text search is required:
 
