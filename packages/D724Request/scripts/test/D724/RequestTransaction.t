@@ -18,6 +18,10 @@ my $Tenant  = 'request-tx-' . lc $Helper->GetRandomID();
 my $Zero    = '0' x 64;
 my $Version = 1;
 
+# The unit-test runner opens a process-wide rollback transaction even when
+# RestoreDatabase is disabled. This contract test deliberately closes that
+# empty wrapper before exercising the same AutoCommit path used by web calls.
+$DB->{dbh}->commit() if !$DB->{dbh}->{AutoCommit};
 ok( $DB->{dbh}->{AutoCommit}, 'transaction contract test starts in production-style AutoCommit mode' );
 
 my $Failed = $Request->_TransactionRun(

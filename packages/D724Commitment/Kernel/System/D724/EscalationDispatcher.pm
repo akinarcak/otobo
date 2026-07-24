@@ -12,7 +12,7 @@ use warnings;
 use Digest::SHA qw(hmac_sha256_hex sha256_hex);
 use URI ();
 
-our $VERSION = '0.3.2';
+our $VERSION = '0.3.3';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::DB',
