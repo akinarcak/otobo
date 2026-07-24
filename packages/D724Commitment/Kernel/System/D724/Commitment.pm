@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -368,7 +368,7 @@ sub _Destination {
 sub _Epoch {
     my ( $Self, $Time ) = @_;
     my $DateTime = $Kernel::OM->Create( 'Kernel::System::DateTime', ObjectParams => { String => $Time, TimeZone => 'UTC' } );
-    return if !$DateTime; return $DateTime->SystemTime();
+    return if !$DateTime; return $DateTime->ToEpoch();
 }
 
 sub _TimeNormalize {
