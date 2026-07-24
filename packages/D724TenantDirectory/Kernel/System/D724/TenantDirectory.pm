@@ -1,0 +1,260 @@
+# --
+# D724 ESM is an enterprise service management platform based on OTOBO.
+# Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
+# SPDX-License-Identifier: GPL-3.0-only
+# --
+
+package Kernel::System::D724::TenantDirectory;
+
+use v5.24;
+use strict;
+use warnings;
+
+our $VERSION = '0.1.0';
+our @ObjectDependencies = (
+    'Kernel::System::D724::TenantGuard',
+    'Kernel::System::DB',
+    'Kernel::System::User',
+);
+
+my %ValidTenantStatus = map { $_ => 1 } qw(active suspended retired);
+my %ValidRole = map { $_ => 1 } qw(requester agent service_owner auditor tenant_admin);
+
+sub new { return bless {}, $_[0] }
+
+sub Bootstrap {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('CONFIRMATION_REQUIRED') if !$Param{Confirm};
+    return $Self->_Error('USER_ID_INVALID') if !$Self->_UserExists( $Param{UserID} );
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    $DBObject->Prepare( SQL => 'SELECT COUNT(*) FROM d724_tenant' );
+    my ($Count) = $DBObject->FetchrowArray();
+    return $Self->_Error('ALREADY_BOOTSTRAPPED') if $Count;
+    my $Tenant = $Self->_TenantInsert(
+        TenantID => $Param{TenantID}, Name => $Param{Name}, UserID => $Param{UserID},
+    );
+    return $Tenant if !$Tenant->{Success};
+    my $Membership = $Self->_MembershipUpsert(
+        TenantID => $Param{TenantID}, MemberUserID => $Param{UserID},
+        Role => 'tenant_admin', UserID => $Param{UserID},
+    );
+    return $Membership if !$Membership->{Success};
+    return { Success => 1, Data => { Tenant => $Tenant->{Data}, Membership => $Membership->{Data} } };
+}
+
+sub TenantCreate {
+    my ( $Self, %Param ) = @_;
+    my $Auth = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Auth if !$Auth->{Success};
+    return $Self->_TenantInsert(%Param);
+}
+
+sub TenantGet {
+    my ( $Self, %Param ) = @_;
+    my $Auth = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Auth if !$Auth->{Success};
+    my $Data = $Self->_TenantRowGet( TenantID => $Param{TenantID} );
+    return $Self->_Error('NOT_FOUND') if !$Data;
+    return { Success => 1, Data => $Data };
+}
+
+sub TenantUpdate {
+    my ( $Self, %Param ) = @_;
+    my $Auth = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Auth if !$Auth->{Success};
+    return $Self->_Error('VERSION_REQUIRED') if !$Self->_PositiveInteger( $Param{ExpectedVersion} );
+    my $Current = $Self->_TenantRowGet( TenantID => $Param{TenantID} );
+    return $Self->_Error('NOT_FOUND') if !$Current;
+    return $Self->_Error('VERSION_CONFLICT') if $Current->{Version} != $Param{ExpectedVersion};
+    $Param{Name}   //= $Current->{Name};
+    $Param{Status} //= $Current->{Status};
+    my $Validation = $Self->_TenantValuesValidate(%Param);
+    return $Validation if !$Validation->{Success};
+    my @Values = ( $Param{Name}, $Param{Status}, $Param{UserID}, $Param{TenantID}, $Param{ExpectedVersion} );
+    my @Bind = map { \$_ } @Values;
+    my $Success = $Kernel::OM->Get('Kernel::System::DB')->Do(
+        SQL => 'UPDATE d724_tenant SET name = ?, status = ?, version = version + 1, '
+            . 'change_time = current_timestamp, change_by = ? WHERE key_name = ? AND version = ?',
+        Bind => \@Bind,
+    );
+    return $Self->_Error('DATABASE_ERROR') if !$Success;
+    my $Updated = $Self->_TenantRowGet( TenantID => $Param{TenantID} );
+    return $Self->_Error('VERSION_CONFLICT') if !$Updated || $Updated->{Version} != $Param{ExpectedVersion} + 1;
+    return { Success => 1, Data => $Updated };
+}
+
+sub MembershipGrant {
+    my ( $Self, %Param ) = @_;
+    my $Auth = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Auth if !$Auth->{Success};
+    return $Self->_MembershipUpsert(%Param);
+}
+
+sub MembershipRevoke {
+    my ( $Self, %Param ) = @_;
+    my $Auth = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Auth if !$Auth->{Success};
+    return $Self->_Error('ROLE_INVALID') if !$ValidRole{ $Param{Role} // q{} };
+    return $Self->_Error('MEMBER_USER_ID_INVALID') if !$Self->_PositiveInteger( $Param{MemberUserID} );
+    my @Values = ( $Param{UserID}, $Param{TenantID}, $Param{MemberUserID}, $Param{Role} );
+    my @Bind = map { \$_ } @Values;
+    my $Success = $Kernel::OM->Get('Kernel::System::DB')->Do(
+        SQL => "UPDATE d724_tenant_agent_role SET status = 'revoked', change_time = current_timestamp, change_by = ? "
+            . 'WHERE tenant_id = ? AND user_id = ? AND role_name = ?',
+        Bind => \@Bind,
+    );
+    return $Self->_Error('DATABASE_ERROR') if !$Success;
+    return { Success => 1 };
+}
+
+sub MembershipList {
+    my ( $Self, %Param ) = @_;
+    my $Auth = $Self->_Authorize( %Param, Action => 'tenant.manage' );
+    return $Auth if !$Auth->{Success};
+    my $TenantID = $Param{TenantID};
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    $DBObject->Prepare(
+        SQL => 'SELECT user_id, role_name, status, create_time, create_by, change_time, change_by '
+            . 'FROM d724_tenant_agent_role WHERE tenant_id = ? ORDER BY user_id, role_name',
+        Bind => [ \$TenantID ],
+    );
+    my @Data;
+    while ( my @Row = $DBObject->FetchrowArray() ) {
+        push @Data, {
+            TenantID => $TenantID, MemberUserID => $Row[0], Role => $Row[1], Status => $Row[2],
+            CreateTime => $Row[3], CreateBy => $Row[4], ChangeTime => $Row[5], ChangeBy => $Row[6],
+        };
+    }
+    return { Success => 1, Data => \@Data };
+}
+
+sub ContextGet {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('USER_ID_INVALID') if !$Self->_PositiveInteger( $Param{UserID} );
+    my $UserID = $Param{UserID};
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    $DBObject->Prepare(
+        SQL => "SELECT r.tenant_id, r.role_name FROM d724_tenant_agent_role r "
+            . "INNER JOIN d724_tenant t ON t.key_name = r.tenant_id "
+            . "WHERE r.user_id = ? AND r.status = 'active' AND t.status = 'active' ORDER BY r.tenant_id, r.role_name",
+        Bind => [ \$UserID ],
+    );
+    my %Bindings;
+    while ( my ( $TenantID, $Role ) = $DBObject->FetchrowArray() ) {
+        push @{ $Bindings{$TenantID} }, $Role if $ValidRole{$Role};
+    }
+    return $Self->_Error('NO_ACTIVE_MEMBERSHIP') if !keys %Bindings;
+    return {
+        Success => 1,
+        Subject => {
+            ID           => "agent:$UserID",
+            TenantIDs    => [ sort keys %Bindings ],
+            RoleBindings => \%Bindings,
+        },
+    };
+}
+
+sub _TenantInsert {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('USER_ID_INVALID') if !$Self->_UserExists( $Param{UserID} );
+    my $Validation = $Self->_TenantValuesValidate(%Param);
+    return $Validation if !$Validation->{Success};
+    return $Self->_Error('TENANT_EXISTS') if $Self->_TenantRowGet( TenantID => $Param{TenantID} );
+    my @Values = ( $Param{TenantID}, $Param{Name}, 'active', 1, $Param{UserID}, $Param{UserID} );
+    my @Bind = map { \$_ } @Values;
+    my $Success = $Kernel::OM->Get('Kernel::System::DB')->Do(
+        SQL => 'INSERT INTO d724_tenant (key_name, name, status, version, create_time, create_by, change_time, change_by) '
+            . 'VALUES (?, ?, ?, ?, current_timestamp, ?, current_timestamp, ?)',
+        Bind => \@Bind,
+    );
+    return $Self->_Error('DATABASE_ERROR') if !$Success;
+    return { Success => 1, Data => $Self->_TenantRowGet( TenantID => $Param{TenantID} ) };
+}
+
+sub _MembershipUpsert {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('ROLE_INVALID') if !$ValidRole{ $Param{Role} // q{} };
+    return $Self->_Error('MEMBER_USER_ID_INVALID') if !$Self->_UserExists( $Param{MemberUserID} );
+    return $Self->_Error('TENANT_NOT_FOUND') if !$Self->_TenantRowGet( TenantID => $Param{TenantID} );
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    my ( $TenantID, $MemberUserID, $Role ) = @Param{qw(TenantID MemberUserID Role)};
+    $DBObject->Prepare(
+        SQL => 'SELECT id, status FROM d724_tenant_agent_role WHERE tenant_id = ? AND user_id = ? AND role_name = ?',
+        Bind => [ \$TenantID, \$MemberUserID, \$Role ], Limit => 1,
+    );
+    my ( $ID, $Status ) = $DBObject->FetchrowArray();
+    my $Success;
+    if ($ID) {
+        my @Values = ( $Param{UserID}, $ID );
+        my @Bind = map { \$_ } @Values;
+        $Success = $DBObject->Do(
+            SQL => "UPDATE d724_tenant_agent_role SET status = 'active', change_time = current_timestamp, change_by = ? WHERE id = ?",
+            Bind => \@Bind,
+        );
+    }
+    else {
+        my @Values = ( $TenantID, $MemberUserID, $Role, $Param{UserID}, $Param{UserID} );
+        my @Bind = map { \$_ } @Values;
+        $Success = $DBObject->Do(
+            SQL => 'INSERT INTO d724_tenant_agent_role '
+                . '(tenant_id, user_id, role_name, status, create_time, create_by, change_time, change_by) '
+                . "VALUES (?, ?, ?, 'active', current_timestamp, ?, current_timestamp, ?)",
+            Bind => \@Bind,
+        );
+    }
+    return $Self->_Error('DATABASE_ERROR') if !$Success;
+    return { Success => 1, Data => { TenantID => $TenantID, MemberUserID => $MemberUserID, Role => $Role, Status => 'active' } };
+}
+
+sub _Authorize {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('USER_ID_INVALID') if !$Self->_UserExists( $Param{UserID} );
+    my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(
+        Subject => $Param{Subject}, Resource => { TenantID => $Param{TenantID} }, Action => $Param{Action},
+    );
+    return $Self->_Error( 'FORBIDDEN', $Decision->{Reason} ) if !$Decision->{Allowed};
+    return { Success => 1 };
+}
+
+sub _TenantValuesValidate {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('TENANT_ID_INVALID')
+        if !defined $Param{TenantID} || $Param{TenantID} !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}\z}smx;
+    return $Self->_Error('NAME_INVALID')
+        if !defined $Param{Name} || !length $Param{Name} || length $Param{Name} > 200 || $Param{Name} =~ m{[\x00-\x1f]}smx;
+    return $Self->_Error('STATUS_INVALID') if defined $Param{Status} && !$ValidTenantStatus{ $Param{Status} };
+    return { Success => 1 };
+}
+
+sub _TenantRowGet {
+    my ( $Self, %Param ) = @_;
+    return if !defined $Param{TenantID};
+    my $TenantID = $Param{TenantID};
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    $DBObject->Prepare(
+        SQL => 'SELECT id, key_name, name, status, version, create_time, create_by, change_time, change_by '
+            . 'FROM d724_tenant WHERE key_name = ?', Bind => [ \$TenantID ], Limit => 1,
+    );
+    my @Row = $DBObject->FetchrowArray();
+    return if !@Row;
+    my @Columns = qw(ID TenantID Name Status Version CreateTime CreateBy ChangeTime ChangeBy);
+    my %Data; @Data{@Columns} = @Row;
+    return \%Data;
+}
+
+sub _UserExists {
+    my ( $Self, $UserID ) = @_;
+    return if !$Self->_PositiveInteger($UserID);
+    return $Kernel::OM->Get('Kernel::System::User')->UserLookup( UserID => $UserID, Silent => 1 ) ? 1 : 0;
+}
+
+sub _PositiveInteger { return defined $_[1] && $_[1] =~ m{\A[1-9][0-9]*\z}smx ? 1 : 0 }
+
+sub _Error {
+    my ( $Self, $Code, $Reason ) = @_;
+    my $Error = { Success => 0, Error => $Code };
+    $Error->{Reason} = $Reason if defined $Reason;
+    return $Error;
+}
+
+1;
