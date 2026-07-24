@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.4.1';
+our $VERSION = '0.6.1';
 our @ObjectDependencies = ('Kernel::System::D724::TicketAudit');
 
 sub Configure {

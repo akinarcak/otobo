@@ -11,7 +11,7 @@ use Kernel::System::Ticket::Article::Backend::MIMEBase ();
 use Kernel::GenericInterface::Operation::Ticket::Common ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.6.0';
+our $VERSION = '0.6.1';
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
 my $OriginalTicketSearch      = Kernel::System::Ticket::TicketSearch->can('TicketSearch');

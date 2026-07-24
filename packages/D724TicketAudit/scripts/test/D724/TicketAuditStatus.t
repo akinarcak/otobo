@@ -15,7 +15,7 @@ is( $ExitCode, 0, 'ticket audit status command succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
 ok( $Status->{Success}, 'ticket audit schema is healthy' );
 is( $Status->{Package}, 'D724TicketAudit', 'status identifies package' );
-is( $Status->{Version}, '0.4.1', 'status identifies version' );
+is( $Status->{Version}, '0.6.1', 'status identifies version' );
 ok( $Status->{Tables}->{d724_ticket_scope}, 'ticket scope table is reported' );
 is( $Status->{Counts}->{UnboundTickets}, 0, 'no legacy ticket is left outside tenant scope' );
 is( $Status->{Counts}->{InvalidTenantTickets}, 0, 'every core ticket maps to an active D724 tenant' );

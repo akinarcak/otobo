@@ -4,7 +4,7 @@ Durum: ticket read/search alt kapisi tamamlandi (`2026-07-24`). Genel `SEC-01b` 
 
 ## Garanti
 
-`D724TicketAudit 0.6.0`, OTOBO'nun resmi `Ticket::CustomModule` uzatma noktasinda merkezi `D724::TicketPolicy` servisini yukler.
+`D724TicketAudit 0.6.1`, OTOBO'nun resmi `Ticket::CustomModule` uzatma noktasinda merkezi `D724::TicketPolicy` servisini yukler.
 
 - Agent baglami aktif `d724_tenant_agent_role` kayitlarindan, customer baglami aktif customer-company tenant'inden uretilir.
 - `TicketSearch` sorgusu calismadan once izinli tenant listesi `CustomerID` predikati olarak eklenir. Cagiranin filtresi izinli tenant'larla kesistirilir; bos kesisim sonuc dondurmez.

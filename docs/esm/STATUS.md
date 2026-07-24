@@ -65,7 +65,7 @@ Son dogrulama: `2026-07-24`
   - temel katman olarak tenant-directory paketine statik bagimlilik olmadan subject veya opsiyonel directory-derived authorization,
   - zincir, head, sequence gap ve event hash dogrulayan `Verify` API'si,
   - iki test dosyasi, 29 test, sonuc `PASS`.
-- GPL-3.0 `D724TicketAudit 0.6.0` OPM paketi:
+- GPL-3.0 `D724TicketAudit 0.6.1` OPM paketi:
   - resmi `Ticket::CustomModule` extension noktasi ile cekirdek dosya fork'u olmadan repository wrapping,
   - her OTOBO ticket icin immutable `d724_ticket_scope` tenant binding ve monoton mutation version'i,
   - ticket create ile title/queue/customer/lock/state/owner/responsible/priority mutasyonlarinda domain+scope+audit tek transaction,
@@ -99,7 +99,7 @@ Son dogrulama: `2026-07-24`
 - Gercek OTOBO ticket kabul akisi: demo tenant ticket `D724AUD20260724001` / ID `9`, `open`, scope version `3`; `ticket.created`, `ticket.state.updated`, `ticket.article.created` olaylari ve gecerli tenant zinciri. Idempotent ikinci kabul calismasi `Created=0` ile ayni ticket ve uc olayi dondurdu.
 - Legacy upgrade kabulunde bos CustomerID'li kurulum ticket'i `2015071510123456` acik replacement onayiyla `d724-demo` tenant'ina transaction-atomic atandi; iki cekirdek ticket'in ikisi de scoped, unbound/invalid sayilari `0`.
 - Son OPM SHA-256 kaniti: Audit 0.2.0 `44604ad6aeb20d5e9eda2c25b28423f2eb6082037d06061f154b8fab13d4446d`, TenantDirectory 0.2.1 `024cfa1cc1298bd00459cc6cb88ecc99e868caac1beb9fa434dd814d06be7b28`, Catalog 0.5.2 `90dfeb6309bcaa89bcffe9acff4ec7e92031afff4bec7eb34bb313343a2795e5`, Request 0.4.6 `c8b5ddb9a9a0aed10e43094f9748ea7a6aca2089f41c0097236f6b57a7c51f46`, Commitment 0.3.8 `19bb3331b3efee9c3d143673fc7537720d3d98f11fc3bf69fa24f3c9229eb94c`.
-- TicketAudit 0.4.1 OPM SHA-256: `bbf753e8a16e1fc3669212c1a986f6e350ea063c7fe018f4645a2663fb77c141`.
+- TicketAudit 0.6.1 OPM SHA-256 son release build'inde yeniden kaydedilecektir.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen

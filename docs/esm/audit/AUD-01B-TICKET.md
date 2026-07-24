@@ -4,7 +4,7 @@ Durum: cekirdek kapsam tamamlandi (`2026-07-24`).
 
 ## Kapsam
 
-`D724TicketAudit 0.6.0`, OTOBO'nun resmi `Ticket::CustomModule` extension mekanizmasini kullanir; upstream `Kernel::System::Ticket` dosyasi degistirilmez. Su yazimlar kapsanir:
+`D724TicketAudit 0.6.1`, OTOBO'nun resmi `Ticket::CustomModule` extension mekanizmasini kullanir; upstream `Kernel::System::Ticket` dosyasi degistirilmez. Su yazimlar kapsanir:
 
 - `ticket.created`
 - `ticket.title.updated`
