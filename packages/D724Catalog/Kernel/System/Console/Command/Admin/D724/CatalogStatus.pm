@@ -45,7 +45,7 @@ sub Run {
         Success => $Success ? 1 : 0,
         Enabled => $Enabled,
         Package => 'D724Catalog',
-        Version => '0.2.4',
+        Version => '0.3.0',
         Tables  => \%Tables,
     };
 

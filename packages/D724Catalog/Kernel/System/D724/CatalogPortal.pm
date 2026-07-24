@@ -12,7 +12,7 @@ use warnings;
 
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.2.4';
+our $VERSION = '0.3.0';
 our @ObjectDependencies = ('Kernel::System::D724::Catalog');
 
 sub new {

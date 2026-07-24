@@ -1,0 +1,76 @@
+# --
+# D724 ESM is an enterprise service management platform based on OTOBO.
+# Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
+# SPDX-License-Identifier: GPL-3.0-only
+# --
+
+<div class="MainBox ARIARoleMain">
+    <h1>[% Translate("D724 Service Catalog") | html %]</h1>
+    <div class="WidgetSimple">
+        <div class="Header"><h2>[% Translate("Tenant") | html %]</h2></div>
+        <div class="Content">
+            <form action="[% Env("CGIHandle") %]" method="get">
+                <input type="hidden" name="Action" value="AdminD724Catalog"/>
+                <select name="TenantID" onchange="this.form.submit()">
+[% RenderBlockStart("TenantOption") %]
+                    <option value="[% Data.TenantID | html %]" [% Data.Selected | html %]>[% Data.Name | html %] ([% Data.TenantID | html %])</option>
+[% RenderBlockEnd("TenantOption") %]
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="WidgetSimple">
+        <div class="Header"><h2>[% Translate("Services") | html %]</h2></div>
+        <div class="Content">
+[% RenderBlockStart("ServiceRow") %]
+            <form action="[% Env("CGIHandle") %]" method="post" class="D724CatalogRow">
+                <input type="hidden" name="Action" value="AdminD724Catalog"/><input type="hidden" name="Subaction" value="ServiceSave"/>
+                <input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+                <input type="hidden" name="ServiceID" value="[% Data.ServiceID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
+                <input name="Name" value="[% Data.Name | html %]" required/><input name="Description" value="[% Data.Description | html %]"/>
+                <select name="Status"><option [% IF Data.Status == 'draft' %]selected[% END %]>draft</option><option [% IF Data.Status == 'active' %]selected[% END %]>active</option><option [% IF Data.Status == 'suspended' %]selected[% END %]>suspended</option><option [% IF Data.Status == 'retired' %]selected[% END %]>retired</option></select>
+                <button type="submit">[% Translate("Save") | html %]</button><span>[% Data.Key | html %]</span>
+            </form>
+[% RenderBlockEnd("ServiceRow") %]
+            <form action="[% Env("CGIHandle") %]" method="post">
+                <input type="hidden" name="Action" value="AdminD724Catalog"/><input type="hidden" name="Subaction" value="ServiceSave"/><input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+                <input name="Key" placeholder="service-key" required/><input name="Name" placeholder="[% Translate("New service") | html %]" required/><input name="Description" placeholder="[% Translate("Description") | html %]"/><input type="hidden" name="Status" value="draft"/><button type="submit">[% Translate("Add") | html %]</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Offerings") | html %]</h2></div><div class="Content">
+[% RenderBlockStart("OfferingRow") %]
+        <form action="[% Env("CGIHandle") %]" method="post">
+            <input type="hidden" name="Action" value="AdminD724Catalog"/><input type="hidden" name="Subaction" value="OfferingSave"/><input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+            <input type="hidden" name="OfferingID" value="[% Data.OfferingID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
+            <input name="Name" value="[% Data.Name | html %]" required/><input name="Description" value="[% Data.Description | html %]"/>
+            <select name="Status"><option [% IF Data.Status == 'draft' %]selected[% END %]>draft</option><option [% IF Data.Status == 'active' %]selected[% END %]>active</option><option [% IF Data.Status == 'suspended' %]selected[% END %]>suspended</option><option [% IF Data.Status == 'retired' %]selected[% END %]>retired</option></select>
+            <select name="FulfillmentType"><option [% IF Data.FulfillmentType == 'manual' %]selected[% END %]>manual</option><option [% IF Data.FulfillmentType == 'process' %]selected[% END %]>process</option><option [% IF Data.FulfillmentType == 'integration' %]selected[% END %]>integration</option></select>
+            <button type="submit">[% Translate("Save") | html %]</button><span>[% Data.ServiceName | html %] / [% Data.Key | html %]</span>
+        </form>
+[% RenderBlockEnd("OfferingRow") %]
+        <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AdminD724Catalog"/><input type="hidden" name="Subaction" value="OfferingSave"/><input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+            <select name="ServiceID" required>[% RenderBlockStart("ServiceOption") %]<option value="[% Data.ServiceID | html %]">[% Data.Name | html %]</option>[% RenderBlockEnd("ServiceOption") %]</select>
+            <input name="Key" placeholder="offering-key" required/><input name="Name" placeholder="[% Translate("New offering") | html %]" required/><input name="Description" placeholder="[% Translate("Description") | html %]"/><input type="hidden" name="Status" value="draft"/><input type="hidden" name="FulfillmentType" value="manual"/><button type="submit">[% Translate("Add") | html %]</button>
+        </form>
+    </div></div>
+
+    <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Catalog Items and Forms") | html %]</h2></div><div class="Content">
+[% RenderBlockStart("ItemRow") %]
+        <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AdminD724Catalog"/><input type="hidden" name="Subaction" value="ItemSave"/><input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+            <input type="hidden" name="CatalogItemID" value="[% Data.CatalogItemID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/><input name="Name" value="[% Data.Name | html %]" required/><input name="Description" value="[% Data.Description | html %]"/>
+            <select name="Status"><option [% IF Data.Status == 'draft' %]selected[% END %]>draft</option><option [% IF Data.Status == 'active' %]selected[% END %]>active</option><option [% IF Data.Status == 'suspended' %]selected[% END %]>suspended</option><option [% IF Data.Status == 'retired' %]selected[% END %]>retired</option></select>
+            <select name="RequestType"><option [% IF Data.RequestType == 'service_request' %]selected[% END %]>service_request</option><option [% IF Data.RequestType == 'incident' %]selected[% END %]>incident</option><option [% IF Data.RequestType == 'access' %]selected[% END %]>access</option><option [% IF Data.RequestType == 'information' %]selected[% END %]>information</option></select><button type="submit">[% Translate("Save item") | html %]</button><span>[% Data.OfferingName | html %] / [% Data.Key | html %]</span>
+        </form>
+        <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AdminD724Catalog"/><input type="hidden" name="Subaction" value="SchemaSave"/><input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="CatalogItemID" value="[% Data.CatalogItemID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.SchemaVersion | html %]"/>
+            <textarea name="SchemaJSON" rows="8" cols="80">[% Data.SchemaJSON | html %]</textarea><button type="submit">[% Translate("Save form schema") | html %]</button>
+        </form>
+[% RenderBlockEnd("ItemRow") %]
+        <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AdminD724Catalog"/><input type="hidden" name="Subaction" value="ItemSave"/><input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+            <select name="OfferingID" required>[% RenderBlockStart("OfferingOption") %]<option value="[% Data.OfferingID | html %]">[% Data.Name | html %]</option>[% RenderBlockEnd("OfferingOption") %]</select>
+            <input name="Key" placeholder="item-key" required/><input name="Name" placeholder="[% Translate("New catalog item") | html %]" required/><input name="Description" placeholder="[% Translate("Description") | html %]"/><input type="hidden" name="Status" value="draft"/><input type="hidden" name="RequestType" value="service_request"/><button type="submit">[% Translate("Add") | html %]</button>
+        </form>
+    </div></div>
+</div>

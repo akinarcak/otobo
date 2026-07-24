@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
     <Name>D724Catalog</Name>
-    <Version>0.2.4</Version>
+    <Version>0.3.0</Version>
     <Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
     <URL>https://github.com/akinarcak/otobo</URL>
@@ -9,7 +9,8 @@
     <Description Lang="en">Tenant-safe service portfolio and catalog repository for D724 ESM.</Description>
     <Description Lang="tr">D724 ESM icin tenant guvenli hizmet portfoyu ve katalog repository'si.</Description>
     <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
-    <PackageRequired Version="0.1.1">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.1.1">D724TenantDirectory</PackageRequired>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsVisible>1</PackageIsVisible>
     <DatabaseInstall Type="post">
@@ -170,11 +171,14 @@
         <File Permission="644" Location="Kernel/System/D724/Catalog.pm" />
         <File Permission="644" Location="Kernel/System/D724/CatalogPortal.pm" />
         <File Permission="644" Location="Kernel/Modules/CustomerD724Catalog.pm" />
+        <File Permission="644" Location="Kernel/Modules/AdminD724Catalog.pm" />
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CatalogStatus.pm" />
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/CustomerD724Catalog.tt" />
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminD724Catalog.tt" />
         <File Permission="644" Location="scripts/test/D724/Catalog.t" />
         <File Permission="644" Location="scripts/test/D724/CatalogStatus.t" />
         <File Permission="644" Location="scripts/test/D724/CatalogPortal.t" />
         <File Permission="644" Location="scripts/test/D724/CatalogFrontend.t" />
+        <File Permission="644" Location="scripts/test/D724/CatalogAgentContext.t" />
     </Filelist>
 </otobo_package>
