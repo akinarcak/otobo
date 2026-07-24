@@ -18,6 +18,7 @@ $Kernel::OM->ObjectParamAdd(
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 $Helper->ConfigSettingChange( Key => 'D724::Catalog::Enabled', Value => 1 );
 $Helper->ConfigSettingChange( Key => 'D724::Request::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
 $Helper->ConfigSettingChange( Key => 'CheckEmailAddresses', Value => 0 );
 
 my $Suffix  = lc $Helper->GetRandomID();
@@ -198,6 +199,19 @@ is(
     )->{Error},
     'TRANSITION_INVALID', 'terminal task state cannot transition again',
 );
+
+my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit');
+my $AuditList = $Audit->List( UserID => $AdminID, TenantID => $TenantA, Limit => 100 );
+ok( $AuditList->{Success}, 'tenant admin reads normalized request audit events' );
+is(
+    [ map { $_->{Action} } @{ $AuditList->{Data} } ],
+    [qw(request.created request.approved task.status_changed task.status_changed request.fulfilled)],
+    'request lifecycle emits ordered normalized audit vocabulary',
+);
+is( [ map { $_->{Sequence} } @{ $AuditList->{Data} } ], [ 1 .. 5 ], 'request audit sequence is contiguous' );
+is( scalar( grep { $_->{Action} eq 'request.created' } @{ $AuditList->{Data} } ), 1, 'idempotent replay does not duplicate creation audit' );
+is( $Audit->List( UserID => $OtherID, TenantID => $TenantB )->{Error}, 'FORBIDDEN', 'non-auditor cannot export tenant audit' );
+ok( $Audit->Verify( UserID => $AdminID, TenantID => $TenantA )->{Valid}, 'request lifecycle audit chain verifies' );
 
 $Helper->ConfigSettingChange( Key => 'D724::Request::Enabled', Value => 0 );
 is(

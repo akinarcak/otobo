@@ -11,10 +11,11 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.2.1';
+our $VERSION = '0.3.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
+    'Kernel::System::D724::Audit',
     'Kernel::System::D724::TenantDirectory',
     'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB',
@@ -126,6 +127,13 @@ sub CustomerSubmit {
         );
         return $Self->_InitializationFail( TenantID => $TenantID, RequestID => $RequestID, Actor => $Actor ) if !$Started->{Success};
     }
+    my $Audited = $Self->_AuditRecord(
+        TenantID => $TenantID, ActorID => $Actor, ActorType => 'customer', Action => 'request.created',
+        ObjectType => 'request', ObjectID => $RequestID, CorrelationID => $RequestNumber,
+        FromState => 'initializing', ToState => $FinalStatus,
+        Details => { catalog_item_id => $Param{CatalogItemID}, entitlement_key => $Workflow->{commitment}->{entitlement_key} // q{} },
+    );
+    return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audited->{Success};
     return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $RequestID ), IdempotentReplay => 0 };
 }
 
@@ -238,6 +246,13 @@ sub ApprovalDecide {
         SQL => "UPDATE d724_request_task SET status = ?, version = version + 1, change_time = current_timestamp, change_by = ? WHERE tenant_id = ? AND request_id = ? AND status = 'blocked'",
         Bind => \@TaskBind,
     );
+    my $Audited = $Self->_AuditRecord(
+        TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'request.' . $Param{Decision},
+        ObjectType => 'request', ObjectID => $Param{RequestID}, CorrelationID => $Request->{RequestNumber},
+        FromState => 'awaiting_approval', ToState => $RequestStatus,
+        Details => { approval_id => $Approval->{ApprovalID}, approver_role => $Approval->{ApproverRole} },
+    );
+    return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audited->{Success};
     return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Param{RequestID} ) };
 }
 
@@ -271,6 +286,13 @@ sub TaskUpdate {
     return $Self->_Error('VERSION_CONFLICT')
         if !$UpdatedTask || $UpdatedTask->{Version} != $Param{ExpectedVersion} + 1
         || $UpdatedTask->{Status} ne $Param{Status};
+    my $RequestBefore = $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Task->{RequestID} );
+    my $TaskAudit = $Self->_AuditRecord(
+        TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'task.status_changed',
+        ObjectType => 'request_task', ObjectID => $Param{TaskID}, CorrelationID => $RequestBefore->{RequestNumber},
+        FromState => $Task->{Status}, ToState => $Param{Status}, Details => { request_id => $Task->{RequestID} },
+    );
+    return $Self->_Error('AUDIT_WRITE_FAILED') if !$TaskAudit->{Success};
     if ( $Param{Status} eq 'failed' ) {
         my @RequestValues = ( $Actor, $Param{TenantID}, $Task->{RequestID} );
         my @RequestBind = map { \$_ } @RequestValues;
@@ -307,6 +329,12 @@ sub TaskUpdate {
                     return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Completed->{Success};
                 }
             }
+            my $RequestAudit = $Self->_AuditRecord(
+                TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'request.fulfilled',
+                ObjectType => 'request', ObjectID => $RequestID, CorrelationID => $RequestBefore->{RequestNumber},
+                FromState => 'in_fulfillment', ToState => 'fulfilled', Details => { final_task_id => $Param{TaskID} },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$RequestAudit->{Success};
         }
     }
     return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Task->{RequestID} ) };
@@ -330,6 +358,12 @@ sub ResponseRecord {
         PolicyKey => $Current->{Data}->{Policy}->{Key}, Signal => 'first_response', RequestStatus => $Request->{Status}, At => $Param{At},
     );
     return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Result->{Success};
+    my $Audited = $Self->_AuditRecord(
+        TenantID => $Param{TenantID}, ActorID => $Context->{Subject}->{ID}, ActorType => 'agent', Action => 'request.first_response',
+        ObjectType => 'request', ObjectID => $Param{RequestID}, CorrelationID => $Request->{RequestNumber},
+        FromState => $Request->{Status}, ToState => $Request->{Status}, Details => {},
+    );
+    return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audited->{Success};
     return { Success => 1, Data => $Result->{Data} };
 }
 
@@ -407,6 +441,13 @@ sub _CommitmentObject {
     return if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Commitment::Enabled');
     my $Object = eval { $Kernel::OM->Get('Kernel::System::D724::Commitment') };
     return $@ ? undef : $Object;
+}
+
+sub _AuditRecord {
+    my ( $Self, %Param ) = @_;
+    my $Audit = eval { $Kernel::OM->Get('Kernel::System::D724::Audit') };
+    return { Success => 0, Error => 'AUDIT_NOT_AVAILABLE' } if $@ || !$Audit;
+    return $Audit->Record( %Param, Outcome => 'success' );
 }
 
 sub _CommitmentSync {
