@@ -32,6 +32,6 @@ unlike( $AgentHTML, qr{Prepare <b>device</b>}, 'agent workbench never renders ta
 is( scalar( () = $AgentHTML =~ m{method="post"}g ), 2, 'approval and task writes use POST forms' );
 like( $AgentHTML, qr{value="ApprovalDecide"}, 'approval action is rendered' );
 like( $AgentHTML, qr{value="TaskUpdate"}, 'task action is rendered' );
-like( $AgentHTML, qr{Commitment</strong>: warning}, 'agent workbench shows commitment state' );
+like( $AgentHTML, qr{<strong>Commitment: warning</strong>}, 'agent workbench shows commitment state' );
 
 done_testing;
