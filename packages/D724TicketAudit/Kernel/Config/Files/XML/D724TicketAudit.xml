@@ -5,6 +5,11 @@
         <Navigation>Core::D724::Audit</Navigation>
         <Value><Item ValueType="Checkbox">1</Item></Value>
     </Setting>
+    <Setting Name="D724::TicketPolicy::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Fail-closed tenant filtering for OTOBO ticket search and read adapters.</Description>
+        <Navigation>Core::D724::Security</Navigation>
+        <Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
     <Setting Name="Ticket::CustomModule###724-D724TicketAudit" Required="1" Valid="1">
         <Description Translatable="1">Loads the D724 transaction and audit wrapper for OTOBO ticket repository mutations.</Description>
         <Navigation>Core::Ticket</Navigation>

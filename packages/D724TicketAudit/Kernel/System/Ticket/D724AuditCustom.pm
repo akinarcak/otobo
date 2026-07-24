@@ -10,9 +10,10 @@ use warnings;
 use Kernel::System::Ticket::Article::Backend::MIMEBase ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.4.1';
+our $VERSION = '0.5.0';
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
+my $OriginalTicketSearch      = \&Kernel::System::Ticket::TicketSearch;
 my $OriginalTicketTitleUpdate = \&Kernel::System::Ticket::TicketTitleUpdate;
 my $OriginalTicketQueueSet    = \&Kernel::System::Ticket::TicketQueueSet;
 my $OriginalTicketCustomerSet = \&Kernel::System::Ticket::TicketCustomerSet;
@@ -32,6 +33,20 @@ my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIME
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->TicketCreateRun(
             TicketObject => $Self, Original => $OriginalTicketCreate, Param => \%Param,
         );
+    };
+
+    *Kernel::System::Ticket::TicketSearch = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalTicketSearch->( $Self, %Param )
+            if $Self->{D724TicketPolicySuppress}
+            || !$Kernel::OM->Get('Kernel::Config')->Get('D724::TicketPolicy::Enabled');
+
+        my $Policy = $Kernel::OM->Get('Kernel::System::D724::TicketPolicy')->SearchScopeApply(
+            Param => \%Param,
+        );
+        return if !$Policy->{Success};
+
+        return $OriginalTicketSearch->( $Self, %{ $Policy->{Param} } );
     };
 
     my $Wrap = sub {
