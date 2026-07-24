@@ -209,7 +209,9 @@ sub AssignLegacy {
     return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
     return $Self->_Error('TENANT_INVALID') if ( $Param{TenantID} // q{} ) !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
     return $Self->_Error('TENANT_NOT_ACTIVE') if !$Self->_TenantActive( $Param{TenantID} );
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
     return $Self->_TransactionRun(
+        OnFailure => sub { eval { $TicketObject->_TicketCacheClear( TicketID => $Param{TicketID} ) } },
         Code => sub {
             my $DB = $Kernel::OM->Get('Kernel::System::DB');
             my $TicketID = $Param{TicketID};
@@ -220,7 +222,6 @@ sub AssignLegacy {
             my $Mismatch = ( $OriginalCustomerID // q{} ) ne $Param{TenantID};
             return $Self->_Error('CUSTOMER_TENANT_MISMATCH') if $Mismatch && !$Param{ReplaceCustomerID};
             if ($Mismatch) {
-                my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
                 local $TicketObject->{D724TicketAuditSuppress} = 1;
                 return $Self->_Error('CUSTOMER_UPDATE_FAILED') if !$TicketObject->TicketCustomerSet(
                     TicketID => $TicketID, No => $Param{TenantID}, UserID => $Param{UserID},
