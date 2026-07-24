@@ -22,28 +22,35 @@ if ($MissingFiles) {
     throw "Required foundation files are missing: $($MissingFiles -join ', ')"
 }
 
-$PackageDirectory = Join-Path $RepositoryRoot 'packages/D724Foundation'
-$PackageSourcePath = Join-Path $PackageDirectory 'D724Foundation.sopm'
-[xml] $PackageSource = Get-Content $PackageSourcePath -Raw
-if ($PackageSource.otobo_package.Name -ne 'D724Foundation') {
-    throw 'Unexpected package name in D724Foundation.sopm.'
+$PackageSources = Get-ChildItem (Join-Path $RepositoryRoot 'packages') -Filter '*.sopm' -Recurse
+if (-not $PackageSources) {
+    throw 'No D724 package sources were found.'
 }
-if ($PackageSource.otobo_package.License -notmatch 'GENERAL PUBLIC LICENSE Version 3') {
-    throw 'D724Foundation must declare GPL version 3.'
-}
-foreach ($File in $PackageSource.otobo_package.Filelist.File) {
-    $PackageFile = Join-Path $PackageDirectory $File.Location
-    if (-not (Test-Path $PackageFile -PathType Leaf)) {
-        throw "Package file list entry is missing: $($File.Location)"
+foreach ($PackageSourceFile in $PackageSources) {
+    $PackageDirectory = $PackageSourceFile.Directory.FullName
+    [xml] $PackageSource = Get-Content $PackageSourceFile.FullName -Raw
+    $PackageName = [string] $PackageSource.otobo_package.Name
+    if ($PackageName -ne $PackageSourceFile.Directory.Name) {
+        throw "Package name and directory differ: $PackageName"
     }
-    $RepositoryRelativePath = "packages/D724Foundation/$($File.Location)"
-    & git -C $RepositoryRoot ls-files --error-unmatch -- $RepositoryRelativePath 2>$null | Out-Null
-    if ($LASTEXITCODE -ne 0) {
-        throw "Package file list entry is not tracked by Git: $RepositoryRelativePath"
+    if ($PackageSource.otobo_package.License -notmatch 'GENERAL PUBLIC LICENSE Version 3') {
+        throw "$PackageName must declare GPL version 3."
+    }
+    foreach ($File in $PackageSource.otobo_package.Filelist.File) {
+        $PackageFile = Join-Path $PackageDirectory $File.Location
+        if (-not (Test-Path $PackageFile -PathType Leaf)) {
+            throw "$PackageName file list entry is missing: $($File.Location)"
+        }
+        $RepositoryRelativePath = "packages/$PackageName/$($File.Location)"
+        & git -C $RepositoryRoot ls-files --error-unmatch -- $RepositoryRelativePath 2>$null | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            throw "$PackageName file list entry is not tracked by Git: $RepositoryRelativePath"
+        }
+        if ($File.Location -match '\.xml$') {
+            [xml] (Get-Content $PackageFile -Raw) | Out-Null
+        }
     }
 }
-
-[xml] (Get-Content (Join-Path $PackageDirectory 'Kernel/Config/Files/XML/D724Foundation.xml') -Raw) | Out-Null
 
 $ComposeText = Get-Content (Join-Path $PSScriptRoot 'compose.yml') -Raw
 if ($ComposeText -notmatch '\$\{D724_BIND_ADDRESS:-127\.0\.0\.1\}') {
