@@ -19,7 +19,7 @@ Gecerli durumlar `draft`, `active`, `suspended`, `retired` olarak sinirlidir. Il
 3. SQL sorgulari `id` ile birlikte daima `tenant_id` kosulu kullanir.
 4. List sorgusu once `D724TenantGuard::ScopeGet`, sonra action karari alir.
 5. Tenant disindaki bir ID, subject'in kendi tenant'i ile sorulursa `NOT_FOUND`; hedef tenant acik verilirse policy tarafindan `FORBIDDEN` doner.
-6. Parent iliskileri `(tenant_id, parent_id)` bileşik foreign key ile korunur.
+6. Parent iliskileri repository'de `(tenant_id, parent_id)` birlikte dogrulanir. OTOBO paket sema ceviricisi cok sutunlu foreign key tanimini ayri kisitlara donusturdugu icin veritabani tek basina bu cifti garanti etmez; ham SQL yazma yetkisi uygulama kullanicisindan alinmali ve bu sinir release oncesi migration ile sertlestirilmelidir.
 7. Key tenant icinde benzersizdir ve create sonrasi degistirilemez.
 8. Update zorunlu `ExpectedVersion` kullanir. Stale yazma `VERSION_CONFLICT` doner ve veri ezilmez.
 9. Liste boyutu yapilandirmayla sinirlanir; tenantsiz/global liste API'si yoktur.

@@ -30,6 +30,6 @@ is(
     [qw(d724_catalog_item d724_service d724_service_offering)],
     'all catalog tables are reported',
 );
-ok( !grep { !$_ } values %{ $Status->{Tables} }, 'all catalog tables exist' );
+ok( !( grep { !$_ } values %{ $Status->{Tables} } ), 'all catalog tables exist' );
 
 done_testing;
