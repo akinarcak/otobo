@@ -45,6 +45,14 @@ my $LegacyTicketID = $Ticket->TicketCreate(
     CustomerID => $Tenant, CustomerUser => 'legacy-ticket-user', OwnerID => 1, UserID => 1,
 );
 ok( $LegacyTicketID, 'legacy ticket fixture is created before adapter enforcement' );
+my $InvalidCustomerID = 'legacy-customer-' . lc $Helper->GetRandomID();
+my $InvalidLegacyNumber = 'D724IV' . $Helper->GetRandomID();
+my $InvalidLegacyTicketID = $Ticket->TicketCreate(
+    TN => $InvalidLegacyNumber, Title => 'Invalid legacy tenant ticket', QueueID => $QueueID,
+    Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
+    CustomerID => $InvalidCustomerID, CustomerUser => 'invalid-legacy-user', OwnerID => 1, UserID => 1,
+);
+ok( $InvalidLegacyTicketID, 'legacy ticket with unmapped customer is created before enforcement' );
 $Helper->ConfigSettingChange( Key => 'D724::TicketAudit::Enabled', Value => 1 );
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
 is(
@@ -61,6 +69,32 @@ my $Backfill = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->Backfill(
 );
 is( $Backfill->{Data}->{Backfilled}, 1, 'legacy scope backfill succeeds after audit recovers' );
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $LegacyTicketID )->{Version}, 1, 'legacy ticket scope starts at version one' );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->AssignLegacy(
+        Confirm => 1, TicketID => $InvalidLegacyTicketID, TenantID => $Tenant, UserID => 1,
+    )->{Error},
+    'CUSTOMER_TENANT_MISMATCH',
+    'explicit assignment refuses mismatching customer without replacement confirmation',
+);
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->AssignLegacy(
+        Confirm => 1, TicketID => $InvalidLegacyTicketID, TenantID => $Tenant, UserID => 1, ReplaceCustomerID => 1,
+    )->{Error},
+    'AUDIT_WRITE_FAILED',
+    'explicit customer replacement rolls back when audit is unavailable',
+);
+my %InvalidAfterFailure = $Ticket->TicketGet( TicketID => $InvalidLegacyTicketID, DynamicFields => 0, UserID => 1 );
+is( $InvalidAfterFailure{CustomerID}, $InvalidCustomerID, 'failed assignment restores original legacy customer ID' );
+ok( !$Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $InvalidLegacyTicketID ), 'failed explicit assignment leaves no scope row' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+my $Assigned = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->AssignLegacy(
+    Confirm => 1, TicketID => $InvalidLegacyTicketID, TenantID => $Tenant, UserID => 1, ReplaceCustomerID => 1,
+);
+ok( $Assigned->{Success} && $Assigned->{Data}->{CustomerIDReplaced}, 'explicit legacy assignment succeeds with replacement confirmation' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $InvalidLegacyTicketID )->{TenantID}, $Tenant, 'explicit assignment creates immutable tenant scope' );
+my %InvalidAfterSuccess = $Ticket->TicketGet( TicketID => $InvalidLegacyTicketID, DynamicFields => 0, UserID => 1 );
+is( $InvalidAfterSuccess{CustomerID}, $Tenant, 'explicit assignment updates legacy customer ID inside transaction' );
 
 my $TicketNumber = 'D724TA' . $Helper->GetRandomID();
 my $TicketID = $Ticket->TicketCreate(
@@ -153,8 +187,10 @@ ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket
 
 ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket fixture is removed' );
 ok( $Ticket->TicketDelete( TicketID => $LegacyTicketID, UserID => 1 ), 'legacy ticket fixture is removed' );
+ok( $Ticket->TicketDelete( TicketID => $InvalidLegacyTicketID, UserID => 1 ), 'invalid legacy ticket fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$TicketID ] ), 'ticket scope fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$LegacyTicketID ] ), 'legacy ticket scope fixture is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$InvalidLegacyTicketID ] ), 'explicit legacy ticket scope fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_event WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit events are removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_head WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit head is removed' );
 for my $TenantID ( $Tenant, $OtherTenant ) {

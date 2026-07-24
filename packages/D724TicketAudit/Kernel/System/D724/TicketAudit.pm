@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.3.0';
+our $VERSION = '0.4.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -198,6 +198,50 @@ sub Backfill {
                 return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
             }
             return { Success => 1, Data => { Backfilled => scalar @Rows, Limit => $Limit } };
+        },
+    );
+}
+
+sub AssignLegacy {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('CONFIRMATION_REQUIRED') if !$Param{Confirm};
+    return $Self->_Error('TICKET_ID_INVALID') if ( $Param{TicketID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('TENANT_INVALID') if ( $Param{TenantID} // q{} ) !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    return $Self->_Error('TENANT_NOT_ACTIVE') if !$Self->_TenantActive( $Param{TenantID} );
+    return $Self->_TransactionRun(
+        Code => sub {
+            my $DB = $Kernel::OM->Get('Kernel::System::DB');
+            my $TicketID = $Param{TicketID};
+            $DB->Prepare( SQL => 'SELECT tn, customer_id FROM ticket WHERE id = ? FOR UPDATE', Bind => [ \$TicketID ] );
+            my ( $TicketNumber, $OriginalCustomerID ) = $DB->FetchrowArray();
+            return $Self->_Error('TICKET_NOT_FOUND') if !defined $TicketNumber;
+            return $Self->_Error('TICKET_SCOPE_EXISTS') if $Self->ScopeGet( TicketID => $TicketID );
+            my $Mismatch = ( $OriginalCustomerID // q{} ) ne $Param{TenantID};
+            return $Self->_Error('CUSTOMER_TENANT_MISMATCH') if $Mismatch && !$Param{ReplaceCustomerID};
+            if ($Mismatch) {
+                my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+                local $TicketObject->{D724TicketAuditSuppress} = 1;
+                return $Self->_Error('CUSTOMER_UPDATE_FAILED') if !$TicketObject->TicketCustomerSet(
+                    TicketID => $TicketID, No => $Param{TenantID}, UserID => $Param{UserID},
+                );
+            }
+            my @Values = ( $TicketID, $Param{TenantID}, $Param{UserID}, $Param{UserID} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('TICKET_SCOPE_WRITE_FAILED') if !$DB->Do(
+                SQL => "INSERT INTO d724_ticket_scope (ticket_id, tenant_id, version, status, create_time, create_by, change_time, change_by) VALUES (?, ?, 1, 'active', current_timestamp, ?, current_timestamp, ?)",
+                Bind => \@Bind,
+            );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Param{TenantID}, TicketID => $TicketID, UserID => $Param{UserID},
+                Action => 'ticket.scope.assigned', Version => 1, FromState => q{}, ToState => 'active',
+                Details => {
+                    ticket_number => $TicketNumber, version => 1, migration => 1,
+                    original_customer_id => $OriginalCustomerID // q{}, customer_id_replaced => $Mismatch ? 1 : 0,
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Data => { TicketID => $TicketID, TenantID => $Param{TenantID}, CustomerIDReplaced => $Mismatch ? 1 : 0 } };
         },
     );
 }
