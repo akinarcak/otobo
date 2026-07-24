@@ -33,7 +33,9 @@ $Structure{Home} = $ModuleDirectory;
 my $Package = $Kernel::OM->Get('Kernel::System::Package')->PackageBuild(%Structure);
 die "Package build failed\n" if !$Package;
 
-my $Filename = "$Structure{Name}->{Content}-$Structure{Version}->{Content}.opm";
+my $PackageName    = $Structure{Name}->{Content};
+my $PackageVersion = $Structure{Version}->{Content};
+my $Filename       = "$PackageName-$PackageVersion.opm";
 my $Location = File::Spec->catfile( $TargetDirectory, $Filename );
 my $Written = $Main->FileWrite(
     Location => $Location, Content => \$Package, Mode => 'utf8',
