@@ -16,6 +16,7 @@
 - [x] `SLA-01b-actions`: lease/retry/dead-letter dispatcher, tenant-role notification, fulfillment assignment ve allow-list/HMAC korumali webhook teslimi (`2026-07-24`).
 - [x] `AUD-01a`: tenant-bazli normalize audit olaylari, SHA-256 hash zinciri, yetkili cursor/NDJSON export, request lifecycle adapter'i ve idempotent olay anahtarlari (`2026-07-24`).
 - [x] `AUD-01b-request`: request create/approval/response/task/fulfillment mutasyonlari ile audit append'ini tek DB transaction'inda atomiklestirme; hata enjeksiyonu, retry ve concurrent dedupe kaniti (`2026-07-24`).
+- [x] `AUD-01b-catalog`: service/offering/item/schema create-update mutasyonlari icin normalize, tenant-safe ve transaction-atomic audit adapter'i (`2026-07-24`).
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
@@ -68,7 +69,7 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 ## Ilk backlog sirasi
 
-1. `AUD-01b-core`: OTOBO ticket/Generic Interface/catalog/SLA mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
+1. `AUD-01b-core`: OTOBO ticket/Generic Interface/tenant-directory/SLA mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
 2. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
 3. `API-01`: tenant-safe REST API, OAuth client kimligi, rate limit ve imzali webhook sozlesmeleri
 4. `OBS-01`: metrikler, dashboard ve alarm esikleri

@@ -18,6 +18,7 @@ Bu dizin, OTOBO `rel-11_1` tabani uzerinde gelistirilecek ticari ESM urununun ka
 - [GPL-COMMERCIAL.md](GPL-COMMERCIAL.md): ticari model ve uyum kontrol listesi
 - [STATUS.md](STATUS.md): dogrulanmis mevcut durum ve acik kapsam
 - [audit/AUD-01-AUDIT.md](audit/AUD-01-AUDIT.md): normalize audit kontrati, hash zinciri, export ve acik completeness kapsami
+- [audit/AUD-01B-CATALOG.md](audit/AUD-01B-CATALOG.md): katalog mutation audit sozlugu, transaction garantisi ve hata enjeksiyonu kaniti
 
 ## Gelistirme modeli
 

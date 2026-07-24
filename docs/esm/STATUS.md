@@ -30,7 +30,7 @@ Son dogrulama: `2026-07-24`
   - one-time confirmed bootstrap ve audited membership grant komutlari,
   - last tenant-admin revoke ve tenant self-deactivation lockout engelleri,
   - iki test dosyasi, 24 test, sonuc `PASS`.
-- GPL-3.0 `D724Catalog 0.4.0` OPM paketi:
+- GPL-3.0 `D724Catalog 0.5.0` OPM paketi:
   - Service, ServiceOffering ve CatalogItem MariaDB semasi,
   - tenant-guarded create/get/list/update repository API'si,
   - tenant icinde benzersiz key, lifecycle ve optimistic version kontrolu,
@@ -41,9 +41,10 @@ Son dogrulama: `2026-07-24`
   - tenant directory context'inden beslenen agent yonetim ekrani,
   - Service/Offering/Item lifecycle ve JSON form semasi yonetimi,
   - CSRF challenge token ve optimistic update formlari,
-  - bes test dosyasi, 59 paket testi, sonuc `PASS`,
+  - service/offering/item/schema create-update icin normalize audit olaylari ve mutation+audit transaction atomikligi,
+  - alti test dosyasi, 73 paket testi, sonuc `PASS`,
   - authenticated customer HTTP katalog ve dinamik form smoke testleri.
-- GPL-3.0 `D724Request 0.4.2` OPM paketi:
+- GPL-3.0 `D724Request 0.4.4` OPM paketi:
   - sunucu-tarafli dinamik cevap validasyonu ve workflow snapshot'i,
   - tenant/requester kapsamli idempotent form submission,
   - tenant-role onayi ve optimistic-lock durum gecisleri,
@@ -60,7 +61,7 @@ Son dogrulama: `2026-07-24`
   - request create/approve/first-response/task-transition/fulfilled adapter'lari,
   - zincir, head, sequence gap ve event hash dogrulayan `Verify` API'si,
   - iki test dosyasi, 29 test, sonuc `PASS`.
-- GPL-3.0 `D724Catalog 0.4.0`, `D724Request 0.4.2` ve `D724Commitment 0.3.4` entegrasyonu:
+- GPL-3.0 `D724Catalog 0.5.0`, `D724Request 0.4.4` ve `D724Commitment 0.3.6` entegrasyonu:
   - tenant-local commitment policy referansli katalog workflow'u,
   - request acilisinda immutable policy snapshot ve otomatik commitment baslatma,
   - OTOBO calisma saatleri, tatil gunleri ve calendar timezone hesaplari,
@@ -73,11 +74,12 @@ Son dogrulama: `2026-07-24`
   - authenticated HTTP akisi `REQ-0000000042`: iki hedef paused, onaydan sonra uc hedef running, ilk yanit ve fulfillment sonunda uc hedef met.
   - atomik lease, exponential retry ve dead-letter escalation dispatcher,
   - tenant-role OTOBO email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
-- Yedi D724 paketinde toplam 20 test dosyasi ve 357 test birlikte `PASS`.
+- Yedi D724 paketinde toplam 21 test dosyasi ve 369 test birlikte `PASS`.
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
-- Son OPM SHA-256 kaniti: Audit 0.1.3 `35f134fa68fae429e1f903cd2246a8d2127110adbf384af5768f35a85ce9b936`, Request 0.4.2 `e8ee9156c5c4802494ee7d531179d6fb209f74b16641ea19e5d1934964f86cb2`, Commitment 0.3.4 `7f422e605b466fd7cdeea9e3c2eddb855ab4106efabcab02c5425ae3b4513735`.
+- Gercek katalog hata enjeksiyonu: service create audit hatasinda row `0`; update hatasinda ad/version degismedi; schema-set hatasinda schema row `0`. Ayni girdilerin retry'lari basarili oldu ve bes sirali katalog audit olayi uretildi; tenant zinciri `Valid=1`.
+- Son OPM SHA-256 kaniti: Audit 0.1.3 `35f134fa68fae429e1f903cd2246a8d2127110adbf384af5768f35a85ce9b936`, Catalog 0.5.0 `36dbd28ec0035432b54ef7a7a807e316ad756d6cdd325a0ece55d32f6c50ae66`, Request 0.4.4 `2ceffaec696e20755fc8ee688507df6f45f38331c46e7ffaf4f6696bfcfff5c6`, Commitment 0.3.6 `a4dbc7ed1026bb89c5e9b425bfd2e832a3b412e19e5e3db136e09d2572176ede`.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen
@@ -88,7 +90,7 @@ Son dogrulama: `2026-07-24`
 - Katalog repository'si merkezi tenant policy'ye baglanan ilk adapter'dir. OTOBO ticket, Generic Interface, daemon, rapor, cache ve search adapter'lari henuz baglanmamistir.
 - OTOBO paket sema ceviricisi katalog parent'lari icin tanimlanan cok sutunlu foreign key'i ayri kisitlara cevirmektedir. Repository cifti birlikte dogrular; dogrudan DB yazimina karsi composite constraint sertlestirmesi release oncesi acik guvenlik isidir.
 - OTOBO paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
-- Request lifecycle mutasyonlari atomiktir. OTOBO ticket/article, Generic Interface, catalog yonetimi, tenant directory ve commitment scheduler gibi diger yazim adapter'lari henuz ayni transaction/outbox completeness garantisine sahip degildir; zincir bu alanlarda olay eksiksizliginin tek basina kaniti sayilmaz.
+- Request lifecycle ve D724 katalog yonetimi mutasyonlari atomiktir. OTOBO ticket/article, Generic Interface, tenant directory ve commitment scheduler gibi diger yazim adapter'lari henuz ayni transaction/outbox completeness garantisine sahip degildir; zincir bu alanlarda olay eksiksizliginin tek basina kaniti sayilmaz.
 
 ## Henuz urun sayilmayan kapsam
 
