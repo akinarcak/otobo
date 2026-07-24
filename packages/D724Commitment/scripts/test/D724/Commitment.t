@@ -10,6 +10,7 @@ use warnings;
 use utf8;
 use Test2::V0;
 use Kernel::System::UnitTest::RegisterOM;
+use Kernel::System::WebUserAgent ();
 
 $Kernel::OM->ObjectParamAdd( 'Kernel::System::UnitTest::Helper' => { RestoreDatabase => 1 } );
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
