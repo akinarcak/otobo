@@ -7,6 +7,7 @@ package Kernel::System::Ticket::D724AuditCustom;
 use v5.24;
 use strict;
 use warnings;
+use Kernel::System::Ticket::Article::Backend::MIMEBase ();
 
 our $ObjectManagerDisabled = 1;
 our $VERSION = '0.1.1';
@@ -20,6 +21,7 @@ my $OriginalTicketStateSet    = \&Kernel::System::Ticket::TicketStateSet;
 my $OriginalTicketOwnerSet    = \&Kernel::System::Ticket::TicketOwnerSet;
 my $OriginalResponsibleSet    = \&Kernel::System::Ticket::TicketResponsibleSet;
 my $OriginalTicketPrioritySet = \&Kernel::System::Ticket::TicketPrioritySet;
+my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate;
 
 {
     no warnings 'redefine'; ## no critic
@@ -52,6 +54,14 @@ my $OriginalTicketPrioritySet = \&Kernel::System::Ticket::TicketPrioritySet;
     $Wrap->( 'TicketOwnerSet',          $OriginalTicketOwnerSet,    'ticket.owner.updated',       'OwnerID' );
     $Wrap->( 'TicketResponsibleSet',    $OriginalResponsibleSet,    'ticket.responsible.updated', 'ResponsibleID' );
     $Wrap->( 'TicketPrioritySet',       $OriginalTicketPrioritySet, 'ticket.priority.updated',    'Priority' );
+
+    *Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalArticleCreate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ArticleCreateRun(
+            ArticleBackend => $Self, Original => $OriginalArticleCreate, Param => \%Param,
+        );
+    };
 }
 
 1;

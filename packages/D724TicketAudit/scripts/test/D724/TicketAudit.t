@@ -73,6 +73,32 @@ ok(
     'customer user can change inside immutable tenant boundary',
 );
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 4, 'customer user update advances scope version' );
+my $ArticleBackend = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForChannel( ChannelName => 'Internal' );
+is(
+    $ArticleBackend->{ArticleStorageModule},
+    'Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleStorageDB',
+    'acceptance runtime uses transactional database article storage',
+);
+my %Article = (
+    TicketID => $TicketID, SenderType => 'agent', IsVisibleForCustomer => 1,
+    From => 'D724 Agent <agent@example.test>', To => 'D724 Customer <customer@example.test>',
+    Subject => 'Audited internal article', Body => 'Acceptance body is not copied into the audit event.',
+    ContentType => 'text/plain; charset=utf-8', HistoryType => 'AddNote', HistoryComment => 'D724 audit acceptance',
+    UserID => 1, NoAgentNotify => 1,
+);
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$ArticleBackend->ArticleCreate(%Article), 'article create fails closed when audit is unavailable' );
+is( [ $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList( TicketID => $TicketID ) ], [], 'failed audited article leaves no article row' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 4, 'failed article create rolls scope version back' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+my $ArticleID = $ArticleBackend->ArticleCreate(%Article);
+ok( $ArticleID, 'article create succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 5, 'successful article advances scope version once' );
+my $ArticleEvents = $Audit->List(
+    Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ArticleID",
+);
+is( [ map { $_->{Action} } @{ $ArticleEvents->{Data} } ], ['ticket.article.created'], 'article emits one normalized audit event' );
+ok( !exists $ArticleEvents->{Data}->[0]->{Details}->{body}, 'article body is excluded from audit details' );
 ok(
     !$Ticket->TicketCustomerSet( TicketID => $TicketID, No => $OtherTenant, User => 'other-user', UserID => 1 ),
     'ticket cannot be reassigned across tenant boundary',

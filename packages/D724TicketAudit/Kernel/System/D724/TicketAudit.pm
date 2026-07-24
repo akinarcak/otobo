@@ -104,6 +104,52 @@ sub MutationRun {
     return $Result->{Success} ? $Result->{Value} : undef;
 }
 
+sub ArticleCreateRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{ArticleBackend}, %{$Call} ) if !$Self->_Enabled();
+    my $TicketID = $Call->{TicketID};
+    return if !$TicketID;
+    if ( ( $Param{ArticleBackend}->{ArticleStorageModule} // q{} ) ne 'Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleStorageDB' ) {
+        $Self->_Log('D724 article create rejected: transactional ArticleStorageDB is required');
+        return;
+    }
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            local $Param{ArticleBackend}->{D724TicketAuditSuppress} = 1;
+            my $ArticleID = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
+            return $Self->_Error('ARTICLE_CREATE_FAILED') if !$ArticleID;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE d724_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => 'ticket.article.created', Version => $Version, FromState => q{}, ToState => 'created',
+                ObjectType => 'ticket_article', ObjectID => $ArticleID,
+                Details => {
+                    ticket_number => $Ticket{TicketNumber} // q{}, version => $Version,
+                    sender_type => $Call->{SenderType} // q{}, visible_for_customer => $Call->{IsVisibleForCustomer} ? 1 : 0,
+                    subject => $Call->{Subject} // q{}, storage => 'database',
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $ArticleID };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
 sub ScopeGet {
     my ( $Self, %Param ) = @_;
     my $TicketID = $Param{TicketID};
@@ -141,7 +187,7 @@ sub _AuditRecord {
     my ( $ActorType, $ActorID ) = $Self->_Actor( UserID => $Param{UserID}, TenantID => $Param{TenantID} );
     return $Kernel::OM->Get('Kernel::System::D724::Audit')->Record(
         TenantID => $Param{TenantID}, ActorType => $ActorType, ActorID => $ActorID,
-        Action => $Param{Action}, ObjectType => 'ticket', ObjectID => "$Param{TicketID}",
+        Action => $Param{Action}, ObjectType => $Param{ObjectType} // 'ticket', ObjectID => defined $Param{ObjectID} ? "$Param{ObjectID}" : "$Param{TicketID}",
         CorrelationID => "ticket:$Param{TicketID}", DedupeKey => "ticket:$Param{TicketID}:version:$Param{Version}",
         FromState => $Param{FromState}, ToState => $Param{ToState}, Outcome => 'success', Details => $Param{Details},
     );
