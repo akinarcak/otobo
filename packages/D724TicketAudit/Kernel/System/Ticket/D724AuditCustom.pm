@@ -10,7 +10,7 @@ use warnings;
 use Kernel::System::Ticket::Article::Backend::MIMEBase ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
 my $OriginalTicketTitleUpdate = \&Kernel::System::Ticket::TicketTitleUpdate;

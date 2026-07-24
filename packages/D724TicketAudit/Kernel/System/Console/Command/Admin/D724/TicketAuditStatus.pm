@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = ( 'Kernel::Config', 'Kernel::System::DB', 'Kernel::System::JSON' );
 
 sub Configure {
@@ -30,14 +30,14 @@ sub Run {
         ( $Tickets, $Tenants ) = $DB->FetchrowArray();
     }
     my $Status = {
-        Success => $Table ? 1 : 0, Package => 'D724TicketAudit', Version => '0.1.1',
+        Success => $Table ? 1 : 0, Package => 'D724TicketAudit', Version => '0.2.0',
         Enabled => $Kernel::OM->Get('Kernel::Config')->Get('D724::TicketAudit::Enabled') ? 1 : 0,
         Tables => { d724_ticket_scope => $Table }, Counts => { Tickets => $Tickets, Tenants => $Tenants },
     };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, Pretty => 1, SortKeys => 1 ) . "\n" );
     }
-    else { $Self->Print("D724TicketAudit 0.1.1: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n") }
+    else { $Self->Print("D724TicketAudit 0.2.0: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n") }
     return $Status->{Success} ? $Self->ExitCodeOk() : $Self->ExitCodeError();
 }
 
