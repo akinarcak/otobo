@@ -10,7 +10,9 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.2.1';
+use Digest::SHA qw(sha256_hex);
+
+our $VERSION = '0.2.2';
 our @ObjectDependencies = ('Kernel::System::D724::Catalog');
 
 sub new {
@@ -57,6 +59,18 @@ sub ItemGet {
     );
     return $Item if !$Item->{Success};
     return { Success => 0, Error => 'NOT_AVAILABLE' } if $Item->{Data}->{Status} ne 'active';
+    my $Offering = $Catalog->OfferingGet(
+        Subject => $Context->{Subject}, TenantID => $Context->{TenantID},
+        OfferingID => $Item->{Data}->{OfferingID},
+    );
+    return $Offering if !$Offering->{Success};
+    return { Success => 0, Error => 'NOT_AVAILABLE' } if $Offering->{Data}->{Status} ne 'active';
+    my $Service = $Catalog->ServiceGet(
+        Subject => $Context->{Subject}, TenantID => $Context->{TenantID},
+        ServiceID => $Offering->{Data}->{ServiceID},
+    );
+    return $Service if !$Service->{Success};
+    return { Success => 0, Error => 'NOT_AVAILABLE' } if $Service->{Data}->{Status} ne 'active';
     my $Schema = $Catalog->CatalogItemSchemaGet(
         Subject => $Context->{Subject}, TenantID => $Context->{TenantID},
         CatalogItemID => $Param{CatalogItemID},
@@ -76,7 +90,7 @@ sub _ContextGet {
         Success  => 1,
         TenantID => $Param{CustomerID},
         Subject  => {
-            ID        => 'customer:' . $Param{CustomerUserID},
+            ID        => 'customer:' . sha256_hex( $Param{CustomerUserID} ),
             Roles     => ['requester'],
             TenantIDs => [ $Param{CustomerID} ],
         },

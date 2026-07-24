@@ -24,7 +24,7 @@ is( $ExitCode, 0, 'catalog status command succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSONString );
 ok( $Status->{Success}, 'catalog repository is healthy' );
 is( $Status->{Package}, 'D724Catalog', 'status identifies package' );
-is( $Status->{Version}, '0.2.1', 'status identifies version' );
+is( $Status->{Version}, '0.2.2', 'status identifies version' );
 is(
     [ sort keys %{ $Status->{Tables} } ],
     [qw(d724_catalog_item d724_catalog_item_schema d724_service d724_service_offering)],

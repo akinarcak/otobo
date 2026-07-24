@@ -27,6 +27,7 @@ sub Run {
     );
 
     if ( ( $Self->{Subaction} // q{} ) eq 'Item' ) {
+        $Param{View} = 'Item';
         my $ItemID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'CatalogItemID' );
         my $Result = $Portal->ItemGet( %Context, CatalogItemID => $ItemID );
         return $LayoutObject->CustomerNoPermission( WithHeader => 'yes' ) if !$Result->{Success};
@@ -36,6 +37,7 @@ sub Run {
         }
     }
     else {
+        $Param{View} = 'Catalog';
         my $Result = $Portal->CatalogGet(%Context);
         return $LayoutObject->CustomerNoPermission( WithHeader => 'yes' ) if !$Result->{Success};
         for my $Service ( @{ $Result->{Data} } ) {

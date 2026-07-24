@@ -44,7 +44,7 @@ $Catalog->CatalogItemCreate(
 );
 
 my $View = $Portal->CatalogGet(
-    CustomerUserID => 'portal.user', CustomerID => 'portal-tenant', TenantID => 'ignored-attacker-input',
+    CustomerUserID => 'portal.user@example.com', CustomerID => 'portal-tenant', TenantID => 'ignored-attacker-input',
 );
 ok( $View->{Success}, 'authenticated customer catalog view succeeds' );
 is( $View->{TenantID}, 'portal-tenant', 'tenant comes only from trusted customer context' );
@@ -56,6 +56,18 @@ my $Detail = $Portal->ItemGet(
     CatalogItemID => $Item->{Data}->{CatalogItemID},
 );
 is( $Detail->{Data}->{FormSchema}->{Schema}->{fields}->[0]->{key}, 'summary', 'portal detail contains dynamic form schema' );
+
+$Catalog->OfferingUpdate(
+    %Write, OfferingID => $Offering->{Data}->{OfferingID}, ExpectedVersion => 1, Status => 'suspended',
+);
+is(
+    $Portal->ItemGet(
+        CustomerUserID => 'portal.user', CustomerID => 'portal-tenant',
+        CatalogItemID => $Item->{Data}->{CatalogItemID},
+    )->{Error},
+    'NOT_AVAILABLE',
+    'active item is unavailable when its parent offering is suspended',
+);
 
 is(
     $Portal->CatalogGet( CustomerUserID => 'portal.user' )->{Error},
