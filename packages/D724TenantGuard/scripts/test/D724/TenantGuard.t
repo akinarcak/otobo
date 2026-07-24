@@ -140,10 +140,65 @@ my $InvalidScope = $Guard->ScopeGet(
 ok( !$InvalidScope->{Success}, 'invalid tenant scope fails closed' );
 is( $InvalidScope->{TenantIDs}, [], 'invalid scope returns no tenants' );
 
+is(
+    $Guard->ScopeGet(
+        Subject => {
+            Roles     => ['agent'],
+            TenantIDs => ['tenant-a'],
+        },
+    )->{Reason},
+    'DENY_SUBJECT_ID_MISSING',
+    'scope without subject ID fails closed',
+);
+is(
+    $Guard->ScopeGet(
+        Subject => {
+            ID        => 'user-1',
+            TenantIDs => ['tenant-a'],
+        },
+    )->{Reason},
+    'DENY_SUBJECT_ROLES_MISSING',
+    'scope without roles fails closed',
+);
+is(
+    $Guard->ScopeGet(
+        Subject => {
+            ID        => 'user-1',
+            Roles     => ['unknown'],
+            TenantIDs => ['tenant-a'],
+        },
+    )->{Reason},
+    'DENY_ROLE_NOT_GRANTED',
+    'scope with only unknown roles fails closed',
+);
+
+{
+    local $ConfigObject->{'D724::TenantGuard::AllowPlatformAdmin'} = 1;
+    my $PlatformScope = $Guard->ScopeGet(
+        Subject => {
+            ID        => 'platform-1',
+            Roles     => ['platform_admin'],
+            TenantIDs => ['tenant-a'],
+        },
+    );
+    ok( $PlatformScope->{Success}, 'enabled platform scope succeeds' );
+    ok( $PlatformScope->{Unrestricted}, 'enabled platform scope is explicitly unrestricted' );
+    is( $PlatformScope->{Reason}, 'ALLOW_PLATFORM_ADMIN', 'unrestricted scope is auditable' );
+}
+
 {
     local $ConfigObject->{'D724::TenantGuard::Enabled'} = 0;
     is( Decision()->{Reason}, 'DENY_POLICY_DISABLED', 'disabled policy fails closed' );
-    ok( !$Guard->ScopeGet( Subject => { TenantIDs => ['tenant-a'] } )->{Success}, 'disabled scope fails closed' );
+    ok(
+        !$Guard->ScopeGet(
+            Subject => {
+                ID        => 'user-1',
+                Roles     => ['agent'],
+                TenantIDs => ['tenant-a'],
+            },
+        )->{Success},
+        'disabled scope fails closed',
+    );
 }
 
 done_testing;

@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -138,6 +138,33 @@ sub ScopeGet {
         TenantIDs     => [],
     } if ref $Subject ne 'HASH';
 
+    return {
+        Success       => 0,
+        Reason        => 'DENY_SUBJECT_ID_MISSING',
+        PolicyVersion => $PolicyVersion,
+        TenantIDs     => [],
+    } if !$Self->_IdentifierValid( $Subject->{ID} );
+
+    my $Roles = $Subject->{Roles};
+    return {
+        Success       => 0,
+        Reason        => 'DENY_SUBJECT_ROLES_MISSING',
+        PolicyVersion => $PolicyVersion,
+        TenantIDs     => [],
+    } if ref $Roles ne 'ARRAY' || !@{$Roles};
+
+    my %Roles = map { $_ => 1 } @{$Roles};
+    my $KnownRole = $Roles{platform_admin};
+    for my $Role ( keys %Roles ) {
+        $KnownRole = 1 if $RoleActions{$Role};
+    }
+    return {
+        Success       => 0,
+        Reason        => 'DENY_ROLE_NOT_GRANTED',
+        PolicyVersion => $PolicyVersion,
+        TenantIDs     => [],
+    } if !$KnownRole;
+
     my $TenantIDs = $Subject->{TenantIDs};
     return {
         Success       => 0,
@@ -157,7 +184,6 @@ sub ScopeGet {
         $TenantIDs{$TenantID} = 1;
     }
 
-    my %Roles = map { $_ => 1 } @{ $Subject->{Roles} // [] };
     my $Unrestricted =
         $Roles{platform_admin}
         && $ConfigObject->Get('D724::TenantGuard::AllowPlatformAdmin')

@@ -1,6 +1,6 @@
 # D724TenantGuard
 
-`D724TenantGuard` provides the default-deny authorization primitive for all tenant-owned D724 resources. It depends on `D724Foundation >= 0.1.0`.
+`D724TenantGuard` provides the default-deny authorization primitive for all tenant-owned D724 resources. Version `0.1.1` depends on `D724Foundation >= 0.1.0`.
 
 The package does not automatically make every OTOBO screen multi-tenant. Each data adapter must call the guard before reading or mutating a resource and must start searches from `ScopeGet()`. See `docs/esm/security/TENANT-THREAT-MODEL.md` for required integration gates.
 
