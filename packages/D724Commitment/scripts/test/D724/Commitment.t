@@ -162,6 +162,18 @@ my $Breached = $Commitment->Evaluate(
 );
 is( $Breached->{Data}->{Status}, 'breached', 'target business time crossing records breach' );
 is( $Breached->{Data}->{BreachedAt}, '2026-07-27 17:00:00', 'breach evidence records evaluation time' );
+my $SweepRequest = $NewRequest->('sweep');
+my $SweepStart = $Commitment->Start(
+    TenantID => $TenantA, RequestID => $SweepRequest->{RequestID}, PolicyKey => 'standard-resolution',
+    Actor => $SweepRequest->{RequesterID}, StartTime => '2026-07-27 09:00:00',
+);
+ok( $SweepStart->{Success}, 'scheduler fixture commitment starts' );
+my $Sweep = $Commitment->Sweep( At => '2026-07-27 17:00:00' );
+ok( $Sweep->{Success}, 'scheduled sweep evaluates active commitments' );
+ok( $Sweep->{Counts}->{Breached} >= 1, 'scheduled sweep emits breach transition' );
+my $AfterSweep = $Commitment->AgentGetByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $SweepRequest->{RequestID} );
+is( $AfterSweep->{Data}->{Status}, 'breached', 'scheduler persists breached state' );
+is( $AfterSweep->{Data}->{Events}->[-1]->{Actor}, 'system:commitment-scheduler', 'scheduler transition has explicit system actor' );
 is(
     $Commitment->AgentGetByRequest( UserID => $OtherID, TenantID => $TenantA, RequestID => $Request->{RequestID} )->{Error},
     'FORBIDDEN', 'agent cannot read another tenant commitment',

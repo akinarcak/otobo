@@ -37,7 +37,7 @@ sub Run {
         ($Counts{Breached}) = $DBObject->FetchrowArray();
     }
     my $Success = !( grep { !$_ } values %Tables );
-    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.1.3', Tables => \%Tables, Counts => \%Counts };
+    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.1.4', Tables => \%Tables, Counts => \%Counts };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }

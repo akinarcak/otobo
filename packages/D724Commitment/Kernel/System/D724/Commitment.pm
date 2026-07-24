@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.3';
+our $VERSION = '0.1.4';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -190,19 +190,48 @@ sub Evaluate {
     my ( $Self, %Param ) = @_;
     my $Auth = $Self->_AgentAuthorize( %Param, Action => 'case.update' );
     return $Auth if !$Auth->{Success};
+    return $Self->_EvaluateOne( %Param, Actor => $Auth->{Subject}->{ID} );
+}
+
+sub Sweep {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('COMMITMENT_DISABLED') if !$Self->_Enabled();
+    my $At = $Self->_TimeNormalize( $Param{At} );
+    return $Self->_Error('TIME_INVALID') if !$At;
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    $DBObject->Prepare( SQL => "SELECT id, tenant_id, version FROM d724_commitment_instance WHERE status IN ('running', 'warning') ORDER BY id", Limit => 5000 );
+    my @Work;
+    while ( my @Row = $DBObject->FetchrowArray() ) { push @Work, \@Row }
+    my %Counts = ( Scanned => 0, Warning => 0, Breached => 0, Unchanged => 0, Errors => 0 );
+    for my $Row (@Work) {
+        $Counts{Scanned}++;
+        my $Result = $Self->_EvaluateOne(
+            CommitmentID => $Row->[0], TenantID => $Row->[1], ExpectedVersion => $Row->[2],
+            At => $At, Actor => 'system:commitment-scheduler', Reason => 'scheduled_sweep',
+        );
+        if ( !$Result->{Success} ) { $Counts{Errors}++; next }
+        if ( $Result->{Transition} eq 'warning' ) { $Counts{Warning}++ }
+        elsif ( $Result->{Transition} eq 'breached' ) { $Counts{Breached}++ }
+        else { $Counts{Unchanged}++ }
+    }
+    return { Success => $Counts{Errors} ? 0 : 1, Counts => \%Counts, At => $At };
+}
+
+sub _EvaluateOne {
+    my ( $Self, %Param ) = @_;
     return $Self->_Error('VERSION_REQUIRED') if !$Self->_PositiveInteger( $Param{ExpectedVersion} );
     my $Instance = $Self->_InstanceRowGet( TenantID => $Param{TenantID}, CommitmentID => $Param{CommitmentID} );
     return $Self->_Error('NOT_FOUND') if !$Instance;
     return $Self->_Error('VERSION_CONFLICT') if $Instance->{Version} != $Param{ExpectedVersion};
-    return { Success => 1, Data => $Self->_Aggregate(%{$Instance}) } if $Instance->{Status} !~ m{\A(?:running|warning)\z}smx;
+    return { Success => 1, Data => $Self->_Aggregate(%{$Instance}), Transition => 'unchanged' } if $Instance->{Status} !~ m{\A(?:running|warning)\z}smx;
     my $At = $Self->_TimeNormalize( $Param{At} );
     return $Self->_Error('TIME_INVALID') if !$At;
     my $Consumed = $Self->_ConsumedAt( Instance => $Instance, At => $At );
     return $Self->_Error('CALENDAR_CALCULATION_FAILED') if !defined $Consumed;
     my $WarningAt = int( $Instance->{TargetSeconds} * $Instance->{WarningPercent} / 100 );
     my $NewStatus = $Consumed >= $Instance->{TargetSeconds} ? 'breached' : $Consumed >= $WarningAt ? 'warning' : 'running';
-    return { Success => 1, Data => { %{ $Self->_Aggregate(%{$Instance}) }, CurrentConsumedSeconds => $Consumed } } if $NewStatus eq $Instance->{Status};
-    my $Actor = $Auth->{Subject}->{ID};
+    return { Success => 1, Data => { %{ $Self->_Aggregate(%{$Instance}) }, CurrentConsumedSeconds => $Consumed }, Transition => 'unchanged' } if $NewStatus eq $Instance->{Status};
+    my $Actor = $Param{Actor};
     my @Values = ( $NewStatus, $NewStatus eq 'breached' ? $At : undef, $Actor, $Param{TenantID}, $Param{CommitmentID}, $Param{ExpectedVersion} );
     my @Bind = map { \$_ } @Values;
     my $OK = $Kernel::OM->Get('Kernel::System::DB')->Do(
@@ -213,7 +242,7 @@ sub Evaluate {
     my $Updated = $Self->_InstanceRowGet( TenantID => $Param{TenantID}, CommitmentID => $Param{CommitmentID} );
     return $Self->_Error('VERSION_CONFLICT') if !$Updated || $Updated->{Version} != $Param{ExpectedVersion} + 1;
     $Self->_EventAdd( %{$Updated}, EventType => $NewStatus eq 'breached' ? 'breached' : 'warning', EventTime => $At, FromStatus => $Instance->{Status}, ToStatus => $NewStatus, Actor => $Actor, Reason => $Param{Reason} // q{}, ConsumedSeconds => $Consumed );
-    return { Success => 1, Data => $Self->_Aggregate(%{$Updated}) };
+    return { Success => 1, Data => $Self->_Aggregate(%{$Updated}), Transition => $NewStatus };
 }
 
 sub _Transition {
