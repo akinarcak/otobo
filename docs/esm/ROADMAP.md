@@ -12,6 +12,8 @@
 - [x] `CAT-02b`: directory-derived tenant-admin katalog/form yonetim arayuzu, CSRF ve optimistic update kontrolleri (`2026-07-24`).
 - [x] `FLOW-01`: idempotent portal submission, tenant-role onayi, fulfillment gorev durum makinesi ve agent workbench; oturumlu HTTP kabul testi (`2026-07-24`).
 - [x] `SLA-01a`: tenant-safe resolution commitment policy/instance/event modeli, OTOBO business calendar hesabi, pause/resume, warning/breach sweep ve request lifecycle entegrasyonu (`2026-07-24`).
+- [x] `SLA-01b-core`: response/resolution/OLA hedefleri, cevap-tabanli entitlement secimi, bagimsiz lifecycle sinyalleri ve idempotent escalation outbox (`2026-07-24`).
+- [ ] `SLA-01b-actions`: outbox dispatcher'lari ile notification, assignment ve imzali webhook teslimi.
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.

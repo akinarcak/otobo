@@ -1,4 +1,4 @@
-# SLA-01a Resolution Commitment Motoru
+# SLA-01 Commitment Motoru
 
 ## Karar
 
@@ -22,12 +22,18 @@ Destination ve elapsed hesaplari OTOBO calisma saatleri, tek-seferlik/yillik tat
 
 Katalog workflow'u `commitment.policy_key` ile tenant policy'yi secer. Request submission commitment'i otomatik baslatir. Onay bekleme pause kuralinda ise ilk durum `paused`; onay sonrasi `running`; rejection `cancelled`; son fulfillment gorevi `met` veya hedef asilmis ise `breached` sonucunu uretir.
 
+## Coklu hedef ve entitlement
+
+Policy artik sirali `response`, `resolution` ve `ola` hedefleri tasir. Her hedef kendi baslangic/bitis sinyalini, takvim hedefini, warning oranini ve escalation action listesini snapshot olarak saklar. `request_created`, `request_approved`, `first_response` ve `request_fulfilled` sinyalleri hedefleri birbirinden bagimsiz baslatir veya kapatir.
+
+Katalog workflow'u varsayilan policy'ye ek olarak sadece validate edilmis cevaplar uzerinde calisan sirali entitlement kurallari tanimlar. Eslesen kural tenant-local policy'yi secer; secim ve kural anahtari request snapshot'inda denetlenebilir bicimde kalir. Warning/breach action'lari benzersiz anahtarla outbox'a yazilir; ayni sweep ayni action'i ikinci kez kuyruklamaz.
+
 ## Dogrulama
 
 - Sabit UTC fixture'lari ile warning, business-time due, gece/ertesi gun pause kaymasi, stale scheduler, met/breach ve cross-tenant denial test edilir.
-- Altı D724 paketi 17 dosyada 275 testi birlikte gecirir.
-- Oturumlu HTTP kabul testi demo talebini `paused -> running -> met` ve request'i `awaiting_approval -> in_fulfillment -> fulfilled` olarak tamamlamistir.
+- Alti D724 paketi 17 dosyada 297 testi birlikte gecirir.
+- Oturumlu HTTP kabul testi premium entitlement secilen `REQ-0000000042` talebinde response/resolution hedeflerini `paused`, onaydan sonra response/resolution/OLA hedeflerini `running`, ilk yanittan sonra response'u `met` ve fulfillment sonunda uc hedefi de `met` olarak dogrulamistir.
 
 ## Acik kapsam
 
-`SLA-01b` response ve resolution icin birden fazla commitment, OLA/UC hedefleri, entitlement/priority secimi ve warning/breach sonrasinda notification/webhook/assignment escalation action'larini ekleyecektir. Bu nedenle genel `SLA-01` henuz tamamen kapanmis sayilmaz.
+Outbox teslim worker'i ve gercek notification/assignment/imzali webhook adapter'lari henuz uygulanmamistir. UC hedefi ve escalation teslim gozlemlenebilirligi de sonraki kapidadir. Bu nedenle genel `SLA-01` henuz tamamen kapanmis sayilmaz.
