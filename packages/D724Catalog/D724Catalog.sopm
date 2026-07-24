@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
     <Name>D724Catalog</Name>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
     <URL>https://github.com/akinarcak/otobo</URL>
@@ -136,8 +136,8 @@
             <ForeignKey ForeignTable="users"><Reference Local="change_by" Foreign="id" /></ForeignKey>
         </TableCreate>
     </DatabaseInstall>
-    <DatabaseUpgrade Type="post" Version="0.2.0">
-        <TableCreate Name="d724_catalog_item_schema">
+    <DatabaseUpgrade Type="post">
+        <TableCreate Name="d724_catalog_item_schema" Version="0.2.1">
             <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
             <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
             <Column Name="catalog_item_id" Required="true" Type="BIGINT" />
