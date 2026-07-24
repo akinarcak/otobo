@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otobo_package version="1.0">
+    <Name>D724Commitment</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-safe business-time commitments, pause rules, breach evaluation, and escalation evidence for D724 ESM.</Description>
+    <Description Lang="tr">D724 ESM icin tenant guvenli is zamani taahhutleri, duraklatma, ihlal ve eskalasyon kaniti.</Description>
+    <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
+    <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.1.2">D724TenantDirectory</PackageRequired>
+    <PackageRequired Version="0.1.3">D724Request</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="d724_commitment_policy">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="key_name" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" /><Column Name="calendar_id" Required="true" Type="INTEGER" />
+            <Column Name="target_seconds" Required="true" Type="BIGINT" /><Column Name="warning_percent" Required="true" Type="INTEGER" />
+            <Column Name="pause_statuses_json" Required="true" Size="4000" Type="VARCHAR" /><Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" /><Column Name="create_time" Required="true" Type="DATE" /><Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="d724_commitment_policy_key"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="key_name" /></Unique>
+            <Unique Name="d724_commitment_policy_tenant_id"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="id" /></Unique>
+        </TableCreate>
+        <TableCreate Name="d724_commitment_instance">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="request_id" Required="true" Type="BIGINT" />
+            <Column Name="policy_id" Required="true" Type="BIGINT" /><Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="target_seconds" Required="true" Type="BIGINT" /><Column Name="consumed_seconds" Required="true" Type="BIGINT" />
+            <Column Name="calendar_id" Required="true" Type="INTEGER" /><Column Name="warning_percent" Required="true" Type="INTEGER" />
+            <Column Name="start_time" Required="true" Type="DATE" /><Column Name="running_since" Required="false" Type="DATE" />
+            <Column Name="paused_at" Required="false" Type="DATE" /><Column Name="warning_time" Required="true" Type="DATE" />
+            <Column Name="due_time" Required="true" Type="DATE" /><Column Name="breached_at" Required="false" Type="DATE" />
+            <Column Name="met_at" Required="false" Type="DATE" /><Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="create_by" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Size="128" Type="VARCHAR" />
+            <Unique Name="d724_commitment_request"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="request_id" /></Unique>
+            <Unique Name="d724_commitment_instance_tenant_id"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="id" /></Unique>
+            <Index Name="d724_commitment_due"><IndexColumn Name="tenant_id" /><IndexColumn Name="status" /><IndexColumn Name="due_time" /></Index>
+        </TableCreate>
+        <TableCreate Name="d724_commitment_event">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="commitment_id" Required="true" Type="BIGINT" />
+            <Column Name="event_type" Required="true" Size="30" Type="VARCHAR" /><Column Name="event_time" Required="true" Type="DATE" />
+            <Column Name="from_status" Required="true" Size="20" Type="VARCHAR" /><Column Name="to_status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="consumed_seconds" Required="true" Type="BIGINT" /><Column Name="actor" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="reason" Required="true" Size="1000" Type="VARCHAR" /><Column Name="create_time" Required="true" Type="DATE" />
+            <Index Name="d724_commitment_event_scope"><IndexColumn Name="tenant_id" /><IndexColumn Name="commitment_id" /><IndexColumn Name="id" /></Index>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUninstall Type="pre"><TableDrop Name="d724_commitment_event" /><TableDrop Name="d724_commitment_instance" /><TableDrop Name="d724_commitment_policy" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/D724Commitment.xml" />
+        <File Permission="644" Location="Kernel/System/D724/Commitment.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CommitmentStatus.pm" />
+        <File Permission="644" Location="scripts/test/D724/Commitment.t" />
+        <File Permission="644" Location="scripts/test/D724/CommitmentStatus.t" />
+    </Filelist>
+</otobo_package>
