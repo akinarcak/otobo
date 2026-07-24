@@ -17,6 +17,7 @@ Bu dizin, OTOBO `rel-11_1` tabani uzerinde gelistirilecek ticari ESM urununun ka
 - [ROADMAP.md](ROADMAP.md): surumlar, epic'ler ve basari olcutleri
 - [GPL-COMMERCIAL.md](GPL-COMMERCIAL.md): ticari model ve uyum kontrol listesi
 - [STATUS.md](STATUS.md): dogrulanmis mevcut durum ve acik kapsam
+- [audit/AUD-01-AUDIT.md](audit/AUD-01-AUDIT.md): normalize audit kontrati, hash zinciri, export ve acik completeness kapsami
 
 ## Gelistirme modeli
 

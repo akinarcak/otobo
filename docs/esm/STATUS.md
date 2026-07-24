@@ -43,13 +43,22 @@ Son dogrulama: `2026-07-24`
   - CSRF challenge token ve optimistic update formlari,
   - bes test dosyasi, 59 paket testi, sonuc `PASS`,
   - authenticated customer HTTP katalog ve dinamik form smoke testleri.
-- GPL-3.0 `D724Request 0.2.1` OPM paketi:
+- GPL-3.0 `D724Request 0.3.2` OPM paketi:
   - sunucu-tarafli dinamik cevap validasyonu ve workflow snapshot'i,
   - tenant/requester kapsamli idempotent form submission,
   - tenant-role onayi ve optimistic-lock durum gecisleri,
   - fulfillment gorevleri, basarisizlik ve otomatik fulfilled sonucu,
   - musteri makbuzu ve agent onay/fulfillment workbench'i,
   - oturumlu HTTP submit sonrasi `REQ-*` makbuzu ve agent gorunurluk testi.
+- GPL-3.0 `D724Audit 0.1.2` OPM paketi:
+  - tenant-bazli monoton sequence ve SHA-256 previous/event hash zinciri,
+  - normalize actor/action/object/correlation/state/outcome/details kontrati,
+  - source IP'nin salt'li SHA-256 pseudonym'i ve clear-text export yasagi,
+  - `audit.read` policy kontrolu, tenant/object filtresi, cursor pagination ve NDJSON export,
+  - tenant + `dedupe_key` benzersizligi ile tekrar teslimde ayni olay sonucunun donmesi,
+  - request create/approve/first-response/task-transition/fulfilled adapter'lari,
+  - zincir, head, sequence gap ve event hash dogrulayan `Verify` API'si,
+  - iki test dosyasi, 29 test, sonuc `PASS`.
 - GPL-3.0 `D724Catalog 0.4.0`, `D724Request 0.2.1` ve `D724Commitment 0.3.0` entegrasyonu:
   - tenant-local commitment policy referansli katalog workflow'u,
   - request acilisinda immutable policy snapshot ve otomatik commitment baslatma,
@@ -63,8 +72,9 @@ Son dogrulama: `2026-07-24`
   - authenticated HTTP akisi `REQ-0000000042`: iki hedef paused, onaydan sonra uc hedef running, ilk yanit ve fulfillment sonunda uc hedef met.
   - atomik lease, exponential retry ve dead-letter escalation dispatcher,
   - tenant-role OTOBO email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
-- Alti D724 paketinde toplam 17 test dosyasi ve 316 test birlikte `PASS`.
-- Son OPM SHA-256 kaniti: Request 0.2.1 `b6d8557df7636ab4357a61eb19ad441cd91f792dc0eeaedc01561cc3241f38e3`, Commitment 0.3.0 `20bb504721babba2f6e96ac2801926f6221d4179715effc693c5ecccae466d14`.
+- Yedi D724 paketinde toplam 19 test dosyasi ve 351 test birlikte `PASS`.
+- Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
+- Son OPM SHA-256 kaniti: Audit 0.1.2 `1be3df134a4a5295446ab9e5a5ce8715295661a163791f8a11de6898587e470e`, Request 0.3.2 `ddb01fea1667d212cab447bde6c6f60231cfcfd38bde2c529d9e0fd0e7ba0082`.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen
@@ -74,6 +84,8 @@ Son dogrulama: `2026-07-24`
 - GitHub Actions workflow'u depoda bulunur ancak fork icin Actions calistirma politikasi ayrica etkinlestirilmelidir.
 - Katalog repository'si merkezi tenant policy'ye baglanan ilk adapter'dir. OTOBO ticket, Generic Interface, daemon, rapor, cache ve search adapter'lari henuz baglanmamistir.
 - OTOBO paket sema ceviricisi katalog parent'lari icin tanimlanan cok sutunlu foreign key'i ayri kisitlara cevirmektedir. Repository cifti birlikte dogrular; dogrudan DB yazimina karsi composite constraint sertlestirmesi release oncesi acik guvenlik isidir.
+- OTOBO paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
+- Hash zinciri kaydedilmis olaylarin sonradan degistirilmesini algilar; uygulama mutasyonu ile audit append'i henuz tek transaction/outbox completeness garantisine sahip degildir. Bu nedenle `AUD-01b` tamamlanmadan zincir, olay eksiksizliginin tek basina kaniti sayilmaz.
 
 ## Henuz urun sayilmayan kapsam
 
@@ -81,10 +93,10 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 
 - tenant/organizasyon policy siniri ve veri sizintisi testleri,
 - UC hedefi, dead-letter replay arayuzu ve escalation teslim metrikleri,
-- audit event modeli ve disari aktarim,
+- tum domain adapter'larinda atomik audit completeness, retention/legal hold ve dis WORM arsivi,
 - portal ve agent urun deneyimi,
 - SSO/SCIM ve entegrasyon sozlesmeleri,
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `AUD-01` normalize audit event modeli ve tenant-safe disari aktarimdir.
+Bir sonraki urun kapisi `AUD-01b`: transaction/outbox tabanli audit completeness, cekirdek OTOBO adapter'lari ve immutable dis arsivdir.

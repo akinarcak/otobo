@@ -14,6 +14,7 @@
 - [x] `SLA-01a`: tenant-safe resolution commitment policy/instance/event modeli, OTOBO business calendar hesabi, pause/resume, warning/breach sweep ve request lifecycle entegrasyonu (`2026-07-24`).
 - [x] `SLA-01b-core`: response/resolution/OLA hedefleri, cevap-tabanli entitlement secimi, bagimsiz lifecycle sinyalleri ve idempotent escalation outbox (`2026-07-24`).
 - [x] `SLA-01b-actions`: lease/retry/dead-letter dispatcher, tenant-role notification, fulfillment assignment ve allow-list/HMAC korumali webhook teslimi (`2026-07-24`).
+- [x] `AUD-01a`: tenant-bazli normalize audit olaylari, SHA-256 hash zinciri, yetkili cursor/NDJSON export, request lifecycle adapter'i ve idempotent olay anahtarlari (`2026-07-24`).
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
@@ -66,8 +67,8 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 ## Ilk backlog sirasi
 
-1. `SLA-01b`: response/resolution/OLA coklu hedefleri, escalation action ve entitlement secimi
-2. `AUD-01`: normalize audit event ve disari aktarim
-3. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
+1. `AUD-01b`: transaction/outbox ile audit completeness, OTOBO ticket/Generic Interface/SLA adapter'lari, retention/legal hold ve WORM sink
+2. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
+3. `API-01`: tenant-safe REST API, OAuth client kimligi, rate limit ve imzali webhook sozlesmeleri
 4. `OBS-01`: metrikler, dashboard ve alarm esikleri
 5. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari
