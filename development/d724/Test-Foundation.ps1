@@ -22,6 +22,9 @@ if ($MissingFiles) {
 }
 
 $ComposeText = Get-Content (Join-Path $PSScriptRoot 'compose.yml') -Raw
+if ($ComposeText -notmatch '\$\{D724_BIND_ADDRESS:-127\.0\.0\.1\}') {
+    throw 'Compose must default its HTTP bind address to localhost.'
+}
 $ForbiddenPatterns = @(
     '(?im)^\s*(?:MYSQL_ROOT_PASSWORD|D724_DB_ROOT_PASSWORD)\s*:\s*(?!\$\{)\S+',
     '(?i)password\s*[:=]\s*(?:admin|password|changeme|tes)\b',

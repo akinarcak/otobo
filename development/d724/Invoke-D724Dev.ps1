@@ -60,6 +60,10 @@ if (-not (Test-Path $EnvironmentFile)) {
 }
 
 Set-BuildMetadata
+$BindAddress = Get-EnvironmentValue -Name 'D724_BIND_ADDRESS' -Default '127.0.0.1'
+if ($BindAddress -eq '0.0.0.0' -or $BindAddress -eq '::') {
+    throw 'Refusing a public wildcard bind. Use localhost, a private interface, or a TLS reverse proxy.'
+}
 
 switch ($Action) {
     'Validate' {
