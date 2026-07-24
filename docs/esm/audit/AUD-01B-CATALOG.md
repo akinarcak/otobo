@@ -4,7 +4,7 @@ Durum: tamamlandi (`2026-07-24`).
 
 ## Kapsam
 
-`D724Catalog 0.5.0`, asagidaki tenant-kapsamli mutation'lari normalize audit zincirine baglar:
+`D724Catalog 0.5.2`, asagidaki tenant-kapsamli mutation'lari normalize audit zincirine baglar:
 
 - `catalog.service.created` / `catalog.service.updated`
 - `catalog.offering.created` / `catalog.offering.updated`
@@ -28,7 +28,7 @@ Service, offering, item ve schema yazim girisleri production `AutoCommit` baglan
 ## Kanit
 
 - Catalog paketi: 6 dosya / 73 test `PASS`.
-- Tum urun regresyonu: 21 dosya / 369 test `PASS`.
+- Tum urun regresyonu: 23 dosya / 402 test `PASS`.
 - Unit transaction kontrati: failure sonrasi mutation `0`, success sonrasi durable row `1`.
 - Gercek demo hata enjeksiyonu:
   - service create audit failure sonrasi row `0`;
@@ -41,4 +41,4 @@ Service, offering, item ve schema yazim girisleri production `AutoCommit` baglan
 
 ## Acik core kapsam
 
-OTOBO ticket/article, Generic Interface, tenant directory ve commitment scheduler/escalation mutation'lari bu katalog adapter'inin transaction garantisine henuz sahip degildir.
+OTOBO ticket/article, Generic Interface ve commitment scheduler/escalation mutation'lari bu katalog adapter'inin transaction garantisine henuz sahip degildir. Tenant-directory atomikligi `AUD-01b-directory` kapsaminda tamamlanmistir.
