@@ -11,6 +11,7 @@
 - [x] `SEC-02`: kalici tenant/agent directory, tenant-bazli role bindings, tek-seferlik bootstrap ve lockout korumalari (`2026-07-24`).
 - [x] `CAT-02b`: directory-derived tenant-admin katalog/form yonetim arayuzu, CSRF ve optimistic update kontrolleri (`2026-07-24`).
 - [x] `FLOW-01`: idempotent portal submission, tenant-role onayi, fulfillment gorev durum makinesi ve agent workbench; oturumlu HTTP kabul testi (`2026-07-24`).
+- [x] `SLA-01a`: tenant-safe resolution commitment policy/instance/event modeli, OTOBO business calendar hesabi, pause/resume, warning/breach sweep ve request lifecycle entegrasyonu (`2026-07-24`).
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
@@ -63,7 +64,7 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 ## Ilk backlog sirasi
 
-1. `SLA-01`: commitment motoru ve takvim hesaplari
+1. `SLA-01b`: response/resolution/OLA coklu hedefleri, escalation action ve entitlement secimi
 2. `AUD-01`: normalize audit event ve disari aktarim
 3. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
 4. `OBS-01`: metrikler, dashboard ve alarm esikleri
