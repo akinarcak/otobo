@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.3.2';
+our $VERSION = '0.4.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -20,11 +20,17 @@ our @ObjectDependencies = (
     'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB',
     'Kernel::System::JSON',
+    'Kernel::System::Log',
 );
 
 sub new { return bless {}, $_[0] }
 
 sub CustomerSubmit {
+    my ( $Self, %Param ) = @_;
+    return $Self->_TransactionRun( Code => sub { return $Self->_CustomerSubmit(%Param) } );
+}
+
+sub _CustomerSubmit {
     my ( $Self, %Param ) = @_;
     return $Self->_Error('REQUEST_DISABLED') if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Request::Enabled');
     return $Self->_Error('IDEMPOTENCY_KEY_INVALID')
@@ -192,6 +198,11 @@ sub AgentList {
 
 sub ApprovalDecide {
     my ( $Self, %Param ) = @_;
+    return $Self->_TransactionRun( Code => sub { return $Self->_ApprovalDecide(%Param) } );
+}
+
+sub _ApprovalDecide {
+    my ( $Self, %Param ) = @_;
     return $Self->_Error('REQUEST_DISABLED') if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Request::Enabled');
     return $Self->_Error('REQUEST_ID_INVALID') if !$Self->_PositiveInteger( $Param{RequestID} );
     return $Self->_Error('DECISION_INVALID') if ( $Param{Decision} // q{} ) !~ m{\A(?:approved|rejected)\z}smx;
@@ -223,7 +234,7 @@ sub ApprovalDecide {
     my $TaskStatus    = $Param{Decision} eq 'approved' ? 'pending' : 'cancelled';
     my @RequestValues = ( $RequestStatus, $Actor, $Param{TenantID}, $Param{RequestID} );
     my @RequestBind = map { \$_ } @RequestValues;
-    $DBObject->Do(
+    return $Self->_Error('DATABASE_ERROR') if !$DBObject->Do(
         SQL => "UPDATE d724_request SET status = ?, version = version + 1, change_time = current_timestamp, change_by = ? WHERE tenant_id = ? AND id = ? AND status = 'awaiting_approval'",
         Bind => \@RequestBind,
     );
@@ -264,6 +275,11 @@ sub ApprovalDecide {
 
 sub TaskUpdate {
     my ( $Self, %Param ) = @_;
+    return $Self->_TransactionRun( Code => sub { return $Self->_TaskUpdate(%Param) } );
+}
+
+sub _TaskUpdate {
+    my ( $Self, %Param ) = @_;
     return $Self->_Error('REQUEST_DISABLED') if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Request::Enabled');
     return $Self->_Error('TASK_ID_INVALID') if !$Self->_PositiveInteger( $Param{TaskID} );
     return $Self->_Error('TASK_STATUS_INVALID') if ( $Param{Status} // q{} ) !~ m{\A(?:in_progress|completed|failed)\z}smx;
@@ -303,13 +319,14 @@ sub TaskUpdate {
     if ( $Param{Status} eq 'failed' ) {
         my @RequestValues = ( $Actor, $Param{TenantID}, $Task->{RequestID} );
         my @RequestBind = map { \$_ } @RequestValues;
-        $DBObject->Do(
+        return $Self->_Error('DATABASE_ERROR') if !$DBObject->Do(
             SQL => "UPDATE d724_request SET status = 'fulfillment_failed', version = version + 1, change_time = current_timestamp, change_by = ? WHERE tenant_id = ? AND id = ? AND status = 'in_fulfillment'",
             Bind => \@RequestBind,
         );
-        $Self->_CommitmentSync(
+        my $Synced = $Self->_CommitmentSync(
             UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Task->{RequestID}, RequestStatus => 'fulfillment_failed',
         );
+        return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Synced->{Success};
     }
     if ( $Param{Status} eq 'completed' ) {
         my $RequestID = $Task->{RequestID};
@@ -321,7 +338,7 @@ sub TaskUpdate {
         if (!$Remaining) {
             my @RequestValues = ( $Actor, $Param{TenantID}, $RequestID );
             my @RequestBind = map { \$_ } @RequestValues;
-            $DBObject->Do(
+            return $Self->_Error('DATABASE_ERROR') if !$DBObject->Do(
                 SQL => "UPDATE d724_request SET status = 'fulfilled', version = version + 1, change_time = current_timestamp, change_by = ? WHERE tenant_id = ? AND id = ?",
                 Bind => \@RequestBind,
             );
@@ -349,6 +366,11 @@ sub TaskUpdate {
 }
 
 sub ResponseRecord {
+    my ( $Self, %Param ) = @_;
+    return $Self->_TransactionRun( Code => sub { return $Self->_ResponseRecord(%Param) } );
+}
+
+sub _ResponseRecord {
     my ( $Self, %Param ) = @_;
     return $Self->_Error('REQUEST_DISABLED') if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Request::Enabled');
     return $Self->_Error('REQUEST_ID_INVALID') if !$Self->_PositiveInteger( $Param{RequestID} );
@@ -457,6 +479,40 @@ sub _AuditRecord {
     my $Audit = eval { $Kernel::OM->Get('Kernel::System::D724::Audit') };
     return { Success => 0, Error => 'AUDIT_NOT_AVAILABLE' } if $@ || !$Audit;
     return $Audit->Record( %Param, Outcome => 'success' );
+}
+
+sub _TransactionRun {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('TRANSACTION_CODE_INVALID') if ref $Param{Code} ne 'CODE';
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+
+    # OTOBO unit tests and callers may already own the surrounding transaction.
+    # In that case this operation joins it; the outer owner remains responsible
+    # for commit/rollback. Normal web and console requests enter with AutoCommit.
+    return $Param{Code}->() if !$DB->{dbh}->{AutoCommit};
+
+    my $Result;
+    my $OK = eval {
+        die "TRANSACTION_START_FAILED\n" if !$DB->BeginWork();
+        $Result = $Param{Code}->();
+        die "TRANSACTION_RESULT_INVALID\n" if ref $Result ne 'HASH' || !exists $Result->{Success};
+        if ( $Result->{Success} ) {
+            die "TRANSACTION_COMMIT_FAILED\n" if !$DB->{dbh}->commit();
+        }
+        else {
+            die "TRANSACTION_ROLLBACK_FAILED\n" if !$DB->Rollback();
+        }
+        1;
+    };
+    if ( !$OK ) {
+        my $Failure = $@ || 'TRANSACTION_FAILED';
+        eval { $DB->Rollback() } if !$DB->{dbh}->{AutoCommit};
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error', Message => "D724 request transaction failed: $Failure",
+        );
+        return $Self->_Error('TRANSACTION_FAILED');
+    }
+    return $Result;
 }
 
 sub _AuditRequestCreated {
