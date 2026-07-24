@@ -1,0 +1,92 @@
+# --
+# Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
+# SPDX-License-Identifier: GPL-3.0-only
+# --
+use v5.24;
+use strict;
+use warnings;
+use Test2::V0;
+use Kernel::System::UnitTest::RegisterOM;
+
+$Kernel::OM->ObjectParamAdd( 'Kernel::System::UnitTest::Helper' => { RestoreDatabase => 0 } );
+my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
+my $DB = $Kernel::OM->Get('Kernel::System::DB');
+my $Tenant = 'ticket-audit-' . lc $Helper->GetRandomID();
+my $OtherTenant = 'ticket-other-' . lc $Helper->GetRandomID();
+my $Handle = $DB->Connect();
+
+$Helper->ConfigSettingChange( Key => 'D724::TicketAudit::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::TenantGuard::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::TenantGuard::AllowPlatformAdmin', Value => 1 );
+$Handle->commit() if !$Handle->{AutoCommit};
+ok( $Handle->{AutoCommit}, 'ticket audit test starts in production-style AutoCommit mode' );
+
+for my $TenantID ( $Tenant, $OtherTenant ) {
+    my @Values = ( $TenantID, "Ticket Test $TenantID", 1, 1 );
+    my @Bind = map { \$_ } @Values;
+    ok( $DB->Do(
+        SQL => "INSERT INTO d724_tenant (key_name, name, status, version, create_time, create_by, change_time, change_by) VALUES (?, ?, 'active', 1, current_timestamp, ?, current_timestamp, ?)",
+        Bind => \@Bind,
+    ), "tenant fixture $TenantID is created" );
+}
+
+my $Ticket = $Kernel::OM->Get('Kernel::System::Ticket');
+my $QueueID = $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup( Queue => 'Raw' );
+my $StateID = $Kernel::OM->Get('Kernel::System::State')->StateLookup( State => 'new' );
+my $PriorityID = $Kernel::OM->Get('Kernel::System::Priority')->PriorityLookup( Priority => '3 normal' );
+ok( $QueueID && $StateID && $PriorityID, 'core ticket fixture lookups resolve' );
+
+my $TicketNumber = 'D724TA' . $Helper->GetRandomID();
+my $TicketID = $Ticket->TicketCreate(
+    TN => $TicketNumber, Title => 'Atomic tenant ticket', QueueID => $QueueID,
+    Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
+    CustomerID => $Tenant, CustomerUser => 'ticket-test-user', OwnerID => 1, UserID => 1,
+);
+ok( $TicketID, 'tenant-bound OTOBO ticket is created' );
+my $Scope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID );
+is( $Scope->{TenantID}, $Tenant, 'ticket gets immutable tenant binding' );
+is( $Scope->{Version}, 1, 'new ticket binding starts at version one' );
+
+my $Subject = { ID => 'ticket-auditor', TenantIDs => [$Tenant], RoleBindings => { $Tenant => ['tenant_admin'] } };
+my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit');
+my $Events = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
+is( [ map { $_->{Action} } @{ $Events->{Data} } ], ['ticket.created'], 'ticket create emits one normalized event' );
+
+my $OpenStateID = $Kernel::OM->Get('Kernel::System::State')->StateLookup( State => 'open' );
+ok( $OpenStateID, 'open state fixture resolves' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$Ticket->TicketStateSet( TicketID => $TicketID, StateID => $OpenStateID, UserID => 1 ), 'state update fails closed when audit is unavailable' );
+my %AfterFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterFailure{StateID}, $StateID, 'failed audited state update rolls ticket state back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 1, 'failed state update rolls scope version back' );
+
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $Ticket->TicketStateSet( TicketID => $TicketID, StateID => $OpenStateID, UserID => 1 ), 'same state update succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 2, 'successful state update advances scope version once' );
+ok(
+    !$Ticket->TicketCustomerSet( TicketID => $TicketID, No => $OtherTenant, User => 'other-user', UserID => 1 ),
+    'ticket cannot be reassigned across tenant boundary',
+);
+my %AfterCrossTenant = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterCrossTenant{CustomerID}, $Tenant, 'cross-tenant customer mutation leaves tenant unchanged' );
+
+my $UnscopedNumber = 'D724UN' . $Helper->GetRandomID();
+ok( !$Ticket->TicketCreate(
+    TN => $UnscopedNumber, Title => 'Unscoped ticket', QueueID => $QueueID,
+    Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID, OwnerID => 1, UserID => 1,
+), 'ticket creation without an active tenant fails closed' );
+ok( !$Ticket->TicketIDLookup( TicketNumber => $UnscopedNumber, UserID => 1 ), 'tenantless rejection leaves no ticket row' );
+
+$Events = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
+is( [ map { $_->{Action} } @{ $Events->{Data} } ], [qw(ticket.created ticket.state.updated)], 'failed update leaves no orphan event and retry emits one event' );
+ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket tenant audit chain verifies' );
+
+ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket fixture is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$TicketID ] ), 'ticket scope fixture is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_audit_event WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit events are removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_audit_head WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit head is removed' );
+for my $TenantID ( $Tenant, $OtherTenant ) {
+    ok( $DB->Do( SQL => 'DELETE FROM d724_tenant WHERE key_name = ?', Bind => [ \$TenantID ] ), "tenant fixture $TenantID is removed" );
+}
+done_testing;

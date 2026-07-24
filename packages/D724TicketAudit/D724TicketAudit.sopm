@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otobo_package version="1.0">
+    <Name>D724TicketAudit</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Transaction-atomic tenant binding and normalized audit for OTOBO ticket mutations.</Description>
+    <Description Lang="tr">OTOBO ticket mutasyonlari icin transaction-atomic tenant baglama ve normalize audit.</Description>
+    <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
+    <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.1">D724TenantDirectory</PackageRequired>
+    <PackageRequired Version="0.2.0">D724Audit</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="d724_ticket_scope">
+            <Column Name="ticket_id" Required="true" PrimaryKey="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
+            <Column Name="status" Required="true" Default="active" Size="20" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Type="INTEGER" />
+            <Index Name="d724_ticket_scope_tenant"><IndexColumn Name="tenant_id" /><IndexColumn Name="ticket_id" /></Index>
+            <ForeignKey ForeignTable="d724_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUninstall Type="pre"><TableDrop Name="d724_ticket_scope" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/D724TicketAudit.xml" />
+        <File Permission="644" Location="Kernel/System/D724/TicketAudit.pm" />
+        <File Permission="644" Location="Kernel/System/Ticket/D724AuditCustom.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/TicketAuditStatus.pm" />
+        <File Permission="644" Location="scripts/test/D724/TicketAudit.t" />
+        <File Permission="644" Location="scripts/test/D724/TicketAuditStatus.t" />
+    </Filelist>
+</otobo_package>
