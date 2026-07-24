@@ -36,6 +36,11 @@ foreach ($File in $PackageSource.otobo_package.Filelist.File) {
     if (-not (Test-Path $PackageFile -PathType Leaf)) {
         throw "Package file list entry is missing: $($File.Location)"
     }
+    $RepositoryRelativePath = "packages/D724Foundation/$($File.Location)"
+    & git -C $RepositoryRoot ls-files --error-unmatch -- $RepositoryRelativePath 2>$null | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Package file list entry is not tracked by Git: $RepositoryRelativePath"
+    }
 }
 
 [xml] (Get-Content (Join-Path $PackageDirectory 'Kernel/Config/Files/XML/D724Foundation.xml') -Raw) | Out-Null

@@ -129,3 +129,7 @@ Test
 # D724 ESM local development secrets and state.
 development/d724/.env
 development/d724/.runtime/
+
+# Package tests are source files; the upstream generic "Test" rule must not hide them on Windows.
+!packages/D724Foundation/scripts/test/
+!packages/D724Foundation/scripts/test/**
