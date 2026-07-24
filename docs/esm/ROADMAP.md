@@ -23,6 +23,7 @@
 - [x] `API-01a`: tenant-bazli client credentials, bcrypt secret, digest-only opaque token, atomik rate limit, auditli client revoke ve tenant-scope vaka read HTTP API'si (`2026-07-24`).
 - [x] `API-01b-core`: canonical `/api/v1`, OpenAPI 3.1, requester-owned request read ve transaction-atomic/idempotent request create (`2026-07-24`).
 - [x] `API-01c-credentials`: optimistic ve transaction-atomic secret rotation, tum tokenlari aninda revoke, token lifecycle audit, retention cleanup ve operasyonel API sayaclari (`2026-07-25`).
+- [x] `API-01b-lifecycle`: tenant-role korumali approval ve fulfillment task write endpoint'leri, optimistic version, guvenli replay, commitment senkronu ve integration actor audit (`2026-07-25`).
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
@@ -77,6 +78,6 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 1. `AUD-01b-core`: kalan ticket delete/merge/type/service/SLA/pending ve Chat article, Generic Interface/SLA scheduler mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
 2. `SEC-01b`: kalan case/API/daemon/report/cache/search policy adapter'lari ve katalog DB constraint sertlestirmesi
-3. `API-01c-webhook`: lifecycle write endpoint'leri, imzali webhook kontrati, route latency/error metrikleri ve load testleri
+3. `API-01c-webhook`: imzali webhook API kontrati, route latency/error metrikleri ve load testleri
 4. `OBS-01`: metrikler, dashboard ve alarm esikleri
 5. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari

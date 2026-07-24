@@ -8,7 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.3.0';
+our $VERSION = '0.5.0';
 our @ObjectDependencies = (
     'Kernel::System::CustomerUser',
     'Kernel::System::D724::APIAuth',
@@ -157,6 +157,56 @@ sub RequestGet {
         Success => 1,
         Data    => $Self->_RequestProject( $Result->{Data} ),
         Meta    => $Self->_Meta($Authorization),
+    };
+}
+
+sub RequestApprovalDecide {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('REQUEST_ID_INVALID')
+        if ( $Param{RequestID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+
+    my $Authorization = $Self->_Authorize( %Param, Action => 'case.update' );
+    return $Authorization if !$Authorization->{Success};
+    my $TenantID = $Authorization->{Data}->{TenantID};
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Request')->ApprovalDecide(
+        TenantID          => $TenantID,
+        RequestID         => $Param{RequestID},
+        Decision          => $Param{Decision},
+        ExpectedVersion   => $Param{ExpectedVersion},
+        Comment           => $Param{Comment},
+        IntegrationSubject => $Authorization->{Data}->{Subject},
+    );
+    return $Result if !$Result->{Success};
+    return {
+        Success          => 1,
+        Data             => $Self->_RequestProject( $Result->{Data} ),
+        IdempotentReplay => $Result->{IdempotentReplay} ? 1 : 0,
+        Meta             => $Self->_Meta($Authorization),
+    };
+}
+
+sub RequestTaskUpdate {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('TASK_ID_INVALID')
+        if ( $Param{TaskID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+
+    my $Authorization = $Self->_Authorize( %Param, Action => 'case.update' );
+    return $Authorization if !$Authorization->{Success};
+    my $TenantID = $Authorization->{Data}->{TenantID};
+    my $Result = $Kernel::OM->Get('Kernel::System::D724::Request')->TaskUpdate(
+        TenantID          => $TenantID,
+        TaskID            => $Param{TaskID},
+        Status            => $Param{Status},
+        ExpectedVersion   => $Param{ExpectedVersion},
+        Comment           => $Param{Comment},
+        IntegrationSubject => $Authorization->{Data}->{Subject},
+    );
+    return $Result if !$Result->{Success};
+    return {
+        Success          => 1,
+        Data             => $Self->_RequestProject( $Result->{Data} ),
+        IdempotentReplay => $Result->{IdempotentReplay} ? 1 : 0,
+        Meta             => $Self->_Meta($Authorization),
     };
 }
 

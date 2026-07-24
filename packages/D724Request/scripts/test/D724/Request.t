@@ -158,16 +158,35 @@ is(
 );
 
 my $Approval = $Created->{Data}->{Approvals}->[0];
-my $Approved = $Request->ApprovalDecide(
-    UserID => $AdminID, TenantID => $TenantA, RequestID => $Created->{Data}->{RequestID},
-    ExpectedVersion => $Approval->{Version}, Decision => 'approved', Comment => 'Approved for engineering.',
-);
-ok( $Approved->{Success}, 'tenant admin approves request' );
-is( $Approved->{Data}->{Status}, 'in_fulfillment', 'approved request enters fulfillment' );
-is( $Approved->{Data}->{Tasks}->[0]->{Status}, 'pending', 'approval releases fulfillment task' );
+my $IntegrationAdmin = {
+    ID => "integration:lifecycle-$Suffix", TenantIDs => [$TenantA],
+    RoleBindings => { $TenantA => ['tenant_admin'] },
+};
 is(
     $Request->ApprovalDecide(
-        UserID => $AdminID, TenantID => $TenantA, RequestID => $Created->{Data}->{RequestID},
+        TenantID => $TenantA, RequestID => $Created->{Data}->{RequestID},
+        ExpectedVersion => $Approval->{Version}, Decision => 'approved',
+        IntegrationSubject => { %{$IntegrationAdmin}, TenantIDs => [$TenantB] },
+    )->{Error},
+    'INTEGRATION_SUBJECT_INVALID', 'integration subject cannot cross the request tenant boundary',
+);
+my $Approved = $Request->ApprovalDecide(
+    IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, RequestID => $Created->{Data}->{RequestID},
+    ExpectedVersion => $Approval->{Version}, Decision => 'approved', Comment => 'Approved for engineering.',
+);
+ok( $Approved->{Success}, 'tenant-admin integration approves request' );
+is( $Approved->{Data}->{Status}, 'in_fulfillment', 'approved request enters fulfillment' );
+is( $Approved->{Data}->{Tasks}->[0]->{Status}, 'pending', 'approval releases fulfillment task' );
+ok(
+    $Request->ApprovalDecide(
+        IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, RequestID => $Created->{Data}->{RequestID},
+        ExpectedVersion => $Approval->{Version}, Decision => 'approved', Comment => 'Approved for engineering.',
+    )->{IdempotentReplay},
+    'identical integration approval retry is a safe replay',
+);
+is(
+    $Request->ApprovalDecide(
+        IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, RequestID => $Created->{Data}->{RequestID},
         ExpectedVersion => $Approval->{Version}, Decision => 'rejected', Comment => q{},
     )->{Error},
     'TRANSITION_INVALID', 'decided approval cannot be overwritten',
@@ -175,26 +194,33 @@ is(
 
 my $Task = $Approved->{Data}->{Tasks}->[0];
 my $Started = $Request->TaskUpdate(
-    UserID => $AdminID, TenantID => $TenantA, TaskID => $Task->{TaskID}, ExpectedVersion => $Task->{Version},
+    IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, TaskID => $Task->{TaskID}, ExpectedVersion => $Task->{Version},
     Status => 'in_progress', Comment => 'Imaging device.',
 );
 is( $Started->{Data}->{Tasks}->[0]->{Status}, 'in_progress', 'task starts with valid transition' );
+ok(
+    $Request->TaskUpdate(
+        IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, TaskID => $Task->{TaskID}, ExpectedVersion => $Task->{Version},
+        Status => 'in_progress', Comment => 'Imaging device.',
+    )->{IdempotentReplay},
+    'identical integration task retry is a safe replay',
+);
 is(
     $Request->TaskUpdate(
-        UserID => $AdminID, TenantID => $TenantA, TaskID => $Task->{TaskID}, ExpectedVersion => $Task->{Version},
+        IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, TaskID => $Task->{TaskID}, ExpectedVersion => $Task->{Version},
         Status => 'completed', Comment => q{},
     )->{Error},
     'VERSION_CONFLICT', 'stale task update is rejected',
 );
 my $CurrentTask = $Started->{Data}->{Tasks}->[0];
 my $Completed = $Request->TaskUpdate(
-    UserID => $AdminID, TenantID => $TenantA, TaskID => $CurrentTask->{TaskID}, ExpectedVersion => $CurrentTask->{Version},
+    IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, TaskID => $CurrentTask->{TaskID}, ExpectedVersion => $CurrentTask->{Version},
     Status => 'completed', Comment => 'Delivered.',
 );
 is( $Completed->{Data}->{Status}, 'fulfilled', 'last completed task fulfills request' );
 is(
     $Request->TaskUpdate(
-        UserID => $AdminID, TenantID => $TenantA, TaskID => $CurrentTask->{TaskID}, ExpectedVersion => $CurrentTask->{Version} + 1,
+        IntegrationSubject => $IntegrationAdmin, TenantID => $TenantA, TaskID => $CurrentTask->{TaskID}, ExpectedVersion => $CurrentTask->{Version} + 1,
         Status => 'failed', Comment => q{},
     )->{Error},
     'TRANSITION_INVALID', 'terminal task state cannot transition again',
@@ -214,6 +240,10 @@ is(
 my $FirstRequestSequence = $RequestAudit[0]->{Sequence};
 is( [ map { $_->{Sequence} } @RequestAudit ], [ $FirstRequestSequence .. $FirstRequestSequence + 4 ], 'request audit sequence is contiguous within the tenant chain' );
 is( scalar( grep { $_->{Action} eq 'request.created' } @RequestAudit ), 1, 'idempotent replay does not duplicate creation audit' );
+is(
+    scalar( grep { $_->{ActorType} eq 'integration' } @RequestAudit ), 4,
+    'all four lifecycle mutation events retain the integration actor type',
+);
 is( $Audit->List( UserID => $OtherID, TenantID => $TenantB )->{Error}, 'FORBIDDEN', 'non-auditor cannot export tenant audit' );
 ok( $Audit->Verify( UserID => $AdminID, TenantID => $TenantA )->{Valid}, 'request lifecycle audit chain verifies' );
 

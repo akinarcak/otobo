@@ -100,7 +100,49 @@ sub Run {
         );
         return $Self->_Result( Result => $Result );
     }
+    if ( $Route eq 'request_approval' ) {
+        return $Self->_Respond( Code => 405, Error => 'METHOD_NOT_ALLOWED' ) if $Method ne 'POST';
+        my $Payload = $Self->_JSONPayload();
+        return $Payload if ref $Payload ne 'HASH';
+        my $Result = $Kernel::OM->Get('Kernel::System::D724::API')->RequestApprovalDecide(
+            AccessToken     => $Bearer,
+            TenantID        => $TenantID,
+            RequestID       => $Request->GetParam( Param => 'request_id' ) // q{},
+            Decision        => $Payload->{decision},
+            ExpectedVersion => $Payload->{expected_version},
+            Comment         => $Payload->{comment},
+        );
+        return $Self->_Result( Result => $Result, Replay => $Result->{IdempotentReplay} ? 1 : 0 );
+    }
+    if ( $Route eq 'task' ) {
+        return $Self->_Respond( Code => 405, Error => 'METHOD_NOT_ALLOWED' ) if $Method ne 'PATCH';
+        my $Payload = $Self->_JSONPayload();
+        return $Payload if ref $Payload ne 'HASH';
+        my $Result = $Kernel::OM->Get('Kernel::System::D724::API')->RequestTaskUpdate(
+            AccessToken     => $Bearer,
+            TenantID        => $TenantID,
+            TaskID          => $Request->GetParam( Param => 'task_id' ) // q{},
+            Status          => $Payload->{status},
+            ExpectedVersion => $Payload->{expected_version},
+            Comment         => $Payload->{comment},
+        );
+        return $Self->_Result( Result => $Result, Replay => $Result->{IdempotentReplay} ? 1 : 0 );
+    }
     return $Self->_Respond( Code => 404, Error => 'ROUTE_NOT_FOUND' );
+}
+
+sub _JSONPayload {
+    my ($Self) = @_;
+    my $Request = $Kernel::OM->Get('Kernel::System::Web::Request');
+    my $ContentType = $Request->Header('Content-Type') // q{};
+    return $Self->_Respond( Code => 415, Error => 'CONTENT_TYPE_UNSUPPORTED' )
+        if $ContentType !~ m{\Aapplication/json(?:[ ]*;|\z)}ismx;
+    my $Content = $Request->Content() // q{};
+    return $Self->_Respond( Code => 413, Error => 'BODY_TOO_LARGE' ) if length $Content > 65_536;
+    my $Payload = eval { $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $Content ) };
+    return $Self->_Respond( Code => 400, Error => 'JSON_INVALID' )
+        if $@ || ref $Payload ne 'HASH';
+    return $Payload;
 }
 
 sub _OpenAPI {
@@ -136,12 +178,17 @@ sub _Result {
             CROSS_TENANT => 403, RATE_LIMITED => 429, NOT_FOUND => 404,
             REQUESTER_NOT_FOUND => 404,
             IDEMPOTENCY_CONFLICT => 409, VERSION_CONFLICT => 409,
+            TRANSITION_INVALID => 409, NO_PENDING_APPROVAL => 409,
             LIMIT_INVALID => 400, CURSOR_INVALID => 400, TICKET_ID_INVALID => 400,
             REQUEST_ID_INVALID => 400, CATALOG_ITEM_ID_INVALID => 400,
+            TASK_ID_INVALID => 400, TASK_STATUS_INVALID => 400,
+            DECISION_INVALID => 400, VERSION_REQUIRED => 400, COMMENT_INVALID => 400,
             REQUESTER_LOGIN_INVALID => 400, ANSWERS_INVALID => 400,
             IDEMPOTENCY_KEY_INVALID => 400, NOT_AVAILABLE => 400,
             ANSWER_UNKNOWN => 400, ANSWER_REQUIRED => 400, ANSWER_TYPE_INVALID => 400,
             ANSWER_TOO_LONG => 400, ANSWER_OPTION_INVALID => 400,
+            APPROVER_ROLE_REQUIRED => 403, INTEGRATION_SUBJECT_INVALID => 403,
+            COMMITMENT_SYNC_FAILED => 503,
             API_DISABLED => 503, DATABASE_ERROR => 503, RATE_DATABASE_ERROR => 503,
             REQUEST_DISABLED => 503, TRANSACTION_FAILED => 503, AUDIT_WRITE_FAILED => 503,
         );

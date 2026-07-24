@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.4.6';
+our $VERSION = '0.4.7';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -212,8 +212,19 @@ sub _ApprovalDecide {
     return $Context if !$Context->{Success};
     my $Request = $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
     return $Self->_Error('NOT_FOUND') if !$Request;
-    return $Self->_Error('TRANSITION_INVALID') if $Request->{Status} ne 'awaiting_approval';
     my ($Approval) = grep { $_->{Status} eq 'pending' } @{ $Request->{Approvals} };
+    if ( !$Approval ) {
+        my ($Replay) = grep {
+            $_->{Status} eq $Param{Decision}
+                && $_->{Version} == $Param{ExpectedVersion} + 1
+        } @{ $Request->{Approvals} };
+        if ($Replay) {
+            my %Roles = map { $_ => 1 } @{ $Context->{Subject}->{RoleBindings}->{ $Param{TenantID} } // [] };
+            return $Self->_Error('APPROVER_ROLE_REQUIRED') if !$Roles{ $Replay->{ApproverRole} };
+            return { Success => 1, Data => $Request, IdempotentReplay => 1 };
+        }
+    }
+    return $Self->_Error('TRANSITION_INVALID') if $Request->{Status} ne 'awaiting_approval';
     return $Self->_Error('NO_PENDING_APPROVAL') if !$Approval;
     return $Self->_Error('VERSION_CONFLICT') if $Approval->{Version} != $Param{ExpectedVersion};
     my %Roles = map { $_ => 1 } @{ $Context->{Subject}->{RoleBindings}->{ $Param{TenantID} } // [] };
@@ -240,17 +251,17 @@ sub _ApprovalDecide {
     );
     my $Commitment = $Self->_CommitmentObject();
     if ($Commitment) {
-        my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
+        my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
         if ( $Current->{Success} ) {
             my $Synced = $Commitment->Signal(
-                UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID},
+                UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID},
                 PolicyKey => $Current->{Data}->{Policy}->{Key}, Signal => $Param{Decision} eq 'rejected' ? 'request_rejected' : 'request_approved',
                 RequestStatus => $RequestStatus,
             );
             return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Synced->{Success};
             if ( $Param{Decision} eq 'approved' ) {
                 my $StatusSync = $Commitment->SyncAllRequestStatus(
-                    UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID}, RequestStatus => $RequestStatus,
+                    UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID}, RequestStatus => $RequestStatus,
                 );
                 return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$StatusSync->{Success};
             }
@@ -263,7 +274,7 @@ sub _ApprovalDecide {
         Bind => \@TaskBind,
     );
     my $Audited = $Self->_AuditRecord(
-        TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'request.' . $Param{Decision},
+        TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => $Self->_ActorType($Context), Action => 'request.' . $Param{Decision},
         ObjectType => 'request', ObjectID => $Param{RequestID}, CorrelationID => $Request->{RequestNumber},
         DedupeKey => "request:$Param{RequestID}:approval:$Approval->{ApprovalID}:$Param{ExpectedVersion}:$Param{Decision}",
         FromState => 'awaiting_approval', ToState => $RequestStatus,
@@ -289,6 +300,13 @@ sub _TaskUpdate {
     return $Context if !$Context->{Success};
     my $Task = $Self->_TaskRowGet( TenantID => $Param{TenantID}, TaskID => $Param{TaskID} );
     return $Self->_Error('NOT_FOUND') if !$Task;
+    if ( $Task->{Version} == $Param{ExpectedVersion} + 1 && $Task->{Status} eq $Param{Status} ) {
+        return {
+            Success => 1,
+            Data => $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Task->{RequestID} ),
+            IdempotentReplay => 1,
+        };
+    }
     return $Self->_Error('VERSION_CONFLICT') if $Task->{Version} != $Param{ExpectedVersion};
     my %Allowed = (
         pending     => { in_progress => 1, completed => 1, failed => 1 },
@@ -310,7 +328,7 @@ sub _TaskUpdate {
         || $UpdatedTask->{Status} ne $Param{Status};
     my $RequestBefore = $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Task->{RequestID} );
     my $TaskAudit = $Self->_AuditRecord(
-        TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'task.status_changed',
+        TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => $Self->_ActorType($Context), Action => 'task.status_changed',
         ObjectType => 'request_task', ObjectID => $Param{TaskID}, CorrelationID => $RequestBefore->{RequestNumber},
         DedupeKey => "request-task:$Param{TaskID}:version:" . ( $Param{ExpectedVersion} + 1 ),
         FromState => $Task->{Status}, ToState => $Param{Status}, Details => { request_id => $Task->{RequestID} },
@@ -344,17 +362,17 @@ sub _TaskUpdate {
             );
             my $Commitment = $Self->_CommitmentObject();
             if ($Commitment) {
-                my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $RequestID );
+                my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, RequestID => $RequestID );
                 if ( $Current->{Success} ) {
                     my $Completed = $Commitment->Signal(
-                        UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $RequestID,
+                        UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, RequestID => $RequestID,
                         PolicyKey => $Current->{Data}->{Policy}->{Key}, Signal => 'request_fulfilled', RequestStatus => 'fulfilled',
                     );
                     return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Completed->{Success};
                 }
             }
             my $RequestAudit = $Self->_AuditRecord(
-                TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'request.fulfilled',
+                TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => $Self->_ActorType($Context), Action => 'request.fulfilled',
                 ObjectType => 'request', ObjectID => $RequestID, CorrelationID => $RequestBefore->{RequestNumber},
                 DedupeKey => "request:$RequestID:fulfilled",
                 FromState => 'in_fulfillment', ToState => 'fulfilled', Details => { final_task_id => $Param{TaskID} },
@@ -400,13 +418,40 @@ sub _ResponseRecord {
 
 sub _AgentAuthorize {
     my ( $Self, %Param ) = @_;
-    my $Context = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->ContextGet( UserID => $Param{UserID} );
-    return $Context if !$Context->{Success};
+    my $Context;
+    if ( defined $Param{IntegrationSubject} ) {
+        return $Self->_Error('INTEGRATION_SUBJECT_INVALID')
+            if !$Self->_IntegrationSubjectValid( Subject => $Param{IntegrationSubject}, TenantID => $Param{TenantID} );
+        $Context = { Success => 1, Subject => $Param{IntegrationSubject} };
+    }
+    else {
+        $Context = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->ContextGet( UserID => $Param{UserID} );
+        return $Context if !$Context->{Success};
+    }
     my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(
         Subject => $Context->{Subject}, Resource => { TenantID => $Param{TenantID} }, Action => $Param{Action},
     );
     return $Self->_Error( 'FORBIDDEN', $Decision->{Reason} ) if !$Decision->{Allowed};
     return { Success => 1, Subject => $Context->{Subject} };
+}
+
+sub _IntegrationSubjectValid {
+    my ( $Self, %Param ) = @_;
+    my $Subject = $Param{Subject};
+    return if ref $Subject ne 'HASH';
+    return if ( $Subject->{ID} // q{} ) !~ m{\Aintegration:[A-Za-z0-9][A-Za-z0-9._:-]{7,127}\z}smx;
+    return if ref $Subject->{TenantIDs} ne 'ARRAY' || @{ $Subject->{TenantIDs} } != 1;
+    return if $Subject->{TenantIDs}->[0] ne ( $Param{TenantID} // q{} );
+    return if ref $Subject->{RoleBindings} ne 'HASH';
+    my $Roles = $Subject->{RoleBindings}->{ $Param{TenantID} };
+    return if ref $Roles ne 'ARRAY' || @{$Roles} != 1;
+    return if $Roles->[0] !~ m{\A(?:requester|agent|service_owner|automation|tenant_admin)\z}smx;
+    return 1;
+}
+
+sub _ActorType {
+    my ( $Self, $Context ) = @_;
+    return $Context->{Subject}->{ID} =~ m{\Aintegration:}smx ? 'integration' : 'agent';
 }
 
 sub _AnswersValidate {
@@ -541,7 +586,7 @@ sub _CommitmentSync {
     my ( $Self, %Param ) = @_;
     my $Commitment = $Self->_CommitmentObject();
     return { Success => 1, NoChange => 1 } if !$Commitment;
-    my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
+    my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
     return { Success => 1, NoChange => 1 } if !$Current->{Success};
     return $Commitment->SyncAllRequestStatus(%Param);
 }

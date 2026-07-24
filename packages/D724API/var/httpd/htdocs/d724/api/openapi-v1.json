@@ -103,6 +103,48 @@
         }
       }
     },
+    "/requests/{request_id}/approval": {
+      "post": {
+        "tags": ["Requests"],
+        "operationId": "decideRequestApproval",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "request_id", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 1 } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApprovalDecision" } } }
+        },
+        "responses": {
+          "200": { "description": "Approval decided or safely replayed", "headers": { "Idempotent-Replayed": { "schema": { "type": "boolean" } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RequestEnvelope" } } } },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/tasks/{task_id}": {
+      "patch": {
+        "tags": ["Requests"],
+        "operationId": "updateRequestTask",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "name": "task_id", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 1 } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskTransition" } } }
+        },
+        "responses": {
+          "200": { "description": "Task transitioned or safely replayed", "headers": { "Idempotent-Replayed": { "schema": { "type": "boolean" } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RequestEnvelope" } } } },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
     "/openapi.json": {
       "get": { "operationId": "getOpenAPI", "responses": { "200": { "description": "OpenAPI 3.1 document" } } }
     }
@@ -116,12 +158,15 @@
       "TicketEnvelope": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "$ref": "#/components/schemas/Ticket" } } },
       "TicketListEnvelope": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "items": { "type": "array", "items": { "$ref": "#/components/schemas/Ticket" } }, "count": { "type": "integer" }, "next_cursor": { "type": ["integer", "null"] } } } } },
       "RequestCreate": { "type": "object", "additionalProperties": false, "required": ["catalog_item_id", "requester_login", "answers"], "properties": { "catalog_item_id": { "type": "integer", "minimum": 1 }, "requester_login": { "type": "string", "maxLength": 200 }, "answers": { "type": "object" } } },
+      "ApprovalDecision": { "type": "object", "additionalProperties": false, "required": ["decision", "expected_version"], "properties": { "decision": { "type": "string", "enum": ["approved", "rejected"] }, "expected_version": { "type": "integer", "minimum": 1 }, "comment": { "type": "string", "maxLength": 4000 } } },
+      "TaskTransition": { "type": "object", "additionalProperties": false, "required": ["status", "expected_version"], "properties": { "status": { "type": "string", "enum": ["in_progress", "completed", "failed"] }, "expected_version": { "type": "integer", "minimum": 1 }, "comment": { "type": "string", "maxLength": 4000 } } },
       "Request": { "type": "object", "required": ["id", "number", "tenant_id", "catalog_item_id", "status", "version"], "properties": { "id": { "type": "integer" }, "number": { "type": "string" }, "tenant_id": { "type": "string" }, "catalog_item_id": { "type": "integer" }, "status": { "type": "string" }, "version": { "type": "integer" }, "approvals": { "type": "array", "items": { "type": "object" } }, "tasks": { "type": "array", "items": { "type": "object" } }, "created_at": { "type": "string" }, "changed_at": { "type": "string" } } },
       "RequestEnvelope": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "$ref": "#/components/schemas/Request" } } }
     },
     "responses": {
       "BadRequest": { "description": "Invalid input", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
       "Unauthorized": { "description": "Invalid, expired, or revoked credentials", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+      "Forbidden": { "description": "The integration role cannot perform this operation", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
       "NotFound": { "description": "Object absent or outside the caller scope", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
       "Conflict": { "description": "Idempotency key or optimistic version conflict", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
       "RateLimited": { "description": "Per-client minute limit exceeded", "headers": { "Retry-After": { "schema": { "type": "integer" } } }, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }

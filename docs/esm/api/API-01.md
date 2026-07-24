@@ -103,6 +103,29 @@ The machine-readable contract is public at
 `GET /otobo/api/v1/openapi.json` with media type
 `application/vnd.oai.openapi+json;version=3.1`.
 
+### Approval and fulfillment lifecycle writes
+
+- `POST /otobo/api/v1/requests/{request_id}/approval`
+- `PATCH /otobo/api/v1/tasks/{task_id}`
+
+Approval bodies require `decision` (`approved` or `rejected`) and
+`expected_version`; task bodies require `status` (`in_progress`, `completed`,
+or `failed`) and `expected_version`. Both accept an optional comment of at most
+4,000 characters. Optimistic version checks and the existing transition state
+machine remain authoritative.
+
+The token role must pass `case.update`; an approval additionally requires the
+role configured on the pending approval. Consequently, a requester integration
+cannot approve a tenant-admin step even when it knows the request ID. The
+token-derived `integration:<client-id>` subject is validated as single-tenant,
+passed through `D724TenantGuard`, reused by commitment synchronization, and
+recorded as actor type `integration`. No synthetic agent ID or audit-free
+mutation path exists.
+
+Repeating the exact approval or task transition with its original expected
+version returns `200` and `Idempotent-Replayed: true` without another mutation
+or audit append. A stale version with a different target returns `409`.
+
 ## Security invariants
 
 - Default-deny `D724TenantGuard` authorization runs before rate consumption and data access.
@@ -114,6 +137,7 @@ The machine-readable contract is public at
 - Canonical path-derived `Action` and `Route` values take precedence over query-string injection attempts.
 - Request JSON bodies are capped at 64 KiB and reject unsupported media types.
 - Token issue/revoke and client create/rotate/revoke are transaction-audited without secret material.
+- Lifecycle writes reuse the request transaction boundary, normalized audit chain, commitment synchronization, role check, and tenant guard.
 
 ## Retention and operational metrics
 
@@ -134,7 +158,7 @@ Only expired or revoked token digests and completed rate windows older than the
 configured thresholds are deleted. Client records and immutable audit evidence
 are retained.
 
-## Verified acceptance (`2026-07-24`)
+## Verified acceptance (`2026-07-25`)
 
 `development/d724/Accept-API.pl` created a short-lived requester client for
 `d724-demo`, exercised the real HTTP endpoint, and revoked the client. Evidence:
@@ -147,12 +171,16 @@ are retained.
 - request create/replay/conflict/get returned `201/200/409/200` for request `187`;
 - rotation advanced version to `2`; old token/secret returned `401/401`, while
   the new secret/token returned `200/200`;
-- all 31 D724 test files and 608 assertions passed together.
+- `Accept-APILifecycle.pl` created request `203`; requester approval was `403`,
+  tenant-admin approval/replay was `200/200`, task start/replay/complete was
+  `200/200/200`, and the final requester-owned GET returned `fulfilled`;
+- exactly four lifecycle audit events retained actor type `integration`, while
+  approval and task replays appended no duplicates;
+- all 31 D724 test files and 616 assertions passed together.
 
 ## Remaining API-01 work
 
-Write endpoints for lifecycle transitions, signed outbound webhook contract,
-per-route latency/error metrics, retention scheduling, and concurrent load tests
-remain open.
+Signed outbound webhook API contract, per-route latency/error metrics,
+retention scheduling, and concurrent load tests remain open.
 Until TLS termination is deployed, this test endpoint must stay on the private
 network and must not be exposed to the public Internet.

@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.3.8';
+our $VERSION = '0.3.9';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -146,11 +146,11 @@ sub Signal {
         next if $Objective->{stop_signal} ne $Param{Signal} && $Param{Signal} !~ m{\A(?:request_rejected|request_fulfilled)\z}smx;
         my $Result = $Param{Signal} eq 'request_rejected'
             ? $Self->Cancel(
-                UserID => $Param{UserID}, TenantID => $Param{TenantID}, CommitmentID => $Existing->{CommitmentID},
+                UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, CommitmentID => $Existing->{CommitmentID},
                 ExpectedVersion => $Existing->{Version}, At => $Param{At}, Reason => 'signal:request_rejected',
             )
             : $Self->Complete(
-                UserID => $Param{UserID}, TenantID => $Param{TenantID}, CommitmentID => $Existing->{CommitmentID},
+                UserID => $Param{UserID}, IntegrationSubject => $Param{IntegrationSubject}, TenantID => $Param{TenantID}, CommitmentID => $Existing->{CommitmentID},
                 ExpectedVersion => $Existing->{Version}, At => $Param{At}, Reason => 'signal:' . $Param{Signal},
             );
         return $Result if !$Result->{Success};
@@ -432,13 +432,35 @@ sub _PolicyAuthorize {
 sub _AgentAuthorize {
     my ( $Self, %Param ) = @_;
     return $Self->_Error('COMMITMENT_DISABLED') if !$Self->_Enabled();
-    my $Context = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->ContextGet( UserID => $Param{UserID} );
-    return $Context if !$Context->{Success};
+    my $Context;
+    if ( defined $Param{IntegrationSubject} ) {
+        return $Self->_Error('INTEGRATION_SUBJECT_INVALID')
+            if !$Self->_IntegrationSubjectValid( Subject => $Param{IntegrationSubject}, TenantID => $Param{TenantID} );
+        $Context = { Success => 1, Subject => $Param{IntegrationSubject} };
+    }
+    else {
+        $Context = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->ContextGet( UserID => $Param{UserID} );
+        return $Context if !$Context->{Success};
+    }
     my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(
         Subject => $Context->{Subject}, Resource => { TenantID => $Param{TenantID} }, Action => $Param{Action},
     );
     return $Self->_Error( 'FORBIDDEN', $Decision->{Reason} ) if !$Decision->{Allowed};
     return { Success => 1, Subject => $Context->{Subject} };
+}
+
+sub _IntegrationSubjectValid {
+    my ( $Self, %Param ) = @_;
+    my $Subject = $Param{Subject};
+    return if ref $Subject ne 'HASH';
+    return if ( $Subject->{ID} // q{} ) !~ m{\Aintegration:[A-Za-z0-9][A-Za-z0-9._:-]{7,127}\z}smx;
+    return if ref $Subject->{TenantIDs} ne 'ARRAY' || @{ $Subject->{TenantIDs} } != 1;
+    return if $Subject->{TenantIDs}->[0] ne ( $Param{TenantID} // q{} );
+    return if ref $Subject->{RoleBindings} ne 'HASH';
+    my $Roles = $Subject->{RoleBindings}->{ $Param{TenantID} };
+    return if ref $Roles ne 'ARRAY' || @{$Roles} != 1;
+    return if $Roles->[0] !~ m{\A(?:requester|agent|service_owner|automation|tenant_admin)\z}smx;
+    return 1;
 }
 
 sub _PolicyValidate {

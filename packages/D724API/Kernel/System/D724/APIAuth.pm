@@ -10,7 +10,7 @@ use warnings;
 use Digest::SHA qw(sha256_hex);
 use Encode ();
 
-our $VERSION = '0.4.0';
+our $VERSION = '0.5.0';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::D724::Audit', 'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB', 'Kernel::System::Log', 'Kernel::System::Main',

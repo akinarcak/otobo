@@ -741,6 +741,12 @@ my $OTOBOApp = builder {
             elsif ( $Path =~ m{\A/requests/([1-9][0-9]*)\z}smx ) {
                 ( $Route, $PathQuery ) = ( 'request', "request_id=$1" );
             }
+            elsif ( $Path =~ m{\A/requests/([1-9][0-9]*)/approval\z}smx ) {
+                ( $Route, $PathQuery ) = ( 'request_approval', "request_id=$1" );
+            }
+            elsif ( $Path =~ m{\A/tasks/([1-9][0-9]*)\z}smx ) {
+                ( $Route, $PathQuery ) = ( 'task', "task_id=$1" );
+            }
             elsif ( $Path eq '/openapi.json' ) {
                 $Route = 'openapi';
             }
