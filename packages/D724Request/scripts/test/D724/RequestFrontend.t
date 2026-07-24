@@ -30,7 +30,7 @@ $Layout->Block( Name => 'ResponseAction', Data => { TenantID => 'tenant-a', Requ
 my $AgentHTML = $Layout->Output( TemplateFile => 'AgentD724Request', Data => { TenantID => 'tenant-a' } );
 like( $AgentHTML, qr{REQ-2&lt;img&gt;}, 'agent workbench escapes request data' );
 unlike( $AgentHTML, qr{Prepare <b>device</b>}, 'agent workbench never renders task markup' );
-is( scalar( () = $AgentHTML =~ m{method="post"}g ), 2, 'approval and task writes use POST forms' );
+is( scalar( () = $AgentHTML =~ m{method="post"}g ), 3, 'approval, response, and task writes use POST forms' );
 like( $AgentHTML, qr{value="ApprovalDecide"}, 'approval action is rendered' );
 like( $AgentHTML, qr{value="TaskUpdate"}, 'task action is rendered' );
 like( $AgentHTML, qr{<strong>response / first-response: warning</strong>}, 'agent workbench shows objective state' );
