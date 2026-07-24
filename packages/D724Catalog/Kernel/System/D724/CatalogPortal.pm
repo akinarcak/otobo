@@ -12,12 +12,17 @@ use warnings;
 
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.3.0';
+our $VERSION = '0.3.1';
 our @ObjectDependencies = ('Kernel::System::D724::Catalog');
 
 sub new {
     my ($Type) = @_;
     return bless {}, $Type;
+}
+
+sub ContextGet {
+    my ( $Self, %Param ) = @_;
+    return $Self->_ContextGet(%Param);
 }
 
 sub CatalogGet {

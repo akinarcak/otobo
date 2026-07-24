@@ -114,6 +114,10 @@ ok( $Item->{Success}, 'catalog item is created under own offering' );
 
 my $FormSchema = {
     version => 1,
+    workflow => {
+        approval => { required => 1, approver_role => 'tenant_admin' },
+        fulfillment => [ { key => 'prepare', name => 'Prepare device', type => 'manual' } ],
+    },
     fields  => [
         { key => 'justification', label => 'Business justification', type => 'textarea', required => 1 },
         {
@@ -158,6 +162,14 @@ is(
     )->{Error},
     'SCHEMA_FIELD_TYPE_INVALID',
     'executable or unknown field types are rejected',
+);
+is(
+    $Catalog->CatalogItemSchemaSet(
+        %BaseA, CatalogItemID => $Item->{Data}->{CatalogItemID}, ExpectedVersion => 2,
+        Schema => { version => 3, fields => [], workflow => { approval => { required => 1, approver_role => 'requester' } } },
+    )->{Error},
+    'SCHEMA_APPROVAL_INVALID',
+    'approval workflow only accepts privileged approver roles',
 );
 is(
     $Catalog->CatalogItemSchemaGet(

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otobo_package version="1.0">
+    <Name>D724Request</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-safe request, approval, and fulfillment orchestration for D724 ESM.</Description>
+    <Description Lang="tr">D724 ESM icin tenant guvenli talep, onay ve fulfillment orkestrasyonu.</Description>
+    <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
+    <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.1.2">D724TenantDirectory</PackageRequired>
+    <PackageRequired Version="0.3.1">D724Catalog</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="d724_request">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="request_number" Required="true" Size="40" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="catalog_item_id" Required="true" Type="BIGINT" />
+            <Column Name="requester_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="idempotency_key" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="payload_hash" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="answers_json" Required="true" Size="16000" Type="VARCHAR" />
+            <Column Name="workflow_json" Required="true" Size="16000" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Size="128" Type="VARCHAR" />
+            <Unique Name="d724_request_number"><UniqueColumn Name="request_number" /></Unique>
+            <Unique Name="d724_request_idempotency"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="requester_id" /><UniqueColumn Name="idempotency_key" /></Unique>
+            <Unique Name="d724_request_tenant_id"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="id" /></Unique>
+            <Index Name="d724_request_tenant_status"><IndexColumn Name="tenant_id" /><IndexColumn Name="status" /></Index>
+            <ForeignKey ForeignTable="d724_catalog_item"><Reference Local="tenant_id" Foreign="tenant_id" /><Reference Local="catalog_item_id" Foreign="id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="d724_request_approval">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="request_id" Required="true" Type="BIGINT" />
+            <Column Name="sequence_no" Required="true" Type="INTEGER" /><Column Name="approver_role" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" /><Column Name="decision_comment" Required="true" Size="4000" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" /><Column Name="decision_time" Required="false" Type="DATE" />
+            <Column Name="decision_by" Required="false" Size="128" Type="VARCHAR" /><Column Name="create_time" Required="true" Type="DATE" />
+            <Unique Name="d724_request_approval_sequence"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="request_id" /><UniqueColumn Name="sequence_no" /></Unique>
+            <ForeignKey ForeignTable="d724_request"><Reference Local="tenant_id" Foreign="tenant_id" /><Reference Local="request_id" Foreign="id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="d724_request_task">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="request_id" Required="true" Type="BIGINT" />
+            <Column Name="key_name" Required="true" Size="64" Type="VARCHAR" /><Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="task_type" Required="true" Size="30" Type="VARCHAR" /><Column Name="status" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" /><Column Name="result_comment" Required="true" Size="4000" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Size="128" Type="VARCHAR" />
+            <Unique Name="d724_request_task_key"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="request_id" /><UniqueColumn Name="key_name" /></Unique>
+            <ForeignKey ForeignTable="d724_request"><Reference Local="tenant_id" Foreign="tenant_id" /><Reference Local="request_id" Foreign="id" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUninstall Type="pre"><TableDrop Name="d724_request_task" /><TableDrop Name="d724_request_approval" /><TableDrop Name="d724_request" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/D724Request.xml" />
+        <File Permission="644" Location="Kernel/System/D724/Request.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/RequestStatus.pm" />
+        <File Permission="644" Location="scripts/test/D724/Request.t" />
+        <File Permission="644" Location="scripts/test/D724/RequestStatus.t" />
+    </Filelist>
+</otobo_package>

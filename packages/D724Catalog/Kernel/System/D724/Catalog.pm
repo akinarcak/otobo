@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.3.0';
+our $VERSION = '0.3.1';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -547,6 +547,10 @@ sub _SchemaValidate {
         if !$Self->_PositiveInteger( $Schema->{version} );
     return $Self->_Error( Error => 'SCHEMA_FIELDS_INVALID' )
         if ref $Schema->{fields} ne 'ARRAY' || @{ $Schema->{fields} } > 50;
+    my %TopLevelAllowed = map { $_ => 1 } qw(version fields workflow);
+    for my $Key ( keys %{$Schema} ) {
+        return $Self->_Error( Error => 'SCHEMA_PROPERTY_UNKNOWN' ) if !$TopLevelAllowed{$Key};
+    }
     my %Keys;
     for my $Field ( @{ $Schema->{fields} } ) {
         return $Self->_Error( Error => 'SCHEMA_FIELD_INVALID' ) if ref $Field ne 'HASH';
@@ -572,6 +576,38 @@ sub _SchemaValidate {
         }
         elsif ( exists $Field->{options} ) {
             return $Self->_Error( Error => 'SCHEMA_FIELD_OPTIONS_INVALID' );
+        }
+    }
+    if ( defined $Schema->{workflow} ) {
+        my $Workflow = $Schema->{workflow};
+        return $Self->_Error( Error => 'SCHEMA_WORKFLOW_INVALID' ) if ref $Workflow ne 'HASH';
+        my %WorkflowAllowed = map { $_ => 1 } qw(approval fulfillment);
+        for my $Key ( keys %{$Workflow} ) {
+            return $Self->_Error( Error => 'SCHEMA_WORKFLOW_PROPERTY_UNKNOWN' ) if !$WorkflowAllowed{$Key};
+        }
+        if ( defined $Workflow->{approval} ) {
+            my $Approval = $Workflow->{approval};
+            return $Self->_Error( Error => 'SCHEMA_APPROVAL_INVALID' )
+                if ref $Approval ne 'HASH'
+                || !defined $Approval->{required}
+                || $Approval->{required} !~ m{\A[01]\z}smx
+                || ( $Approval->{required} && ( $Approval->{approver_role} // q{} ) !~ m{\A(?:tenant_admin|service_owner)\z}smx );
+        }
+        if ( defined $Workflow->{fulfillment} ) {
+            my $Tasks = $Workflow->{fulfillment};
+            return $Self->_Error( Error => 'SCHEMA_FULFILLMENT_INVALID' )
+                if ref $Tasks ne 'ARRAY' || !@{$Tasks} || @{$Tasks} > 20;
+            my %TaskKeys;
+            for my $Task ( @{$Tasks} ) {
+                my %TaskAllowed = map { $_ => 1 } qw(key name type);
+                return $Self->_Error( Error => 'SCHEMA_FULFILLMENT_INVALID' )
+                    if ref $Task ne 'HASH'
+                    || ( grep { !$TaskAllowed{$_} } keys %{$Task} )
+                    || ( $Task->{key} // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx
+                    || $TaskKeys{ $Task->{key} }++
+                    || !length( $Task->{name} // q{} ) || length $Task->{name} > 200
+                    || ( $Task->{type} // q{} ) !~ m{\A(?:manual|process|integration)\z}smx;
+            }
         }
     }
     return { Success => 1 };
