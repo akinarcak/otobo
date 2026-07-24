@@ -4,7 +4,7 @@ Durum: cekirdek kapsam tamamlandi (`2026-07-24`).
 
 ## Kapsam
 
-`D724TicketAudit 0.4.1`, OTOBO'nun resmi `Ticket::CustomModule` extension mekanizmasini kullanir; upstream `Kernel::System::Ticket` dosyasi degistirilmez. Su yazimlar kapsanir:
+`D724TicketAudit 0.6.0`, OTOBO'nun resmi `Ticket::CustomModule` extension mekanizmasini kullanir; upstream `Kernel::System::Ticket` dosyasi degistirilmez. Su yazimlar kapsanir:
 
 - `ticket.created`
 - `ticket.title.updated`
@@ -43,6 +43,10 @@ MIME article atomikligi yalniz transaction destekli `ArticleStorageDB` icin etki
 - Legacy kabul: kurulum ticket'i ID `1` acik replacement onayiyla `d724-demo` tenant'ina atandi; `CoreTickets=2`, `Tickets=2`, `UnboundTickets=0`, `InvalidTenantTickets=0`.
 - OPM SHA-256: `bbf753e8a16e1fc3669212c1a986f6e350ea063c7fe018f4645a2663fb77c141`.
 
+## Sonraki guvenlik katmani
+
+Ticket sorgu-oncesi tenant filtresi, immutable-scope tekil okuma ve Generic Interface ortak get/history/update tenant kontrolu daha sonra `SEC-01b-ticket` kapsaminda tamamlanmistir.
+
 ## Acik kapsam
 
-Ticket delete/merge/type/service/SLA/pending-time mutasyonlari, Chat backend article yazimlari, Generic Interface seviyesinde caller policy enforcement, ticket read/search tenant filtreleri ve harici article storage outbox/compensation adapter'i sonraki guvenlik kapilaridir.
+Ticket delete/merge/type/service/SLA/pending-time mutasyonlari, Chat backend article yazimlari, Generic Interface operasyon-bazli role/action policy'si ve harici article storage outbox/compensation adapter'i sonraki guvenlik kapilaridir.

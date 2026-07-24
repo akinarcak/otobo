@@ -65,7 +65,7 @@ Son dogrulama: `2026-07-24`
   - temel katman olarak tenant-directory paketine statik bagimlilik olmadan subject veya opsiyonel directory-derived authorization,
   - zincir, head, sequence gap ve event hash dogrulayan `Verify` API'si,
   - iki test dosyasi, 29 test, sonuc `PASS`.
-- GPL-3.0 `D724TicketAudit 0.4.1` OPM paketi:
+- GPL-3.0 `D724TicketAudit 0.6.0` OPM paketi:
   - resmi `Ticket::CustomModule` extension noktasi ile cekirdek dosya fork'u olmadan repository wrapping,
   - her OTOBO ticket icin immutable `d724_ticket_scope` tenant binding ve monoton mutation version'i,
   - ticket create ile title/queue/customer/lock/state/owner/responsible/priority mutasyonlarinda domain+scope+audit tek transaction,
@@ -73,7 +73,10 @@ Son dogrulama: `2026-07-24`
   - audit hata enjeksiyonunda ticket state, article row/storage, customer migration, scope version ve cache rollback kaniti,
   - tenantless create ve cross-tenant customer reassignment icin fail-closed davranis,
   - toplu active-tenant backfill ve acik onayli tek-ticket CustomerID replacement komutlari,
-  - status kapisinda `UnboundTickets=0`, `InvalidTenantTickets=0`, iki test dosyasi / 67 test `PASS`.
+  - status kapisinda `UnboundTickets=0`, `InvalidTenantTickets=0`,
+  - sorgu-oncesi tenant filtresi, `CustomerIDRaw` bypass reddi ve immutable-scope tekil okuma,
+  - Generic Interface get/history/update ortak erisiminde OTOBO izni + tenant izni birlikte zorunlu,
+  - uc test dosyasi / 84 test `PASS`.
 - GPL-3.0 `D724Catalog 0.5.2`, `D724Request 0.4.6` ve `D724Commitment 0.3.8` entegrasyonu:
   - tenant-local commitment policy referansli katalog workflow'u,
   - request acilisinda immutable policy snapshot ve otomatik commitment baslatma,
@@ -87,7 +90,7 @@ Son dogrulama: `2026-07-24`
   - authenticated HTTP akisi `REQ-0000000042`: iki hedef paused, onaydan sonra uc hedef running, ilk yanit ve fulfillment sonunda uc hedef met.
   - atomik lease, exponential retry ve dead-letter escalation dispatcher,
   - tenant-role OTOBO email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
-- Sekiz D724 paketinde toplam 25 test dosyasi ve 469 test birlikte `PASS`.
+- Sekiz D724 paketinde toplam 26 test dosyasi ve 486 test birlikte `PASS`.
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
@@ -104,7 +107,7 @@ Son dogrulama: `2026-07-24`
 - Elasticsearch `search` profili opsiyoneldir. Test sunucusundaki Docker CDN baglantisi buyuk image katmaninda tekrar tekrar sifirlandigi icin temel kurulum aramadan dogrulanmistir.
 - TLS ve genel internet yayini yapilmamistir; test erisimi ozel ag arayuzuyle sinirlidir.
 - GitHub Actions workflow'u depoda bulunur ancak fork icin Actions calistirma politikasi ayrica etkinlestirilmelidir.
-- Katalog ve cekirdek OTOBO ticket yazimlari tenant scope'a baglidir. Generic Interface operasyon katmani, daemon, rapor, cache ve search okuma adapter'lari henuz merkezi policy'ye tam baglanmamistir.
+- Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch ve Generic Interface ortak ticket get/history/update erisimi tenant scope'a baglidir. Generic Interface operasyon-bazli role/action, daemon, rapor, cache ve Elasticsearch adapter'lari henuz merkezi policy'ye tam baglanmamistir.
 - OTOBO paket sema ceviricisi katalog parent'lari icin tanimlanan cok sutunlu foreign key'i ayri kisitlara cevirmektedir. Repository cifti birlikte dogrular; dogrudan DB yazimina karsi composite constraint sertlestirmesi release oncesi acik guvenlik isidir.
 - OTOBO paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
 - Request lifecycle, D724 katalog, tenant-directory ve kapsanan OTOBO ticket/MIME article mutasyonlari atomiktir. Ticket delete/merge/type/service/SLA/pending, Chat article, Generic Interface ve commitment scheduler gibi diger yazim adapter'lari henuz ayni transaction/outbox completeness garantisine sahip degildir.
@@ -121,4 +124,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `SEC-01b/API-01`: ticket read/search ve Generic Interface tenant policy enforcement; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
+Bir sonraki urun kapisi genel `SEC-01b/API-01`: daemon/report/cache/Elasticsearch adapter'lari ile OAuth client, operasyon-bazli role/action, rate limit ve surumlu REST kontrati; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.

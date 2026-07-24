@@ -19,6 +19,7 @@
 - [x] `AUD-01b-catalog`: service/offering/item/schema create-update mutasyonlari icin normalize, tenant-safe ve transaction-atomic audit adapter'i (`2026-07-24`).
 - [x] `AUD-01b-directory`: tenant create/update ve membership grant/revoke mutasyonlari icin normalize audit, membership versioning, tenant-row lock ve transaction-atomic rollback (`2026-07-24`).
 - [x] `AUD-01b-ticket-core`: OTOBO ticket create ile title/queue/customer/lock/state/owner/responsible/priority ve DB-backed MIME article create icin immutable tenant scope, transaction-atomic audit ve legacy migration kapisi (`2026-07-24`).
+- [x] `SEC-01b-ticket`: OTOBO TicketSearch sorgu-oncesi tenant filtresi, raw bypass reddi, immutable-scope tekil okuma ve Generic Interface ortak get/history/update tenant kapisi (`2026-07-24`).
 - [ ] `SEC-01b`: katalog, case/ticket, Generic Interface, daemon, rapor, cache ve search adapter'larinda zorunlu tenant policy entegrasyonu.
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
