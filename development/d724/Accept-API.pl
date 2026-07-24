@@ -143,6 +143,46 @@ eval {
     die "OpenAPI HTTP status $OpenAPI->{status}\n" if $OpenAPI->{status} != 200;
     my $OpenAPIJSON = JSON::PP::decode_json( $OpenAPI->{content} );
     die "OpenAPI version mismatch\n" if $OpenAPIJSON->{openapi} ne '3.1.0';
+
+    my $OldSecret = $Created->{Data}->{ClientSecret};
+    my $OldToken  = $Token;
+    my $Rotation = $Auth->ClientSecretRotate(
+        Subject => $Admin, TenantID => $TenantID, ClientID => $ClientID,
+        UserID => 1, ExpectedVersion => 1,
+    );
+    die "Client secret rotation failed: $Rotation->{Error}\n" if !$Rotation->{Success};
+    $Evidence{rotation_version} = 0 + $Rotation->{Data}->{Version};
+    my $OldTokenResponse = $HTTP->get(
+        "$BaseURL/tickets?limit=1", { headers => { Authorization => "Bearer $OldToken" } },
+    );
+    $Evidence{rotated_old_token_status} = 0 + $OldTokenResponse->{status};
+    die "Old token survived rotation\n" if $OldTokenResponse->{status} != 401;
+
+    my $OldForm = 'grant_type=client_credentials&client_id=' . uri_escape_utf8($ClientID)
+        . '&client_secret=' . uri_escape_utf8($OldSecret);
+    my $OldSecretResponse = $HTTP->post(
+        "$BaseURL/oauth/token",
+        { headers => { 'Content-Type' => 'application/x-www-form-urlencoded' }, content => $OldForm },
+    );
+    $Evidence{rotated_old_secret_status} = 0 + $OldSecretResponse->{status};
+    die "Old secret survived rotation\n" if $OldSecretResponse->{status} != 401;
+
+    my $NewForm = 'grant_type=client_credentials&client_id=' . uri_escape_utf8($ClientID)
+        . '&client_secret=' . uri_escape_utf8( $Rotation->{Data}->{ClientSecret} );
+    my $NewSecretResponse = $HTTP->post(
+        "$BaseURL/oauth/token",
+        { headers => { 'Content-Type' => 'application/x-www-form-urlencoded' }, content => $NewForm },
+    );
+    $Evidence{rotated_new_secret_status} = 0 + $NewSecretResponse->{status};
+    die "New secret token HTTP status $NewSecretResponse->{status}\n" if $NewSecretResponse->{status} != 200;
+    my $NewTokenJSON = JSON::PP::decode_json( $NewSecretResponse->{content} );
+    $Token = $NewTokenJSON->{data}->{access_token};
+    die "New secret token response invalid\n" if ( $Token // q{} ) !~ m{\A[a-zA-Z0-9]{64}\z}smx;
+    my $NewTokenList = $HTTP->get(
+        "$BaseURL/tickets?limit=1", { headers => { Authorization => "Bearer $Token" } },
+    );
+    $Evidence{rotated_new_token_status} = 0 + $NewTokenList->{status};
+    die "New token is unusable\n" if $NewTokenList->{status} != 200;
     1;
 } or $Failure = $@ || 'Unknown acceptance failure';
 

@@ -59,6 +59,50 @@ is( length $TokenHash, 64, 'only SHA-256 token digest is stored' );
 ok( $API->TokenValidate( AccessToken => $Token )->{Success}, 'active token validates' );
 is( $API->TokenValidate( AccessToken => 'x' x 64 )->{Error}, 'TOKEN_INVALID', 'unknown well-formed token fails closed' );
 
+is(
+    $API->ClientSecretRotate(
+        Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID,
+        UserID => 1, ExpectedVersion => 99,
+    )->{Error},
+    'VERSION_CONFLICT', 'stale secret rotation version is rejected',
+);
+is(
+    $API->ClientSecretRotate(
+        Subject => { ID => 'other-admin', TenantIDs => [$Other], RoleBindings => { $Other => ['tenant_admin'] } },
+        TenantID => $Other, ClientID => $ClientID, UserID => 1, ExpectedVersion => 1,
+    )->{Error},
+    'CLIENT_NOT_FOUND', 'cross-tenant secret rotation hides client existence',
+);
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+is(
+    $API->ClientSecretRotate(
+        Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID,
+        UserID => 1, ExpectedVersion => 1,
+    )->{Error},
+    'AUDIT_WRITE_FAILED', 'secret rotation fails closed when audit is unavailable',
+);
+$DB->Prepare( SQL => 'SELECT secret_hash, version FROM d724_api_client WHERE client_id = ?', Bind => [ \$ClientID ], Limit => 1 );
+my ( $HashAfterFailure, $VersionAfterFailure ) = $DB->FetchrowArray();
+is( $HashAfterFailure, $StoredHash, 'failed rotation rolls secret hash back' );
+is( $VersionAfterFailure, 1, 'failed rotation rolls version back' );
+ok( $API->TokenValidate( AccessToken => $Token )->{Success}, 'failed rotation leaves existing token active' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+
+my $Rotated = $API->ClientSecretRotate(
+    Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID,
+    UserID => 1, ExpectedVersion => 1,
+);
+ok( $Rotated->{Success}, 'tenant administrator rotates client secret' );
+is( $Rotated->{Data}->{Version}, 2, 'secret rotation advances optimistic version' );
+like( $Rotated->{Data}->{ClientSecret}, qr{\A[a-zA-Z0-9]{64}\z}, 'new secret is returned exactly as opaque material' );
+isnt( $Rotated->{Data}->{ClientSecret}, $Secret, 'rotation produces different secret material' );
+is( $API->TokenValidate( AccessToken => $Token )->{Error}, 'TOKEN_INVALID', 'rotation invalidates every existing token' );
+is( $API->TokenIssue( ClientID => $ClientID, ClientSecret => $Secret )->{Error}, 'INVALID_CLIENT', 'old secret is invalid immediately' );
+my $NewSecret = $Rotated->{Data}->{ClientSecret};
+my $AfterRotateIssued = $API->TokenIssue( ClientID => $ClientID, ClientSecret => $NewSecret );
+ok( $AfterRotateIssued->{Success}, 'new secret issues a token' );
+$Token = $AfterRotateIssued->{Data}->{AccessToken};
+
 is( $API->Authorize( AccessToken => $Token, TenantID => $Other, Action => 'case.read' )->{Error}, 'CROSS_TENANT', 'token cannot cross tenant' );
 is( $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'case.update' )->{Error}, 'FORBIDDEN', 'requester role cannot update cases' );
 my $ReadOne = $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'case.read' );
@@ -71,22 +115,29 @@ is( $API->Authorize( AccessToken => $Token, TenantID => $Tenant, Action => 'case
 
 ok( $API->TokenRevoke( AccessToken => $Token )->{Success}, 'individual token revocation succeeds' );
 is( $API->TokenValidate( AccessToken => $Token )->{Error}, 'TOKEN_INVALID', 'individually revoked token is immediately invalid' );
-my $SecondIssued = $API->TokenIssue( ClientID => $ClientID, ClientSecret => $Secret );
+my $SecondIssued = $API->TokenIssue( ClientID => $ClientID, ClientSecret => $NewSecret );
 ok( $SecondIssued->{Success}, 'second token issued before client revocation' );
 my $SecondToken = $SecondIssued->{Data}->{AccessToken};
 my $Revoked = $API->ClientRevoke( Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID, UserID => 1 );
 ok( $Revoked->{Success}, 'tenant administrator revokes API client' );
-is( $Revoked->{Data}->{Version}, 2, 'client revocation advances optimistic version' );
+is( $Revoked->{Data}->{Version}, 3, 'client revocation advances optimistic version' );
 is( $API->TokenValidate( AccessToken => $SecondToken )->{Error}, 'TOKEN_INVALID', 'client revocation immediately invalidates every active token' );
-is( $API->ClientRevoke( Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID, UserID => 1 )->{Data}->{Version}, 2, 'client revocation replay is idempotent' );
+is( $API->ClientRevoke( Subject => $Admin, TenantID => $Tenant, ClientID => $ClientID, UserID => 1 )->{Data}->{Version}, 3, 'client revocation replay is idempotent' );
 is( $API->ClientRevoke( Subject => { %{$Admin}, TenantIDs => [$Other], RoleBindings => { $Other => ['tenant_admin'] } }, TenantID => $Other, ClientID => $ClientID, UserID => 1 )->{Error}, 'CLIENT_NOT_FOUND', 'cross-tenant client lookup is hidden' );
 
 my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit')->List( Subject => $Admin, TenantID => $Tenant, Limit => 100 );
-is( [ map { $_->{Action} } grep { $_->{ObjectType} eq 'api_client' } @{ $Audit->{Data} } ], ['api.client.created', 'api.client.revoked'], 'client lifecycle has tenant audit evidence' );
+is(
+    [ map { $_->{Action} } grep { $_->{ObjectType} eq 'api_client' } @{ $Audit->{Data} } ],
+    [
+        'api.client.created', 'api.token.issued', 'api.client.secret_rotated',
+        'api.token.issued', 'api.token.revoked', 'api.token.issued', 'api.client.revoked',
+    ],
+    'client, secret, and token lifecycle has ordered tenant audit evidence',
+);
 
 {
     local $Kernel::OM->Get('Kernel::Config')->{'D724::API::Enabled'} = 0;
-    is( $API->TokenIssue( ClientID => $ClientID, ClientSecret => $Secret )->{Error}, 'API_DISABLED', 'disabled API fails closed' );
+    is( $API->TokenIssue( ClientID => $ClientID, ClientSecret => $NewSecret )->{Error}, 'API_DISABLED', 'disabled API fails closed' );
 }
 
 ok( $DB->Do( SQL => 'DELETE FROM d724_api_rate WHERE client_id = ?', Bind => [ \$ClientID ] ), 'rate fixtures removed' );

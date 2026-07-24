@@ -10,7 +10,7 @@ use warnings;
 use Digest::SHA qw(sha256_hex);
 use Encode ();
 
-our $VERSION = '0.2.1';
+our $VERSION = '0.4.0';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::D724::Audit', 'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB', 'Kernel::System::Log', 'Kernel::System::Main',
@@ -71,12 +71,88 @@ sub TokenIssue {
     my $Token = $Kernel::OM->Get('Kernel::System::Main')->GenerateRandomString( Length => 64 );
     my $TokenHash = sha256_hex($Token); my $TTL = $Client->{TokenTTL};
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
-    my @Values = ( $TokenHash, $Client->{ClientID}, $TTL ); my @Bind = map { \$_ } @Values;
-    return $Self->_Error('TOKEN_ISSUE_FAILED') if !$DB->Do(
-        SQL => "INSERT INTO d724_api_token (token_hash, client_id, expires_at, status, create_time) VALUES (?, ?, DATE_ADD(current_timestamp, INTERVAL ? SECOND), 'active', current_timestamp)",
-        Bind => \@Bind,
-    );
+    my $Handle = $DB->Connect(); return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OK = eval {
+        $DB->BeginWork() if $Handle->{AutoCommit};
+        my @Values = ( $TokenHash, $Client->{ClientID}, $TTL ); my @Bind = map { \$_ } @Values;
+        die "TOKEN_INSERT_FAILED\n" if !$DB->Do(
+            SQL => "INSERT INTO d724_api_token (token_hash, client_id, expires_at, status, create_time) VALUES (?, ?, DATE_ADD(current_timestamp, INTERVAL ? SECOND), 'active', current_timestamp)",
+            Bind => \@Bind,
+        );
+        my $Fingerprint = substr $TokenHash, 0, 16;
+        my $Audit = $Self->_Audit(
+            TenantID => $Client->{TenantID}, ActorID => "integration:$Client->{ClientID}",
+            Action => 'api.token.issued', ClientID => $Client->{ClientID},
+            DedupeKey => "api-token:$Client->{ClientID}:$Fingerprint:issued", ToState => 'active',
+            Details => { token_fingerprint => $Fingerprint, expires_in => 0 + $TTL },
+        );
+        die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
+        $Handle->commit() if !$Handle->{AutoCommit};
+        1;
+    };
+    if (!$OK) {
+        my $Failure = $@; eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'TOKEN_ISSUE_FAILED' );
+    }
     return { Success => 1, Data => { AccessToken => $Token, TokenType => 'Bearer', ExpiresIn => $TTL, TenantID => $Client->{TenantID}, Role => $Client->{Role} } };
+}
+
+sub ClientSecretRotate {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('API_DISABLED') if !$Self->_Enabled();
+    return $Self->_Error('CLIENT_ID_INVALID')
+        if ( $Param{ClientID} // q{} ) !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{7,127}\z}smx;
+    return $Self->_Error('TENANT_ID_INVALID')
+        if ( $Param{TenantID} // q{} ) !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    return $Self->_Error('USER_ID_INVALID')
+        if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('VERSION_REQUIRED')
+        if ( $Param{ExpectedVersion} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+
+    my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(
+        Subject => $Param{Subject}, Resource => { TenantID => $Param{TenantID} }, Action => 'tenant.manage',
+    );
+    return $Self->_Error( 'FORBIDDEN', $Decision->{Reason} ) if !$Decision->{Allowed};
+    my $Client = $Self->_ClientGet( ClientID => $Param{ClientID} );
+    return $Self->_Error('CLIENT_NOT_FOUND')
+        if !$Client || $Client->{TenantID} ne $Param{TenantID} || $Client->{Status} ne 'active';
+    return $Self->_Error('VERSION_CONFLICT') if $Client->{Version} != $Param{ExpectedVersion};
+
+    my $Secret = $Kernel::OM->Get('Kernel::System::Main')->GenerateRandomString( Length => 64 );
+    my $Hash = $Self->_SecretHash($Secret); return $Self->_Error('BCRYPT_UNAVAILABLE') if !$Hash;
+    my $NextVersion = $Client->{Version} + 1;
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    my $Handle = $DB->Connect(); return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OK = eval {
+        $DB->BeginWork() if $Handle->{AutoCommit};
+        my @Values = ( $Hash, $Param{UserID}, $Client->{ClientID}, $Param{TenantID}, $Param{ExpectedVersion} );
+        my @Bind = map { \$_ } @Values;
+        die "CLIENT_ROTATE_FAILED\n" if !$DB->Do(
+            SQL => "UPDATE d724_api_client SET secret_hash = ?, version = version + 1, change_time = current_timestamp, change_by = ? WHERE client_id = ? AND tenant_id = ? AND status = 'active' AND version = ?",
+            Bind => \@Bind,
+        );
+        my $Updated = $Self->_ClientGet( ClientID => $Client->{ClientID} );
+        die "VERSION_CONFLICT\n" if !$Updated || $Updated->{Version} != $NextVersion || $Updated->{SecretHash} ne $Hash;
+        my $ClientID = $Client->{ClientID};
+        die "TOKEN_REVOKE_FAILED\n" if !$DB->Do(
+            SQL => "UPDATE d724_api_token SET status = 'revoked' WHERE client_id = ? AND status = 'active'",
+            Bind => [ \$ClientID ],
+        );
+        my $Audit = $Self->_Audit(
+            TenantID => $Param{TenantID}, ActorID => $Param{Subject}->{ID}, Action => 'api.client.secret_rotated',
+            ClientID => $Client->{ClientID}, DedupeKey => "api-client:$Client->{ClientID}:version:$NextVersion",
+            ToState => 'active', Details => { version => $NextVersion, all_active_tokens_revoked => 1 },
+        );
+        die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
+        $Handle->commit() if !$Handle->{AutoCommit};
+        1;
+    };
+    if (!$OK) {
+        my $Failure = $@; eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        return $Self->_Error('VERSION_CONFLICT') if $Failure =~ /VERSION_CONFLICT/;
+        return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'CLIENT_ROTATE_FAILED' );
+    }
+    return { Success => 1, Data => { ClientID => $Client->{ClientID}, ClientSecret => $Secret, TenantID => $Param{TenantID}, Version => $NextVersion } };
 }
 
 sub ClientRevoke {
@@ -111,6 +187,9 @@ sub ClientRevoke {
             SQL => "UPDATE d724_api_client SET status = 'revoked', version = version + 1, change_time = current_timestamp, change_by = ? WHERE client_id = ? AND tenant_id = ? AND status = 'active' AND version = ?",
             Bind => \@ClientBind,
         );
+        my $Updated = $Self->_ClientGet( ClientID => $Client->{ClientID} );
+        die "VERSION_CONFLICT\n"
+            if !$Updated || $Updated->{Status} ne 'revoked' || $Updated->{Version} != $NextVersion;
         my $ClientID = $Client->{ClientID};
         die "TOKEN_REVOKE_FAILED\n" if !$DB->Do(
             SQL => "UPDATE d724_api_token SET status = 'revoked' WHERE client_id = ? AND status = 'active'",
@@ -128,6 +207,7 @@ sub ClientRevoke {
     if (!$OK) {
         my $Failure = $@;
         eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        return $Self->_Error('VERSION_CONFLICT') if $Failure =~ /VERSION_CONFLICT/;
         return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'CLIENT_REVOKE_FAILED' );
     }
     return { Success => 1, Data => { ClientID => $Client->{ClientID}, Status => 'revoked', Version => $NextVersion } };
@@ -166,10 +246,34 @@ sub TokenRevoke {
     my ( $Self, %Param ) = @_;
     return $Self->_Error('TOKEN_INVALID') if ( $Param{AccessToken} // q{} ) !~ m{\A[a-zA-Z0-9]{64}\z}smx;
     my $Hash = sha256_hex( $Param{AccessToken} );
-    my $OK = $Kernel::OM->Get('Kernel::System::DB')->Do(
-        SQL => "UPDATE d724_api_token SET status = 'revoked' WHERE token_hash = ? AND status = 'active'", Bind => [ \$Hash ],
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    $DB->Prepare(
+        SQL => "SELECT c.client_id, c.tenant_id FROM d724_api_token t INNER JOIN d724_api_client c ON c.client_id = t.client_id WHERE t.token_hash = ? AND t.status = 'active'",
+        Bind => [ \$Hash ], Limit => 1,
     );
-    return $OK ? { Success => 1 } : $Self->_Error('TOKEN_REVOKE_FAILED');
+    my ( $ClientID, $TenantID ) = $DB->FetchrowArray();
+    return $Self->_Error('TOKEN_INVALID') if !$ClientID;
+    my $Handle = $DB->Connect(); return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OK = eval {
+        $DB->BeginWork() if $Handle->{AutoCommit};
+        die "TOKEN_REVOKE_FAILED\n" if !$DB->Do(
+            SQL => "UPDATE d724_api_token SET status = 'revoked' WHERE token_hash = ? AND status = 'active'", Bind => [ \$Hash ],
+        );
+        my $Fingerprint = substr $Hash, 0, 16;
+        my $Audit = $Self->_Audit(
+            TenantID => $TenantID, ActorID => "integration:$ClientID", Action => 'api.token.revoked',
+            ClientID => $ClientID, DedupeKey => "api-token:$ClientID:$Fingerprint:revoked",
+            ToState => 'revoked', Details => { token_fingerprint => $Fingerprint },
+        );
+        die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
+        $Handle->commit() if !$Handle->{AutoCommit};
+        1;
+    };
+    if (!$OK) {
+        my $Failure = $@; eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'TOKEN_REVOKE_FAILED' );
+    }
+    return { Success => 1 };
 }
 
 sub _RateConsume {
