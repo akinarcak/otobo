@@ -10,10 +10,11 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.4.0';
+our $VERSION = '0.5.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
+    'Kernel::System::D724::Audit',
     'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB',
     'Kernel::System::JSON',
@@ -33,7 +34,7 @@ sub new {
 
 sub ServiceCreate {
     my ( $Self, %Param ) = @_;
-    return $Self->_Create( Entity => 'Service', %Param );
+    return $Self->_TransactionRun( Code => sub { return $Self->_Create( Entity => 'Service', %Param ) } );
 }
 
 sub ServiceGet {
@@ -48,12 +49,12 @@ sub ServiceList {
 
 sub ServiceUpdate {
     my ( $Self, %Param ) = @_;
-    return $Self->_Update( Entity => 'Service', %Param );
+    return $Self->_TransactionRun( Code => sub { return $Self->_Update( Entity => 'Service', %Param ) } );
 }
 
 sub OfferingCreate {
     my ( $Self, %Param ) = @_;
-    return $Self->_Create( Entity => 'Offering', %Param );
+    return $Self->_TransactionRun( Code => sub { return $Self->_Create( Entity => 'Offering', %Param ) } );
 }
 
 sub OfferingGet {
@@ -68,12 +69,12 @@ sub OfferingList {
 
 sub OfferingUpdate {
     my ( $Self, %Param ) = @_;
-    return $Self->_Update( Entity => 'Offering', %Param );
+    return $Self->_TransactionRun( Code => sub { return $Self->_Update( Entity => 'Offering', %Param ) } );
 }
 
 sub CatalogItemCreate {
     my ( $Self, %Param ) = @_;
-    return $Self->_Create( Entity => 'CatalogItem', %Param );
+    return $Self->_TransactionRun( Code => sub { return $Self->_Create( Entity => 'CatalogItem', %Param ) } );
 }
 
 sub CatalogItemGet {
@@ -88,10 +89,15 @@ sub CatalogItemList {
 
 sub CatalogItemUpdate {
     my ( $Self, %Param ) = @_;
-    return $Self->_Update( Entity => 'CatalogItem', %Param );
+    return $Self->_TransactionRun( Code => sub { return $Self->_Update( Entity => 'CatalogItem', %Param ) } );
 }
 
 sub CatalogItemSchemaSet {
+    my ( $Self, %Param ) = @_;
+    return $Self->_TransactionRun( Code => sub { return $Self->_CatalogItemSchemaSet(%Param) } );
+}
+
+sub _CatalogItemSchemaSet {
     my ( $Self, %Param ) = @_;
 
     my $Authorization = $Self->_Authorize(
@@ -163,6 +169,16 @@ sub CatalogItemSchemaSet {
         if !$Updated || $Updated->{Version} != $Expected || $Updated->{SchemaJSON} ne $SchemaJSON;
     delete $Updated->{SchemaJSON};
     $Updated->{Schema} = $Param{Schema};
+    my $Audit = $Self->_AuditRecord(
+        TenantID => $Param{TenantID}, UserID => $Param{UserID}, Subject => $Param{Subject},
+        Action => $Current ? 'catalog.item_schema.updated' : 'catalog.item_schema.created',
+        ObjectType => 'catalog_item_schema', ObjectID => $Param{CatalogItemID},
+        CorrelationID => "catalog-item:$Param{CatalogItemID}",
+        DedupeKey => "catalog:item-schema:$Param{CatalogItemID}:version:$Expected",
+        FromState => $Current ? "$Current->{Version}" : q{}, ToState => "$Expected",
+        Details => { catalog_item_id => $Param{CatalogItemID}, schema_version => $Param{Schema}->{version}, repository_version => $Expected },
+    );
+    return $Self->_Error( Error => 'AUDIT_WRITE_FAILED' ) if !$Audit->{Success};
     return { Success => 1, Data => $Updated };
 }
 
@@ -273,6 +289,16 @@ sub _Create {
         TenantID => $Param{TenantID},
     );
     return $Self->_Error( Error => 'DATABASE_ERROR' ) if !$Data;
+
+    my $Type = $Self->_AuditType( Entity => $Param{Entity} );
+    my $Audit = $Self->_AuditRecord(
+        TenantID => $Param{TenantID}, UserID => $Param{UserID}, Subject => $Param{Subject},
+        Action => "catalog.$Type.created", ObjectType => "catalog_$Type", ObjectID => $ID,
+        CorrelationID => "catalog:$Type:$Param{Key}", DedupeKey => "catalog:$Type:$ID:created",
+        FromState => q{}, ToState => $Data->{Status},
+        Details => { key => $Data->{Key}, status => $Data->{Status}, version => $Data->{Version} },
+    );
+    return $Self->_Error( Error => 'AUDIT_WRITE_FAILED' ) if !$Audit->{Success};
 
     return {
         Success => 1,
@@ -450,10 +476,76 @@ sub _Update {
             if $Updated->{ $Meta->{TypeAPI} } ne $Param{ $Meta->{TypeAPI} };
     }
 
+    my $Type = $Self->_AuditType( Entity => $Param{Entity} );
+    my $ID = $Param{ $Meta->{IDAPI} };
+    my $Audit = $Self->_AuditRecord(
+        TenantID => $Param{TenantID}, UserID => $Param{UserID}, Subject => $Param{Subject},
+        Action => "catalog.$Type.updated", ObjectType => "catalog_$Type", ObjectID => $ID,
+        CorrelationID => "catalog:$Type:$Updated->{Key}",
+        DedupeKey => "catalog:$Type:$ID:version:$Updated->{Version}",
+        FromState => $Current->{Status}, ToState => $Updated->{Status},
+        Details => { key => $Updated->{Key}, status => $Updated->{Status}, version => $Updated->{Version} },
+    );
+    return $Self->_Error( Error => 'AUDIT_WRITE_FAILED' ) if !$Audit->{Success};
+
     return {
         Success => 1,
         Data    => $Updated,
     };
+}
+
+sub _AuditType {
+    my ( $Self, %Param ) = @_;
+    return 'service'  if $Param{Entity} eq 'Service';
+    return 'offering' if $Param{Entity} eq 'Offering';
+    return 'item'     if $Param{Entity} eq 'CatalogItem';
+    return 'unknown';
+}
+
+sub _AuditRecord {
+    my ( $Self, %Param ) = @_;
+    my $Subject = $Param{Subject};
+    my $SubjectID = ref $Subject eq 'HASH' ? $Subject->{ID} : undef;
+    my $ActorID = defined $SubjectID && length $SubjectID ? "agent:$SubjectID" : "agent:$Param{UserID}";
+    return $Kernel::OM->Get('Kernel::System::D724::Audit')->Record(
+        TenantID => $Param{TenantID}, ActorType => 'agent', ActorID => $ActorID,
+        Action => $Param{Action}, ObjectType => $Param{ObjectType}, ObjectID => "$Param{ObjectID}",
+        CorrelationID => $Param{CorrelationID}, DedupeKey => $Param{DedupeKey},
+        FromState => $Param{FromState}, ToState => $Param{ToState}, Outcome => 'success',
+        Details => $Param{Details},
+    );
+}
+
+sub _TransactionRun {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error( Error => 'TRANSACTION_CODE_INVALID' ) if ref $Param{Code} ne 'CODE';
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    my $Handle = $DB->Connect();
+    return $Self->_Error( Error => 'TRANSACTION_CONNECTION_FAILED' ) if !$Handle;
+    return $Param{Code}->() if !$Handle->{AutoCommit};
+
+    my $Result;
+    my $OK = eval {
+        die "TRANSACTION_START_FAILED\n" if !$DB->BeginWork();
+        $Result = $Param{Code}->();
+        die "TRANSACTION_RESULT_INVALID\n" if ref $Result ne 'HASH' || !exists $Result->{Success};
+        if ( $Result->{Success} ) {
+            die "TRANSACTION_COMMIT_FAILED\n" if !$Handle->commit();
+        }
+        else {
+            die "TRANSACTION_ROLLBACK_FAILED\n" if !$DB->Rollback();
+        }
+        1;
+    };
+    if ( !$OK ) {
+        my $Failure = $@ || 'TRANSACTION_FAILED';
+        eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error', Message => "D724 catalog transaction failed: $Failure",
+        );
+        return $Self->_Error( Error => 'TRANSACTION_FAILED' );
+    }
+    return $Result;
 }
 
 sub _Authorize {

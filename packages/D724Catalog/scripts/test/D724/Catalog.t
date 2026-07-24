@@ -258,6 +258,26 @@ is(
     'invalid fulfillment type is rejected',
 );
 
+my $Audit = $Kernel::OM->Get('Kernel::System::D724::Audit');
+my $AuditList = $Audit->List( Subject => $AdminA, TenantID => 'tenant-a', Limit => 100 );
+ok( $AuditList->{Success}, 'tenant administrator reads catalog audit events' );
+is(
+    [ map { $_->{Action} } @{ $AuditList->{Data} } ],
+    [qw(
+        catalog.service.created
+        catalog.offering.created
+        catalog.item.created
+        catalog.item_schema.created
+        catalog.item_schema.updated
+        catalog.service.updated
+    )],
+    'catalog mutations emit ordered normalized audit vocabulary',
+);
+is( [ map { $_->{Sequence} } @{ $AuditList->{Data} } ], [ 1 .. 6 ], 'catalog audit sequence is contiguous' );
+is( scalar( grep { !length( $_->{DedupeKey} // q{} ) } @{ $AuditList->{Data} } ), 0, 'every catalog event has a dedupe key' );
+ok( $Audit->Verify( Subject => $AdminA, TenantID => 'tenant-a' )->{Valid}, 'catalog audit hash chain verifies' );
+is( $Audit->List( Subject => $AdminA, TenantID => 'tenant-b' )->{Error}, 'FORBIDDEN', 'catalog audit cannot cross tenant boundary' );
+
 {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
     local $ConfigObject->{'D724::Catalog::Enabled'} = 0;
