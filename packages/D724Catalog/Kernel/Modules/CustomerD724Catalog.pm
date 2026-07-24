@@ -9,6 +9,7 @@ package Kernel::Modules::CustomerD724Catalog;
 use v5.24;
 use strict;
 use warnings;
+use Digest::SHA qw(sha256_hex);
 
 our $ObjectManagerDisabled = 1;
 
@@ -31,6 +32,8 @@ sub Run {
         my $ItemID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'CatalogItemID' );
         my $Result = $Portal->ItemGet( %Context, CatalogItemID => $ItemID );
         return $LayoutObject->CustomerNoPermission( WithHeader => 'yes' ) if !$Result->{Success};
+        $Param{CatalogItemID} = $Result->{Data}->{CatalogItemID};
+        $Param{IdempotencyKey} = 'portal-' . sha256_hex( join q{|}, $Self->{UserID}, $ItemID, time, rand() );
         $LayoutObject->Block( Name => 'ItemDetail', Data => $Result->{Data} );
         for my $Field ( @{ $Result->{Data}->{FormSchema}->{Schema}->{fields} } ) {
             $LayoutObject->Block( Name => 'FormField', Data => $Field );

@@ -35,6 +35,11 @@
 [% RenderBlockEnd("ItemDetail") %]
 [% IF Data.View == 'Item' %]
         <form action="[% Env("CGIHandle") %]" method="post">
+            <input type="hidden" name="Action" value="CustomerD724Request"/>
+            <input type="hidden" name="Subaction" value="Submit"/>
+            <input type="hidden" name="ChallengeToken" value="[% Env("ChallengeToken") | html %]"/>
+            <input type="hidden" name="CatalogItemID" value="[% Data.CatalogItemID | html %]"/>
+            <input type="hidden" name="IdempotencyKey" value="[% Data.IdempotencyKey | html %]"/>
             <fieldset class="TableLike FixedLabel">
 [% RenderBlockStart("FormField") %]
         <div class="Row">
@@ -55,7 +60,7 @@
         </div>
 [% RenderBlockEnd("FormField") %]
             </fieldset>
-            <p>[% Translate("Submission workflow will be enabled when fulfillment is configured.") | html %]</p>
+            <button class="Primary CallForAction" type="submit"><span>[% Translate("Submit request") | html %]</span></button>
         </form>
 [% END %]
     </div>
