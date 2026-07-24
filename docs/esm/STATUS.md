@@ -43,14 +43,14 @@ Son dogrulama: `2026-07-24`
   - CSRF challenge token ve optimistic update formlari,
   - bes test dosyasi, 59 paket testi, sonuc `PASS`,
   - authenticated customer HTTP katalog ve dinamik form smoke testleri.
-- GPL-3.0 `D724Request 0.2.0` OPM paketi:
+- GPL-3.0 `D724Request 0.2.1` OPM paketi:
   - sunucu-tarafli dinamik cevap validasyonu ve workflow snapshot'i,
   - tenant/requester kapsamli idempotent form submission,
   - tenant-role onayi ve optimistic-lock durum gecisleri,
   - fulfillment gorevleri, basarisizlik ve otomatik fulfilled sonucu,
   - musteri makbuzu ve agent onay/fulfillment workbench'i,
   - oturumlu HTTP submit sonrasi `REQ-*` makbuzu ve agent gorunurluk testi.
-- GPL-3.0 `D724Catalog 0.4.0`, `D724Request 0.2.0` ve `D724Commitment 0.2.1` entegrasyonu:
+- GPL-3.0 `D724Catalog 0.4.0`, `D724Request 0.2.1` ve `D724Commitment 0.3.0` entegrasyonu:
   - tenant-local commitment policy referansli katalog workflow'u,
   - request acilisinda immutable policy snapshot ve otomatik commitment baslatma,
   - OTOBO calisma saatleri, tatil gunleri ve calendar timezone hesaplari,
@@ -61,8 +61,10 @@ Son dogrulama: `2026-07-24`
   - authenticated HTTP akisi: `paused -> running -> met` ve `awaiting_approval -> in_fulfillment -> fulfilled`.
   - response/resolution/OLA hedefleri, validated-answer entitlement secimi ve idempotent escalation outbox,
   - authenticated HTTP akisi `REQ-0000000042`: iki hedef paused, onaydan sonra uc hedef running, ilk yanit ve fulfillment sonunda uc hedef met.
-- Alti D724 paketinde toplam 17 test dosyasi ve 297 test birlikte `PASS`.
-- Tekrarlanabilir OPM SHA-256 kaniti: Catalog 0.4.0 `db3f490b52cc1b765b7c03240fc22e219f5edbe0989f0ce3cf7f9e888a73035d`, Request 0.2.0 `44c2c508eee36cd0d0d8de961dcb2e00dd080b564b6d3af2461b3943c35a0bf8`, Commitment 0.2.1 `73aa20b69d20bb84f4b8f1a236e9e42d1670bc8c14fa028aa9096a271234325f`.
+  - atomik lease, exponential retry ve dead-letter escalation dispatcher,
+  - tenant-role OTOBO email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
+- Alti D724 paketinde toplam 17 test dosyasi ve 316 test birlikte `PASS`.
+- Son OPM SHA-256 kaniti: Request 0.2.1 `b6d8557df7636ab4357a61eb19ad441cd91f792dc0eeaedc01561cc3241f38e3`, Commitment 0.3.0 `20bb504721babba2f6e96ac2801926f6221d4179715effc693c5ecccae466d14`.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen
@@ -78,11 +80,11 @@ Son dogrulama: `2026-07-24`
 Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 
 - tenant/organizasyon policy siniri ve veri sizintisi testleri,
-- escalation outbox teslim worker'i, notification/assignment/imzali webhook adapter'lari ve UC hedefi,
+- UC hedefi, dead-letter replay arayuzu ve escalation teslim metrikleri,
 - audit event modeli ve disari aktarim,
 - portal ve agent urun deneyimi,
 - SSO/SCIM ve entegrasyon sozlesmeleri,
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `SLA-01b-actions` gercek escalation dispatcher ve teslim kanitidir. Ardindan `AUD-01` normalize audit event modeline gecilir.
+Bir sonraki urun kapisi `AUD-01` normalize audit event modeli ve tenant-safe disari aktarimdir.

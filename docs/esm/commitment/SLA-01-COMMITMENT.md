@@ -28,12 +28,18 @@ Policy artik sirali `response`, `resolution` ve `ola` hedefleri tasir. Her hedef
 
 Katalog workflow'u varsayilan policy'ye ek olarak sadece validate edilmis cevaplar uzerinde calisan sirali entitlement kurallari tanimlar. Eslesen kural tenant-local policy'yi secer; secim ve kural anahtari request snapshot'inda denetlenebilir bicimde kalir. Warning/breach action'lari benzersiz anahtarla outbox'a yazilir; ayni sweep ayni action'i ikinci kez kuyruklamaz.
 
+## Escalation teslimi
+
+`D724Commitment 0.3.0` dispatcher'i pending/retry kayitlarini atomik lease ile sahiplenir. Yarisan worker ayni action'i alamaz; gecici hata 60 saniyeden baslayan ussel backoff ile yeniden denenir ve maksimum deneme sonunda kayit `dead` olur. `attempt_count`, son hata, response code, islenme zamani ve delivery reference commitment kanitinda saklanir.
+
+`notify_role`, alicilari sadece action tenant'indaki aktif directory rol uyeliklerinden cozer ve OTOBO email transport'una tenant/delivery basliklariyla kuyruklar. `assignment`, ayni tenant ve request'teki aktif fulfillment gorevini hedef gruba atar. `webhook`, policy icinde URL kabul etmez: adlandirilmis endpoint SysConfig/secret store'dan cozulur, yalnizca exact allow-list'teki HTTPS host'una gider ve payload HMAC-SHA256 ile imzalanir.
+
 ## Dogrulama
 
 - Sabit UTC fixture'lari ile warning, business-time due, gece/ertesi gun pause kaymasi, stale scheduler, met/breach ve cross-tenant denial test edilir.
-- Alti D724 paketi 17 dosyada 297 testi birlikte gecirir.
+- Alti D724 paketi 17 dosyada 316 testi birlikte gecirir.
 - Oturumlu HTTP kabul testi premium entitlement secilen `REQ-0000000042` talebinde response/resolution hedeflerini `paused`, onaydan sonra response/resolution/OLA hedeflerini `running`, ilk yanittan sonra response'u `met` ve fulfillment sonunda uc hedefi de `met` olarak dogrulamistir.
 
 ## Acik kapsam
 
-Outbox teslim worker'i ve gercek notification/assignment/imzali webhook adapter'lari henuz uygulanmamistir. UC hedefi ve escalation teslim gozlemlenebilirligi de sonraki kapidadir. Bu nedenle genel `SLA-01` henuz tamamen kapanmis sayilmaz.
+UC hedefi, dead-letter replay yonetim ekrani ve notification/webhook teslim metrikleri sonraki operasyon kapisindadir. Bu nedenle genel `SLA-01` henuz tamamen kapanmis sayilmaz.
