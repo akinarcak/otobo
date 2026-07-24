@@ -24,14 +24,14 @@ sub Run {
     my ($Self) = @_;
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     my %Existing = map { $_ => 1 } $DBObject->ListTables();
-    my %Tables = map { $_ => $Existing{$_} ? 1 : 0 } qw(d724_commitment_policy d724_commitment_policy_objective d724_commitment_instance d724_commitment_event d724_escalation_outbox);
+    my %Tables = map { $_ => $Existing{$_} ? 1 : 0 } qw(d724_commitment_policy d724_commitment_objective d724_commitment_instance d724_commitment_event d724_escalation_outbox);
     my %Counts = ( Policies => 0, Objectives => 0, Active => 0, Breached => 0, PendingEscalations => 0 );
     if ( $Tables{d724_commitment_policy} ) {
         $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_commitment_policy WHERE status = 'active'" );
         ($Counts{Policies}) = $DBObject->FetchrowArray();
     }
-    if ( $Tables{d724_commitment_policy_objective} ) {
-        $DBObject->Prepare( SQL => 'SELECT COUNT(*) FROM d724_commitment_policy_objective' );
+    if ( $Tables{d724_commitment_objective} ) {
+        $DBObject->Prepare( SQL => 'SELECT COUNT(*) FROM d724_commitment_objective' );
         ($Counts{Objectives}) = $DBObject->FetchrowArray();
     }
     if ( $Tables{d724_commitment_instance} ) {
@@ -45,7 +45,7 @@ sub Run {
         ($Counts{PendingEscalations}) = $DBObject->FetchrowArray();
     }
     my $Success = !( grep { !$_ } values %Tables );
-    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.2.0', Tables => \%Tables, Counts => \%Counts };
+    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.2.1', Tables => \%Tables, Counts => \%Counts };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }

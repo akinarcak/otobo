@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -508,7 +508,7 @@ sub _PolicyObjectivesReplace {
     return { Success => 1 } if !defined $Param{Objectives};
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     $DBObject->Do(
-        SQL => 'DELETE FROM d724_commitment_policy_objective WHERE tenant_id = ? AND policy_id = ?',
+        SQL => 'DELETE FROM d724_commitment_objective WHERE tenant_id = ? AND policy_id = ?',
         Bind => [ \$Param{TenantID}, \$Param{PolicyID} ],
     ) || return $Self->_Error('DATABASE_ERROR');
     my $Sequence = 0;
@@ -521,7 +521,7 @@ sub _PolicyObjectivesReplace {
         );
         my @Bind = map { \$_ } @Values;
         return $Self->_Error('DATABASE_ERROR') if !$DBObject->Do(
-            SQL => 'INSERT INTO d724_commitment_policy_objective (tenant_id, policy_id, key_name, objective_type, target_seconds, warning_percent, start_signal, stop_signal, escalation_actions_json, sequence_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            SQL => 'INSERT INTO d724_commitment_objective (tenant_id, policy_id, key_name, objective_type, target_seconds, warning_percent, start_signal, stop_signal, escalation_actions_json, sequence_no) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             Bind => \@Bind,
         );
     }
@@ -532,7 +532,7 @@ sub _PolicyObjectivesGet {
     my ( $Self, %Param ) = @_;
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     $DBObject->Prepare(
-        SQL => 'SELECT key_name, objective_type, target_seconds, warning_percent, start_signal, stop_signal, escalation_actions_json FROM d724_commitment_policy_objective WHERE tenant_id = ? AND policy_id = ? ORDER BY sequence_no, id',
+        SQL => 'SELECT key_name, objective_type, target_seconds, warning_percent, start_signal, stop_signal, escalation_actions_json FROM d724_commitment_objective WHERE tenant_id = ? AND policy_id = ? ORDER BY sequence_no, id',
         Bind => [ \$Param{TenantID}, \$Param{PolicyID} ],
     );
     my @Data;

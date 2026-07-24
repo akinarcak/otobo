@@ -17,10 +17,10 @@ is( $ExitCode, 0, 'commitment status succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
 ok( $Status->{Success}, 'commitment schema is healthy' );
 is( $Status->{Package}, 'D724Commitment', 'status identifies package' );
-is( $Status->{Version}, '0.2.0', 'status identifies version' );
+is( $Status->{Version}, '0.2.1', 'status identifies version' );
 is(
     [ sort keys %{ $Status->{Tables} } ],
-    [qw(d724_commitment_event d724_commitment_instance d724_commitment_policy d724_commitment_policy_objective d724_escalation_outbox)],
+    [qw(d724_commitment_event d724_commitment_instance d724_commitment_objective d724_commitment_policy d724_escalation_outbox)],
     'all commitment and escalation tables reported',
 );
 
