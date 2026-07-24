@@ -7,6 +7,7 @@ $Kernel::OM->ObjectParamAdd('Kernel::System::UnitTest::Helper'=>{RestoreDatabase
 my $Helper=$Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 $Helper->ConfigSettingChange(Key=>'D724::Audit::Enabled',Value=>1);
 $Helper->ConfigSettingChange(Key=>'D724::Audit::IPHashSalt',Value=>'unit-test-secret-salt');
+$Helper->ConfigSettingChange(Key=>'CheckEmailAddresses',Value=>0);
 my $Suffix=lc $Helper->GetRandomID(); my $A="audit-a-$Suffix"; my $B="audit-b-$Suffix";
 my $User=$Kernel::OM->Get('Kernel::System::User');
 my $AuditorID=$User->UserAdd(UserFirstname=>'Audit',UserLastname=>'Reader',UserLogin=>"audit-reader-$Suffix",UserEmail=>"audit-reader-$Suffix\@example.test",ValidID=>1,ChangeUserID=>1) || die;

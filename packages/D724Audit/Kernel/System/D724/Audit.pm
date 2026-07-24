@@ -60,7 +60,7 @@ sub Record {
         );
         $DB->Prepare(
             SQL => 'SELECT last_sequence, last_hash FROM d724_audit_head WHERE tenant_id = ? FOR UPDATE',
-            Bind => [ \$Param{TenantID} ], Limit => 1,
+            Bind => [ \$Param{TenantID} ],
         );
         my ( $LastSequence, $PreviousHash ) = $DB->FetchrowArray();
         die "HEAD_MISSING\n" if !defined $LastSequence;
