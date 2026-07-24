@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -467,12 +467,12 @@ sub _TasksGet {
     my ( $Self, %Param ) = @_;
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     $DBObject->Prepare(
-        SQL => 'SELECT id, key_name, name, task_type, status, version, result_comment, change_time, change_by FROM d724_request_task WHERE tenant_id = ? AND request_id = ? ORDER BY id',
+        SQL => 'SELECT id, key_name, name, task_type, status, version, result_comment, assigned_group, change_time, change_by FROM d724_request_task WHERE tenant_id = ? AND request_id = ? ORDER BY id',
         Bind => [ \$Param{TenantID}, \$Param{RequestID} ],
     );
     my @Data;
     while ( my @Row = $DBObject->FetchrowArray() ) {
-        push @Data, { TaskID => $Row[0], Key => $Row[1], Name => $Row[2], Type => $Row[3], Status => $Row[4], Version => $Row[5], Comment => $Row[6], ChangeTime => $Row[7], ChangeBy => $Row[8], RequestID => $Param{RequestID} };
+        push @Data, { TaskID => $Row[0], Key => $Row[1], Name => $Row[2], Type => $Row[3], Status => $Row[4], Version => $Row[5], Comment => $Row[6], AssignedGroup => $Row[7], ChangeTime => $Row[8], ChangeBy => $Row[9], RequestID => $Param{RequestID} };
     }
     return \@Data;
 }

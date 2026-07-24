@@ -39,7 +39,7 @@ sub Run {
         ($Counts{OpenTasks}) = $DBObject->FetchrowArray();
     }
     my $Success = !( grep { !$_ } values %Tables );
-    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Request', Version => '0.2.0', Tables => \%Tables, Counts => \%Counts };
+    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Request', Version => '0.2.1', Tables => \%Tables, Counts => \%Counts };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }

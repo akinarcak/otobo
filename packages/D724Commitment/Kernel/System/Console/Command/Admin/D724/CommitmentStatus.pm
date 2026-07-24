@@ -25,7 +25,7 @@ sub Run {
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     my %Existing = map { $_ => 1 } $DBObject->ListTables();
     my %Tables = map { $_ => $Existing{$_} ? 1 : 0 } qw(d724_commitment_policy d724_commitment_objective d724_commitment_instance d724_commitment_event d724_escalation_outbox);
-    my %Counts = ( Policies => 0, Objectives => 0, Active => 0, Breached => 0, PendingEscalations => 0 );
+    my %Counts = ( Policies => 0, Objectives => 0, Active => 0, Breached => 0, PendingEscalations => 0, DeadEscalations => 0 );
     if ( $Tables{d724_commitment_policy} ) {
         $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_commitment_policy WHERE status = 'active'" );
         ($Counts{Policies}) = $DBObject->FetchrowArray();
@@ -41,16 +41,18 @@ sub Run {
         ($Counts{Breached}) = $DBObject->FetchrowArray();
     }
     if ( $Tables{d724_escalation_outbox} ) {
-        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status = 'pending'" );
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status IN ('pending','retry','processing')" );
         ($Counts{PendingEscalations}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status = 'dead'" );
+        ($Counts{DeadEscalations}) = $DBObject->FetchrowArray();
     }
     my $Success = !( grep { !$_ } values %Tables );
-    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.2.1', Tables => \%Tables, Counts => \%Counts };
+    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.3.0', Tables => \%Tables, Counts => \%Counts };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
     else {
-        $Self->Print("D724 commitment status\nActive policies: $Counts{Policies}\nObjectives: $Counts{Objectives}\nActive commitments: $Counts{Active}\nBreached: $Counts{Breached}\nPending escalations: $Counts{PendingEscalations}\n");
+        $Self->Print("D724 commitment status\nActive policies: $Counts{Policies}\nObjectives: $Counts{Objectives}\nActive commitments: $Counts{Active}\nBreached: $Counts{Breached}\nPending escalations: $Counts{PendingEscalations}\nDead escalations: $Counts{DeadEscalations}\n");
         $Self->Print( $Success ? "Status: OK\n" : "Status: FAILED\n" );
     }
     return $Success ? $Self->ExitCodeOk() : $Self->ExitCodeError();

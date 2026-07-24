@@ -16,6 +16,9 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 $Helper->ConfigSettingChange( Key => 'D724::Catalog::Enabled', Value => 1 );
 $Helper->ConfigSettingChange( Key => 'D724::Request::Enabled', Value => 1 );
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationDispatchEnabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationBatchSize', Value => 25 );
+$Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationMaxAttempts', Value => 3 );
 $Helper->ConfigSettingChange( Key => 'CheckEmailAddresses', Value => 0 );
 $Helper->ConfigSettingChange( Key => 'OTOBOTimeZone', Value => 'UTC' );
 $Helper->ConfigSettingChange(
@@ -39,6 +42,7 @@ my $OtherID = $UserObject->UserAdd(
 ) || die 'Could not create commitment other user';
 
 my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+my $Dispatcher = $Kernel::OM->Get('Kernel::System::D724::EscalationDispatcher');
 for my $Tenant ( $TenantA, $TenantB ) {
     my @Values = ( $Tenant, "Tenant $Tenant", 'active', 1, $AdminID, $AdminID ); my @Bind = map { \$_ } @Values;
     $DBObject->Do(
@@ -215,6 +219,25 @@ $Commitment->Sweep( At => '2026-07-27 09:32:00' );
 $MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
 ($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
 is( scalar @{ $ResponseObjective->{Escalations} }, 1, 'repeated sweep does not duplicate escalation action' );
+my $FailedDispatch = $Dispatcher->Dispatch(
+    At => '2026-07-27 09:33:00', WorkerID => 'test-worker-a',
+    Handlers => { notify_role => sub { return { Success => 0, Error => 'TEST_TRANSIENT_FAILURE' } } },
+);
+is( $FailedDispatch->{Counts}->{Retried}, 1, 'transient delivery failure schedules retry' );
+$MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
+($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
+is( $ResponseObjective->{Escalations}->[0]->{Status}, 'retry', 'retry state is visible in commitment evidence' );
+is( $ResponseObjective->{Escalations}->[0]->{AttemptCount}, 1, 'failed attempt is counted once' );
+my $SuccessfulDispatch = $Dispatcher->Dispatch(
+    At => '2026-07-27 09:35:00', WorkerID => 'test-worker-b',
+    Handlers => { notify_role => sub { return { Success => 1, DeliveryRef => 'test:notification:1', ResponseCode => 'QUEUED' } } },
+);
+is( $SuccessfulDispatch->{Counts}->{Delivered}, 1, 'retry is delivered by a later dispatcher run' );
+$MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
+($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
+is( $ResponseObjective->{Escalations}->[0]->{Status}, 'delivered', 'delivery evidence becomes terminal' );
+is( $ResponseObjective->{Escalations}->[0]->{DeliveryRef}, 'test:notification:1', 'delivery reference is retained for audit' );
+is( $Dispatcher->Dispatch( At => '2026-07-27 09:36:00', WorkerID => 'test-worker-c', Handlers => {} )->{Counts}->{Claimed}, 0, 'delivered action is never claimed again' );
 my $ResponseSignal = $Commitment->Signal(
     UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID}, PolicyKey => 'premium-multi',
     Signal => 'first_response', RequestStatus => 'in_fulfillment', At => '2026-07-27 09:45:00',
@@ -260,6 +283,40 @@ my ($AgentIntegrated) = grep { $_->{RequestID} == $Integrated->{Data}->{RequestI
 };
 is( $AgentIntegrated->{Commitment}->{Policy}->{Key}, 'standard-resolution', 'agent list includes policy and due data' );
 my $IntegratedTask = $Integrated->{Data}->{Tasks}->[0];
+my $Assignment = $Dispatcher->_Assign( {
+    ID => 9001, TenantID => $TenantA,
+    Payload => { RequestID => $Integrated->{Data}->{RequestID}, Target => 'resolver-escalation' },
+} );
+ok( $Assignment->{Success}, 'assignment adapter assigns active fulfillment work' );
+my ($AssignedRequest) = grep { $_->{RequestID} == $Integrated->{Data}->{RequestID} } @{
+    $RequestObject->AgentList( UserID => $AdminID, TenantID => $TenantA )->{Data}
+};
+is( $AssignedRequest->{Tasks}->[0]->{AssignedGroup}, 'resolver-escalation', 'assignment is tenant-scoped and visible to agents' );
+$IntegratedTask = $AssignedRequest->{Tasks}->[0];
+
+$Helper->ConfigSettingChange( Key => 'D724::Commitment::WebhookAllowedHosts', Value => ['hooks.example.test'] );
+$Helper->ConfigSettingChange(
+    Key => 'D724::Commitment::WebhookEndpoints',
+    Value => { 'audit-hook' => { URL => 'https://hooks.example.test/d724', Secret => '0123456789abcdef0123456789abcdef' } },
+);
+my %WebhookCall;
+{
+    no warnings 'redefine';
+    local *Kernel::System::WebUserAgent::Request = sub {
+        my ( $Self, %Param ) = @_; %WebhookCall = %Param; return ( Status => '202 Accepted', Content => \q{} );
+    };
+    my $Webhook = $Dispatcher->_Webhook( {
+        ID => 9002, TenantID => $TenantA,
+        Payload => { TenantID => $TenantA, RequestID => $Integrated->{Data}->{RequestID}, Target => 'audit-hook', Trigger => 'warning', ObjectiveKey => 'resolution' },
+    } );
+    ok( $Webhook->{Success}, 'allow-listed HTTPS webhook is delivered' );
+}
+like( $WebhookCall{Header}->{'X-D724-Signature-256'}, qr{\Asha256=[0-9a-f]{64}\z}, 'webhook carries an HMAC SHA-256 signature' );
+is( $WebhookCall{Header}->{'X-D724-Delivery-ID'}, 9002, 'webhook carries stable delivery identifier' );
+is(
+    $Dispatcher->_Webhook( { ID => 9003, TenantID => $TenantA, Payload => { TenantID => $TenantA, RequestID => 1, Target => 'missing-hook' } } )->{Error},
+    'WEBHOOK_NOT_CONFIGURED', 'unknown webhook key fails closed without arbitrary URL access',
+);
 my $Fulfilled = $RequestObject->TaskUpdate(
     UserID => $AdminID, TenantID => $TenantA, TaskID => $IntegratedTask->{TaskID},
     ExpectedVersion => $IntegratedTask->{Version}, Status => 'completed', Comment => 'Done',

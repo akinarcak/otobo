@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724Commitment</Name><Version>0.2.1</Version><Framework>11.1.x</Framework>
+    <Name>D724Commitment</Name><Version>0.3.0</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe business-time commitments, pause rules, breach evaluation, and escalation evidence for D724 ESM.</Description>
@@ -8,7 +8,7 @@
     <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
     <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
     <PackageRequired Version="0.1.2">D724TenantDirectory</PackageRequired>
-    <PackageRequired Version="0.2.0">D724Request</PackageRequired>
+    <PackageRequired Version="0.2.1">D724Request</PackageRequired>
     <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
     <DatabaseInstall Type="post">
         <TableCreate Name="d724_commitment_policy">
@@ -66,6 +66,8 @@
             <Column Name="action_type" Required="true" Size="30" Type="VARCHAR" /><Column Name="payload_json" Required="true" Size="8000" Type="VARCHAR" />
             <Column Name="status" Required="true" Size="20" Type="VARCHAR" /><Column Name="attempt_count" Required="true" Type="INTEGER" />
             <Column Name="available_time" Required="true" Type="DATE" /><Column Name="processed_time" Required="false" Type="DATE" />
+            <Column Name="lease_token" Required="true" Default="" Size="64" Type="VARCHAR" /><Column Name="lease_until" Required="false" Type="DATE" />
+            <Column Name="delivery_ref" Required="true" Default="" Size="255" Type="VARCHAR" /><Column Name="response_code" Required="true" Default="" Size="64" Type="VARCHAR" />
             <Column Name="last_error" Required="true" Size="2000" Type="VARCHAR" /><Column Name="create_time" Required="true" Type="DATE" />
             <Column Name="change_time" Required="true" Type="DATE" />
             <Unique Name="d724_escalation_action_once"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="commitment_event_id" /><UniqueColumn Name="action_key" /></Unique>
@@ -102,11 +104,16 @@
             <Unique Name="d724_escalation_action_once"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="commitment_event_id" /><UniqueColumn Name="action_key" /></Unique>
             <Index Name="d724_escalation_dispatch"><IndexColumn Name="status" /><IndexColumn Name="available_time" /><IndexColumn Name="id" /></Index>
         </TableCreate>
+        <TableAlter Name="d724_escalation_outbox" Version="0.3.0">
+            <ColumnAdd Name="lease_token" Required="true" Default="" Size="64" Type="VARCHAR" /><ColumnAdd Name="lease_until" Required="false" Type="DATE" />
+            <ColumnAdd Name="delivery_ref" Required="true" Default="" Size="255" Type="VARCHAR" /><ColumnAdd Name="response_code" Required="true" Default="" Size="64" Type="VARCHAR" />
+        </TableAlter>
     </DatabaseUpgrade>
     <DatabaseUninstall Type="pre"><TableDrop Name="d724_escalation_outbox" /><TableDrop Name="d724_commitment_event" /><TableDrop Name="d724_commitment_instance" /><TableDrop Name="d724_commitment_objective" /><TableDrop Name="d724_commitment_policy" /></DatabaseUninstall>
     <Filelist>
         <File Permission="644" Location="Kernel/Config/Files/XML/D724Commitment.xml" />
         <File Permission="644" Location="Kernel/System/D724/Commitment.pm" />
+        <File Permission="644" Location="Kernel/System/D724/EscalationDispatcher.pm" />
         <File Permission="644" Location="Kernel/Modules/AdminD724Commitment.pm" />
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminD724Commitment.tt" />
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CommitmentStatus.pm" />
