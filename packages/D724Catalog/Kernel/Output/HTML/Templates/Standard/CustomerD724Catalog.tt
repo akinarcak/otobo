@@ -37,7 +37,6 @@
         <form action="[% Env("CGIHandle") %]" method="post">
             <input type="hidden" name="Action" value="CustomerD724Request"/>
             <input type="hidden" name="Subaction" value="Submit"/>
-            <input type="hidden" name="ChallengeToken" value="[% Env("ChallengeToken") | html %]"/>
             <input type="hidden" name="CatalogItemID" value="[% Data.CatalogItemID | html %]"/>
             <input type="hidden" name="IdempotencyKey" value="[% Data.IdempotencyKey | html %]"/>
             <fieldset class="TableLike FixedLabel">

@@ -14,7 +14,7 @@
 [% RenderBlockStart("Approval") %]
       <form action="[% Env("CGIHandle") %]" method="post">
         <input type="hidden" name="Action" value="AgentD724Request"/><input type="hidden" name="Subaction" value="ApprovalDecide"/>
-        <input type="hidden" name="ChallengeToken" value="[% Env("ChallengeToken") | html %]"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+        <input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
         <input type="hidden" name="RequestID" value="[% Data.RequestID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
         <input name="Comment" maxlength="4000" placeholder="[% Translate("Decision comment") | html %]"/>
         <button name="Decision" value="approved" type="submit">[% Translate("Approve") | html %]</button>
@@ -24,7 +24,7 @@
 [% RenderBlockStart("Task") %]
       <form action="[% Env("CGIHandle") %]" method="post">
         <input type="hidden" name="Action" value="AgentD724Request"/><input type="hidden" name="Subaction" value="TaskUpdate"/>
-        <input type="hidden" name="ChallengeToken" value="[% Env("ChallengeToken") | html %]"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+        <input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
         <input type="hidden" name="TaskID" value="[% Data.TaskID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
         <strong>[% Data.Name | html %]</strong> ([% Data.Status | html %]) <input name="Comment" maxlength="4000" placeholder="[% Translate("Result comment") | html %]"/>
         <button name="Status" value="in_progress" type="submit">[% Translate("Start") | html %]</button>
