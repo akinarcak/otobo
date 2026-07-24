@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -37,6 +37,8 @@ sub Record {
     for my $Key (qw(CorrelationID FromState ToState)) {
         return $Self->_Error( uc($Key) . '_INVALID' ) if length( $Param{$Key} // q{} ) > 128 || ( $Param{$Key} // q{} ) =~ m{[\x00-\x1f]}smx;
     }
+    return $Self->_Error('DEDUPE_KEY_INVALID')
+        if ( $Param{DedupeKey} // q{} ) !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{7,127}\z}smx;
     my $Details = $Self->_DetailsNormalize( $Param{Details} // {} );
     return $Details if !$Details->{Success};
     my $At = $Self->_TimeNormalize( $Param{EventTime} );
@@ -64,6 +66,18 @@ sub Record {
         );
         my ( $LastSequence, $PreviousHash ) = $DB->FetchrowArray();
         die "HEAD_MISSING\n" if !defined $LastSequence;
+        $DB->Prepare(
+            SQL => 'SELECT sequence_no, event_uuid, event_hash, previous_hash FROM d724_audit_event WHERE tenant_id = ? AND dedupe_key = ?',
+            Bind => [ \$Param{TenantID}, \$Param{DedupeKey} ], Limit => 1,
+        );
+        my ( $ExistingSequence, $ExistingUUID, $ExistingHash, $ExistingPreviousHash ) = $DB->FetchrowArray();
+        if ( defined $ExistingSequence ) {
+            $DB->{dbh}->commit() if $OwnTransaction;
+            return { Success => 1, IdempotentReplay => 1, Data => {
+                Sequence => $ExistingSequence, EventUUID => $ExistingUUID,
+                EventHash => $ExistingHash, PreviousHash => $ExistingPreviousHash,
+            } };
+        }
         my $Sequence = $LastSequence + 1;
         my $UUID = sha256_hex( join q{|}, $Param{TenantID}, $Sequence, $At, $Param{ActorID}, $Param{Action}, $Param{ObjectType}, $Param{ObjectID}, $PreviousHash );
         my %Canonical = (
@@ -72,16 +86,17 @@ sub Record {
             object_type => "$Param{ObjectType}", object_id => "$Param{ObjectID}", correlation_id => defined $Param{CorrelationID} ? "$Param{CorrelationID}" : q{},
             from_state => $Param{FromState} // q{}, to_state => $Param{ToState} // q{}, outcome => $Param{Outcome} // 'success',
             source_ip_hash => $SourceHash, details => $Details->{Data}, previous_hash => $PreviousHash,
+            dedupe_key => "$Param{DedupeKey}",
         );
         my $EventHash = sha256_hex( $JSON->Encode( Data => \%Canonical, SortKeys => 1 ) );
         my @Values = (
             $Param{TenantID}, $Sequence, $UUID, $At, $Param{ActorType}, $Param{ActorID}, $Param{Action}, $Param{ObjectType}, $Param{ObjectID},
-            $Param{CorrelationID} // q{}, $Param{FromState} // q{}, $Param{ToState} // q{}, $Param{Outcome} // 'success', $SourceHash,
+            $Param{CorrelationID} // q{}, $Param{DedupeKey}, $Param{FromState} // q{}, $Param{ToState} // q{}, $Param{Outcome} // 'success', $SourceHash,
             $DetailsJSON, $PreviousHash, $EventHash,
         );
         my @Bind = map { \$_ } @Values;
         die "EVENT_INSERT_FAILED\n" if !$DB->Do(
-            SQL => 'INSERT INTO d724_audit_event (tenant_id, sequence_no, event_uuid, event_time, actor_type, actor_id, action_name, object_type, object_id, correlation_id, from_state, to_state, outcome, source_ip_hash, details_json, previous_hash, event_hash, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)',
+            SQL => 'INSERT INTO d724_audit_event (tenant_id, sequence_no, event_uuid, event_time, actor_type, actor_id, action_name, object_type, object_id, correlation_id, dedupe_key, from_state, to_state, outcome, source_ip_hash, details_json, previous_hash, event_hash, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_timestamp)',
             Bind => \@Bind,
         );
         die "HEAD_UPDATE_FAILED\n" if !$DB->Do(
@@ -89,7 +104,7 @@ sub Record {
             Bind => [ \$Sequence, \$EventHash, \$Param{TenantID} ],
         );
         $DB->{dbh}->commit() if $OwnTransaction;
-        return { Success => 1, Data => { Sequence => $Sequence, EventUUID => $UUID, EventHash => $EventHash, PreviousHash => $PreviousHash } };
+        return { Success => 1, IdempotentReplay => 0, Data => { Sequence => $Sequence, EventUUID => $UUID, EventHash => $EventHash, PreviousHash => $PreviousHash } };
     } or do {
         my $Error = $@ || 'AUDIT_WRITE_FAILED'; eval { $DB->Rollback() } if $OwnTransaction;
         return $Self->_Error( $Error =~ m{(HEAD_MISSING|EVENT_INSERT_FAILED|HEAD_UPDATE_FAILED)} ? $1 : 'AUDIT_WRITE_FAILED' );
@@ -111,7 +126,7 @@ sub List {
     }
     my @Bind = map { \$_ } @Values;
     $DB->Prepare(
-        SQL => "SELECT sequence_no, event_uuid, event_time, actor_type, actor_id, action_name, object_type, object_id, correlation_id, from_state, to_state, outcome, source_ip_hash, details_json, previous_hash, event_hash FROM d724_audit_event WHERE tenant_id = ? AND sequence_no > ?$Filter ORDER BY sequence_no",
+        SQL => "SELECT sequence_no, event_uuid, event_time, actor_type, actor_id, action_name, object_type, object_id, correlation_id, dedupe_key, from_state, to_state, outcome, source_ip_hash, details_json, previous_hash, event_hash FROM d724_audit_event WHERE tenant_id = ? AND sequence_no > ?$Filter ORDER BY sequence_no",
         Bind => \@Bind, Limit => $Limit,
     );
     my @Data;
@@ -132,7 +147,7 @@ sub Verify {
     my $Auth = $Self->_Authorize(%Param); return $Auth if !$Auth->{Success};
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     $DB->Prepare(
-        SQL => 'SELECT sequence_no, event_uuid, event_time, actor_type, actor_id, action_name, object_type, object_id, correlation_id, from_state, to_state, outcome, source_ip_hash, details_json, previous_hash, event_hash FROM d724_audit_event WHERE tenant_id = ? ORDER BY sequence_no',
+        SQL => 'SELECT sequence_no, event_uuid, event_time, actor_type, actor_id, action_name, object_type, object_id, correlation_id, dedupe_key, from_state, to_state, outcome, source_ip_hash, details_json, previous_hash, event_hash FROM d724_audit_event WHERE tenant_id = ? ORDER BY sequence_no',
         Bind => [ \$Param{TenantID} ],
     );
     my ( $ExpectedSequence, $PreviousHash ) = ( 1, '0' x 64 );
@@ -147,6 +162,7 @@ sub Verify {
             correlation_id => $Data->{CorrelationID}, from_state => $Data->{FromState}, to_state => $Data->{ToState}, outcome => $Data->{Outcome},
             source_ip_hash => $Data->{SourceIPHash}, details => $Data->{Details}, previous_hash => $Data->{PreviousHash},
         );
+        $Canonical{dedupe_key} = $Data->{DedupeKey} if length( $Data->{DedupeKey} // q{} );
         my $Hash = sha256_hex( $JSON->Encode( Data => \%Canonical, SortKeys => 1 ) );
         return { Success => 1, Valid => 0, Error => 'EVENT_HASH_MISMATCH', Sequence => $Data->{Sequence} } if $Hash ne $Data->{EventHash};
         $PreviousHash = $Hash; $ExpectedSequence++;
@@ -187,8 +203,8 @@ sub _DetailsNormalize {
 
 sub _Row {
     my ( $Self, %Param ) = @_; my @R = @{ $Param{Row} };
-    my $Details = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $R[13] ); $Details = {} if ref $Details ne 'HASH';
-    return { TenantID => $Param{TenantID}, Sequence => $R[0], EventUUID => $R[1], EventTime => $R[2], ActorType => $R[3], ActorID => $R[4], Action => $R[5], ObjectType => $R[6], ObjectID => $R[7], CorrelationID => $R[8], FromState => $R[9], ToState => $R[10], Outcome => $R[11], SourceIPHash => $R[12], Details => $Details, PreviousHash => $R[14], EventHash => $R[15] };
+    my $Details = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $R[14] ); $Details = {} if ref $Details ne 'HASH';
+    return { TenantID => $Param{TenantID}, Sequence => $R[0], EventUUID => $R[1], EventTime => $R[2], ActorType => $R[3], ActorID => $R[4], Action => $R[5], ObjectType => $R[6], ObjectID => $R[7], CorrelationID => $R[8], DedupeKey => $R[9], FromState => $R[10], ToState => $R[11], Outcome => $R[12], SourceIPHash => $R[13], Details => $Details, PreviousHash => $R[15], EventHash => $R[16] };
 }
 
 sub _TimeNormalize {

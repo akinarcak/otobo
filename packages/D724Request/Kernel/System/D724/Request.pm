@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.3.0';
+our $VERSION = '0.3.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -58,6 +58,10 @@ sub CustomerSubmit {
         my $Data = $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $Existing->{RequestID} );
         return $Self->_Error('INITIALIZATION_FAILED') if !$Data || $Data->{Status} eq 'submission_failed';
         return $Self->_Error('REQUEST_INITIALIZING') if $Data->{Status} eq 'initializing';
+        my $Audited = $Self->_AuditRequestCreated(
+            TenantID => $TenantID, ActorID => $RequesterID, Request => $Data,
+        );
+        return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audited->{Success};
         return { Success => 1, Data => $Data, IdempotentReplay => 1 };
     }
 
@@ -81,7 +85,10 @@ sub CustomerSubmit {
         );
         return $Self->_Error('DATABASE_ERROR') if !$Raced;
         return $Self->_Error('IDEMPOTENCY_CONFLICT') if $Raced->{PayloadHash} ne $PayloadHash;
-        return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $Raced->{RequestID} ), IdempotentReplay => 1 };
+        my $Data = $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $Raced->{RequestID} );
+        my $Audited = $Self->_AuditRequestCreated( TenantID => $TenantID, ActorID => $RequesterID, Request => $Data );
+        return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audited->{Success};
+        return { Success => 1, Data => $Data, IdempotentReplay => 1 };
     }
     my $Created = $Self->_RequestByIdempotency(
         TenantID => $TenantID, RequesterID => $RequesterID, IdempotencyKey => $Param{IdempotencyKey},
@@ -127,11 +134,9 @@ sub CustomerSubmit {
         );
         return $Self->_InitializationFail( TenantID => $TenantID, RequestID => $RequestID, Actor => $Actor ) if !$Started->{Success};
     }
-    my $Audited = $Self->_AuditRecord(
-        TenantID => $TenantID, ActorID => $Actor, ActorType => 'customer', Action => 'request.created',
-        ObjectType => 'request', ObjectID => $RequestID, CorrelationID => $RequestNumber,
-        FromState => 'initializing', ToState => $FinalStatus,
-        Details => { catalog_item_id => $Param{CatalogItemID}, entitlement_key => $Workflow->{commitment}->{entitlement_key} // q{} },
+    my $Audited = $Self->_AuditRequestCreated(
+        TenantID => $TenantID, ActorID => $Actor,
+        Request => $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $RequestID ),
     );
     return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audited->{Success};
     return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $RequestID ), IdempotentReplay => 0 };
@@ -249,6 +254,7 @@ sub ApprovalDecide {
     my $Audited = $Self->_AuditRecord(
         TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'request.' . $Param{Decision},
         ObjectType => 'request', ObjectID => $Param{RequestID}, CorrelationID => $Request->{RequestNumber},
+        DedupeKey => "request:$Param{RequestID}:approval:$Approval->{ApprovalID}:$Param{ExpectedVersion}:$Param{Decision}",
         FromState => 'awaiting_approval', ToState => $RequestStatus,
         Details => { approval_id => $Approval->{ApprovalID}, approver_role => $Approval->{ApproverRole} },
     );
@@ -290,6 +296,7 @@ sub TaskUpdate {
     my $TaskAudit = $Self->_AuditRecord(
         TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'task.status_changed',
         ObjectType => 'request_task', ObjectID => $Param{TaskID}, CorrelationID => $RequestBefore->{RequestNumber},
+        DedupeKey => "request-task:$Param{TaskID}:version:" . ( $Param{ExpectedVersion} + 1 ),
         FromState => $Task->{Status}, ToState => $Param{Status}, Details => { request_id => $Task->{RequestID} },
     );
     return $Self->_Error('AUDIT_WRITE_FAILED') if !$TaskAudit->{Success};
@@ -332,6 +339,7 @@ sub TaskUpdate {
             my $RequestAudit = $Self->_AuditRecord(
                 TenantID => $Param{TenantID}, ActorID => $Actor, ActorType => 'agent', Action => 'request.fulfilled',
                 ObjectType => 'request', ObjectID => $RequestID, CorrelationID => $RequestBefore->{RequestNumber},
+                DedupeKey => "request:$RequestID:fulfilled",
                 FromState => 'in_fulfillment', ToState => 'fulfilled', Details => { final_task_id => $Param{TaskID} },
             );
             return $Self->_Error('AUDIT_WRITE_FAILED') if !$RequestAudit->{Success};
@@ -361,6 +369,7 @@ sub ResponseRecord {
     my $Audited = $Self->_AuditRecord(
         TenantID => $Param{TenantID}, ActorID => $Context->{Subject}->{ID}, ActorType => 'agent', Action => 'request.first_response',
         ObjectType => 'request', ObjectID => $Param{RequestID}, CorrelationID => $Request->{RequestNumber},
+        DedupeKey => "request:$Param{RequestID}:first-response",
         FromState => $Request->{Status}, ToState => $Request->{Status}, Details => {},
     );
     return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audited->{Success};
@@ -448,6 +457,26 @@ sub _AuditRecord {
     my $Audit = eval { $Kernel::OM->Get('Kernel::System::D724::Audit') };
     return { Success => 0, Error => 'AUDIT_NOT_AVAILABLE' } if $@ || !$Audit;
     return $Audit->Record( %Param, Outcome => 'success' );
+}
+
+sub _AuditRequestCreated {
+    my ( $Self, %Param ) = @_;
+    my $Request = $Param{Request};
+    return { Success => 0, Error => 'REQUEST_NOT_AVAILABLE' } if ref $Request ne 'HASH';
+    my $Workflow = $Request->{Workflow};
+    $Workflow = {} if ref $Workflow ne 'HASH';
+    my $Commitment = $Workflow->{commitment};
+    $Commitment = {} if ref $Commitment ne 'HASH';
+    return $Self->_AuditRecord(
+        TenantID => $Param{TenantID}, ActorID => $Param{ActorID}, ActorType => 'customer',
+        Action => 'request.created', ObjectType => 'request', ObjectID => $Request->{RequestID},
+        CorrelationID => $Request->{RequestNumber}, DedupeKey => "request:$Request->{RequestID}:created",
+        FromState => 'initializing', ToState => $Request->{Status},
+        Details => {
+            catalog_item_id => $Request->{CatalogItemID},
+            entitlement_key => $Commitment->{entitlement_key} // q{},
+        },
+    );
 }
 
 sub _CommitmentSync {

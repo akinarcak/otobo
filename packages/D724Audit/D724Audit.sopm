@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724Audit</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Name>D724Audit</Name><Version>0.1.1</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe, tamper-evident normalized audit events and NDJSON export for D724 ESM.</Description>
@@ -22,6 +22,7 @@
             <Column Name="actor_type" Required="true" Size="30" Type="VARCHAR" /><Column Name="actor_id" Required="true" Size="128" Type="VARCHAR" />
             <Column Name="action_name" Required="true" Size="100" Type="VARCHAR" /><Column Name="object_type" Required="true" Size="50" Type="VARCHAR" />
             <Column Name="object_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="correlation_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="dedupe_key" Required="false" Size="128" Type="VARCHAR" />
             <Column Name="from_state" Required="true" Size="50" Type="VARCHAR" /><Column Name="to_state" Required="true" Size="50" Type="VARCHAR" />
             <Column Name="outcome" Required="true" Size="20" Type="VARCHAR" /><Column Name="source_ip_hash" Required="true" Size="64" Type="VARCHAR" />
             <Column Name="details_json" Required="true" Size="8000" Type="VARCHAR" />
@@ -29,10 +30,17 @@
             <Column Name="create_time" Required="true" Type="DATE" />
             <Unique Name="d724_audit_tenant_sequence"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="sequence_no" /></Unique>
             <Unique Name="d724_audit_event_uuid"><UniqueColumn Name="event_uuid" /></Unique>
+            <Unique Name="d724_audit_dedupe"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="dedupe_key" /></Unique>
             <Index Name="d724_audit_object"><IndexColumn Name="tenant_id" /><IndexColumn Name="object_type" /><IndexColumn Name="object_id" /><IndexColumn Name="sequence_no" /></Index>
             <Index Name="d724_audit_action"><IndexColumn Name="tenant_id" /><IndexColumn Name="action_name" /><IndexColumn Name="sequence_no" /></Index>
         </TableCreate>
     </DatabaseInstall>
+    <DatabaseUpgrade Type="post">
+        <TableAlter Name="d724_audit_event" Version="0.1.1">
+            <ColumnAdd Name="dedupe_key" Required="false" Size="128" Type="VARCHAR" />
+            <Unique Name="d724_audit_dedupe"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="dedupe_key" /></Unique>
+        </TableAlter>
+    </DatabaseUpgrade>
     <DatabaseUninstall Type="pre"><TableDrop Name="d724_audit_event" /><TableDrop Name="d724_audit_head" /></DatabaseUninstall>
     <Filelist>
         <File Permission="644" Location="Kernel/Config/Files/XML/D724Audit.xml" />
