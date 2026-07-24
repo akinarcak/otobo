@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -159,6 +159,47 @@ sub ScopeGet {
     my @Row = $Kernel::OM->Get('Kernel::System::DB')->FetchrowArray();
     return if !defined $Row[0];
     return { TicketID => $TicketID, TenantID => $Row[0], Version => $Row[1], Status => $Row[2] };
+}
+
+sub Backfill {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('CONFIRMATION_REQUIRED') if !$Param{Confirm};
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('TENANT_INVALID')
+        if defined $Param{TenantID} && $Param{TenantID} !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    my $Limit = $Param{Limit} // 1000;
+    return $Self->_Error('LIMIT_INVALID') if $Limit !~ m{\A[1-9][0-9]*\z}smx || $Limit > 10_000;
+    return $Self->_TransactionRun(
+        Code => sub {
+            my $DB = $Kernel::OM->Get('Kernel::System::DB');
+            my $TenantFilter = defined $Param{TenantID} ? ' AND t.customer_id = ?' : q{};
+            my @Bind = defined $Param{TenantID} ? ( \$Param{TenantID} ) : ();
+            $DB->Prepare(
+                SQL => 'SELECT t.id, t.tn, t.customer_id FROM ticket t '
+                    . 'JOIN d724_tenant d ON d.key_name = t.customer_id AND d.status = \'active\' '
+                    . 'LEFT JOIN d724_ticket_scope s ON s.ticket_id = t.id '
+                    . "WHERE s.ticket_id IS NULL$TenantFilter ORDER BY t.id LIMIT $Limit FOR UPDATE",
+                Bind => \@Bind,
+            );
+            my @Rows;
+            while ( my @Row = $DB->FetchrowArray() ) { push @Rows, \@Row }
+            for my $Row (@Rows) {
+                my @Values = ( $Row->[0], $Row->[2], $Param{UserID}, $Param{UserID} );
+                my @InsertBind = map { \$_ } @Values;
+                return $Self->_Error('TICKET_SCOPE_WRITE_FAILED') if !$DB->Do(
+                    SQL => "INSERT INTO d724_ticket_scope (ticket_id, tenant_id, version, status, create_time, create_by, change_time, change_by) VALUES (?, ?, 1, 'active', current_timestamp, ?, current_timestamp, ?)",
+                    Bind => \@InsertBind,
+                );
+                my $Audit = $Self->_AuditRecord(
+                    TenantID => $Row->[2], TicketID => $Row->[0], UserID => $Param{UserID},
+                    Action => 'ticket.scope.backfilled', Version => 1, FromState => q{}, ToState => 'active',
+                    Details => { ticket_number => $Row->[1], version => 1, migration => 1 },
+                );
+                return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            }
+            return { Success => 1, Data => { Backfilled => scalar @Rows, Limit => $Limit } };
+        },
+    );
 }
 
 sub _ScopeLock {

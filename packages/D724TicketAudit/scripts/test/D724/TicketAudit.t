@@ -37,6 +37,31 @@ my $StateID = $Kernel::OM->Get('Kernel::System::State')->StateLookup( State => '
 my $PriorityID = $Kernel::OM->Get('Kernel::System::Priority')->PriorityLookup( Priority => '3 normal' );
 ok( $QueueID && $StateID && $PriorityID, 'core ticket fixture lookups resolve' );
 
+$Helper->ConfigSettingChange( Key => 'D724::TicketAudit::Enabled', Value => 0 );
+my $LegacyNumber = 'D724LG' . $Helper->GetRandomID();
+my $LegacyTicketID = $Ticket->TicketCreate(
+    TN => $LegacyNumber, Title => 'Legacy tenant ticket', QueueID => $QueueID,
+    Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
+    CustomerID => $Tenant, CustomerUser => 'legacy-ticket-user', OwnerID => 1, UserID => 1,
+);
+ok( $LegacyTicketID, 'legacy ticket fixture is created before adapter enforcement' );
+$Helper->ConfigSettingChange( Key => 'D724::TicketAudit::Enabled', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->Backfill(
+        Confirm => 1, TenantID => $Tenant, UserID => 1,
+    )->{Error},
+    'AUDIT_WRITE_FAILED',
+    'legacy scope backfill fails closed when audit is unavailable',
+);
+ok( !$Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $LegacyTicketID ), 'failed legacy backfill leaves no scope row' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+my $Backfill = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->Backfill(
+    Confirm => 1, TenantID => $Tenant, UserID => 1,
+);
+is( $Backfill->{Data}->{Backfilled}, 1, 'legacy scope backfill succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $LegacyTicketID )->{Version}, 1, 'legacy ticket scope starts at version one' );
+
 my $TicketNumber = 'D724TA' . $Helper->GetRandomID();
 my $TicketID = $Ticket->TicketCreate(
     TN => $TicketNumber, Title => 'Atomic tenant ticket', QueueID => $QueueID,
@@ -127,7 +152,9 @@ is(
 ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket tenant audit chain verifies' );
 
 ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket fixture is removed' );
+ok( $Ticket->TicketDelete( TicketID => $LegacyTicketID, UserID => 1 ), 'legacy ticket fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$TicketID ] ), 'ticket scope fixture is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$LegacyTicketID ] ), 'legacy ticket scope fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_event WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit events are removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_head WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit head is removed' );
 for my $TenantID ( $Tenant, $OtherTenant ) {
