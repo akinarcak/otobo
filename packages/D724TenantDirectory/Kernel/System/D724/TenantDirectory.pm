@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 our @ObjectDependencies = (
     'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB',
