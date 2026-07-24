@@ -80,4 +80,13 @@ is( [ map { $_->{Action} } grep { $_->{ObjectType} eq 'api_client' } @{ $Audit->
     is( $API->TokenIssue( ClientID => $ClientID, ClientSecret => $Secret )->{Error}, 'API_DISABLED', 'disabled API fails closed' );
 }
 
+ok( $DB->Do( SQL => 'DELETE FROM d724_api_rate WHERE client_id = ?', Bind => [ \$ClientID ] ), 'rate fixtures removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_api_token WHERE client_id = ?', Bind => [ \$ClientID ] ), 'token fixtures removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_api_client WHERE client_id = ?', Bind => [ \$ClientID ] ), 'client fixture removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_audit_event WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'API audit fixture removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_audit_head WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'API audit head removed' );
+for my $TenantID ( $Tenant, $Other ) {
+    ok( $DB->Do( SQL => 'DELETE FROM d724_tenant WHERE key_name = ?', Bind => [ \$TenantID ] ), "tenant fixture $TenantID removed" );
+}
+
 done_testing;
