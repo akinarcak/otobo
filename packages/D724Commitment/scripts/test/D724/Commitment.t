@@ -174,6 +174,62 @@ ok( $Sweep->{Counts}->{Breached} >= 1, 'scheduled sweep emits breach transition'
 my $AfterSweep = $Commitment->AgentGetByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $SweepRequest->{RequestID} );
 is( $AfterSweep->{Data}->{Status}, 'breached', 'scheduler persists breached state' );
 is( $AfterSweep->{Data}->{Events}->[-1]->{Actor}, 'system:commitment-scheduler', 'scheduler transition has explicit system actor' );
+
+my $MultiPolicy = $Commitment->PolicyCreate(
+    Subject => $Subject, UserID => $AdminID, TenantID => $TenantA,
+    Key => 'premium-multi', Name => 'Premium multi-objective', CalendarID => 0,
+    TargetSeconds => 14_400, WarningPercent => 75, PauseStatuses => ['awaiting_approval'], Status => 'active',
+    Objectives => [
+        {
+            key => 'first-response', type => 'response', target_seconds => 3600, warning_percent => 50,
+            start_signal => 'request_created', stop_signal => 'first_response',
+            escalation_actions => [ { key => 'warn-owner', trigger => 'warning', type => 'notify_role', target => 'service_owner' } ],
+        },
+        {
+            key => 'resolution', type => 'resolution', target_seconds => 14_400, warning_percent => 75,
+            start_signal => 'request_created', stop_signal => 'request_fulfilled',
+            escalation_actions => [ { key => 'assign-breach', trigger => 'breached', type => 'assignment', target => 'resolver-escalation' } ],
+        },
+        {
+            key => 'internal-ola', type => 'ola', target_seconds => 7200, warning_percent => 75,
+            start_signal => 'request_approved', stop_signal => 'request_fulfilled', escalation_actions => [],
+        },
+    ],
+);
+ok( $MultiPolicy->{Success}, 'multi-objective response, resolution and OLA policy is created' );
+is( [ map { $_->{type} } @{ $MultiPolicy->{Data}->{Objectives} } ], [qw(response resolution ola)], 'objective order and types are persisted' );
+my $MultiRequest = $NewRequest->('multi');
+my $MultiStarted = $Commitment->StartAll(
+    TenantID => $TenantA, RequestID => $MultiRequest->{RequestID}, PolicyKey => 'premium-multi',
+    Actor => $MultiRequest->{RequesterID}, StartTime => '2026-07-27 09:00:00', Signal => 'request_created', RequestStatus => 'in_fulfillment',
+);
+is( scalar @{ $MultiStarted->{Data} }, 2, 'request-created starts response and resolution objectives only' );
+my $MultiSweep = $Commitment->Sweep( At => '2026-07-27 09:31:00' );
+ok( $MultiSweep->{Success}, 'multi-objective sweep succeeds' );
+my $MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
+my ($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
+is( $ResponseObjective->{Status}, 'warning', 'response objective reaches warning independently' );
+is( $ResponseObjective->{Escalations}->[0]->{ActionType}, 'notify_role', 'warning queues configured escalation action' );
+is( $ResponseObjective->{Escalations}->[0]->{Payload}->{Target}, 'service_owner', 'outbox payload preserves safe target' );
+$Commitment->Sweep( At => '2026-07-27 09:32:00' );
+$MultiList = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID} );
+($ResponseObjective) = grep { $_->{ObjectiveType} eq 'response' } @{ $MultiList->{Data} };
+is( scalar @{ $ResponseObjective->{Escalations} }, 1, 'repeated sweep does not duplicate escalation action' );
+my $ResponseSignal = $Commitment->Signal(
+    UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID}, PolicyKey => 'premium-multi',
+    Signal => 'first_response', RequestStatus => 'in_fulfillment', At => '2026-07-27 09:45:00',
+);
+is( $ResponseSignal->{Data}->{Stopped}->[0]->{Status}, 'met', 'first response signal completes response objective' );
+my $ApprovalSignal = $Commitment->Signal(
+    UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID}, PolicyKey => 'premium-multi',
+    Signal => 'request_approved', RequestStatus => 'in_fulfillment', At => '2026-07-27 10:00:00',
+);
+is( $ApprovalSignal->{Data}->{Started}->[0]->{ObjectiveType}, 'ola', 'approval signal starts internal OLA objective' );
+my $FulfilledSignal = $Commitment->Signal(
+    UserID => $AdminID, TenantID => $TenantA, RequestID => $MultiRequest->{RequestID}, PolicyKey => 'premium-multi',
+    Signal => 'request_fulfilled', RequestStatus => 'fulfilled', At => '2026-07-27 11:00:00',
+);
+is( [ sort map { $_->{ObjectiveType} } @{ $FulfilledSignal->{Data}->{Stopped} } ], [qw(ola resolution)], 'fulfillment closes remaining resolution and OLA objectives' );
 is(
     $Commitment->AgentGetByRequest( UserID => $OtherID, TenantID => $TenantA, RequestID => $Request->{RequestID} )->{Error},
     'FORBIDDEN', 'agent cannot read another tenant commitment',
@@ -213,6 +269,57 @@ is(
     $Commitment->AgentGetByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $Integrated->{Data}->{RequestID} )->{Data}->{Status},
     'met', 'request fulfillment automatically records commitment as met',
 );
+
+my $EntitlementSchema = $Catalog->CatalogItemSchemaSet(
+    %CatalogCall, CatalogItemID => $Item->{Data}->{CatalogItemID}, ExpectedVersion => 2,
+    Schema => {
+        version => 3,
+        fields => [ {
+            key => 'support_tier', label => 'Support tier', type => 'select', required => 1,
+            options => [ { value => 'standard', label => 'Standard' }, { value => 'premium', label => 'Premium' } ],
+        } ],
+        workflow => {
+            approval => { required => 1, approver_role => 'tenant_admin' },
+            fulfillment => [ { key => 'fulfill', name => 'Fulfill request', type => 'manual' } ],
+            commitment => {
+                default_policy_key => 'standard-resolution',
+                entitlements => [ { key => 'premium-tier', answer_key => 'support_tier', equals => 'premium', policy_key => 'premium-multi' } ],
+            },
+        },
+    },
+);
+ok( $EntitlementSchema->{Success}, 'catalog stores validated answer-based entitlement selection' );
+my $Entitled = $RequestObject->CustomerSubmit(
+    CustomerUserID => "customer-$Suffix\@example.test", CustomerID => $TenantA,
+    CatalogItemID => $Item->{Data}->{CatalogItemID}, IdempotencyKey => "commit-$Suffix-entitled-0001", Answers => { support_tier => 'premium' },
+);
+ok( $Entitled->{Success}, 'premium request is submitted through request API' );
+is( $Entitled->{Data}->{Workflow}->{commitment}->{policy_key}, 'premium-multi', 'validated answer selects premium policy snapshot' );
+my $EntitledCustomer = $RequestObject->CustomerGet(
+    CustomerUserID => "customer-$Suffix\@example.test", CustomerID => $TenantA, RequestID => $Entitled->{Data}->{RequestID},
+);
+is( scalar @{ $EntitledCustomer->{Data}->{Commitments} }, 2, 'customer initially sees response and resolution objectives' );
+is( [ map { $_->{Status} } @{ $EntitledCustomer->{Data}->{Commitments} } ], [qw(paused paused)], 'approval pause rule applies to both initial objectives' );
+my $EntitledApproval = $Entitled->{Data}->{Approvals}->[0];
+my $EntitledApproved = $RequestObject->ApprovalDecide(
+    UserID => $AdminID, TenantID => $TenantA, RequestID => $Entitled->{Data}->{RequestID},
+    ExpectedVersion => $EntitledApproval->{Version}, Decision => 'approved', Comment => 'Premium entitlement approved',
+);
+ok( $EntitledApproved->{Success}, 'normal approval signal starts OLA and resumes objectives' );
+my ($EntitledAgent) = grep { $_->{RequestID} == $Entitled->{Data}->{RequestID} } @{
+    $RequestObject->AgentList( UserID => $AdminID, TenantID => $TenantA )->{Data}
+};
+is( scalar @{ $EntitledAgent->{Commitments} }, 3, 'agent sees response, resolution, and OLA objectives' );
+ok( $RequestObject->ResponseRecord( UserID => $AdminID, TenantID => $TenantA, RequestID => $Entitled->{Data}->{RequestID} )->{Success}, 'agent response signal completes response objective' );
+my $EntitledTask = $EntitledApproved->{Data}->{Tasks}->[0];
+ok(
+    $RequestObject->TaskUpdate(
+        UserID => $AdminID, TenantID => $TenantA, TaskID => $EntitledTask->{TaskID}, ExpectedVersion => $EntitledTask->{Version}, Status => 'completed', Comment => 'Premium fulfilled',
+    )->{Success},
+    'normal fulfillment signal completes remaining objectives',
+);
+my $EntitledFinal = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $Entitled->{Data}->{RequestID} );
+is( [ map { $_->{Status} } @{ $EntitledFinal->{Data} } ], [qw(met met met)], 'all premium objectives finish met in end-to-end lifecycle' );
 
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::Enabled', Value => 0 );
 is(

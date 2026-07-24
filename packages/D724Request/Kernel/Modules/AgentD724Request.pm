@@ -27,10 +27,14 @@ sub Run {
     return $Layout->NoPermission( WithHeader => 'yes' ) if !$OwnTenant{$TenantID};
 
     my $Subaction = $Self->{Subaction} // q{};
-    if ( $Subaction eq 'ApprovalDecide' || $Subaction eq 'TaskUpdate' ) {
+    if ( $Subaction eq 'ApprovalDecide' || $Subaction eq 'TaskUpdate' || $Subaction eq 'ResponseRecord' ) {
         $Layout->ChallengeTokenCheck();
         my %Common = ( UserID => $Self->{UserID}, TenantID => $TenantID, Comment => $WebRequest->GetParam( Param => 'Comment' ) );
-        my $Result = $Subaction eq 'ApprovalDecide'
+        my $Result = $Subaction eq 'ResponseRecord'
+            ? $RequestObject->ResponseRecord(
+                %Common, RequestID => $WebRequest->GetParam( Param => 'RequestID' ),
+            )
+            : $Subaction eq 'ApprovalDecide'
             ? $RequestObject->ApprovalDecide(
                 %Common, RequestID => $WebRequest->GetParam( Param => 'RequestID' ),
                 ExpectedVersion => $WebRequest->GetParam( Param => 'ExpectedVersion' ),
@@ -52,8 +56,12 @@ sub Run {
     return $Layout->NoPermission( WithHeader => 'yes' ) if !$List->{Success};
     for my $Request ( @{ $List->{Data} } ) {
         $Layout->Block( Name => 'Request', Data => $Request );
-        if ( $Request->{Commitment} ) {
-            $Layout->Block( Name => 'Commitment', Data => $Request->{Commitment} );
+        $Layout->Block( Name => 'Commitment', Data => $_ ) for @{ $Request->{Commitments} // [] };
+        my ($OpenResponse) = grep {
+            $_->{ObjectiveType} eq 'response' && $_->{Status} !~ m{\A(?:met|breached|cancelled)\z}smx
+        } @{ $Request->{Commitments} // [] };
+        if ($OpenResponse) {
+            $Layout->Block( Name => 'ResponseAction', Data => { TenantID => $TenantID, RequestID => $Request->{RequestID} } );
         }
         for my $Approval ( @{ $Request->{Approvals} } ) {
             next if $Approval->{Status} ne 'pending';

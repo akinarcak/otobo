@@ -11,6 +11,7 @@
       <input name="Name" required maxlength="200" placeholder="[% Translate("Policy name") | html %]"/>
       <input name="CalendarID" type="number" min="0" max="9" value="0" required/><input name="TargetSeconds" type="number" min="1" max="31536000" required placeholder="14400"/>
       <input name="WarningPercent" type="number" min="1" max="99" value="80" required/><input name="PauseStatuses" placeholder="waiting_customer, pending_vendor"/>
+      <textarea name="ObjectivesJSON" rows="8" placeholder='[{"key":"first-response","type":"response","target_seconds":3600,"warning_percent":75,"start_signal":"request_created","stop_signal":"first_response","escalation_actions":[]}]'></textarea>
       <select name="Status"><option value="active">active</option><option value="inactive">inactive</option></select><button type="submit">[% Translate("Create") | html %]</button>
     </form>
   </div></section>
@@ -19,7 +20,7 @@
     <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AdminD724Commitment"/><input type="hidden" name="Subaction" value="PolicySave"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="PolicyID" value="[% Data.PolicyID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
       <input name="Name" value="[% Data.Name | html %]" required maxlength="200"/><input name="CalendarID" type="number" min="0" max="9" value="[% Data.CalendarID | html %]" required/>
       <input name="TargetSeconds" type="number" min="1" max="31536000" value="[% Data.TargetSeconds | html %]" required/><input name="WarningPercent" type="number" min="1" max="99" value="[% Data.WarningPercent | html %]" required/>
-      <input name="PauseStatuses" value="[% Data.PauseStatusesText | html %]"/><select name="Status"><option value="[% Data.Status | html %]">[% Data.Status | html %]</option><option value="active">active</option><option value="inactive">inactive</option></select><button type="submit">[% Translate("Update") | html %]</button>
+      <input name="PauseStatuses" value="[% Data.PauseStatusesText | html %]"/><textarea name="ObjectivesJSON" rows="10">[% Data.ObjectivesJSON | html %]</textarea><select name="Status"><option value="[% Data.Status | html %]">[% Data.Status | html %]</option><option value="active">active</option><option value="inactive">inactive</option></select><button type="submit">[% Translate("Update") | html %]</button>
     </form>
   </div></section>
 [% RenderBlockEnd("PolicyRow") %]

@@ -41,8 +41,14 @@ sub Run {
             TargetSeconds => $WebRequest->GetParam( Param => 'TargetSeconds' ), WarningPercent => $WebRequest->GetParam( Param => 'WarningPercent' ),
             PauseStatuses => \@PauseStatuses, Status => $WebRequest->GetParam( Param => 'Status' ),
         );
+        my $ObjectivesJSON = $WebRequest->GetParam( Param => 'ObjectivesJSON' ) // q{};
+        if ( length $ObjectivesJSON ) {
+            my $Objectives = eval { $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $ObjectivesJSON ) };
+            if ( $@ || ref $Objectives ne 'ARRAY' ) { $Param{Error} = 'OBJECTIVES_JSON_INVALID' }
+            else { $Values{Objectives} = $Objectives }
+        }
         my $PolicyID = $WebRequest->GetParam( Param => 'PolicyID' );
-        my $Result = $PolicyID
+        my $Result = $Param{Error} ? { Success => 0, Error => $Param{Error} } : $PolicyID
             ? $Commitment->PolicyUpdate( %Call, %Values, PolicyID => $PolicyID, ExpectedVersion => $WebRequest->GetParam( Param => 'ExpectedVersion' ) )
             : $Commitment->PolicyCreate( %Call, %Values, Key => $WebRequest->GetParam( Param => 'Key' ) );
         return $Layout->Redirect( OP => "Action=AdminD724Commitment;TenantID=$TenantID" ) if $Result->{Success};
@@ -55,7 +61,9 @@ sub Run {
     my $Policies = $Commitment->PolicyList( Subject => $Context->{Subject}, TenantID => $TenantID );
     return $Layout->NoPermission( WithHeader => 'yes' ) if !$Policies->{Success};
     for my $Policy ( @{ $Policies->{Data} } ) {
-        $Layout->Block( Name => 'PolicyRow', Data => { %{$Policy}, PauseStatusesText => join( ', ', @{ $Policy->{PauseStatuses} } ), TenantID => $TenantID } );
+        my $ObjectivesJSON = @{ $Policy->{Objectives} }
+            ? $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Policy->{Objectives}, SortKeys => 1, Pretty => 1 ) : q{};
+        $Layout->Block( Name => 'PolicyRow', Data => { %{$Policy}, PauseStatusesText => join( ', ', @{ $Policy->{PauseStatuses} } ), ObjectivesJSON => $ObjectivesJSON, TenantID => $TenantID } );
     }
     my $Output = $Layout->Header( Title => 'D724 Commitments' );
     $Output .= $Layout->NavigationBar();

@@ -6,9 +6,9 @@
 [% ELSE %]
     <h2>[% Data.Request.RequestNumber | html %]</h2>
     <p>[% Translate("Status") | html %]: <strong>[% Data.Request.Status | html %]</strong></p>
-[% IF Data.Request.Commitment %]
-    <p>[% Translate("Commitment") | html %]: <strong>[% Data.Request.Commitment.Status | html %]</strong></p>
-    <p>[% Translate("Warning") | html %]: [% Data.Request.Commitment.WarningTime | html %] — [% Translate("Due") | html %]: [% Data.Request.Commitment.DueTime | html %]</p>
+[% FOREACH Commitment IN Data.Request.Commitments %]
+    <p><strong>[% Commitment.ObjectiveType | html %] / [% Commitment.ObjectiveKey | html %]: [% Commitment.Status | html %]</strong></p>
+    <p>[% Translate("Warning") | html %]: [% Commitment.WarningTime | html %] — [% Translate("Due") | html %]: [% Commitment.DueTime | html %]</p>
 [% END %]
     <p>[% Translate("Your request was recorded safely. Repeating the same submission will not create a duplicate.") | html %]</p>
 [% END %]

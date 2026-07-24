@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.5';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -41,7 +41,7 @@ sub CustomerSubmit {
     my $Schema = $Item->{Data}->{FormSchema}->{Schema};
     my $Answers = $Self->_AnswersValidate( Schema => $Schema, Answers => $Param{Answers} );
     return $Answers if !$Answers->{Success};
-    my $Workflow = $Self->_WorkflowNormalize( Schema => $Schema );
+    my $Workflow = $Self->_WorkflowNormalize( Schema => $Schema, Answers => $Answers->{Data} );
     my $JSON = $Kernel::OM->Get('Kernel::System::JSON');
     my $AnswersJSON  = $JSON->Encode( Data => $Answers->{Data}, SortKeys => 1 );
     my $WorkflowJSON = $JSON->Encode( Data => $Workflow, SortKeys => 1 );
@@ -120,9 +120,9 @@ sub CustomerSubmit {
     if ( $Workflow->{commitment} ) {
         my $Commitment = $Self->_CommitmentObject();
         return $Self->_InitializationFail( TenantID => $TenantID, RequestID => $RequestID, Actor => $Actor ) if !$Commitment;
-        my $Started = $Commitment->Start(
+        my $Started = $Commitment->StartAll(
             TenantID => $TenantID, RequestID => $RequestID, PolicyKey => $Workflow->{commitment}->{policy_key},
-            Actor => $Actor, RequestStatus => $FinalStatus,
+            Actor => $Actor, RequestStatus => $FinalStatus, Signal => 'request_created',
         );
         return $Self->_InitializationFail( TenantID => $TenantID, RequestID => $RequestID, Actor => $Actor ) if !$Started->{Success};
     }
@@ -145,6 +145,7 @@ sub CustomerGet {
             CustomerUserID => $Param{CustomerUserID}, CustomerID => $Param{CustomerID}, RequestID => $Param{RequestID},
         );
         $Data->{Commitment} = $Result->{Data} if $Result->{Success};
+        $Data->{Commitments} = $Result->{Objectives} if $Result->{Success};
     }
     return { Success => 1, Data => $Data };
 }
@@ -165,8 +166,11 @@ sub AgentList {
         my $Data = $Self->_RequestAggregate( TenantID => $TenantID, RequestID => $ID );
         my $Commitment = $Self->_CommitmentObject();
         if ($Commitment) {
-            my $Result = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $TenantID, RequestID => $ID );
-            $Data->{Commitment} = $Result->{Data} if $Result->{Success};
+            my $Result = $Commitment->AgentListByRequest( UserID => $Param{UserID}, TenantID => $TenantID, RequestID => $ID );
+            if ( $Result->{Success} && @{ $Result->{Data} } ) {
+                $Data->{Commitment} = $Result->{Data}->[0];
+                $Data->{Commitments} = $Result->{Data};
+            }
         }
         push @Data, $Data;
     }
@@ -214,16 +218,18 @@ sub ApprovalDecide {
     if ($Commitment) {
         my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
         if ( $Current->{Success} ) {
-            my $Synced = $Param{Decision} eq 'rejected'
-                ? $Commitment->Cancel(
-                    UserID => $Param{UserID}, TenantID => $Param{TenantID}, CommitmentID => $Current->{Data}->{CommitmentID},
-                    ExpectedVersion => $Current->{Data}->{Version}, Reason => 'request_rejected',
-                )
-                : $Commitment->RequestStatusSync(
-                    UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID},
-                    ExpectedVersion => $Current->{Data}->{Version}, RequestStatus => $RequestStatus,
-                );
+            my $Synced = $Commitment->Signal(
+                UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID},
+                PolicyKey => $Current->{Data}->{Policy}->{Key}, Signal => $Param{Decision} eq 'rejected' ? 'request_rejected' : 'request_approved',
+                RequestStatus => $RequestStatus,
+            );
             return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Synced->{Success};
+            if ( $Param{Decision} eq 'approved' ) {
+                my $StatusSync = $Commitment->SyncAllRequestStatus(
+                    UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID}, RequestStatus => $RequestStatus,
+                );
+                return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$StatusSync->{Success};
+            }
         }
     }
     my @TaskValues = ( $TaskStatus, $Actor, $Param{TenantID}, $Param{RequestID} );
@@ -294,9 +300,9 @@ sub TaskUpdate {
             if ($Commitment) {
                 my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $RequestID );
                 if ( $Current->{Success} ) {
-                    my $Completed = $Commitment->Complete(
-                        UserID => $Param{UserID}, TenantID => $Param{TenantID}, CommitmentID => $Current->{Data}->{CommitmentID},
-                        ExpectedVersion => $Current->{Data}->{Version}, Reason => 'request_fulfilled',
+                    my $Completed = $Commitment->Signal(
+                        UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $RequestID,
+                        PolicyKey => $Current->{Data}->{Policy}->{Key}, Signal => 'request_fulfilled', RequestStatus => 'fulfilled',
                     );
                     return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Completed->{Success};
                 }
@@ -304,6 +310,27 @@ sub TaskUpdate {
         }
     }
     return { Success => 1, Data => $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Task->{RequestID} ) };
+}
+
+sub ResponseRecord {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('REQUEST_DISABLED') if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Request::Enabled');
+    return $Self->_Error('REQUEST_ID_INVALID') if !$Self->_PositiveInteger( $Param{RequestID} );
+    my $Context = $Self->_AgentAuthorize( %Param, Action => 'case.update' );
+    return $Context if !$Context->{Success};
+    my $Request = $Self->_RequestAggregate( TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
+    return $Self->_Error('NOT_FOUND') if !$Request;
+    return $Self->_Error('TRANSITION_INVALID') if $Request->{Status} =~ m{\A(?:fulfilled|rejected)\z}smx;
+    my $Commitment = $Self->_CommitmentObject();
+    return $Self->_Error('COMMITMENT_NOT_AVAILABLE') if !$Commitment;
+    my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
+    return $Self->_Error('COMMITMENT_NOT_FOUND') if !$Current->{Success};
+    my $Result = $Commitment->Signal(
+        UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID},
+        PolicyKey => $Current->{Data}->{Policy}->{Key}, Signal => 'first_response', RequestStatus => $Request->{Status}, At => $Param{At},
+    );
+    return $Self->_Error('COMMITMENT_SYNC_FAILED') if !$Result->{Success};
+    return { Success => 1, Data => $Result->{Data} };
 }
 
 sub _AgentAuthorize {
@@ -361,7 +388,17 @@ sub _WorkflowNormalize {
         approval => $Workflow->{approval} // { required => 0 },
         fulfillment => $Workflow->{fulfillment} // [ { key => 'fulfill', name => 'Fulfill request', type => 'manual' } ],
     };
-    $Normalized->{commitment} = $Workflow->{commitment} if $Workflow->{commitment};
+    if ( $Workflow->{commitment} ) {
+        my $Definition = $Workflow->{commitment};
+        my $PolicyKey = $Definition->{default_policy_key} // $Definition->{policy_key};
+        my $EntitlementKey = 'default';
+        for my $Entitlement ( @{ $Definition->{entitlements} // [] } ) {
+            my $Value = $Param{Answers}->{ $Entitlement->{answer_key} };
+            next if ref $Value || !defined $Value || "$Value" ne "$Entitlement->{equals}";
+            $PolicyKey = $Entitlement->{policy_key}; $EntitlementKey = $Entitlement->{key}; last;
+        }
+        $Normalized->{commitment} = { policy_key => $PolicyKey, entitlement_key => $EntitlementKey };
+    }
     return $Normalized;
 }
 
@@ -378,9 +415,7 @@ sub _CommitmentSync {
     return { Success => 1, NoChange => 1 } if !$Commitment;
     my $Current = $Commitment->AgentGetByRequest( UserID => $Param{UserID}, TenantID => $Param{TenantID}, RequestID => $Param{RequestID} );
     return { Success => 1, NoChange => 1 } if !$Current->{Success};
-    return $Commitment->RequestStatusSync(
-        %Param, ExpectedVersion => $Current->{Data}->{Version},
-    );
+    return $Commitment->SyncAllRequestStatus(%Param);
 }
 
 sub _RequestByIdempotency {

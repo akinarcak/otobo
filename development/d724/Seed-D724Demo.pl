@@ -65,13 +65,37 @@ if ($Commitment) {
     my $Policies = $Commitment->PolicyList( Subject => $Subject, TenantID => $TenantID );
     die "Could not list demo commitment policies\n" if !$Policies->{Success};
     my ($Policy) = grep { $_->{Key} eq 'standard-resolution' } @{ $Policies->{Data} };
+    my $StandardObjectives = [
+        { key => 'first-response', type => 'response', target_seconds => 3600, warning_percent => 75, start_signal => 'request_created', stop_signal => 'first_response', escalation_actions => [ { key => 'warn-owner', trigger => 'warning', type => 'notify_role', target => 'service_owner' } ] },
+        { key => 'resolution', type => 'resolution', target_seconds => 28_800, warning_percent => 75, start_signal => 'request_created', stop_signal => 'request_fulfilled', escalation_actions => [ { key => 'assign-breach', trigger => 'breached', type => 'assignment', target => 'resolver-escalation' } ] },
+        { key => 'internal-ola', type => 'ola', target_seconds => 14_400, warning_percent => 75, start_signal => 'request_approved', stop_signal => 'request_fulfilled', escalation_actions => [] },
+    ];
     if (!$Policy) {
         my $Result = $Commitment->PolicyCreate(
             %Write, Key => 'standard-resolution', Name => 'Standard Request Resolution',
             CalendarID => 0, TargetSeconds => 28_800, WarningPercent => 75,
-            PauseStatuses => ['awaiting_approval'], Status => 'active',
+            PauseStatuses => ['awaiting_approval'], Status => 'active', Objectives => $StandardObjectives,
         );
         die "Could not create demo commitment policy: $Result->{Error}\n" if !$Result->{Success};
+    }
+    elsif ( !@{ $Policy->{Objectives} // [] } ) {
+        my $Result = $Commitment->PolicyUpdate(
+            %Write, PolicyID => $Policy->{PolicyID}, ExpectedVersion => $Policy->{Version}, Objectives => $StandardObjectives,
+        );
+        die "Could not upgrade demo commitment policy: $Result->{Error}\n" if !$Result->{Success};
+    }
+    my ($Premium) = grep { $_->{Key} eq 'developer-premium' } @{ $Policies->{Data} };
+    if (!$Premium) {
+        my $Result = $Commitment->PolicyCreate(
+            %Write, Key => 'developer-premium', Name => 'Developer Premium', CalendarID => 0,
+            TargetSeconds => 14_400, WarningPercent => 75, PauseStatuses => ['awaiting_approval'], Status => 'active',
+            Objectives => [
+                { key => 'first-response', type => 'response', target_seconds => 1800, warning_percent => 75, start_signal => 'request_created', stop_signal => 'first_response', escalation_actions => [ { key => 'warn-owner', trigger => 'warning', type => 'notify_role', target => 'service_owner' } ] },
+                { key => 'resolution', type => 'resolution', target_seconds => 14_400, warning_percent => 75, start_signal => 'request_created', stop_signal => 'request_fulfilled', escalation_actions => [ { key => 'assign-breach', trigger => 'breached', type => 'assignment', target => 'developer-escalation' } ] },
+                { key => 'internal-ola', type => 'ola', target_seconds => 7200, warning_percent => 75, start_signal => 'request_approved', stop_signal => 'request_fulfilled', escalation_actions => [] },
+            ],
+        );
+        die "Could not create premium demo commitment policy: $Result->{Error}\n" if !$Result->{Success};
     }
 }
 my $Services = $Catalog->ServiceList( Subject => $Subject, TenantID => $TenantID );
@@ -117,7 +141,10 @@ my $ExistingSchema = $Catalog->CatalogItemSchemaGet(
 my $DesiredWorkflow = {
     approval => { required => 1, approver_role => 'tenant_admin' },
     fulfillment => [ { key => 'prepare', name => 'Prepare and deliver laptop', type => 'manual' } ],
-    commitment => { policy_key => 'standard-resolution' },
+    commitment => {
+        default_policy_key => 'standard-resolution',
+        entitlements => [ { key => 'developer-tier', answer_key => 'device_profile', equals => 'developer', policy_key => 'developer-premium' } ],
+    },
 };
 if (!$ExistingSchema->{Success}) {
     my $Result = $Catalog->CatalogItemSchemaSet(
@@ -141,7 +168,7 @@ if (!$ExistingSchema->{Success}) {
     );
     die "Could not create demo schema: $Result->{Error}\n" if !$Result->{Success};
 }
-elsif ( !$ExistingSchema->{Data}->{Schema}->{workflow}->{commitment} ) {
+elsif ( !( $ExistingSchema->{Data}->{Schema}->{workflow}->{commitment}->{default_policy_key} // q{} ) ) {
     my $Schema = $ExistingSchema->{Data}->{Schema};
     $Schema->{version}++;
     $Schema->{workflow} = $DesiredWorkflow;

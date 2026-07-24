@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.3.4';
+our $VERSION = '0.4.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -611,10 +611,30 @@ sub _SchemaValidate {
         }
         if ( defined $Workflow->{commitment} ) {
             my $Commitment = $Workflow->{commitment};
+            my %AllowedCommitment = map { $_ => 1 } qw(policy_key default_policy_key entitlements);
             return $Self->_Error( Error => 'SCHEMA_COMMITMENT_INVALID' )
                 if ref $Commitment ne 'HASH'
-                || ( grep { $_ ne 'policy_key' } keys %{$Commitment} )
-                || ( $Commitment->{policy_key} // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx;
+                || ( grep { !$AllowedCommitment{$_} } keys %{$Commitment} );
+            my $DefaultKey = $Commitment->{default_policy_key} // $Commitment->{policy_key};
+            return $Self->_Error( Error => 'SCHEMA_COMMITMENT_INVALID' )
+                if ( $DefaultKey // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx;
+            if ( exists $Commitment->{entitlements} ) {
+                return $Self->_Error( Error => 'SCHEMA_ENTITLEMENTS_INVALID' )
+                    if ref $Commitment->{entitlements} ne 'ARRAY' || @{ $Commitment->{entitlements} } > 20;
+                my %EntitlementKeys;
+                for my $Entitlement ( @{ $Commitment->{entitlements} } ) {
+                    my %AllowedEntitlement = map { $_ => 1 } qw(key answer_key equals policy_key);
+                    return $Self->_Error( Error => 'SCHEMA_ENTITLEMENT_INVALID' )
+                        if ref $Entitlement ne 'HASH'
+                        || ( grep { !$AllowedEntitlement{$_} } keys %{$Entitlement} )
+                        || ( $Entitlement->{key} // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx
+                        || $EntitlementKeys{ $Entitlement->{key} }++
+                        || !$Keys{ $Entitlement->{answer_key} // q{} }
+                        || ref $Entitlement->{equals}
+                        || !defined $Entitlement->{equals} || length $Entitlement->{equals} > 4000
+                        || ( $Entitlement->{policy_key} // q{} ) !~ m{\A[a-z][a-z0-9_-]{0,63}\z}smx;
+                }
+            }
         }
     }
     return { Success => 1 };
