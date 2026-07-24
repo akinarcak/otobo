@@ -9,7 +9,15 @@ use strict;
 use warnings;
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.5.0';
+our $VERSION = '0.5.1';
+
+our @ObjectDependencies = (
+    'Kernel::System::CustomerUser',
+    'Kernel::System::D724::TenantDirectory',
+    'Kernel::System::D724::TenantGuard',
+    'Kernel::System::DB',
+    'Kernel::System::Log',
+);
 
 sub new {
     my ($Type) = @_;
@@ -49,7 +57,8 @@ sub SearchScopeApply {
 
 sub TicketAccessCheck {
     my ( $Self, %Param ) = @_;
-    return $Self->_Deny('TICKET_ID_INVALID') if !( $Param{TicketID} // q{} ) =~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Deny('TICKET_ID_INVALID')
+        if ( $Param{TicketID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
 
     my $Context = $Self->ContextResolve(%Param);
     return $Context if !$Context->{Success};
