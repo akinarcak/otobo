@@ -7,5 +7,9 @@ for services, service offerings, and requestable catalog items. Every database
 query includes `tenant_id`; cross-tenant parent relationships are rejected; and
 authorization is delegated to `D724TenantGuard` before data access.
 
+Version 0.2 adds validated, versioned dynamic form schemas and an authenticated
+customer portal. The portal derives tenant context from the OTOBO customer session,
+lists only fully active catalog hierarchies, and HTML-escapes rendered content.
+
 Run `bin/otobo.Console.pl Admin::D724::CatalogStatus --json` after installation
 to verify configuration and schema health.
