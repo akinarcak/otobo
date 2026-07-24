@@ -39,6 +39,14 @@ Elasticsearch is optional because its image and memory footprint are substantial
 ./Invoke-D724Dev.ps1 Down
 ```
 
+## Tenant-safe demo catalog
+
+After installing `D724Catalog`, copy `Seed-D724Demo.pl` into the web container and
+run it as the `otobo` user with `D724_DEMO_CUSTOMER_PASSWORD` supplied only through
+the process environment. The script is idempotent and creates customer login
+`demo.customer`, tenant `d724-demo`, and a sample laptop request form. Never commit
+or print the supplied password.
+
 `Down` preserves database and application volumes. Destructive cleanup is explicit:
 
 ```powershell
