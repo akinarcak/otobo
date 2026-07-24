@@ -65,7 +65,7 @@ sub MutationRun {
         Code => sub {
             my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
             return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
-            if ( $Param{Field} eq 'CustomerID' ) {
+            if ( $Param{Field} eq 'Customer' ) {
                 my $RequestedTenant = $Call->{No} // $Call->{CustomerID} // q{};
                 return $Self->_Error('TENANT_CHANGE_FORBIDDEN') if length $RequestedTenant && $RequestedTenant ne $Scope->{TenantID};
             }
@@ -74,8 +74,12 @@ sub MutationRun {
             my $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
             return $Self->_Error('TICKET_MUTATION_FAILED') if !$Value;
             my %After = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
-            my $From = defined $Before{ $Param{Field} } ? "$Before{$Param{Field}}" : q{};
-            my $To   = defined $After{ $Param{Field} }  ? "$After{$Param{Field}}"  : q{};
+            my $From = $Param{Field} eq 'Customer'
+                ? join( q{|}, $Before{CustomerID} // q{}, $Before{CustomerUserID} // q{} )
+                : defined $Before{ $Param{Field} } ? "$Before{$Param{Field}}" : q{};
+            my $To = $Param{Field} eq 'Customer'
+                ? join( q{|}, $After{CustomerID} // q{}, $After{CustomerUserID} // q{} )
+                : defined $After{ $Param{Field} } ? "$After{$Param{Field}}" : q{};
             return { Success => 1, Value => $Value } if $From eq $To;
             my $Version = $Scope->{Version} + 1;
             my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );

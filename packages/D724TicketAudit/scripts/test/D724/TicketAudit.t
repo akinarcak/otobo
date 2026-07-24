@@ -64,6 +64,15 @@ is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID =>
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
 ok( $Ticket->TicketStateSet( TicketID => $TicketID, StateID => $OpenStateID, UserID => 1 ), 'same state update succeeds after audit recovers' );
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 2, 'successful state update advances scope version once' );
+ok( $Ticket->TicketTitleUpdate( TicketID => $TicketID, Title => 'Atomic tenant ticket updated', UserID => 1 ), 'ticket title update succeeds' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 3, 'title update advances scope version' );
+ok( $Ticket->TicketTitleUpdate( TicketID => $TicketID, Title => 'Atomic tenant ticket updated', UserID => 1 ), 'same title replay succeeds' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 3, 'no-op title replay does not advance scope version' );
+ok(
+    $Ticket->TicketCustomerSet( TicketID => $TicketID, No => $Tenant, User => 'ticket-test-user-2', UserID => 1 ),
+    'customer user can change inside immutable tenant boundary',
+);
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, 4, 'customer user update advances scope version' );
 ok(
     !$Ticket->TicketCustomerSet( TicketID => $TicketID, No => $OtherTenant, User => 'other-user', UserID => 1 ),
     'ticket cannot be reassigned across tenant boundary',
@@ -79,7 +88,11 @@ ok( !$Ticket->TicketCreate(
 ok( !$Ticket->TicketIDLookup( TicketNumber => $UnscopedNumber, UserID => 1 ), 'tenantless rejection leaves no ticket row' );
 
 $Events = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
-is( [ map { $_->{Action} } @{ $Events->{Data} } ], [qw(ticket.created ticket.state.updated)], 'failed update leaves no orphan event and retry emits one event' );
+is(
+    [ map { $_->{Action} } @{ $Events->{Data} } ],
+    [qw(ticket.created ticket.state.updated ticket.title.updated ticket.customer.updated)],
+    'failed/no-op updates leave no orphan event and successful mutations emit one event each',
+);
 ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket tenant audit chain verifies' );
 
 ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket fixture is removed' );
