@@ -1,6 +1,6 @@
 # API-01 - Tenant-safe integration API
 
-## Implemented contract (`D724API 0.3.0`)
+## Implemented contract (`D724API 0.4.0`)
 
 The API is a GPL-3.0 package and uses OTOBO's supported public frontend
 registration. Its canonical versioned base URL is:
@@ -38,6 +38,27 @@ opaque 64-character random values; only their SHA-256 digest is stored.
 Clients are created by a tenant administrator. `ClientRevoke` atomically changes
 the optimistic client version, revokes every active token, and appends
 `api.client.revoked` to the tenant audit chain. Revocation replay is idempotent.
+Token issue and individual revoke append `api.token.issued` and
+`api.token.revoked`; audit details contain only a short digest fingerprint,
+never the bearer token or its complete stored digest.
+
+### Secret rotation
+
+Tenant administrators rotate a client with the console command below. The
+current optimistic version is mandatory, and `--confirm` makes the disruptive
+token invalidation explicit:
+
+```text
+bin/otobo.Console.pl Admin::D724::APIClientRotate \
+  --tenant-id TENANT --client-id CLIENT --expected-version VERSION \
+  --actor-user-id USER_ID --confirm
+```
+
+The new secret is printed exactly once. Secret hash replacement, client version
+advance, revocation of every active token, and `api.client.secret_rotated` audit
+append share one database transaction. An audit or concurrent-version failure
+rolls all four effects back. The old secret and old tokens become invalid as
+soon as a successful rotation commits.
 
 ### Ticket reads
 
@@ -92,6 +113,26 @@ The machine-readable contract is public at
 - Acceptance tooling never prints client secrets or bearer tokens.
 - Canonical path-derived `Action` and `Route` values take precedence over query-string injection attempts.
 - Request JSON bodies are capped at 64 KiB and reject unsupported media types.
+- Token issue/revoke and client create/rotate/revoke are transaction-audited without secret material.
+
+## Retention and operational metrics
+
+`Admin::D724::APIStatus --json` reports active/revoked/expired clients and
+tokens, current-minute request volume, total/stale rate windows, stale token
+digests, invalid hashes/tenant references, retention validity, canonical mount,
+and OpenAPI health. Any query error or structural invariant failure makes the
+command fail closed.
+
+Defaults retain expired/revoked token digests for 30 days and rate windows for
+48 hours. A scheduler may run this confirmed maintenance command daily:
+
+```text
+bin/otobo.Console.pl Maint::D724::APIRetentionCleanup --confirm
+```
+
+Only expired or revoked token digests and completed rate windows older than the
+configured thresholds are deleted. Client records and immutable audit evidence
+are retained.
 
 ## Verified acceptance (`2026-07-24`)
 
@@ -104,12 +145,14 @@ The machine-readable contract is public at
 - the same token returned `401` immediately after client revocation;
 - canonical OpenAPI returned `200` and parsed as version `3.1.0`;
 - request create/replay/conflict/get returned `201/200/409/200` for request `187`;
-- all 30 D724 test files and 580 assertions passed together.
+- rotation advanced version to `2`; old token/secret returned `401/401`, while
+  the new secret/token returned `200/200`;
+- all 31 D724 test files and 608 assertions passed together.
 
 ## Remaining API-01 work
 
-Client secret rotation, write endpoints for lifecycle transitions, signed
-outbound webhook contract, retention for revoked clients/tokens/rate windows,
-API metrics, and concurrent load tests remain open.
+Write endpoints for lifecycle transitions, signed outbound webhook contract,
+per-route latency/error metrics, retention scheduling, and concurrent load tests
+remain open.
 Until TLS termination is deployed, this test endpoint must stay on the private
 network and must not be exposed to the public Internet.
