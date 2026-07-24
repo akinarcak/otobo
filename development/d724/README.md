@@ -45,7 +45,8 @@ After installing `D724Catalog`, copy `Seed-D724Demo.pl` into the web container a
 run it as the `otobo` user with `D724_DEMO_CUSTOMER_PASSWORD` supplied only through
 the process environment. The script is idempotent and creates customer login
 `demo.customer`, tenant `d724-demo`, and a sample laptop request form. Never commit
-or print the supplied password.
+or print the supplied password. The Perl invocation must include OTOBO's bundled
+libraries: `perl -I. -IKernel/cpan-lib -ICustom /tmp/Seed-D724Demo.pl`.
 
 `Down` preserves database and application volumes. Destructive cleanup is explicit:
 

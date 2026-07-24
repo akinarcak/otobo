@@ -45,7 +45,7 @@ if (!%CustomerUser) {
         UserLastname   => 'Demo Customer',
         UserCustomerID => $TenantID,
         UserLogin      => $Login,
-        UserEmail      => 'demo.customer@example.invalid',
+        UserEmail      => 'demo.customer@example.com',
         ValidID        => 1,
         UserID         => $UserID,
     );
