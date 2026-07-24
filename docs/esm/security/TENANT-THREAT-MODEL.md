@@ -1,6 +1,6 @@
 # SEC-01 Tenant Threat Modeli
 
-Durum: policy cekirdegi uygulandi, OTOBO ticket/API entegrasyon kapilari henuz acik.
+Durum: policy cekirdegi ve OTOBO ticket write-scope cekirdegi uygulandi; API ve kalan read/query entegrasyon kapilari acik.
 
 ## Guvenlik siniri
 

@@ -38,4 +38,4 @@ Audit temel paketi directory'ye statik olarak bagli degildir. Hazir bir `Subject
 
 ## Acik core kapsam
 
-Clustered iki-proses last-admin yarisi icin kabul testi, OTOBO ticket/article, Generic Interface, commitment scheduler/escalation audit completeness, retention/legal hold ve dis WORM sink sonraki core kapilaridir.
+Clustered iki-proses last-admin yarisi icin kabul testi, Generic Interface, kalan ticket/Chat ve commitment scheduler/escalation audit completeness, retention/legal hold ve dis WORM sink sonraki core kapilaridir. OTOBO ticket/MIME article cekirdegi daha sonra `AUD-01b-ticket-core` kapsaminda tamamlanmistir.

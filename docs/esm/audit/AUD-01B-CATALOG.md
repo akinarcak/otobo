@@ -41,4 +41,4 @@ Service, offering, item ve schema yazim girisleri production `AutoCommit` baglan
 
 ## Acik core kapsam
 
-OTOBO ticket/article, Generic Interface ve commitment scheduler/escalation mutation'lari bu katalog adapter'inin transaction garantisine henuz sahip degildir. Tenant-directory atomikligi `AUD-01b-directory` kapsaminda tamamlanmistir.
+Bu milestone sonrasinda OTOBO ticket/MIME article cekirdek atomikligi `AUD-01b-ticket-core`, tenant-directory atomikligi `AUD-01b-directory` kapsaminda tamamlanmistir. Generic Interface, kalan ticket/Chat ve commitment scheduler/escalation adapter'lari aciktir.

@@ -1,12 +1,12 @@
 # AUD-01 Audit Karari
 
-Durum: `AUD-01a`, `AUD-01b-request`, `AUD-01b-catalog` ve `AUD-01b-directory` tamamlandi (`2026-07-24`). `AUD-01b-core` acik.
+Durum: `AUD-01a`, `AUD-01b-request`, `AUD-01b-catalog`, `AUD-01b-directory` ve `AUD-01b-ticket-core` tamamlandi (`2026-07-24`). `AUD-01b-core` acik.
 
 ## Amac ve guvenlik siniri
 
 `D724Audit`, her tenant icin ayri ve monoton bir audit olayi zinciri tutar. Okuma, dogrulama ve export islemleri `D724TenantGuard` uzerinden `audit.read` karari almadan calismaz. Tenant kimligi export filtresinden veya tarayici girdisinden guvenilir kabul edilmez.
 
-Bu katman kaydedilmis olaylarin sonradan sessizce degistirilmesini algilar. Request lifecycle, D724 katalog ve tenant-directory adapter'lari uygulama mutasyonu ile audit append'ini ayni transaction'a alir. Diger domain adapter'lari ve DB-disinda immutable saklama henuz bu garantiyi tasimaz.
+Bu katman kaydedilmis olaylarin sonradan sessizce degistirilmesini algilar. Request lifecycle, D724 katalog, tenant-directory ve kapsanan OTOBO ticket/MIME article adapter'lari uygulama mutasyonu ile audit append'ini ayni transaction'a alir. Diger domain adapter'lari ve DB-disinda immutable saklama henuz bu garantiyi tasimaz.
 
 ## Normalize olay kontrati
 
@@ -45,10 +45,10 @@ Customer submit, approval, first-response ve task update girisleri production `A
 
 ## Kanit
 
-- Paketler: `D724Audit 0.2.0`, `D724TenantDirectory 0.2.1`, `D724Catalog 0.5.2`, `D724Request 0.4.6`, `D724Commitment 0.3.8`.
+- Paketler: `D724Audit 0.2.0`, `D724TenantDirectory 0.2.1`, `D724Catalog 0.5.2`, `D724Request 0.4.6`, `D724Commitment 0.3.8`, `D724TicketAudit 0.4.1`.
 - MariaDB migration kaniti: `d724_audit_dedupe(tenant_id, dedupe_key)` unique index'i mevcut.
 - Audit + Request: 5 dosya / 80 test `PASS`.
-- Tum D724 regresyonu: 23 dosya / 402 test `PASS`.
+- Tum D724 regresyonu: 25 dosya / 469 test `PASS`.
 - Gercek HTTP akisi: `REQ-0000000086`, durum `fulfilled`, bes sirali ve farkli dedupe anahtarli lifecycle olayi.
 - Ayni customer POST replay'i `REQ-0000000086` dondurdu; lifecycle event sayisi bes kaldi.
 - Demo tenant zinciri katalog atomik kabul sonunda `Valid=1`, 20 event.
@@ -58,7 +58,7 @@ Customer submit, approval, first-response ve task update girisleri production `A
 
 ## AUD-01b-core acik kapsam
 
-- OTOBO ticket/article, Generic Interface, commitment scheduler/escalation ve konfigurasyon mutasyonlarinda transaction veya transactional outbox completeness garantisi.
+- Kalan OTOBO ticket delete/merge/type/service/SLA/pending, Chat article, Generic Interface, commitment scheduler/escalation ve konfigurasyon mutasyonlarinda transaction veya transactional outbox completeness garantisi.
 - Retention politikasi, legal hold, erasure istisnalari ve yetkili export UI/API.
 - DB-disinda WORM/immutable sink, signing key rotation ve periyodik anchor.
 - Audit delivery/completeness metrikleri, alarm ve reconciliation.
