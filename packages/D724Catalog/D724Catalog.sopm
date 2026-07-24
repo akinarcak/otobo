@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otobo_package version="1.0">
+    <Name>D724Catalog</Name>
+    <Version>0.1.0</Version>
+    <Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
+    <URL>https://github.com/akinarcak/otobo</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-safe service portfolio and catalog repository for D724 ESM.</Description>
+    <Description Lang="tr">D724 ESM icin tenant guvenli hizmet portfoyu ve katalog repository'si.</Description>
+    <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
+    <PackageRequired Version="0.1.1">D724TenantGuard</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable>
+    <PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="d724_service">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="key_name" Required="true" Size="100" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="description" Required="true" Size="4000" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="d724_service_tenant_key">
+                <UniqueColumn Name="tenant_id" />
+                <UniqueColumn Name="key_name" />
+            </Unique>
+            <Unique Name="d724_service_tenant_id">
+                <UniqueColumn Name="tenant_id" />
+                <UniqueColumn Name="id" />
+            </Unique>
+            <Index Name="d724_service_tenant_status">
+                <IndexColumn Name="tenant_id" />
+                <IndexColumn Name="status" />
+            </Index>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="create_by" Foreign="id" />
+            </ForeignKey>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="change_by" Foreign="id" />
+            </ForeignKey>
+        </TableCreate>
+        <TableCreate Name="d724_service_offering">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="service_id" Required="true" Type="BIGINT" />
+            <Column Name="key_name" Required="true" Size="100" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="description" Required="true" Size="4000" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="fulfillment_type" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="d724_offering_tenant_key">
+                <UniqueColumn Name="tenant_id" />
+                <UniqueColumn Name="key_name" />
+            </Unique>
+            <Unique Name="d724_offering_tenant_id">
+                <UniqueColumn Name="tenant_id" />
+                <UniqueColumn Name="id" />
+            </Unique>
+            <Index Name="d724_offering_tenant_status">
+                <IndexColumn Name="tenant_id" />
+                <IndexColumn Name="status" />
+            </Index>
+            <ForeignKey ForeignTable="d724_service">
+                <Reference Local="tenant_id" Foreign="tenant_id" />
+                <Reference Local="service_id" Foreign="id" />
+            </ForeignKey>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="create_by" Foreign="id" />
+            </ForeignKey>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="change_by" Foreign="id" />
+            </ForeignKey>
+        </TableCreate>
+        <TableCreate Name="d724_catalog_item">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="offering_id" Required="true" Type="BIGINT" />
+            <Column Name="key_name" Required="true" Size="100" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="description" Required="true" Size="4000" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="request_type" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="d724_item_tenant_key">
+                <UniqueColumn Name="tenant_id" />
+                <UniqueColumn Name="key_name" />
+            </Unique>
+            <Index Name="d724_item_tenant_status">
+                <IndexColumn Name="tenant_id" />
+                <IndexColumn Name="status" />
+            </Index>
+            <ForeignKey ForeignTable="d724_service_offering">
+                <Reference Local="tenant_id" Foreign="tenant_id" />
+                <Reference Local="offering_id" Foreign="id" />
+            </ForeignKey>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="create_by" Foreign="id" />
+            </ForeignKey>
+            <ForeignKey ForeignTable="users">
+                <Reference Local="change_by" Foreign="id" />
+            </ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUninstall Type="pre">
+        <TableDrop Name="d724_catalog_item" />
+        <TableDrop Name="d724_service_offering" />
+        <TableDrop Name="d724_service" />
+    </DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/D724Catalog.xml" />
+        <File Permission="644" Location="Kernel/System/D724/Catalog.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CatalogStatus.pm" />
+        <File Permission="644" Location="scripts/test/D724/Catalog.t" />
+        <File Permission="644" Location="scripts/test/D724/CatalogStatus.t" />
+    </Filelist>
+</otobo_package>
