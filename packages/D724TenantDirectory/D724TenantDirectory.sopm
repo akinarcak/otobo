@@ -65,6 +65,7 @@
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/TenantBootstrap.pm" />
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/TenantMembershipGrant.pm" />
         <File Permission="644" Location="scripts/test/D724/TenantDirectory.t" />
+        <File Permission="644" Location="scripts/test/D724/TenantDirectoryAuditRollback.t" />
         <File Permission="644" Location="scripts/test/D724/TenantDirectoryStatus.t" />
         <File Permission="644" Location="scripts/test/D724/TenantDirectoryTransaction.t" />
     </Filelist>

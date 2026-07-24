@@ -18,7 +18,6 @@ $Helper->ConfigSettingChange( Key => 'D724::TenantGuard::Enabled', Value => 1 );
 $Helper->ConfigSettingChange( Key => 'D724::TenantGuard::AllowPlatformAdmin', Value => 1 );
 
 my $Directory = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory');
-my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 my $Platform = { ID => 'platform-test', Roles => ['platform_admin'], TenantIDs => ['bootstrap'] };
 my $Suffix = $Helper->GetRandomID();
 my $TenantA = "directory-a-$Suffix";
@@ -153,60 +152,5 @@ is(
 );
 ok( $Audit->Verify( Subject => $AdminB, TenantID => $TenantB )->{Valid}, 'tenant B directory chain verifies' );
 is( $Audit->List( Subject => $AdminA, TenantID => $TenantB )->{Error}, 'FORBIDDEN', 'directory audit cannot cross tenant boundary' );
-
-my $TenantC = "directory-rollback-$Suffix";
-ok(
-    $Directory->TenantCreate( Subject => $Platform, TenantID => $TenantC, Name => 'Directory Rollback', UserID => 1 )->{Success},
-    'rollback fixture tenant is created',
-);
-$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
-is(
-    $Directory->MembershipGrant(
-        Subject => $Platform, TenantID => $TenantC, MemberUserID => 1, Role => 'auditor', UserID => 1,
-    )->{Error},
-    'AUDIT_WRITE_FAILED',
-    'membership grant fails closed when its audit event cannot be written',
-);
-my $AuditorRole = 'auditor';
-$DBObject->Prepare(
-    SQL => 'SELECT COUNT(*) FROM d724_tenant_agent_role WHERE tenant_id = ? AND user_id = 1 AND role_name = ?',
-    Bind => [ \$TenantC, \$AuditorRole ],
-);
-my ($MembershipCountC) = $DBObject->FetchrowArray();
-is( $MembershipCountC, 0, 'failed audited grant is rolled back completely' );
-$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
-my $GrantC = $Directory->MembershipGrant(
-    Subject => $Platform, TenantID => $TenantC, MemberUserID => 1, Role => 'auditor', UserID => 1,
-);
-ok( $GrantC->{Success}, 'membership grant succeeds after audit recovers' );
-is( $GrantC->{Data}->{Version}, 1, 'retried grant starts at version one' );
-$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
-is(
-    $Directory->MembershipRevoke(
-        Subject => $Platform, TenantID => $TenantC, MemberUserID => 1, Role => 'auditor', UserID => 1,
-    )->{Error},
-    'AUDIT_WRITE_FAILED',
-    'membership revoke fails closed when its audit event cannot be written',
-);
-$DBObject->Prepare(
-    SQL => 'SELECT status, version FROM d724_tenant_agent_role WHERE tenant_id = ? AND user_id = 1 AND role_name = ?',
-    Bind => [ \$TenantC, \$AuditorRole ], Limit => 1,
-);
-my ( $MembershipStatusC, $MembershipVersionC ) = $DBObject->FetchrowArray();
-is( $MembershipStatusC, 'active', 'failed audited revoke restores active membership' );
-is( $MembershipVersionC, 1, 'failed audited revoke restores membership version' );
-$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
-my $RevokeC = $Directory->MembershipRevoke(
-    Subject => $Platform, TenantID => $TenantC, MemberUserID => 1, Role => 'auditor', UserID => 1,
-);
-ok( $RevokeC->{Success}, 'membership revoke succeeds after audit recovers' );
-is( $RevokeC->{Data}->{Version}, 2, 'retried revoke advances exactly one version' );
-my $AuditC = $Audit->List( Subject => $Platform, TenantID => $TenantC, Limit => 100 );
-is(
-    [ map { $_->{Action} } @{ $AuditC->{Data} } ],
-    [qw(tenant.created tenant.membership.granted tenant.membership.revoked)],
-    'failed mutations leave no orphan audit event and retries form one canonical chain',
-);
-ok( $Audit->Verify( Subject => $Platform, TenantID => $TenantC )->{Valid}, 'rollback fixture audit chain verifies' );
 
 done_testing;
