@@ -21,6 +21,8 @@ Filtre sonuctan sonra uygulanmaz. Bu sayede `Limit`, siralama ve `COUNT` altinda
 - `TicketPolicy.t`: ayni-tenant arama/tekil erisim/GI izinleri; cross-tenant arama, tekil erisim ve GI redleri; raw bypass, uyeliksiz agent ve unbound ticket redleri.
 - Tum D724 regresyonu: 26 dosya / 486 test `PASS`.
 - Kalici demo kabul betigi: `development/d724/Accept-TicketPolicy.pl` agent directory baglamindan `D724AUD20260724001` kaydini arar, scope tenant'ini dogrular, raw bypass'i reddeder ve Generic Interface ortak kontrolunu calistirir.
+- Test sunucusu kabul sonucu: `demo.agent` / UserID `47`, tenant `d724-demo`, gorunen ticket listesi `[9]`, raw bypass denied ve Generic Interface access `1`.
+- OPM SHA-256: `a574c4e22fef7520c7d86a7ab418f13243ae8e8963e742150b1c6d097e3d9e29`.
 
 ## Acik kapsam
 
