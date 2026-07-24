@@ -182,6 +182,14 @@ my $ItemList = $Catalog->CatalogItemList(
     OfferingID => $Offering->{Data}->{OfferingID},
 );
 is( [ map { $_->{Key} } @{ $ItemList->{Data} } ], ['request-laptop'], 'item list honors parent filter' );
+is(
+    $Catalog->OfferingUpdate(
+        %BaseA, OfferingID => $Offering->{Data}->{OfferingID}, ExpectedVersion => 1,
+        ServiceID => $ServiceB->{Data}->{ServiceID},
+    )->{Error},
+    'PARENT_IMMUTABLE',
+    'offering parent cannot be changed after creation',
+);
 
 my $Updated = $Catalog->ServiceUpdate(
     %BaseA,

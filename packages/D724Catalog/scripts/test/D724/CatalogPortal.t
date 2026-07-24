@@ -57,9 +57,10 @@ my $Detail = $Portal->ItemGet(
 );
 is( $Detail->{Data}->{FormSchema}->{Schema}->{fields}->[0]->{key}, 'summary', 'portal detail contains dynamic form schema' );
 
-$Catalog->OfferingUpdate(
+my $OfferingSuspended = $Catalog->OfferingUpdate(
     %Write, OfferingID => $Offering->{Data}->{OfferingID}, ExpectedVersion => 1, Status => 'suspended',
 );
+ok( $OfferingSuspended->{Success}, 'offering can be suspended without resubmitting immutable parent ID' );
 is(
     $Portal->ItemGet(
         CustomerUserID => 'portal.user', CustomerID => 'portal-tenant',

@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.2.2';
+our $VERSION = '0.2.3';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -397,6 +397,12 @@ sub _Update {
 
     for my $Field (qw(Name Description Status)) {
         $Param{$Field} = $Current->{$Field} if !defined $Param{$Field};
+    }
+    if ($Meta->{ParentAPI}) {
+        return $Self->_Error( Error => 'PARENT_IMMUTABLE' )
+            if defined $Param{ $Meta->{ParentAPI} }
+            && $Param{ $Meta->{ParentAPI} } != $Current->{ $Meta->{ParentAPI} };
+        $Param{ $Meta->{ParentAPI} } = $Current->{ $Meta->{ParentAPI} };
     }
     if ($Meta->{TypeAPI}) {
         $Param{ $Meta->{TypeAPI} } = $Current->{ $Meta->{TypeAPI} }
