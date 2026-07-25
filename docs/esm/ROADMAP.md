@@ -38,6 +38,7 @@
 - [x] `SEC-01b`: katalog/ticket/GI/daemon/report/cache/search tenant sınırı; Generic Interface operasyon-bazlı action matrisi ve üç composite katalog parent constraint'i (`2026-07-25`).
 - [x] `SEC-03a`: exact issuer/audience tenant route'u, doğrulanmış-claim sözleşmesi, domain ve grup→rol allow-list'i, immutable subject/login bağı (`2026-07-25`).
 - [x] `SEC-03b-core`: OIDC state/nonce, PKCE S256, browser binding, aynı-origin HTTPS metadata/JWKS politikası, yerleşik imza doğrulayıcı delegasyonu ve tek-kullanımlık callback (`2026-07-25`).
+- [x] `SEC-03b-pkce`: OTOBO OAuth2 authorization URL ve token exchange katmanlarında RFC 7636 S256 challenge/verifier taşıma ve fail-closed doğrulama (`2026-07-25`).
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
 

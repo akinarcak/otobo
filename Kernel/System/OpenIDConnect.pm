@@ -132,6 +132,8 @@ sub BuildRedirectURL {
         ResponseType          => $Param{AuthRequest}->{ResponseType},
         Scope                 => $Scope,
         Nonce                 => $Param{AuthRequest}->{Nonce},
+        CodeChallenge         => $Param{AuthRequest}->{CodeChallenge},
+        CodeChallengeMethod   => $Param{AuthRequest}->{CodeChallengeMethod},
         RandTTL               => $Param{AuthRequest}->{$RandTTL} // $RandTTL,
         RedirectURL           => $Param{ClientSettings}{RedirectURI},
         State                 => $Param{AuthRequest}->{State},
@@ -184,6 +186,7 @@ sub RequestIDToken {
         ClientSecret  => $Param{ClientSettings}->{ClientSecret},
         GrantType     => 'authorization_code',
         Code          => $Param{AuthorizationCode},
+        CodeVerifier  => $Param{CodeVerifier},
         RedirectURL   => $Param{ClientSettings}{RedirectURI},
         SSLOptions    => $Param{ProviderSettings}{SSLOptions},
     );

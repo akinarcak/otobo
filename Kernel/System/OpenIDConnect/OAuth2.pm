@@ -167,6 +167,20 @@ sub RequestToken {
             code         => $Param{Code},
             redirect_uri => $Param{RedirectURL},
         ];
+
+        if ( defined $Param{CodeVerifier} ) {
+            if ( $Param{CodeVerifier} !~ m{\A[A-Za-z0-9._~-]{43,128}\z}smx ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => 'Invalid RFC 7636 code verifier.',
+                );
+                return {
+                    Success => 0,
+                    Error   => 'Invalid PKCE code verifier.',
+                };
+            }
+            push @{$PostData}, code_verifier => $Param{CodeVerifier};
+        }
     }
     elsif (
         $Param{GrantType} eq 'password'
@@ -287,6 +301,20 @@ sub GetAuthURL {
     my $ResourceParamName = $Param{ResourceParamName} || 'resource';
     my $State             = $Param{State}             || $RandomString;
 
+    if ( defined $Param{CodeChallenge} || defined $Param{CodeChallengeMethod} ) {
+        if (
+            ( $Param{CodeChallenge} // q{} ) !~ m{\A[A-Za-z0-9_-]{43,128}\z}smx
+            || ( $Param{CodeChallengeMethod} // q{} ) ne 'S256'
+            )
+        {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => 'Invalid RFC 7636 code challenge.',
+            );
+            return;
+        }
+    }
+
     my $ResponseType = $Param{ResponseType} || ['code'];
     if ( ref $ResponseType ne 'ARRAY' ) {
         $ResponseType = [$ResponseType];
@@ -321,6 +349,11 @@ sub GetAuthURL {
 
     if ( $Param{Prompt} ) {
         $RedirectURL .= '&prompt=login';
+    }
+
+    if ( $Param{CodeChallenge} ) {
+        $RedirectURL .= '&code_challenge=' . uri_escape_utf8( $Param{CodeChallenge} );
+        $RedirectURL .= '&code_challenge_method=S256';
     }
 
     $RedirectURL .= '&state=' . uri_escape_utf8($State);

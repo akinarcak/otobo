@@ -149,7 +149,7 @@ Son dogrulama: `2026-07-25`
   - digest-only state/nonce/verifier saklama, PKCE S256 ve browser binding; yerel dönüş yolu ve tek-kullanımlık callback,
   - aynı-origin HTTPS discovery/JWKS ve yalnız RS256/ES256; OTOBO yerleşik JWKS/imza doğrulayıcısına delegasyon,
   - dört test dosyası / 39 test `PASS` ve canlı status `Success=1`.
-- On üç CareOnCloud paketinin 49 dosyalık birleşik regresyonu `975` test ile `PASS` (`2026-07-25`).
+- On üç CareOnCloud paketinin 50 dosyalık birleşik regresyonu `984` test ile `PASS`; mevcut OTOBO OAuth2 testleriyle birlikte 57 dosya / `4010` test `PASS` (`2026-07-25`).
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.

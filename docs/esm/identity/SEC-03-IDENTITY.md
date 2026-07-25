@@ -16,6 +16,7 @@
 - Callback, state satırını transaction içinde kilitler; browser binding, PKCE S256, exact issuer/audience ve nonce doğrulamasından sonra akışı tek kullanımlık olarak tüketir.
 - Dönüş hedefi yalnız yerel `/otobo/...` yoludur. Open redirect kabul edilmez.
 - Discovery metadata issuer ile aynı HTTPS origin'den authorization, token ve JWKS endpoint'i vermeli; ID token algoritması yalnız `RS256` veya `ES256` olabilir.
+- Fork'un yerleşik OTOBO OAuth2 katmanı `code_challenge`/`S256` değerlerini authorization URL'sine ve exact `code_verifier` değerini token exchange formuna taşır; hatalı RFC 7636 değerleri ağ isteğinden önce reddedilir.
 
 ## Tamamlanan kapsam
 
