@@ -44,4 +44,4 @@ dogruladi:
 - policy kapaliyken automation context uretilmedi;
 - normal aktif tenant sweep, scan ve delivery akislari geriye uyumlu kaldi.
 
-Guncel paket regresyonu 39 dosya ve 799 assertion ile gecti.
+Guncel paket regresyonu 41 dosya ve 834 assertion ile gecti.

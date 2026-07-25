@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724Reporting</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Name>D724Reporting</Name><Version>0.2.0</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe, privacy-minimized operational ESM reports and CSV/JSON export.</Description>
     <Description Lang="tr">Tenant guvenli, PII-minimize operasyonel ESM raporlari ve CSV/JSON export.</Description>
     <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
-    <PackageRequired Version="0.4.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.5.0">D724TenantGuard</PackageRequired>
     <PackageRequired Version="0.2.1">D724TenantDirectory</PackageRequired>
     <PackageRequired Version="0.5.2">D724Catalog</PackageRequired>
     <PackageRequired Version="0.4.7">D724Request</PackageRequired>

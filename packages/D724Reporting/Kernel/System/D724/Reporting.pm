@@ -8,10 +8,10 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::DB', 'Kernel::System::D724::TenantDirectory',
-    'Kernel::System::D724::TenantGuard', 'Kernel::System::JSON',
+    'Kernel::System::D724::TenantCache', 'Kernel::System::D724::TenantGuard', 'Kernel::System::JSON',
 );
 
 sub new { return bless {}, $_[0] }
@@ -22,7 +22,7 @@ sub Summary {
     return $Valid if !$Valid->{Success};
     my $Auth = $Self->_Authorize( %Param, Action => 'report.read' );
     return $Auth if !$Auth->{Success};
-    return $Self->_SummaryQuery(%Param);
+    return $Self->_SummaryCached( %Param, Subject => $Auth->{Subject}, Action => 'report.read' );
 }
 
 sub Export {
@@ -32,7 +32,7 @@ sub Export {
     return $Valid if !$Valid->{Success};
     my $Auth = $Self->_Authorize( %Param, Action => 'report.export' );
     return $Auth if !$Auth->{Success};
-    my $Result = $Self->_SummaryQuery(%Param);
+    my $Result = $Self->_SummaryCached( %Param, Subject => $Auth->{Subject}, Action => 'report.export' );
     return $Result if !$Result->{Success};
 
     my $TenantFile = $Param{TenantID};
@@ -115,6 +115,25 @@ sub _SummaryQuery {
             RequestStatus => \@RequestStatus, CatalogItems => \@CatalogItems, CommitmentStatus => \@Commitments,
         },
     };
+}
+
+sub _SummaryCached {
+    my ( $Self, %Param ) = @_;
+    my $TTL = $Kernel::OM->Get('Kernel::Config')->Get('D724::Reporting::CacheTTLSeconds') // 60;
+    return $Self->_Error('CACHE_TTL_INVALID') if $TTL !~ m{\A[1-9][0-9]{0,4}\z}smx;
+    my %CacheParam = (
+        Subject => $Param{Subject}, TenantID => $Param{TenantID}, Action => $Param{Action},
+        Domain => 'reporting', Key => join( q{|}, 'operational-v1', $Param{From}, $Param{To} ),
+    );
+    my $Cache = $Kernel::OM->Get('Kernel::System::D724::TenantCache');
+    my $Cached = $Cache->Get(%CacheParam);
+    return $Cached if !$Cached->{Success};
+    return { Success => 1, Data => $Cached->{Value}, Cached => 1 } if $Cached->{Hit};
+    my $Result = $Self->_SummaryQuery(%Param);
+    return $Result if !$Result->{Success};
+    my $Stored = $Cache->Set( %CacheParam, Value => $Result->{Data}, TTL => $TTL );
+    return $Stored if !$Stored->{Success};
+    return { %{$Result}, Cached => 0 };
 }
 
 sub _CSV {

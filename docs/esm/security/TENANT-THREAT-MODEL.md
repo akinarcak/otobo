@@ -28,7 +28,7 @@ Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozle
 | Yetki yukseltme | kullanicinin role parametresi gondermesi | roller yalnizca guvenilir server context'inden | API adapter threat testi sonraki kapida |
 | Kuyruk yan gecisi | ortak agent grubunun iki musteri kaydini gormesi | OTOBO grup izninden sonra TenantGuard | ticket permission adapter sonraki kapida |
 | Arka plan sizintisi | daemon job'unun tenantsiz calismasi | aktif TenantID + tenant-bound `automation:<job>` subject + merkezi `automation.execute` | commitment sweep/webhook scan/dispatcher negatif entegrasyon testleri (`SEC-01b-daemon`) |
-| Cache karismasi | tenant anahtari olmayan cache key | tum D724 cache key'lerinde TenantID | cache adapter testi sonraki kapida |
+| Cache karismasi | tenant anahtari olmayan cache key | aktif tenant + policy kontrolu, hash'li tenant Type ve izole invalidation | `TenantCache.t`, `TenantCacheStatus.t`, `Accept-TenantCache.pl` |
 | Arama sizintisi | global Elasticsearch sonucu | index dokumaninda TenantID + zorunlu filter | search profili sonraki kapida |
 | Export sizintisi | raporun tum kayitlari indirmesi | her SQL'de tenant+tarih predicate, `report.read`/`report.export`, aggregate-only schema | D724Reporting cross-tenant/PII/CSV negatif testleri ve demo kabulü (`SEC-01b-report`) |
 | Global admin kotuye kullanimi | tek rolle tum tenant'lara giris | iki anahtarli opt-in, audit ve acil durum runbook'u | platform admin config testleri |

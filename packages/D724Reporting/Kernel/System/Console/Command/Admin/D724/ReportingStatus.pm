@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = ('Kernel::Config', 'Kernel::System::DB', 'Kernel::System::JSON');
 
 sub Configure {
@@ -26,11 +26,12 @@ sub StatusData {
     my $Config = $Kernel::OM->Get('Kernel::Config');
     my $Enabled = $Config->Get('D724::Reporting::Enabled') ? 1 : 0;
     my $Maximum = $Config->Get('D724::Reporting::MaximumRangeDays') // 366;
-    my $ConfigValid = $Maximum =~ m{\A[1-9][0-9]{0,3}\z}smx ? 1 : 0;
+    my $CacheTTL = $Config->Get('D724::Reporting::CacheTTLSeconds') // 60;
+    my $ConfigValid = $Maximum =~ m{\A[1-9][0-9]{0,3}\z}smx && $CacheTTL =~ m{\A[1-9][0-9]{0,4}\z}smx ? 1 : 0;
     my $Success = $Enabled && $ConfigValid && !( grep { !$_ } values %Tables );
     return {
         Success => $Success ? 1 : 0, Package => 'D724Reporting', Version => $VERSION,
-        Enabled => $Enabled, MaximumRangeDays => 0 + $Maximum, ConfigValid => $ConfigValid, Tables => \%Tables,
+        Enabled => $Enabled, MaximumRangeDays => 0 + $Maximum, CacheTTLSeconds => 0 + $CacheTTL, ConfigValid => $ConfigValid, Tables => \%Tables,
     };
 }
 

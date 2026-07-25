@@ -21,4 +21,12 @@
             <Item ValueType="String" ValueRegex="^\d+\.\d+\.\d+$">1.3.0</Item>
         </Value>
     </Setting>
+    <Setting Name="D724::TenantCache::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables policy-bound tenant namespace cache operations.</Description>
+        <Navigation>Core::D724::Security</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="D724::TenantCache::MaximumTTLSeconds" Required="1" Valid="1">
+        <Description Translatable="1">Maximum TTL accepted by the tenant cache adapter.</Description>
+        <Navigation>Core::D724::Security</Navigation><Value><Item ValueType="String" ValueRegex="^[1-9][0-9]{0,5}$">86400</Item></Value>
+    </Setting>
 </otobo_config>

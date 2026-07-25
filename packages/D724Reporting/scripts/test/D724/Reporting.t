@@ -10,7 +10,11 @@ use Kernel::System::UnitTest::RegisterOM;
 
 $Kernel::OM->ObjectParamAdd( 'Kernel::System::UnitTest::Helper' => { RestoreDatabase => 1 } );
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
-for my $Setting ( [ 'D724::Reporting::Enabled', 1 ], [ 'D724::Reporting::MaximumRangeDays', 366 ], [ 'D724::Catalog::Enabled', 1 ] ) {
+for my $Setting (
+    [ 'D724::Reporting::Enabled', 1 ], [ 'D724::Reporting::MaximumRangeDays', 366 ],
+    [ 'D724::Reporting::CacheTTLSeconds', 60 ], [ 'D724::TenantCache::Enabled', 1 ],
+    [ 'D724::TenantCache::MaximumTTLSeconds', 600 ], [ 'D724::Catalog::Enabled', 1 ],
+) {
     $Helper->ConfigSettingChange( Key => $Setting->[0], Value => $Setting->[1] );
 }
 my $Suffix = lc $Helper->GetRandomID();
@@ -60,8 +64,10 @@ my $OwnerB = { ID => 'owner-b', TenantIDs => [$TenantB], RoleBindings => { $Tena
 my %Range = ( TenantID => $TenantA, From => '2026-07-01', To => '2026-07-31' );
 my $Summary = $Reporting->Summary( Subject => $OwnerA, %Range );
 ok( $Summary->{Success}, 'service owner reads tenant operational summary' );
+ok( !$Summary->{Cached}, 'first report query populates tenant cache' );
 is( $Summary->{Data}->{Totals}->{Requests}, 1, 'date range includes exactly one own-tenant request' );
 is( $Summary->{Data}->{CatalogItems}->[0]->{Name}, '=Formula Safe', 'summary retains catalog label without requester PII' );
+ok( $Reporting->Summary( Subject => $OwnerA, %Range )->{Cached}, 'second authorized report read uses tenant cache' );
 is( $Reporting->Summary( Subject => $OwnerB, %Range )->{Error}, 'FORBIDDEN', 'cross-tenant report read is denied' );
 is( $Reporting->Summary( Subject => $AgentA, %Range )->{Error}, 'FORBIDDEN', 'ordinary agent cannot read management report' );
 ok( $Reporting->Summary( Subject => $AuditorA, %Range )->{Success}, 'auditor can read privacy-minimized report' );
@@ -81,6 +87,9 @@ is( $Reporting->Export( Subject => $OwnerA, %Range, Format => 'xml' )->{Error}, 
 is( $Reporting->Summary( Subject => $OwnerA, %Range, From => '2026-99-99' )->{Error}, 'DATE_INVALID', 'invalid calendar date is rejected' );
 is( $Reporting->Summary( Subject => $OwnerA, TenantID => $TenantA, From => '2025-01-01', To => '2026-12-31' )->{Error}, 'RANGE_TOO_LARGE', 'oversized report range is rejected' );
 
+$Kernel::OM->Get('Kernel::System::D724::TenantCache')->TenantCleanUp(
+    Subject => $OwnerA, TenantID => $TenantA, Action => 'report.read', Domain => 'reporting', Key => 'cleanup',
+);
 $Helper->ConfigSettingChange( Key => 'D724::Reporting::Enabled', Value => 0 );
 is( $Reporting->Summary( Subject => $OwnerA, %Range )->{Error}, 'REPORTING_DISABLED', 'disabled reporting fails closed' );
 

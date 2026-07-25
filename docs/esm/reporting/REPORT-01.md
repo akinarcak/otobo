@@ -4,7 +4,7 @@ Durum: ilk operasyon raporu ve export guvenlik kapisi tamamlandi (`2026-07-25`).
 
 ## Sozlesme
 
-`D724Reporting 0.1.0`, tek tenant ve inclusive tarih araligi icin su aggregate
+`D724Reporting 0.2.0`, tek tenant ve inclusive tarih araligi icin su aggregate
 verileri uretir:
 
 - request status sayilari;
@@ -16,6 +16,12 @@ Her SQL sorgusu bagli `tenant_id`, `from` ve `to + 1 gun` kosullarini tasir.
 Tarih araligi varsayilan en fazla 366 gundur. Rapor, requester kimligi, dinamik
 form cevaplari, yorumlar, idempotency key, audit actor'u veya serbest metin
 workflow payload'i secmez.
+
+Basarili policy kararindan sonra summary, `D724::TenantCache` uzerinde 60 saniye
+saklanir. Logical key schema surumu ve tarih araligini tasir; fiziksel Type tenant
+kimliginin SHA-256 turevidir. Her hit/miss isteginde authorization yeniden calisir;
+cache bir yetki atlama mekanizmasi degildir. Rapor verisi en fazla 60 saniye gecikmeli
+olabilir ve bu sinir SysConfig ile daha da dusurulebilir.
 
 ## Yetkilendirme
 
@@ -52,4 +58,5 @@ bin/otobo.Console.pl Admin::D724::ReportExport \
 adini `=Formula Safe` secerek CSV neutralization'i ve baska tenant etiketi ile
 request'inin export edilmedigini dogruladi.
 
-Tam D724 regresyonu 39 dosya ve 799 assertion ile gecti.
+Ilk cagrinin cache miss, ikincinin hit olmasi ve iki tenantin ayni logical key ile
+ayri deger okumasini da kapsayan tam D724 regresyonu 41 dosya ve 834 assertion ile gecti.
