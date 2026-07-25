@@ -1,7 +1,6 @@
 # SEC-01B Elasticsearch Search Boundary
 
-Durum: uygulama request-boundary kapisi tamamlandi (`2026-07-25`). Aktif
-Elasticsearch profiliyle index migration ve iki-tenant network acceptance aciktir.
+Durum: request-boundary ve aktif runtime kapilari tamamlandi (`2026-07-25`).
 
 ## Tehdit ve kontrat
 
@@ -36,15 +35,31 @@ surumunu, desteklenen index listesini, tenant field'ini ve direct-unscoped davra
 raporlar. Yalniz `ticket` index'i tenant-safe allow-list'tedir; konfigurasyona baska
 bir index eklemek kod seviyesindeki supported-index kapisini asamaz.
 
-## Kanit ve sinir
+## Runtime kurulumu ve kanit
+
+Search servisi `rotheross/otobo-elasticsearch:latest-11_1` image'inin
+`sha256:96966a51f3c9a5811473a1b9ec6d262e0857e92d4c6475be9b432af5945c753f`
+digest'ine sabitlenmistir. Elasticsearch 8.19.3 yalniz Compose ic aginda 9200/9300
+portlarini acar; host portu yayinlamaz. Cluster `green` ve OTOBO resmi
+`Maint::Elasticsearch::TestConnection` kontrolu basarilidir.
+
+`elasticsearch-webservice.yml`, requester host'unu `http://elastic:9200` olarak
+surumler. `Configure-Elasticsearch.pl`, var olan invalid kaydi idempotent bicimde
+gunceller veya eksikse olusturur; beklenmeyen host'u reddeder.
+
+`Maint::Elasticsearch::Migration --target t` iki authoritative MariaDB ticket'ini
+ticket index'ine tasimistir. Regresyon sonrasi ayni migration tekrar calistirilarak
+unit testlerin dis-index yan etkileri temizlenmis, refresh sonrasi document count `2`
+olmustur.
 
 `SearchPolicy.t`, benzersiz bir agent ve iki tenant ile trusted scope, merkezi action,
 exact final filter, direct bypass reddi, unsafe index reddi ve disabled-policy
 fail-closed davranisini test eder. `Accept-SearchPolicy.pl`, gercek demo agent UserID
 `47` icin OTOBO invoker'inin serialize ettigi body'de yalniz `d724-demo` filtresini
-dogrulamistir.
+dogrulamistir. `Accept-ElasticsearchRuntime.pl`, aktif index'e ayni full-text degeri
+tasiyan iki gecici tenant dokumani yazmis; OTOBO TicketSearch uzerinden yalniz own
+tenant hit'ini almis, explicit cross-tenant istegi reddetmis ve iki fixture'i silmistir.
 
-Hedefli guvenlik regresyonu 5 dosya / 204 test; tam D724 regresyonu 42 dosya / 859
-test ile `PASS` sonucudur. Test sunucusunda `Elasticsearch::Active=false` oldugu icin
-bu kanit request serialization sinirindadir; gercek index hit/miss ve migration kaniti
-search profili guvenilir bicimde indirildiginde ayri runtime kapisinda tamamlanacaktir.
+Hedefli guvenlik regresyonu 5 dosya / 204 test; Elasticsearch aktifken tam D724
+regresyonu 42 dosya / 859 test ile `PASS` sonucudur. Runtime kabul sonucu
+`cross_tenant_hit_excluded=true` ve `explicit_cross_tenant_denied=true` dondurmustur.

@@ -33,7 +33,7 @@ services:
 
   elastic:
     profiles: ["search"]
-    image: rotheross/otobo-elasticsearch:latest-11_1
+    image: rotheross/otobo-elasticsearch:latest-11_1@sha256:96966a51f3c9a5811473a1b9ec6d262e0857e92d4c6475be9b432af5945c753f
     restart: unless-stopped
     environment:
       discovery.type: single-node

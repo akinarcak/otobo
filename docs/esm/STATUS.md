@@ -7,6 +7,7 @@ Son dogrulama: `2026-07-25`
 - OTOBO `rel-11_1` tabanli GitHub forku ve `codex/esm-foundation` gelistirme dali.
 - Kaynak koddan uretilen `d724/esm:dev` container image'i.
 - MariaDB, Redis, OTOBO web ve daemon servislerinden olusan izole Compose profili.
+- Digest-pinned Elasticsearch 8.19.3 servisi; yalniz Docker ic aginda, cluster `green`, OTOBO resmi connection testi basarili.
 - Ozel test aginda HTTP health ve agent giris sayfasi: HTTP 200.
 - OTOBO konsolundan SysConfig rebuild ve daemon status kontrolleri.
 - GPL-3.0 `D724Foundation 0.1.0` OPM paketi:
@@ -152,14 +153,16 @@ Son dogrulama: `2026-07-25`
 - Cache-policy OPM SHA-256 kaniti: TenantGuard 0.5.1 `144045187a4cb25e2b664bafb465e3ad34130585172e6a54e672dcbf9477dc01`, Reporting 0.2.0 `4365369a9dae69a1eeae5860fb6a1ed059752fe384a902456ef9066c061ab5ca`.
 - Search-policy OPM SHA-256 kaniti: TenantGuard 0.6.0 `66ff6f82eac72463fa22579a783e62266ef40047e29a12105b587845b45b4438`, TicketAudit 0.7.1 `6b98185191b32846d8a8e09d213996ebd28df6c49ece80717f0dd8be2418bca8`.
 - Kalici ticket-policy kabulunde `demo.agent` (UserID `47`) kendi `d724-demo` scope'unda yalniz TicketID `9` / `D724AUD20260724001` sonucunu gordu; `CustomerIDRaw` bypass'i reddedildi ve Generic Interface ortak erisimi basarili oldu.
+- Gercek Elasticsearch runtime kabulunde ayni full-text degerli `d724-demo` ve yabanci tenant fixture dokumanlarindan UserID `47` yalniz kendi hit'ini gordu; explicit cross-tenant filter `EMPTY_TENANT_INTERSECTION` ile reddedildi ve fixture'lar silindi.
+- Resmi `Maint::Elasticsearch::Migration --target t` authoritative rebuild'i 2 MariaDB ticket'ini tasidi; refresh sonrasi index count `2`. Elasticsearch aktifken 42 dosya / 859 test yeniden `PASS` oldu.
+- Elasticsearch webservice ID `1`, surumlu YAML ve idempotent konfigurator ile `http://elastic:9200` private host'una sabitlendi; OTOBO `Maint::Elasticsearch::TestConnection` basarili.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen
 
-- Elasticsearch `search` profili opsiyoneldir ve test sunucusunda kapali kalmistir. Final OTOBO invoker request-body kabulunde `demo.agent` yalniz `d724-demo` filtresiyle serialize edilmis, direct unscoped ve unsafe global index sorgulari reddedilmistir; gercek Elasticsearch network/index migration kabul kaniti profil etkinlestirilince tamamlanacaktir.
 - TLS ve genel internet yayini yapilmamistir; test erisimi ozel ag arayuzuyle sinirlidir.
 - GitHub Actions workflow'u depoda bulunur ancak fork icin Actions calistirma politikasi ayrica etkinlestirilmelidir.
-- Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u, D724 cache ve Elasticsearch ticket request boundary tenant scope'a baglidir. Generic Interface operasyon-bazli role/action matrisi ile aktif Elasticsearch runtime/index migration kabul kaniti aciktir.
+- Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u, D724 cache ve aktif Elasticsearch ticket aramasi tenant scope'a baglidir. Generic Interface operasyon-bazli role/action matrisi aciktir.
 - OTOBO paket sema ceviricisi katalog parent'lari icin tanimlanan cok sutunlu foreign key'i ayri kisitlara cevirmektedir. Repository cifti birlikte dogrular; dogrudan DB yazimina karsi composite constraint sertlestirmesi release oncesi acik guvenlik isidir.
 - OTOBO paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
 - Request lifecycle, D724 katalog, tenant-directory ve kapsanan OTOBO ticket/MIME article mutasyonlari atomiktir. Ticket delete/merge/type/service/SLA/pending, Chat article, Generic Interface ve commitment scheduler gibi diger yazim adapter'lari henuz ayni transaction/outbox completeness garantisine sahip degildir.
@@ -176,4 +179,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `SEC-01b-search-runtime/OBS-01`: aktif Elasticsearch uzerinde migration ve iki-tenant network kaniti; Prometheus/OpenTelemetry export'u, dashboard ve alarm teslim kanallari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
+Bir sonraki urun kapisi `OBS-01/SEC-01b-GI`: Prometheus/OpenTelemetry export'u, dashboard ve alarm teslim kanallari; Generic Interface operasyon-bazli action matrisi ve katalog composite DB constraint'i; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.

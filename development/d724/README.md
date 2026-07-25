@@ -30,6 +30,22 @@ Elasticsearch is optional because its image and memory footprint are substantial
 ./Invoke-D724Dev.ps1 Setup -EnableSearch
 ```
 
+Search runtime kurulumu sonrasinda `elasticsearch-webservice.yml` dosyasini ve
+`Configure-Elasticsearch.pl` scriptini web container'ina kopyalayin. Konfigurator,
+yalniz `http://elastic:9200` private servis adresini kabul eder ve var olan invalid
+OTOBO kaydini idempotent bicimde etkinlestirir. Ardindan su resmi kapilari calistirin:
+
+```text
+bin/otobo.Console.pl Admin::Config::Update --setting-name Elasticsearch::Active --value 1 --valid 1
+bin/otobo.Console.pl Maint::Elasticsearch::TestConnection
+bin/otobo.Console.pl Maint::Elasticsearch::Migration --target t
+```
+
+`Accept-ElasticsearchRuntime.pl`, iki gecici tenant dokumaniyla gercek hit/miss
+izolasyonunu test eder ve fixture'lari siler. Regresyon testleri Elasticsearch event'i
+uretebildigi icin tam testten sonra `Migration --target t` yeniden calistirilarak index
+authoritative MariaDB durumundan kurulmalidir.
+
 ## Daily commands
 
 ```powershell
