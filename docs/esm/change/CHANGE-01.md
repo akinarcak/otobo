@@ -1,6 +1,6 @@
 # CHANGE-01 — Change Enablement core
 
-Status: backend implemented in `D724Change` 0.1.1; agent/CAB UI is the next delivery slice.
+Status: backend and agent/CAB workbench implemented in `D724Change` 0.2.1.
 
 The tenant-safe change repository provides numbered change records, standard/normal/emergency types, deterministic impact × likelihood risk scoring, mandatory implementation/test/backout plans, optional tenant-bound service-instance impact, optimistic locking and an auditable lifecycle.
 

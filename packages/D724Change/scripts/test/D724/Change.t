@@ -17,4 +17,5 @@ is($C->Transition(Subject=>$Agent,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedV
 is($C->Get(Subject=>$Other,TenantID=>$TA,UserID=>1,ChangeID=>$I)->{Error},'FORBIDDEN','cross tenant denied');
 is($C->Transition(Subject=>$Agent,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedVersion=>4,ToStatus=>'failed')->{Error},'VERSION_CONFLICT','stale transition denied');
 my$Audit=$Kernel::OM->Get('Kernel::System::D724::Audit')->List(Subject=>$Admin,TenantID=>$TA,Limit=>50);ok(scalar(grep{$_->{ObjectType}eq'change'}@{$Audit->{Data}}),'change audit exists');
+my$Second=$C->Create(%B,Title=>'Second change');ok($Second->{Success},'second change created');my$Many=$C->List(Subject=>$Agent,TenantID=>$TA,UserID=>1);is(scalar@{$Many->{Data}},2,'list preserves all rows while loading details');
 done_testing;
