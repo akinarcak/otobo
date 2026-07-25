@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
- <Name>D724CMDB</Name><Version>0.3.4</Version><Framework>11.1.x</Framework>
+ <Name>D724CMDB</Name><Version>0.4.1</Version><Framework>11.1.x</Framework>
  <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
  <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
  <Description Lang="en">Tenant-isolated configuration items and service graph for CareOnCloud ESM.</Description>
@@ -39,5 +39,5 @@
   </TableCreate>
  </DatabaseInstall>
  <DatabaseUninstall Type="pre"><TableDrop Name="d724_service_instance_ci"/><TableDrop Name="d724_ci_relation"/><TableDrop Name="d724_ci"/><TableDrop Name="d724_ci_type"/><TableDrop Name="d724_service_instance"/><TableDrop Name="d724_service_category_service"/><TableDrop Name="d724_service_category"/></DatabaseUninstall>
- <Filelist><File Permission="644" Location="Kernel/Config/Files/XML/D724CMDB.xml"/><File Permission="644" Location="Kernel/System/D724/CMDB.pm"/><File Permission="644" Location="Kernel/System/D724/CMDBConstraint.pm"/><File Permission="644" Location="Kernel/System/D724/CMDBWorkbook.pm"/><File Permission="644" Location="Kernel/System/D724/CMDBWorkbookImport.pm"/><File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CMDBStatus.pm"/><File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CMDBWorkbookInspect.pm"/><File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CMDBWorkbookImport.pm"/><File Permission="644" Location="scripts/test/D724/CMDB.t"/><File Permission="644" Location="scripts/test/D724/CMDBConstraint.t"/><File Permission="644" Location="scripts/test/D724/CMDBWorkbook.t"/></Filelist>
+ <Filelist><File Permission="644" Location="Kernel/Config/Files/XML/D724CMDB.xml"/><File Permission="644" Location="Kernel/System/D724/CMDB.pm"/><File Permission="644" Location="Kernel/System/D724/CMDBConstraint.pm"/><File Permission="644" Location="Kernel/System/D724/CMDBWorkbook.pm"/><File Permission="644" Location="Kernel/System/D724/CMDBWorkbookImport.pm"/><File Permission="644" Location="Kernel/Modules/AgentD724ServicePortfolio.pm"/><File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentD724ServicePortfolio.tt"/><File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CMDBStatus.pm"/><File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CMDBWorkbookInspect.pm"/><File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CMDBWorkbookImport.pm"/><File Permission="644" Location="scripts/test/D724/CMDB.t"/><File Permission="644" Location="scripts/test/D724/CMDBConstraint.t"/><File Permission="644" Location="scripts/test/D724/CMDBWorkbook.t"/><File Permission="644" Location="scripts/test/D724/CMDBFrontend.t"/></Filelist>
 </otobo_package>

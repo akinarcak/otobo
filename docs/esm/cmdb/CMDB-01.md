@@ -1,6 +1,6 @@
 # CMDB-01 — Service context and configuration graph
 
-Status: implemented in `D724CMDB` 0.3.4.
+Status: implemented in `D724CMDB` 0.4.1.
 
 ## Product model
 
@@ -54,3 +54,4 @@ The default-deny policy version is 1.8.0.
 - `Admin::D724::CMDBStatus --json`: package state, seven tables, and constraint health.
 - `Admin::D724::CMDBWorkbookInspect --file /absolute/path/catalog.xlsx`: performs a read-only XLSX structure, header, commercial-model, required-field, normalization, and count validation. It never creates tenants or claims that workbook brands are CareOnCloud customers.
 - `Admin::D724::CMDBWorkbookImport --file /absolute/path/catalog.xlsx --actor-user-id 1 --demo-data --confirm`: writes only to `demo-*` tenants whose display names start with `[DEMO]`, grants the actor tenant-admin membership, creates prefixed support groups, and idempotently creates categories, services, category links, and service instances. A rerun resumes safely after any interrupted item and creates no duplicates.
+- `AgentD724ServicePortfolio`: tenant-authorized agent portfolio with customer switching, category/service summary, instance model, criticality, support-team ownership and status. All repository reads are guarded by `cmdb.read`; requested tenant IDs are intersected with the authenticated subject before rendering.

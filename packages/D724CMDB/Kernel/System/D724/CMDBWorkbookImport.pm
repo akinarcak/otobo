@@ -3,7 +3,7 @@
 # --
 package Kernel::System::D724::CMDBWorkbookImport;
 use v5.24;use strict;use warnings;use utf8;
-our $VERSION='0.3.4';
+our $VERSION='0.4.1';
 our @ObjectDependencies=('Kernel::System::D724::Catalog','Kernel::System::D724::CMDB','Kernel::System::D724::CMDBWorkbook','Kernel::System::D724::TenantDirectory','Kernel::System::DB','Kernel::System::Group','Kernel::System::Log');
 sub new{return bless{},$_[0]}
 sub Apply{

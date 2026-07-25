@@ -4,7 +4,7 @@
 package Kernel::System::D724::CMDBWorkbook;
 use v5.24;use strict;use warnings;use utf8;
 use Archive::Zip qw(AZ_OK);use XML::LibXML;
-our $VERSION='0.3.4';our @ObjectDependencies=();
+our $VERSION='0.4.1';our @ObjectDependencies=();
 my @Header=('Müşteri Adı','Müşteri Tipi','Servis Modeli','Katalog Referansı','Kırılım 3 (Service)','Kırılım 1 (Service Category)','Kırılım 2 (Support Team)');
 my %Model=('Sabit Kapsam (Teklif Bazlı)'=>'fixed_scope','Unify Pack (Ticket Bazlı, Tüm Katalog)'=>'unify_pack','Unify Pack (Ticket Bazlı, Kota Dahilinde Tüm Katalog)'=>'unify_pack');
 sub new{return bless{},$_[0]}
