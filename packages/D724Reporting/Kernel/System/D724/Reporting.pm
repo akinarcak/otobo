@@ -8,7 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.1';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::DB', 'Kernel::System::D724::TenantDirectory',
     'Kernel::System::D724::TenantCache', 'Kernel::System::D724::TenantGuard', 'Kernel::System::JSON',
@@ -45,6 +45,21 @@ sub Export {
         };
     }
     return { %{$Result}, Content => $Self->_CSV( Data => $Result->{Data} ), ContentType => 'text/csv; charset=utf-8', FileName => $Name };
+}
+
+sub TenantLabelGet {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('REPORTING_DISABLED') if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Reporting::Enabled');
+    return $Self->_Error('TENANT_ID_INVALID') if ( $Param{TenantID} // q{} ) !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}\z}smx;
+    my $Auth = $Self->_Authorize( %Param, Action => 'report.read' );
+    return $Auth if !$Auth->{Success};
+    my $TenantID = $Param{TenantID}; my $Status = 'active';
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    return $Self->_Error('QUERY_FAILED') if !$DB->Prepare(
+        SQL => 'SELECT name FROM d724_tenant WHERE key_name = ? AND status = ?', Bind => [ \$TenantID, \$Status ], Limit => 1,
+    );
+    my ($Name) = $DB->FetchrowArray();
+    return defined $Name ? { Success => 1, Data => { TenantID => $TenantID, Name => $Name } } : $Self->_Error('NOT_FOUND');
 }
 
 sub _Validate {

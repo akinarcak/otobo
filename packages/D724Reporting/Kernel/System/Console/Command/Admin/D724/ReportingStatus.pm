@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.1';
 our @ObjectDependencies = ('Kernel::Config', 'Kernel::System::DB', 'Kernel::System::JSON');
 
 sub Configure {

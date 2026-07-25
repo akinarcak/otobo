@@ -62,6 +62,8 @@ my $AgentA = { ID => 'agent-a', TenantIDs => [$TenantA], RoleBindings => { $Tena
 my $OwnerB = { ID => 'owner-b', TenantIDs => [$TenantB], RoleBindings => { $TenantB => ['service_owner'] } };
 
 my %Range = ( TenantID => $TenantA, From => '2026-07-01', To => '2026-07-31' );
+is( $Reporting->TenantLabelGet( Subject => $OwnerA, TenantID => $TenantA )->{Data}->{Name}, "Report $TenantA", 'authorized report reader gets tenant display label' );
+is( $Reporting->TenantLabelGet( Subject => $OwnerB, TenantID => $TenantA )->{Error}, 'FORBIDDEN', 'tenant display label is tenant isolated' );
 my $Summary = $Reporting->Summary( Subject => $OwnerA, %Range );
 ok( $Summary->{Success}, 'service owner reads tenant operational summary' );
 ok( !$Summary->{Cached}, 'first report query populates tenant cache' );
