@@ -1,6 +1,6 @@
 # CMDB-01 — Service context and configuration graph
 
-Status: implemented in `D724CMDB` 0.1.2.
+Status: implemented in `D724CMDB` 0.2.2.
 
 ## Product model
 
@@ -52,3 +52,4 @@ The default-deny policy version is 1.8.0.
 - `D724/CMDB.t`: category, service instance, schema validation, CI lifecycle, binding, graph, audit, concurrency, tenant isolation, and cycle rejection.
 - `D724/CMDBConstraint.t`: all eight composite tenant constraints and a direct cross-tenant database attack.
 - `Admin::D724::CMDBStatus --json`: package state, seven tables, and constraint health.
+- `Admin::D724::CMDBWorkbookInspect --file /absolute/path/catalog.xlsx`: performs a read-only XLSX structure, header, commercial-model, required-field, normalization, and count validation. It never creates tenants or claims that workbook brands are CareOnCloud customers.

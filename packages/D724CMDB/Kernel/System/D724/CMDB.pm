@@ -4,7 +4,7 @@
 # --
 package Kernel::System::D724::CMDB;
 use v5.24;use strict;use warnings;
-our $VERSION='0.1.2';
+our $VERSION='0.2.2';
 our @ObjectDependencies=('Kernel::Config','Kernel::System::D724::Audit','Kernel::System::D724::TenantGuard','Kernel::System::DB','Kernel::System::JSON');
 my%TypeStatus=map{$_=>1}qw(draft active retired);my%CIStatus=map{$_=>1}qw(planned active maintenance retired);my%Criticality=map{$_=>1}qw(low medium high critical);my%RelationType=map{$_=>1}qw(depends_on runs_on connects_to contains backs_up);my%BindingType=map{$_=>1}qw(supported_by depends_on);my%FieldType=map{$_=>1}qw(text number boolean date datetime ip hostname url select);
 my%ServiceModel=map{$_=>1}qw(fixed_scope unify_pack project);
