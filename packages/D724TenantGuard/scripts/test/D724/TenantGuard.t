@@ -48,6 +48,8 @@ my @Matrix = (
     [ 'auditor reads tenant report',          ['auditor'],       'report.read',     'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
     [ 'service owner exports report',         ['service_owner'], 'report.export',   'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
     [ 'agent cannot export report',           ['agent'],         'report.export',   'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
+    [ 'requester searches own tenant',        ['requester'],     'search.read',     'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'agent cannot search another tenant',   ['agent'],         'search.read',     'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'tenant admin cannot cross tenant',     ['tenant_admin'],  'tenant.manage',  'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'requester cannot cross tenant',        ['requester'],     'case.read',      'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'tenant IDs are case sensitive',        ['agent'],         'case.read',      'Tenant-A', 0, 'DENY_CROSS_TENANT' ],
@@ -64,7 +66,7 @@ for my $Case (@Matrix) {
     );
     is( $Decision->{Allowed}, $Allowed, "$Name: allowed" );
     is( $Decision->{Reason}, $Reason, "$Name: reason" );
-    is( $Decision->{PolicyVersion}, '1.3.0', "$Name: policy version" );
+    is( $Decision->{PolicyVersion}, '1.4.0', "$Name: policy version" );
 }
 
 is(

@@ -9,9 +9,12 @@ use strict;
 use warnings;
 use Kernel::System::Ticket::Article::Backend::MIMEBase ();
 use Kernel::GenericInterface::Operation::Ticket::Common ();
+use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
+use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.6.1';
+our $VERSION = '0.7.1';
+our $D724SearchContext;
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
 my $OriginalTicketSearch      = Kernel::System::Ticket::TicketSearch->can('TicketSearch');
@@ -25,6 +28,8 @@ my $OriginalResponsibleSet    = \&Kernel::System::Ticket::TicketResponsibleSet;
 my $OriginalTicketPrioritySet = \&Kernel::System::Ticket::TicketPrioritySet;
 my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate;
 my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Common->can('CheckAccessPermissions');
+my $OriginalESSearch          = Kernel::System::Elasticsearch->can('TicketSearch');
+my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch::Search->can('PrepareRequest');
 
 {
     no warnings 'redefine'; ## no critic
@@ -49,6 +54,30 @@ my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Com
         return if !$Policy->{Success};
 
         return $OriginalTicketSearch->( $Self, %{ $Policy->{Param} } );
+    };
+
+    *Kernel::System::Elasticsearch::TicketSearch = sub {
+        my ( $Self, %Param ) = @_;
+        my $Context = $Kernel::OM->Get('Kernel::System::D724::SearchPolicy')->ContextCreate(%Param);
+        return if !$Context->{Success};
+        my $Scoped = $Kernel::OM->Get('Kernel::System::D724::TicketPolicy')->SearchScopeApply(
+            Param => \%Param,
+        );
+        return if !$Scoped->{Success};
+        local $D724SearchContext = $Context;
+        return $OriginalESSearch->( $Self, %{ $Scoped->{Param} } );
+    };
+
+    *Kernel::GenericInterface::Invoker::Elasticsearch::Search::PrepareRequest = sub {
+        my ( $Self, %Param ) = @_;
+        my $Filtered = $Kernel::OM->Get('Kernel::System::D724::SearchPolicy')->RequestFilterApply(
+            Data => $Param{Data}, Context => $D724SearchContext,
+        );
+        return {
+            Success => 0, ErrorMessage => 'D724 Elasticsearch search denied: ' . ( $Filtered->{Reason} // 'UNKNOWN' ), Data => {},
+        } if !$Filtered->{Success};
+        $Param{Data} = $Filtered->{Data};
+        return $OriginalESPrepareRequest->( $Self, %Param );
     };
 
     my $Wrap = sub {

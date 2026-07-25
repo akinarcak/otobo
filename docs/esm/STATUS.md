@@ -15,7 +15,7 @@ Son dogrulama: `2026-07-25`
   - `Admin::D724::FoundationStatus --json` tanilama komutu,
   - paket deployment kontrolu `OK`,
   - iki test dosyasi, 15 test, sonuc `PASS`.
-- GPL-3.0 `D724TenantGuard 0.5.1` / policy contract `1.3.0` OPM paketi:
+- GPL-3.0 `D724TenantGuard 0.6.0` / policy contract `1.4.0` OPM paketi:
   - varsayilan-reddet action/role matrisi,
   - exact ve buyuk/kucuk harf duyarli tenant siniri,
   - query'ler icin fail-closed `ScopeGet`,
@@ -26,7 +26,8 @@ Son dogrulama: `2026-07-25`
   - `auditor`, `service_owner` ve `tenant_admin` icin tenant-bound `report.read`/`report.export`; agent/requester default-deny,
   - kalici-backend kullanan `D724::TenantCache`: her operasyonda aktif tenant + merkezi policy, hash'li tenant namespace'i, TTL ust siniri ve tenant-izole delete/cleanup,
   - `Admin::D724::TenantCacheStatus --json` operasyon kapisi,
-  - bes test dosyasi, 144 test, sonuc `PASS`,
+  - tenant-bound `search.read` action'i ve tum bilinen tenant rollerinde acik grant,
+  - bes test dosyasi, 150 test, sonuc `PASS`,
   - ayni tenant karari `ALLOW_ROLE_ACTION`, capraz tenant karari `DENY_CROSS_TENANT`.
 - GPL-3.0 `D724TenantDirectory 0.2.1` OPM paketi:
   - kalici tenant ve agent-role membership tablolari,
@@ -69,7 +70,7 @@ Son dogrulama: `2026-07-25`
   - temel katman olarak tenant-directory paketine statik bagimlilik olmadan subject veya opsiyonel directory-derived authorization,
   - zincir, head, sequence gap ve event hash dogrulayan `Verify` API'si,
   - iki test dosyasi, 29 test, sonuc `PASS`.
-- GPL-3.0 `D724TicketAudit 0.6.1` OPM paketi:
+- GPL-3.0 `D724TicketAudit 0.7.1` OPM paketi:
   - resmi `Ticket::CustomModule` extension noktasi ile cekirdek dosya fork'u olmadan repository wrapping,
   - her OTOBO ticket icin immutable `d724_ticket_scope` tenant binding ve monoton mutation version'i,
   - ticket create ile title/queue/customer/lock/state/owner/responsible/priority mutasyonlarinda domain+scope+audit tek transaction,
@@ -80,7 +81,10 @@ Son dogrulama: `2026-07-25`
   - status kapisinda `UnboundTickets=0`, `InvalidTenantTickets=0`,
   - sorgu-oncesi tenant filtresi, `CustomerIDRaw` bypass reddi ve immutable-scope tekil okuma,
   - Generic Interface get/history/update ortak erisiminde OTOBO izni + tenant izni birlikte zorunlu,
-  - uc test dosyasi / 84 test `PASS`.
+  - Elasticsearch TicketSearch oncesinde trusted directory/customer context ve merkezi `search.read` karari,
+  - final ortak Elasticsearch invoker'inda `CustomerID` tenant filter'i; direct unscoped ve desteklenmeyen global index sorgularinda fail-closed,
+  - status kapisinda search contract/index/field/unscoped davranis raporu,
+  - dort test dosyasi / 103 test `PASS`.
 - GPL-3.0 `D724Catalog 0.5.2`, `D724Request 0.4.6` ve `D724Commitment 0.3.8` entegrasyonu:
   - tenant-local commitment policy referansli katalog workflow'u,
   - request acilisinda immutable policy snapshot ve otomatik commitment baslatma,
@@ -131,7 +135,7 @@ Son dogrulama: `2026-07-25`
   - JSON ve RFC4180-benzeri CSV; CR/LF temizleme ve `= + - @` spreadsheet formula neutralization,
   - her cache get/set oncesi yeniden yetkilendirme, tenant namespace'li 60 saniye aggregate cache ve schema-version'li logical key,
   - gercek demo kabulunde `10` request, `24` commitment, `2` breached; JSON/CSV PII-minimize ve cross-tenant export `FORBIDDEN`.
-- On bir D724 paketinde toplam 41 test dosyasi ve 834 test birlikte `PASS`.
+- On bir D724 paketinde toplam 42 test dosyasi ve 859 test birlikte `PASS`.
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
@@ -146,15 +150,16 @@ Son dogrulama: `2026-07-25`
 - Daemon-policy OPM SHA-256 kaniti: TenantGuard 0.3.0 `590308bc72229b505d4a3b63daf04300983242150c630bed115fecafdda89962`, Commitment 0.5.0 `96091e6586fdc9f38afcd21dae66574ad17074b9a66603e0a84fdc82420e5f83`, Webhook 0.3.0 `bdd5df604e517769e41cd00b522add91f15f3cd667fda2d2971f9b0d0de8d8c5`.
 - Reporting-policy OPM SHA-256 kaniti: TenantGuard 0.4.0 `c93d399a40a9d567660db9eaa91f6367d0f73e9171b2873d655ae78740f5a8bf`, Reporting 0.1.0 `4215ab125e2c531c131e839ef357f5bde0b8b7c1a24ef3e64fcaa5285fd7be57`.
 - Cache-policy OPM SHA-256 kaniti: TenantGuard 0.5.1 `144045187a4cb25e2b664bafb465e3ad34130585172e6a54e672dcbf9477dc01`, Reporting 0.2.0 `4365369a9dae69a1eeae5860fb6a1ed059752fe384a902456ef9066c061ab5ca`.
+- Search-policy OPM SHA-256 kaniti: TenantGuard 0.6.0 `66ff6f82eac72463fa22579a783e62266ef40047e29a12105b587845b45b4438`, TicketAudit 0.7.1 `6b98185191b32846d8a8e09d213996ebd28df6c49ece80717f0dd8be2418bca8`.
 - Kalici ticket-policy kabulunde `demo.agent` (UserID `47`) kendi `d724-demo` scope'unda yalniz TicketID `9` / `D724AUD20260724001` sonucunu gordu; `CustomerIDRaw` bypass'i reddedildi ve Generic Interface ortak erisimi basarili oldu.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen
 
-- Elasticsearch `search` profili opsiyoneldir. Test sunucusundaki Docker CDN baglantisi buyuk image katmaninda tekrar tekrar sifirlandigi icin temel kurulum aramadan dogrulanmistir.
+- Elasticsearch `search` profili opsiyoneldir ve test sunucusunda kapali kalmistir. Final OTOBO invoker request-body kabulunde `demo.agent` yalniz `d724-demo` filtresiyle serialize edilmis, direct unscoped ve unsafe global index sorgulari reddedilmistir; gercek Elasticsearch network/index migration kabul kaniti profil etkinlestirilince tamamlanacaktir.
 - TLS ve genel internet yayini yapilmamistir; test erisimi ozel ag arayuzuyle sinirlidir.
 - GitHub Actions workflow'u depoda bulunur ancak fork icin Actions calistirma politikasi ayrica etkinlestirilmelidir.
-- Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u ve D724 cache erisimi tenant scope'a baglidir. Generic Interface operasyon-bazli role/action ve Elasticsearch adapter'i henuz merkezi policy'ye tam baglanmamistir.
+- Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u, D724 cache ve Elasticsearch ticket request boundary tenant scope'a baglidir. Generic Interface operasyon-bazli role/action matrisi ile aktif Elasticsearch runtime/index migration kabul kaniti aciktir.
 - OTOBO paket sema ceviricisi katalog parent'lari icin tanimlanan cok sutunlu foreign key'i ayri kisitlara cevirmektedir. Repository cifti birlikte dogrular; dogrudan DB yazimina karsi composite constraint sertlestirmesi release oncesi acik guvenlik isidir.
 - OTOBO paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
 - Request lifecycle, D724 katalog, tenant-directory ve kapsanan OTOBO ticket/MIME article mutasyonlari atomiktir. Ticket delete/merge/type/service/SLA/pending, Chat article, Generic Interface ve commitment scheduler gibi diger yazim adapter'lari henuz ayni transaction/outbox completeness garantisine sahip degildir.
@@ -171,4 +176,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `SEC-01b-search/OBS-01`: Elasticsearch zorunlu tenant filter'i; Prometheus/OpenTelemetry export'u, dashboard ve alarm teslim kanallari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
+Bir sonraki urun kapisi `SEC-01b-search-runtime/OBS-01`: aktif Elasticsearch uzerinde migration ve iki-tenant network kaniti; Prometheus/OpenTelemetry export'u, dashboard ve alarm teslim kanallari; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.

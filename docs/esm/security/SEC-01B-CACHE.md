@@ -5,7 +5,7 @@ adapter'i tamamlanana kadar aciktir.
 
 ## Guvenlik kontrati
 
-`D724TenantGuard 0.5.1` icindeki `D724::TenantCache`, D724 domain kodunun OTOBO
+`D724TenantGuard 0.5.1` ile eklenen ve `0.6.0` icinde korunan `D724::TenantCache`, D724 domain kodunun OTOBO
 cache'ine dogrudan tenant-belirsiz key yazmasini engelleyen ortak adapter'dir.
 Her `Set`, `Get`, `Delete` ve tenant-geneli `CleanUp` islemi:
 
@@ -49,6 +49,6 @@ invalidation'i, inactive tenant ile disabled adapter fail-closed davranisini tes
 `Accept-TenantCache.pl` ayni matrisi calisan MariaDB ve persistent OTOBO backend'i
 uzerinde gecici tenant fixture'lariyla calistirip temizler.
 
-Hedefli regresyon 6 dosya / 172 test, tam D724 regresyonu 41 dosya / 834 test ile
+Hedefli regresyon 6 dosya / 172 test, guncel tam D724 regresyonu 42 dosya / 859 test ile
 `PASS` sonucudur. Canli kabul `namespace_isolated`, `cross_tenant_denied` ve
 `cleanup_isolated` alanlarini `true` dondurmustur.

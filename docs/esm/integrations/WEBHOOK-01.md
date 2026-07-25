@@ -118,6 +118,6 @@ attempt/replay/lifetime sayaclari `1/1/4` ve tek audit olayi dogrulandi.
 `Accept-WebhookSubscription.pl` gercek canonical HTTP uzerinde requester create
 `403`, tanimsiz endpoint `422`, tenant-admin create/list/get/disable
 `201/200/200/200` ve stale update `409` kanitladi. Audit sequence `116`, shared
-outbox `74` ile tek kez teslim edildi. Son paketlerle tum D724 regresyonu 41
-dosya ve 834 assertion olarak birlikte gecti; web, daemon, MariaDB ve Redis
+outbox `74` ile tek kez teslim edildi. Son paketlerle tum D724 regresyonu 42
+dosya ve 859 assertion olarak birlikte gecti; web, daemon, MariaDB ve Redis
 servisleri saglikli kaldi.

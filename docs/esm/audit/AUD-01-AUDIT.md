@@ -45,7 +45,7 @@ Customer submit, approval, first-response ve task update girisleri production `A
 
 ## Kanit
 
-- Paketler: `D724Audit 0.2.0`, `D724TenantDirectory 0.2.1`, `D724Catalog 0.5.2`, `D724Request 0.4.6`, `D724Commitment 0.3.8`, `D724TicketAudit 0.6.1`.
+- Paketler: `D724Audit 0.2.0`, `D724TenantDirectory 0.2.1`, `D724Catalog 0.5.2`, `D724Request 0.4.6`, `D724Commitment 0.3.8`, `D724TicketAudit 0.7.1`.
 - MariaDB migration kaniti: `d724_audit_dedupe(tenant_id, dedupe_key)` unique index'i mevcut.
 - Audit + Request: 5 dosya / 80 test `PASS`.
 - Tum D724 regresyonu: 25 dosya / 469 test `PASS`.

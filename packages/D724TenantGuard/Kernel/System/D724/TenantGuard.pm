@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.5.1';
+our $VERSION = '0.6.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -19,22 +19,22 @@ our @ObjectDependencies = (
 
 my %RoleActions = (
     requester => {
-        map { $_ => 1 } qw(catalog.read case.create case.read case.comment)
+        map { $_ => 1 } qw(catalog.read case.create case.read case.comment search.read)
     },
     agent => {
-        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign)
+        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign search.read)
     },
     service_owner => {
-        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read report.read report.export)
+        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read report.read report.export search.read)
     },
     auditor => {
-        map { $_ => 1 } qw(catalog.read case.read audit.read report.read report.export)
+        map { $_ => 1 } qw(catalog.read case.read audit.read report.read report.export search.read)
     },
     automation => {
-        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign automation.execute)
+        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign automation.execute search.read)
     },
     tenant_admin => {
-        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage automation.execute report.read report.export)
+        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage automation.execute report.read report.export search.read)
     },
 );
 

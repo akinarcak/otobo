@@ -4,7 +4,7 @@ Durum: ticket read/search alt kapisi tamamlandi (`2026-07-24`). Genel `SEC-01b` 
 
 ## Garanti
 
-`D724TicketAudit 0.6.1`, OTOBO'nun resmi `Ticket::CustomModule` uzatma noktasinda merkezi `D724::TicketPolicy` servisini yukler.
+`D724TicketAudit 0.7.1`, OTOBO'nun resmi `Ticket::CustomModule` uzatma noktasinda merkezi `D724::TicketPolicy` servisini yukler.
 
 - Agent baglami aktif `d724_tenant_agent_role` kayitlarindan, customer baglami aktif customer-company tenant'inden uretilir.
 - `TicketSearch` sorgusu calismadan once izinli tenant listesi `CustomerID` predikati olarak eklenir. Cagiranin filtresi izinli tenant'larla kesistirilir; bos kesisim sonuc dondurmez.
@@ -26,4 +26,4 @@ Filtre sonuctan sonra uygulanmaz. Bu sayede `Limit`, siralama ve `COUNT` altinda
 
 ## Acik kapsam
 
-Generic Interface icin OAuth client kimligi, operasyon-bazli role/action matrisi, rate limit, idempotency ve surumlu `/api/v1` kontrati `API-01` kapsamindadir. Daemon actor baglami `SEC-01B-DAEMON.md`, operasyon raporu `REPORT-01.md` ile tamamlanmistir. Elasticsearch adapter'i, cache key tenant namespace'i ve ticket detay UI direct-link savunmasinin genis kabul matrisi genel `SEC-01b` icinde aciktir.
+Generic Interface icin OAuth client kimligi, rate limit, idempotency ve surumlu `/api/v1` kontrati `API-01` kapsamindadir. Daemon actor baglami `SEC-01B-DAEMON.md`, operasyon raporu `REPORT-01.md`, cache namespace'i `SEC-01B-CACHE.md` ve Elasticsearch request boundary `SEC-01B-SEARCH.md` ile tamamlanmistir. Generic Interface operasyon-bazli role/action matrisi, aktif Elasticsearch runtime/index migration kaniti ve ticket detay UI direct-link genis kabul matrisi genel `SEC-01b` icinde aciktir.

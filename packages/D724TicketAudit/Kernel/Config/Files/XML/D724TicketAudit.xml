@@ -10,6 +10,16 @@
         <Navigation>Core::D724::Security</Navigation>
         <Value><Item ValueType="Checkbox">1</Item></Value>
     </Setting>
+    <Setting Name="D724::SearchPolicy::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Requires a trusted tenant context and mandatory filter for every D724 Elasticsearch query.</Description>
+        <Navigation>Core::D724::Security</Navigation>
+        <Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="D724::SearchPolicy::TenantSafeIndexes" Required="1" Valid="1">
+        <Description Translatable="1">Elasticsearch indexes whose documents and final query filter carry the D724 tenant discriminator.</Description>
+        <Navigation>Core::D724::Security</Navigation>
+        <Value><Array><Item>ticket</Item></Array></Value>
+    </Setting>
     <Setting Name="Ticket::CustomModule###724-D724TicketAudit" Required="1" Valid="1">
         <Description Translatable="1">Loads the D724 transaction and audit wrapper for OTOBO ticket repository mutations.</Description>
         <Navigation>Core::Ticket</Navigation>

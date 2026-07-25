@@ -59,4 +59,4 @@ adini `=Formula Safe` secerek CSV neutralization'i ve baska tenant etiketi ile
 request'inin export edilmedigini dogruladi.
 
 Ilk cagrinin cache miss, ikincinin hit olmasi ve iki tenantin ayni logical key ile
-ayri deger okumasini da kapsayan tam D724 regresyonu 41 dosya ve 834 assertion ile gecti.
+ayri deger okumasini da kapsayan tam D724 regresyonu 42 dosya ve 859 assertion ile gecti.
