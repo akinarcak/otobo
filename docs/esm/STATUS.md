@@ -17,7 +17,7 @@ Son dogrulama: `2026-07-25`
   - paket deployment kontrolu `OK`,
   - CareOnCloud ESM ürün adı, resmi Careon logo varlıkları ve `Hizmet Bulutta, Kontrol Sizde.` sloganı,
   - iki test dosyası dahil birleşik regresyonda sonuç `PASS`.
-- GPL-3.0 `D724TenantGuard 0.8.0` / policy contract `1.6.0` OPM paketi:
+- GPL-3.0 `D724TenantGuard 0.9.0` / policy contract `1.7.0` OPM paketi:
   - varsayilan-reddet action/role matrisi,
   - exact ve buyuk/kucuk harf duyarli tenant siniri,
   - query'ler icin fail-closed `ScopeGet`,
@@ -31,6 +31,16 @@ Son dogrulama: `2026-07-25`
   - tenant-bound `search.read` action'i ve tum bilinen tenant rollerinde acik grant,
   - beş test dosyası, 168 test, sonuç `PASS`,
   - ayni tenant karari `ALLOW_ROLE_ACTION`, capraz tenant karari `DENY_CROSS_TENANT`.
+- GPL-3.0 `D724SCIM 0.1.5` OPM paketi:
+  - mevcut tenant-bound bcrypt API client ve digest-only bearer token altyapisini kullanan `scim.provision` yetkisi,
+  - ajan ve musteri hesabi create/get/list/replace/deprovision/reactivate yasam dongusu,
+  - immutable `externalId`/`userName`, weak ETag ve zorunlu `If-Match` optimistic concurrency,
+  - SCIM grup uyeliginden tenant rol uzlastirmasi; deprovision'da tum tenant rollerini revoke ve reactivation'da restore,
+  - baska aktif tenant uyeligi olan ajanin global hesabini kapatmama,
+  - tenant ile birlikte baglanan tum user/group/member sorgulari ve cross-tenant `403`, bilinmeyen kaynak `404`,
+  - integration actor ile transaction-atomic audit zinciri,
+  - canonical `/otobo/scim/v2` Users/Groups/discovery REST tasiyicisi, bounded `eq` filtre ve SCIM hata medyasi,
+  - gercek MariaDB kabulunde 29/29 test `PASS`; public HTTPS kimliksiz istek `401 application/scim+json`.
 - GPL-3.0 `D724TenantDirectory 0.2.1` OPM paketi:
   - kalici tenant ve agent-role membership tablolari,
   - directory-derived agent policy context'i,

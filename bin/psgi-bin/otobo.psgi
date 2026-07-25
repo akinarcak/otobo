@@ -768,6 +768,43 @@ my $OTOBOApp = builder {
         };
     };
 
+    # CareOnCloud SCIM 2.0 canonical mount. Authentication, tenant isolation,
+    # validation and lifecycle behavior remain package-owned by D724SCIM.
+    mount '/scim/v2' => builder {
+
+        enable $RedirectToHTTPS;
+
+        enable 'OTOBO::PerformanceLog',
+            interface => 'Public';
+
+        enable $CheckPublicInterfaceMiddleware;
+
+        my $PublicSCIMApp = Kernel::System::Web::InterfacePublic->new(
+            Debug => 0,
+        )->to_app;
+
+        sub {
+            my ($Env) = @_;
+            my %SCIMEnv = %{$Env};
+            my $Path = $SCIMEnv{PATH_INFO} // q{};
+            my ( $Route, $ID );
+            if ( $Path eq '/ServiceProviderConfig' ) { $Route = 'service_provider_config' }
+            elsif ( $Path eq '/Schemas' )            { $Route = 'schemas' }
+            elsif ( $Path eq '/ResourceTypes' )      { $Route = 'resource_types' }
+            elsif ( $Path eq '/Users' )              { $Route = 'users' }
+            elsif ( $Path =~ m{\A/Users/([a-f0-9]{32})\z}smx ) { ( $Route, $ID ) = ( 'user', $1 ) }
+            elsif ( $Path eq '/Groups' )             { $Route = 'groups' }
+            elsif ( $Path =~ m{\A/Groups/([a-f0-9]{32})\z}smx ) { ( $Route, $ID ) = ( 'group', $1 ) }
+            else { $Route = 'not_found' }
+
+            my $OriginalQuery = $SCIMEnv{QUERY_STRING} // q{};
+            $SCIMEnv{QUERY_STRING} = join '&', grep { length }
+                'Action=PublicD724SCIM', "Route=$Route", defined $ID ? "id=$ID" : q{}, $OriginalQuery;
+            $SCIMEnv{PATH_INFO} = q{};
+            return $PublicSCIMApp->(\%SCIMEnv);
+        };
+    };
+
     # redirect to Frontend::DefaultInterface when in doubt
     mount '/' => $RedirectOtoboApp;
 };

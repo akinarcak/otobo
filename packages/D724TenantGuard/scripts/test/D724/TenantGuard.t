@@ -47,6 +47,8 @@ my @Matrix = (
     [ 'tenant admin manages own tenant',      ['tenant_admin'],  'tenant.manage',  'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
     [ 'tenant admin manages identity trust',  ['tenant_admin'],  'identity.manage','tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
     [ 'agent cannot manage identity trust',   ['agent'],         'identity.manage','tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
+    [ 'tenant admin provisions SCIM',         ['tenant_admin'],  'scim.provision','tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'agent cannot provision SCIM',          ['agent'],         'scim.provision','tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
     [ 'auditor reads tenant report',          ['auditor'],       'report.read',     'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
     [ 'service owner exports report',         ['service_owner'], 'report.export',   'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
     [ 'agent cannot export report',           ['agent'],         'report.export',   'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
@@ -74,7 +76,7 @@ for my $Case (@Matrix) {
     );
     is( $Decision->{Allowed}, $Allowed, "$Name: allowed" );
     is( $Decision->{Reason}, $Reason, "$Name: reason" );
-    is( $Decision->{PolicyVersion}, '1.6.0', "$Name: policy version" );
+    is( $Decision->{PolicyVersion}, '1.7.0', "$Name: policy version" );
 }
 
 is(
