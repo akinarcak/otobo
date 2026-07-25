@@ -4,4 +4,14 @@
         <Description Translatable="1">Enable the CareOnCloud federated identity trust boundary.</Description>
         <Navigation>Core::D724</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
     </Setting>
+    <Setting Name="D724::Identity::OIDC::RedirectURI" Required="1" Valid="1">
+        <Description Translatable="1">Exact HTTPS callback URI for each CareOnCloud OIDC login surface.</Description>
+        <Navigation>Core::D724</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="agent">https://esm.arcak.net/otobo/index.pl?Action=Login</Item>
+                <Item Key="customer">https://esm.arcak.net/otobo/customer.pl?Action=Login</Item>
+            </Hash>
+        </Value>
+    </Setting>
 </otobo_config>

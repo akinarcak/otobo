@@ -29,4 +29,4 @@
 
 ## Sonraki kapı
 
-`SEC-03b-web`, bu çekirdeği agent/customer login ve callback controller'larına bağlayacak; gerçek bir dış IdP ile uçtan uca kabul ve logout/session politikası ekleyecektir. `SEC-03c`, SCIM 2.0 User/Group provisioning, deprovisioning ve tenant membership reconciliation ekleyecektir. Bunlar tamamlanmadan ürün “SSO/SCIM hazır” olarak pazarlanmaz.
+`SEC-03b-idp`, tamamlanan agent/customer web adapter'ini gerçek bir dış IdP ile uçtan uca doğrulayacak ve logout/session politikası ekleyecektir. `SEC-03c`, SCIM 2.0 User/Group provisioning, deprovisioning ve tenant membership reconciliation ekleyecektir. Bunlar tamamlanmadan ürün “SSO/SCIM hazır” olarak pazarlanmaz.

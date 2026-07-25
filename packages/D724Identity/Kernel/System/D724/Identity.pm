@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 our @ObjectDependencies = qw(Kernel::Config Kernel::System::DB Kernel::System::D724::Audit Kernel::System::D724::TenantGuard Kernel::System::JSON Kernel::System::Log);
 
 my %Role = map { $_ => 1 } qw(requester agent service_owner auditor tenant_admin);

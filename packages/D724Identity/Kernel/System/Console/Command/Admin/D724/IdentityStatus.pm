@@ -12,7 +12,7 @@ sub Run {
     my %Tables=map {$_=>($T{$_}?1:0)} qw(d724_identity_provider d724_federated_identity d724_oidc_flow);
     my $Enabled=$Kernel::OM->Get('Kernel::Config')->Get('D724::Identity::Enabled')?1:0;
     my $Success=$Enabled && !grep {!$Tables{$_}} keys %Tables;
-    my $Data={Success=>$Success?1:0,Enabled=>$Enabled,Package=>'D724Identity',Version=>'0.2.0',Tables=>\%Tables};
+    my $Data={Success=>$Success?1:0,Enabled=>$Enabled,Package=>'D724Identity',Version=>'0.3.0',Tables=>\%Tables};
     if($Self->GetOption('json')){$Self->Print($Kernel::OM->Get('Kernel::System::JSON')->Encode(Data=>$Data,SortKeys=>1,Pretty=>1))}
     else{$Self->Print('CareOnCloud identity: '.($Success?'OK':'FAILED')."\n")}
     return $Success?$Self->ExitCodeOk():$Self->ExitCodeError();

@@ -16,6 +16,8 @@ my$Flow=$F->Begin(TenantID=>$T,ProviderKey=>'oidc',BrowserBinding=>'b'x40,Return
 is($Flow->{Data}->{CodeChallenge},encode_base64url(sha256($Flow->{Data}->{CodeVerifier})),'PKCE challenge is exact S256');
 $DB->Prepare(SQL=>'SELECT state_digest,nonce_digest,verifier_digest,status FROM d724_oidc_flow WHERE tenant_id=?',Bind=>[\$T],Limit=>1);my@Stored=$DB->FetchrowArray();
 unlike(join('|',@Stored),qr/\Q$Flow->{Data}->{State}\E|\Q$Flow->{Data}->{Nonce}\E|\Q$Flow->{Data}->{CodeVerifier}\E/,'database stores only flow secret digests');is($Stored[3],'pending','flow starts pending');
+is($F->ExchangeContextGet(State=>$Flow->{Data}->{State},BrowserBinding=>'wrong browser binding value xxxxx',CodeVerifier=>$Flow->{Data}->{CodeVerifier})->{Error},'BROWSER_BINDING_MISMATCH','exchange context rejects wrong browser binding');
+my$Context=$F->ExchangeContextGet(State=>$Flow->{Data}->{State},BrowserBinding=>'b'x40,CodeVerifier=>$Flow->{Data}->{CodeVerifier});ok($Context->{Success},'verified pending exchange context is available');is($Context->{Data}->{TenantID},$T,'exchange context tenant comes from stored flow');is($Context->{Data}->{ProviderKey},'oidc','exchange context provider comes from stored flow');
 my$Provider=$I->ProviderRouteGetByKey(TenantID=>$T,ProviderKey=>'oidc');my$Metadata={issuer=>$Issuer,authorization_endpoint=>"$Issuer/authorize",token_endpoint=>"$Issuer/token",jwks_uri=>"$Issuer/jwks",id_token_signing_alg_values_supported=>[qw(RS256 HS256)]};
 ok($F->MetadataValidate(Provider=>$Provider,Metadata=>$Metadata)->{Success},'same-origin HTTPS metadata and asymmetric algorithm accepted');
 is($F->MetadataValidate(Provider=>$Provider,Metadata=>{%$Metadata,jwks_uri=>'https://evil.invalid/jwks'})->{Error},'JWKS_URI_INVALID','cross-origin JWKS rejected');

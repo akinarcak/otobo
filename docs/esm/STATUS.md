@@ -140,7 +140,7 @@ Son dogrulama: `2026-07-25`
   - JSON ve RFC4180-benzeri CSV; CR/LF temizleme ve `= + - @` spreadsheet formula neutralization,
   - her cache get/set oncesi yeniden yetkilendirme, tenant namespace'li 60 saniye aggregate cache ve schema-version'li logical key,
   - gercek demo kabulunde `10` request, `24` commitment, `2` breached; JSON/CSV PII-minimize ve cross-tenant export `FORBIDDEN`.
-- GPL-3.0 `D724Identity 0.2.0` OPM paketi:
+- GPL-3.0 `D724Identity 0.3.0` OPM paketi:
   - exact issuer/audience trust route'undan tenant türetme; token `tenant_id` claim'ini yönlendirmede yok sayma,
   - yalnız doğrulanmış OIDC/SAML adaptör sonucu kabulü; HTTPS issuer ve email-domain allow-list'i,
   - bounded grup→tenant rol eşlemesi, varsayılan requester ve bilinmeyen gruplarda yetki vermeme,
@@ -148,8 +148,10 @@ Son dogrulama: `2026-07-25`
   - provider/ilk subject link mutation'ı ile audit olayının transaction-atomic yazımı,
   - digest-only state/nonce/verifier saklama, PKCE S256 ve browser binding; yerel dönüş yolu ve tek-kullanımlık callback,
   - aynı-origin HTTPS discovery/JWKS ve yalnız RS256/ES256; OTOBO yerleşik JWKS/imza doğrulayıcısına delegasyon,
-  - dört test dosyası / 39 test `PASS` ve canlı status `Success=1`.
-- On üç CareOnCloud paketinin 50 dosyalık birleşik regresyonu `984` test ile `PASS`; mevcut OTOBO OAuth2 testleriyle birlikte 57 dosya / `4010` test `PASS` (`2026-07-25`).
+  - agent/customer surface bağlı web adapter'i, Secure/HttpOnly/SameSite=Lax flow cookie'si ve exact OIDC profile/redirect doğrulaması,
+  - kurulumdaki mevcut DB/LDAP auth backend'ini koruyan fallback; callback sonrası preprovision ve aktif tenant üyeliği kapısı,
+  - altı test dosyası / 71 test `PASS`, canlı agent/customer parola oturumları `302→200` ve status `Success=1`.
+- On üç CareOnCloud paketinin 52 dosyalık birleşik regresyonu `1016` test ile `PASS`; mevcut OTOBO OAuth2 testleriyle birlikte 59 dosya / `4042` test `PASS` (`2026-07-25`).
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
@@ -168,6 +170,7 @@ Son dogrulama: `2026-07-25`
 - SEC-01b yayın OPM SHA-256 kanıtı: TenantGuard 0.7.0 `e2c4f4d7b77f4588f4950aa7bf785abcc3ba1705eb0427a177b986ffae2cd5e2`, TicketAudit 0.8.1 `31792e68bc819ae70cfe843953260648d0f8f54187a5c8b9ef7ecbf4d1f33cb8`, Catalog 0.6.1 `867cfa4fffd094a74bc98ac4ea11675a7429db974c6ee39c8d3d00433d9bd986`.
 - SEC-03a yayın OPM SHA-256 kanıtı: TenantGuard 0.8.0 `31e8de399198caa81102d989319db382c609e540aefe3e58446c82265605f975`, Identity 0.1.1 `067822c1d5b8852c8351fa36525b48b613014e2bf76cef698067c1b2f0a60a8d`.
 - SEC-03b-core yayın OPM SHA-256 kanıtı: Identity 0.2.0 `38e7ae451fdd9b81eaece5019998616d8784a7f2fd52f69cfa95b609efef72ac`.
+- SEC-03b-web-core yayın OPM SHA-256 kanıtı: Identity 0.3.0 `74f8ea05d04ddf7a8753a9c4ad8e2c90f022a2ac703f996f68ebc7432d345039`.
 - Kalici ticket-policy kabulunde `demo.agent` (UserID `47`) kendi `d724-demo` scope'unda yalniz TicketID `9` / `D724AUD20260724001` sonucunu gordu; `CustomerIDRaw` bypass'i reddedildi ve Generic Interface ortak erisimi basarili oldu.
 - Gercek Elasticsearch runtime kabulunde ayni full-text degerli `d724-demo` ve yabanci tenant fixture dokumanlarindan UserID `47` yalniz kendi hit'ini gordu; explicit cross-tenant filter `EMPTY_TENANT_INTERSECTION` ile reddedildi ve fixture'lar silindi.
 - Resmi `Maint::Elasticsearch::Migration --target t` authoritative rebuild'i 2 MariaDB ticket'ini tasidi; refresh sonrasi index count `2`. Elasticsearch aktifken 42 dosya / 859 test yeniden `PASS` oldu.
@@ -200,4 +203,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki ürün kapısı `SEC-03b-web/SEC-03c` ve `OBS-01b`: OIDC agent/customer controller'ları, gerçek IdP kabulü, SCIM yaşam döngüsü; OpenTelemetry export'u, operasyon dashboard'u ve alarm teslim kanalları. Buna paralel kalan ticket/Chat/SLA adapter'ları, transactional outbox ve immutable dış arşivdir.
+Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış IdP kabulü, logout/session politikası ve SCIM yaşam döngüsü; OpenTelemetry export'u, operasyon dashboard'u ve alarm teslim kanalları. Buna paralel kalan ticket/Chat/SLA adapter'ları, transactional outbox ve immutable dış arşivdir.

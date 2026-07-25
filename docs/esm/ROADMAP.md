@@ -39,6 +39,7 @@
 - [x] `SEC-03a`: exact issuer/audience tenant route'u, doğrulanmış-claim sözleşmesi, domain ve grup→rol allow-list'i, immutable subject/login bağı (`2026-07-25`).
 - [x] `SEC-03b-core`: OIDC state/nonce, PKCE S256, browser binding, aynı-origin HTTPS metadata/JWKS politikası, yerleşik imza doğrulayıcı delegasyonu ve tek-kullanımlık callback (`2026-07-25`).
 - [x] `SEC-03b-pkce`: OTOBO OAuth2 authorization URL ve token exchange katmanlarında RFC 7636 S256 challenge/verifier taşıma ve fail-closed doğrulama (`2026-07-25`).
+- [x] `SEC-03b-web-core`: tenant/provider/surface bağlı agent-customer auth adapter'i, güvenli flow cookie'si, mevcut auth backend fallback'i, preprovision ve aktif tenant üyeliği kapısı (`2026-07-25`).
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
 
@@ -91,7 +92,7 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 ## Ilk backlog sirasi
 
 1. `AUD-01b-core`: kalan ticket delete/merge/type/service/SLA/pending ve Chat article, Generic Interface/SLA scheduler mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
-2. `SEC-03b-web/SEC-03c`: OIDC agent/customer web controller'ları ve gerçek IdP kabulü; ardından SCIM 2.0 yaşam döngüsü ve membership reconciliation
+2. `SEC-03b-idp/SEC-03c`: gerçek dış IdP uçtan uca kabulü ve logout/session politikası; ardından SCIM 2.0 yaşam döngüsü ve membership reconciliation
 3. `API-01d-ops` (tamamlandi, 2026-07-25): bounded-cardinality route latency/error metrikleri, 168 saat retention, webhook throughput/backlog/dead-letter alarmlari ve 12 bagimsiz writer concurrent kabul testi
 4. `OBS-01b`: operasyon dashboard'u, OpenTelemetry export'u ve alarm teslim kanallari (Prometheus cekirdegi tamamlandi)
 5. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari

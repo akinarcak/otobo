@@ -9,7 +9,7 @@ use Digest::SHA qw(sha256 sha256_hex);
 use MIME::Base64 qw(encode_base64url);
 use URI ();
 
-our $VERSION='0.2.0';
+our $VERSION='0.3.0';
 our @ObjectDependencies=qw(Kernel::System::DB Kernel::System::D724::Identity Kernel::System::OpenIDConnect::Token);
 sub new{return bless{},$_[0]}
 
@@ -39,6 +39,38 @@ sub MetadataValidate {
     my %Supported=map{$_=>1}@{$M->{id_token_signing_alg_values_supported}//[]};
     return $Self->_Error('SIGNING_ALGORITHM_UNSUPPORTED') if !$Supported{RS256} && !$Supported{ES256};
     return{Success=>1,Data=>{Issuer=>$Provider->{Issuer},AuthorizationEndpoint=>$M->{authorization_endpoint},TokenEndpoint=>$M->{token_endpoint},JWKSURI=>$M->{jwks_uri},AllowedAlgorithms=>[grep{$Supported{$_}}qw(ES256 RS256)]}};
+}
+
+sub ExchangeContextGet {
+    my ( $Self, %Param ) = @_;
+    for my $Key (qw(State CodeVerifier)) {
+        return $Self->_Error('FLOW_PARAMETER_INVALID')
+            if ( $Param{$Key} // q{} ) !~ m{\A[A-Za-z0-9_-]{20,128}\z}smx;
+    }
+    return $Self->_Error('FLOW_PARAMETER_INVALID')
+        if ( $Param{BrowserBinding} // q{} ) !~ m{\A[^\x00-\x1f]{32,512}\z}smx;
+
+    my $StateDigest = sha256_hex( $Param{State} );
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    $DB->Prepare(
+        SQL => q{SELECT f.tenant_id,p.key_name,f.browser_digest,f.verifier_digest FROM d724_oidc_flow f INNER JOIN d724_identity_provider p ON p.id=f.provider_id WHERE f.state_digest=? AND f.status='pending' AND f.expires_at>current_timestamp},
+        Bind => [ \$StateDigest ],
+        Limit => 1,
+    );
+    my ( $TenantID, $ProviderKey, $BrowserDigest, $VerifierDigest ) = $DB->FetchrowArray();
+    return $Self->_Error('FLOW_NOT_FOUND_OR_EXPIRED') if !defined $TenantID;
+    return $Self->_Error('BROWSER_BINDING_MISMATCH')
+        if !$Self->_Equal( $BrowserDigest, sha256_hex( $Param{BrowserBinding} ) );
+    return $Self->_Error('PKCE_VERIFIER_MISMATCH')
+        if !$Self->_Equal( $VerifierDigest, sha256_hex( $Param{CodeVerifier} ) );
+
+    return {
+        Success => 1,
+        Data    => {
+            TenantID   => $TenantID,
+            ProviderKey => $ProviderKey,
+        },
+    };
 }
 
 sub CallbackVerify {
