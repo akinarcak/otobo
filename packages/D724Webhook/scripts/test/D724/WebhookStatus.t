@@ -15,11 +15,16 @@ is( $ExitCode, 0, 'webhook status succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
 ok( $Status->{Success}, 'webhook subscription schema is healthy' );
 is( $Status->{Package}, 'D724Webhook', 'status identifies package' );
-is( $Status->{Version}, '0.1.0', 'status identifies version' );
+is( $Status->{Version}, '0.2.0', 'status identifies version' );
 ok( $Status->{Tables}->{d724_webhook_subscription}, 'subscription table is present' );
 is( $Status->{QueryErrors}, 0, 'status queries are error free' );
-for my $Metric (qw(Subscriptions Active Inactive TotalCursorLag MaximumCursorLag InvalidTenantReferences)) {
+for my $Metric (qw(Subscriptions Active Inactive TotalCursorLag MaximumCursorLag InvalidTenantReferences PendingDeliveries RetryDeliveries DeadDeliveries DeliveredLastHour OldestReadyAgeMinutes)) {
     ok( exists $Status->{Counts}->{$Metric}, "status reports $Metric" );
 }
+ok( $Status->{Health}->{AlertConfigValid}, 'webhook health alert thresholds are valid' );
+ok( exists $Status->{Health}->{Healthy}, 'status exposes webhook delivery health' );
+ok( exists $Status->{Health}->{BacklogAlert}, 'status exposes backlog alarm state' );
+ok( exists $Status->{Health}->{AgeAlert}, 'status exposes oldest-ready alarm state' );
+ok( exists $Status->{Health}->{DeadLetterAlert}, 'status exposes dead-letter alarm state' );
 
 done_testing;

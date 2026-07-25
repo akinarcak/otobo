@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.6.0';
+our $VERSION = '0.7.1';
 our @ObjectDependencies = ( 'Kernel::Config', 'Kernel::System::DB' );
 
 sub Configure {
@@ -28,7 +28,9 @@ sub Run {
     my $Config = $Kernel::OM->Get('Kernel::Config');
     my $TokenDays = $Config->Get('D724::API::TokenRetentionDays') // 30;
     my $RateHours = $Config->Get('D724::API::RateRetentionHours') // 48;
-    if ( $TokenDays !~ m{\A[1-9][0-9]{0,3}\z}smx || $RateHours !~ m{\A[1-9][0-9]{0,4}\z}smx ) {
+    my $MetricHours = $Config->Get('D724::API::MetricRetentionHours') // 168;
+    if ( $TokenDays !~ m{\A[1-9][0-9]{0,3}\z}smx || $RateHours !~ m{\A[1-9][0-9]{0,4}\z}smx
+        || $MetricHours !~ m{\A[1-9][0-9]{0,3}\z}smx ) {
         $Self->PrintError('Invalid API retention configuration.');
         return $Self->ExitCodeError();
     }
@@ -39,7 +41,7 @@ sub Run {
         $Self->PrintError('Database unavailable.');
         return $Self->ExitCodeError();
     }
-    my ( $TokenCount, $RateCount );
+    my ( $TokenCount, $RateCount, $MetricCount );
     my $OK = eval {
         $DB->BeginWork() if $Handle->{AutoCommit};
         $DB->Prepare(
@@ -52,6 +54,11 @@ sub Run {
             Bind => [ \$RateHours ],
         ) or die "RATE_COUNT_FAILED\n";
         ($RateCount) = $DB->FetchrowArray();
+        $DB->Prepare(
+            SQL => 'SELECT COUNT(*) FROM d724_api_metric WHERE window_start < DATE_SUB(current_timestamp, INTERVAL ? HOUR)',
+            Bind => [ \$MetricHours ],
+        ) or die "METRIC_COUNT_FAILED\n";
+        ($MetricCount) = $DB->FetchrowArray();
         $DB->Do(
             SQL => "DELETE FROM d724_api_token WHERE (status = 'revoked' OR expires_at <= current_timestamp) AND create_time < DATE_SUB(current_timestamp, INTERVAL ? DAY)",
             Bind => [ \$TokenDays ],
@@ -60,6 +67,10 @@ sub Run {
             SQL => 'DELETE FROM d724_api_rate WHERE window_start < DATE_SUB(current_timestamp, INTERVAL ? HOUR)',
             Bind => [ \$RateHours ],
         ) or die "RATE_DELETE_FAILED\n";
+        $DB->Do(
+            SQL => 'DELETE FROM d724_api_metric WHERE window_start < DATE_SUB(current_timestamp, INTERVAL ? HOUR)',
+            Bind => [ \$MetricHours ],
+        ) or die "METRIC_DELETE_FAILED\n";
         $Handle->commit() if !$Handle->{AutoCommit};
         1;
     };
@@ -68,7 +79,7 @@ sub Run {
         $Self->PrintError('API retention cleanup failed.');
         return $Self->ExitCodeError();
     }
-    $Self->Print("DeletedTokenDigests=$TokenCount\nDeletedRateWindows=$RateCount\n");
+    $Self->Print("DeletedTokenDigests=$TokenCount\nDeletedRateWindows=$RateCount\nDeletedMetricWindows=$MetricCount\n");
     return $Self->ExitCodeOk();
 }
 

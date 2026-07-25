@@ -24,6 +24,26 @@
         <Description Translatable="1">Hours to retain completed API rate windows.</Description>
         <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String">48</Item></Value>
     </Setting>
+    <Setting Name="D724::API::MetricsEnabled" Required="1" Valid="1">
+        <Description Translatable="1">Record bounded-cardinality API route latency and status metrics.</Description>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="D724::API::MetricRetentionHours" Required="1" Valid="1">
+        <Description Translatable="1">Hours to retain completed API route metric windows.</Description>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String" ValueRegex="^[1-9][0-9]{0,3}$">168</Item></Value>
+    </Setting>
+    <Setting Name="D724::API::LatencyWarningMs" Required="1" Valid="1">
+        <Description Translatable="1">Maximum route latency in milliseconds before API health warns.</Description>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String" ValueRegex="^[1-9][0-9]{0,5}$">2000</Item></Value>
+    </Setting>
+    <Setting Name="D724::API::ErrorRateWarningPercent" Required="1" Valid="1">
+        <Description Translatable="1">Five-minute server error percentage that raises an API health warning.</Description>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String" ValueRegex="^(?:[1-9]|[1-9][0-9]|100)$">5</Item></Value>
+    </Setting>
+    <Setting Name="D724::API::MinimumAlertRequests" Required="1" Valid="1">
+        <Description Translatable="1">Minimum five-minute request volume before error-rate alerting.</Description>
+        <Navigation>Core::D724::API</Navigation><Value><Item ValueType="String" ValueRegex="^[1-9][0-9]{0,5}$">20</Item></Value>
+    </Setting>
     <Setting Name="PublicFrontend::Module###PublicD724API" Required="0" Valid="1">
         <Description Translatable="1">Public transport endpoint for the tenant-safe D724 API.</Description>
         <Navigation>Frontend::Public::ModuleRegistration</Navigation>

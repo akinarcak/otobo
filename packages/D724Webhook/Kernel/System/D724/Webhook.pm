@@ -9,7 +9,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',

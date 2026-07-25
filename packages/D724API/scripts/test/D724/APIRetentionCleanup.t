@@ -18,6 +18,7 @@ my $Client = "retention-client-$Suffix";
 my $TokenHash = 'a' x 64;
 $Helper->ConfigSettingChange( Key => 'D724::API::TokenRetentionDays', Value => 30 );
 $Helper->ConfigSettingChange( Key => 'D724::API::RateRetentionHours', Value => 48 );
+$Helper->ConfigSettingChange( Key => 'D724::API::MetricRetentionHours', Value => 168 );
 
 my @TenantValues = ( $Tenant, "Retention $Tenant", 1, 1 );
 my @TenantBind = map { \$_ } @TenantValues;
@@ -41,18 +42,26 @@ ok( $DB->Do(
     SQL => "INSERT INTO d724_api_rate (client_id, window_start, request_count) VALUES (?, DATE_SUB(current_timestamp, INTERVAL 72 HOUR), 3)",
     Bind => [ \$Client ],
 ), 'stale rate window fixture created' );
+ok( $DB->Do(
+    SQL => "INSERT INTO d724_api_metric (tenant_id, window_start, route_key, method_name, status_code, error_code, request_count, duration_sum_ms, duration_max_ms, create_time, change_time) VALUES (?, DATE_SUB(current_timestamp, INTERVAL 200 HOUR), 'tickets', 'GET', 200, '', 3, 30, 15, current_timestamp, current_timestamp)",
+    Bind => [ \$Tenant ],
+), 'stale route metric fixture created' );
 
 my $Command = $Kernel::OM->Get('Kernel::System::Console::Command::Maint::D724::APIRetentionCleanup');
 my ( $Output, undef, $ExitCode ) = capture { return $Command->Execute('--confirm') };
 is( $ExitCode, 0, 'retention cleanup command succeeds' );
 like( $Output, qr{DeletedTokenDigests=1}, 'cleanup reports deleted token digest' );
 like( $Output, qr{DeletedRateWindows=1}, 'cleanup reports deleted rate window' );
+like( $Output, qr{DeletedMetricWindows=1}, 'cleanup reports deleted metric window' );
 $DB->Prepare( SQL => 'SELECT COUNT(*) FROM d724_api_token WHERE token_hash = ?', Bind => [ \$TokenHash ] );
 my ($Tokens) = $DB->FetchrowArray();
 is( $Tokens, 0, 'stale token digest is deleted' );
 $DB->Prepare( SQL => 'SELECT COUNT(*) FROM d724_api_rate WHERE client_id = ?', Bind => [ \$Client ] );
 my ($Rates) = $DB->FetchrowArray();
 is( $Rates, 0, 'stale rate window is deleted' );
+$DB->Prepare( SQL => 'SELECT COUNT(*) FROM d724_api_metric WHERE tenant_id = ?', Bind => [ \$Tenant ] );
+my ($Metrics) = $DB->FetchrowArray();
+is( $Metrics, 0, 'stale route metric window is deleted' );
 
 ok( $DB->Do( SQL => 'DELETE FROM d724_api_client WHERE client_id = ?', Bind => [ \$Client ] ), 'client fixture removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_tenant WHERE key_name = ?', Bind => [ \$Tenant ] ), 'tenant fixture removed' );

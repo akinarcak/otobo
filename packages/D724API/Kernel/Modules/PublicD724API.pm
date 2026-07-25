@@ -7,6 +7,7 @@ package Kernel::Modules::PublicD724API;
 use v5.24;
 use strict;
 use warnings;
+use Time::HiRes qw(clock_gettime CLOCK_MONOTONIC);
 
 our $ObjectManagerDisabled = 1;
 
@@ -16,6 +17,36 @@ sub new {
 }
 
 sub Run {
+    my ($Self) = @_;
+    my $Started = clock_gettime(CLOCK_MONOTONIC);
+    $Self->{D724MetricTenantID} = '__public__';
+    $Self->{D724MetricCode} = 500;
+    $Self->{D724MetricError} = 'INTERNAL_ERROR';
+    my $Output = eval { $Self->_Run() };
+    if ($@) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error', Message => 'D724 API transport failed before response completion.',
+        );
+        $Output = $Self->_Respond( Code => 500, Error => 'INTERNAL_ERROR' );
+    }
+    my $DurationMS = int( ( clock_gettime(CLOCK_MONOTONIC) - $Started ) * 1000 + 0.5 );
+    $DurationMS = 600_000 if $DurationMS > 600_000;
+    my $Metric = eval {
+        $Kernel::OM->Get('Kernel::System::D724::APIMetric')->Record(
+            TenantID => $Self->{D724MetricTenantID}, Route => $Self->_MetricRouteKey(),
+            Method => $Self->_MetricMethod(), StatusCode => $Self->{D724MetricCode},
+            ErrorCode => $Self->{D724MetricError}, DurationMS => $DurationMS,
+        );
+    };
+    if ( !$Metric || !$Metric->{Success} && ( $Metric->{Error} // q{} ) ne 'METRICS_DISABLED' ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error', Message => 'D724 API metric write failed.',
+        );
+    }
+    return $Output;
+}
+
+sub _Run {
     my ($Self) = @_;
     my $Request = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $Route   = $Request->GetParam( Param => 'Route' ) // q{};
@@ -29,6 +60,8 @@ sub Run {
             ClientID     => $Request->GetParam( Param => 'client_id' ) // q{},
             ClientSecret => $Request->GetParam( Param => 'client_secret' ) // q{},
         );
+        $Self->{D724MetricTenantID} = $Result->{Data}->{TenantID}
+            if $Result->{Success} && ( $Result->{Data}->{TenantID} // q{} ) =~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
         return $Self->_Result( Result => $Result, SuccessCode => 200, Token => 1 );
     }
 
@@ -45,6 +78,7 @@ sub Run {
     );
     return $Self->_Result( Result => $Validated ) if !$Validated->{Success};
     my $TenantID = $Validated->{Data}->{TenantID};
+    $Self->{D724MetricTenantID} = $TenantID;
 
     if ( $Route eq 'tickets' ) {
         return $Self->_Respond( Code => 405, Error => 'METHOD_NOT_ALLOWED' ) if $Method ne 'GET';
@@ -174,6 +208,22 @@ sub Run {
     return $Self->_Respond( Code => 404, Error => 'ROUTE_NOT_FOUND' );
 }
 
+sub _MetricRouteKey {
+    my ($Self) = @_;
+    my $Route = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'Route' ) // q{};
+    my %Allowed = map { $_ => 1 } qw(
+        token openapi tickets ticket requests request request_approval task
+        webhook_subscriptions webhook_subscription
+    );
+    return $Allowed{$Route} ? $Route : 'not_found';
+}
+
+sub _MetricMethod {
+    my ($Self) = @_;
+    my $Method = uc( $Kernel::OM->Get('Kernel::System::Web::Request')->RequestMethod() // q{} );
+    return $Method =~ m{\A(?:GET|POST|PATCH|PUT|DELETE)\z}smx ? $Method : 'OTHER';
+}
+
 sub _JSONPayload {
     my ($Self) = @_;
     my $Request = $Kernel::OM->Get('Kernel::System::Web::Request');
@@ -199,6 +249,8 @@ sub _OpenAPI {
         if !$Content || ref $Content ne 'SCALAR';
     my $Response = $Kernel::OM->Get('Kernel::System::Web::Response');
     $Response->Code(200);
+    $Self->{D724MetricCode} = 200;
+    $Self->{D724MetricError} = q{};
     $Response->Header( 'Content-Type' => 'application/vnd.oai.openapi+json;version=3.1' );
     $Response->Header( 'Cache-Control' => 'public, max-age=300' );
     $Response->Header( 'X-Content-Type-Options' => 'nosniff' );
@@ -261,6 +313,8 @@ sub _Result {
 sub _Respond {
     my ( $Self, %Param ) = @_;
     my $Response = $Kernel::OM->Get('Kernel::System::Web::Response');
+    $Self->{D724MetricCode} = 0 + $Param{Code};
+    $Self->{D724MetricError} = $Param{Error} // q{};
     $Response->Code( $Param{Code} );
     $Response->Header( 'Content-Type' => 'application/json; charset=utf-8' );
     $Response->Header( 'Cache-Control' => 'no-store' );

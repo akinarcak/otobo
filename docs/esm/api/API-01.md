@@ -1,6 +1,6 @@
 # API-01 - Tenant-safe integration API
 
-## Implemented contract (`D724API 0.6.0`)
+## Implemented contract (`D724API 0.7.1`)
 
 The API is a GPL-3.0 package and uses OTOBO's supported public frontend
 registration. Its canonical versioned base URL is:
@@ -155,13 +155,23 @@ receiver verification are specified in `WEBHOOK-01.md`.
 ## Retention and operational metrics
 
 `Admin::D724::APIStatus --json` reports active/revoked/expired clients and
-tokens, current-minute request volume, total/stale rate windows, stale token
-digests, invalid hashes/tenant references, retention validity, canonical mount,
-and OpenAPI health. Any query error or structural invariant failure makes the
-command fail closed.
+tokens, current-minute request volume, total/stale rate and metric windows,
+five-minute request/error counts, route series, average/maximum latency, stale
+token digests, invalid hashes/tenant references, retention validity, canonical
+mount, and OpenAPI health. Any query error or structural invariant failure
+makes the command fail closed.
 
-Defaults retain expired/revoked token digests for 30 days and rate windows for
-48 hours. A scheduler may run this confirmed maintenance command daily:
+Every public request records one atomic minute aggregate after response
+creation. Dimensions are limited to tenant (or the reserved `__public__`
+authentication boundary), a fixed route key, normalized method, status and
+bounded error code. Raw paths, ticket/request IDs, tokens and client IDs cannot
+become labels. The upsert accumulates request count, duration sum and maximum,
+so multiple web workers do not lose increments. Defaults warn at 2,000 ms
+maximum latency or 5% server-error rate after at least 20 requests.
+
+Defaults retain expired/revoked token digests for 30 days, rate windows for 48
+hours, and API metric windows for 168 hours. A scheduler may run this confirmed
+maintenance command daily:
 
 ```text
 bin/otobo.Console.pl Maint::D724::APIRetentionCleanup --confirm
@@ -192,13 +202,20 @@ are retained.
 - `Accept-WebhookSubscription.pl` returned requester/tanimsiz-endpoint/create/
   list/get/disable/stale statuses `403/422/201/200/200/200/409`; audit sequence
   `116` became shared outbox delivery `74` exactly once;
-- all 34 D724 test files and 690 assertions passed together.
+- `Accept-APIMetrics.pl` recorded three successful ticket reads, a normalized
+  unknown route and an invalid credential as tenant `tickets/200`, tenant
+  `not_found/404`, and `__public__/tickets/401`; no raw/high-cardinality route
+  label was stored;
+- `Accept-APIMetricConcurrency.pl` ran 12 independent database writers against
+  one minute series and obtained exactly one row with count/sum/max `12/78/12`;
+- all 35 D724 test files and 720 assertions passed together.
 
 ## Remaining API-01 work
 
-Per-route latency/error metrics, retention scheduling, webhook throughput/
-backlog alarms, and concurrent load tests remain open. The lifecycle
-subscription, canonical JSON/HMAC delivery, and dead-letter replay contracts
-are complete in `WEBHOOK-01`.
+External metric export/dashboard delivery and sustained capacity testing remain
+open. Route latency/error aggregation, retention cleanup, webhook backlog
+health, bounded-cardinality checks and concurrent writer acceptance are
+complete. The lifecycle subscription, canonical JSON/HMAC delivery, and
+dead-letter replay contracts are complete in `WEBHOOK-01`.
 Until TLS termination is deployed, this test endpoint must stay on the private
 network and must not be exposed to the public Internet.

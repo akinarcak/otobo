@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.6.0';
+our $VERSION = '0.7.1';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::DB', 'Kernel::System::JSON', 'Kernel::System::Main',
 );
@@ -27,20 +27,31 @@ sub StatusData {
     my ($Self) = @_;
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     my %Table = map { $_ => 1 } $DB->ListTables();
-    my @Needed = qw(d724_api_client d724_api_token d724_api_rate);
+    my @Needed = qw(d724_api_client d724_api_token d724_api_rate d724_api_metric);
     my @Missing = grep { !$Table{$_} } @Needed;
     my %Count = map { $_ => 0 } qw(
         Clients ActiveClients RevokedClients Tokens ActiveTokens RevokedTokens
         ExpiredActiveTokens RateWindows CurrentWindowRequests StaleTokenDigests
         StaleRateWindows InvalidTenantClients InvalidSecretHashes InvalidTokenHashes
         DuplicateRateWindows RateWindowUnique QueryErrors
+        MetricWindows Requests5m ClientErrors5m ServerErrors5m DurationSumMS5m
+        MaximumLatencyMS5m RouteSeries5m StaleMetricWindows InvalidMetricTenantRefs
+        MetricSeriesUnique AverageLatencyMS5m
     );
 
     my $Config = $Kernel::OM->Get('Kernel::Config');
     my $TokenDays = $Config->Get('D724::API::TokenRetentionDays') // 30;
     my $RateHours = $Config->Get('D724::API::RateRetentionHours') // 48;
+    my $MetricHours = $Config->Get('D724::API::MetricRetentionHours') // 168;
+    my $LatencyWarningMS = $Config->Get('D724::API::LatencyWarningMs') // 2000;
+    my $ErrorWarningPercent = $Config->Get('D724::API::ErrorRateWarningPercent') // 5;
+    my $MinimumAlertRequests = $Config->Get('D724::API::MinimumAlertRequests') // 20;
     my $RetentionValid = $TokenDays =~ m{\A[1-9][0-9]{0,3}\z}smx
-        && $RateHours =~ m{\A[1-9][0-9]{0,4}\z}smx ? 1 : 0;
+        && $RateHours =~ m{\A[1-9][0-9]{0,4}\z}smx
+        && $MetricHours =~ m{\A[1-9][0-9]{0,3}\z}smx ? 1 : 0;
+    my $AlertConfigValid = $LatencyWarningMS =~ m{\A[1-9][0-9]{0,5}\z}smx
+        && $ErrorWarningPercent =~ m{\A(?:[1-9]|[1-9][0-9]|100)\z}smx
+        && $MinimumAlertRequests =~ m{\A[1-9][0-9]{0,5}\z}smx ? 1 : 0;
 
     if ( !@Missing ) {
         $Self->_Query(
@@ -86,6 +97,28 @@ sub StatusData {
         );
         $Count{QueryErrors} += $Index{QueryErrors} // 0;
         $Count{RateWindowUnique} = ( $Index{Columns} // 0 ) == 2 ? 1 : 0;
+        $Self->_Query(
+            DB => $DB, Count => \%Count,
+            SQL => 'SELECT COUNT(*) FROM d724_api_metric', Keys => ['MetricWindows'],
+        );
+        $Self->_Query(
+            DB => $DB, Count => \%Count,
+            SQL => "SELECT COALESCE(SUM(request_count),0), COALESCE(SUM(CASE WHEN status_code BETWEEN 400 AND 499 THEN request_count ELSE 0 END),0), COALESCE(SUM(CASE WHEN status_code >= 500 THEN request_count ELSE 0 END),0), COALESCE(SUM(duration_sum_ms),0), COALESCE(MAX(duration_max_ms),0), COUNT(*) FROM d724_api_metric WHERE window_start >= DATE_SUB(DATE_FORMAT(current_timestamp, '%Y-%m-%d %H:%i:00'), INTERVAL 5 MINUTE)",
+            Keys => [qw(Requests5m ClientErrors5m ServerErrors5m DurationSumMS5m MaximumLatencyMS5m RouteSeries5m)],
+        );
+        $Self->_Query(
+            DB => $DB, Count => \%Count,
+            SQL => "SELECT COUNT(*) FROM d724_api_metric m LEFT JOIN d724_tenant t ON t.key_name = m.tenant_id WHERE m.tenant_id <> '__public__' AND t.key_name IS NULL",
+            Keys => ['InvalidMetricTenantRefs'],
+        );
+        my %MetricIndex;
+        $Self->_Query(
+            DB => $DB, Count => \%MetricIndex,
+            SQL => "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'd724_api_metric' AND index_name = 'd724_api_metric_series'",
+            Keys => ['Columns'],
+        );
+        $Count{QueryErrors} += $MetricIndex{QueryErrors} // 0;
+        $Count{MetricSeriesUnique} = ( $MetricIndex{Columns} // 0 ) == 6 ? 1 : 0;
 
         if ($RetentionValid) {
             $Self->_Query(
@@ -98,9 +131,21 @@ sub StatusData {
                 SQL => 'SELECT COUNT(*) FROM d724_api_rate WHERE window_start < DATE_SUB(current_timestamp, INTERVAL ? HOUR)',
                 Bind => [ \$RateHours ], Keys => ['StaleRateWindows'],
             );
+            $Self->_Query(
+                DB => $DB, Count => \%Count,
+                SQL => 'SELECT COUNT(*) FROM d724_api_metric WHERE window_start < DATE_SUB(current_timestamp, INTERVAL ? HOUR)',
+                Bind => [ \$MetricHours ], Keys => ['StaleMetricWindows'],
+            );
         }
     }
     $_ //= 0 for values %Count;
+    $Count{AverageLatencyMS5m} = $Count{Requests5m}
+        ? int( $Count{DurationSumMS5m} / $Count{Requests5m} + 0.5 ) : 0;
+    my $ServerErrorRatePercent = $Count{Requests5m}
+        ? 100 * $Count{ServerErrors5m} / $Count{Requests5m} : 0;
+    my $LatencyAlert = $AlertConfigValid && $Count{MaximumLatencyMS5m} >= $LatencyWarningMS ? 1 : 0;
+    my $ErrorRateAlert = $AlertConfigValid && $Count{Requests5m} >= $MinimumAlertRequests
+        && $ServerErrorRatePercent >= $ErrorWarningPercent ? 1 : 0;
 
     my $Home = $Config->Get('Home');
     my $Main = $Kernel::OM->Get('Kernel::System::Main');
@@ -122,8 +167,10 @@ sub StatusData {
     my $MountOK = $PSGI && ${$PSGI} =~ m{mount[ ]+'/api/v1'}smx ? 1 : 0;
     my $WebhookMountOK = $MountOK && ${$PSGI} =~ m{/webhook-subscriptions}smx ? 1 : 0;
 
-    my $Success = !@Missing && $RetentionValid && $Count{RateWindowUnique}
+    my $Success = !@Missing && $RetentionValid && $AlertConfigValid
+        && $Count{RateWindowUnique} && $Count{MetricSeriesUnique}
         && !$Count{QueryErrors} && !$Count{InvalidTenantClients}
+        && !$Count{InvalidMetricTenantRefs}
         && !$Count{InvalidSecretHashes} && !$Count{InvalidTokenHashes}
         && !$Count{DuplicateRateWindows} && $ContractOK && $MountOK && $WebhookContractOK && $WebhookMountOK;
     return {
@@ -132,6 +179,16 @@ sub StatusData {
         MissingTables => \@Missing, Counts => \%Count,
         Retention => {
             Valid => $RetentionValid, TokenDays => 0 + $TokenDays, RateHours => 0 + $RateHours,
+            MetricHours => 0 + $MetricHours,
+        },
+        Health => {
+            Healthy => $Success && !$LatencyAlert && !$ErrorRateAlert ? 1 : 0,
+            AlertConfigValid => $AlertConfigValid,
+            ServerErrorRatePercent5m => 0 + sprintf( '%.2f', $ServerErrorRatePercent ),
+            LatencyWarningMS => 0 + $LatencyWarningMS,
+            ErrorRateWarningPercent => 0 + $ErrorWarningPercent,
+            MinimumAlertRequests => 0 + $MinimumAlertRequests,
+            LatencyAlert => $LatencyAlert, ErrorRateAlert => $ErrorRateAlert,
         },
         Transport => {
             CanonicalMount => $MountOK, OpenAPI31 => $ContractOK,

@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.6.0';
+our $VERSION = '0.7.1';
 our @ObjectDependencies = (
     'Kernel::System::D724::APIAuth',
     'Kernel::System::D724::TenantDirectory',
