@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.3.0';
+our $VERSION = '0.4.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -25,16 +25,16 @@ my %RoleActions = (
         map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign)
     },
     service_owner => {
-        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read)
+        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read report.read report.export)
     },
     auditor => {
-        map { $_ => 1 } qw(catalog.read case.read audit.read)
+        map { $_ => 1 } qw(catalog.read case.read audit.read report.read report.export)
     },
     automation => {
         map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign automation.execute)
     },
     tenant_admin => {
-        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage automation.execute)
+        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage automation.execute report.read report.export)
     },
 );
 

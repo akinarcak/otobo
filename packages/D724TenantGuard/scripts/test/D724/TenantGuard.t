@@ -45,6 +45,9 @@ my @Matrix = (
     [ 'requester cannot execute tenant job',  ['requester'],     'automation.execute', 'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
     [ 'automation cannot delete case',        ['automation'],    'case.delete',    'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
     [ 'tenant admin manages own tenant',      ['tenant_admin'],  'tenant.manage',  'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'auditor reads tenant report',          ['auditor'],       'report.read',     'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'service owner exports report',         ['service_owner'], 'report.export',   'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'agent cannot export report',           ['agent'],         'report.export',   'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
     [ 'tenant admin cannot cross tenant',     ['tenant_admin'],  'tenant.manage',  'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'requester cannot cross tenant',        ['requester'],     'case.read',      'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'tenant IDs are case sensitive',        ['agent'],         'case.read',      'Tenant-A', 0, 'DENY_CROSS_TENANT' ],
@@ -61,7 +64,7 @@ for my $Case (@Matrix) {
     );
     is( $Decision->{Allowed}, $Allowed, "$Name: allowed" );
     is( $Decision->{Reason}, $Reason, "$Name: reason" );
-    is( $Decision->{PolicyVersion}, '1.2.0', "$Name: policy version" );
+    is( $Decision->{PolicyVersion}, '1.3.0', "$Name: policy version" );
 }
 
 is(

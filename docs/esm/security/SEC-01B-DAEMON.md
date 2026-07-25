@@ -1,12 +1,12 @@
 # SEC-01b Daemon Tenant Policy
 
 Durum: daemon/automation alt kapisi tamamlandi (`2026-07-25`). Genel
-`SEC-01b`, report/export, cache, search ve kalan domain adapter'lari tamamlanana
+`SEC-01b`, cache, search ve kalan domain adapter'lari tamamlanana
 kadar aciktir.
 
 ## Guvenlik sozlesmesi
 
-`D724TenantGuard 0.3.0` policy contract `1.2.0`, bir arka plan isi tenant verisine dokunmadan once
+`D724TenantGuard 0.4.0` policy contract `1.3.0`, bir arka plan isi tenant verisine dokunmadan once
 `AutomationAuthorize(TenantID, JobName)` karari ister. Karar:
 
 - dar tenant/job kimlik formatini dogrular;
@@ -44,4 +44,4 @@ dogruladi:
 - policy kapaliyken automation context uretilmedi;
 - normal aktif tenant sweep, scan ve delivery akislari geriye uyumlu kaldi.
 
-Tam paket regresyonu 36 dosya ve 757 assertion ile gecti.
+Guncel paket regresyonu 39 dosya ve 799 assertion ile gecti.

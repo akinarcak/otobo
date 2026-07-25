@@ -30,7 +30,7 @@ Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozle
 | Arka plan sizintisi | daemon job'unun tenantsiz calismasi | aktif TenantID + tenant-bound `automation:<job>` subject + merkezi `automation.execute` | commitment sweep/webhook scan/dispatcher negatif entegrasyon testleri (`SEC-01b-daemon`) |
 | Cache karismasi | tenant anahtari olmayan cache key | tum D724 cache key'lerinde TenantID | cache adapter testi sonraki kapida |
 | Arama sizintisi | global Elasticsearch sonucu | index dokumaninda TenantID + zorunlu filter | search profili sonraki kapida |
-| Export sizintisi | raporun tum kayitlari indirmesi | scoped query + `audit.read`/ozel export action | export entegrasyon testi sonraki kapida |
+| Export sizintisi | raporun tum kayitlari indirmesi | her SQL'de tenant+tarih predicate, `report.read`/`report.export`, aggregate-only schema | D724Reporting cross-tenant/PII/CSV negatif testleri ve demo kabulü (`SEC-01b-report`) |
 | Global admin kotuye kullanimi | tek rolle tum tenant'lara giris | iki anahtarli opt-in, audit ve acil durum runbook'u | platform admin config testleri |
 | Kimlik karmasasi | bosluk/case ile benzer tenant ID | dar kimlik regex'i ve exact match | invalid/case-sensitive testler |
 
