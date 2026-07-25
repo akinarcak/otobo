@@ -17,7 +17,7 @@ Son dogrulama: `2026-07-25`
   - paket deployment kontrolu `OK`,
   - CareOnCloud ESM ürün adı, resmi Careon logo varlıkları ve `Hizmet Bulutta, Kontrol Sizde.` sloganı,
   - iki test dosyası dahil birleşik regresyonda sonuç `PASS`.
-- GPL-3.0 `D724TenantGuard 0.7.0` / policy contract `1.5.0` OPM paketi:
+- GPL-3.0 `D724TenantGuard 0.8.0` / policy contract `1.6.0` OPM paketi:
   - varsayilan-reddet action/role matrisi,
   - exact ve buyuk/kucuk harf duyarli tenant siniri,
   - query'ler icin fail-closed `ScopeGet`,
@@ -140,7 +140,14 @@ Son dogrulama: `2026-07-25`
   - JSON ve RFC4180-benzeri CSV; CR/LF temizleme ve `= + - @` spreadsheet formula neutralization,
   - her cache get/set oncesi yeniden yetkilendirme, tenant namespace'li 60 saniye aggregate cache ve schema-version'li logical key,
   - gercek demo kabulunde `10` request, `24` commitment, `2` breached; JSON/CSV PII-minimize ve cross-tenant export `FORBIDDEN`.
-- On iki CareOnCloud paketinin 45 dosyalık birleşik regresyonu `930` test ile `PASS` (`2026-07-25`).
+- GPL-3.0 `D724Identity 0.1.1` OPM paketi:
+  - exact issuer/audience trust route'undan tenant türetme; token `tenant_id` claim'ini yönlendirmede yok sayma,
+  - yalnız doğrulanmış OIDC/SAML adaptör sonucu kabulü; HTTPS issuer ve email-domain allow-list'i,
+  - bounded grup→tenant rol eşlemesi, varsayılan requester ve bilinmeyen gruplarda yetki vermeme,
+  - immutable `(provider, subject)→login`, tenant login takeover koruması ve idempotent last-seen yenileme,
+  - provider/ilk subject link mutation'ı ile audit olayının transaction-atomic yazımı,
+  - üç test dosyası / 24 test `PASS` ve canlı status `Success=1`.
+- On üç CareOnCloud paketinin 48 dosyalık birleşik regresyonu `960` test ile `PASS` (`2026-07-25`).
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
@@ -157,6 +164,7 @@ Son dogrulama: `2026-07-25`
 - Cache-policy OPM SHA-256 kaniti: TenantGuard 0.5.1 `144045187a4cb25e2b664bafb465e3ad34130585172e6a54e672dcbf9477dc01`, Reporting 0.2.0 `4365369a9dae69a1eeae5860fb6a1ed059752fe384a902456ef9066c061ab5ca`.
 - Tarihsel search-policy OPM SHA-256 kanıtı: TenantGuard 0.6.0 `66ff6f82eac72463fa22579a783e62266ef40047e29a12105b587845b45b4438`, TicketAudit 0.7.1 `6b98185191b32846d8a8e09d213996ebd28df6c49ece80717f0dd8be2418bca8`.
 - SEC-01b yayın OPM SHA-256 kanıtı: TenantGuard 0.7.0 `e2c4f4d7b77f4588f4950aa7bf785abcc3ba1705eb0427a177b986ffae2cd5e2`, TicketAudit 0.8.1 `31792e68bc819ae70cfe843953260648d0f8f54187a5c8b9ef7ecbf4d1f33cb8`, Catalog 0.6.1 `867cfa4fffd094a74bc98ac4ea11675a7429db974c6ee39c8d3d00433d9bd986`.
+- SEC-03a yayın OPM SHA-256 kanıtı: TenantGuard 0.8.0 `31e8de399198caa81102d989319db382c609e540aefe3e58446c82265605f975`, Identity 0.1.1 `067822c1d5b8852c8351fa36525b48b613014e2bf76cef698067c1b2f0a60a8d`.
 - Kalici ticket-policy kabulunde `demo.agent` (UserID `47`) kendi `d724-demo` scope'unda yalniz TicketID `9` / `D724AUD20260724001` sonucunu gordu; `CustomerIDRaw` bypass'i reddedildi ve Generic Interface ortak erisimi basarili oldu.
 - Gercek Elasticsearch runtime kabulunde ayni full-text degerli `d724-demo` ve yabanci tenant fixture dokumanlarindan UserID `47` yalniz kendi hit'ini gordu; explicit cross-tenant filter `EMPTY_TENANT_INTERSECTION` ile reddedildi ve fixture'lar silindi.
 - Resmi `Maint::Elasticsearch::Migration --target t` authoritative rebuild'i 2 MariaDB ticket'ini tasidi; refresh sonrasi index count `2`. Elasticsearch aktifken 42 dosya / 859 test yeniden `PASS` oldu.

@@ -18,7 +18,7 @@
         <Description Translatable="1">Identifies the active tenant policy contract for audit records.</Description>
         <Navigation>Core::D724::Security</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="^\d+\.\d+\.\d+$">1.5.0</Item>
+            <Item ValueType="String" ValueRegex="^\d+\.\d+\.\d+$">1.6.0</Item>
         </Value>
     </Setting>
     <Setting Name="D724::TenantCache::Enabled" Required="1" Valid="1">

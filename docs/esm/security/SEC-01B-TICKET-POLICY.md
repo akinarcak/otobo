@@ -26,4 +26,4 @@ Filtre sonuctan sonra uygulanmaz. Bu sayede `Limit`, siralama ve `COUNT` altinda
 
 ## Acik kapsam
 
-Generic Interface için OAuth client kimliği, rate limit, idempotency ve sürümlü `/api/v1` kontratı `API-01` kapsamındadır. Daemon actor bağlamı `SEC-01B-DAEMON.md`, operasyon raporu `REPORT-01.md`, cache namespace'i `SEC-01B-CACHE.md` ve aktif Elasticsearch runtime'i `SEC-01B-SEARCH.md` ile tamamlanmıştır. Operasyon-bazlı role/action matrisi `D724TenantGuard 0.7.0` ve `D724TicketAudit 0.8.1` ile kapatılmıştır.
+Generic Interface için OAuth client kimliği, rate limit, idempotency ve sürümlü `/api/v1` kontratı `API-01` kapsamındadır. Daemon actor bağlamı `SEC-01B-DAEMON.md`, operasyon raporu `REPORT-01.md`, cache namespace'i `SEC-01B-CACHE.md` ve aktif Elasticsearch runtime'i `SEC-01B-SEARCH.md` ile tamamlanmıştır. Operasyon-bazlı role/action matrisi `D724TenantGuard 0.8.0` ve `D724TicketAudit 0.8.1` ile kapatılmıştır.
