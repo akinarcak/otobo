@@ -1,0 +1,10 @@
+[Unit]
+Description=CareOnCloud ESM localhost origin socket for Cloudflare Tunnel
+Documentation=https://github.com/akinarcak/otobo
+
+[Socket]
+ListenStream=127.0.0.1:8088
+NoDelay=true
+
+[Install]
+WantedBy=sockets.target

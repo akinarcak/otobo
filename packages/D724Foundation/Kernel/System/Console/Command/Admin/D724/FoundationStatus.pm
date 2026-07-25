@@ -23,7 +23,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Validate the D724 ESM foundation and print its product manifest.');
+    $Self->Description('Validate the CareOnCloud ESM foundation and print its product manifest.');
     $Self->AddOption(
         Name        => 'json',
         Description => 'Print machine-readable JSON output.',
@@ -49,8 +49,9 @@ sub Run {
     }
     else {
         my $Manifest = $Status->{Manifest};
-        $Self->Print("D724 ESM foundation status\n");
+        $Self->Print("CareOnCloud ESM foundation status\n");
         $Self->Print("Product: $Manifest->{Product}\n");
+        $Self->Print("Slogan: $Manifest->{Slogan}\n");
         $Self->Print("Edition: $Manifest->{Edition}\n");
         $Self->Print("Package: $Manifest->{Package} $Manifest->{PackageVersion}\n");
         $Self->Print("Framework: $Manifest->{FrameworkVersion}\n");

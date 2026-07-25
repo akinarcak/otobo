@@ -73,7 +73,7 @@ my $Schema = {
     version => 1,
     workflow => {
         approval => { required => 1, approver_role => 'tenant_admin' },
-        fulfillment => [ { key => 'prepare', name => 'Prepare laptop', type => 'manual' } ],
+        fulfillment => [ { key => 'prepare', name => 'Dizüstü bilgisayarı hazırla', type => 'manual' } ],
     },
     fields => [
         { key => 'reason', label => 'Reason', type => 'textarea', required => 1 },
@@ -92,11 +92,12 @@ ok(
 
 my $Request = $Kernel::OM->Get('Kernel::System::D724::Request');
 my %Customer = ( CustomerUserID => "customer-$Suffix\@example.test", CustomerID => $TenantA );
-my %Answers = ( reason => 'Engineering workstation', model => 'developer', accessories => ['dock'] );
+my %Answers = ( reason => 'Mühendislik iş istasyonu — İstanbul', model => 'developer', accessories => ['dock'] );
 my $Created = $Request->CustomerSubmit(
     %Customer, CatalogItemID => $Item->{Data}->{CatalogItemID}, IdempotencyKey => "submit-$Suffix-00000001", Answers => \%Answers,
 );
 ok( $Created->{Success}, 'customer request created' );
+is( $Created->{Data}->{Answers}->{reason}, 'Mühendislik iş istasyonu — İstanbul', 'Unicode answers survive canonical payload hashing' );
 is( $Created->{Data}->{Status}, 'awaiting_approval', 'request waits for approval' );
 is( $Created->{Data}->{Approvals}->[0]->{Status}, 'pending', 'approval is pending' );
 is( $Created->{Data}->{Tasks}->[0]->{Status}, 'blocked', 'fulfillment is blocked before approval' );

@@ -1,0 +1,92 @@
+{
+   "CatalogItems" : [
+      {
+         "Count" : 6,
+         "Key" : "new-store-opening",
+         "Name" : "Yeni Mağaza Açılışı"
+      },
+      {
+         "Count" : 6,
+         "Key" : "pos-incident",
+         "Name" : "POS Arızası ve Değişimi"
+      }
+   ],
+   "CommitmentStatus" : [
+      {
+         "Count" : 6,
+         "ObjectiveType" : "ola",
+         "Status" : "met"
+      },
+      {
+         "Count" : 3,
+         "ObjectiveType" : "ola",
+         "Status" : "running"
+      },
+      {
+         "Count" : 1,
+         "ObjectiveType" : "resolution",
+         "Status" : "cancelled"
+      },
+      {
+         "Count" : 6,
+         "ObjectiveType" : "resolution",
+         "Status" : "met"
+      },
+      {
+         "Count" : 2,
+         "ObjectiveType" : "resolution",
+         "Status" : "paused"
+      },
+      {
+         "Count" : 3,
+         "ObjectiveType" : "resolution",
+         "Status" : "running"
+      },
+      {
+         "Count" : 1,
+         "ObjectiveType" : "response",
+         "Status" : "cancelled"
+      },
+      {
+         "Count" : 9,
+         "ObjectiveType" : "response",
+         "Status" : "met"
+      },
+      {
+         "Count" : 2,
+         "ObjectiveType" : "response",
+         "Status" : "paused"
+      }
+   ],
+   "From" : "2026-07-01",
+   "RequestStatus" : [
+      {
+         "Count" : 2,
+         "Status" : "awaiting_approval"
+      },
+      {
+         "Count" : 6,
+         "Status" : "fulfilled"
+      },
+      {
+         "Count" : 1,
+         "Status" : "fulfillment_failed"
+      },
+      {
+         "Count" : 2,
+         "Status" : "in_fulfillment"
+      },
+      {
+         "Count" : 1,
+         "Status" : "rejected"
+      }
+   ],
+   "SchemaVersion" : 1,
+   "TenantID" : "showcase-retail",
+   "To" : "2026-07-31",
+   "Totals" : {
+      "BreachedCommitments" : 0,
+      "Commitments" : 33,
+      "Requests" : 12
+   }
+}

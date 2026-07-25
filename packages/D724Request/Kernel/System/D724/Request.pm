@@ -10,8 +10,9 @@ use v5.24;
 use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
+use Encode qw(encode_utf8);
 
-our $VERSION = '0.4.7';
+our $VERSION = '0.4.8';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::CatalogPortal',
@@ -52,7 +53,7 @@ sub _CustomerSubmit {
     my $JSON = $Kernel::OM->Get('Kernel::System::JSON');
     my $AnswersJSON  = $JSON->Encode( Data => $Answers->{Data}, SortKeys => 1 );
     my $WorkflowJSON = $JSON->Encode( Data => $Workflow, SortKeys => 1 );
-    my $PayloadHash  = sha256_hex( join q{|}, $Param{CatalogItemID}, $AnswersJSON, $WorkflowJSON );
+    my $PayloadHash  = sha256_hex( encode_utf8( join q{|}, $Param{CatalogItemID}, $AnswersJSON, $WorkflowJSON ) );
     my $TenantID     = $Context->{TenantID};
     my $RequesterID  = $Context->{Subject}->{ID};
 

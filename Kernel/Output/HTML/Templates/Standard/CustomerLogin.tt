@@ -18,13 +18,13 @@
 <!-- start login -->
 <div id="oooLoginBG">
     <div class="oooBG" style="background-image: url([% Data.Background | html %]);">
-        <div id="oooBGSignet" style="background-image: url([% Config("Frontend::WebPath") %]common/img/otobo-signet_border.svg);"></div>
+        <div id="oooBGSignet" style="background-image: url([% Config("Frontend::WebPath") %]skins/Customer/default/img/careon-signet.png);"></div>
     </div>
     <h1>[% Translate(Data.LoginText) | html %]</h1>
 </div>
 <div id="MainBox" class="Login ARIARoleMain">
 [% RenderBlockStart("Signet") %]
-    <img id="oooSignet" src="[% Config("Frontend::WebPath") %]common/img/otobo-signet.svg">
+    <img id="oooSignet" src="[% Config("Frontend::WebPath") %]skins/Customer/default/img/careon-signet.png" alt="CareOnCloud ESM">
 [% RenderBlockEnd("Signet") %]
 [% RenderBlockStart("Message") %]
     <div class="[% IF Data.MessageType == 'Success' %]SuccessBox[% ELSE %]ErrorBox[% END %]"><p>[% Translate(Data.Message) | html %]</p></div>

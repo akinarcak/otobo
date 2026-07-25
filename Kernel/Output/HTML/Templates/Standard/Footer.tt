@@ -16,9 +16,9 @@
 
 <div id="Footer" class="ARIARoleContentinfo">
 [% IF !Config("Secure::DisableBanner") %]
-    <a href="https://otobo.io" title="[% Config("Product") | html %][% IF !Data.IsLoginPage %] [% Config("Version") | html %][% END %]" target="_blank">
+    <a href="https://esm.arcak.net" title="[% Config("ProductName") | html %]" target="_blank">
         <span></span>
-        [% Translate("Powered by %s", "Rother OSS") | html %]
+        [% Translate("Powered by %s", "CareOnCloud ESM") | html %]
     </a>
 [% END %]
 </div>

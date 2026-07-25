@@ -46,6 +46,12 @@ izolasyonunu test eder ve fixture'lari siler. Regresyon testleri Elasticsearch e
 uretebildigi icin tam testten sonra `Migration --target t` yeniden calistirilarak index
 authoritative MariaDB durumundan kurulmalidir.
 
+Prometheus operasyon yuzeyi `D724Observability` paketiyle gelir. Scrape tokeninin
+yalniz SHA-256 digest'ini SysConfig'e kaydedin; tokeni secret store'dan Prometheus'a
+dosya olarak baglayin. Endpoint `/otobo/public.pl?Action=PublicD724Metrics` ve
+standart Bearer auth kullanir. Kurulum ve kabul ayrintilari
+`docs/esm/observability/PROMETHEUS.md` dosyasindadir.
+
 ## Daily commands
 
 ```powershell

@@ -13,7 +13,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.2.1';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -32,6 +32,7 @@ sub ManifestGet {
 
     return {
         Product          => $ConfigObject->Get('D724::Foundation::ProductName') // q{},
+        Slogan           => $ConfigObject->Get('D724::Foundation::Slogan') // q{},
         Edition          => $ConfigObject->Get('D724::Foundation::Edition') // q{},
         Package          => 'D724Foundation',
         PackageVersion   => $VERSION,
@@ -55,6 +56,7 @@ sub StatusGet {
     my %Checks  = (
         Enabled          => $Enabled,
         ProductName      => $Manifest->{Product} ? 1 : 0,
+        Slogan           => $Manifest->{Slogan} ? 1 : 0,
         Edition          => $Manifest->{Edition} ? 1 : 0,
         FrameworkVersion => $Manifest->{FrameworkVersion} ? 1 : 0,
         License          => $Manifest->{License} eq 'GPL-3.0-only' ? 1 : 0,

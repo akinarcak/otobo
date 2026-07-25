@@ -17,7 +17,7 @@
 <div id='oooFooter'>
     <div>
         <div id='oooCopyright'>
-            <p class='ooo10g'>© 2019-2026 </p>
+            <p class='ooo10g'>© 2026 CareOnCloud ESM</p>
             <a href="https://otobo.io" target="_blank">
                 <svg
                    xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -110,7 +110,7 @@
 [% END %]
         </div>
         <div id='ooo'>
-            <p class='ooo10g'>powered by <a href="https://otobo.io" target="_blank">Rother OSS</a></p>
+            <p class='ooo10g'>powered by <a href="https://esm.arcak.net" target="_blank">CareOnCloud ESM</a></p>
         </div>
     </div>
 </div>

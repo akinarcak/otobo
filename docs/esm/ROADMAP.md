@@ -2,6 +2,9 @@
 
 ## Gerceklesen
 
+- [x] `BRAND-01`: CareOnCloud ESM ürün adı, resmi Careon logosu, `Hizmet Bulutta, Kontrol Sizde.` sloganı ve agent/müşteri giriş yüzeyleri (`2026-07-25`).
+- [x] `DEMO-01`: Cloudflare Tunnel ile `esm.arcak.net`, üç sentetik sektör tenant'ı, 36 örnek talep, 99 commitment ve kapasite/kullanım ayrımlı raporlar (`2026-07-25`).
+- [x] `CAT-03`: DD-YHE-02-R1 kaynaklı 6 alan/51 hizmetlik yönetilen hizmet kataloğu, DORA iz alanları ve dört demo tenant'ına idempotent kurulum (`2026-07-25`).
 - [x] `FOUND-01`: kaynak koddan Docker image, Compose gelistirme profili, statik smoke testi ve GitHub Actions kalite kapisi (`2026-07-24`).
 - [x] Ozel test sunucusunda izole temel kurulum: MariaDB, Redis, OTOBO web ve daemon; HTTP ve konsol smoke testleri (`2026-07-24`).
 - [x] `FOUND-02`: kurulabilir `D724Foundation 0.1.0` paketi, SysConfig, JSON tanilama komutu ve 15 paket testi (`2026-07-24`).
@@ -25,6 +28,7 @@
 - [x] `SEC-01b-cache`: aktif tenant ve merkezi policy ile fail-closed cache adapter'i, hash'li tenant namespace'i, TTL siniri, izole invalidation ve raporlama entegrasyonu (`2026-07-25`).
 - [x] `SEC-01b-search-boundary`: trusted tenant context, merkezi `search.read`, final Elasticsearch request'inde zorunlu tenant filter'i ve filtresiz/unsafe-index fail-closed kapisi (`2026-07-25`).
 - [x] `SEC-01b-search-runtime`: private Elasticsearch 8.19.3, resmi connection testi, ticket index migration, authoritative rebuild ve gercek iki-tenant hit/miss kabul kaniti (`2026-07-25`).
+- [x] `OBS-01a`: authenticated Prometheus 0.0.4 endpoint'i, 20 sabit-labelsiz seri, API/webhook alarm bayraklari ve gercek `401/401/200` scrape kabulu (`2026-07-25`).
 - [x] `API-01a`: tenant-bazli client credentials, bcrypt secret, digest-only opaque token, atomik rate limit, auditli client revoke ve tenant-scope vaka read HTTP API'si (`2026-07-24`).
 - [x] `API-01b-core`: canonical `/api/v1`, OpenAPI 3.1, requester-owned request read ve transaction-atomic/idempotent request create (`2026-07-24`).
 - [x] `API-01c-credentials`: optimistic ve transaction-atomic secret rotation, tum tokenlari aninda revoke, token lifecycle audit, retention cleanup ve operasyonel API sayaclari (`2026-07-25`).
@@ -86,5 +90,5 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 1. `AUD-01b-core`: kalan ticket delete/merge/type/service/SLA/pending ve Chat article, Generic Interface/SLA scheduler mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
 2. `SEC-01b`: Generic Interface operasyon-bazli action matrisi ve katalog DB constraint sertlestirmesi
 3. `API-01d-ops` (tamamlandi, 2026-07-25): bounded-cardinality route latency/error metrikleri, 168 saat retention, webhook throughput/backlog/dead-letter alarmlari ve 12 bagimsiz writer concurrent kabul testi
-4. `OBS-01`: operasyon dashboard'u, Prometheus/OpenTelemetry export'u ve alarm teslim kanallari
+4. `OBS-01b`: operasyon dashboard'u, OpenTelemetry export'u ve alarm teslim kanallari (Prometheus cekirdegi tamamlandi)
 5. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari

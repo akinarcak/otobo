@@ -16,10 +16,11 @@ my $FoundationObject = $Kernel::OM->Get('Kernel::System::D724::Foundation');
 my $ConfigObject     = $Kernel::OM->Get('Kernel::Config');
 
 my $Manifest = $FoundationObject->ManifestGet();
-is( $Manifest->{Product}, 'D724 ESM', 'product identity is available' );
+is( $Manifest->{Product}, 'CareOnCloud ESM', 'product identity is available' );
+is( $Manifest->{Slogan}, 'Hizmet Bulutta, Kontrol Sizde.', 'brand slogan is available' );
 is( $Manifest->{Edition}, 'Community', 'default edition is Community' );
 is( $Manifest->{Package}, 'D724Foundation', 'package name is stable' );
-is( $Manifest->{PackageVersion}, '0.1.0', 'package version is exposed' );
+is( $Manifest->{PackageVersion}, '0.2.1', 'package version is exposed' );
 is( $Manifest->{License}, 'GPL-3.0-only', 'license is explicit' );
 ok( $Manifest->{FrameworkVersion}, 'framework version is exposed' );
 

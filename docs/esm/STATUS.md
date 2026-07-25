@@ -1,4 +1,4 @@
-# D724 ESM Durum Kaydi
+# CareOnCloud ESM Durum Kaydı
 
 Son dogrulama: `2026-07-25`
 
@@ -10,12 +10,13 @@ Son dogrulama: `2026-07-25`
 - Digest-pinned Elasticsearch 8.19.3 servisi; yalniz Docker ic aginda, cluster `green`, OTOBO resmi connection testi basarili.
 - Ozel test aginda HTTP health ve agent giris sayfasi: HTTP 200.
 - OTOBO konsolundan SysConfig rebuild ve daemon status kontrolleri.
-- GPL-3.0 `D724Foundation 0.1.0` OPM paketi:
+- GPL-3.0 `D724Foundation 0.2.1` uyumluluk adlı CareOnCloud temel OPM paketi:
   - urun ve edition SysConfig ayarlari,
   - telemetry icin opt-in varsayilani,
   - `Admin::D724::FoundationStatus --json` tanilama komutu,
   - paket deployment kontrolu `OK`,
-  - iki test dosyasi, 15 test, sonuc `PASS`.
+  - CareOnCloud ESM ürün adı, resmi Careon logo varlıkları ve `Hizmet Bulutta, Kontrol Sizde.` sloganı,
+  - iki test dosyası dahil birleşik regresyonda sonuç `PASS`.
 - GPL-3.0 `D724TenantGuard 0.6.0` / policy contract `1.4.0` OPM paketi:
   - varsayilan-reddet action/role matrisi,
   - exact ve buyuk/kucuk harf duyarli tenant siniri,
@@ -53,7 +54,7 @@ Son dogrulama: `2026-07-25`
   - service/offering/item/schema create-update icin normalize audit olaylari ve mutation+audit transaction atomikligi,
   - alti test dosyasi, 73 paket testi, sonuc `PASS`,
   - authenticated customer HTTP katalog ve dinamik form smoke testleri.
-- GPL-3.0 `D724Request 0.4.6` OPM paketi:
+- GPL-3.0 `D724Request 0.4.8` uyumluluk adlı request OPM paketi:
   - sunucu-tarafli dinamik cevap validasyonu ve workflow snapshot'i,
   - tenant/requester kapsamli idempotent form submission,
   - tenant-role onayi ve optimistic-lock durum gecisleri,
@@ -136,7 +137,7 @@ Son dogrulama: `2026-07-25`
   - JSON ve RFC4180-benzeri CSV; CR/LF temizleme ve `= + - @` spreadsheet formula neutralization,
   - her cache get/set oncesi yeniden yetkilendirme, tenant namespace'li 60 saniye aggregate cache ve schema-version'li logical key,
   - gercek demo kabulunde `10` request, `24` commitment, `2` breached; JSON/CSV PII-minimize ve cross-tenant export `FORBIDDEN`.
-- On bir D724 paketinde toplam 42 test dosyasi ve 859 test birlikte `PASS`.
+- On iki CareOnCloud paketinin 44 dosyalık birleşik regresyonu `898` test ile `PASS` (`2026-07-25`).
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
@@ -155,12 +156,17 @@ Son dogrulama: `2026-07-25`
 - Kalici ticket-policy kabulunde `demo.agent` (UserID `47`) kendi `d724-demo` scope'unda yalniz TicketID `9` / `D724AUD20260724001` sonucunu gordu; `CustomerIDRaw` bypass'i reddedildi ve Generic Interface ortak erisimi basarili oldu.
 - Gercek Elasticsearch runtime kabulunde ayni full-text degerli `d724-demo` ve yabanci tenant fixture dokumanlarindan UserID `47` yalniz kendi hit'ini gordu; explicit cross-tenant filter `EMPTY_TENANT_INTERSECTION` ile reddedildi ve fixture'lar silindi.
 - Resmi `Maint::Elasticsearch::Migration --target t` authoritative rebuild'i 2 MariaDB ticket'ini tasidi; refresh sonrasi index count `2`. Elasticsearch aktifken 42 dosya / 859 test yeniden `PASS` oldu.
+- GPL-3.0 `D724Observability 0.1.0`: tenant/PII/dinamik label icermeyen 20 sabit Prometheus serisi; API latency/error-rate ile webhook backlog/age/dead-letter alarm bayraklari; Elasticsearch policy, tenant-cache, commitment ve escalation saglik sinyalleri; digest-only Bearer auth ve fail-closed `503`.
+- Gercek Public frontend scrape kabulunde eksik/yanlis/dogru Bearer sonucu `401/401/200`, `d724_up=1`, 20 sabit seri, `no-store` ve secret sizintisi olmamasi dogrulandi. Test tokeni yalniz `/home/test/.d724-metrics-token` dosyasinda `0600` tutuluyor.
+- Cloudflare Tunnel üzerinden `https://esm.arcak.net` yayını aktiftir; origin yalnız `127.0.0.1:8088` systemd socket proxy üzerinden özel `100.86.171.110:8088` bind'ına ulaşır. Agent ve müşteri girişleri HTTP `200` ile doğrulanmıştır.
+- DD-YHE-02-R1 DORA uyumlu Careon hizmet kataloğu 6 ana alan, 51 yönetilen hizmet sunumu ve tenant başına 51 katalog öğesi olarak ürünleştirildi. Üç sentetik sektör demosunda mevcut iki sektörel öğeyle toplam `53` aktif katalog öğesi vardır.
+- Sentetik Marmara Bank Demo, Anadolu Moda Demo ve Perakende360 Demo tenant'larında toplam `36` request ve `99` commitment bulunur. Yönetici raporu kullanım ile katalog kapasitesini ayrı gösterir; hiçbir ad gerçek müşteri referansı değildir.
 - Elasticsearch webservice ID `1`, surumlu YAML ve idempotent konfigurator ile `http://elastic:9200` private host'una sabitlendi; OTOBO `Maint::Elasticsearch::TestConnection` basarili.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## Bilerek ertelenen
 
-- TLS ve genel internet yayini yapilmamistir; test erisimi ozel ag arayuzuyle sinirlidir.
+- Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
 - GitHub Actions workflow'u depoda bulunur ancak fork icin Actions calistirma politikasi ayrica etkinlestirilmelidir.
 - Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u, D724 cache ve aktif Elasticsearch ticket aramasi tenant scope'a baglidir. Generic Interface operasyon-bazli role/action matrisi aciktir.
 - OTOBO paket sema ceviricisi katalog parent'lari icin tanimlanan cok sutunlu foreign key'i ayri kisitlara cevirmektedir. Repository cifti birlikte dogrular; dogrudan DB yazimina karsi composite constraint sertlestirmesi release oncesi acik guvenlik isidir.
@@ -179,4 +185,4 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - AI gateway, PII korumasi ve insan onayi,
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
-Bir sonraki urun kapisi `OBS-01/SEC-01b-GI`: Prometheus/OpenTelemetry export'u, dashboard ve alarm teslim kanallari; Generic Interface operasyon-bazli action matrisi ve katalog composite DB constraint'i; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.
+Bir sonraki urun kapisi `OBS-01b/SEC-01b-GI`: OpenTelemetry export'u, operasyon dashboard'u ve alarm teslim kanallari; Generic Interface operasyon-bazli action matrisi ve katalog composite DB constraint'i; buna paralel kalan ticket/Chat/SLA adapter'lari, transactional outbox ve immutable dis arsivdir.

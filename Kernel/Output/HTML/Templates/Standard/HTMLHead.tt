@@ -56,6 +56,14 @@
             right: [% Data.StyleRight | html %];
             width: [% Data.StyleWidth | html %];
             height: [% Data.StyleHeight | html %];
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            border: 5px solid #fff;
+            border-radius: 10px;
+            box-sizing: border-box;
+            box-shadow: 0 3px 12px rgba(16, 42, 67, .24);
         }
     </style>
 [% RenderBlockEnd("HeaderLogoCSS") %]
@@ -65,6 +73,14 @@
         #LoginLogo {
             background-image: [% Data.URL | html %];
             height: [% Data.StyleHeight | html %];
+            background-color: #fff;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            border: 8px solid #fff;
+            border-radius: 14px;
+            box-sizing: border-box;
+            box-shadow: 0 8px 28px rgba(16, 42, 67, .18);
         }
     </style>
 [% RenderBlockEnd("LoginLogoCSS") %]
