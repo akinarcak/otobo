@@ -1,0 +1,1 @@
+use v5.24;use strict;use warnings;use Test2::V0;use Kernel::System::UnitTest::RegisterOM;my$R=$Kernel::OM->Get('Kernel::System::Console::Command::Admin::D724::AssistStatus')->StatusData();ok($R->{Success},'assist status healthy');is($R->{Version},'0.1.1','version');is($R->{ExternalDataTransfer},0,'no external transfer');done_testing;
