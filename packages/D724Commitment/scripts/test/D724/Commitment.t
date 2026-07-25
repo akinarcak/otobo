@@ -180,7 +180,7 @@ ok( $Sweep->{Success}, 'scheduled sweep evaluates active commitments' );
 ok( $Sweep->{Counts}->{Breached} >= 1, 'scheduled sweep emits breach transition' );
 my $AfterSweep = $Commitment->AgentGetByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $SweepRequest->{RequestID} );
 is( $AfterSweep->{Data}->{Status}, 'breached', 'scheduler persists breached state' );
-is( $AfterSweep->{Data}->{Events}->[-1]->{Actor}, 'system:commitment-scheduler', 'scheduler transition has explicit system actor' );
+is( $AfterSweep->{Data}->{Events}->[-1]->{Actor}, 'automation:commitment-sweep', 'scheduler transition records tenant-bound automation actor' );
 
 my $MultiPolicy = $Commitment->PolicyCreate(
     Subject => $Subject, UserID => $AdminID, TenantID => $TenantA,
@@ -461,6 +461,43 @@ ok(
 );
 my $EntitledFinal = $Commitment->AgentListByRequest( UserID => $AdminID, TenantID => $TenantA, RequestID => $Entitled->{Data}->{RequestID} );
 is( [ map { $_->{Status} } @{ $EntitledFinal->{Data} } ], [qw(met met met)], 'all premium objectives finish met in end-to-end lifecycle' );
+
+my $GuardedCommitmentID = $EntitledFinal->{Data}->[0]->{CommitmentID};
+my $GuardedVersion = $EntitledFinal->{Data}->[0]->{Version};
+my ( $Running, $InactiveTenant ) = ( 'running', 'inactive' );
+ok(
+    $DBObject->Do(
+        SQL => 'UPDATE d724_commitment_instance SET status = ? WHERE tenant_id = ? AND id = ?',
+        Bind => [ \$Running, \$TenantA, \$GuardedCommitmentID ],
+    ),
+    'daemon guard commitment fixture is made runnable',
+);
+ok(
+    $DBObject->Do( SQL => 'UPDATE d724_tenant SET status = ? WHERE key_name = ?', Bind => [ \$InactiveTenant, \$TenantA ] ),
+    'tenant is deactivated before scheduler execution',
+);
+my $DeniedSweep = $Commitment->Sweep( At => '2035-01-01 00:00:00' );
+ok( !$DeniedSweep->{Success}, 'scheduler fails closed when work references an inactive tenant' );
+ok( $DeniedSweep->{Counts}->{Denied} >= 1, 'scheduler reports policy-denied tenant work' );
+$DBObject->Prepare(
+    SQL => 'SELECT status, version FROM d724_commitment_instance WHERE tenant_id = ? AND id = ?',
+    Bind => [ \$TenantA, \$GuardedCommitmentID ], Limit => 1,
+);
+is( [ $DBObject->FetchrowArray() ], [ 'running', $GuardedVersion ], 'denied scheduler work cannot mutate commitment state/version' );
+
+my ( $Pending, $DispatchAt, $EmptyLease ) = ( 'pending', '2035-01-01 00:00:00', q{} );
+ok(
+    $DBObject->Do(
+        SQL => 'UPDATE d724_escalation_outbox SET status = ?, available_time = ?, lease_token = ?, lease_until = NULL WHERE id = ?',
+        Bind => [ \$Pending, \$DispatchAt, \$EmptyLease, \$EscalationID ],
+    ),
+    'daemon guard outbox fixture is made dispatchable',
+);
+my $DeniedDispatch = $Dispatcher->Dispatch( At => $DispatchAt, WorkerID => 'inactive-tenant-guard', Handlers => {} );
+ok( !$DeniedDispatch->{Success}, 'dispatcher fails closed for inactive tenant work' );
+ok( $DeniedDispatch->{Counts}->{Denied} >= 1, 'dispatcher reports policy-denied outbox work' );
+$DBObject->Prepare( SQL => 'SELECT status, lease_token FROM d724_escalation_outbox WHERE id = ?', Bind => [ \$EscalationID ], Limit => 1 );
+is( [ $DBObject->FetchrowArray() ], [ 'pending', q{} ], 'denied delivery remains unclaimed and unchanged' );
 
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::Enabled', Value => 0 );
 is(

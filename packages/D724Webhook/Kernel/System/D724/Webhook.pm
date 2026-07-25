@@ -9,7 +9,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -143,8 +143,12 @@ sub Scan {
     $DB->Prepare( SQL => "SELECT id, tenant_id FROM d724_webhook_subscription WHERE status = 'active' ORDER BY tenant_id, id", Limit => 5000 );
     my @Subscriptions;
     while ( my @Row = $DB->FetchrowArray() ) { push @Subscriptions, \@Row }
-    my %Counts = ( Subscriptions => scalar @Subscriptions, Scanned => 0, Matched => 0, Queued => 0, Replayed => 0, Errors => 0 );
+    my %Counts = ( Subscriptions => scalar @Subscriptions, Scanned => 0, Matched => 0, Queued => 0, Replayed => 0, Denied => 0, Errors => 0 );
     for my $Row (@Subscriptions) {
+        my $Automation = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->AutomationAuthorize(
+            TenantID => $Row->[1], JobName => 'webhook-scan',
+        );
+        if ( !$Automation->{Success} ) { $Counts{Denied}++; $Counts{Errors}++; next }
         my $Result = $Self->_ScanSubscription( SubscriptionID => $Row->[0], TenantID => $Row->[1], Limit => $Limit );
         if ( !$Result->{Success} ) { $Counts{Errors}++; next }
         $Counts{$_} += $Result->{Counts}->{$_} for qw(Scanned Matched Queued Replayed);

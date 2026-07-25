@@ -27,7 +27,7 @@ Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozle
 | Eksik filtre | rapor sorgusunda tenant kosulu unutulmasi | `ScopeGet` bos/invalid kapsamda basarisiz | scope testleri; repository entegrasyon testi sonraki kapida |
 | Yetki yukseltme | kullanicinin role parametresi gondermesi | roller yalnizca guvenilir server context'inden | API adapter threat testi sonraki kapida |
 | Kuyruk yan gecisi | ortak agent grubunun iki musteri kaydini gormesi | OTOBO grup izninden sonra TenantGuard | ticket permission adapter sonraki kapida |
-| Arka plan sizintisi | daemon job'unun tenantsiz calismasi | job payload'inda zorunlu TenantID | automation paketi entegrasyon testi sonraki kapida |
+| Arka plan sizintisi | daemon job'unun tenantsiz calismasi | aktif TenantID + tenant-bound `automation:<job>` subject + merkezi `automation.execute` | commitment sweep/webhook scan/dispatcher negatif entegrasyon testleri (`SEC-01b-daemon`) |
 | Cache karismasi | tenant anahtari olmayan cache key | tum D724 cache key'lerinde TenantID | cache adapter testi sonraki kapida |
 | Arama sizintisi | global Elasticsearch sonucu | index dokumaninda TenantID + zorunlu filter | search profili sonraki kapida |
 | Export sizintisi | raporun tum kayitlari indirmesi | scoped query + `audit.read`/ozel export action | export entegrasyon testi sonraki kapida |

@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.4.1';
+our $VERSION = '0.5.0';
 
 our @ObjectDependencies = ('Kernel::System::DB', 'Kernel::System::JSON');
 
@@ -32,6 +32,7 @@ sub Run {
         PendingEscalations => 0, RetryEscalations => 0, ProcessingEscalations => 0,
         DeliveredEscalations => 0, DeadEscalations => 0, DeliveredWebhooks => 0,
         DeadWebhooks => 0, LifetimeAttempts => 0, ReplayedEscalations => 0,
+        InvalidAutomationCommitments => 0, InvalidAutomationDeliveries => 0,
     );
     if ( $Tables{d724_commitment_policy} ) {
         $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_commitment_policy WHERE status = 'active'" );
@@ -46,6 +47,8 @@ sub Run {
         ($Counts{Active}) = $DBObject->FetchrowArray();
         $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_commitment_instance WHERE status = 'breached'" );
         ($Counts{Breached}) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_commitment_instance i LEFT JOIN d724_tenant t ON t.key_name = i.tenant_id AND t.status = 'active' WHERE i.status IN ('running','warning') AND t.key_name IS NULL" );
+        ($Counts{InvalidAutomationCommitments}) = $DBObject->FetchrowArray();
     }
     if ( $Tables{d724_escalation_outbox} ) {
         $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox WHERE status IN ('pending','retry','processing')" );
@@ -64,9 +67,12 @@ sub Run {
         ($Counts{DeadWebhooks}) = $DBObject->FetchrowArray();
         $DBObject->Prepare( SQL => 'SELECT COALESCE(SUM(lifetime_attempt_count), 0), COALESCE(SUM(replay_count), 0) FROM d724_escalation_outbox' );
         ( $Counts{LifetimeAttempts}, $Counts{ReplayedEscalations} ) = $DBObject->FetchrowArray();
+        $DBObject->Prepare( SQL => "SELECT COUNT(*) FROM d724_escalation_outbox o LEFT JOIN d724_tenant t ON t.key_name = o.tenant_id AND t.status = 'active' WHERE o.status IN ('pending','retry','processing') AND t.key_name IS NULL" );
+        ($Counts{InvalidAutomationDeliveries}) = $DBObject->FetchrowArray();
     }
-    my $Success = !( grep { !$_ } values %Tables );
-    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => '0.4.1', Tables => \%Tables, Counts => \%Counts };
+    my $Success = !( grep { !$_ } values %Tables )
+        && !$Counts{InvalidAutomationCommitments} && !$Counts{InvalidAutomationDeliveries};
+    my $Status = { Success => $Success ? 1 : 0, Package => 'D724Commitment', Version => $VERSION, Tables => \%Tables, Counts => \%Counts };
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }

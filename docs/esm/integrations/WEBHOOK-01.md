@@ -2,13 +2,13 @@
 
 ## Kapsam
 
-`D724Commitment 0.4.1`, SLA/OLA escalation outbox'indaki webhook aksiyonlarini
+`D724Commitment 0.5.0`, SLA/OLA escalation outbox'indaki webhook aksiyonlarini
 tenant-safe, tekrar denenebilir ve denetlenebilir bicimde teslim eder. Endpoint
 URL ve secret veritabaninda tutulmaz; policy yalniz adlandirilmis endpoint
 anahtarini tasir. Deployment konfigurasyonu bu anahtari URL/secret kaydina
 cozer ve URL'nin HTTPS host'u exact allow-list'te olmak zorundadir.
 
-`D724Webhook 0.2.0` ayni teslimat cekirdeginin uzerine genel lifecycle
+`D724Webhook 0.3.0` ayni teslimat cekirdeginin uzerine genel lifecycle
 aboneliklerini ekler. Ayri bir retry motoru veya teslimat tablosu yoktur.
 
 ## Endpoint konfigurasyonu
@@ -118,6 +118,6 @@ attempt/replay/lifetime sayaclari `1/1/4` ve tek audit olayi dogrulandi.
 `Accept-WebhookSubscription.pl` gercek canonical HTTP uzerinde requester create
 `403`, tanimsiz endpoint `422`, tenant-admin create/list/get/disable
 `201/200/200/200` ve stale update `409` kanitladi. Audit sequence `116`, shared
-outbox `74` ile tek kez teslim edildi. Son paketlerle tum D724 regresyonu 35
-dosya ve 720 assertion olarak birlikte gecti; web, daemon, MariaDB ve Redis
+outbox `74` ile tek kez teslim edildi. Son paketlerle tum D724 regresyonu 36
+dosya ve 757 assertion olarak birlikte gecti; web, daemon, MariaDB ve Redis
 servisleri saglikli kaldi.

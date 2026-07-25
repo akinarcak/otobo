@@ -15,7 +15,7 @@ is( $ExitCode, 0, 'webhook status succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
 ok( $Status->{Success}, 'webhook subscription schema is healthy' );
 is( $Status->{Package}, 'D724Webhook', 'status identifies package' );
-is( $Status->{Version}, '0.2.0', 'status identifies version' );
+is( $Status->{Version}, '0.3.0', 'status identifies version' );
 ok( $Status->{Tables}->{d724_webhook_subscription}, 'subscription table is present' );
 is( $Status->{QueryErrors}, 0, 'status queries are error free' );
 for my $Metric (qw(Subscriptions Active Inactive TotalCursorLag MaximumCursorLag InvalidTenantReferences PendingDeliveries RetryDeliveries DeadDeliveries DeliveredLastHour OldestReadyAgeMinutes)) {

@@ -143,4 +143,36 @@ is(
     2, 'subscription list retains every ID before loading row details',
 );
 
+my ( $Inactive, $Pending, $Available, $EmptyLease ) = ( 'inactive', 'pending', '2035-01-01 00:00:00', q{} );
+my $ActiveSubscription = 'active';
+ok(
+    $DB->Do(
+        SQL => 'UPDATE d724_webhook_subscription SET status = ? WHERE tenant_id = ? AND id = ?',
+        Bind => [ \$ActiveSubscription, \$TenantA, \$Created->{Data}->{SubscriptionID} ],
+    ),
+    'subscription is active for daemon guard acceptance',
+);
+ok( $DB->Do( SQL => 'UPDATE d724_tenant SET status = ? WHERE key_name = ?', Bind => [ \$Inactive, \$TenantA ] ), 'webhook tenant is deactivated' );
+my $CursorBeforeDeniedScan = $AfterScan->{Data}->{CursorSequence};
+my $DeniedScan = $Webhook->Scan( Limit => 100 );
+ok( !$DeniedScan->{Success}, 'webhook daemon fails closed for inactive tenant subscription' );
+ok( $DeniedScan->{Counts}->{Denied} >= 1, 'webhook daemon reports denied subscription work' );
+is(
+    $Webhook->_SubscriptionRowGet( TenantID => $TenantA, SubscriptionID => $Created->{Data}->{SubscriptionID} )->{CursorSequence},
+    $CursorBeforeDeniedScan,
+    'denied subscription scan cannot advance tenant cursor',
+);
+ok(
+    $DB->Do(
+        SQL => 'UPDATE d724_escalation_outbox SET status = ?, available_time = ?, lease_token = ?, lease_until = NULL WHERE id = ?',
+        Bind => [ \$Pending, \$Available, \$EmptyLease, \$OutboxID ],
+    ),
+    'inactive tenant delivery is made dispatchable',
+);
+my $DeniedDelivery = $Dispatcher->Dispatch( At => $Available, WorkerID => 'webhook-inactive-guard', Handlers => {} );
+ok( !$DeniedDelivery->{Success}, 'shared dispatcher denies inactive webhook tenant' );
+ok( $DeniedDelivery->{Counts}->{Denied} >= 1, 'shared dispatcher exposes denied delivery count' );
+$DB->Prepare( SQL => 'SELECT status, lease_token FROM d724_escalation_outbox WHERE id = ?', Bind => [ \$OutboxID ], Limit => 1 );
+is( [ $DB->FetchrowArray() ], [ 'pending', q{} ], 'denied webhook delivery remains unclaimed' );
+
 done_testing;

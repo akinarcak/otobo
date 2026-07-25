@@ -12,7 +12,7 @@ use warnings;
 use Digest::SHA qw(hmac_sha256_hex sha256_hex);
 use URI ();
 
-our $VERSION = '0.4.1';
+our $VERSION = '0.5.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::DB',
@@ -42,12 +42,17 @@ sub Dispatch {
         Bind => [ \$At ],
     );
     $DB->Prepare(
-        SQL => "SELECT id FROM d724_escalation_outbox WHERE status IN ('pending','retry') AND available_time <= ? ORDER BY available_time, id",
+        SQL => "SELECT id, tenant_id FROM d724_escalation_outbox WHERE status IN ('pending','retry') AND available_time <= ? ORDER BY available_time, id",
         Bind => [ \$At ], Limit => $Limit,
     );
-    my @IDs; while ( my ($ID) = $DB->FetchrowArray() ) { push @IDs, $ID }
-    my %Counts = ( Claimed => 0, Delivered => 0, Retried => 0, Dead => 0 );
-    for my $ID (@IDs) {
+    my @Work; while ( my @Row = $DB->FetchrowArray() ) { push @Work, \@Row }
+    my %Counts = ( Claimed => 0, Delivered => 0, Retried => 0, Dead => 0, Denied => 0, Errors => 0 );
+    for my $Work (@Work) {
+        my ( $ID, $TenantID ) = @{$Work};
+        my $Automation = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->AutomationAuthorize(
+            TenantID => $TenantID, JobName => 'escalation-dispatch',
+        );
+        if ( !$Automation->{Success} ) { $Counts{Denied}++; $Counts{Errors}++; next }
         my $Token = sha256_hex( join q{:}, $Worker, $ID, $At, rand() );
         my $LeaseUntil = $Self->_AddSeconds( Time => $At, Seconds => 60 );
         $DB->Do(
@@ -83,7 +88,7 @@ sub Dispatch {
         );
         $Counts{ $Dead ? 'Dead' : 'Retried' }++;
     }
-    return { Success => 1, Counts => \%Counts };
+    return { Success => $Counts{Errors} ? 0 : 1, Counts => \%Counts };
 }
 
 sub QueueWebhook {

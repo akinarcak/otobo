@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 our @ObjectDependencies = ('Kernel::Config', 'Kernel::System::DB', 'Kernel::System::JSON');
 
 sub Configure {
@@ -36,7 +36,7 @@ sub Run {
             [ Subscriptions => 'SELECT COUNT(*) FROM d724_webhook_subscription' ],
             [ Active => "SELECT COUNT(*) FROM d724_webhook_subscription WHERE status = 'active'" ],
             [ Inactive => "SELECT COUNT(*) FROM d724_webhook_subscription WHERE status = 'inactive'" ],
-            [ InvalidTenantReferences => 'SELECT COUNT(*) FROM d724_webhook_subscription s LEFT JOIN d724_tenant t ON t.key_name = s.tenant_id WHERE t.key_name IS NULL' ],
+            [ InvalidTenantReferences => "SELECT COUNT(*) FROM d724_webhook_subscription s LEFT JOIN d724_tenant t ON t.key_name = s.tenant_id AND t.status = 'active' WHERE s.status = 'active' AND t.key_name IS NULL" ],
         );
         for my $Query (@Queries) {
             if ( !$DB->Prepare( SQL => $Query->[1] ) ) { $QueryErrors++; next }

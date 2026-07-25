@@ -10,7 +10,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.4.1';
+our $VERSION = '0.5.0';
 our @ObjectDependencies = (
     'Kernel::System::D724::EscalationDispatcher',
     'Kernel::System::D724::TenantDirectory',

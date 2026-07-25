@@ -10,10 +10,11 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.3.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
+    'Kernel::System::DB',
 );
 
 my %RoleActions = (
@@ -30,10 +31,10 @@ my %RoleActions = (
         map { $_ => 1 } qw(catalog.read case.read audit.read)
     },
     automation => {
-        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign)
+        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign automation.execute)
     },
     tenant_admin => {
-        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage)
+        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage automation.execute)
     },
 );
 
@@ -255,6 +256,41 @@ sub ScopeGet {
         PolicyVersion => $PolicyVersion,
         TenantIDs     => [ sort keys %TenantIDs ],
         Unrestricted  => $Unrestricted,
+    };
+}
+
+sub AutomationAuthorize {
+    my ( $Self, %Param ) = @_;
+
+    my $TenantID = $Param{TenantID};
+    return { Success => 0, Error => 'TENANT_ID_INVALID', Reason => 'DENY_TENANT_IDENTIFIER_INVALID' }
+        if !$Self->_IdentifierValid($TenantID);
+    return { Success => 0, Error => 'JOB_NAME_INVALID', Reason => 'DENY_SUBJECT_ID_MISSING' }
+        if ( $Param{JobName} // q{} ) !~ m{\A[a-zA-Z0-9][a-zA-Z0-9_.:-]{0,63}\z}smx;
+
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    return { Success => 0, Error => 'TENANT_LOOKUP_FAILED', Reason => 'DENY_POLICY_ERROR' }
+        if !$DB->Prepare(
+            SQL => "SELECT 1 FROM d724_tenant WHERE key_name = ? AND status = 'active'",
+            Bind => [ \$TenantID ], Limit => 1,
+        );
+    my ($Active) = $DB->FetchrowArray();
+    return { Success => 0, Error => 'TENANT_INACTIVE', Reason => 'DENY_TENANT_INACTIVE' } if !$Active;
+
+    my $Subject = {
+        ID => "automation:$Param{JobName}", TenantIDs => [$TenantID],
+        RoleBindings => { $TenantID => ['automation'] },
+    };
+    my $Decision = $Self->DecisionGet(
+        Subject => $Subject, Resource => { TenantID => $TenantID }, Action => 'automation.execute',
+    );
+    return {
+        Success => 0, Error => 'AUTOMATION_FORBIDDEN', Reason => $Decision->{Reason},
+        PolicyVersion => $Decision->{PolicyVersion},
+    } if !$Decision->{Allowed};
+    return {
+        Success => 1, Subject => $Subject, Reason => $Decision->{Reason},
+        PolicyVersion => $Decision->{PolicyVersion},
     };
 }
 

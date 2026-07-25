@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
     <Name>D724TenantGuard</Name>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
     <URL>https://github.com/akinarcak/otobo</URL>
@@ -16,6 +16,7 @@
         <File Permission="644" Location="Kernel/System/D724/TenantGuard.pm" />
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/TenantGuardCheck.pm" />
         <File Permission="644" Location="scripts/test/D724/TenantGuard.t" />
+        <File Permission="644" Location="scripts/test/D724/TenantGuardAutomation.t" />
         <File Permission="644" Location="scripts/test/D724/TenantGuardCheck.t" />
     </Filelist>
 </otobo_package>

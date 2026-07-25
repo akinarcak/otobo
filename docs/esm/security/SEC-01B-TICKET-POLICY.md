@@ -26,4 +26,4 @@ Filtre sonuctan sonra uygulanmaz. Bu sayede `Limit`, siralama ve `COUNT` altinda
 
 ## Acik kapsam
 
-Generic Interface icin OAuth client kimligi, operasyon-bazli role/action matrisi, rate limit, idempotency ve surumlu `/api/v1` kontrati `API-01` kapsamindadir. Elasticsearch adapter'i, rapor/statistik sorgulari, cache key tenant namespace'i, daemon actor baglami ve ticket detay UI direct-link savunmasinin genis kabul matrisi genel `SEC-01b` icinde aciktir.
+Generic Interface icin OAuth client kimligi, operasyon-bazli role/action matrisi, rate limit, idempotency ve surumlu `/api/v1` kontrati `API-01` kapsamindadir. Daemon actor baglami `SEC-01B-DAEMON.md` ile tamamlanmistir. Elasticsearch adapter'i, rapor/statistik sorgulari, cache key tenant namespace'i ve ticket detay UI direct-link savunmasinin genis kabul matrisi genel `SEC-01b` icinde aciktir.

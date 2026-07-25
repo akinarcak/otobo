@@ -11,7 +11,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.4.1';
+our $VERSION = '0.5.0';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantDirectory',
@@ -304,12 +304,16 @@ sub Sweep {
     $DBObject->Prepare( SQL => "SELECT id, tenant_id, version FROM d724_commitment_instance WHERE status IN ('running', 'warning') ORDER BY id", Limit => 5000 );
     my @Work;
     while ( my @Row = $DBObject->FetchrowArray() ) { push @Work, \@Row }
-    my %Counts = ( Scanned => 0, Warning => 0, Breached => 0, Unchanged => 0, Errors => 0 );
+    my %Counts = ( Scanned => 0, Warning => 0, Breached => 0, Unchanged => 0, Denied => 0, Errors => 0 );
     for my $Row (@Work) {
         $Counts{Scanned}++;
+        my $Automation = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->AutomationAuthorize(
+            TenantID => $Row->[1], JobName => 'commitment-sweep',
+        );
+        if ( !$Automation->{Success} ) { $Counts{Denied}++; $Counts{Errors}++; next }
         my $Result = $Self->_EvaluateOne(
             CommitmentID => $Row->[0], TenantID => $Row->[1], ExpectedVersion => $Row->[2],
-            At => $At, Actor => 'system:commitment-scheduler', Reason => 'scheduled_sweep',
+            At => $At, Actor => $Automation->{Subject}->{ID}, Reason => 'scheduled_sweep',
         );
         if ( !$Result->{Success} ) { $Counts{Errors}++; next }
         if ( $Result->{Transition} eq 'warning' ) { $Counts{Warning}++ }

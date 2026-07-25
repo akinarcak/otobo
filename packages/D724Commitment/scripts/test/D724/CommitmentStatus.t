@@ -17,7 +17,7 @@ is( $ExitCode, 0, 'commitment status succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
 ok( $Status->{Success}, 'commitment schema is healthy' );
 is( $Status->{Package}, 'D724Commitment', 'status identifies package' );
-is( $Status->{Version}, '0.4.1', 'status identifies version' );
+is( $Status->{Version}, '0.5.0', 'status identifies version' );
 is(
     [ sort keys %{ $Status->{Tables} } ],
     [qw(d724_commitment_event d724_commitment_instance d724_commitment_objective d724_commitment_policy d724_escalation_outbox)],
@@ -26,5 +26,7 @@ is(
 for my $Metric (qw(DeliveredEscalations DeliveredWebhooks DeadEscalations DeadWebhooks LifetimeAttempts ReplayedEscalations RetryEscalations)) {
     ok( exists $Status->{Counts}->{$Metric}, "status reports $Metric" );
 }
+is( $Status->{Counts}->{InvalidAutomationCommitments}, 0, 'no runnable commitment references inactive tenant' );
+is( $Status->{Counts}->{InvalidAutomationDeliveries}, 0, 'no dispatchable outbox row references inactive tenant' );
 
 done_testing;

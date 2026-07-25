@@ -208,7 +208,7 @@ are retained.
   label was stored;
 - `Accept-APIMetricConcurrency.pl` ran 12 independent database writers against
   one minute series and obtained exactly one row with count/sum/max `12/78/12`;
-- all 35 D724 test files and 720 assertions passed together.
+- all 36 D724 test files and 757 assertions passed together.
 
 ## Remaining API-01 work
 
