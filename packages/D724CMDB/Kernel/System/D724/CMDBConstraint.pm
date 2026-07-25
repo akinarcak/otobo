@@ -3,7 +3,7 @@
 # --
 package Kernel::System::D724::CMDBConstraint;
 use v5.24;use strict;use warnings;
-our $VERSION='0.2.2';our @ObjectDependencies=('Kernel::System::DB');
+our $VERSION='0.3.4';our @ObjectDependencies=('Kernel::System::DB');
 my@C=(
  {Name=>'d724_fk_category_service_category',Table=>'d724_service_category_service',Columns=>[qw(tenant_id category_id)],ForeignTable=>'d724_service_category',ForeignColumns=>[qw(tenant_id id)]},
  {Name=>'d724_fk_category_service_service',Table=>'d724_service_category_service',Columns=>[qw(tenant_id service_id)],ForeignTable=>'d724_service',ForeignColumns=>[qw(tenant_id id)]},

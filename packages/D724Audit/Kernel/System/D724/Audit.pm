@@ -10,8 +10,9 @@ use v5.24;
 use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
+use Encode qw(encode_utf8);
 
-our $VERSION = '0.2.0';
+our $VERSION = '0.2.1';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::TenantGuard',
@@ -89,7 +90,7 @@ sub Record {
             source_ip_hash => $SourceHash, details => $Details->{Data}, previous_hash => $PreviousHash,
             dedupe_key => "$Param{DedupeKey}",
         );
-        my $EventHash = sha256_hex( $JSON->Encode( Data => \%Canonical, SortKeys => 1 ) );
+        my $EventHash = sha256_hex( encode_utf8( $JSON->Encode( Data => \%Canonical, SortKeys => 1 ) ) );
         my @Values = (
             $Param{TenantID}, $Sequence, $UUID, $At, $Param{ActorType}, $Param{ActorID}, $Param{Action}, $Param{ObjectType}, $Param{ObjectID},
             $Param{CorrelationID} // q{}, $Param{DedupeKey}, $Param{FromState} // q{}, $Param{ToState} // q{}, $Param{Outcome} // 'success', $SourceHash,
@@ -164,7 +165,7 @@ sub Verify {
             source_ip_hash => $Data->{SourceIPHash}, details => $Data->{Details}, previous_hash => $Data->{PreviousHash},
         );
         $Canonical{dedupe_key} = $Data->{DedupeKey} if length( $Data->{DedupeKey} // q{} );
-        my $Hash = sha256_hex( $JSON->Encode( Data => \%Canonical, SortKeys => 1 ) );
+        my $Hash = sha256_hex( encode_utf8( $JSON->Encode( Data => \%Canonical, SortKeys => 1 ) ) );
         return { Success => 1, Valid => 0, Error => 'EVENT_HASH_MISMATCH', Sequence => $Data->{Sequence} } if $Hash ne $Data->{EventHash};
         $PreviousHash = $Hash; $ExpectedSequence++;
     }

@@ -2,7 +2,7 @@
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --
-use v5.24; use strict; use warnings; use Test2::V0; use Kernel::System::UnitTest::RegisterOM;
+use v5.24; use strict; use warnings; use utf8; use Test2::V0; use Kernel::System::UnitTest::RegisterOM;
 $Kernel::OM->ObjectParamAdd('Kernel::System::UnitTest::Helper'=>{RestoreDatabase=>1});
 my $Helper=$Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 $Helper->ConfigSettingChange(Key=>'D724::Audit::Enabled',Value=>1);
@@ -19,7 +19,7 @@ my $One=$Audit->Record(TenantID=>$A,ActorType=>'customer',ActorID=>'customer:tes
 ok($One->{Success},'first normalized audit event is recorded'); is($One->{Data}->{Sequence},1,'tenant chain begins at sequence one'); is($One->{Data}->{PreviousHash},'0'x64,'tenant chain begins with zero hash');
 my $Replay=$Audit->Record(TenantID=>$A,ActorType=>'customer',ActorID=>'customer:test',Action=>'request.created',ObjectType=>'request',ObjectID=>'101',CorrelationID=>'REQ-101',DedupeKey=>'request:101:created',FromState=>'',ToState=>'awaiting_approval',Details=>{catalog_item_id=>7});
 ok($Replay->{Success} && $Replay->{IdempotentReplay},'duplicate event key returns the original event'); is($Replay->{Data}->{Sequence},1,'duplicate event does not advance the chain');
-my $Two=$Audit->Record(TenantID=>$A,ActorType=>'agent',ActorID=>"agent:$AuditorID",Action=>'request.approved',ObjectType=>'request',ObjectID=>'101',CorrelationID=>'REQ-101',DedupeKey=>'request:101:approval:1',FromState=>'awaiting_approval',ToState=>'in_fulfillment',Details=>{decision=>'approved'},EventTime=>'2026-07-24 12:00:00');
+my $Two=$Audit->Record(TenantID=>$A,ActorType=>'agent',ActorID=>"agent:$AuditorID",Action=>'request.approved',ObjectType=>'request',ObjectID=>'101',CorrelationID=>'REQ-101',DedupeKey=>'request:101:approval:1',FromState=>'awaiting_approval',ToState=>'in_fulfillment',Details=>{decision=>'onaylandı'},EventTime=>'2026-07-24 12:00:00');
 ok($Two->{Success},'second audit event is recorded'); is($Two->{Data}->{Sequence},2,'sequence advances monotonically'); is($Two->{Data}->{PreviousHash},$One->{Data}->{EventHash},'event links to previous hash');
 ok($Audit->Record(TenantID=>$B,ActorType=>'system',ActorID=>'system:test',Action=>'request.created',ObjectType=>'request',ObjectID=>'201',DedupeKey=>'request:201:created',Details=>{})->{Success},'another tenant has independent chain');
 my $Page=$Audit->List(UserID=>$AuditorID,TenantID=>$A,Limit=>1); ok($Page->{Success},'auditor reads own tenant audit'); is(scalar @{$Page->{Data}},1,'pagination limit is honored'); is($Page->{NextSequence},1,'stable sequence cursor is returned');
