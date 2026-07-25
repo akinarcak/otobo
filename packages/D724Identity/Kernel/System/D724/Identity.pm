@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = qw(Kernel::Config Kernel::System::DB Kernel::System::D724::Audit Kernel::System::D724::TenantGuard Kernel::System::JSON Kernel::System::Log);
 
 my %Role = map { $_ => 1 } qw(requester agent service_owner auditor tenant_admin);
@@ -150,6 +150,20 @@ sub _ProviderByRoute {
     my $JSON = $Kernel::OM->Get('Kernel::System::JSON');
     return { ID => 0 + $Row[0], TenantID => $Row[1], Key => $Row[2], Issuer => $Row[3], Audience => $Row[4],
         AllowedDomains => $JSON->Decode( Data => $Row[5] ), GroupRoleMap => $JSON->Decode( Data => $Row[6] ), Status => $Row[7], Version => 0 + $Row[8] };
+}
+
+sub ProviderRouteGetByKey {
+    my ( $Self, %Param ) = @_;
+    return if ( $Param{TenantID} // q{} ) !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    return if ( $Param{ProviderKey} // q{} ) !~ m{\A[a-z0-9][a-z0-9._-]{0,99}\z}smx;
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    $DB->Prepare(
+        SQL => 'SELECT issuer,audience FROM d724_identity_provider WHERE tenant_id=? AND key_name=? AND status=\'active\'',
+        Bind => [ \$Param{TenantID}, \$Param{ProviderKey} ], Limit => 1,
+    );
+    my ( $Issuer, $Audience ) = $DB->FetchrowArray();
+    return if !defined $Issuer;
+    return $Self->_ProviderByRoute( Issuer => $Issuer, Audience => $Audience );
 }
 
 sub _DomainsValidate {

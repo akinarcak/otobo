@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724Identity</Name><Version>0.1.1</Version><Framework>11.1.x</Framework>
+    <Name>D724Identity</Name><Version>0.2.0</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe federated identity trust boundary for CareOnCloud ESM.</Description>
@@ -45,14 +45,39 @@
             <ForeignKey ForeignTable="d724_identity_provider"><Reference Local="provider_id" Foreign="id" /></ForeignKey>
             <ForeignKey ForeignTable="d724_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
         </TableCreate>
+        <TableCreate Name="d724_oidc_flow">
+            <Column Name="state_digest" Required="true" PrimaryKey="true" Size="64" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="provider_id" Required="true" Type="BIGINT" />
+            <Column Name="browser_digest" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="nonce_digest" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="verifier_digest" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="return_path" Required="true" Size="1100" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="expires_at" Required="true" Type="DATE" /><Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" />
+            <Index Name="d724_oidc_flow_expiry"><IndexColumn Name="status" /><IndexColumn Name="expires_at" /></Index>
+            <ForeignKey ForeignTable="d724_identity_provider"><Reference Local="provider_id" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="d724_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
     </DatabaseInstall>
-    <DatabaseUninstall Type="pre"><TableDrop Name="d724_federated_identity" /><TableDrop Name="d724_identity_provider" /></DatabaseUninstall>
+    <DatabaseUpgrade Type="post">
+        <TableCreate Name="d724_oidc_flow" Version="0.2.0">
+            <Column Name="state_digest" Required="true" PrimaryKey="true" Size="64" Type="VARCHAR" /><Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="provider_id" Required="true" Type="BIGINT" />
+            <Column Name="browser_digest" Required="true" Size="64" Type="VARCHAR" /><Column Name="nonce_digest" Required="true" Size="64" Type="VARCHAR" /><Column Name="verifier_digest" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="return_path" Required="true" Size="1100" Type="VARCHAR" /><Column Name="status" Required="true" Size="20" Type="VARCHAR" /><Column Name="expires_at" Required="true" Type="DATE" /><Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" />
+            <Index Name="d724_oidc_flow_expiry"><IndexColumn Name="status" /><IndexColumn Name="expires_at" /></Index>
+            <ForeignKey ForeignTable="d724_identity_provider"><Reference Local="provider_id" Foreign="id" /></ForeignKey><ForeignKey ForeignTable="d724_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+    </DatabaseUpgrade>
+    <DatabaseUninstall Type="pre"><TableDrop Name="d724_oidc_flow" /><TableDrop Name="d724_federated_identity" /><TableDrop Name="d724_identity_provider" /></DatabaseUninstall>
     <Filelist>
         <File Permission="644" Location="Kernel/Config/Files/XML/D724Identity.xml" />
         <File Permission="644" Location="Kernel/System/D724/Identity.pm" />
+        <File Permission="644" Location="Kernel/System/D724/OIDCFlow.pm" />
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/IdentityStatus.pm" />
         <File Permission="644" Location="scripts/test/D724/Identity.t" />
         <File Permission="644" Location="scripts/test/D724/IdentityStatus.t" />
         <File Permission="644" Location="scripts/test/D724/IdentityTransaction.t" />
+        <File Permission="644" Location="scripts/test/D724/OIDCFlow.t" />
     </Filelist>
 </otobo_package>

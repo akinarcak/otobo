@@ -9,6 +9,6 @@ my($JSON,undef,$Exit)=capture{return $Command->Execute('--json')};
 is($Exit,0,'identity status succeeds');
 my $Data=$Kernel::OM->Get('Kernel::System::JSON')->Decode(Data=>$JSON);
 ok($Data->{Success},'identity trust boundary is healthy');
-is($Data->{Version},'0.1.1','identity package version is reported');
-is([sort keys %{$Data->{Tables}}],[qw(d724_federated_identity d724_identity_provider)],'identity tables are reported');
+is($Data->{Version},'0.2.0','identity package version is reported');
+is([sort keys %{$Data->{Tables}}],[qw(d724_federated_identity d724_identity_provider d724_oidc_flow)],'identity tables are reported');
 done_testing;
