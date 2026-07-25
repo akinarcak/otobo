@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.5.2';
+our $VERSION = '0.6.1';
 
 our @ObjectDependencies = (
     'Kernel::Config',

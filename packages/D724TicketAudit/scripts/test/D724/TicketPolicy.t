@@ -98,13 +98,47 @@ is(
 );
 
 my $GICommon = bless {}, 'Kernel::GenericInterface::Operation::Ticket::Common';
+{
+    package Kernel::GenericInterface::Operation::Ticket::TicketGet;
+    sub D724PolicyTestCall { return $_[0]->CheckAccessPermissions( %{ $_[1] } ) }
+    package Kernel::GenericInterface::Operation::Ticket::TicketHistoryGet;
+    sub D724PolicyTestCall { return $_[0]->CheckAccessPermissions( %{ $_[1] } ) }
+    package Kernel::GenericInterface::Operation::Ticket::TicketUpdate;
+    sub D724PolicyTestCall { return $_[0]->CheckAccessPermissions( %{ $_[1] } ) }
+    package main;
+}
+my $GICall = { UserID => 1, UserType => 'User', TicketID => $TicketIDs[0] };
 ok(
-    $GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[0] ),
+    Kernel::GenericInterface::Operation::Ticket::TicketGet::D724PolicyTestCall( $GICommon, $GICall ),
+    'TicketGet caller is mapped to its operation-specific action',
+);
+ok(
+    Kernel::GenericInterface::Operation::Ticket::TicketHistoryGet::D724PolicyTestCall( $GICommon, $GICall ),
+    'TicketHistoryGet caller is mapped to its operation-specific action',
+);
+ok(
+    Kernel::GenericInterface::Operation::Ticket::TicketUpdate::D724PolicyTestCall( $GICommon, $GICall ),
+    'TicketUpdate caller is mapped to its operation-specific action',
+);
+ok(
+    $GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[0], D724Action => 'integration.ticket.get' ),
     'Generic Interface common adapter permits core-authorized same-tenant read',
 );
 ok(
-    !$GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[1] ),
+    !$GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[1], D724Action => 'integration.ticket.get' ),
     'Generic Interface common adapter denies cross-tenant get/history/update access',
+);
+ok(
+    $GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[0], D724Action => 'integration.ticket.update' ),
+    'agent role permits Generic Interface update action',
+);
+ok(
+    !$GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[0], D724Action => 'integration.ticket.unknown' ),
+    'unknown Generic Interface action fails closed',
+);
+ok(
+    !$GICommon->CheckAccessPermissions( UserID => 1, UserType => 'User', TicketID => $TicketIDs[0] ),
+    'unidentified Generic Interface operation fails closed',
 );
 
 done_testing;

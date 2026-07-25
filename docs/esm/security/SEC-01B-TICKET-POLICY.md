@@ -11,7 +11,7 @@ Durum: ticket read/search alt kapisi tamamlandi (`2026-07-24`). Genel `SEC-01b` 
 - `CustomerIDRaw` tenant filtresini atlayabildigi icin policy etkinken reddedilir.
 - Baglamsiz, uyeliksiz, gecersiz veya inactive tenant kimlikleri fail-closed davranir.
 - Tekil erisim immutable `d724_ticket_scope` ve aktif tenant kaydindan dogrulanir; ticket'in degisebilir UI alanlarina guvenilmez.
-- Generic Interface `TicketGet`, `TicketHistoryGet` ve `TicketUpdate` ortak erisim kontrolu hem OTOBO queue/customer iznini hem D724 tenant iznini zorunlu tutar.
+- Generic Interface `TicketGet`, `TicketHistoryGet` ve `TicketUpdate` ortak erişim kontrolü hem OTOBO queue/customer iznini hem tenant iznini zorunlu tutar. Ayrıca ayrı `integration.ticket.get`, `integration.ticket.history` ve `integration.ticket.update` kararları uygulanır; requester/auditor update yapamaz ve tanımlanamayan operasyon fail-closed reddedilir.
 - Platform bypass yalniz mevcut `D724::TenantGuard::AllowPlatformAdmin` emergency ayari ve acik `platform_admin` baglami ile mumkundur.
 
 Filtre sonuctan sonra uygulanmaz. Bu sayede `Limit`, siralama ve `COUNT` altinda baska tenant kayitlarinin pencereyi doldurup izinli kayitlari gizlemesi engellenir.
@@ -26,4 +26,4 @@ Filtre sonuctan sonra uygulanmaz. Bu sayede `Limit`, siralama ve `COUNT` altinda
 
 ## Acik kapsam
 
-Generic Interface icin OAuth client kimligi, rate limit, idempotency ve surumlu `/api/v1` kontrati `API-01` kapsamindadir. Daemon actor baglami `SEC-01B-DAEMON.md`, operasyon raporu `REPORT-01.md`, cache namespace'i `SEC-01B-CACHE.md` ve aktif Elasticsearch runtime'i `SEC-01B-SEARCH.md` ile tamamlanmistir. Generic Interface operasyon-bazli role/action matrisi ve ticket detay UI direct-link genis kabul matrisi genel `SEC-01b` icinde aciktir.
+Generic Interface için OAuth client kimliği, rate limit, idempotency ve sürümlü `/api/v1` kontratı `API-01` kapsamındadır. Daemon actor bağlamı `SEC-01B-DAEMON.md`, operasyon raporu `REPORT-01.md`, cache namespace'i `SEC-01B-CACHE.md` ve aktif Elasticsearch runtime'i `SEC-01B-SEARCH.md` ile tamamlanmıştır. Operasyon-bazlı role/action matrisi `D724TenantGuard 0.7.0` ve `D724TicketAudit 0.8.1` ile kapatılmıştır.

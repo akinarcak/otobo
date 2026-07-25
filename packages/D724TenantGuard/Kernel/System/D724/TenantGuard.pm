@@ -10,7 +10,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.6.0';
+our $VERSION = '0.7.0';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -19,22 +19,22 @@ our @ObjectDependencies = (
 
 my %RoleActions = (
     requester => {
-        map { $_ => 1 } qw(catalog.read case.create case.read case.comment search.read)
+        map { $_ => 1 } qw(catalog.read case.create case.read case.comment search.read integration.ticket.get integration.ticket.history)
     },
     agent => {
-        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign search.read)
+        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign search.read integration.ticket.get integration.ticket.history integration.ticket.update)
     },
     service_owner => {
-        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read report.read report.export search.read)
+        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read report.read report.export search.read integration.ticket.get integration.ticket.history integration.ticket.update)
     },
     auditor => {
-        map { $_ => 1 } qw(catalog.read case.read audit.read report.read report.export search.read)
+        map { $_ => 1 } qw(catalog.read case.read audit.read report.read report.export search.read integration.ticket.get integration.ticket.history)
     },
     automation => {
-        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign automation.execute search.read)
+        map { $_ => 1 } qw(catalog.read case.create case.read case.comment case.update case.assign automation.execute search.read integration.ticket.get integration.ticket.history integration.ticket.update)
     },
     tenant_admin => {
-        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage automation.execute report.read report.export search.read)
+        map { $_ => 1 } qw(catalog.read catalog.manage case.create case.read case.comment case.update case.assign case.delete audit.read tenant.manage automation.execute report.read report.export search.read integration.ticket.get integration.ticket.history integration.ticket.update)
     },
 );
 

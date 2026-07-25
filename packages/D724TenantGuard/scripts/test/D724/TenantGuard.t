@@ -50,6 +50,12 @@ my @Matrix = (
     [ 'agent cannot export report',           ['agent'],         'report.export',   'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
     [ 'requester searches own tenant',        ['requester'],     'search.read',     'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
     [ 'agent cannot search another tenant',   ['agent'],         'search.read',     'tenant-b', 0, 'DENY_CROSS_TENANT' ],
+    [ 'requester can use GI ticket get',      ['requester'],     'integration.ticket.get', 'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'requester can use GI history',         ['requester'],     'integration.ticket.history', 'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'requester cannot use GI update',       ['requester'],     'integration.ticket.update', 'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
+    [ 'auditor cannot use GI update',         ['auditor'],       'integration.ticket.update', 'tenant-a', 0, 'DENY_ROLE_NOT_GRANTED' ],
+    [ 'agent can use GI update',              ['agent'],         'integration.ticket.update', 'tenant-a', 1, 'ALLOW_ROLE_ACTION' ],
+    [ 'agent GI get cannot cross tenant',     ['agent'],         'integration.ticket.get', 'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'tenant admin cannot cross tenant',     ['tenant_admin'],  'tenant.manage',  'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'requester cannot cross tenant',        ['requester'],     'case.read',      'tenant-b', 0, 'DENY_CROSS_TENANT' ],
     [ 'tenant IDs are case sensitive',        ['agent'],         'case.read',      'Tenant-A', 0, 'DENY_CROSS_TENANT' ],
@@ -66,7 +72,7 @@ for my $Case (@Matrix) {
     );
     is( $Decision->{Allowed}, $Allowed, "$Name: allowed" );
     is( $Decision->{Reason}, $Reason, "$Name: reason" );
-    is( $Decision->{PolicyVersion}, '1.4.0', "$Name: policy version" );
+    is( $Decision->{PolicyVersion}, '1.5.0', "$Name: policy version" );
 }
 
 is(

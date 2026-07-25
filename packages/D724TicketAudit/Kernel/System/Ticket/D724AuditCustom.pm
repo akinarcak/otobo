@@ -13,7 +13,7 @@ use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.7.1';
+our $VERSION = '0.8.1';
 our $D724SearchContext;
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
@@ -118,8 +118,26 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
         my %Identity = $Param{UserType} eq 'Customer'
             ? ( CustomerUserID => $Param{UserID} )
             : ( UserID => $Param{UserID} );
+        my $Action = $Param{D724Action};
+        if ( !defined $Action ) {
+            my %OperationAction = (
+                'Kernel::GenericInterface::Operation::Ticket::TicketGet'        => 'integration.ticket.get',
+                'Kernel::GenericInterface::Operation::Ticket::TicketHistoryGet' => 'integration.ticket.history',
+                'Kernel::GenericInterface::Operation::Ticket::TicketUpdate'     => 'integration.ticket.update',
+            );
+            for my $Depth ( 0 .. 12 ) {
+                my $Caller = caller $Depth;
+                last if !defined $Caller;
+                if ( $OperationAction{$Caller} ) {
+                    $Action = $OperationAction{$Caller};
+                    last;
+                }
+            }
+        }
+        return if !defined $Action;
+
         my $Policy = $Kernel::OM->Get('Kernel::System::D724::TicketPolicy')->TicketAccessCheck(
-            TicketID => $Param{TicketID}, %Identity,
+            TicketID => $Param{TicketID}, Action => $Action, %Identity,
         );
         return $Policy->{Success} ? 1 : undef;
     };

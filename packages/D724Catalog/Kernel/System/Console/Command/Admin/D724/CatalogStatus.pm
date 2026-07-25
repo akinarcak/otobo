@@ -16,6 +16,7 @@ our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::DB',
     'Kernel::System::JSON',
+    'Kernel::System::D724::CatalogConstraint',
 );
 
 sub Configure {
@@ -40,13 +41,15 @@ sub Run {
     my %Tables       = map { $_ => $Existing{$_} ? 1 : 0 }
         qw(d724_service d724_service_offering d724_catalog_item d724_catalog_item_schema);
     my $Enabled = $ConfigObject->Get('D724::Catalog::Enabled') ? 1 : 0;
-    my $Success = $Enabled && !grep { !$Tables{$_} } keys %Tables;
+    my $Constraint = $Kernel::OM->Get('Kernel::System::D724::CatalogConstraint')->StatusGet();
+    my $Success = $Enabled && $Constraint->{Success} && !grep { !$Tables{$_} } keys %Tables;
     my $Status  = {
         Success => $Success ? 1 : 0,
         Enabled => $Enabled,
         Package => 'D724Catalog',
-        Version => '0.5.2',
+        Version => '0.6.1',
         Tables  => \%Tables,
+        TenantConstraints => $Constraint,
     };
 
     if ( $Self->GetOption('json') ) {

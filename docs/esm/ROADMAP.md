@@ -35,7 +35,7 @@
 - [x] `API-01b-lifecycle`: tenant-role korumali approval ve fulfillment task write endpoint'leri, optimistic version, guvenli replay, commitment senkronu ve integration actor audit (`2026-07-25`).
 - [x] `SLA-01b-ops`: canonical JSON/HMAC v1 webhook kontrati, tenant-safe dead-letter replay, lifetime/replay kaniti ve teslimat metrikleri (`2026-07-25`).
 - [x] `API-01c-webhook`: tenant-admin lifecycle subscription CRUD API'si, exact/prefix event filtreleri, immutable audit cursor tarayicisi ve ortak imzali outbox uzerinde exactly-once kuyruklama (`2026-07-25`).
-- [ ] `SEC-01b`: katalog/ticket/GI ortak erisim/daemon/report/cache/search tamamlandi; Generic Interface operasyon-bazli action matrisi ve katalog DB constraint sertlestirmesi acik.
+- [x] `SEC-01b`: katalog/ticket/GI/daemon/report/cache/search tenant sınırı; Generic Interface operasyon-bazlı action matrisi ve üç composite katalog parent constraint'i (`2026-07-25`).
 
 Takvim, iki haftalik sprint ve her asamada calisan urun varsayimiyla yazildi. Tarihler ekip kapasitesi dogrulandiktan sonra sabitlenmelidir.
 
@@ -88,7 +88,7 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 ## Ilk backlog sirasi
 
 1. `AUD-01b-core`: kalan ticket delete/merge/type/service/SLA/pending ve Chat article, Generic Interface/SLA scheduler mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
-2. `SEC-01b`: Generic Interface operasyon-bazli action matrisi ve katalog DB constraint sertlestirmesi
+2. `SEC-03`: SSO/SCIM kimlik yaşam döngüsü, tenant claim sözleşmesi ve JIT provisioning güvenlik kapısı
 3. `API-01d-ops` (tamamlandi, 2026-07-25): bounded-cardinality route latency/error metrikleri, 168 saat retention, webhook throughput/backlog/dead-letter alarmlari ve 12 bagimsiz writer concurrent kabul testi
 4. `OBS-01b`: operasyon dashboard'u, OpenTelemetry export'u ve alarm teslim kanallari (Prometheus cekirdegi tamamlandi)
 5. `PILOT-01`: ornek IT/HR kataloglari ve pilot kabul senaryolari

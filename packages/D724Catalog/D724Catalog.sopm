@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
     <Name>D724Catalog</Name>
-    <Version>0.5.2</Version>
+    <Version>0.6.1</Version>
     <Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
     <URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
-    <Description Lang="en">Tenant-safe service portfolio and catalog repository for D724 ESM.</Description>
-    <Description Lang="tr">D724 ESM icin tenant guvenli hizmet portfoyu ve katalog repository'si.</Description>
+    <Description Lang="en">Tenant-safe service portfolio and catalog repository for CareOnCloud ESM.</Description>
+    <Description Lang="tr">CareOnCloud ESM icin tenant guvenli hizmet portfoyu ve katalog repository'si.</Description>
     <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
     <PackageRequired Version="0.2.0">D724TenantGuard</PackageRequired>
     <PackageRequired Version="0.2.1">D724TenantDirectory</PackageRequired>
     <PackageRequired Version="0.2.0">D724Audit</PackageRequired>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsVisible>1</PackageIsVisible>
+    <CodeInstall Type="post"><![CDATA[
+$Kernel::OM->Get('Kernel::System::D724::CatalogConstraint')->Ensure()->{Success}
+    || die "CareOnCloud catalog tenant constraints could not be installed";
+    ]]></CodeInstall>
+    <CodeUpgrade Type="post" Version="0.6.0"><![CDATA[
+$Kernel::OM->Get('Kernel::System::D724::CatalogConstraint')->Ensure()->{Success}
+    || die "CareOnCloud catalog tenant constraints could not be upgraded";
+    ]]></CodeUpgrade>
     <DatabaseInstall Type="post">
         <TableCreate Name="d724_service">
             <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
@@ -171,6 +179,7 @@
         <File Permission="644" Location="Kernel/Config/Files/XML/D724Catalog.xml" />
         <File Permission="644" Location="Kernel/System/D724/Catalog.pm" />
         <File Permission="644" Location="Kernel/System/D724/CatalogPortal.pm" />
+        <File Permission="644" Location="Kernel/System/D724/CatalogConstraint.pm" />
         <File Permission="644" Location="Kernel/Modules/CustomerD724Catalog.pm" />
         <File Permission="644" Location="Kernel/Modules/AdminD724Catalog.pm" />
         <File Permission="644" Location="Kernel/System/Console/Command/Admin/D724/CatalogStatus.pm" />
@@ -178,6 +187,7 @@
         <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminD724Catalog.tt" />
         <File Permission="644" Location="scripts/test/D724/Catalog.t" />
         <File Permission="644" Location="scripts/test/D724/CatalogStatus.t" />
+        <File Permission="644" Location="scripts/test/D724/CatalogConstraint.t" />
         <File Permission="644" Location="scripts/test/D724/CatalogPortal.t" />
         <File Permission="644" Location="scripts/test/D724/CatalogFrontend.t" />
         <File Permission="644" Location="scripts/test/D724/CatalogAgentContext.t" />

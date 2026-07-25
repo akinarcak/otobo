@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_package version="1.0">
-    <Name>D724TicketAudit</Name><Version>0.7.1</Version><Framework>11.1.x</Framework>
+    <Name>D724TicketAudit</Name><Version>0.8.1</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://github.com/akinarcak/otobo</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe OTOBO ticket search and Generic Interface reads with transaction-atomic mutation audit.</Description>
     <Description Lang="tr">Tenant-guvenli OTOBO ticket arama ve Generic Interface okumalari ile transaction-atomic mutasyon auditi.</Description>
     <PackageRequired Version="0.1.0">D724Foundation</PackageRequired>
-    <PackageRequired Version="0.6.0">D724TenantGuard</PackageRequired>
+    <PackageRequired Version="0.7.0">D724TenantGuard</PackageRequired>
     <PackageRequired Version="0.2.1">D724TenantDirectory</PackageRequired>
     <PackageRequired Version="0.2.0">D724Audit</PackageRequired>
     <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>

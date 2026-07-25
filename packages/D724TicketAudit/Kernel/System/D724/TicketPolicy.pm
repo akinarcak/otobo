@@ -8,7 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.7.1';
+our $VERSION = '0.8.1';
 
 our @ObjectDependencies = (
     'Kernel::System::CustomerUser',
@@ -76,6 +76,12 @@ sub TicketAccessCheck {
 
     my %Allowed = map { $_ => 1 } @{ $Context->{TenantIDs} };
     return $Self->_Deny('CROSS_TENANT') if !$Allowed{$TenantID};
+
+    my $Action = $Param{Action} // 'case.read';
+    my $Decision = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->DecisionGet(
+        Subject => $Context->{Subject}, Resource => { TenantID => $TenantID }, Action => $Action,
+    );
+    return $Self->_Deny( $Decision->{Reason} // 'ACTION_DENIED' ) if !$Decision->{Allowed};
     return { Success => 1, Context => $Context, TenantID => $TenantID, Reason => 'ALLOW_TENANT_SCOPE' };
 }
 
