@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "description": "Tenant-isolated integration API for D724 ESM. GPL-3.0-only server implementation."
   },
-  "servers": [{ "url": "/otobo/api/v1" }],
+  "servers": [{ "url": "/careoncloud/api/v1" }],
   "tags": [
     { "name": "Authentication" },
     { "name": "Tickets" },

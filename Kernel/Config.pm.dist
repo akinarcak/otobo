@@ -56,12 +56,12 @@ sub Load {
     $Self->{DatabaseHost} = '127.0.0.1';
 
     # The database name
-    $Self->{Database} = 'otobo';
+    $Self->{Database} = 'careoncloud_esm';
 
     # The database user
-    $Self->{DatabaseUser} = 'otobo';
+    $Self->{DatabaseUser} = 'careoncloud_esm';
 
-    # The password of database user. You also can use bin/otobo.Console.pl Maint::Database::PasswordCrypt
+    # The password of database user. You also can use bin/careoncloud.Console.pl Maint::Database::PasswordCrypt
     # for crypted passwords
     $Self->{DatabasePw} = 'some-pass';
 

@@ -117,14 +117,14 @@ switch ($Action) {
 
         $AdminPassword = New-RandomSecret
         $RootPassword = New-RandomSecret
-        Invoke-Compose exec -T web bin/otobo.Console.pl Admin::User::SetPassword admin $AdminPassword
-        Invoke-Compose exec -T web bin/otobo.Console.pl Admin::User::SetPassword root@localhost $RootPassword
+        Invoke-Compose exec -T web bin/careoncloud.Console.pl Admin::User::SetPassword admin $AdminPassword
+        Invoke-Compose exec -T web bin/careoncloud.Console.pl Admin::User::SetPassword root@localhost $RootPassword
 
         $RuntimeDirectory = Join-Path $ComposeDirectory '.runtime'
         New-Item -ItemType Directory -Force -Path $RuntimeDirectory | Out-Null
         $CredentialFile = Join-Path $RuntimeDirectory 'admin-credentials.env'
         @(
-            "URL=http://$BindAddress`:$HttpPort/otobo/index.pl",
+            "URL=http://$BindAddress`:$HttpPort/careoncloud/index.pl",
             'USER=admin',
             "PASSWORD=$AdminPassword"
         ) | Set-Content -Encoding UTF8 $CredentialFile
@@ -137,7 +137,7 @@ switch ($Action) {
         Invoke-Compose ps
         $HttpPort = Get-EnvironmentValue -Name 'D724_HTTP_PORT' -Default '8080'
         Invoke-RestMethod -Uri "http://127.0.0.1:$HttpPort/health" -TimeoutSec 10 | Out-Null
-        Invoke-Compose exec -T web bin/otobo.Console.pl Maint::Config::Rebuild
+        Invoke-Compose exec -T web bin/careoncloud.Console.pl Maint::Config::Rebuild
         Write-Host 'HTTP health and OTOBO console smoke checks passed.'
     }
     'Logs' {

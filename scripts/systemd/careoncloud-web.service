@@ -1,0 +1,18 @@
+[Unit]
+Description = CareOnCloud ESM Web Service
+Documentation = https://esm.arcak.net
+After = network.target
+
+[Service]
+Type = simple
+User = careoncloud
+Group = careoncloud
+WorkingDirectory = /opt/careoncloud
+Environment = CAREONCLOUD_HOME=/opt/careoncloud
+Environment = PERL5LIB=/opt/careoncloud/install/local/lib/perl5
+Environment = PATH=/opt/careoncloud/local/bin:/opt/careoncloud/install/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart = /opt/careoncloud/bin/docker/entrypoint.sh web
+Restart = always
+
+[Install]
+WantedBy = multi-user.target

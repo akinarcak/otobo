@@ -30,14 +30,14 @@ use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 my @Tests = (
     {
         Name      => 'Command completion',
-        COMP_LINE => 'bin/otobo.Console.pl Hel',
-        Arguments => [ 'bin/otobo.Console.pl', 'Hel', 'bin/otobo.Console.pl' ],
+        COMP_LINE => 'bin/careoncloud.Console.pl Hel',
+        Arguments => [ 'bin/careoncloud.Console.pl', 'Hel', 'bin/careoncloud.Console.pl' ],
         Result    => "Help",
     },
     {
         Name      => 'Argument list',
-        COMP_LINE => 'bin/otobo.Console.pl Admin::Article::StorageSwitch ',
-        Arguments => [ 'bin/otobo.Console.pl', '', 'Admin::Article::SwitchStorage' ],
+        COMP_LINE => 'bin/careoncloud.Console.pl Admin::Article::StorageSwitch ',
+        Arguments => [ 'bin/careoncloud.Console.pl', '', 'Admin::Article::SwitchStorage' ],
         Result    => "--target
 --tickets-closed-before-date
 --tickets-closed-before-days
@@ -47,8 +47,8 @@ my @Tests = (
     },
     {
         Name      => 'Argument list limitted',
-        COMP_LINE => 'bin/otobo.Console.pl Admin::Article::StorageSwitch --to',
-        Arguments => [ 'bin/otobo.Console.pl', '--to', 'Admin::Article::SwitchStorage' ],
+        COMP_LINE => 'bin/careoncloud.Console.pl Admin::Article::StorageSwitch --to',
+        Arguments => [ 'bin/careoncloud.Console.pl', '--to', 'Admin::Article::SwitchStorage' ],
         Result    => "--tolerant",
     },
 );

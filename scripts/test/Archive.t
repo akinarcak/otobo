@@ -50,7 +50,7 @@ if ( !$ChecksumFileArrayRef || !@{$ChecksumFileArrayRef} ) {
     note(
         'Archive unit test requires the checksum file (ARCHIVE) to be present and valid. '
             .
-            'Please first call the following command to create it: bin/otobo.CheckSum.pl -a create'
+            'Please first call the following command to create it: bin/careoncloud.CheckSum.pl -a create'
     );
     fail('got checksums from ARCHIVE');
 }

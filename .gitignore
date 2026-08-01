@@ -133,3 +133,7 @@ development/d724/.runtime/
 # Package tests are source files; the upstream generic "Test" rule must not hide them on Windows.
 !packages/*/scripts/test/
 !packages/*/scripts/test/**
+
+# Locally generated CareOnCloud release and package archives.
+careoncloud-deploy-*.tgz
+D724Problem-*-source.tar.gz

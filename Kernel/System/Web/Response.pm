@@ -40,7 +40,7 @@ Kernel::System::Web::Response - a wrapper around Plack::Response
 
 A wrapper around L<Plack::Response>.
 Used for collecting the HTTP headers that should be emitted.
-Also, the status code set in this object overrides in F<otobo.psgi> the default status code 200..
+Also, the status code set in this object overrides in F<careoncloud.psgi> the default status code 200..
 
 =head1 PUBLIC INTERFACE
 

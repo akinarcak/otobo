@@ -2583,8 +2583,8 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             '%s를 읽음으로써 시스템 구성을 사용하는 방법을 알아보십시오.',
         'Search in all settings...' => '모든 설정에서 검색...',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
-            '현재 사용할 수있는 설정이 없습니다. 소프트웨어를 사용하기 전에 \'otobo.Console.pl Maint :: Config :: Rebuild\'를 실행하십시오. ',
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+            '현재 사용할 수있는 설정이 없습니다. 소프트웨어를 사용하기 전에 \'careoncloud.Console.pl Maint :: Config :: Rebuild\'를 실행하십시오. ',
 
         # Template: AdminSystemConfigurationDeployment
         'Changes Deployment' => '변경 사항 배포',
@@ -2955,8 +2955,8 @@ sub Data {
             '.dist (확장자없이) \'%s\'파일이 있는지 확인하십시오. 이 cron 작업은 OTOBO 데몬이 실행중인 경우 5 분마다 점검하고 필요한 경우 시작합니다.',
         'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
             '\'%s start\'를 실행하여 \'otobo\'사용자의 cron 작업이 활성 상태인지 확인하십시오.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            '5 분 후, OTOBO 데몬이 시스템에서 실행 중인지 확인하십시오 ( \'bin / otobo.Daemon.pl status\').',
+        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            '5 분 후, OTOBO 데몬이 시스템에서 실행 중인지 확인하십시오 ( \'bin / careoncloud.Daemon.pl status\').',
         'Running the OTOBO Daemon in a Docker based installation' => '',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             '',
@@ -6260,8 +6260,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => '잘못된 기본값',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
-            '잘못된 기본값이있는 테이블을 찾았습니다. 자동으로 수정하려면 다음을 실행하십시오. bin / otobo.Console.pl Maint :: Database :: Check --repair',
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
+            '잘못된 기본값이있는 테이블을 찾았습니다. 자동으로 수정하려면 다음을 실행하십시오. bin / careoncloud.Console.pl Maint :: Database :: Check --repair',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
         'Maximum Query Size' => '최대 쿼리 크기',
@@ -6472,11 +6472,11 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'ticket_lock_index 테이블의 고아 레코드',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            '표 ticket_lock_index에는 분리 된 레코드가 있습니다. bin / otobo.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            '표 ticket_lock_index에는 분리 된 레코드가 있습니다. bin / careoncloud.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
         'Orphaned Records In ticket_index Table' => 'ticket_index 테이블의 고아 레코드',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            '표 ticket_index에는 분리 된 레코드가 있습니다. bin / otobo.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            '표 ticket_index에는 분리 된 레코드가 있습니다. bin / careoncloud.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => '시간 설정',
@@ -6633,7 +6633,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => '',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => '유효하지 않은 일시적',
         'Group for default access.' => '기본 액세스 그룹.',
         'Group of all administrators.' => '모든 관리자 그룹.',
@@ -7479,7 +7479,7 @@ Thanks for your help!
         'Avatar' => '화신',
         'Based on global RichText setting' => '전역 서식있는 텍스트 설정에 기반',
         'Basic Auth' => '',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
             '',
         'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
             '',
@@ -8487,11 +8487,11 @@ Thanks for your help!
             '사용자 아바타를 정의합니다. 참고 : \'활성\'을 0으로 설정하면 상담원이이 그룹의 개인 환경 설정에서 설정을 편집하지 못하게되지만 관리자가 다른 사용자를 대신하여 설정을 편집 할 수 있습니다. \'PreferenceGroup\'을 사용하여 이러한 설정을 사용자 인터페이스에 표시 할 영역을 제어하십시오.',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/otobo.Console.pl Maint::Cache::Delete).' =>
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
             '',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            '잠금 해제 된 티켓의 유효한 상태를 정의합니다. 티켓의 잠금을 해제하려면 "bin / otobo.Console.pl Maint :: Ticket :: UnlockTimeout"스크립트를 사용할 수 있습니다.',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in otobo.psgi.' =>
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            '잠금 해제 된 티켓의 유효한 상태를 정의합니다. 티켓의 잠금을 해제하려면 "bin / careoncloud.Console.pl Maint :: Ticket :: UnlockTimeout"스크립트를 사용할 수 있습니다.',
+        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
             '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             '티켓의 표시 가능 잠금을 정의합니다. 참고 :이 설정을 변경할 때 새 값을 사용하려면 캐시를 삭제해야합니다. 기본값 : 잠금 해제, tmp_lock.',
@@ -8910,7 +8910,7 @@ Thanks for your help!
         'Graph: Stacked Area Chart' => '그래프 : 누적 영역 차트',
         'Greek' => '그리스 사람',
         'Hebrew' => '헤브라이 사람',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
             '',
         'High Contrast' => '고 대비',
         'High contrast skin for visually impaired users.' => '시각 장애가 있는 사용자를 위한 고 대비 피부.',
@@ -9064,8 +9064,8 @@ Thanks for your help!
         'Includes article create times in the ticket search of the agent interface.' =>
             '에이전트 인터페이스의 티켓 검색에서 기사 작성 시간을 포함합니다.',
         'Incoming Phone Call.' => '수신 전화.',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            'IndexAccelerator : 백엔드 TicketViewAccelerator 모듈을 선택합니다. "RuntimeDB"는 티켓 테이블에서 각 큐 뷰를 생성합니다 (성능상의 문제없이 최대 약 60,000 개의 티켓과 시스템의 6.000 개 티켓). "StaticDB"는보기와 같이 작동하는 별도의 티켓 색인 표를 사용하는 가장 강력한 모듈입니다 (80.000 개 이상의 티켓이 시스템에 저장되어있는 경우 권장). 초기 색인 작성은 "bin / otobo.Console.pl Maint :: Ticket :: QueueIndexRebuild"명령을 사용하십시오.',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            'IndexAccelerator : 백엔드 TicketViewAccelerator 모듈을 선택합니다. "RuntimeDB"는 티켓 테이블에서 각 큐 뷰를 생성합니다 (성능상의 문제없이 최대 약 60,000 개의 티켓과 시스템의 6.000 개 티켓). "StaticDB"는보기와 같이 작동하는 별도의 티켓 색인 표를 사용하는 가장 강력한 모듈입니다 (80.000 개 이상의 티켓이 시스템에 저장되어있는 경우 권장). 초기 색인 작성은 "bin / careoncloud.Console.pl Maint :: Ticket :: QueueIndexRebuild"명령을 사용하십시오.',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             '반송 전자 메일을 항상 정상적인 후속조치로 처리해야하는지 나타냅니다.',
         'Indonesian' => '인도네시아인',

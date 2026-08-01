@@ -38,7 +38,7 @@ $OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 $OTOBOVersion .= '.x';
 
 my $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -79,11 +79,11 @@ my $String = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $StringSecond = "<?xml version='1.0' encoding='utf-8' ?>
-<otobo_package version='1.0'>
+<careoncloud_package version='1.0'>
   <Name>TestSecond</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -100,7 +100,7 @@ my $StringSecond = "<?xml version='1.0' encoding='utf-8' ?>
     <File Location='TestSecond' Permission='644' Encode='Base64'>aGVsbG8K</File>
     <File Location='var/TestSecond' Permission='644' Encode='Base64'>aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ";
 
 # Override Request() from K::S::CloudService::Backend::Run to always return expected data without any real web call.

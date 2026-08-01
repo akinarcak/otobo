@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Framework">
+<careoncloud_config version="2.0" init="Framework">
     <Setting Name="SecureMode" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.</Description>
+        <Description Translatable="1">Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
@@ -112,7 +112,7 @@
         <Description Translatable="1">Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">otobo/</Item>
+            <Item ValueType="String" ValueRegex="">careoncloud/</Item>
         </Value>
     </Setting>
     <Setting Name="AdminEmail" Required="1" Valid="1">
@@ -281,8 +281,8 @@
         <Navigation>Frontend::Customer</Navigation>
         <Value>
             <Hash>
-                <Item Key="URLLogo">skins/Customer/default/img/otobo_logo_simple_w.svg</Item>
-                <Item Key="URLSignet">skins/Customer/default/img/otobo_signet_w.svg</Item>
+                <Item Key="URLLogo">skins/Customer/default/img/careoncloud-logo.png</Item>
+                <Item Key="URLSignet">skins/Customer/default/img/careoncloud-signet.png</Item>
             </Hash>
         </Value>
     </Setting>
@@ -449,7 +449,7 @@
         <Navigation>Frontend::Agent</Navigation>
         <Value>
             <Hash>
-                <Item Key="URL">skins/Agent/default/img/Otobo_Wortmarke_Digital_Blau_RGB.svg</Item>
+                <Item Key="URL">skins/Agent/default/img/careoncloud-logo.png</Item>
                 <Item Key="StyleHeight">150px</Item>
             </Hash>
         </Value>
@@ -458,7 +458,7 @@
         <Description Translatable="1">Defines the URL base path of icons, CSS and Java Script.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">/otobo-web/</Item>
+            <Item ValueType="String" ValueRegex="">/careoncloud-web/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::ImagePath" Required="1" Valid="1" ConfigLevel="200">
@@ -1063,7 +1063,7 @@
         <Description Translatable="1">If "file" was selected for LogModule, a logfile must be specified. If the file doesn't exist, it will be created by the system.</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">/tmp/otobo.log</Item>
+            <Item ValueType="String" ValueRegex="">/tmp/careoncloud.log</Item>
         </Value>
     </Setting>
     <Setting Name="LogModule::LogFile::Date" Required="1" Valid="1">
@@ -1265,7 +1265,7 @@
         <Description Translatable="1">Defines an alternate URL, where the logout link refers to.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">http://host.example.com/thanks-for-using-otobo.html</Item>
+            <Item ValueType="String" ValueRegex="">http://host.example.com/thanks-for-using-careoncloud.html</Item>
         </Value>
     </Setting>
     <Setting Name="PreApplicationModule###AgentInfo" Required="0" Valid="0" ConfigLevel="300">
@@ -1436,7 +1436,7 @@
         </Value>
     </Setting>
     <Setting Name="SessionSameSite" Required="1" Valid="1">
-        <Description Translatable="1">Defines the value of the SameSite attribute of the OTOBO session cookies. Used in otobo.psgi.</Description>
+        <Description Translatable="1">Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="Lax">
@@ -3119,16 +3119,16 @@
         <Navigation>Core::Package</Navigation>
         <Value>
             <Array>
-                <Item>https://ftp.otobo.org/pub/otobo/misc/packages/repository.xml</Item>
+                <Item>https://ftp.otobo.org/pub/careoncloud/misc/packages/repository.xml</Item>
             </Array>
         </Value>
     </Setting>
     <Setting Name="Package::RepositoryList" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".</Description>
+        <Description Translatable="1">Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".</Description>
         <Navigation>Core::Package</Navigation>
         <Value>
             <Hash>
-                <Item Key="ftp://ftp.example.com/pub/otobo/misc/packages/">[Example] ftp://ftp.example.com/</Item>
+                <Item Key="ftp://ftp.example.com/pub/careoncloud/misc/packages/">[Example] ftp://ftp.example.com/</Item>
             </Hash>
         </Value>
     </Setting>
@@ -3241,7 +3241,7 @@
         <Navigation>Core::PDF</Navigation>
         <Value>
             <!-- the modifier 'i' is for ignoring case, works for both Perl and JavaScript regex -->
-            <Item ValueType="String" ValueRegex="\.(?i:gif|jpeg|jpg|png)$">&lt;OTOBO_CONFIG_Home&gt;/var/logo-otobo.png</Item>
+            <Item ValueType="String" ValueRegex="\.(?i:gif|jpeg|jpg|png)$">&lt;OTOBO_CONFIG_Home&gt;/var/logo-careoncloud.png</Item>
         </Value>
     </Setting>
     <Setting Name="PDF::PageSize" Required="1" Valid="1">
@@ -3356,7 +3356,7 @@
         <Description Translatable="1">Sets the options for PGP binary.</Description>
         <Navigation>Core::Crypt::PGP</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">--homedir /opt/otobo/.gnupg/ --batch --no-tty --yes</Item>
+            <Item ValueType="String" ValueRegex="">--homedir /opt/careoncloud/.gnupg/ --batch --no-tty --yes</Item>
         </Value>
     </Setting>
     <Setting Name="PGP::Options::DigestPreference" Required="0" Valid="1">
@@ -3481,7 +3481,7 @@
         <Description Translatable="1">Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">otobo@&lt;OTOBO_CONFIG_FQDN&gt;</Item>
+            <Item ValueType="String" ValueRegex="">esm@&lt;OTOBO_CONFIG_FQDN&gt;</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationSubjectLostPasswordToken" Required="1" Valid="1">
@@ -4253,8 +4253,8 @@ via the Preferences button after logging in.
         <Value>
             <Hash>
                 <Item Key="mariadb_ssl">1</Item>
-                <Item Key="mariadb_client_cert">/opt/otobo/tls/client-cert.pem</Item>
-                <Item Key="mariadb_client_key">/opt/otobo/tls/client-key.pem</Item>
+                <Item Key="mariadb_client_cert">/opt/careoncloud/tls/client-cert.pem</Item>
+                <Item Key="mariadb_client_key">/opt/careoncloud/tls/client-key.pem</Item>
                 <Item Key="mariadb_ssl_optional">1</Item>
             </Hash>
         </Value>
@@ -7953,9 +7953,9 @@ via the Preferences button after logging in.
                         </Item>
                         <Item Key="Images">
                             <Hash>
-                                <Item Key="/otobo-web/skins/Customer/default/img/sample_otobo.png">1</Item>
-                                <Item Key="/otobo-web/skins/Customer/default/img/sample_openstreetmap.png">2</Item>
-                                <Item Key="/otobo-web/skins/Customer/default/img/sample_wikipedia.png">3</Item>
+                                <Item Key="/careoncloud-web/skins/Customer/default/img/careoncloud-logo.png">1</Item>
+                                <Item Key="/careoncloud-web/skins/Customer/default/img/sample_openstreetmap.png">2</Item>
+                                <Item Key="/careoncloud-web/skins/Customer/default/img/sample_wikipedia.png">3</Item>
                             </Hash>
                         </Item>
                         <Item Key="Titles">
@@ -11111,4 +11111,4 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <!-- End Namespaces -->
-</otobo_config>
+</careoncloud_config>

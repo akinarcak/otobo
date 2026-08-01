@@ -56,7 +56,7 @@ sub Run {
                 Value      => $OrphanedTicketLockIndex,
                 Message    =>
                     Translatable(
-                        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.'
+                        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.'
                     ),
             );
         }
@@ -80,7 +80,7 @@ sub Run {
                 Value      => $OrphanedTicketIndex,
                 Message    =>
                     Translatable(
-                        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.'
+                        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.'
                     ),
             );
         }

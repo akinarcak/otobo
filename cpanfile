@@ -1,6 +1,6 @@
 # Do not change this file manually.
-# Instead adapt bin/otobo.CheckModules.pl and call
-#    ./bin/otobo.CheckModules.pl --cpanfile > cpanfile
+# Instead adapt bin/careoncloud.CheckModules.pl and call
+#    ./bin/careoncloud.CheckModules.pl --cpanfile > cpanfile
 
 # Required for compressed file generation (in perlcore).
 requires 'Archive::Tar';
@@ -204,7 +204,7 @@ feature 'devel:profiling', 'Modules for profiling Perl code' => sub {
     # for profiling Perl code
     requires 'Devel::NYTProf', '>= 6.12';
 
-    # plack middleware for profiling a plack app like otobo.psgi
+    # plack middleware for profiling a plack app like careoncloud.psgi
     requires 'Plack::Middleware::Profiler::NYTProf', '>= 0.17';
 
 };
@@ -482,7 +482,7 @@ feature 'optional', 'Support for feature optional' => sub {
     # for profiling Perl code
     requires 'Devel::NYTProf', '>= 6.12';
 
-    # plack middleware for profiling a plack app like otobo.psgi
+    # plack middleware for profiling a plack app like careoncloud.psgi
     requires 'Plack::Middleware::Profiler::NYTProf', '>= 0.17';
 
     # language packs from the CLDR project

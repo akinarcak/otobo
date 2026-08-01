@@ -68,7 +68,7 @@ my @Tests = (
         Description => 'Wrong version',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="1.0" init="Application">
+<careoncloud_config version="1.0" init="Application">
     <Setting Name="Test1" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -83,7 +83,7 @@ my @Tests = (
             <Item ValueType="File">/usr/bin/gpg</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [],
@@ -92,7 +92,7 @@ my @Tests = (
         Description => 'Contains old ConfigItem(it should be ignored)',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="Test1" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -108,7 +108,7 @@ my @Tests = (
             <String>Test</String>
         </Setting>
     </ConfigItem>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [
@@ -156,7 +156,7 @@ my @Tests = (
         Description => 'Valid XML',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="Test1" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -171,7 +171,7 @@ my @Tests = (
             <Item ValueType="File">/usr/bin/gpg</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [
@@ -254,7 +254,7 @@ my @Tests = (
         Description => 'Valid XML UTF8',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="äëïöüÄËÏÖÜáéíóúÁÉÍÓÚñÑ€исß" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -269,7 +269,7 @@ my @Tests = (
             <Item ValueType="File">/usr/bin/gpg</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [
@@ -355,7 +355,7 @@ my @Tests = (
         Description => 'Invalid XML',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<WRONG_otobo_config version="2.0" init="Application">
+<WRONG_careoncloud_config version="2.0" init="Application">
     <Setting Name="Test1" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -370,13 +370,13 @@ my @Tests = (
             <Item ValueType="File">/usr/bin/gpg</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [],
     },
     {
-        Description => 'Missing surrounding otobo_config element',
+        Description => 'Missing surrounding careoncloud_config element',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
 <Setting Name="Test1" Required="1" Valid="1">
@@ -401,7 +401,7 @@ my @Tests = (
         Description => 'No Setting elements',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <NoSetting Name="Test1" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -416,7 +416,7 @@ my @Tests = (
             <Item ValueType="File">/usr/bin/gpg</Item>
         </Value>
     </NoSetting>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [],
@@ -425,7 +425,7 @@ my @Tests = (
         Description => 'Setting without Name attribute is skipped',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -440,7 +440,7 @@ my @Tests = (
             <Item ValueType="File">/usr/bin/gpg</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [
@@ -486,7 +486,7 @@ my @Tests = (
         Description => 'Setting with comments',
         Config      => {
             XMLInput => '<?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="Test" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -502,7 +502,7 @@ my @Tests = (
             </Array>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
             ',
         },
         ExpectedResult => [

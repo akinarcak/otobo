@@ -199,8 +199,8 @@ sub Run {
             Message => $Self->{LanguageObject}->Translate("Migrate configuration settings."),
             Comment => $Self->{LanguageObject}->Translate(<<'END_COMMENT'),
 The merged configuration could not be deployed because it contains invalid values. Please try to fix the configuration
-by running these commands: "bin/otobo.Console.pl Admin::Config::ListInvalid" and "bin/otobo.Console.pl Admin::Config::FixInvalid".
-After fixing the configuration run "bin/otobo.Console.pl Maint::Config::Rebuild" and continue with the migration.
+by running these commands: "bin/careoncloud.Console.pl Admin::Config::ListInvalid" and "bin/careoncloud.Console.pl Admin::Config::FixInvalid".
+After fixing the configuration run "bin/careoncloud.Console.pl Maint::Config::Rebuild" and continue with the migration.
 END_COMMENT
             Successful => 0,
         };

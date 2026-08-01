@@ -2591,8 +2591,8 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             'Finn ut hvordan du bruker systemkonfigurasjonen ved å lese %s.',
         'Search in all settings...' => 'Søk i alle innstillinger...',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
-            'Det er for øyeblikket ingen tilgjengelige innstillinger. Sørg for å kjøre \'otobo.Console.pl Maint::Config::Rebuild\' før du bruker programvaren.',
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+            'Det er for øyeblikket ingen tilgjengelige innstillinger. Sørg for å kjøre \'careoncloud.Console.pl Maint::Config::Rebuild\' før du bruker programvaren.',
 
         # Template: AdminSystemConfigurationDeployment
         'Changes Deployment' => 'Endrer distribusjon',
@@ -2963,8 +2963,8 @@ sub Data {
             'Kontroller at filen \'%s\' eksisterer (uten .dist-utvidelse). Denne cron-jobben vil sjekke hvert 5. minutt om OTOBO Daemon kjører og starte den om nødvendig.',
         'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
             'Kjør \'%s start\' for å sikre at cron-jobbene til \'otobo\'-brukeren er aktive.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            'Etter 5 minutter, sjekk at OTOBO Daemon kjører i systemet (\'bin/otobo.Daemon.pl status\').',
+        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'Etter 5 minutter, sjekk at OTOBO Daemon kjører i systemet (\'bin/careoncloud.Daemon.pl status\').',
         'Running the OTOBO Daemon in a Docker based installation' => '',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             '',
@@ -6268,8 +6268,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => 'Ugyldige standardverdier',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
-            'Tabeller med ugyldige standardverdier ble funnet. For å fikse det automatisk, vennligst kjør: bin/otobo.Console.pl Maint::Database::Check --repair',
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
+            'Tabeller med ugyldige standardverdier ble funnet. For å fikse det automatisk, vennligst kjør: bin/careoncloud.Console.pl Maint::Database::Check --repair',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
         'Maximum Query Size' => 'Maksimum størrelse på spørring',
@@ -6480,11 +6480,11 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'Foreldreløse poster i ticket_lock_index-tabell',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'Tabell ticket_lock_index inneholder foreldreløse poster. Vennligst kjør bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" for å rense StaticDB-indeksen.',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'Tabell ticket_lock_index inneholder foreldreløse poster. Vennligst kjør bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" for å rense StaticDB-indeksen.',
         'Orphaned Records In ticket_index Table' => 'Foreldreløse poster i ticket_index-tabell',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'Tabell ticket_index inneholder foreldreløse poster. Vennligst kjør bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" for å rense StaticDB-indeksen.',
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'Tabell ticket_index inneholder foreldreløse poster. Vennligst kjør bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" for å rense StaticDB-indeksen.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => 'Tidsinnstillinger',
@@ -6641,7 +6641,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => 'Kunne ikke koble til databasen.',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => 'midlertidig ugyldig',
         'Group for default access.' => 'Gruppe for standardtilgang.',
         'Group of all administrators.' => 'Gruppe av alle administratorer.',
@@ -7487,8 +7487,8 @@ Ditt Helpdesk-team
         'Avatar' => 'Avatar',
         'Based on global RichText setting' => 'Basert på global RichText-innstilling',
         'Basic Auth' => '',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
-            'Grunnleggende fulltekstindeksinnstillinger. Kjør "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" for å generere en ny indeks.',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+            'Grunnleggende fulltekstindeksinnstillinger. Kjør "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" for å generere en ny indeks.',
         'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
             '',
         'Both' => '',
@@ -8495,11 +8495,11 @@ Ditt Helpdesk-team
             'Definerer brukerens avatar. Vennligst merk: å sette \'Aktiv\' til 0 vil bare forhindre agenter fra å redigere innstillingene for denne gruppen i sine personlige preferanser, men vil fortsatt tillate administratorer å redigere innstillingene til en annen brukers vegne. Bruk \'PreferenceGroup\' for å kontrollere i hvilket område disse innstillingene skal vises i brukergrensesnittet.',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             'Definerer gyldige tilstandstyper for en sak. Hvis en sak er i en tilstand som har en hvilken som helst tilstandstype fra denne innstillingen, vil denne saken anses som åpen, ellers som lukket.',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/otobo.Console.pl Maint::Cache::Delete).' =>
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
             '',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            'Definerer gyldige tilstander for ulåste saker. For å låse opp saker kan skriptet "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" brukes.',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in otobo.psgi.' =>
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            'Definerer gyldige tilstander for ulåste saker. For å låse opp saker kan skriptet "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" brukes.',
+        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
             '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             'Definerer de synlige låsene til en sak. MERK: Når du endrer denne innstillingen, sørg for å slette hurtigbufferen for å bruke den nye verdien. Standard: unlock, tmp_lock.',
@@ -8918,8 +8918,8 @@ Ditt Helpdesk-team
         'Graph: Stacked Area Chart' => 'Graf: Stablet områdediagram',
         'Greek' => 'Gresk',
         'Hebrew' => 'Hebraisk',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
-            'Hjelper med å utvide artiklenes fulltekstsøk (Fra, Til, Kopi, Emne og Kroppssøk). Den vil fjerne alle artikler og bygge en indeks etter at artikkelen er opprettet, noe som øker fulltekstsøk med omtrent 50 %. For å lage en innledende indeks, bruk "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".',
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+            'Hjelper med å utvide artiklenes fulltekstsøk (Fra, Til, Kopi, Emne og Kroppssøk). Den vil fjerne alle artikler og bygge en indeks etter at artikkelen er opprettet, noe som øker fulltekstsøk med omtrent 50 %. For å lage en innledende indeks, bruk "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".',
         'High Contrast' => 'Høy kontrast',
         'High contrast skin for visually impaired users.' => 'Høy kontrast-tema for synshemmede brukere.',
         'Hindi' => 'Hindi',
@@ -9072,8 +9072,8 @@ Ditt Helpdesk-team
         'Includes article create times in the ticket search of the agent interface.' =>
             'Inkluder opprettelsestidspunkt i søkedelen av agentdelen.',
         'Incoming Phone Call.' => 'Innkommende telefonsamtale.',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            'IndexAccelerator: for å velge din backend TicketViewAccelerator-modul. "RuntimeDB" genererer hver køvisning på farten fra saksbordet (ingen ytelsesproblemer opp til ca. 60.000 saker totalt og 6.000 åpne saker i systemet). "StaticDB" er den kraftigste modulen, den bruker en ekstra saksindekstabell som fungerer som en visning (anbefales hvis mer enn 80.000 og 6.000 åpne saker er lagret i systemet). Bruk kommandoen "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for første indeksoppretting.',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            'IndexAccelerator: for å velge din backend TicketViewAccelerator-modul. "RuntimeDB" genererer hver køvisning på farten fra saksbordet (ingen ytelsesproblemer opp til ca. 60.000 saker totalt og 6.000 åpne saker i systemet). "StaticDB" er den kraftigste modulen, den bruker en ekstra saksindekstabell som fungerer som en visning (anbefales hvis mer enn 80.000 og 6.000 åpne saker er lagret i systemet). Bruk kommandoen "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for første indeksoppretting.',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             'Indikerer om en retur-e-post alltid skal behandles som vanlig oppfølging.',
         'Indonesian' => 'indonesisk',

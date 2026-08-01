@@ -162,7 +162,7 @@ sub StatusData {
         && ref $Contract->{paths}->{'/webhook-subscriptions'} eq 'HASH'
         && ref $Contract->{paths}->{'/webhook-subscriptions/{subscription_id}'} eq 'HASH' ? 1 : 0;
     my $PSGI = $Main->FileRead(
-        Location => "$Home/bin/psgi-bin/otobo.psgi", Mode => 'utf8', Result => 'SCALAR',
+        Location => "$Home/bin/psgi-bin/careoncloud.psgi", Mode => 'utf8', Result => 'SCALAR',
     );
     my $MountOK = $PSGI && ${$PSGI} =~ m{mount[ ]+'/api/v1'}smx ? 1 : 0;
     my $WebhookMountOK = $MountOK && ${$PSGI} =~ m{/webhook-subscriptions}smx ? 1 : 0;

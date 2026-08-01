@@ -29,14 +29,14 @@ if (-not $PackageSources) {
 foreach ($PackageSourceFile in $PackageSources) {
     $PackageDirectory = $PackageSourceFile.Directory.FullName
     [xml] $PackageSource = Get-Content $PackageSourceFile.FullName -Raw
-    $PackageName = [string] $PackageSource.otobo_package.Name
+    $PackageName = [string] $PackageSource.careoncloud_package.Name
     if ($PackageName -ne $PackageSourceFile.Directory.Name) {
         throw "Package name and directory differ: $PackageName"
     }
-    if ($PackageSource.otobo_package.License -notmatch 'GENERAL PUBLIC LICENSE Version 3') {
+    if ($PackageSource.careoncloud_package.License -notmatch 'GENERAL PUBLIC LICENSE Version 3') {
         throw "$PackageName must declare GPL version 3."
     }
-    foreach ($File in $PackageSource.otobo_package.Filelist.File) {
+    foreach ($File in $PackageSource.careoncloud_package.Filelist.File) {
         $PackageFile = Join-Path $PackageDirectory $File.Location
         if (-not (Test-Path $PackageFile -PathType Leaf)) {
             throw "$PackageName file list entry is missing: $($File.Location)"

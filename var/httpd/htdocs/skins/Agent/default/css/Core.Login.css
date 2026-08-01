@@ -83,7 +83,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     display: block;
     width: 20px;
     height: 20px;
-    background: url(../img/otobo-signet.svg);
+    background: url(../img/careoncloud-signet.png);
     background-size: cover;
     margin: 20px auto 10px auto;
     opacity: 0.3;
@@ -143,7 +143,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
  * @subsection  Customizable logos
  */
 #LoginLogo {
-    background: transparent url(../img/Otobo_Wortmarke_Digital_Blau_RGB.svg) center no-repeat;
+    background: transparent url(../img/careoncloud-logo.png) center no-repeat;
     background-size: contain;
     height: 220px;
     margin-bottom: 30px;

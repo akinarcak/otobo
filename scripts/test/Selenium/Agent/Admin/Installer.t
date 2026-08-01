@@ -262,7 +262,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
 
                 # Count number of table elements in OTOBO schema for comparison.
                 my $XMLString = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
-                    Location => "$Home/scripts/database/otobo-schema.xml",
+                    Location => "$Home/scripts/database/careoncloud-schema.xml",
                 );
                 my $TableCount = () = ( ${$XMLString} =~ /<Table/g );
                 $Self->Is(

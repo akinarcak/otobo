@@ -1,5 +1,5 @@
 # --
-# CareOnCloud ESM is based on OTOBO.
+# CareOnCloud ESM enterprise service management platform.
 # SPDX-License-Identifier: GPL-3.0-only
 # --
 package Kernel::Modules::AgentD724ServicePortfolio;

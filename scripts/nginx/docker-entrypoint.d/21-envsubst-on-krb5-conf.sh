@@ -19,7 +19,7 @@
 # This script works just like /docker-entrypoint.d/20-envsubst-on-templates.sh in the Nginx base Docker image.
 # A template file for /etc/krb5.conf is set up in /etc/nginx/templates/kerberos/krb5.conf.template.
 # The command envsubst replaces environment variables in the template and writes the output to /etc/krb6.conf.
-supported_envs='${OTOBO_NGINX_KERBEROS_REALM} ${OTOBO_NGINX_KERBEROS_KDC} ${OTOBO_NGINX_KERBEROS_ADMIN_SERVER} ${OTOBO_NGINX_KERBEROS_DEFAULT_DOMAIN}'
+supported_envs='${CAREONCLOUD_NGINX_KERBEROS_REALM} ${CAREONCLOUD_NGINX_KERBEROS_KDC} ${CAREONCLOUD_NGINX_KERBEROS_ADMIN_SERVER} ${CAREONCLOUD_NGINX_KERBEROS_DEFAULT_DOMAIN}'
 template_dir="${NGINX_ENVSUBST_TEMPLATE_DIR:-/etc/nginx/config/template-custom}"
 
 envsubst "$supported_envs" < "$template_dir/../../kerberos/templates/krb5.conf.template" > /etc/krb5.conf

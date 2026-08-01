@@ -246,7 +246,7 @@ sub CleanLicenseHeaderInDir {
 
 =head2 MigrateXMLConfig()
 
-replace the XML element I<otrs_config> to I<otobo_config>.
+replace the XML element I<otrs_config> to I<careoncloud_config>.
 
     $OTRSToOTOBOObject->MigrateXMLConfig(
         File         => '/opt/otobo/Test.pm',
@@ -277,8 +277,8 @@ sub MigrateXMLConfig {
     return 1 unless $Content =~ m{<otrs_config.*?version="2.0"};
 
     # now the actual transformation
-    $Content =~ s{^<otrs_config}{<otobo_config}gsmx;
-    $Content =~ s{^</otrs_config}{</otobo_config}gsmx;
+    $Content =~ s{^<otrs_config}{<careoncloud_config}gsmx;
+    $Content =~ s{^</otrs_config}{</careoncloud_config}gsmx;
 
     # Save result in the original file
     my $SaveSuccess = $MainObject->FileWrite(
@@ -1340,7 +1340,7 @@ sub DBRenameTables {
 
     # the tables must be lower case
     return {
-        article_data_otrs_chat  => 'article_data_otobo_chat',
+        article_data_otrs_chat  => 'article_data_careoncloud_chat',
         groups                  => 'groups_table',              # OTRS 6.0, Znuny 6.0
         permission_groups       => 'groups_table',              # Znuny 6.1
         pm_sequence_flow        => 'pm_transition',             # OTRS 7
@@ -1349,7 +1349,7 @@ sub DBRenameTables {
 }
 
 # OTOBO VARCHAR attribute shortened to 191 chars, because of InnoDB max key length
-# The values were determined by looking at the patches in scripts/database/otobo-schema.xml.
+# The values were determined by looking at the patches in scripts/database/careoncloud-schema.xml.
 sub DBShortenedColumns {
     return
         {

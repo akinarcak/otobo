@@ -2589,8 +2589,8 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             '通过阅读%s来了解如何使用系统配置。',
         'Search in all settings...' => '在所有设置中搜索...',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
-            '目前没有可用的设置。 在使用软件之前，请确保运行 \'otobo.Console.pl Maint::Config::Rebuild\'。',
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+            '目前没有可用的设置。 在使用软件之前，请确保运行 \'careoncloud.Console.pl Maint::Config::Rebuild\'。',
 
         # Template: AdminSystemConfigurationDeployment
         'Changes Deployment' => '更改部署',
@@ -2961,8 +2961,8 @@ sub Data {
             '确保存在文件“%s”（没有.dist扩展名）。这个CRON任务会每5分钟检查一次OTOBO守护进程是否在运行，并在需要时启动它。',
         'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
             '执行\'%s start\'确保\'otobo\'用户的cron任务是活动的。',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            '5分钟后，在系统中执行\'bin/otobo.Daemon.pl status\'，检查OTOBO守护进程是否正常运行。',
+        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            '5分钟后，在系统中执行\'bin/careoncloud.Daemon.pl status\'，检查OTOBO守护进程是否正常运行。',
         'Running the OTOBO Daemon in a Docker based installation' => '',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             '',
@@ -6266,8 +6266,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => '无效的默认值',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
-            '找到具有无效的默认值的表。 为了自动修复它，请运行：bin/otobo.Console.pl Maint::Database::Check --repair',
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
+            '找到具有无效的默认值的表。 为了自动修复它，请运行：bin/careoncloud.Console.pl Maint::Database::Check --repair',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
         'Maximum Query Size' => '最大查询大小',
@@ -6478,11 +6478,11 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'ticket_lock_index 表中的孤儿记录',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'ticket_lock_index 表中包含孤儿记录。请运行bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup"清理静态数据库的索引。',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'ticket_lock_index 表中包含孤儿记录。请运行bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup"清理静态数据库的索引。',
         'Orphaned Records In ticket_index Table' => 'ticket_index 表中的孤儿记录',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'ticket_index表中包含孤儿记录，请运行bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup"，清理静态数据库的索引。',
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'ticket_index表中包含孤儿记录，请运行bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup"，清理静态数据库的索引。',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => '时间设置',
@@ -6639,7 +6639,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => '',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => '暂时无效',
         'Group for default access.' => '具有默认权限的组。',
         'Group of all administrators.' => '所有管理员的组。',
@@ -7483,8 +7483,8 @@ Thanks for your help!
         'Avatar' => '头像',
         'Based on global RichText setting' => '基于全局富文本设置',
         'Basic Auth' => '',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
-            '基本的全文索引设置。执行 "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" 以生成一个新索引。',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+            '基本的全文索引设置。执行 "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" 以生成一个新索引。',
         'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
             '',
         'Both' => '',
@@ -8491,11 +8491,11 @@ Thanks for your help!
             '定义用户头像。 请注意：将\'Active（激活）\'设置为0只会阻止服务人员在个人偏好设置中编辑此组的设置，但仍然允许管理员以其他用户的名义编辑这些设置。 使用\'PreferenceGroup\'来控制这些设置应该显示在用户界面的哪个区域。',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '定义工单的有效状态类型。如果一个工单处于此设置中任一状态类型的状态，则该工单将被视为打开，否则将被视为关闭。',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/otobo.Console.pl Maint::Cache::Delete).' =>
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
             '',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            '定义解锁的工单有效的状态。为解锁工单，可以使用脚本"bin/otobo.Console.pl Maint::Ticket::UnlockTimeout"。',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in otobo.psgi.' =>
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            '定义解锁的工单有效的状态。为解锁工单，可以使用脚本"bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout"。',
+        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
             '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             '定义工单能看到的锁定状态。注意：修改这个设置后，请确保删除缓存以便使用新值。默认：未锁定，临时锁定。',
@@ -8914,8 +8914,8 @@ Thanks for your help!
         'Graph: Stacked Area Chart' => '图形：堆叠面积图',
         'Greek' => '希腊语',
         'Hebrew' => '希伯来语',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
-            '帮助扩展信件全文搜索（发件人、收件人、抄送、主题和正文搜索）。它将在信件创建后条带化所有信件并建立索引，提升全文搜索50%的效率。可使用命令 "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" 来创建初始索引。',
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+            '帮助扩展信件全文搜索（发件人、收件人、抄送、主题和正文搜索）。它将在信件创建后条带化所有信件并建立索引，提升全文搜索50%的效率。可使用命令 "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" 来创建初始索引。',
         'High Contrast' => '高对比度',
         'High contrast skin for visually impaired users.' => '用于视力受损用户的高对比度皮肤。',
         'Hindi' => '印度语',
@@ -9068,8 +9068,8 @@ Thanks for your help!
         'Includes article create times in the ticket search of the agent interface.' =>
             '服务人员界面工单搜索时包括工单创建时间。',
         'Incoming Phone Call.' => '客户来电。',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            '索引加速器：选择您的后端工单视图加速器模块。“RuntimeDB（运行时数据库）”实时生成每个队列视图（工单总数不超过60000个且系统打开的工单不超过6000个时没有性能问题）。“StaticDB（静态数据库）是最强大的模块，它使用额外的类似于视图的工单索引表（工单总数超过80000且系统打开的工单超过6000时推荐使用），使用命令"bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild"来初始化索引。',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            '索引加速器：选择您的后端工单视图加速器模块。“RuntimeDB（运行时数据库）”实时生成每个队列视图（工单总数不超过60000个且系统打开的工单不超过6000个时没有性能问题）。“StaticDB（静态数据库）是最强大的模块，它使用额外的类似于视图的工单索引表（工单总数超过80000且系统打开的工单超过6000时推荐使用），使用命令"bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild"来初始化索引。',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             '表明是否应该将始终退回邮件视为正常的跟进处理。',
         'Indonesian' => '印度尼西亚语',

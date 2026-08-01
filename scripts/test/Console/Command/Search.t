@@ -49,7 +49,7 @@ $Self->Is(
 );
 
 $Self->False(
-    index( $Result, 'otobo.Console.pl Help command' ) > -1,
+    index( $Result, 'careoncloud.Console.pl Help command' ) > -1,
     "Help for 'Help' command not found",
 );
 
@@ -73,7 +73,7 @@ $Self->Is(
 );
 
 $Self->False(
-    index( $Result, 'otobo.Console.pl Help command' ) > -1,
+    index( $Result, 'careoncloud.Console.pl Help command' ) > -1,
     "Help for 'Help' command not found",
 );
 

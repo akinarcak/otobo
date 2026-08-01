@@ -161,14 +161,14 @@ my $WebserviceID = $WebserviceObject->WebserviceAdd(
 );
 ok( $WebserviceID, "Added Web Service" );
 
-# load the PSGI app 'otobo.psgi' and intialize
+# load the PSGI app 'careoncloud.psgi' and intialize
 my $PlackTest;
 {
     my $Home = $ConfigObject->Get('Home');
     ok( -d $Home, 'OTOBO home dir found' );
 
-    my $PSGIFile = "$Home/bin/psgi-bin/otobo.psgi";
-    ok( -f $PSGIFile, 'otobo.psgi found' );
+    my $PSGIFile = "$Home/bin/psgi-bin/careoncloud.psgi";
+    ok( -f $PSGIFile, 'careoncloud.psgi found' );
     my $App = Plack::Util::load_psgi($PSGIFile);
     ref_ok( $App, 'CODE', 'PSGI app was loaded' );
 

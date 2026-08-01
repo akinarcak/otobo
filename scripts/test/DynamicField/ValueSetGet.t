@@ -34,7 +34,7 @@ ValueSetGet.t - test the method ValueSet() and ValueGet() for different dynamic 
 
 =head1 SYNOPSIS
 
-    bin/otobo.Console.pl Dev::UnitTest::Run --verbose --merge scripts/test/DynamicField/ValueSetGet.t
+    bin/careoncloud.Console.pl Dev::UnitTest::Run --verbose --merge scripts/test/DynamicField/ValueSetGet.t
 
 =head1 DESCRIPTION
 

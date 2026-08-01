@@ -1,6 +1,6 @@
 # Do not change this file manually except if you want to invalidate the cache just in the GitHub CI workflow.
-# Instead adapt bin/otobo.CheckModules.pl and call
-#    ./bin/otobo.CheckModules.pl --plackup-cpanfile > cpanfile.plackup
+# Instead adapt bin/careoncloud.CheckModules.pl and call
+#    ./bin/careoncloud.CheckModules.pl --plackup-cpanfile > cpanfile.plackup
 
 # Required for compressed file generation (in perlcore).
 requires 'Archive::Tar', '3.12';

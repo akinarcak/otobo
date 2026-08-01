@@ -39,7 +39,7 @@ Plack::Loader::SyncWithS3 - check for package events
 =head1 SYNOPSIS
 
     # to be used as a loader module in plackup
-    plackup --server Gazelle --env deployment --port 5000 -I /opt/otobo/Kernel/cpan-lib --loader SyncWithS3  bin/psgi-bin/otobo.psgi
+    plackup --server Gazelle --env deployment --port 5000 -I /opt/otobo/Kernel/cpan-lib --loader SyncWithS3  bin/psgi-bin/careoncloud.psgi
 
 =head1 DESCRIPTION
 
@@ -67,7 +67,7 @@ sub preload_app {
     return;
 }
 
-# Plack::Loader::watch() is not overridden, as neither bin/psgi-bin/otobo.psgi nor bin/psgi-bin/lib are watched.
+# Plack::Loader::watch() is not overridden, as neither bin/psgi-bin/careoncloud.psgi nor bin/psgi-bin/lib are watched.
 
 sub run {
     my ($Self, $Server) = @_;
@@ -145,10 +145,10 @@ sub run {
 
         # reinstall packages
         # Use the console command in order to avoid dependance on OTOBO modules in the watchdog loop
-        my $Output = qx{/opt/otobo/bin/otobo.Console.pl Admin::Package::ReinstallAll};
+        my $Output = qx{/opt/otobo/bin/careoncloud.Console.pl Admin::Package::ReinstallAll};
         warn "Admin::Package::ReinstallAll: $Output";
-        # TODO: $OTOBO_HOME/bin/otobo.Console.pl Maint::Config::Rebuild
-        # TODO: $OTOBO_HOME/bin/otobo.Console.pl Maint::Cache::Delete
+        # TODO: $OTOBO_HOME/bin/careoncloud.Console.pl Maint::Config::Rebuild
+        # TODO: $OTOBO_HOME/bin/careoncloud.Console.pl Maint::Cache::Delete
 
         # no locking required as there should be no concurrent access
 

@@ -1,5 +1,5 @@
 # --
-# D724 ESM is an enterprise service management platform based on OTOBO.
+# CareOnCloud ESM enterprise service management platform.
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --
@@ -13,6 +13,26 @@ use Test2::V0;
 use Kernel::System::UnitTest::RegisterOM;
 
 my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+$LayoutObject->Block(
+    Name => 'ServiceSelectOption',
+    Data => { ServiceID => 4, Name => 'Workplace <Admin>', Selected => 'selected' },
+);
+$LayoutObject->Block(
+    Name => 'OfferingSelectOption',
+    Data => { OfferingID => 7, Name => 'Managed Device', Selected => 'selected' },
+);
+$LayoutObject->Block(
+    Name => 'ItemSelectOption',
+    Data => { CatalogItemID => 9, Name => 'Laptop Request' },
+);
+my $SelectionHTML = $LayoutObject->Output(
+    TemplateFile => 'CustomerD724Catalog',
+    Data => { View => 'Select', ServiceID => 4, OfferingID => 7 },
+);
+like( $SelectionHTML, qr{id="D724ServiceID"}, 'customer selects a service category' );
+like( $SelectionHTML, qr{id="D724OfferingID"}, 'customer selects a service extension' );
+like( $SelectionHTML, qr{id="D724CatalogItemID"}, 'customer selects a request type' );
+like( $SelectionHTML, qr{Workplace\s*&lt;Admin&gt;}, 'category names are HTML escaped' );
 $LayoutObject->Block(
     Name => 'ItemDetail',
     Data => { Name => 'Laptop <script>alert(1)</script>', Description => 'Safe description' },

@@ -54,7 +54,7 @@ if ( !$DeveloperSystem ) {
 
     # install package normally
     my $String = '<?xml version="1.0" encoding="utf-8" ?>
-    <otobo_package version="1.0">
+    <careoncloud_package version="1.0">
       <Name>Test</Name>
       <Version>0.0.1</Version>
       <Vendor>Rother OSS GmbH</Vendor>
@@ -71,7 +71,7 @@ if ( !$DeveloperSystem ) {
         <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
         <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
       </Filelist>
-    </otobo_package>
+    </careoncloud_package>
     ';
     my $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -94,7 +94,7 @@ if ( !$DeveloperSystem ) {
     # will be uninstalled, the not framework files will be removed and the framework files will
     # remain
     $String = '<?xml version="1.0" encoding="utf-8" ?>
-    <otobo_package version="1.0">
+    <careoncloud_package version="1.0">
       <Name>Test</Name>
       <Version>0.0.1</Version>
       <Vendor>Rother OSS GmbH</Vendor>
@@ -110,9 +110,9 @@ if ( !$DeveloperSystem ) {
       <Filelist>
         <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
         <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
-        <File Location="bin/otobo.CheckSum.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
+        <File Location="bin/careoncloud.CheckSum.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
       </Filelist>
-    </otobo_package>
+    </careoncloud_package>
     ';
     my $PackageName = 'Test';
 
@@ -130,14 +130,14 @@ if ( !$DeveloperSystem ) {
 
     # now create an .save file for the framework file, content doesn't matter as it will be deleted
     my $Write = $Kernel::OM->Get('Kernel::System::Main')->FileWrite(
-        Location   => $Home . '/bin/otobo.CheckSum.pl.save',
+        Location   => $Home . '/bin/careoncloud.CheckSum.pl.save',
         Content    => \$Content,
         Mode       => 'binmode',
         Permission => '644',
     );
     $Self->True(
         $Write,
-        '#FileWrite() - bin/otobo.CheckSum.pl.save',
+        '#FileWrite() - bin/careoncloud.CheckSum.pl.save',
     );
 
     # create PackageObject again to make sure cache is cleared
@@ -152,7 +152,7 @@ if ( !$DeveloperSystem ) {
 
     # check that the original files from the package does not exist anymore
     # these files are suppose to be old files that are not required anymore by the merged package
-    for my $File (qw( Test var/Test bin/otobo.CheckSum.pl.save )) {
+    for my $File (qw( Test var/Test bin/careoncloud.CheckSum.pl.save )) {
         my $RealFile = $Home . '/' . $File;
         $RealFile =~ s/\/\//\//g;
         $Self->False(
@@ -162,7 +162,7 @@ if ( !$DeveloperSystem ) {
     }
 
     # check that the framework file still exists
-    for my $File (qw( bin/otobo.CheckSum.pl )) {
+    for my $File (qw( bin/careoncloud.CheckSum.pl )) {
         my $RealFile = $Home . '/' . $File;
         $RealFile =~ s/\/\//\//g;
         $Self->True(

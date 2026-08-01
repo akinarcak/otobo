@@ -276,8 +276,8 @@ sub Main {
         # the xml files contain the database name 'otobo' hardcoded
         my ( $Success, $Message ) = ExecuteSQL(
             XMLFiles => [
-                "$Home/scripts/database/otobo-schema.xml",
-                "$Home/scripts/database/otobo-initial_insert.xml",
+                "$Home/scripts/database/careoncloud-schema.xml",
+                "$Home/scripts/database/careoncloud-initial_insert.xml",
             ],
         );
 
@@ -477,7 +477,7 @@ sub CheckSystemRequirements {
         return 0, "'$DatabaseDir' does not exist";
     }
 
-    for my $XmlFile ( map { $DatabaseDir->file($_) } ( 'otobo-schema.xml', 'otobo-initial_insert.xml' ) ) {
+    for my $XmlFile ( map { $DatabaseDir->file($_) } ( 'careoncloud-schema.xml', 'careoncloud-initial_insert.xml' ) ) {
         if ( !-f $XmlFile ) {
             return 0, "'$XmlFile' does not exist";
         }

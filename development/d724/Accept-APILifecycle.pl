@@ -11,7 +11,7 @@ use JSON::PP ();
 use URI::Escape qw(uri_escape_utf8);
 use Kernel::System::ObjectManager;
 
-my $BaseURL = $ARGV[0] // 'http://127.0.0.1:5000/otobo/api/v1';
+my $BaseURL = $ARGV[0] // 'http://127.0.0.1:5000/careoncloud/api/v1';
 die "Acceptance URL must use http(s)\n" if $BaseURL !~ m{\Ahttps?://}smx;
 my $TenantID = 'd724-demo';
 my $RunID = time() . '-' . $$;

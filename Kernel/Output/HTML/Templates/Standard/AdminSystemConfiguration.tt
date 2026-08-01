@@ -92,7 +92,7 @@
                 [% ELSE %]
                     <p class="Center NoItemsInfo">
                         <i class="fa fa-exclamation-triangle"></i>
-                        [% Translate("There are currently no settings available. Please make sure to run 'otobo.Console.pl Maint::Config::Rebuild' before using the software.") | html %]
+                        [% Translate("There are currently no settings available. Please make sure to run 'careoncloud.Console.pl Maint::Config::Rebuild' before using the software.") | html %]
                     </p>
                 [% END %]
             </div>

@@ -2,7 +2,7 @@
 # --
 # SPDX-License-Identifier: GPL-3.0-only
 # --
-use v5.24;use strict;use warnings;use FindBin qw($RealBin);use lib '/opt/otobo';use lib '/opt/otobo/Kernel/cpan-lib';use Kernel::System::ObjectManager;
+use v5.24;use strict;use warnings;use FindBin qw($RealBin);use lib '/opt/careoncloud';use lib '/opt/careoncloud/Kernel/cpan-lib';use Kernel::System::ObjectManager;
 local$Kernel::OM=Kernel::System::ObjectManager->new('Kernel::System::Log'=>{LogPrefix=>'CareOnCloud-change-demo'});
 my$UserID=47;my$Directory=$Kernel::OM->Get('Kernel::System::D724::TenantDirectory');my$Change=$Kernel::OM->Get('Kernel::System::D724::Change');my$Ctx=$Directory->ContextGet(UserID=>$UserID);die"User context unavailable\n"if!$Ctx->{Success};my$Subject=$Ctx->{Subject};
 my@Seed=(

@@ -4333,7 +4333,7 @@ sub CustomerHeader {
 
     # define (custom) logo
     my $WebPath = $ConfigObject->Get('Frontend::WebPath');
-    $Param{URLSignet} = $WebPath . 'skins/Customer/default/img/otobo_signet_w.svg';
+    $Param{URLSignet} = $WebPath . 'skins/Customer/default/img/careoncloud-signet.png';
     if ( defined $ConfigObject->Get('CustomerLogo') ) {
         my %CustomerLogo = %{ $ConfigObject->Get('CustomerLogo') };
 
@@ -4882,8 +4882,8 @@ sub CustomerNavigationBar {
 
     # define (custom) logo
     my $WebPath = $ConfigObject->Get('Frontend::WebPath');
-    $Param{URLLogo}   = $WebPath . 'skins/Customer/default/img/otobo_logo_simple_w.svg';
-    $Param{URLSignet} = $WebPath . 'skins/Customer/default/img/otobo_signet_w.svg';
+    $Param{URLLogo}   = $WebPath . 'skins/Customer/default/img/careoncloud-logo.png';
+    $Param{URLSignet} = $WebPath . 'skins/Customer/default/img/careoncloud-signet.png';
     if ( defined $ConfigObject->Get('CustomerLogo') ) {
         my %CustomerLogo = %{ $ConfigObject->Get('CustomerLogo') };
 

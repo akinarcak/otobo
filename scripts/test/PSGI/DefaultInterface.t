@@ -71,7 +71,7 @@ SKIP:
 {
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-    psgi_app_add Plack::Util::load_psgi("$Home/bin/psgi-bin/otobo.psgi");
+    psgi_app_add Plack::Util::load_psgi("$Home/bin/psgi-bin/careoncloud.psgi");
 
     my $OtoboURL = '/otobo';
 

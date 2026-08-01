@@ -141,7 +141,7 @@ my $RandomID = $Helper->GetRandomID();
 my %Packages = (
     'Package1' => <<"EOF",
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.1">
+<careoncloud_package version="1.1">
     <Name>Package1$RandomID</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
@@ -160,12 +160,12 @@ my %Packages = (
             <Column Name="name" Required="true" Size="200" Type="VARCHAR"></Column>
         </TableCreate>
     </DatabaseInstall>
-</otobo_package>
+</careoncloud_package>
 EOF
 
     'Package2' => <<"EOF",
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.1">
+<careoncloud_package version="1.1">
     <Name>Package2$RandomID</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
@@ -178,7 +178,7 @@ EOF
     <PackageIsRemovable>1</PackageIsRemovable>
     <BuildDate>2016-03-04 18:02:26</BuildDate>
     <BuildHost>otobo.master.mandalore.com</BuildHost>
-</otobo_package>
+</careoncloud_package>
 EOF
 );
 

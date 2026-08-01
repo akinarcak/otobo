@@ -1,5 +1,5 @@
 # --
-# D724 ESM is an enterprise service management platform based on OTOBO.
+# CareOnCloud ESM enterprise service management platform.
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --

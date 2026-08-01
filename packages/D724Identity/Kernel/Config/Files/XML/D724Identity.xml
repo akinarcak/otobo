@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="D724::Identity::Enabled" Required="1" Valid="1">
         <Description Translatable="1">Enable the CareOnCloud federated identity trust boundary.</Description>
         <Navigation>Core::D724</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
@@ -9,9 +9,9 @@
         <Navigation>Core::D724</Navigation>
         <Value>
             <Hash>
-                <Item Key="agent">https://esm.arcak.net/otobo/index.pl?Action=Login</Item>
-                <Item Key="customer">https://esm.arcak.net/otobo/customer.pl?Action=Login</Item>
+                <Item Key="agent">https://esm.arcak.net/careoncloud/index.pl?Action=Login</Item>
+                <Item Key="customer">https://esm.arcak.net/careoncloud/customer.pl?Action=Login</Item>
             </Hash>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

@@ -18,7 +18,7 @@ sub Begin {
     my $Provider=$Kernel::OM->Get('Kernel::System::D724::Identity')->ProviderRouteGetByKey(%Param);
     return $Self->_Error('PROVIDER_NOT_FOUND') if !$Provider;
     return $Self->_Error('BROWSER_BINDING_INVALID') if ($Param{BrowserBinding}//q{})!~m{\A[^\x00-\x1f]{32,512}\z}smx;
-    return $Self->_Error('RETURN_PATH_INVALID') if ($Param{ReturnPath}//q{})!~m{\A/otobo/(?!/)[A-Za-z0-9?&=._~/%+-]{0,1000}\z}smx;
+    return $Self->_Error('RETURN_PATH_INVALID') if ($Param{ReturnPath}//q{})!~m{\A/careoncloud/(?!/)[A-Za-z0-9?&=._~/%+-]{0,1000}\z}smx;
     my $State=encode_base64url(random_bytes(32)); my $Nonce=encode_base64url(random_bytes(32)); my $Verifier=encode_base64url(random_bytes(64));
     my $Challenge=encode_base64url(sha256($Verifier));
     my($StateDigest,$BrowserDigest,$NonceDigest,$VerifierDigest)=map{sha256_hex($_)}($State,$Param{BrowserBinding},$Nonce,$Verifier);

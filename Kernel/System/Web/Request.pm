@@ -112,7 +112,7 @@ sub new {
         # a HTTP::Request object, used primarily in test scripts
         $PSGIEnv = req_to_psgi( $Param{HTTPRequest} );
 
-        # req_to_psgi() does not split SCRIPT_NAME from PATH_INFO like it is done in otobo.psgi.
+        # req_to_psgi() does not split SCRIPT_NAME from PATH_INFO like it is done in careoncloud.psgi.
         # So, let's emulate this here. Note that the first '.*' matches greedily.
         if ( $PSGIEnv->{PATH_INFO} =~ m!(.*) / (.+)!x ) {
             $PSGIEnv->{PATH_INFO}   = $1;

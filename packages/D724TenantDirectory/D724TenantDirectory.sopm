@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>D724TenantDirectory</Name>
     <Version>0.2.1</Version>
     <Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
-    <URL>https://github.com/akinarcak/otobo</URL>
+    <URL>https://esm.arcak.net</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Persistent tenant and tenant-bound agent role directory for D724 ESM.</Description>
     <Description Lang="tr">D724 ESM icin kalici tenant ve tenant-bazli agent rol dizini.</Description>
@@ -69,4 +69,4 @@
         <File Permission="644" Location="scripts/test/D724/TenantDirectoryStatus.t" />
         <File Permission="644" Location="scripts/test/D724/TenantDirectoryTransaction.t" />
     </Filelist>
-</otobo_package>
+</careoncloud_package>

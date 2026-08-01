@@ -31,7 +31,7 @@ our $Self;
 
 my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-my $Daemon = $Home . '/bin/otobo.Daemon.pl';
+my $Daemon = $Home . '/bin/careoncloud.Daemon.pl';
 
 # get current daemon status
 my $PreviousDaemonStatus = `$^X $Daemon status`;

@@ -349,7 +349,7 @@ sub Run {
 
     # Register a callback that triggered after a test script has run.
     # E.g.:
-    #   bin/otobo.Console.pl Dev::UnitTest::Run  --verbose --directory ACL \
+    #   bin/careoncloud.Console.pl Dev::UnitTest::Run  --verbose --directory ACL \
     #     --post-test-script 'echo file: %File%' \
     #     --post-test-script 'echo ok: %TestOk%' \
     #     --post-test-script 'echo nok: %TestNotOk%' > prove_acl.out 2>&1

@@ -78,9 +78,9 @@ sub new {
 
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  => "Can't write $ArticleDir! try: \$OTOBO_HOME/bin/otobo.SetPermissions.pl!",
+            Message  => "Can't write $ArticleDir! try: \$OTOBO_HOME/bin/careoncloud.SetPermissions.pl!",
         );
-        die "Can't write $ArticleDir! try: \$OTOBO_HOME/bin/otobo.SetPermissions.pl!";
+        die "Can't write $ArticleDir! try: \$OTOBO_HOME/bin/careoncloud.SetPermissions.pl!";
     }
 
     # Get activated cache backend configuration.

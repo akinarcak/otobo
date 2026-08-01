@@ -73,8 +73,8 @@ sub import {    ## no critic qw(OTOBO::RequireCamelCase)
 END {
 
     # Clean up the global objects before global destruction sets in.
-    # This makes the test scripts behave more like otobo.psgi
-    # or otobo.Console.pl .
+    # This makes the test scripts behave more like careoncloud.psgi
+    # or careoncloud.Console.pl .
     if ($Kernel::OM) {
         $Kernel::OM->ObjectsDiscard;
     }

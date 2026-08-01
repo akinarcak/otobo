@@ -138,11 +138,11 @@ sub Run {
     # TODO: what about locking
     # reinstall packages
     # Use the console command in order to avoid dependance on OTOBO modules in the watchdog loop
-    my $Output = qx{$Self->{Home}/bin/otobo.Console.pl Admin::Package::ReinstallAll};
+    my $Output = qx{$Self->{Home}/bin/careoncloud.Console.pl Admin::Package::ReinstallAll};
     warn "Admin::Package::ReinstallAll: $Output";
 
-    # TODO: $OTOBO_HOME/bin/otobo.Console.pl Maint::Config::Rebuild
-    # TODO: $OTOBO_HOME/bin/otobo.Console.pl Maint::Cache::Delete
+    # TODO: $OTOBO_HOME/bin/careoncloud.Console.pl Maint::Config::Rebuild
+    # TODO: $OTOBO_HOME/bin/careoncloud.Console.pl Maint::Cache::Delete
 
     # no locking required as there should be no concurrent access
 

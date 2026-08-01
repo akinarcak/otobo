@@ -49,29 +49,29 @@ build () {
 # environment vars for all Docker images built by this script
 GIT_BRANCH=$(git branch --show-current)   # will be empty in detached HEAD
 GIT_COMMIT=$(git rev-parse HEAD)          # also works in detached HEAD
-otobo_version=$(perl -lne 'print $1 if /VERSION\s*=\s*(\S+)/' < RELEASE)
-DOCKER_TAG="local-${otobo_version}"
+careoncloud_version=$(perl -lne 'print $1 if /VERSION\s*=\s*(\S+)/' < RELEASE)
+DOCKER_TAG="local-${careoncloud_version}"
 
 # build otobo for the services web and daemon
-build "otobo.web.dockerfile" "otobo-web" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "." "otobo:$DOCKER_TAG"
+build "careoncloud.web.dockerfile" "careoncloud-web" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "." "careoncloud:$DOCKER_TAG"
 
 # build otobo with Kerberos support
-build "otobo.web.dockerfile" "otobo-web-kerberos" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "." "otobo-kerberos:$DOCKER_TAG"
+build "careoncloud.web.dockerfile" "careoncloud-web-kerberos" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "." "careoncloud-kerberos:$DOCKER_TAG"
 
 # Building the web container entails installing Perl distributions from CPAN.
 # The exact versions of these distributions are tracked in the file cpanfile.snapshot.
 # This file is part of the git repository and is kept up to date for the specific
 # release series. It won't be merged into the higher release series.
-docker run --rm --entrypoint cat otobo-kerberos:$DOCKER_TAG /opt/otobo_install/cpanfile.snapshot > cpanfile.docker.snapshot
+docker run --rm --entrypoint cat careoncloud-kerberos:$DOCKER_TAG /opt/careoncloud_install/cpanfile.snapshot > cpanfile.docker.snapshot
 
-# build otobo-nginx-webproxy
-build "otobo.nginx.dockerfile" "otobo-nginx-webproxy" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/nginx" "otobo-nginx-webproxy:$DOCKER_TAG"
+# build careoncloud-nginx-webproxy
+build "careoncloud.nginx.dockerfile" "careoncloud-nginx-webproxy" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/nginx" "careoncloud-nginx-webproxy:$DOCKER_TAG"
 
-# build otobo-nginx-kerberos-webproxy
-build "otobo.nginx.dockerfile" "otobo-nginx-kerberos-webproxy" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/nginx" "otobo-nginx-kerberos-webproxy:$DOCKER_TAG"
+# build careoncloud-nginx-kerberos-webproxy
+build "careoncloud.nginx.dockerfile" "careoncloud-nginx-kerberos-webproxy" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/nginx" "careoncloud-nginx-kerberos-webproxy:$DOCKER_TAG"
 
-# build otobo-elasticsearch
-build "otobo.elasticsearch.dockerfile" "otobo-elasticsearch" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/elasticsearch" "otobo-elasticsearch:$DOCKER_TAG"
+# build careoncloud-elasticsearch
+build "careoncloud.elasticsearch.dockerfile" "careoncloud-elasticsearch" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/elasticsearch" "careoncloud-elasticsearch:$DOCKER_TAG"
 
-# build otobo-selenium-chrome
-build "otobo.selenium-chrome.dockerfile" "otobo-selenium-chrome" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/test/sample" "otobo-selenium-chrome:$DOCKER_TAG"
+# build careoncloud-selenium-chrome
+build "careoncloud.selenium-chrome.dockerfile" "careoncloud-selenium-chrome" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "scripts/test/sample" "careoncloud-selenium-chrome:$DOCKER_TAG"

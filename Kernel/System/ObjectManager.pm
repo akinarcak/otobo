@@ -58,7 +58,7 @@ Kernel::System::ObjectManager - Central singleton manager and object instance ge
 
 =head1 SYNOPSIS
 
-    # In top level scripts, or otobo.psgi, only!
+    # In top level scripts, or careoncloud.psgi, only!
     local $Kernel::OM = Kernel::System::ObjectManager->new();
 
     # Everywhere: get a singleton instance (and create it, if needed).
@@ -97,7 +97,7 @@ like Kernel::System::DB:
     return unless $Kernel::OM->Get('Kernel::System::DB')->Prepare('SELECT 1');
 
 Note that localizing C<$Kernel::OM> is not really necessary in most scripts. The use of C<local> in
-F<otobo.psgi> is a special case. There it helps in avoiding that data from one HTTP request carries
+F<careoncloud.psgi> is a special case. There it helps in avoiding that data from one HTTP request carries
 over to the next request.
 
 =head2 Which objects can be loaded?

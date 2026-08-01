@@ -1,5 +1,5 @@
 # --
-# CareOnCloud ESM is based on OTOBO.
+# CareOnCloud ESM enterprise service management platform.
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --
@@ -10,7 +10,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.1.5';
+our $VERSION = '0.2.0';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::D724::APIAuth', 'Kernel::System::D724::Audit',
     'Kernel::System::DB', 'Kernel::System::Main', 'Kernel::System::User',
@@ -35,14 +35,14 @@ sub UserCreate {
     my $SCIMID = $Self->_IDGenerate( $TenantID, 'user', $Param{UserName} );
     my $Active = exists $Param{Active} ? ( $Param{Active} ? 1 : 0 ) : 1;
     my $Result = $Self->_TransactionRun( Code => sub {
-        my ( $OTOBOUserID, $CustomerLogin );
+        my ( $NativeUserID, $CustomerLogin );
         if ( $Param{Surface} eq 'agent' ) {
-            $OTOBOUserID = $Kernel::OM->Get('Kernel::System::User')->UserAdd(
+            $NativeUserID = $Kernel::OM->Get('Kernel::System::User')->UserAdd(
                 UserFirstname => $Param{GivenName}, UserLastname => $Param{FamilyName},
                 UserLogin => $Param{UserName}, UserEmail => $Param{Email},
                 ValidID => $Self->_ValidID($Active), ChangeUserID => 1,
             );
-            die "NATIVE_USER_CREATE_FAILED\n" if !$OTOBOUserID;
+            die "NATIVE_USER_CREATE_FAILED\n" if !$NativeUserID;
         }
         else {
             die "CUSTOMER_COMPANY_NOT_FOUND\n" if !$Self->_CustomerCompanyExists($TenantID);
@@ -55,14 +55,14 @@ sub UserCreate {
         }
         my @Values = (
             $SCIMID, $TenantID, $Param{ExternalID} // undef, $Param{Surface}, $Param{UserName},
-            $Param{Email}, $Param{GivenName}, $Param{FamilyName}, $Active, $OTOBOUserID, $CustomerLogin,
+            $Param{Email}, $Param{GivenName}, $Param{FamilyName}, $Active, $NativeUserID, $CustomerLogin,
         );
         my @Bind = map { \$_ } @Values;
         die "SCIM_USER_INSERT_FAILED\n" if !$Kernel::OM->Get('Kernel::System::DB')->Do(
-            SQL => 'INSERT INTO d724_scim_user (scim_id, tenant_id, external_id, surface, user_name, email, given_name, family_name, active, otobo_user_id, customer_login, version, create_time, change_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, current_timestamp, current_timestamp)',
+            SQL => 'INSERT INTO d724_scim_user (scim_id, tenant_id, external_id, surface, user_name, email, given_name, family_name, active, native_user_id, customer_login, version, create_time, change_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, current_timestamp, current_timestamp)',
             Bind => \@Bind,
         );
-        $Self->_MembershipSet( TenantID => $TenantID, OTOBOUserID => $OTOBOUserID, Role => 'requester', Active => $Active )
+        $Self->_MembershipSet( TenantID => $TenantID, NativeUserID => $NativeUserID, Role => 'requester', Active => $Active )
             if $Param{Surface} eq 'agent';
         $Self->_Audit( Auth => $Auth, TenantID => $TenantID, Action => 'scim.user.created',
             ObjectType => 'scim_user', ObjectID => $SCIMID, Version => 1, From => q{}, To => $Active ? 'active' : 'inactive',
@@ -97,7 +97,7 @@ sub UserList {
     my $DB = $Kernel::OM->Get('Kernel::System::DB'); my @Bind = map { \$_ } @Values;
     $DB->Prepare( SQL => "SELECT COUNT(*) FROM d724_scim_user WHERE $Where", Bind => \@Bind ); my ($Total) = $DB->FetchrowArray();
     $DB->Prepare(
-        SQL => "SELECT scim_id, tenant_id, external_id, surface, user_name, email, given_name, family_name, active, otobo_user_id, customer_login, version, create_time, change_time FROM d724_scim_user WHERE $Where ORDER BY scim_id",
+        SQL => "SELECT scim_id, tenant_id, external_id, surface, user_name, email, given_name, family_name, active, native_user_id, customer_login, version, create_time, change_time FROM d724_scim_user WHERE $Where ORDER BY scim_id",
         Bind => \@Bind, Limit => $Count, Offset => $Start - 1,
     );
     my @Resources; while ( my @R = $DB->FetchrowArray() ) { push @Resources, $Self->_UserResource( $Self->_UserRow(\@R) ) }
@@ -122,7 +122,7 @@ sub UserReplace {
         my $NativeActive = $Active;
         if ( $Current->{Surface} eq 'agent' ) {
             $Self->_UserMembershipsReconcile( TenantID => $Param{TenantID}, User => $Current, Active => $Active );
-            $NativeActive = 1 if !$Active && $Self->_AgentHasActiveMembership( OTOBOUserID => $Current->{OTOBOUserID} );
+            $NativeActive = 1 if !$Active && $Self->_AgentHasActiveMembership( NativeUserID => $Current->{NativeUserID} );
         }
         $Self->_NativeUserUpdate( Row => $Current, %Param, Active => $NativeActive );
         my @Values = ( $Param{Email}, $Param{GivenName}, $Param{FamilyName}, $Active, $Param{TenantID}, $Param{SCIMID}, $Current->{Version} );
@@ -271,7 +271,7 @@ sub _NativeUserUpdate {
     my ( $Self, %Param ) = @_; my $R = $Param{Row};
     my $OK;
     if ( $R->{Surface} eq 'agent' ) {
-        $OK = $Kernel::OM->Get('Kernel::System::User')->UserUpdate( UserID => $R->{OTOBOUserID}, UserFirstname => $Param{GivenName}, UserLastname => $Param{FamilyName}, UserLogin => $R->{UserName}, UserEmail => $Param{Email}, ValidID => $Self->_ValidID($Param{Active}), ChangeUserID => 1 );
+        $OK = $Kernel::OM->Get('Kernel::System::User')->UserUpdate( UserID => $R->{NativeUserID}, UserFirstname => $Param{GivenName}, UserLastname => $Param{FamilyName}, UserLogin => $R->{UserName}, UserEmail => $Param{Email}, ValidID => $Self->_ValidID($Param{Active}), ChangeUserID => 1 );
     }
     else {
         $OK = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserUpdate( ID => $R->{CustomerLogin}, UserLogin => $R->{UserName}, UserFirstname => $Param{GivenName}, UserLastname => $Param{FamilyName}, UserCustomerID => $Param{TenantID}, UserEmail => $Param{Email}, ValidID => $Self->_ValidID($Param{Active}), UserID => 1 );
@@ -288,7 +288,7 @@ sub _GroupMembersReplace {
     for my $ID ( keys %Wanted ) {
         my $User = $Self->_UserByID( TenantID => $Tenant, SCIMID => $ID ); die "MEMBER_NOT_FOUND\n" if !$User || $User->{Surface} ne 'agent';
         if ( !$Current{$ID} ) { $DB->Do( SQL => 'INSERT INTO d724_scim_group_member (group_id, user_id, tenant_id, create_time) VALUES (?, ?, ?, current_timestamp)', Bind => [ \$Group, \$ID, \$Tenant ] ) || die "MEMBER_INSERT_FAILED\n" }
-        $Self->_MembershipSet( TenantID => $Tenant, OTOBOUserID => $User->{OTOBOUserID}, Role => $Param{Role}, Active => $User->{Active} );
+        $Self->_MembershipSet( TenantID => $Tenant, NativeUserID => $User->{NativeUserID}, Role => $Param{Role}, Active => $User->{Active} );
     }
     for my $ID ( keys %Current ) {
         next if $Wanted{$ID}; my $User = $Self->_UserByID( TenantID => $Tenant, SCIMID => $ID );
@@ -301,11 +301,11 @@ sub _GroupMembersReplace {
 sub _RoleReconcile {
     my ( $Self, %Param ) = @_; my ($Tenant,$User,$Role)=@Param{qw(TenantID User Role)}; my $DB=$Kernel::OM->Get('Kernel::System::DB');
     $DB->Prepare( SQL => 'SELECT 1 FROM d724_scim_group_member m INNER JOIN d724_scim_group g ON g.scim_id = m.group_id AND g.tenant_id = m.tenant_id WHERE m.tenant_id = ? AND m.user_id = ? AND g.role_name = ?', Bind => [ \$Tenant, \$User->{SCIMID}, \$Role ], Limit => 1 ); my ($Keep)=$DB->FetchrowArray();
-    $Self->_MembershipSet( TenantID => $Tenant, OTOBOUserID => $User->{OTOBOUserID}, Role => $Role, Active => $Keep ? 1 : 0 ); return 1;
+    $Self->_MembershipSet( TenantID => $Tenant, NativeUserID => $User->{NativeUserID}, Role => $Role, Active => $Keep ? 1 : 0 ); return 1;
 }
 
 sub _MembershipSet {
-    my ( $Self, %Param ) = @_; return 1 if !$Param{OTOBOUserID}; my $DB=$Kernel::OM->Get('Kernel::System::DB'); my ($T,$U,$R)=@Param{qw(TenantID OTOBOUserID Role)};
+    my ( $Self, %Param ) = @_; return 1 if !$Param{NativeUserID}; my $DB=$Kernel::OM->Get('Kernel::System::DB'); my ($T,$U,$R)=@Param{qw(TenantID NativeUserID Role)};
     $DB->Prepare( SQL => 'SELECT id, status FROM d724_tenant_agent_role WHERE tenant_id = ? AND user_id = ? AND role_name = ? FOR UPDATE', Bind => [ \$T, \$U, \$R ] ); my ($ID,$Status)=$DB->FetchrowArray(); my $Want=$Param{Active}?'active':'revoked';
     return 1 if $ID && $Status eq $Want;
     if ($ID) { $DB->Do( SQL => 'UPDATE d724_tenant_agent_role SET status = ?, version = version + 1, change_time = current_timestamp, change_by = 1 WHERE id = ?', Bind => [ \$Want, \$ID ] ) || die "MEMBERSHIP_UPDATE_FAILED\n" }
@@ -314,20 +314,20 @@ sub _MembershipSet {
 }
 
 sub _UserMembershipsReconcile {
-    my ( $Self, %Param ) = @_; my $U=$Param{User}; return 1 if !$U->{OTOBOUserID};
+    my ( $Self, %Param ) = @_; my $U=$Param{User}; return 1 if !$U->{NativeUserID};
     my $T=$Param{TenantID}; my $DB=$Kernel::OM->Get('Kernel::System::DB');
     if (!$Param{Active}) {
-        $DB->Do( SQL => "UPDATE d724_tenant_agent_role SET status = 'revoked', version = version + 1, change_time = current_timestamp, change_by = 1 WHERE tenant_id = ? AND user_id = ? AND status = 'active'", Bind => [ \$T, \$U->{OTOBOUserID} ] ) || die "MEMBERSHIP_UPDATE_FAILED\n";
+        $DB->Do( SQL => "UPDATE d724_tenant_agent_role SET status = 'revoked', version = version + 1, change_time = current_timestamp, change_by = 1 WHERE tenant_id = ? AND user_id = ? AND status = 'active'", Bind => [ \$T, \$U->{NativeUserID} ] ) || die "MEMBERSHIP_UPDATE_FAILED\n";
         return 1;
     }
-    $Self->_MembershipSet(TenantID=>$T,OTOBOUserID=>$U->{OTOBOUserID},Role=>'requester',Active=>1);
+    $Self->_MembershipSet(TenantID=>$T,NativeUserID=>$U->{NativeUserID},Role=>'requester',Active=>1);
     $DB->Prepare(SQL=>'SELECT DISTINCT g.role_name FROM d724_scim_group_member m INNER JOIN d724_scim_group g ON g.scim_id=m.group_id AND g.tenant_id=m.tenant_id WHERE m.tenant_id=? AND m.user_id=?',Bind=>[\$T,\$U->{SCIMID}]);
-    while(my($Role)=$DB->FetchrowArray()){$Self->_MembershipSet(TenantID=>$T,OTOBOUserID=>$U->{OTOBOUserID},Role=>$Role,Active=>1)}
+    while(my($Role)=$DB->FetchrowArray()){$Self->_MembershipSet(TenantID=>$T,NativeUserID=>$U->{NativeUserID},Role=>$Role,Active=>1)}
     return 1;
 }
 
 sub _AgentHasActiveMembership {
-    my ( $Self, %Param ) = @_; my $U=$Param{OTOBOUserID}; my $DB=$Kernel::OM->Get('Kernel::System::DB');
+    my ( $Self, %Param ) = @_; my $U=$Param{NativeUserID}; my $DB=$Kernel::OM->Get('Kernel::System::DB');
     $DB->Prepare( SQL => "SELECT 1 FROM d724_tenant_agent_role WHERE user_id = ? AND status = 'active'", Bind => [ \$U ], Limit => 1 ); my ($Has)=$DB->FetchrowArray(); return 1 if $Has;
     return 0;
 }
@@ -335,8 +335,8 @@ sub _AgentHasActiveMembership {
 sub _UserByID { my ( $Self,%P)=@_; return if !$Self->_IDValid($P{SCIMID}); return $Self->_UserSelect('tenant_id = ? AND scim_id = ?', $P{TenantID}, $P{SCIMID}) }
 sub _UserByName { my ( $Self,%P)=@_; return $Self->_UserSelect('tenant_id = ? AND user_name = ?', $P{TenantID}, $P{UserName}) }
 sub _UserByExternal { my ( $Self,%P)=@_; return $Self->_UserSelect('tenant_id = ? AND external_id = ?', $P{TenantID}, $P{ExternalID}) }
-sub _UserSelect { my ( $Self,$Where,@V)=@_; my @B=map{\$_}@V; my $DB=$Kernel::OM->Get('Kernel::System::DB'); $DB->Prepare(SQL=>"SELECT scim_id, tenant_id, external_id, surface, user_name, email, given_name, family_name, active, otobo_user_id, customer_login, version, create_time, change_time FROM d724_scim_user WHERE $Where",Bind=>\@B,Limit=>1); my @R=$DB->FetchrowArray(); return @R ? $Self->_UserRow(\@R) : undef }
-sub _UserRow { my($Self,$R)=@_; return { SCIMID=>$R->[0],TenantID=>$R->[1],ExternalID=>$R->[2],Surface=>$R->[3],UserName=>$R->[4],Email=>$R->[5],GivenName=>$R->[6],FamilyName=>$R->[7],Active=>0+$R->[8],OTOBOUserID=>$R->[9],CustomerLogin=>$R->[10],Version=>0+$R->[11],CreateTime=>$R->[12],ChangeTime=>$R->[13] } }
+sub _UserSelect { my ( $Self,$Where,@V)=@_; my @B=map{\$_}@V; my $DB=$Kernel::OM->Get('Kernel::System::DB'); $DB->Prepare(SQL=>"SELECT scim_id, tenant_id, external_id, surface, user_name, email, given_name, family_name, active, native_user_id, customer_login, version, create_time, change_time FROM d724_scim_user WHERE $Where",Bind=>\@B,Limit=>1); my @R=$DB->FetchrowArray(); return @R ? $Self->_UserRow(\@R) : undef }
+sub _UserRow { my($Self,$R)=@_; return { SCIMID=>$R->[0],TenantID=>$R->[1],ExternalID=>$R->[2],Surface=>$R->[3],UserName=>$R->[4],Email=>$R->[5],GivenName=>$R->[6],FamilyName=>$R->[7],Active=>0+$R->[8],NativeUserID=>$R->[9],CustomerLogin=>$R->[10],Version=>0+$R->[11],CreateTime=>$R->[12],ChangeTime=>$R->[13] } }
 sub _UserResource { my($Self,$R)=@_; return { schemas=>['urn:ietf:params:scim:schemas:core:2.0:User'],id=>$R->{SCIMID},externalId=>$R->{ExternalID},userName=>$R->{UserName},name=>{givenName=>$R->{GivenName},familyName=>$R->{FamilyName}},emails=>[{value=>$R->{Email},primary=>1,type=>'work'}],active=>$R->{Active}?1:0,'urn:careoncloud:params:scim:schemas:extension:esm:2.0:User'=>{surface=>$R->{Surface},tenantId=>$R->{TenantID}},meta=>{resourceType=>'User',created=>$R->{CreateTime},lastModified=>$R->{ChangeTime},version=>'W/"'.$R->{Version}.'"'} } }
 
 sub _GroupByID { my($Self,%P)=@_; return if !$Self->_IDValid($P{SCIMID}); return $Self->_GroupSelect('tenant_id = ? AND scim_id = ?',$P{TenantID},$P{SCIMID}) }

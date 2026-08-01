@@ -44,7 +44,7 @@ subtest 'command help' => sub {
         return $CommandObject->Execute('Help');
     };
     is( $ExitCode, 0, "Exit code looking for one command" );
-    like( $Result, qr/otobo.Console.pl Help command/, "Found Help for 'Help' command" );
+    like( $Result, qr/careoncloud.Console.pl Help command/, "Found Help for 'Help' command" );
     is( $Error, '', 'no error' );
 };
 
@@ -53,7 +53,7 @@ subtest 'command search' => sub {
         return $CommandObject->Execute('Lis');
     };
     is( $ExitCode, 0, "Exit code searching for commands" );
-    unlike( $Result, qr/otobo.Console.pl Help command/, "Help for 'Help' command not found" );
+    unlike( $Result, qr/careoncloud.Console.pl Help command/, "Help for 'Help' command not found" );
     like( $Result, qr/List all installed OTOBO packages/, 'Found Admin::Package::List command entry' );
     is( $Error, '', 'no error' );
 };
@@ -63,7 +63,7 @@ subtest 'command search (empty)' => sub {
         return $CommandObject->Execute('NonExistingSearchTerm');
     };
     is( $ExitCode, 0, 'Exit code searching for commands' );
-    unlike( $Result, qr/otobo.Console.pl Help command/, "Help for 'Help' command not found" );
+    unlike( $Result, qr/careoncloud.Console.pl Help command/, "Help for 'Help' command not found" );
     like( $Result, qr/No commands found./, "No commands found." );
     is( $Error, '', 'no error' );
 };

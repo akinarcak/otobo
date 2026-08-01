@@ -364,7 +364,7 @@ sub PageNew {
     my $LogoFile =
         $Self->{Document}->{LogoFile}
         ||
-        $Kernel::OM->Get('Kernel::Config')->Get('Home') . '/var/logo-otobo.png';
+        $Kernel::OM->Get('Kernel::Config')->Get('Home') . '/var/logo-careoncloud.png';
     if (
         $Param{LogoFile}
         &&

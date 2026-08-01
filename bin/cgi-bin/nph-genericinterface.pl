@@ -32,7 +32,7 @@ use Plack::Util         ();
 
 #local $ENV{PLACK_URLMAP_DEBUG} = 1; # enable when the URL mapping does not work
 
-# otobo.psgi looks primarily in $ENV{PATH_INFO}
+# careoncloud.psgi looks primarily in $ENV{PATH_INFO}
 local $ENV{PATH_INFO}   = join '/', grep { defined $_ && $_ ne '' } @ENV{qw(SCRIPT_NAME PATH_INFO)};
 local $ENV{SCRIPT_NAME} = '';
 
@@ -45,7 +45,7 @@ state $App = builder {
     #        response => 1,
     #        request  => 1;
 
-    Plack::Util::load_psgi("$CgiBinDir/../psgi-bin/otobo.psgi");
+    Plack::Util::load_psgi("$CgiBinDir/../psgi-bin/careoncloud.psgi");
 };
 
 #$Plack::Middleware::DebugLogging::module_map->{'text/xml; charset=utf-8'} = 'XML::Simple';

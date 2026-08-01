@@ -19,7 +19,7 @@ ConvenienceMethods.t - test some select methods of Kernel::System::DB
 
 =head1 SYNOPSIS
 
-    bin/otobo.Console.pl Dev::UnitTest::Run --verbose --merge scripts/test/DB/ConvenienceMethods.t
+    bin/careoncloud.Console.pl Dev::UnitTest::Run --verbose --merge scripts/test/DB/ConvenienceMethods.t
 
 =head1 DESCRIPTION
 

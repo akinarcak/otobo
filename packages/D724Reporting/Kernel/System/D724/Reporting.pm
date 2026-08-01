@@ -8,7 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.3.1';
+our $VERSION = '0.4.1';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::DB', 'Kernel::System::D724::TenantDirectory',
     'Kernel::System::D724::TenantCache', 'Kernel::System::D724::TenantGuard', 'Kernel::System::JSON',
@@ -23,6 +23,184 @@ sub Summary {
     my $Auth = $Self->_Authorize( %Param, Action => 'report.read' );
     return $Auth if !$Auth->{Success};
     return $Self->_SummaryCached( %Param, Subject => $Auth->{Subject}, Action => 'report.read' );
+}
+
+sub CustomReport {
+    my ( $Self, %Param ) = @_;
+    my $Valid = $Self->_Validate(%Param);
+    return $Valid if !$Valid->{Success};
+    my $Auth = $Self->_Authorize( %Param, Action => 'report.read' );
+    return $Auth if !$Auth->{Success};
+
+    my %Dimension = (
+        status         => { SQL => 'r.status',                         Label => 'Status' },
+        service        => { SQL => 's.name',                           Label => 'Service category' },
+        extension      => { SQL => 'o.name',                           Label => 'Service extension' },
+        request_type   => { SQL => 'c.name',                           Label => 'Request type' },
+        month          => { SQL => q{DATE_FORMAT(r.create_time, '%Y-%m')}, Label => 'Month' },
+    );
+    my %Metric = (
+        requests       => { SQL => 'COUNT(DISTINCT r.id)', Label => 'Requests' },
+        commitments    => { SQL => 'COUNT(DISTINCT i.id)', Label => 'SLA objectives' },
+        breaches       => { SQL => q{COUNT(DISTINCT CASE WHEN i.status = 'breached' THEN i.id END)}, Label => 'Breaches' },
+        sla_compliance => { SQL => q{COALESCE(ROUND(100 - (100 * COUNT(DISTINCT CASE WHEN i.status = 'breached' THEN i.id END) / NULLIF(COUNT(DISTINCT i.id), 0)), 1), 100)}, Label => 'SLA compliance' },
+    );
+    my @Dimensions = ref $Param{Dimensions} eq 'ARRAY' ? @{ $Param{Dimensions} } : ( $Param{Dimension} // 'status' );
+    my @Metrics    = ref $Param{Metrics} eq 'ARRAY' ? @{ $Param{Metrics} } : ( $Param{Metric} // 'requests' );
+    return $Self->_Error('DIMENSION_INVALID') if !@Dimensions || @Dimensions > 3 || grep { !$Dimension{$_} } @Dimensions;
+    return $Self->_Error('METRIC_INVALID') if !@Metrics || @Metrics > 4 || grep { !$Metric{$_} } @Metrics;
+    my %Seen;
+    @Dimensions = grep { !$Seen{"d:$_"}++ } @Dimensions;
+    @Metrics    = grep { !$Seen{"m:$_"}++ } @Metrics;
+
+    my @Select = ( map { $Dimension{$_}->{SQL} } @Dimensions, map { $Metric{$_}->{SQL} } @Metrics );
+    my @Where = ( 'r.tenant_id = ?', 'r.create_time >= ?', 'r.create_time < DATE_ADD(?, INTERVAL 1 DAY)' );
+    my @BindValue = ( $Param{TenantID}, $Param{From}, $Param{To} );
+    if ( defined $Param{Status} && length $Param{Status} ) {
+        return $Self->_Error('FILTER_INVALID') if $Param{Status} !~ m{\A[a-z][a-z0-9_-]{0,31}\z}smx;
+        push @Where, 'r.status = ?';
+        push @BindValue, $Param{Status};
+    }
+    my @Group = map { $Dimension{$_}->{SQL} } @Dimensions;
+    my $SQL = 'SELECT ' . join( ', ', @Select )
+        . ' FROM d724_request r'
+        . ' INNER JOIN d724_catalog_item c ON c.tenant_id = r.tenant_id AND c.id = r.catalog_item_id'
+        . ' INNER JOIN d724_service_offering o ON o.tenant_id = c.tenant_id AND o.id = c.offering_id'
+        . ' INNER JOIN d724_service s ON s.tenant_id = o.tenant_id AND s.id = o.service_id'
+        . ' LEFT JOIN d724_commitment_instance i ON i.tenant_id = r.tenant_id AND i.request_id = r.id'
+        . ' WHERE ' . join( ' AND ', @Where )
+        . ' GROUP BY ' . join( ', ', @Group )
+        . ' ORDER BY ' . join( ', ', @Group );
+    my @Bind = map { \$_ } @BindValue;
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    return $Self->_Error('QUERY_FAILED') if !$DB->Prepare( SQL => $SQL, Bind => \@Bind );
+    my @Rows;
+    while ( my @Value = $DB->FetchrowArray() ) {
+        push @Rows, { Values => [ map { defined $_ ? $_ : q{} } @Value ] };
+    }
+    return {
+        Success => 1,
+        Data => {
+            TenantID => $Param{TenantID}, From => $Param{From}, To => $Param{To},
+            Dimensions => \@Dimensions, Metrics => \@Metrics,
+            Columns => [ map { $Dimension{$_}->{Label} } @Dimensions, map { $Metric{$_}->{Label} } @Metrics ],
+            Rows => \@Rows,
+        },
+    };
+}
+
+sub CustomExport {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('FORMAT_INVALID') if ( $Param{Format} // q{} ) !~ m{\A(?:csv|json)\z}smx;
+    my $Valid = $Self->_Validate(%Param);
+    return $Valid if !$Valid->{Success};
+    my $Auth = $Self->_Authorize( %Param, Action => 'report.export' );
+    return $Auth if !$Auth->{Success};
+    my $Result = $Self->CustomReport( %Param, Subject => $Auth->{Subject} );
+    return $Result if !$Result->{Success};
+    my $TenantFile = $Param{TenantID};
+    $TenantFile =~ s{[^a-zA-Z0-9_-]}{_}gsmx;
+    my $Name = "careoncloud-custom-$TenantFile-$Param{From}-$Param{To}.$Param{Format}";
+    if ( $Param{Format} eq 'json' ) {
+        return {
+            %{$Result},
+            Content => $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Result->{Data}, SortKeys => 1, Pretty => 1 ),
+            ContentType => 'application/json', FileName => $Name,
+        };
+    }
+    my @Rows = ( $Result->{Data}->{Columns}, map { $_->{Values} } @{ $Result->{Data}->{Rows} } );
+    return {
+        %{$Result}, Content => join( q{}, map { join( q{,}, map { $Self->_CSVCell($_) } @{$_} ) . "\r\n" } @Rows ),
+        ContentType => 'text/csv; charset=utf-8', FileName => $Name,
+    };
+}
+
+sub DefinitionCreate {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('KEY_INVALID') if ( $Param{Key} // q{} ) !~ m{\A[a-z][a-z0-9_-]{1,99}\z}smx;
+    return $Self->_Error('NAME_INVALID') if !defined $Param{Name} || !length $Param{Name} || length $Param{Name} > 200;
+    return $Self->_Error('DESCRIPTION_INVALID') if length( $Param{Description} // q{} ) > 2000;
+    return $Self->_Error('VISIBILITY_INVALID') if ( $Param{Visibility} // 'private' ) !~ m{\A(?:private|shared)\z}smx;
+    my $Report = $Self->CustomReport(%Param);
+    return $Report if !$Report->{Success};
+    my $Definition = {
+        Dimensions => $Report->{Data}->{Dimensions}, Metrics => $Report->{Data}->{Metrics},
+        Status => $Param{Status} // q{},
+    };
+    my $JSON = $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Definition, SortKeys => 1 );
+    my ( $TenantID, $Key, $Name, $Description, $UserID, $Visibility ) = (
+        $Param{TenantID}, $Param{Key}, $Param{Name}, $Param{Description} // q{}, $Param{UserID}, $Param{Visibility} // 'private',
+    );
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    return $Self->_Error('CREATE_FAILED') if !$DB->Do(
+        SQL => 'INSERT INTO d724_report_definition (tenant_id, key_name, name, description, owner_user_id, visibility, definition_json, version, create_time, create_by, change_time, change_by) VALUES (?, ?, ?, ?, ?, ?, ?, 1, current_timestamp, ?, current_timestamp, ?)',
+        Bind => [ \$TenantID, \$Key, \$Name, \$Description, \$UserID, \$Visibility, \$JSON, \$UserID, \$UserID ],
+    );
+    return $Self->DefinitionGet( %Param, ReportKey => $Key );
+}
+
+sub DefinitionList {
+    my ( $Self, %Param ) = @_;
+    my $Base = $Self->_DefinitionAccessValidate(%Param);
+    return $Base if !$Base->{Success};
+    my ( $TenantID, $UserID, $Shared ) = ( $Param{TenantID}, $Param{UserID}, 'shared' );
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    return $Self->_Error('QUERY_FAILED') if !$DB->Prepare(
+        SQL => 'SELECT id, key_name, name, description, owner_user_id, visibility, definition_json, version, create_time, change_time FROM d724_report_definition WHERE tenant_id = ? AND (owner_user_id = ? OR visibility = ?) ORDER BY name, id',
+        Bind => [ \$TenantID, \$UserID, \$Shared ],
+    );
+    my @Definitions;
+    while ( my @Row = $DB->FetchrowArray() ) {
+        push @Definitions, $Self->_DefinitionMap( TenantID => $TenantID, Row => \@Row );
+    }
+    return { Success => 1, Data => \@Definitions };
+}
+
+sub DefinitionGet {
+    my ( $Self, %Param ) = @_;
+    my $Base = $Self->_DefinitionAccessValidate(%Param);
+    return $Base if !$Base->{Success};
+    my $Where;
+    my $Identifier;
+    if ( ( $Param{ReportID} // q{} ) =~ m{\A[1-9][0-9]*\z}smx ) { $Where = 'id = ?'; $Identifier = $Param{ReportID}; }
+    elsif ( ( $Param{ReportKey} // q{} ) =~ m{\A[a-z][a-z0-9_-]{1,99}\z}smx ) { $Where = 'key_name = ?'; $Identifier = $Param{ReportKey}; }
+    else { return $Self->_Error('REPORT_ID_INVALID'); }
+    my ( $TenantID, $UserID, $Shared ) = ( $Param{TenantID}, $Param{UserID}, 'shared' );
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    return $Self->_Error('QUERY_FAILED') if !$DB->Prepare(
+        SQL => "SELECT id, key_name, name, description, owner_user_id, visibility, definition_json, version, create_time, change_time FROM d724_report_definition WHERE tenant_id = ? AND $Where AND (owner_user_id = ? OR visibility = ?)",
+        Bind => [ \$TenantID, \$Identifier, \$UserID, \$Shared ], Limit => 1,
+    );
+    my @Row = $DB->FetchrowArray();
+    return $Self->_Error('NOT_FOUND') if !@Row;
+    return { Success => 1, Data => $Self->_DefinitionMap( TenantID => $TenantID, Row => \@Row ) };
+}
+
+sub DefinitionDelete {
+    my ( $Self, %Param ) = @_;
+    my $Base = $Self->_DefinitionAccessValidate(%Param);
+    return $Base if !$Base->{Success};
+    return $Self->_Error('REPORT_ID_INVALID') if ( $Param{ReportID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    my ( $TenantID, $UserID, $ReportID ) = @Param{qw(TenantID UserID ReportID)};
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    return $Self->_Error('DELETE_FAILED') if !$DB->Do(
+        SQL => 'DELETE FROM d724_report_definition WHERE tenant_id = ? AND id = ? AND owner_user_id = ?',
+        Bind => [ \$TenantID, \$ReportID, \$UserID ],
+    );
+    return { Success => 1 };
+}
+
+sub DefinitionExecute {
+    my ( $Self, %Param ) = @_;
+    my $Saved = $Self->DefinitionGet(%Param);
+    return $Saved if !$Saved->{Success};
+    return $Self->CustomReport(
+        %Param,
+        Dimensions => $Saved->{Data}->{Definition}->{Dimensions},
+        Metrics => $Saved->{Data}->{Definition}->{Metrics},
+        Status => $Saved->{Data}->{Definition}->{Status},
+    );
 }
 
 sub Export {
@@ -60,6 +238,26 @@ sub TenantLabelGet {
     );
     my ($Name) = $DB->FetchrowArray();
     return defined $Name ? { Success => 1, Data => { TenantID => $TenantID, Name => $Name } } : $Self->_Error('NOT_FOUND');
+}
+
+sub _DefinitionAccessValidate {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('REPORTING_DISABLED') if !$Kernel::OM->Get('Kernel::Config')->Get('D724::Reporting::Enabled');
+    return $Self->_Error('TENANT_ID_INVALID') if ( $Param{TenantID} // q{} ) !~ m{\A[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}\z}smx;
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Authorize( %Param, Action => 'report.read' );
+}
+
+sub _DefinitionMap {
+    my ( $Self, %Param ) = @_;
+    my $Row = $Param{Row};
+    my $Definition = eval { $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $Row->[6] ) };
+    $Definition = {} if $@ || ref $Definition ne 'HASH';
+    return {
+        ReportID => 0 + $Row->[0], TenantID => $Param{TenantID}, Key => $Row->[1], Name => $Row->[2],
+        Description => $Row->[3], OwnerUserID => 0 + $Row->[4], Visibility => $Row->[5], Definition => $Definition,
+        Version => 0 + $Row->[7], CreateTime => $Row->[8], ChangeTime => $Row->[9],
+    };
 }
 
 sub _Validate {

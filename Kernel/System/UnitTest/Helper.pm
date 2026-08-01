@@ -733,8 +733,8 @@ All database contents will be automatically dropped when the Helper object is de
         DatabaseXMLString => $XML,      # (optional) OTOBO database XML schema to execute
                                         # or
         DatabaseXMLFiles => [           # (optional) List of XML files to load and execute
-            '/opt/otobo/scripts/database/otobo-schema.xml',
-            '/opt/otobo/scripts/database/otobo-initial_insert.xml',
+            '/opt/otobo/scripts/database/careoncloud-schema.xml',
+            '/opt/otobo/scripts/database/careoncloud-initial_insert.xml',
         ],
     );
 

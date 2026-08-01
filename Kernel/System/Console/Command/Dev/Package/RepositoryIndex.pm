@@ -55,7 +55,7 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     my $Result = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
-    $Result .= "<otobo_package_list version=\"1.0\">\n";
+    $Result .= "<careoncloud_package_list version=\"1.0\">\n";
     my $SourceDirectory = $Self->GetArgument('source-directory');
     my @List            = $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
         Directory => $SourceDirectory,
@@ -87,7 +87,7 @@ sub Run {
         $Result .= "  <File>$RelativeFile</File>\n";
         $Result .= "</Package>\n";
     }
-    $Result .= "</otobo_package_list>\n";
+    $Result .= "</careoncloud_package_list>\n";
     $Self->Print($Result);
 
     return $Self->ExitCodeOk();

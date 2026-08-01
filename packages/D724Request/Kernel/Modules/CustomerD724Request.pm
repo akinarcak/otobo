@@ -1,5 +1,5 @@
 # --
-# D724 ESM is an enterprise service management platform based on OTOBO.
+# CareOnCloud ESM enterprise service management platform.
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --
@@ -24,7 +24,12 @@ sub Run {
     if ( ( $Self->{Subaction} // q{} ) eq 'Submit' ) {
         $Layout->ChallengeTokenCheck();
         my $ItemID = $WebRequest->GetParam( Param => 'CatalogItemID' );
-        my $Item = $Kernel::OM->Get('Kernel::System::D724::CatalogPortal')->ItemGet( %Context, CatalogItemID => $ItemID );
+        my $Item = $Kernel::OM->Get('Kernel::System::D724::CatalogPortal')->ItemGet(
+            %Context,
+            CatalogItemID => $ItemID,
+            ServiceID     => $WebRequest->GetParam( Param => 'ServiceID' ),
+            OfferingID    => $WebRequest->GetParam( Param => 'OfferingID' ),
+        );
         return $Layout->CustomerNoPermission( WithHeader => 'yes' ) if !$Item->{Success};
         my %Answers;
         for my $Field ( @{ $Item->{Data}->{FormSchema}->{Schema}->{fields} } ) {

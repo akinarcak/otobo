@@ -36,9 +36,9 @@ yalniz `http://elastic:9200` private servis adresini kabul eder ve var olan inva
 OTOBO kaydini idempotent bicimde etkinlestirir. Ardindan su resmi kapilari calistirin:
 
 ```text
-bin/otobo.Console.pl Admin::Config::Update --setting-name Elasticsearch::Active --value 1 --valid 1
-bin/otobo.Console.pl Maint::Elasticsearch::TestConnection
-bin/otobo.Console.pl Maint::Elasticsearch::Migration --target t
+bin/careoncloud.Console.pl Admin::Config::Update --setting-name Elasticsearch::Active --value 1 --valid 1
+bin/careoncloud.Console.pl Maint::Elasticsearch::TestConnection
+bin/careoncloud.Console.pl Maint::Elasticsearch::Migration --target t
 ```
 
 `Accept-ElasticsearchRuntime.pl`, iki gecici tenant dokumaniyla gercek hit/miss
@@ -48,7 +48,7 @@ authoritative MariaDB durumundan kurulmalidir.
 
 Prometheus operasyon yuzeyi `D724Observability` paketiyle gelir. Scrape tokeninin
 yalniz SHA-256 digest'ini SysConfig'e kaydedin; tokeni secret store'dan Prometheus'a
-dosya olarak baglayin. Endpoint `/otobo/public.pl?Action=PublicD724Metrics` ve
+dosya olarak baglayin. Endpoint `/careoncloud/public.pl?Action=PublicD724Metrics` ve
 standart Bearer auth kullanir. Kurulum ve kabul ayrintilari
 `docs/esm/observability/PROMETHEUS.md` dosyasindadir.
 

@@ -84,7 +84,7 @@ $Self->True(
 # Prepare two new file-type config settings.
 my $ValidSettingXML = <<"END_XML";
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Framework">
+<careoncloud_config version="2.0" init="Framework">
     <Setting Name="Test1" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -99,7 +99,7 @@ my $ValidSettingXML = <<"END_XML";
             <Item ValueType="File">$TestFileLocation</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
 END_XML
 
 my $ConfigFileLocation = $ConfigObject->Get('Home') . '/Kernel/Config/Files/XML/UnitTest' . $HelperObject->GetRandomNumber() . '.xml';

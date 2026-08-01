@@ -299,7 +299,7 @@ sub Run {
 
         # Return AJAX response content as as Perl string.
         # The output should not be encoded because the content
-        # will be encoded in otobo.psgi. Double encoding is bad.
+        # will be encoded in careoncloud.psgi. Double encoding is bad.
         my $OutputJSON = $LayoutObject->JSONEncode( Data => $Return );
 
         return $LayoutObject->Attachment(
@@ -573,7 +573,7 @@ sub _Finish {
         UserID      => 1,
     );
 
-    # A restart should never be needed as otobo.psgi checks for changed modules.
+    # A restart should never be needed as careoncloud.psgi checks for changed modules.
     # But keep the old code for future reference.
     my $Webserver;
     if (0) {

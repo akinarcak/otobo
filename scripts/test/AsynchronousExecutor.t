@@ -28,7 +28,7 @@ use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $Home   = $Kernel::OM->Get('Kernel::Config')->Get('Home');
-my $Daemon = $Home . '/bin/otobo.Daemon.pl';
+my $Daemon = $Home . '/bin/careoncloud.Daemon.pl';
 
 # get daemon status (stop if necessary)
 my $PreviousDaemonStatus = `$^X $Daemon status`;

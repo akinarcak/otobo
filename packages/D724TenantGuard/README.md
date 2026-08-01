@@ -7,7 +7,7 @@ The package does not automatically make every OTOBO screen multi-tenant. Each da
 ## Diagnostic example
 
 ```bash
-bin/otobo.Console.pl Admin::D724::TenantGuardCheck \
+bin/careoncloud.Console.pl Admin::D724::TenantGuardCheck \
   --subject-id agent-1 \
   --subject-tenant tenant-a \
   --role agent \

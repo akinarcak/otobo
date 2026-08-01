@@ -12,7 +12,7 @@ my$S=lc$H->GetRandomID();my$T="oidc-$S";my$Issuer="https://login.example.invalid
 ok($D->TenantCreate(Subject=>$P,TenantID=>$T,Name=>'OIDC',UserID=>1)->{Success},'tenant created');my$Admin={ID=>'admin',TenantIDs=>[$T],RoleBindings=>{$T=>['tenant_admin']}};
 ok($I->ProviderCreate(Subject=>$Admin,TenantID=>$T,Key=>'oidc',Issuer=>$Issuer,Audience=>$Audience,AllowedDomains=>['example.com'],GroupRoleMap=>{'agents'=>'agent'},UserID=>1)->{Success},'provider created');
 is($F->Begin(TenantID=>$T,ProviderKey=>'oidc',BrowserBinding=>'b'x40,ReturnPath=>'https://evil.invalid')->{Error},'RETURN_PATH_INVALID','external return URL rejected');
-my$Flow=$F->Begin(TenantID=>$T,ProviderKey=>'oidc',BrowserBinding=>'b'x40,ReturnPath=>'/otobo/index.pl');ok($Flow->{Success},'OIDC flow begins');
+my$Flow=$F->Begin(TenantID=>$T,ProviderKey=>'oidc',BrowserBinding=>'b'x40,ReturnPath=>'/careoncloud/index.pl');ok($Flow->{Success},'OIDC flow begins');
 is($Flow->{Data}->{CodeChallenge},encode_base64url(sha256($Flow->{Data}->{CodeVerifier})),'PKCE challenge is exact S256');
 $DB->Prepare(SQL=>'SELECT state_digest,nonce_digest,verifier_digest,status FROM d724_oidc_flow WHERE tenant_id=?',Bind=>[\$T],Limit=>1);my@Stored=$DB->FetchrowArray();
 unlike(join('|',@Stored),qr/\Q$Flow->{Data}->{State}\E|\Q$Flow->{Data}->{Nonce}\E|\Q$Flow->{Data}->{CodeVerifier}\E/,'database stores only flow secret digests');is($Stored[3],'pending','flow starts pending');

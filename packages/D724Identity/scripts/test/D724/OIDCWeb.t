@@ -15,8 +15,8 @@ $H->ConfigSettingChange(Key=>'D724::Identity::Enabled',Value=>1);
 $H->ConfigSettingChange(Key=>'D724::TenantGuard::Enabled',Value=>1);
 $H->ConfigSettingChange(Key=>'D724::TenantGuard::AllowPlatformAdmin',Value=>1);
 $H->ConfigSettingChange(Key=>'D724::Identity::OIDC::RedirectURI',Value=>{
-    agent=>'https://esm.example.invalid/otobo/index.pl?Action=Login',
-    customer=>'https://esm.example.invalid/otobo/customer.pl?Action=Login',
+    agent=>'https://esm.example.invalid/careoncloud/index.pl?Action=Login',
+    customer=>'https://esm.example.invalid/careoncloud/customer.pl?Action=Login',
 });
 
 my$Suffix=lc$H->GetRandomID();my$Tenant="oidc-web-$Suffix";my$Issuer="https://login.example.invalid/$Suffix";my$Audience="client-$Suffix";
@@ -27,7 +27,7 @@ my$Admin={ID=>'admin',TenantIDs=>[$Tenant],RoleBindings=>{$Tenant=>['tenant_admi
 ok($Directory->MembershipGrant(Subject=>$Admin,TenantID=>$Tenant,MemberUserID=>1,Role=>'tenant_admin',UserID=>1)->{Success},'preprovisioned agent has tenant membership');
 ok($Identity->ProviderCreate(Subject=>$Admin,TenantID=>$Tenant,Key=>'workforce',Issuer=>$Issuer,Audience=>$Audience,AllowedDomains=>['localhost'],GroupRoleMap=>{agents=>'agent'},UserID=>1)->{Success},'trust route created');
 
-my$YAML=$Kernel::OM->Get('Kernel::System::YAML');my$Name="careoncloud:$Tenant:workforce:agent";my$Secret='unit-secret';my$Redirect='https://esm.example.invalid/otobo/index.pl?Action=Login';my$Discovery="$Issuer/.well-known/openid-configuration";my$Valid=1;my$TTL=300;my$EmptyYAML=$YAML->Dump(Data=>{});
+my$YAML=$Kernel::OM->Get('Kernel::System::YAML');my$Name="careoncloud:$Tenant:workforce:agent";my$Secret='unit-secret';my$Redirect='https://esm.example.invalid/careoncloud/index.pl?Action=Login';my$Discovery="$Issuer/.well-known/openid-configuration";my$Valid=1;my$TTL=300;my$EmptyYAML=$YAML->Dump(Data=>{});
 $DB->Do(SQL=>q{INSERT INTO oidc_profiles (name,client_id,client_secret,redirect_uri,openid_config,ssl_options,misc,ttl,create_time,create_by,change_time,change_by,valid_id) VALUES (?,?,?,?,?,?,?,?,current_timestamp,1,current_timestamp,1,?)},Bind=>[\$Name,\$Audience,\$Secret,\$Redirect,\$Discovery,\$EmptyYAML,\$EmptyYAML,\$TTL,\$Valid]);
 
 my$Metadata={issuer=>$Issuer,authorization_endpoint=>"$Issuer/authorize",token_endpoint=>"$Issuer/token",jwks_uri=>"$Issuer/jwks",id_token_signing_alg_values_supported=>['RS256']};
@@ -39,11 +39,11 @@ local *Kernel::System::OpenIDConnect::BuildRedirectURL=sub{my($Self,%Param)=@_;$
 local *Kernel::System::OpenIDConnect::RequestIDToken=sub{return'signed.jwt.value'};
 local *Kernel::System::OpenIDConnect::Token::Validate=sub{return{Success=>1,TokenData=>$Claims}};
 
-my$Start=$Web->Start(TenantID=>$Tenant,ProviderKey=>'workforce',Surface=>'agent',BrowserBinding=>'b'x43,ReturnPath=>'/otobo/index.pl?Action=AgentDashboard');ok($Start->{Success},'agent OIDC web flow starts');
+my$Start=$Web->Start(TenantID=>$Tenant,ProviderKey=>'workforce',Surface=>'agent',BrowserBinding=>'b'x43,ReturnPath=>'/careoncloud/index.pl?Action=AgentDashboard');ok($Start->{Success},'agent OIDC web flow starts');
 is($Start->{Data}->{RedirectURL},'https://login.example.invalid/authorize?safe=1','only validated authorization URL is returned');
 is($CapturedAuth->{AuthRequest}->{CodeChallengeMethod},'S256','web adapter requires PKCE S256');is($CapturedAuth->{ClientSettings}->{RedirectURI},$Redirect,'exact configured redirect URI is used');
 like($Start->{Data}->{CookieName},qr/\AD724OIDC-[A-Za-z0-9_-]{20,128}\z/,'state-specific cookie name returned');unlike($Start->{Data}->{CookieValue},qr/$Secret/,'cookie never contains client secret');
-is($Web->Start(TenantID=>$Tenant,ProviderKey=>'workforce',Surface=>'customer',BrowserBinding=>'b'x43,ReturnPath=>'/otobo/customer.pl?Action=CustomerDashboard')->{Error},'SSO_PROVIDER_UNAVAILABLE','surface cannot reuse another surface profile');
+is($Web->Start(TenantID=>$Tenant,ProviderKey=>'workforce',Surface=>'customer',BrowserBinding=>'b'x43,ReturnPath=>'/careoncloud/customer.pl?Action=CustomerDashboard')->{Error},'SSO_PROVIDER_UNAVAILABLE','surface cannot reuse another surface profile');
 
 my($Browser,$Verifier)=split /\./,$Start->{Data}->{CookieValue},2;
 $Claims={iss=>$Issuer,aud=>$Audience,sub=>'root-subject',preferred_username=>'root@localhost',email=>'root@localhost',groups=>['agents'],nonce=>$CapturedAuth->{AuthRequest}->{Nonce},exp=>time+300,iat=>time};

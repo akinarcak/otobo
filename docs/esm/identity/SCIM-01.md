@@ -1,6 +1,6 @@
 # SCIM-01 - Tenant-isolated provisioning
 
-CareOnCloud ESM exposes SCIM 2.0 at `/otobo/scim/v2`. Every request requires:
+CareOnCloud ESM exposes SCIM 2.0 at `/careoncloud/scim/v2`. Every request requires:
 
 - `Authorization: Bearer <64-character tenant-bound API token>`
 - `X-CareOnCloud-Tenant: <tenant key>`

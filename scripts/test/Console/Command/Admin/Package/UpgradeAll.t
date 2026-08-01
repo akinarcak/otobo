@@ -30,8 +30,8 @@ my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 # Initialize test database based on fresh OTOBO 10 schema.
 my $Success = $Helper->ProvideTestDatabase(
     DatabaseXMLFiles => [
-        "$Home/scripts/database/otobo-schema.xml",
-        "$Home/scripts/database/otobo-initial_insert.xml",
+        "$Home/scripts/database/careoncloud-schema.xml",
+        "$Home/scripts/database/careoncloud-initial_insert.xml",
     ],
 );
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="D724::Webhook::Enabled" Required="1" Valid="1">
         <Description Translatable="1">Enables tenant-safe D724 lifecycle webhook subscriptions.</Description>
         <Navigation>Core::D724::Webhook</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
@@ -25,4 +25,4 @@
             <Item Key="MaximumParallelInstances">1</Item><Item Key="Params"><Array></Array></Item>
         </Hash></Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

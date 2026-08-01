@@ -61,14 +61,14 @@ Returns list of communication channel article tables for backend data storage.
     my @ArticleDataTables = $ChannelObject->ArticleDataTables();
 
     @ArticleTables = (
-        'article_data_otobo_chat',
+        'article_data_careoncloud_chat',
     );
 
 =cut
 
 sub ArticleDataTables {
     return (
-        'article_data_otobo_chat',
+        'article_data_careoncloud_chat',
     );
 }
 

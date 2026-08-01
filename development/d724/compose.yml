@@ -33,7 +33,11 @@ services:
 
   elastic:
     profiles: ["search"]
-    image: rotheross/otobo-elasticsearch:latest-11_1@sha256:96966a51f3c9a5811473a1b9ec6d262e0857e92d4c6475be9b432af5945c753f
+    image: d724/careoncloud-elasticsearch:dev
+    build:
+      context: ../..
+      dockerfile: careoncloud.elasticsearch.dockerfile
+      target: careoncloud-elasticsearch
     restart: unless-stopped
     environment:
       discovery.type: single-node
@@ -51,8 +55,8 @@ services:
     image: d724/esm:dev
     build:
       context: ../..
-      dockerfile: otobo.web.dockerfile
-      target: otobo-web
+      dockerfile: careoncloud.web.dockerfile
+      target: careoncloud-web
       args:
         DOCKER_TAG: dev
         GIT_BRANCH: ${D724_GIT_BRANCH:-local}
@@ -73,8 +77,8 @@ services:
       timeout: 5s
       retries: 30
     volumes:
-      - otobo-app:/opt/otobo
-      - otobo-update:/opt/otobo_update
+      - careoncloud-app:/opt/careoncloud
+      - careoncloud-update:/opt/careoncloud_update
 
   daemon:
     image: d724/esm:dev
@@ -84,10 +88,10 @@ services:
         condition: service_healthy
     command: ["daemon"]
     volumes:
-      - otobo-app:/opt/otobo
+      - careoncloud-app:/opt/careoncloud
 
 volumes:
   mariadb-data:
   elasticsearch-data:
-  otobo-app:
-  otobo-update:
+  careoncloud-app:
+  careoncloud-update:

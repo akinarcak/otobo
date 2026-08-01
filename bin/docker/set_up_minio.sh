@@ -16,11 +16,11 @@
 # --
 
 # Set up MinIO starting from a virgin state. It is expected that the executable mc is
-# in the path and that the MinIO alias otobo_minio is set up.
+# in the path and that the MinIO alias careoncloud_minio is set up.
 
 # settings
 config_file=$( dirname -- "${BASH_SOURCE[0]}" )/../../Kernel/Config.pm.docker.dist
-alias=otobo_minio
+alias=careoncloud_minio
 
 # sanity check
 which mc

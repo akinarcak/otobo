@@ -35,7 +35,7 @@ my $HelperObject = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
 
 my $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestPackage1</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -48,11 +48,11 @@ my $String = '<?xml version="1.0" encoding="utf-8" ?>
   <Filelist>
     <File Location="Kernel/Config/Files/XML/TestPackage1.xml" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $String2 = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestPackage2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -65,7 +65,7 @@ my $String2 = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="Kernel/Config/Files/XML/TestPackage2-1.xml" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="Kernel/Config/Files/XML/TestPackage2-2.xml" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');

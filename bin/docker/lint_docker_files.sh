@@ -17,7 +17,7 @@
 
 # Lint the dockerfiles with hadolint, https://github.com/hadolint/hadolint
 
-for dockerfile in otobo.web.dockerfile otobo.nginx.dockerfile otobo.elasticsearch.dockerfile
+for dockerfile in careoncloud.web.dockerfile careoncloud.nginx.dockerfile careoncloud.elasticsearch.dockerfile
 do
 	echo "Linting $dockerfile"
     docker run --rm -i hadolint/hadolint < $dockerfile

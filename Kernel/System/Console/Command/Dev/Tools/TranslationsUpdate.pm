@@ -84,13 +84,13 @@ sub Configure {
 
 Make sure that you have a clean system with a current configuration. No modules may be installed or linked into the system!
 
-    <green>otobo.Console.pl $Name --language ...</green>
+    <green>careoncloud.Console.pl $Name --language ...</green>
 
 <yellow>Translating Extension Modules</yellow>
 
 Make sure that you have a clean system with a current configuration. The module that needs to be translated has to be installed or linked into the system, but only this one!
 
-    <green>otobo.Console.pl $Name --language ... --module-directory ...</green>
+    <green>careoncloud.Console.pl $Name --language ... --module-directory ...</green>
 EOF
 
     return;
@@ -184,8 +184,8 @@ sub HandleLanguage {
     if ( !$Module ) {
         $LanguageFile  = "$Home/Kernel/Language/$Language.pm";
         $TargetFile    = "$Home/Kernel/Language/$Language.pm";
-        $TargetPOTFile = "$Home/i18n/otobo/otobo.pot";
-        $TargetPOFile  = "$Home/i18n/otobo/otobo.$WeblateLanguage.po";
+        $TargetPOTFile = "$Home/i18n/careoncloud/careoncloud.pot";
+        $TargetPOFile  = "$Home/i18n/careoncloud/otobo.$WeblateLanguage.po";
     }
     else {
         $IsSubTranslation = 1;
@@ -477,7 +477,7 @@ sub HandleLanguage {
             );
         }
         else {
-            @DBXMLFiles = "$Home/scripts/database/otobo-initial_insert.xml";
+            @DBXMLFiles = "$Home/scripts/database/careoncloud-initial_insert.xml";
         }
 
         FILE:

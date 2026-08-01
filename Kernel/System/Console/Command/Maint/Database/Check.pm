@@ -181,7 +181,7 @@ sub _CheckMySQLInvalidDefaultValues {
     }
     else {
         $Error
-            .= "\n\n *** Please correct these problems manually with the following SQL statements or use 'otobo.Console.pl $Self->{Name} --repair'. *** \n\n";
+            .= "\n\n *** Please correct these problems manually with the following SQL statements or use 'careoncloud.Console.pl $Self->{Name} --repair'. *** \n\n";
     }
 
     my @SQLRepairStatements;

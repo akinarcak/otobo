@@ -119,7 +119,7 @@ sub Output {
         undef $Self->{EnvNewRef};
     }
 
-    # otobo.psgi seemingly does not set REQUEST_SCHEME
+    # careoncloud.psgi seemingly does not set REQUEST_SCHEME
     if ( !$Self->{EnvRef}{REQUEST_SCHEME} && $Self->{EnvRef}{HTTPS} ) {
         $Self->{EnvRef}{REQUEST_SCHEME} = lc( $Self->{EnvRef}{HTTPS} ) eq 'on' ? 'https' : 'http';
     }

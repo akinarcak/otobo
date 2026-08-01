@@ -44,7 +44,7 @@ my $TmpDir = $ConfigObject->Get('TempDir');
 
 # install package normally
 my $MergeOne = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>MergeOne</Name>
   <Version>2.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -62,7 +62,7 @@ my $MergeOne = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="DeleteMe" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install package using package manager API
@@ -95,7 +95,7 @@ for my $File (qw( Test var/Test DeleteMe)) {
 }
 
 my $MainPackageOne = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>TestMainPackage</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
@@ -121,7 +121,7 @@ my $MainPackageOne = '<?xml version="1.0" encoding="utf-8" ?>
           </TableCreate>
       </DatabaseUpgrade>
     </PackageMerge>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install main package where the Test package was merged
@@ -148,7 +148,7 @@ $Self->True(
 );
 
 my $MainPackageTwo = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>TestMainPackage</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
@@ -208,7 +208,7 @@ my $MainPackageTwo = '<?xml version="1.0" encoding="utf-8" ?>
     <DatabaseUninstall Type="post">
       <TableDrop Name="merge_package"/>
     </DatabaseUninstall>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install main package where the Test package was merged
@@ -366,7 +366,7 @@ $PackageObject->PackageUninstall( String => $MainPackageThree );
 
 # define package for merging
 my $MergeThree = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>MergeThree</Name>
   <Version>3.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -379,11 +379,11 @@ my $MergeThree = '<?xml version="1.0" encoding="utf-8" ?>
   <Filelist>
     <File Location="DeleteMePlease" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $MainPackageFour = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>TestMainPackageFour</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
@@ -425,7 +425,7 @@ my $MainPackageFour = '<?xml version="1.0" encoding="utf-8" ?>
             Content  => \$Content,
         );
     ]]></CodeInstall>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageMergeSection = '<PackageMerge Name="MergeThree" TargetVersion="3.0.2"></PackageMerge>';
@@ -649,7 +649,7 @@ for my $Test (@Tests) {
 
 # define initial package
 my $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>PackageFour</Name>
   <Version>4.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -662,7 +662,7 @@ my $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
   <Filelist>
     <File Location="DeleteMePlease" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install predefined package
@@ -693,7 +693,7 @@ $Self->True(
 );
 
 $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>PackageFour</Name>
   <Version>4.0.2</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -728,7 +728,7 @@ $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
             Content  => \$Content,
         );
   ]]></CodeUpgrade>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageUpgrade = $PackageObject->PackageUpgrade( String => $PackageFour );

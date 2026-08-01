@@ -43,7 +43,7 @@ my @Tests = (
     #             'TagLevel' => '2',
     #             'Minimum' => '5.0.10',
     #             'Content' => '5.0.x',
-    #             'TagLastLevel' => 'otobo_package',
+    #             'TagLastLevel' => 'careoncloud_package',
     #             'TagCount' => '24',
     #             'Tag' => 'Framework'
     #           }

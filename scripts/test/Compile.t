@@ -62,7 +62,7 @@ my %FailureIsAccepted = (
     'Kernel/cpan-lib/PDF/API2/Win32.pm'          => 'Win32::TieRegistry is not available, but never mind as Win32 is not supported',
     'Kernel/cpan-lib/SOAP/Lite.pm'               => 'some strangeness concerning SOAP::Constants',
     'Kernel/cpan-lib/URI/urn/isbn.pm'            => 'Business::ISBN is not required',
-    'scripts/apache2-perl-preload_otobo_psgi.pl' => 'Apache2::ServerUtil::restart_count() only available when running under mod_perl',
+    'scripts/apache2-perl-preload_careoncloud_psgi.pl' => 'Apache2::ServerUtil::restart_count() only available when running under mod_perl',
 );
 
 # some modules are only expected to compile when the S3 backend is active
@@ -124,7 +124,7 @@ note('check syntax of the Perl scripts');
 note('look at Perl code with an unusual extension');
 {
     my @Files = (
-        'bin/psgi-bin/otobo.psgi',
+        'bin/psgi-bin/careoncloud.psgi',
     );
 
     FILE:

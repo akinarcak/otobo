@@ -44,7 +44,7 @@ my %DefaultSettingAddTemplate = (
 
 my $SettingsXML = <<'EOF',
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Framework">
+<careoncloud_config version="2.0" init="Framework">
     <Setting Name="Test0" Required="1" Valid="1">
         <Description Translatable="1">Test.</Description>
         <Navigation>Core::Test</Navigation>
@@ -59,7 +59,7 @@ my $SettingsXML = <<'EOF',
             <Item ValueType="String" ValueRegex=".*">Test</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
 EOF
 
     # Get SysConfig XML object.

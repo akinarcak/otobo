@@ -42,7 +42,7 @@ my ($S3Active);
 #   transaction mode
 my $HelperObject = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $Home         = $Kernel::OM->Get('Kernel::Config')->Get('Home');
-my $Daemon       = $Home . '/bin/otobo.Daemon.pl';
+my $Daemon       = $Home . '/bin/careoncloud.Daemon.pl';
 
 # get daemon status (stop if necessary)
 my $PreviousDaemonStatus = `$^X $Daemon status`;

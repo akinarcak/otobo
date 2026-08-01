@@ -517,8 +517,8 @@ for my $Test (@Tests) {
             diag 'Testing with Plack::Test';
 
             my $Home     = $ConfigObject->Get('Home');
-            my $PSGIFile = join '/', $Home, 'bin', 'psgi-bin', 'otobo.psgi';
-            ok( -f $PSGIFile, 'otobo.psgi found' );
+            my $PSGIFile = join '/', $Home, 'bin', 'psgi-bin', 'careoncloud.psgi';
+            ok( -f $PSGIFile, 'careoncloud.psgi found' );
             my $App = Plack::Util::load_psgi($PSGIFile);
             ref_ok( $App, 'CODE', 'got a Plack app' );
             my $PlackTest = Plack::Test->create($App);

@@ -50,7 +50,7 @@ my $ChecksumFileArrayRef = $MainObject->FileRead(
 );
 
 skip_all(
-    'Default configuration unit test requires the checksum file (ARCHIVE) to be present and valid. Please first call the following command to create it: bin/otobo.CheckSum.pl -a create'
+    'Default configuration unit test requires the checksum file (ARCHIVE) to be present and valid. Please first call the following command to create it: bin/careoncloud.CheckSum.pl -a create'
 ) if !$ChecksumFileArrayRef || !@{$ChecksumFileArrayRef};
 
 # Get list of present config XML files.

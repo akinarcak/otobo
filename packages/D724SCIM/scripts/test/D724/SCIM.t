@@ -49,13 +49,13 @@ is($SCIM->UserReplace(%Base,SCIMID=>$AgentID,ExpectedVersion=>1,UserName=>'takeo
 my $Group=$SCIM->GroupCreate(%Base,ExternalID=>"entra-group-$Suffix",DisplayName=>"SCIM Agents $Suffix",Role=>'agent',Members=>[$AgentID]);
 diag "group create error: ".($Group->{Error}//'unknown') if !$Group->{Success};
 ok($Group->{Success},'SCIM group provisioned and reconciled');my $GroupID=$Group->{Data}->{id};is($Group->{Data}->{members}->[0]->{value},$AgentID,'group returns exact member');
-$DB->Prepare(SQL=>"SELECT status FROM d724_tenant_agent_role r INNER JOIN d724_scim_user u ON u.otobo_user_id=r.user_id WHERE u.scim_id=? AND r.tenant_id=? AND r.role_name='agent'",Bind=>[\$AgentID,\$TenantA],Limit=>1);my($AgentRole)=$DB->FetchrowArray();is($AgentRole,'active','group membership grants tenant agent role');
+$DB->Prepare(SQL=>"SELECT status FROM d724_tenant_agent_role r INNER JOIN d724_scim_user u ON u.native_user_id=r.user_id WHERE u.scim_id=? AND r.tenant_id=? AND r.role_name='agent'",Bind=>[\$AgentID,\$TenantA],Limit=>1);my($AgentRole)=$DB->FetchrowArray();is($AgentRole,'active','group membership grants tenant agent role');
 
 my $Deactivated=$SCIM->UserReplace(%Base,SCIMID=>$AgentID,ExpectedVersion=>1,Email=>"new.$Suffix\@example.com",GivenName=>'New',FamilyName=>'Name',Surface=>'agent',Active=>0);
 ok($Deactivated->{Success},'user deprovision succeeds');is($Deactivated->{Data}->{active},0,'SCIM resource is inactive');
-$DB->Prepare(SQL=>"SELECT COUNT(*) FROM d724_tenant_agent_role r INNER JOIN d724_scim_user u ON u.otobo_user_id=r.user_id WHERE u.scim_id=? AND r.tenant_id=? AND r.status='active'",Bind=>[\$AgentID,\$TenantA]);my($ActiveRoles)=$DB->FetchrowArray();is($ActiveRoles,0,'deprovision revokes every role in the tenant');
+$DB->Prepare(SQL=>"SELECT COUNT(*) FROM d724_tenant_agent_role r INNER JOIN d724_scim_user u ON u.native_user_id=r.user_id WHERE u.scim_id=? AND r.tenant_id=? AND r.status='active'",Bind=>[\$AgentID,\$TenantA]);my($ActiveRoles)=$DB->FetchrowArray();is($ActiveRoles,0,'deprovision revokes every role in the tenant');
 my $Reactivated=$SCIM->UserReplace(%Base,SCIMID=>$AgentID,ExpectedVersion=>2,Email=>"new.$Suffix\@example.com",GivenName=>'New',FamilyName=>'Name',Surface=>'agent',Active=>1);ok($Reactivated->{Success},'reactivation succeeds');
-$DB->Prepare(SQL=>"SELECT COUNT(*) FROM d724_tenant_agent_role r INNER JOIN d724_scim_user u ON u.otobo_user_id=r.user_id WHERE u.scim_id=? AND r.tenant_id=? AND r.status='active'",Bind=>[\$AgentID,\$TenantA]);($ActiveRoles)=$DB->FetchrowArray();is($ActiveRoles,2,'reactivation restores baseline and group-derived roles');
+$DB->Prepare(SQL=>"SELECT COUNT(*) FROM d724_tenant_agent_role r INNER JOIN d724_scim_user u ON u.native_user_id=r.user_id WHERE u.scim_id=? AND r.tenant_id=? AND r.status='active'",Bind=>[\$AgentID,\$TenantA]);($ActiveRoles)=$DB->FetchrowArray();is($ActiveRoles,2,'reactivation restores baseline and group-derived roles');
 
 my $Customer=$SCIM->UserCreate(%Base,ExternalID=>"entra-customer-$Suffix",Surface=>'customer',UserName=>"scim.customer.$Suffix",Email=>"scim.customer.$Suffix\@example.com",GivenName=>'SCIM',FamilyName=>'Customer',Active=>1);
 diag "customer create error: ".($Customer->{Error}//'unknown') if !$Customer->{Success};
@@ -72,7 +72,7 @@ ok($Audit->{Success},'SCIM audit chain readable');ok(grep($_->{Action} eq 'scim.
 
 # These APIs intentionally commit real transactions, so remove all acceptance
 # fixtures explicitly instead of relying on the unit-test rollback wrapper.
-$DB->Prepare(SQL=>'SELECT otobo_user_id FROM d724_scim_user WHERE tenant_id=? AND scim_id=?',Bind=>[\$TenantA,\$AgentID],Limit=>1);my($NativeAgentID)=$DB->FetchrowArray();
+$DB->Prepare(SQL=>'SELECT native_user_id FROM d724_scim_user WHERE tenant_id=? AND scim_id=?',Bind=>[\$TenantA,\$AgentID],Limit=>1);my($NativeAgentID)=$DB->FetchrowArray();
 my $CustomerLogin="scim.customer.$Suffix";my $ClientID=$Client->{Data}->{ClientID};
 for my $Delete (
     [ 'DELETE FROM d724_scim_group_member WHERE tenant_id=?', [\$TenantA] ],

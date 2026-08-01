@@ -23,7 +23,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 
 our $Self;
 
-my $Output = qx{"$^X" bin/otobo.Console.pl Maint::Ticket::PendingCheck --quiet};
+my $Output = qx{"$^X" bin/careoncloud.Console.pl Maint::Ticket::PendingCheck --quiet};
 
 $Self->False( scalar( $Output =~ /\S/ ), "No output with --quiet" );
 

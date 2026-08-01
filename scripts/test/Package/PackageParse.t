@@ -67,7 +67,7 @@ for a package file.',
     {
         Name   => 'Normal package content',
         String => '<?xml version="1.0" encoding="utf-8" ?>
-    <otobo_package version="1.0">
+    <careoncloud_package version="1.0">
       <Name>TestPackage</Name>
       <Version>1.0.1</Version>
       <Vendor>Rother OSS GmbH</Vendor>
@@ -85,7 +85,7 @@ for a package file.',
         <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
         <File Location="bin/otobo.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
       </Filelist>
-    </otobo_package>
+    </careoncloud_package>
 ',
         Success => 1,
     },

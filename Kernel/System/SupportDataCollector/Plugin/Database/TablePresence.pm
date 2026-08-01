@@ -38,7 +38,7 @@ sub Run {
     my $Self = shift;
 
     # table check
-    my $File = $Kernel::OM->Get('Kernel::Config')->Get('Home') . '/scripts/database/otobo-schema.xml';
+    my $File = $Kernel::OM->Get('Kernel::Config')->Get('Home') . '/scripts/database/careoncloud-schema.xml';
     if ( !-f $File ) {
         $Self->AddResultProblem(
             Label   => Translatable('Table Presence'),

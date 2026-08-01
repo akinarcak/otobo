@@ -1,6 +1,32 @@
 <div class="MainBox ARIARoleMain">
  <h1>[% Translate("CareOnCloud Operations Center") | html %]</h1>
  <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Report scope") | html %]</h2></div><div class="Content"><form action="[% Env("CGIHandle") %]" method="get"><input type="hidden" name="Action" value="AgentD724Operations"/><label for="D724OpsTenant">[% Translate("Customer") | html %]</label><select id="D724OpsTenant" name="TenantID">[% RenderBlockStart("TenantOption") %]<option value="[% Data.TenantID | html %]" [% Data.Selected | html %]>[% Data.Name | html %]</option>[% RenderBlockEnd("TenantOption") %]</select><label for="D724OpsFrom">[% Translate("From") | html %]</label><input id="D724OpsFrom" type="date" name="From" value="[% Data.From | html %]"/><label for="D724OpsTo">[% Translate("To") | html %]</label><input id="D724OpsTo" type="date" name="To" value="[% Data.To | html %]"/><button class="Button" type="submit">[% Translate("Refresh") | html %]</button></form></div></div>
+ <div class="WidgetSimple">
+  <div class="Header"><h2>[% Translate("Custom report designer") | html %]</h2></div>
+  <div class="Content">
+[% IF Data.SavedNotice %]<p class="Success">[% Translate("Report definition saved.") | html %]</p>[% END %]
+   <form action="[% Env("CGIHandle") %]" method="get">
+    <input type="hidden" name="Action" value="AgentD724Operations"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="From" value="[% Data.From | html %]"/><input type="hidden" name="To" value="[% Data.To | html %]"/>
+    <label for="D724SavedReport">[% Translate("Saved reports") | html %]</label>
+    <select id="D724SavedReport" name="ReportID"><option value="">[% Translate("Please select") | html %]</option>[% RenderBlockStart("SavedReportOption") %]<option value="[% Data.ReportID | html %]" [% Data.Selected | html %]>[% Data.Name | html %] ([% Translate(Data.Visibility) | html %])</option>[% RenderBlockEnd("SavedReportOption") %]</select>
+    <button class="Button" type="submit" name="Subaction" value="LoadSaved">[% Translate("Load report") | html %]</button>
+   </form>
+   <form action="[% Env("CGIHandle") %]" method="post">
+    <input type="hidden" name="Action" value="AgentD724Operations"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="From" value="[% Data.From | html %]"/><input type="hidden" name="To" value="[% Data.To | html %]"/>
+    <input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]>
+    <label for="D724ReportDimensions">[% Translate("Group by") | html %]</label>
+    <select id="D724ReportDimensions" name="Dimensions" multiple size="5" required>[% RenderBlockStart("DimensionOption") %]<option value="[% Data.Key | html %]" [% Data.Selected | html %]>[% Translate(Data.Label) | html %]</option>[% RenderBlockEnd("DimensionOption") %]</select>
+    <label for="D724ReportMetrics">[% Translate("Metrics") | html %]</label>
+    <select id="D724ReportMetrics" name="Metrics" multiple size="4" required>[% RenderBlockStart("MetricOption") %]<option value="[% Data.Key | html %]" [% Data.Selected | html %]>[% Translate(Data.Label) | html %]</option>[% RenderBlockEnd("MetricOption") %]</select>
+    <label for="D724ReportStatus">[% Translate("Status filter") | html %]</label><input id="D724ReportStatus" name="Status" value="[% Data.Status | html %]" maxlength="32"/>
+    <button class="Primary CallForAction" type="submit"><span>[% Translate("Run report") | html %]</span></button>
+    <button class="Button" type="submit" name="Subaction" value="ExportCustom"><span>[% Translate("Export custom report") | html %]</span></button>
+    <input type="hidden" name="Format" value="csv"/>
+    <fieldset><legend>[% Translate("Save report definition") | html %]</legend><label for="D724ReportKey">[% Translate("Technical key") | html %]</label><input id="D724ReportKey" name="ReportKey" pattern="[a-z][a-z0-9_-]{1,99}" maxlength="100"/><label for="D724ReportName">[% Translate("Report name") | html %]</label><input id="D724ReportName" name="ReportName" maxlength="200"/><label for="D724ReportDescription">[% Translate("Description") | html %]</label><input id="D724ReportDescription" name="ReportDescription" maxlength="2000"/><label for="D724ReportVisibility">[% Translate("Visibility") | html %]</label><select id="D724ReportVisibility" name="ReportVisibility"><option value="private">[% Translate("private") | html %]</option><option value="shared">[% Translate("shared") | html %]</option></select><button class="Button" type="submit" name="Subaction" value="SaveReport">[% Translate("Save report") | html %]</button></fieldset>
+   </form>
+   <table class="DataTable"><thead><tr>[% FOREACH Column IN Data.CustomColumns %]<th>[% Translate(Column) | html %]</th>[% END %]</tr></thead><tbody>[% FOREACH Row IN Data.CustomRows %]<tr>[% FOREACH Value IN Row.Values %]<td>[% Value | html %]</td>[% END %]</tr>[% END %]</tbody></table>
+  </div>
+ </div>
  <div class="D724KPIGrid">
   <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Requests") | html %]</h2></div><div class="Content"><strong class="D724KPI">[% Data.Requests | html %]</strong></div></div>
   <div class="WidgetSimple"><div class="Header"><h2>[% Translate("SLA objectives") | html %]</h2></div><div class="Content"><strong class="D724KPI">[% Data.Commitments | html %]</strong></div></div>

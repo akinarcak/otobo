@@ -2588,8 +2588,8 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             'Ismerje meg, hogy hogyan kell használni a rendszert az %s elolvasásával.',
         'Search in all settings...' => 'Keresés az összes beállításban…',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
-            'Jelenleg nincsenek elérhető beállítások. Győződjön meg arról, hogy lefuttatta-e az „otobo.Console.pl Maint::Config::Rebuild” parancsot a szoftver használata előtt.',
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+            'Jelenleg nincsenek elérhető beállítások. Győződjön meg arról, hogy lefuttatta-e az „careoncloud.Console.pl Maint::Config::Rebuild” parancsot a szoftver használata előtt.',
 
         # Template: AdminSystemConfigurationDeployment
         'Changes Deployment' => 'Változások üzembe állítása',
@@ -2960,8 +2960,8 @@ sub Data {
             'Győződjön meg arról, hogy a(z) „%s” fájl létezik-e (.dist kiterjesztés nélkül). Ez a cron-feladat 5 percenként fogja ellenőrizni, hogy az OTOBO démon fut-e, és szükség szerint elindítja azt.',
         'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
             'Hajtsa végre a(z) „%s start” parancsot, hogy megbizonyosodjon arról, hogy az „otobo” felhasználó cron-feladatai aktívak-e.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            'Ellenőrizze 5 perc után, hogy az OTOBO démon fut-e a rendszeren („bin/otobo.Daemon.pl status”).',
+        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'Ellenőrizze 5 perc után, hogy az OTOBO démon fut-e a rendszeren („bin/careoncloud.Daemon.pl status”).',
         'Running the OTOBO Daemon in a Docker based installation' => 'Az OTOBO démon futtatása Docker-alapú telepítésben',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             'Ellenőrizze a „docker compose ps” paranccsal, hogy fut-e „daemon” nevű szolgáltatás.',
@@ -6265,8 +6265,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => 'Érvénytelen alapértelmezett értékek',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
-            'Érvénytelen alapértelmezett értékekkel rendelkező táblák találhatók. Az automatikus javításukhoz futtassa a következő parancsot: bin/otobo.Console.pl Maint::Database::Check --repair',
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
+            'Érvénytelen alapértelmezett értékekkel rendelkező táblák találhatók. Az automatikus javításukhoz futtassa a következő parancsot: bin/careoncloud.Console.pl Maint::Database::Check --repair',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
         'Maximum Query Size' => 'Legnagyobb lekérdezési méret',
@@ -6477,11 +6477,11 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'Árva rekordok a ticket_lock_index táblában',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'A „ticket_lock_index” tábla árva rekordokat tartalmaz. Futtassa a bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" parancsot a StaticDB index tisztításához.',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'A „ticket_lock_index” tábla árva rekordokat tartalmaz. Futtassa a bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" parancsot a StaticDB index tisztításához.',
         'Orphaned Records In ticket_index Table' => 'Árva rekordok a ticket_index táblában',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'A „ticket_index” tábla árva rekordokat tartalmaz. Futtassa a bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" parancsot a StaticDB index tisztításához.',
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'A „ticket_index” tábla árva rekordokat tartalmaz. Futtassa a bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" parancsot a StaticDB index tisztításához.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => 'Időbeállítások',
@@ -6638,7 +6638,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => 'Nem sikerült kapcsolódni az adatbázishoz.',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => 'átmenetileg érvénytelen',
         'Group for default access.' => 'Csoport az alapértelmezett hozzáféréshez.',
         'Group of all administrators.' => 'Az összes adminisztrátor csoportja.',
@@ -7484,8 +7484,8 @@ Az Ön ügyfélszolgálati csapata
         'Avatar' => 'Profilkép',
         'Based on global RichText setting' => 'Globális RichText beállítás alapján',
         'Basic Auth' => '',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
-            'Alapvető szabad-szavas index beállítások. Futtassa a „bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild” parancsfájlt egy új index előállítása érdekében.',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+            'Alapvető szabad-szavas index beállítások. Futtassa a „bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild” parancsfájlt egy új index előállítása érdekében.',
         'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
             'Blokkolja az összes olyan beérkező e-mailt, amelyek nem rendelkeznek érvényes jegyszámmal (ebben a példában) a @example.com című feladótól. Itt használhat reguláris kifejezéseket. Új sort is hozzáadhat az illesztés mezőben, hogy több mezőben is keressen, például a „Címzett” mezőben, és itt is használhat reguláris kifejezéseket. A „PostMaster::PreFilterModule::NewTicketReject::Body”, a „PostMaster::PreFilterModule::NewTicketReject::Subject” és a „PostMaster::PreFilterModule::NewTicketReject::Sender” beállításokkal automatikus elutasító üzenetet határozhat meg. Egy illesztés (például „From -> .”) szükséges ahhoz, hogy ez a funkcionalitás működjön.',
         'Both' => '',
@@ -8492,12 +8492,12 @@ Az Ön ügyfélszolgálati csapata
             'Meghatározza a felhasználók profilképét. Ne feledje: az „Active” 0-ra állításával csak az ügyintézőknek akadályozza meg ezen csoport beállításainak szerkesztését a személyes beállításaikban, de az adminisztrátoroknak továbbra is lehetővé teszi a beállítások szerkesztését egy másik felhasználó nevében. Használja a „PreferenceGroup” kulcsot annak szabályozásához, hogy ezeknek a beállításoknak mely területen kell megjelenniük a felhasználói felületen.',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             'Meghatározza egy jegy érvényes állapottípusait. Ha a jegy olyan állapotban van, amelynek van valamilyen állapottípusa ebből a beállításból, akkor a jegy nyitottként lesz figyelembe véve, egyébként lezártként.',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/otobo.Console.pl Maint::Cache::Delete).' =>
-            'Meghatározza egy jegy érvényes állapottípusait. Ha egy jegy olyan állapotban van, amely bármilyen állapottípussal rendelkezik ebből a beállításból, akkor ez a jegy nyitottnak lesz tekintve, ellenkező esetben lezártnak. Ez a beállítás például azt szabályozza, hogy egy állapottípus látható-e az ügyintéző jegyállapot nézetében lévő nyitott jegyek vagy a lezárt jegyek szakaszában. Szükséges lehet a rendszer gyorsítótárának törlése annak érdekében, hogy az összes változtatást láthassa (/opt/otobo/bin/otobo.Console.pl Maint::Cache::Delete).',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            'Meghatározza a feloldott jegyek érvényes állapotait. A jegyek feloldásához a „bin/otobo.Console.pl Maint::Ticket::UnlockTimeout” parancsfájl használható.',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in otobo.psgi.' =>
-            'Meghatározza az OTOBO munkamenet-sütijei „SameSite” attribútumának értékét. Az otobo.psgi fájlban van használva.',
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+            'Meghatározza egy jegy érvényes állapottípusait. Ha egy jegy olyan állapotban van, amely bármilyen állapottípussal rendelkezik ebből a beállításból, akkor ez a jegy nyitottnak lesz tekintve, ellenkező esetben lezártnak. Ez a beállítás például azt szabályozza, hogy egy állapottípus látható-e az ügyintéző jegyállapot nézetében lévő nyitott jegyek vagy a lezárt jegyek szakaszában. Szükséges lehet a rendszer gyorsítótárának törlése annak érdekében, hogy az összes változtatást láthassa (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).',
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            'Meghatározza a feloldott jegyek érvényes állapotait. A jegyek feloldásához a „bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout” parancsfájl használható.',
+        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
+            'Meghatározza az OTOBO munkamenet-sütijei „SameSite” attribútumának értékét. Az careoncloud.psgi fájlban van használva.',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             'Meghatározza egy jegy látható zárait. MEGJEGYZÉS: ha megváltoztatja ezt a beállítást, akkor győződjön meg arról, hogy törölte-e a gyorsítótárat annak érdekében, hogy használhassa az új értéket. Alapértelmezett: unlock, tmp_lock.',
         'Defines the width for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
@@ -8915,8 +8915,8 @@ Az Ön ügyfélszolgálati csapata
         'Graph: Stacked Area Chart' => 'Grafikon: halmozott területdiagram',
         'Greek' => 'Görög',
         'Hebrew' => 'Héber',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
-            'Segít kiterjeszteni a bejegyzések szabad-szavas keresését (feladó, címzett, másolat, tárgy és törzs keresés). Fel fogja darabolni az összes bejegyzést, és egy indexet fog felépíteni a bejegyzés létrehozása után, körülbelül 50%-kal növelve a szabad-szavas kereséseket. Egy kezdeti index létrehozásához használja a „bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild” parancsfájlt.',
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+            'Segít kiterjeszteni a bejegyzések szabad-szavas keresését (feladó, címzett, másolat, tárgy és törzs keresés). Fel fogja darabolni az összes bejegyzést, és egy indexet fog felépíteni a bejegyzés létrehozása után, körülbelül 50%-kal növelve a szabad-szavas kereséseket. Egy kezdeti index létrehozásához használja a „bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild” parancsfájlt.',
         'High Contrast' => 'Nagy kontraszt',
         'High contrast skin for visually impaired users.' => 'Nagy kontrasztú felszín a látássérült felhasználóknak.',
         'Hindi' => 'Hindi',
@@ -9069,8 +9069,8 @@ Az Ön ügyfélszolgálati csapata
         'Includes article create times in the ticket search of the agent interface.' =>
             'Felveszi a bejegyzés létrehozási idejeit az ügyintézői felület jegy keresésénél.',
         'Incoming Phone Call.' => 'Bejövő telefonhívás.',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            'IndexAccelerator: a TicketViewAccelerator háttérprogram modul választásához. A „RuntimeDB” minden egyes várólista nézetet valós időben állít elő a jegytáblából (nincs teljesítmény-probléma a rendszeren körülbelül 60 000 összes jegyig és 6000 nyitott jegyig). A „StaticDB” a legerősebb modul, amely egy további jegyindex táblát használ, amely úgy működik mint egy nézet (javasolt, ha több mint 80 000 és 6000 nyitott jegy van a rendszeren tárolva). Használja a „bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild” parancsot a kezdeti index létrehozásához.',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            'IndexAccelerator: a TicketViewAccelerator háttérprogram modul választásához. A „RuntimeDB” minden egyes várólista nézetet valós időben állít elő a jegytáblából (nincs teljesítmény-probléma a rendszeren körülbelül 60 000 összes jegyig és 6000 nyitott jegyig). A „StaticDB” a legerősebb modul, amely egy további jegyindex táblát használ, amely úgy működik mint egy nézet (javasolt, ha több mint 80 000 és 6000 nyitott jegy van a rendszeren tárolva). Használja a „bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild” parancsot a kezdeti index létrehozásához.',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             'Azt jelzi, hogy egy átirányított e-mailt mindig normál követőként kell-e kezelni.',
         'Indonesian' => 'Indonéz',

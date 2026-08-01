@@ -1,5 +1,5 @@
 # --
-# D724 ESM is an enterprise service management platform based on OTOBO.
+# CareOnCloud ESM enterprise service management platform.
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --
@@ -7,6 +7,53 @@
 <div id="oooContent" class="MainBox ARIARole MainContent">
     <div id="oooHeader"><h1>[% Translate("Service Catalog") | html %]</h1></div>
     <div id="oooMainBox">
+[% IF Data.View != 'Item' %]
+        <div class="WidgetSimple">
+            <div class="Header"><h2>[% Translate("Create a service request") | html %]</h2></div>
+            <div class="Content">
+                <p>[% Translate("Select the service category, service extension and request type.") | html %]</p>
+                <form action="[% Env("CGIHandle") %]" method="get">
+                    <input type="hidden" name="Action" value="CustomerD724Catalog"/>
+                    <input type="hidden" name="Subaction" value="Select"/>
+                    <fieldset class="TableLike FixedLabel">
+                        <div class="Row">
+                            <label for="D724ServiceID">[% Translate("Service category") | html %]</label>
+                            <select id="D724ServiceID" name="ServiceID" required>
+                                <option value="">[% Translate("Please select") | html %]</option>
+[% RenderBlockStart("ServiceSelectOption") %]
+                                <option value="[% Data.ServiceID | html %]" [% Data.Selected | html %]>[% Data.Name | html %]</option>
+[% RenderBlockEnd("ServiceSelectOption") %]
+                            </select>
+                        </div>
+[% IF Data.ServiceID %]
+                        <div class="Row">
+                            <label for="D724OfferingID">[% Translate("Service extension") | html %]</label>
+                            <select id="D724OfferingID" name="OfferingID" required>
+                                <option value="">[% Translate("Please select") | html %]</option>
+[% RenderBlockStart("OfferingSelectOption") %]
+                                <option value="[% Data.OfferingID | html %]" [% Data.Selected | html %]>[% Data.Name | html %]</option>
+[% RenderBlockEnd("OfferingSelectOption") %]
+                            </select>
+                        </div>
+[% END %]
+[% IF Data.OfferingID %]
+                        <div class="Row">
+                            <label for="D724CatalogItemID">[% Translate("Request type") | html %]</label>
+                            <select id="D724CatalogItemID" name="CatalogItemID" required>
+                                <option value="">[% Translate("Please select") | html %]</option>
+[% RenderBlockStart("ItemSelectOption") %]
+                                <option value="[% Data.CatalogItemID | html %]">[% Data.Name | html %]</option>
+[% RenderBlockEnd("ItemSelectOption") %]
+                            </select>
+                        </div>
+[% END %]
+                    </fieldset>
+                    <button class="Primary CallForAction" type="submit"><span>[% IF Data.OfferingID %][% Translate("Open request form") | html %][% ELSE %][% Translate("Continue") | html %][% END %]</span></button>
+                </form>
+            </div>
+        </div>
+[% END %]
+[% IF Data.View != 'Item' %]
 [% RenderBlockStart("Service") %]
         <section class="WidgetSimple">
             <div class="Header"><h2>[% Data.Name | html %]</h2></div>
@@ -27,6 +74,7 @@
             </div>
         </div>
 [% RenderBlockEnd("CatalogItem") %]
+[% END %]
 [% RenderBlockStart("ItemDetail") %]
         <div class="WidgetSimple">
             <div class="Header"><h2>[% Data.Name | html %]</h2></div>
@@ -34,10 +82,22 @@
         </div>
 [% RenderBlockEnd("ItemDetail") %]
 [% IF Data.View == 'Item' %]
+        <div class="WidgetSimple">
+            <div class="Header"><h3>[% Translate("Selected service") | html %]</h3></div>
+            <div class="Content">
+                <dl>
+                    <dt>[% Translate("Service category") | html %]</dt><dd>[% Data.ServiceName | html %]</dd>
+                    <dt>[% Translate("Service extension") | html %]</dt><dd>[% Data.OfferingName | html %]</dd>
+                    <dt>[% Translate("Request type") | html %]</dt><dd>[% Data.CatalogItemName | html %]</dd>
+                </dl>
+            </div>
+        </div>
         <form action="[% Env("CGIHandle") %]" method="post">
             <input type="hidden" name="Action" value="CustomerD724Request"/>
             <input type="hidden" name="Subaction" value="Submit"/>
             <input type="hidden" name="CatalogItemID" value="[% Data.CatalogItemID | html %]"/>
+            <input type="hidden" name="ServiceID" value="[% Data.ServiceID | html %]"/>
+            <input type="hidden" name="OfferingID" value="[% Data.OfferingID | html %]"/>
             <input type="hidden" name="IdempotencyKey" value="[% Data.IdempotencyKey | html %]"/>
             <fieldset class="TableLike FixedLabel">
 [% RenderBlockStart("FormField") %]

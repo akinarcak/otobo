@@ -1,5 +1,5 @@
 # --
-# D724 ESM is an enterprise service management platform based on OTOBO.
+# CareOnCloud ESM enterprise service management platform.
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --
@@ -56,6 +56,25 @@ my $Detail = $Portal->ItemGet(
     CatalogItemID => $Item->{Data}->{CatalogItemID},
 );
 is( $Detail->{Data}->{FormSchema}->{Schema}->{fields}->[0]->{key}, 'summary', 'portal detail contains dynamic form schema' );
+is( $Detail->{Data}->{Service}->{ServiceID}, $Service->{Data}->{ServiceID}, 'detail exposes selected service category' );
+is( $Detail->{Data}->{Offering}->{OfferingID}, $Offering->{Data}->{OfferingID}, 'detail exposes selected service extension' );
+is(
+    $Portal->ItemGet(
+        CustomerUserID => 'portal.user', CustomerID => 'portal-tenant',
+        CatalogItemID => $Item->{Data}->{CatalogItemID},
+        ServiceID => $Service->{Data}->{ServiceID}, OfferingID => $Offering->{Data}->{OfferingID},
+    )->{Success},
+    1,
+    'matching customer category and extension selection is accepted',
+);
+is(
+    $Portal->ItemGet(
+        CustomerUserID => 'portal.user', CustomerID => 'portal-tenant',
+        CatalogItemID => $Item->{Data}->{CatalogItemID}, ServiceID => 999999,
+    )->{Error},
+    'SELECTION_MISMATCH',
+    'tampered service category selection is rejected',
+);
 
 my $OfferingSuspended = $Catalog->OfferingUpdate(
     %Write, OfferingID => $Offering->{Data}->{OfferingID}, ExpectedVersion => 1, Status => 'suspended',

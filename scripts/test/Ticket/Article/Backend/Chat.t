@@ -581,7 +581,7 @@ for my $Test (@ArticleDeleteTests) {
         # Make sure there is nothing left
         my $SQL = '
             SELECT COUNT(*)
-            FROM article_data_otobo_chat
+            FROM article_data_careoncloud_chat
             WHERE article_id = ?
         ';
 

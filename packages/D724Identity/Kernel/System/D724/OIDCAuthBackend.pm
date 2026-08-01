@@ -57,8 +57,8 @@ sub PreAuth {
     my $Surface = $Self->_Surface();
     my $BrowserBinding = encode_base64url( random_bytes(32) );
     my $ReturnPath = $Surface eq 'agent'
-        ? '/otobo/index.pl?Action=AgentDashboard'
-        : '/otobo/customer.pl?Action=CustomerDashboard';
+        ? '/careoncloud/index.pl?Action=AgentDashboard'
+        : '/careoncloud/customer.pl?Action=CustomerDashboard';
     my $Start = $Kernel::OM->Get('Kernel::System::D724::OIDCWeb')->Start(
         TenantID       => $Request->GetParam( Param => 'TenantID' ),
         ProviderKey    => $Request->GetParam( Param => 'ProviderKey' ),
@@ -117,7 +117,7 @@ sub Auth {
     );
     return if !$Result->{Success};
     $Self->{RequestedURL} = $Result->{Data}->{ReturnPath};
-    $Self->{RequestedURL} =~ s{\A/otobo/(?:index|customer)\.pl\??}{}smx;
+    $Self->{RequestedURL} =~ s{\A/careoncloud/(?:index|customer)\.pl\??}{}smx;
     $Self->{AuthError} = q{};
     return $Result->{Data}->{Login};
 }

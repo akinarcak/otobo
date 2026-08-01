@@ -102,7 +102,7 @@ my $TicketID = $Ticket->TicketCreate(
     Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
     CustomerID => $Tenant, CustomerUser => 'ticket-test-user', OwnerID => 1, UserID => 1,
 );
-ok( $TicketID, 'tenant-bound OTOBO ticket is created' );
+ok( $TicketID, 'tenant-bound CareOnCloud ticket is created' );
 my $Scope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID );
 is( $Scope->{TenantID}, $Tenant, 'ticket gets immutable tenant binding' );
 is( $Scope->{Version}, 1, 'new ticket binding starts at version one' );

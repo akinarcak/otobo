@@ -38,7 +38,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::MigrateFromOTRS::OTOBOPerlModulesCheck - call otobo.CheckModules.pl
+Kernel::System::MigrateFromOTRS::OTOBOPerlModulesCheck - call careoncloud.CheckModules.pl
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ sub Run {
         },
     );
 
-    my $ScriptPath = "$Home/bin/otobo.CheckModules.pl";
+    my $ScriptPath = "$Home/bin/careoncloud.CheckModules.pl";
 
     # verify check modules script exist
     if ( !-e $ScriptPath ) {

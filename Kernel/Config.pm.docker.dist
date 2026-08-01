@@ -61,7 +61,7 @@ mix-ups with a database running on the Docker host less likely.
 =item LogModule and LogModule::LogFile
 
 Syslog is not easily available in a Docker container.
-Log to the file F</opt/otobo/var/log/otobo.log>.
+Log to the file F</opt/careoncloud/var/log/careoncloud.log>.
 As this specific location as it is located on the volume that is visible from the host.
 
 =item Cache::Module and Cache::Redis
@@ -100,14 +100,14 @@ sub Load {
     $Self->{DatabaseHost} = 'db';
 
     # The database name
-    $Self->{Database} = 'otobo';
+    $Self->{Database} = 'careoncloud_esm';
 
     # The database user
-    $Self->{DatabaseUser} = 'otobo';
+    $Self->{DatabaseUser} = 'careoncloud_esm';
 
-    # The password of database user. You also can use bin/otobo.Console.pl Maint::Database::PasswordCrypt
+    # The password of database user. You also can use bin/careoncloud.Console.pl Maint::Database::PasswordCrypt
     # for crypted passwords
-    $Self->{DatabasePw} = 'otobo-docker-databasepw';
+    $Self->{DatabasePw} = 'careoncloud-docker-databasepw';
 
     # The database DSN for MySQL and MariaDB ==> more: "perldoc DBD::MariaDB"
     # Note that internally a DSN starting with 'DBI:mysql' would be switched to 'DBI:MariaDB'
@@ -127,20 +127,20 @@ sub Load {
 #    $ENV{NLS_DATE_FORMAT} = 'YYYY-MM-DD HH24:MI:SS';
 #    $ENV{NLS_LANG}        = 'AMERICAN_AMERICA.AL32UTF8';
 
-    # Additional connect attributes for the standard 'otobo' database connection.
+    # Additional connect attributes for the standard CareOnCloud database connection.
     # Set the attributes needed for encrypted database connections here.
 #    $Self->{DatabaseAttribute} = {};
 
     # ---------------------------------------------------- #
     # fs root directory, without trailing slash            #
     # ---------------------------------------------------- #
-    $Self->{Home} = '/opt/otobo';
+    $Self->{Home} = '/opt/careoncloud';
 
     # ---------------------------------------------------- #
     # modified settings for running OTOBO under Docker     #
     # ---------------------------------------------------- #
     $Self->{'LogModule'}                   = 'Kernel::System::Log::File';
-    $Self->{'LogModule::LogFile'}          = '/opt/otobo/var/log/otobo.log';
+    $Self->{'LogModule::LogFile'}          = '/opt/careoncloud/var/log/careoncloud.log';
     $Self->{'TestHTTPHostname'}            = 'web:5000';
 
     # -------------------------------------------------#

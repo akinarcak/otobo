@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>Test</Name>
     <Version>0.0.1</Version>
     <Framework>x.x.x</Framework>
@@ -40,4 +40,4 @@
     <File Location="var/tmp/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     </Filelist>
-</otobo_package>
+</careoncloud_package>

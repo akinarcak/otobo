@@ -64,7 +64,7 @@ sub Run {
 
         # get repository index
         my $Index = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-        $Index .= "<otobo_package_list version=\"1.0\">\n";
+        $Index .= "<careoncloud_package_list version=\"1.0\">\n";
         my @List = $PackageObject->RepositoryList();
         for my $Package (@List) {
             $Index .= "<Package>\n";
@@ -72,7 +72,7 @@ sub Run {
             $Index .= $PackageObject->PackageBuild( %{$Package}, Type => 'Index' );
             $Index .= "</Package>\n";
         }
-        $Index .= "</otobo_package_list>\n";
+        $Index .= "</careoncloud_package_list>\n";
         return $LayoutObject->Attachment(
             Type        => 'inline',      # inline|attachment
             Filename    => 'otobo.xml',

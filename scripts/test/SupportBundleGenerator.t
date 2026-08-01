@@ -79,7 +79,7 @@ else {
 }
 
 # create an ARCHIVE file on developer systems to continue working
-my $ArchiveGeneratorTool = $Home . '/bin/otobo.CheckSum.pl';
+my $ArchiveGeneratorTool = $Home . '/bin/careoncloud.CheckSum.pl';
 
 # if tool is not present we can't continue
 if ( !-e $ArchiveGeneratorTool ) {
@@ -135,7 +135,7 @@ $OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 $OTOBOVersion .= '.x';
 
 my $TestPackage = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test - ' . $RandomNumber . '</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
@@ -150,7 +150,7 @@ my $TestPackage = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="TestSBG" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/TestSBG" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # tests for GenerateCustom Files Archive

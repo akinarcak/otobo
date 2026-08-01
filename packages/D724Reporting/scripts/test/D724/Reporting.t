@@ -74,6 +74,46 @@ is( $Reporting->Summary( Subject => $OwnerB, %Range )->{Error}, 'FORBIDDEN', 'cr
 is( $Reporting->Summary( Subject => $AgentA, %Range )->{Error}, 'FORBIDDEN', 'ordinary agent cannot read management report' );
 ok( $Reporting->Summary( Subject => $AuditorA, %Range )->{Success}, 'auditor can read privacy-minimized report' );
 
+my $Custom = $Reporting->CustomReport(
+    Subject => $OwnerA, %Range,
+    Dimensions => [ 'service', 'status' ],
+    Metrics => [ 'requests', 'breaches', 'sla_compliance' ],
+);
+ok( $Custom->{Success}, 'authorized service owner runs a custom report' );
+is( $Custom->{Data}->{Columns}, [ 'Service category', 'Status', 'Requests', 'Breaches', 'SLA compliance' ], 'custom report returns deterministic selected columns' );
+is( $Custom->{Data}->{Rows}->[0]->{Values}->[0], 'IT', 'custom report groups by own-tenant service category' );
+is( $Custom->{Data}->{Rows}->[0]->{Values}->[2], 1, 'custom request metric counts distinct requests' );
+is( $Reporting->CustomReport( Subject => $OwnerB, %Range, Dimensions => ['status'], Metrics => ['requests'] )->{Error}, 'FORBIDDEN', 'custom report is tenant isolated' );
+is( $Reporting->CustomReport( Subject => $OwnerA, %Range, Dimensions => ['raw_sql'], Metrics => ['requests'] )->{Error}, 'DIMENSION_INVALID', 'unknown custom dimension is rejected' );
+is( $Reporting->CustomReport( Subject => $OwnerA, %Range, Dimensions => ['status'], Metrics => ['passwords'] )->{Error}, 'METRIC_INVALID', 'unknown custom metric is rejected' );
+is( $Reporting->CustomReport( Subject => $OwnerA, %Range, Dimensions => ['status'], Metrics => ['requests'], Status => q{fulfilled' OR 1=1} )->{Error}, 'FILTER_INVALID', 'custom filter cannot inject SQL' );
+my $CustomCSV = $Reporting->CustomExport( Subject => $OwnerA, %Range, Dimensions => ['request_type'], Metrics => ['requests'], Format => 'csv' );
+ok( $CustomCSV->{Success}, 'authorized service owner exports selected custom columns' );
+like( $CustomCSV->{Content}, qr{"Request type","Requests"}, 'custom CSV contains selected headers' );
+like( $CustomCSV->{Content}, qr{"'=Formula Safe","1"}, 'custom CSV neutralizes spreadsheet formulas' );
+my $CustomJSON = $Reporting->CustomExport( Subject => $AuditorA, %Range, Dimensions => ['status'], Metrics => ['requests'], Format => 'json' );
+ok( $CustomJSON->{Success}, 'authorized auditor exports custom JSON' );
+unlike( $CustomJSON->{Content}, qr{requester-|idem-}, 'custom JSON remains privacy minimized' );
+is( $Reporting->CustomExport( Subject => $AgentA, %Range, Dimensions => ['status'], Metrics => ['requests'], Format => 'csv' )->{Error}, 'FORBIDDEN', 'ordinary agent cannot export a custom report' );
+my $Definition = $Reporting->DefinitionCreate(
+    Subject => $OwnerA, UserID => 1, %Range, Key => "monthly-demand-$Suffix", Name => 'Monthly demand',
+    Description => 'Reusable service demand report', Visibility => 'shared',
+    Dimensions => [ 'month', 'service' ], Metrics => [ 'requests' ],
+);
+ok( $Definition->{Success}, 'authorized report owner saves a reusable definition' );
+is( $Definition->{Data}->{Definition}->{Dimensions}, [ 'month', 'service' ], 'saved report retains selected dimensions' );
+my $Definitions = $Reporting->DefinitionList( Subject => $OwnerA, UserID => 1, TenantID => $TenantA );
+ok( $Definitions->{Success}, 'authorized owner lists saved report definitions' );
+is( $Definitions->{Data}->[0]->{Key}, "monthly-demand-$Suffix", 'saved report is listed in deterministic order' );
+my $Executed = $Reporting->DefinitionExecute(
+    Subject => $OwnerA, UserID => 1, %Range, ReportID => $Definition->{Data}->{ReportID},
+);
+ok( $Executed->{Success}, 'saved report executes through the same tenant-safe engine' );
+is( $Executed->{Data}->{Dimensions}, [ 'month', 'service' ], 'saved execution uses persisted dimensions' );
+is( $Reporting->DefinitionGet( Subject => $OwnerB, UserID => 1, TenantID => $TenantA, ReportID => $Definition->{Data}->{ReportID} )->{Error}, 'FORBIDDEN', 'saved report cannot cross tenant boundary' );
+ok( $Reporting->DefinitionDelete( Subject => $OwnerA, UserID => 1, TenantID => $TenantA, ReportID => $Definition->{Data}->{ReportID} )->{Success}, 'owner deletes own saved report' );
+is( $Reporting->DefinitionGet( Subject => $OwnerA, UserID => 1, TenantID => $TenantA, ReportID => $Definition->{Data}->{ReportID} )->{Error}, 'NOT_FOUND', 'deleted report cannot be loaded' );
+
 my $CSV = $Reporting->Export( Subject => $OwnerA, %Range, Format => 'csv' );
 ok( $CSV->{Success}, 'service owner exports CSV' );
 is( $CSV->{ContentType}, 'text/csv; charset=utf-8', 'CSV media type is explicit' );

@@ -36,7 +36,7 @@ $Selenium->RunTest(
         my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
         my $Home           = $ConfigObject->Get('Home');
-        my $Daemon         = $Home . '/bin/otobo.Daemon.pl';
+        my $Daemon         = $Home . '/bin/careoncloud.Daemon.pl';
         my $DaemonExitCode = 1;
 
         my $RevertDeamonStatus = sub {

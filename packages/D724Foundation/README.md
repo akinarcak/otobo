@@ -8,7 +8,7 @@ From an OTOBO runtime containing this source directory:
 
 ```bash
 mkdir -p /tmp/d724-package-out
-bin/otobo.Console.pl Dev::Package::Build \
+bin/careoncloud.Console.pl Dev::Package::Build \
   --module-directory packages/D724Foundation \
   packages/D724Foundation/D724Foundation.sopm \
   /tmp/d724-package-out
@@ -19,10 +19,10 @@ The result is `D724Foundation-0.1.0.opm`.
 ## Install and verify
 
 ```bash
-bin/otobo.Console.pl Admin::Package::Install /tmp/d724-package-out/D724Foundation-0.1.0.opm
-bin/otobo.Console.pl Admin::D724::FoundationStatus --json
-bin/otobo.Console.pl Dev::UnitTest::Run --test scripts/test/D724/Foundation.t
-bin/otobo.Console.pl Dev::UnitTest::Run --test scripts/test/D724/FoundationStatus.t
+bin/careoncloud.Console.pl Admin::Package::Install /tmp/d724-package-out/D724Foundation-0.1.0.opm
+bin/careoncloud.Console.pl Admin::D724::FoundationStatus --json
+bin/careoncloud.Console.pl Dev::UnitTest::Run --test scripts/test/D724/Foundation.t
+bin/careoncloud.Console.pl Dev::UnitTest::Run --test scripts/test/D724/FoundationStatus.t
 ```
 
 All package code is licensed under GPL-3.0-only. The edition setting describes the support and operations contract; it does not change the software license.

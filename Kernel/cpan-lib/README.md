@@ -6,7 +6,7 @@ License information of the bundled modules can be found in the
 
 The original list of the bundled distributions is maintained in the module `Kernel::System::Environment`.
 Please keep that list up to date when upgrading or adding distributions. The list from `Kernel::System::Environment`
-is also used by the command `bin/otobo.CheckModules.pl --bundled-cpanfile > Kernel/cpan-lib/cpanfile`.
+is also used by the command `bin/careoncloud.CheckModules.pl --bundled-cpanfile > Kernel/cpan-lib/cpanfile`.
 That command generates a cpanfile for the bundled modules.
 
 The generated cpanfile _Kernel/cpan-lib/cpanfile_ can then be used for updating *Kernel/cpan-lib*.
@@ -16,9 +16,9 @@ But that task is not trivial. So here is an exemplar workflow:
 
 Starting in the OTOBO root dir.
 
-    bin/otobo.CheckModules.pl --inst                                        # make sure that the deps are installed
+    bin/careoncloud.CheckModules.pl --inst                                        # make sure that the deps are installed
     gvim Kernel/System/Environment.pm                                       # update BundleModulesDeclarationGet() if there are changes
-    bin/otobo.CheckModules.pl --bundled-cpanfile > Kernel/cpan-lib/cpanfile # in case BundleModulesDeclarationGet() list has changed
+    bin/careoncloud.CheckModules.pl --bundled-cpanfile > Kernel/cpan-lib/cpanfile # in case BundleModulesDeclarationGet() list has changed
 
 ### Streamlined procedure when there are only version updates
 

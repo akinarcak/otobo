@@ -2585,7 +2585,7 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             'تعرف على المزيد حول استخدام تكوين النظام في٪ s.',
         'Search in all settings...' => 'بحث في كافة الإعدادات ...',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
             'لا توجد حاليا أي إعدادات متوفرة. يرجى التأكد من تشغيل "otobo. Console. pl Maint::Config::Rebuild" قبل استخدام البرنامج.',
 
         # Template: AdminSystemConfigurationDeployment
@@ -2957,8 +2957,8 @@ sub Data {
             'تأكد من وجود الملف \'٪s\' (بدون ملحق . dist). ستقوم مهمة cron هذه بالتحقق كل 5 دقائق مما إذا كان OTOBO Daemon قيد التشغيل وبدء تشغيله إذا لزم الأمر.',
         'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
             'قم بتنفيذ \'٪s start\' للتأكد من أن وظائف cron الخاصة بالمستخدم \'otobo\' نشطة.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            'بعد 5 دقائق، تحقق من تشغيل برنامج OTOBO Daemon في النظام ("bin / otobo.Daemon.pl status").',
+        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'بعد 5 دقائق، تحقق من تشغيل برنامج OTOBO Daemon في النظام ("bin / careoncloud.Daemon.pl status").',
         'Running the OTOBO Daemon in a Docker based installation' => '',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             '',
@@ -6262,8 +6262,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => 'قيم افتراضية غير صالحة',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
-            'تم العثور على جداول ذات قيم افتراضية غير صالحة. لإصلاحها تلقائيا ، يرجى تنفيذ الأمر التالي: bin/otobo.Console.pl Maint::Database::Check --repair',
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
+            'تم العثور على جداول ذات قيم افتراضية غير صالحة. لإصلاحها تلقائيا ، يرجى تنفيذ الأمر التالي: bin/careoncloud.Console.pl Maint::Database::Check --repair',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
         'Maximum Query Size' => 'الحد الأقصى لحجم الطلب',
@@ -6474,10 +6474,10 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => '',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             '',
         'Orphaned Records In ticket_index Table' => '',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
@@ -6635,7 +6635,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => 'تعذر الاتصال بقاعدة البيانات.',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => 'غير فعال مؤقتاً',
         'Group for default access.' => 'مجموعة الوصول الافتراضية.',
         'Group of all administrators.' => 'مجموعة كافة المسؤولين.',
@@ -7481,8 +7481,8 @@ Thanks for your help!
         'Avatar' => 'الصورة الرمزية (Avatar)',
         'Based on global RichText setting' => 'استنادا إلى إعداد النص المنسق العام',
         'Basic Auth' => '',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
-            'إعدادات فهرس النص الكامل الأساسية. نفذ "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" لإنشاء فهرس جديد.',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+            'إعدادات فهرس النص الكامل الأساسية. نفذ "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" لإنشاء فهرس جديد.',
         'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
             '',
         'Both' => '',
@@ -8489,11 +8489,11 @@ Thanks for your help!
             'تعريف أفاتار المستخدمين. الرجاء ملاحظة: سيؤدي تعيين \'Active\' إلى 0 فقط إلى منع الوكلاء من تحرير إعدادات هذه المجموعة في تفضيلاتهم الشخصية، ولكنه سيسمح للمسؤولين بتحرير إعدادات نيابة عن مستخدم آخر. أستخدم \'PreferenceGroup\' للتحكم في المنطقة التي يجب إظهار هذه الإعدادات في واجهة المستخدم.',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             'يحدد أنواع الحالة الصالحة للتذكرة. إذا كانت التذكرة في حالة لها نوع حالة من هذا الإعداد، اعتبار هذه التذكرة مفتوحة، وإلا يتم إغلاقها.',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/otobo.Console.pl Maint::Cache::Delete).' =>
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
             '',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            'يحدد حالة التذاكر غير المؤمنة. لإلغاء تأمين التذاكر، يمكنك إستخدام البرنامج النصي bin/otobo.Console.pl Maint::Tict::UnlockingTimeout.',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in otobo.psgi.' =>
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            'يحدد حالة التذاكر غير المؤمنة. لإلغاء تأمين التذاكر، يمكنك إستخدام البرنامج النصي bin/careoncloud.Console.pl Maint::Tict::UnlockingTimeout.',
+        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
             '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             'يحدد أنواع القفل المرئي للتذكرة. ملاحظة: يرجى التأكد من مسح ذاكرة التخزين المؤقت عند تغيير هذا الإعداد.',
@@ -8912,8 +8912,8 @@ Thanks for your help!
         'Graph: Stacked Area Chart' => 'الرسم البياني: المستويات المكدسة',
         'Greek' => 'اليونانية',
         'Hebrew' => 'العبرية',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
-            'يساعد على توسيع فهرس البحث عن نص كامل لمقالتك (من، إلى، نسخة، الموضوع والبحث عن النص). يقوم بإنشاء فهرس بعد إنشاء المقالة، مما يزيد من سرعة البحث عن النص الكامل بحوالي 50٪. استخدم "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" لإنشاء فهرس أولي.',
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+            'يساعد على توسيع فهرس البحث عن نص كامل لمقالتك (من، إلى، نسخة، الموضوع والبحث عن النص). يقوم بإنشاء فهرس بعد إنشاء المقالة، مما يزيد من سرعة البحث عن النص الكامل بحوالي 50٪. استخدم "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" لإنشاء فهرس أولي.',
         'High Contrast' => 'تباين عالي',
         'High contrast skin for visually impaired users.' => 'سطح (skin) عالي التباين للمستخدمين الذين يعانون من ضعف البصر.',
         'Hindi' => 'الهندية',
@@ -9066,8 +9066,8 @@ Thanks for your help!
         'Includes article create times in the ticket search of the agent interface.' =>
             'يتضمن أوقات إنشاء المقالة في البحث في التذاكر في منطقة الوكيل.',
         'Incoming Phone Call.' => 'مكالمة هاتفية واردة.',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            'IndexAccelerator: اختيار وحدة الواجهة الخلفية لوحدة TicketViewAccelerator. يقوم "RuntimeDB" بإنشاء عرض كل قائمة انتظار ديناميكيا من جدول التذاكر (لا توجد مشاكل في الأداء تصل إلى حوالي 60.000 تذكرة في المجموع و 6.000 تذكرة مفتوحة في النظام). "StaticDB" هي أقوى وحدة، فهي تستخدم جدولا إضافيا لفهرس التذاكر، والذي يعمل كنظرة عامة (موصى به من أكثر من 80.000 تذكرة في المجموع و 6.000 تذكرة مفتوحة في النظام). استخدم الأمر "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" لبناء الفهرس الأولي.',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            'IndexAccelerator: اختيار وحدة الواجهة الخلفية لوحدة TicketViewAccelerator. يقوم "RuntimeDB" بإنشاء عرض كل قائمة انتظار ديناميكيا من جدول التذاكر (لا توجد مشاكل في الأداء تصل إلى حوالي 60.000 تذكرة في المجموع و 6.000 تذكرة مفتوحة في النظام). "StaticDB" هي أقوى وحدة، فهي تستخدم جدولا إضافيا لفهرس التذاكر، والذي يعمل كنظرة عامة (موصى به من أكثر من 80.000 تذكرة في المجموع و 6.000 تذكرة مفتوحة في النظام). استخدم الأمر "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" لبناء الفهرس الأولي.',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             'يحدد ما إذا كان يجب دائما التعامل مع البريد الإلكتروني المرتد كمتابعة عادية.',
         'Indonesian' => 'الأندونيسية',

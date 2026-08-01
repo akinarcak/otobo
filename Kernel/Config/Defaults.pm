@@ -109,7 +109,7 @@ sub LoadDefaults {
     # ScriptAlias
     # Prefix to index.pl used as ScriptAlias in web config
     # (Used when emailing links to agents).
-    $Self->{ScriptAlias} = 'otobo/';
+    $Self->{ScriptAlias} = 'careoncloud/';
 
     # AdminEmail
     # (Email of the system admin.)
@@ -122,7 +122,7 @@ sub LoadDefaults {
 
     # ProductName
     # (Application name displayed in frontend.)
-    $Self->{ProductName} = 'OTOBO 11';
+    $Self->{ProductName} = 'CareOnCloud ESM';
 
     # --------------------------------------------------- #
     # database settings                                   #
@@ -134,11 +134,11 @@ sub LoadDefaults {
 
     # Database
     # (The database name.)
-    $Self->{Database} = 'otobo';
+    $Self->{Database} = 'careoncloud_esm';
 
     # DatabaseUser
     # (The database user.)
-    $Self->{DatabaseUser} = 'otobo';
+    $Self->{DatabaseUser} = 'careoncloud_esm';
 
     # DatabasePw
     # (The password of database user.)
@@ -215,7 +215,7 @@ sub LoadDefaults {
     # how to make use of 'Database::Attribute'.
 
     # --------------------------------------------------- #
-    # otobo.psgi configuration                            #
+    # careoncloud.psgi configuration                            #
     # --------------------------------------------------- #
     # default redirect
     $Self->{'Frontend::DefaultInterface'} = 'index.pl';
@@ -357,7 +357,7 @@ sub LoadDefaults {
 
     # Frontend::WebPath
     # (URL base path of icons, CSS and Java Script.)
-    $Self->{'Frontend::WebPath'} = '/otobo-web/';
+    $Self->{'Frontend::WebPath'} = '/careoncloud-web/';
 
     # Frontend::JavaScriptPath
     # (URL JavaScript path.)
@@ -962,7 +962,7 @@ sub LoadDefaults {
 
     # SessionName
     # (Name of the session key. E. g. Session, SessionID, OTOBO)
-    $Self->{SessionName} = 'OTOBOAgentInterface';
+    $Self->{SessionName} = 'CareOnCloudAgentInterface';
 
     # SessionCheckRemoteIP
     # (If the application is used via a proxy-farm then the
@@ -1061,7 +1061,7 @@ sub LoadDefaults {
 #    $Self->{WebUploadCacheModule} = 'Kernel::System::Web::UploadCache::FS';
 
     # CGILogPrefix
-    $Self->{CGILogPrefix} = 'OTOBO-CGI';
+    $Self->{CGILogPrefix} = 'CareOnCloud-CGI';
 
     # --------------------------------------------------- #
     # Agent Web Interface
@@ -1101,7 +1101,7 @@ sub LoadDefaults {
     # directories                                         #
     # --------------------------------------------------- #
     # root directory
-    $Self->{Home} = '/opt/otobo';
+    $Self->{Home} = '/opt/careoncloud';
 
     # tmp dir
     $Self->{TempDir} = '<OTOBO_CONFIG_Home>/var/tmp';
@@ -1401,15 +1401,15 @@ sub LoadDefaults {
     # --------------------------------------------------- #
 
     # notification sender
-    $Self->{NotificationSenderName}  = 'OTOBO Notifications';
-    $Self->{NotificationSenderEmail} = 'otobo@<OTOBO_CONFIG_FQDN>';
+    $Self->{NotificationSenderName}  = 'CareOnCloud ESM Notifications';
+    $Self->{NotificationSenderEmail} = 'esm@<OTOBO_CONFIG_FQDN>';
 
     # notification email for new password
-    $Self->{NotificationSubjectLostPassword} = 'New OTOBO password';
+    $Self->{NotificationSubjectLostPassword} = 'New CareOnCloud ESM password';
     $Self->{NotificationBodyLostPassword}    = 'Hi <OTOBO_USERFIRSTNAME>,
 
 
-Here\'s your new OTOBO password.
+Here\'s your new CareOnCloud ESM password.
 
 New password: <OTOBO_NEWPW>
 
@@ -1427,7 +1427,7 @@ You can log in via the following URL:
 
     # SessionName
     # (Name of the session key. E. g. Session, SessionID, OTOBO)
-    $Self->{CustomerPanelSessionName} = 'OTOBOCustomerInterface';
+    $Self->{CustomerPanelSessionName} = 'CareOnCloudCustomerInterface';
 
     # CustomerPanelUserID
     # (The customer panel db-uid.) [default: 1]
@@ -1492,7 +1492,7 @@ You can log in via the following URL:
     # --------------------------------------------------- #
     # notification email about new password               #
     # --------------------------------------------------- #
-    $Self->{CustomerPanelSubjectLostPassword} = 'New OTOBO password';
+    $Self->{CustomerPanelSubjectLostPassword} = 'New CareOnCloud ESM password';
     $Self->{CustomerPanelBodyLostPassword}    = 'Hi <OTOBO_USERFIRSTNAME>,
 
 
@@ -1504,10 +1504,10 @@ New password: <OTOBO_NEWPW>
     # --------------------------------------------------- #
     # notification email about new account                #
     # --------------------------------------------------- #
-    $Self->{CustomerPanelSubjectNewAccount} = 'New OTOBO Account!';
+    $Self->{CustomerPanelSubjectNewAccount} = 'New CareOnCloud ESM Account!';
     $Self->{CustomerPanelBodyNewAccount}    = 'Hi <OTOBO_USERFIRSTNAME>,
 
-You or someone impersonating you has created a new OTOBO account for
+You or someone impersonating you has created a new CareOnCloud ESM account for
 you.
 
 Full name: <OTOBO_USERFIRSTNAME> <OTOBO_USERLASTNAME>

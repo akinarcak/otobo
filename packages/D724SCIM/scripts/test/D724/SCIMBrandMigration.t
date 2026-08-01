@@ -1,0 +1,2 @@
+use v5.24;use strict;use warnings;use Test2::V0;use Kernel::System::UnitTest::RegisterOM;
+my$M=$Kernel::OM->Get('Kernel::System::D724::SCIMBrandMigration');my$R=$M->Ensure();ok($R->{Success},'brand-neutral SCIM schema ensured');ok($R->{NativeColumn},'native user column exists');ok(!$R->{LegacyColumn},'legacy upstream-branded column removed');my$Again=$M->Ensure();ok($Again->{Success},'migration is idempotent');done_testing;

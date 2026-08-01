@@ -13,7 +13,7 @@ stable resource-oriented `/api/v1` contract.
 
 ## Decision
 
-The fork adds one routing adapter in `bin/psgi-bin/otobo.psgi`. The adapter maps
+The fork adds one routing adapter in `bin/psgi-bin/careoncloud.psgi`. The adapter maps
 only these exact paths to the package-owned `PublicD724API` module:
 
 - `/api/v1/oauth/token`
@@ -45,7 +45,7 @@ upgrade from being reported healthy when the fork routing adapter is absent.
 
 - Rewriting at an external reverse proxy was rejected as the only mechanism
   because local development and self-hosted installs would have divergent APIs.
-- Shipping the complete upstream `otobo.psgi` inside an OPM was rejected because
+- Shipping the complete upstream `careoncloud.psgi` inside an OPM was rejected because
   package ownership of a core file would make upstream upgrades unsafe.
 - A second standalone API process was deferred until scale or isolation evidence
   justifies the operational cost.

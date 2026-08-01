@@ -67,7 +67,7 @@ $Self->True(
 
 my $XML = <<"EOS";
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="UnitTest::DummyModule::$RandomID" Required="1" Valid="1">
         <Description Translatable="1">Dummy module registration for a unit test</Description>
         <Navigation>UnitTest</Navigation>
@@ -75,7 +75,7 @@ my $XML = <<"EOS";
             <Item ValueType="PerlModule" ValueFilter="Kernel/*.pm">Kernel::FixInvalid$RandomID</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
 EOS
 
 my $XMLFile = $MainObject->FileWrite(

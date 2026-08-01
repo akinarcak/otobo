@@ -4,7 +4,7 @@
 serisini OTOBO Public frontend uzerinden sunar:
 
 ```text
-GET /otobo/public.pl?Action=PublicD724Metrics
+GET /careoncloud/public.pl?Action=PublicD724Metrics
 Authorization: Bearer <scrape-token>
 ```
 
@@ -19,8 +19,8 @@ Token uretme ve ayarlama ornegi (secret manager ile uygulanmalidir):
 ```text
 token=<secret-manager-generated-value>
 digest=<sha256(token)>
-bin/otobo.Console.pl Admin::Config::Update --setting-name D724::Observability::MetricsTokenSHA256 --valid 1
-bin/otobo.Console.pl Admin::Config::Update --setting-name D724::Observability::MetricsTokenSHA256 --value <digest>
+bin/careoncloud.Console.pl Admin::Config::Update --setting-name D724::Observability::MetricsTokenSHA256 --valid 1
+bin/careoncloud.Console.pl Admin::Config::Update --setting-name D724::Observability::MetricsTokenSHA256 --value <digest>
 ```
 
 `--valid` ve `--value`, OTOBO komutunun birbirini dislayan islem kipleri oldugu
@@ -42,7 +42,7 @@ icin iki ayri komuttur. Token komut satirina, repoya veya loga konulmamalidir.
 ```yaml
 scrape_configs:
   - job_name: d724-esm
-    metrics_path: /otobo/public.pl
+    metrics_path: /careoncloud/public.pl
     params:
       Action: [PublicD724Metrics]
     authorization:

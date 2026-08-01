@@ -285,7 +285,7 @@ sub _Actor {
     if ( $Context->{Success} && grep { $_ eq $Param{TenantID} } @{ $Context->{Subject}->{TenantIDs} // [] } ) {
         return ( 'agent', "agent:$Param{UserID}" );
     }
-    return ( 'system', "otobo-user:$Param{UserID}" );
+    return ( 'system', "careoncloud-user:$Param{UserID}" );
 }
 
 sub _TransactionRun {

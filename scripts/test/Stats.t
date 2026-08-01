@@ -480,7 +480,7 @@ $Self->False(
     'Import() statistic with not existing object module must fail',
 );
 
-# try to use otobo.Console.pl Maint::Stats::Generate
+# try to use careoncloud.Console.pl Maint::Stats::Generate
 
 # check the imported stat
 my $Stat4 = $StatsObject->StatsGet( StatID => $StatID );

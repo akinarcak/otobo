@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="CloudServices::Disabled" Required="0" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Defines if the communication between this system and the servers that provide cloud services is possible. If set to 'Disable cloud services', some functionality will be lost such as support data sending, Package Verify™ and product News dashboard widgets, among others.</Description>
         <Navigation>CloudService</Navigation>
@@ -89,4 +89,4 @@
     </Setting> -->
 <!-- Register Cloud Services -->
 
-</otobo_config>
+</careoncloud_config>

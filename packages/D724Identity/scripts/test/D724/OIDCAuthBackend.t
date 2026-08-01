@@ -16,7 +16,7 @@ my$UserID=$Kernel::OM->Get('Kernel::System::User')->UserAdd(UserFirstname=>'OIDC
 
 sub RequestSet{my($URL,$Cookie)=@_;$Kernel::OM->ObjectsDiscard(Objects=>['Kernel::System::Web::Request','Kernel::Output::HTML::Layout']);my$HTTP=GET($URL);$HTTP->header(Cookie=>$Cookie)if$Cookie;$Kernel::OM->ObjectParamAdd('Kernel::System::Web::Request'=>{HTTPRequest=>$HTTP});}
 
-RequestSet('https://esm.example.invalid/otobo/index.pl');
+RequestSet('https://esm.example.invalid/careoncloud/index.pl');
 require Kernel::System::Auth::D724OpenIDConnect;require Kernel::System::CustomerAuth::D724OpenIDConnect;
 my$Agent=Kernel::System::Auth::D724OpenIDConnect->new(Count=>'');
 is($Agent->GetOption(What=>'PreAuth'),0,'normal login does not activate pre-auth redirect');is($Agent->Auth(User=>$Login,Pw=>$Password),$Login,'existing DB password agent login still works');
@@ -25,16 +25,16 @@ my$State='s'x43;my$Verifier='v'x64;my$Browser='b'x43;my$StartSurface;my$Callback
 $Kernel::OM->Get('Kernel::System::D724::OIDCWeb');
 no warnings 'redefine';
 local *Kernel::System::D724::OIDCWeb::Start=sub{my($Self,%Param)=@_;$StartSurface=$Param{Surface};return{Success=>1,Data=>{RedirectURL=>'https://login.example.invalid/authorize',CookieName=>"D724OIDC-$State",CookieValue=>"$Browser.$Verifier",CookieTTL=>300}}};
-local *Kernel::System::D724::OIDCWeb::Callback=sub{my($Self,%Param)=@_;$CallbackSurface=$Param{Surface};return{Success=>1,Data=>{Login=>$Login,TenantID=>'tenant-a',ReturnPath=>'/otobo/index.pl?Action=AgentDashboard'}}};
+local *Kernel::System::D724::OIDCWeb::Callback=sub{my($Self,%Param)=@_;$CallbackSurface=$Param{Surface};return{Success=>1,Data=>{Login=>$Login,TenantID=>'tenant-a',ReturnPath=>'/careoncloud/index.pl?Action=AgentDashboard'}}};
 
-RequestSet('https://esm.example.invalid/otobo/index.pl?D724SSO=1&TenantID=tenant-a&ProviderKey=workforce');
+RequestSet('https://esm.example.invalid/careoncloud/index.pl?D724SSO=1&TenantID=tenant-a&ProviderKey=workforce');
 is($Agent->GetOption(What=>'PreAuth'),1,'explicit tenant/provider selection activates SSO pre-auth');my$Pre=$Agent->PreAuth();is($Pre->{RedirectURL},'https://login.example.invalid/authorize','pre-auth returns provider redirect');is($StartSurface,'agent','agent backend binds agent surface');
 my$Cookies=$Kernel::OM->Get('Kernel::Output::HTML::Layout')->{SetCookies};is($Cookies->{"D724OIDC-$State"}->{httponly},1,'flow cookie is HttpOnly');is($Cookies->{"D724OIDC-$State"}->{secure},1,'flow cookie is Secure');is($Cookies->{"D724OIDC-$State"}->{samesite},'lax','flow cookie is SameSite Lax');
 
-RequestSet("https://esm.example.invalid/otobo/index.pl?Action=Login&state=$State&code=authorization-code","D724OIDC-$State=$Browser.$Verifier");
+RequestSet("https://esm.example.invalid/careoncloud/index.pl?Action=Login&state=$State&code=authorization-code","D724OIDC-$State=$Browser.$Verifier");
 is($Agent->Auth(),$Login,'agent callback returns verified login');is($CallbackSurface,'agent','callback is bound to agent surface');is($Agent->PostAuth()->{RequestedURL},'Action=AgentDashboard','post-auth uses verified local return action');
 
-RequestSet("https://esm.example.invalid/otobo/customer.pl?D724SSO=1&TenantID=tenant-a&ProviderKey=workforce");
+RequestSet("https://esm.example.invalid/careoncloud/customer.pl?D724SSO=1&TenantID=tenant-a&ProviderKey=workforce");
 my$Customer=Kernel::System::CustomerAuth::D724OpenIDConnect->new(Count=>'');is($Customer->GetOption(What=>'PreAuth'),1,'customer backend recognizes explicit SSO selection');$Customer->PreAuth();is($StartSurface,'customer','customer backend binds customer surface');
 
 done_testing;

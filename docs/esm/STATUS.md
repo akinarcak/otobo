@@ -39,7 +39,7 @@ Son dogrulama: `2026-07-25`
   - baska aktif tenant uyeligi olan ajanin global hesabini kapatmama,
   - tenant ile birlikte baglanan tum user/group/member sorgulari ve cross-tenant `403`, bilinmeyen kaynak `404`,
   - integration actor ile transaction-atomic audit zinciri,
-  - canonical `/otobo/scim/v2` Users/Groups/discovery REST tasiyicisi, bounded `eq` filtre ve SCIM hata medyasi,
+  - canonical `/careoncloud/scim/v2` Users/Groups/discovery REST tasiyicisi, bounded `eq` filtre ve SCIM hata medyasi,
   - gercek MariaDB kabulunde 29/29 test `PASS`; public HTTPS kimliksiz istek `401 application/scim+json`.
 - GPL-3.0 `D724TenantDirectory 0.2.1` OPM paketi:
   - kalici tenant ve agent-role membership tablolari,
@@ -84,6 +84,7 @@ Son dogrulama: `2026-07-25`
   - temel katman olarak tenant-directory paketine statik bagimlilik olmadan subject veya opsiyonel directory-derived authorization,
   - zincir, head, sequence gap ve event hash dogrulayan `Verify` API'si,
   - iki test dosyasi, 29 test, sonuc `PASS`.
+- `D724Problem 0.2.0` backend and agent RCA workbench is present in the current checkout. Problem state transitions use tenant-scoped row locking together with optimistic versions and transactional audit; creation has an audit-failure rollback regression case. Runtime acceptance is pending because this workspace currently has no Docker or Perl executable.
 - GPL-3.0 `D724TicketAudit 0.8.1` OPM paketi:
   - resmi `Ticket::CustomModule` extension noktasi ile cekirdek dosya fork'u olmadan repository wrapping,
   - her OTOBO ticket icin immutable `d724_ticket_scope` tenant binding ve monoton mutation version'i,
@@ -121,7 +122,7 @@ Son dogrulama: `2026-07-25`
   - immutable `d724_ticket_scope` SQL predicate'i; cross-tenant nesne varligini gizleyen `404`,
   - `no-store`, `nosniff`, bearer challenge ve `429 Retry-After` guvenlik basliklari,
   - secret/token yazdirmayan gercek HTTP kabulunde token/list/get `200`, bilinmeyen vaka `404`, revoke sonrasi ayni token `401`.
-  - fork PSGI adapter'i ile canonical `/otobo/api/v1` ve public OpenAPI 3.1 kontrati,
+  - fork PSGI adapter'i ile canonical `/careoncloud/api/v1` ve public OpenAPI 3.1 kontrati,
   - aktif ve ayni tenant customer hesabi adina transaction-atomic request create ile requester-owned get,
   - `Idempotency-Key`: ilk create `201`, kalici replay `200`, farkli payload conflict `409`,
   - canonical HTTP kabulunde request `187` create/replay/conflict/get `201/200/409/200`.

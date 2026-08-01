@@ -2,19 +2,21 @@
 
 ## Delivered contract
 
-- The authenticated OTOBO customer company ID is the tenant boundary for the portal request.
+- The authenticated CareOnCloud ESM customer company ID is the tenant boundary for the portal request.
 - The browser cannot select or override `TenantID`; `CustomerD724Catalog` derives it from the authenticated session.
 - Customer login identifiers are SHA-256 normalized before becoming TenantGuard subject identifiers, so email-style logins remain valid without exposing them in policy decisions.
 - Only active services, offerings, and catalog items are listed.
+- Customers explicitly select a service category, service extension, and request type before the dynamic request form opens.
+- The selected hierarchy is validated server-side; a catalog item cannot be submitted with a mismatched service or extension identifier.
 - Item detail is unavailable if any parent in its hierarchy is not active.
 - Form schemas support `text`, `textarea`, `select`, `multiselect`, `checkbox`, `date`, `datetime`, `number`, and `email` fields.
 - Schema keys, labels, required flags, option values, sizes, and field counts are validated server-side. Script/HTML field types and duplicate keys/options are rejected.
 - Schema writes use optimistic versioning and all reads/writes are tenant scoped.
-- OTOBO Template Toolkit HTML filters escape catalog and schema content before rendering.
+- CareOnCloud ESM Template Toolkit HTML filters escape catalog and schema content before rendering.
 
-## Deliberate boundary
+## Submission boundary
 
-The rendered form is read-only in CAT-02a. Submission and ticket/fulfillment creation belong to `FLOW-01`, where CSRF protection, server-side answer validation, idempotency, audit events, and workflow routing will be implemented together. A tenant-admin catalog management screen remains `CAT-02b`; catalog management is currently available through the guarded repository API.
+`D724Request` owns CSRF validation, server-side answer validation, idempotency, audit events, commitments and workflow routing. `D724Catalog` owns the tenant-safe three-level selection and dynamic form definition. The submitted service and extension identifiers are checked against the selected catalog item before request orchestration starts.
 
 ## Test-server evidence
 

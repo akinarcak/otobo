@@ -23,8 +23,8 @@ host'u yazar. Ornek endpoint anahtari `lifecycle` icin alanlar
 
 Tenant administrator su canonical endpoint'leri kullanir:
 
-- `POST|GET /otobo/api/v1/webhook-subscriptions`
-- `GET|PATCH /otobo/api/v1/webhook-subscriptions/{subscription_id}`
+- `POST|GET /careoncloud/api/v1/webhook-subscriptions`
+- `GET|PATCH /careoncloud/api/v1/webhook-subscriptions/{subscription_id}`
 
 Create kontrati `key`, `name`, `endpoint_key` ve 1-20 `event_patterns` ister.
 Pattern exact action (`request.created`) veya prefix wildcard (`request.*`)
@@ -87,7 +87,7 @@ Yalniz tenant administrator su onayli komutla tek bir dead-letter kaydini
 yeniden kuyruklayabilir:
 
 ```text
-bin/otobo.Console.pl Admin::D724::CommitmentReplay \
+bin/careoncloud.Console.pl Admin::D724::CommitmentReplay \
   --tenant-id TENANT --outbox-id ID --expected-attempt-count COUNT \
   --actor-user-id USER_ID --confirm
 ```

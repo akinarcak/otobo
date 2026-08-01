@@ -50,8 +50,8 @@ else {
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
     my @DatabaseXMLFiles = (
-        "$Home/scripts/database/otobo-schema.xml",
-        "$Home/scripts/database/otobo-initial_insert.xml",
+        "$Home/scripts/database/careoncloud-schema.xml",
+        "$Home/scripts/database/careoncloud-initial_insert.xml",
     );
 
     $Success = $Helper->ProvideTestDatabase(

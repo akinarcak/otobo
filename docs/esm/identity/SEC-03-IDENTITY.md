@@ -14,7 +14,7 @@
 - Provider oluşturma ve ilk subject link'i audit olayıyla aynı transaction'dadır.
 - Authorization isteği state, nonce ve PKCE verifier için kriptografik rastgele değerler üretir; veritabanında yalnız SHA-256 özetleri saklanır.
 - Callback, state satırını transaction içinde kilitler; browser binding, PKCE S256, exact issuer/audience ve nonce doğrulamasından sonra akışı tek kullanımlık olarak tüketir.
-- Dönüş hedefi yalnız yerel `/otobo/...` yoludur. Open redirect kabul edilmez.
+- Dönüş hedefi yalnız yerel `/careoncloud/...` yoludur. Open redirect kabul edilmez.
 - Discovery metadata issuer ile aynı HTTPS origin'den authorization, token ve JWKS endpoint'i vermeli; ID token algoritması yalnız `RS256` veya `ES256` olabilir.
 - Fork'un yerleşik OTOBO OAuth2 katmanı `code_challenge`/`S256` değerlerini authorization URL'sine ve exact `code_verifier` değerini token exchange formuna taşır; hatalı RFC 7636 değerleri ağ isteğinden önce reddedilir.
 

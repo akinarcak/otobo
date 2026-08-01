@@ -51,8 +51,8 @@ $Self->Is(
 $Self->Is(
     $Result,
     '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package_list version="1.0">
-</otobo_package_list>
+<careoncloud_package_list version="1.0">
+</careoncloud_package_list>
 ',
     "Dev::Package::RepositoryIndex result for empty directory",
 );

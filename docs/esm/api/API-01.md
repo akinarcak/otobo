@@ -5,11 +5,11 @@
 The API is a GPL-3.0 package and uses OTOBO's supported public frontend
 registration. Its canonical versioned base URL is:
 
-`/otobo/api/v1`
+`/careoncloud/api/v1`
 
 The legacy compatibility transport remains available at:
 
-`/otobo/public.pl?Action=PublicD724API`
+`/careoncloud/public.pl?Action=PublicD724API`
 
 All responses are JSON, carry `Cache-Control: no-store` and
 `X-Content-Type-Options: nosniff`, and use a stable envelope:
@@ -27,7 +27,7 @@ or cross-tenant object existence:
 
 ### Client credentials
 
-`POST /otobo/api/v1/oauth/token`
+`POST /careoncloud/api/v1/oauth/token`
 
 Content type is `application/x-www-form-urlencoded`; required fields are
 `grant_type=client_credentials`, `client_id`, and `client_secret`. A successful
@@ -49,7 +49,7 @@ current optimistic version is mandatory, and `--confirm` makes the disruptive
 token invalidation explicit:
 
 ```text
-bin/otobo.Console.pl Admin::D724::APIClientRotate \
+bin/careoncloud.Console.pl Admin::D724::APIClientRotate \
   --tenant-id TENANT --client-id CLIENT --expected-version VERSION \
   --actor-user-id USER_ID --confirm
 ```
@@ -62,8 +62,8 @@ soon as a successful rotation commits.
 
 ### Ticket reads
 
-- `GET /otobo/api/v1/tickets?limit=50&after_id=0`
-- `GET /otobo/api/v1/tickets/9`
+- `GET /careoncloud/api/v1/tickets?limit=50&after_id=0`
+- `GET /careoncloud/api/v1/tickets/9`
 
 The bearer token's tenant is the sole tenant selector; the caller cannot supply
 or override it. Reads join the immutable `d724_ticket_scope` predicate before
@@ -78,7 +78,7 @@ atomic per-client minute limit returns `429` with `Retry-After: 60`.
 
 ### Idempotent service-request writes
 
-`POST /otobo/api/v1/requests` requires `Content-Type: application/json`, a
+`POST /careoncloud/api/v1/requests` requires `Content-Type: application/json`, a
 16-128 character `Idempotency-Key` header, and this body shape:
 
 ```json
@@ -95,18 +95,18 @@ request/catalog/form/workflow/audit implementation. First creation returns
 `201`; an identical replay returns the original request with `200` and
 `Idempotent-Replayed: true`; reuse with a different payload returns `409`.
 
-`GET /otobo/api/v1/requests/{id}?requester_login=...` returns only a request
+`GET /careoncloud/api/v1/requests/{id}?requester_login=...` returns only a request
 owned by that validated requester. The API projection excludes submitted answer
 values and workflow internals to avoid unnecessary PII disclosure.
 
 The machine-readable contract is public at
-`GET /otobo/api/v1/openapi.json` with media type
+`GET /careoncloud/api/v1/openapi.json` with media type
 `application/vnd.oai.openapi+json;version=3.1`.
 
 ### Approval and fulfillment lifecycle writes
 
-- `POST /otobo/api/v1/requests/{request_id}/approval`
-- `PATCH /otobo/api/v1/tasks/{task_id}`
+- `POST /careoncloud/api/v1/requests/{request_id}/approval`
+- `PATCH /careoncloud/api/v1/tasks/{task_id}`
 
 Approval bodies require `decision` (`approved` or `rejected`) and
 `expected_version`; task bodies require `status` (`in_progress`, `completed`,
@@ -128,8 +128,8 @@ or audit append. A stale version with a different target returns `409`.
 
 ### Lifecycle webhook subscriptions
 
-- `GET|POST /otobo/api/v1/webhook-subscriptions`
-- `GET|PATCH /otobo/api/v1/webhook-subscriptions/{subscription_id}`
+- `GET|POST /careoncloud/api/v1/webhook-subscriptions`
+- `GET|PATCH /careoncloud/api/v1/webhook-subscriptions/{subscription_id}`
 
 Only a role passing `tenant.manage` can administer subscriptions. The bearer
 token tenant is authoritative and every get/list/update predicate includes it.
@@ -174,7 +174,7 @@ hours, and API metric windows for 168 hours. A scheduler may run this confirmed
 maintenance command daily:
 
 ```text
-bin/otobo.Console.pl Maint::D724::APIRetentionCleanup --confirm
+bin/careoncloud.Console.pl Maint::D724::APIRetentionCleanup --confirm
 ```
 
 Only expired or revoked token digests and completed rate windows older than the

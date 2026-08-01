@@ -2240,7 +2240,7 @@ sub PackageBuild {
     if ( !$Param{Type} ) {
         $XML .= '<?xml version="1.0" encoding="utf-8" ?>';
         $XML .= "\n";
-        $XML .= '<otobo_package version="1.1">';
+        $XML .= '<careoncloud_package version="1.1">';
         $XML .= "\n";
     }
 
@@ -2450,7 +2450,7 @@ sub PackageBuild {
         }
     }
 
-    $XML .= '</otobo_package>';
+    $XML .= '</careoncloud_package>';
 
     return $XML;
 }
@@ -4417,7 +4417,7 @@ sub _FileSystemCheck {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "ERROR: Need write permissions for directory $Home$Filepath\n"
-                . " Try: $Home/bin/otobo.SetPermissions.pl!",
+                . " Try: $Home/bin/careoncloud.SetPermissions.pl!",
         );
 
         return;

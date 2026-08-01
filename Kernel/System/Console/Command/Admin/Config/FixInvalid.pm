@@ -248,7 +248,7 @@ sub Run {
         $Self->Print(
             "\nFollowing settings were not fixed:\n"
                 . join( ",\n", map {"  - $_"} @NotFixedSettings ) . "\n"
-                . "\nPlease use console command (bin/otobo.Console.pl Admin::Config::Update --help) or GUI to fix them.\n\n"
+                . "\nPlease use console command (bin/careoncloud.Console.pl Admin::Config::Update --help) or GUI to fix them.\n\n"
         );
     }
 

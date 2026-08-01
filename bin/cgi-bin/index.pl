@@ -31,10 +31,10 @@ use Plack::Handler::CGI ();
 
 #local $ENV{PLACK_URLMAP_DEBUG} = 1; # enable when the URL mapping does not work
 
-# otobo.psgi looks primarily in $ENV{PATH_INFO}
+# careoncloud.psgi looks primarily in $ENV{PATH_INFO}
 local $ENV{PATH_INFO}   = join '/', grep { defined $_ && $_ ne '' } @ENV{qw(SCRIPT_NAME PATH_INFO)};
 local $ENV{SCRIPT_NAME} = '';
 
 my $CgiBinDir = dirname(__FILE__);
-state $App = Plack::Util::load_psgi("$CgiBinDir/../psgi-bin/otobo.psgi");
+state $App = Plack::Util::load_psgi("$CgiBinDir/../psgi-bin/careoncloud.psgi");
 Plack::Handler::CGI->new()->run($App);

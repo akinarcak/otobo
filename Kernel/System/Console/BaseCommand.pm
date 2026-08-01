@@ -434,7 +434,7 @@ sub Execute {
     #   In future we might need to check if it was created and update it on the fly.
     $Kernel::OM->ObjectParamAdd(
         'Kernel::System::Log' => {
-            LogPrefix => 'OTOBO-otobo.Console.pl-' . $Self->Name(),
+            LogPrefix => 'OTOBO-careoncloud.Console.pl-' . $Self->Name(),
         },
     );
 
@@ -443,9 +443,9 @@ sub Execute {
     # Don't allow to run these scripts as root.
     if ( !$ParsedGlobalOptions->{'allow-root'} && $> == 0 ) {    # $EFFECTIVE_USER_ID
         $Self->PrintError(
-            "You cannot run otobo.Console.pl as root. Please run it as the 'otobo' user or with the help of su:"
+            "You cannot run careoncloud.Console.pl as root. Please run it as the 'otobo' user or with the help of su:"
         );
-        $Self->Print("  <yellow>su -c \"bin/otobo.Console.pl MyCommand\" -s /bin/bash otobo</yellow>\n");
+        $Self->Print("  <yellow>su -c \"bin/careoncloud.Console.pl MyCommand\" -s /bin/bash otobo</yellow>\n");
 
         return $Self->ExitCodeError();
     }
@@ -580,7 +580,7 @@ sub GetUsageHelp {
 
     my $UsageText = "<green>$Self->{Description}</green>\n";
     $UsageText .= "\n<yellow>Usage:</yellow>\n";
-    $UsageText .= " otobo.Console.pl $Self->{Name}";
+    $UsageText .= " careoncloud.Console.pl $Self->{Name}";
 
     my $OptionsText   = "<yellow>Options:</yellow>\n";
     my $ArgumentsText = "<yellow>Arguments:</yellow>\n";

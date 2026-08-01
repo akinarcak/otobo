@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use HTTP::Tiny ();
 
-my $URL = shift // 'http://127.0.0.1:5000/otobo/public.pl?Action=PublicD724Metrics';
+my $URL = shift // 'http://127.0.0.1:5000/careoncloud/public.pl?Action=PublicD724Metrics';
 my $Token = $ENV{D724_METRICS_TOKEN} // q{};
 die "D724_METRICS_TOKEN must contain 16-256 non-whitespace characters\n"
     if $Token !~ m{\A\S{16,256}\z}smx;

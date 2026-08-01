@@ -412,7 +412,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 0.27',
         },
         {
-            'Comment'         => 'needed by otobo.CheckModules.pl',
+            'Comment'         => 'needed by careoncloud.CheckModules.pl',
             'Module'          => 'Linux::Distribution',
             'Required'        => 1,
             'VersionRequired' => '== 0.23',
@@ -478,7 +478,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 0.15',
         },
         {
-            'Comment'         => 'needed by otobo.psgi',
+            'Comment'         => 'needed by careoncloud.psgi',
             'Module'          => 'Module::Refresh',
             'Required'        => 1,
             'VersionRequired' => '== 0.17',

@@ -16,7 +16,7 @@ close $Handle;
 my $Contract = eval { JSON::PP::decode_json($Raw) };
 ok( !$@ && ref $Contract eq 'HASH', 'OpenAPI contract is valid JSON' );
 is( $Contract->{openapi}, '3.1.0', 'contract uses OpenAPI 3.1' );
-is( $Contract->{servers}->[0]->{url}, '/otobo/api/v1', 'canonical API mount is declared' );
+is( $Contract->{servers}->[0]->{url}, '/careoncloud/api/v1', 'canonical API mount is declared' );
 for my $PathKey (qw(/oauth/token /tickets /tickets/{ticket_id} /requests /requests/{request_id} /requests/{request_id}/approval /tasks/{task_id} /webhook-subscriptions /webhook-subscriptions/{subscription_id} /openapi.json)) {
     ok( $Contract->{paths}->{$PathKey}, "contract declares $PathKey" );
 }

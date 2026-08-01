@@ -4,7 +4,7 @@
 # Instead adapt the module list in the method Kernel::System::Environment::BundleModulesDeclarationGet()
 # and call:
 #    mkdir tmp-cpan-lib
-#    ./bin/otobo.CheckModules.pl --bundled-cpanfile > tmp-cpan-lib/cpanfile
+#    ./bin/careoncloud.CheckModules.pl --bundled-cpanfile > tmp-cpan-lib/cpanfile
 #
 
 # Needed by Text::Diff
@@ -68,7 +68,7 @@ requires 'JSON', '== 4.10';
 # needed by the console command Dev::Tools::TranslationsUpdate
 requires 'Lingua::Translit', '== 0.27';
 
-# needed by otobo.CheckModules.pl
+# needed by careoncloud.CheckModules.pl
 requires 'Linux::Distribution', '== 0.23';
 
 # needed by Kernel::System::ReferenceData, which uses Locale::Country
@@ -101,7 +101,7 @@ requires 'Module::Extract::VERSION', '== 1.121';
 # needed by Crypt::Random::Source
 requires 'Module::Find', '== 0.15';
 
-# needed by otobo.psgi
+# needed by careoncloud.psgi
 requires 'Module::Refresh', '== 0.17';
 
 # needed by LWP::Protocol::https

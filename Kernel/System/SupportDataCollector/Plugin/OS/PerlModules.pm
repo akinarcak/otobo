@@ -37,7 +37,7 @@ sub Run {
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
     my $Output;
-    open( my $FH, '-|', "perl $Home/bin/otobo.CheckModules.pl nocolors --all" );    ## no critic qw(OTOBO::ProhibitOpen)
+    open( my $FH, '-|', "perl $Home/bin/careoncloud.CheckModules.pl nocolors --all" );    ## no critic qw(OTOBO::ProhibitOpen)
 
     while ( my $Line = <$FH> ) {
         $Output .= $Line;
