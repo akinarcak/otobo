@@ -1,6 +1,6 @@
 # API-01 - Tenant-safe integration API
 
-## Implemented contract (`D724API 0.7.1`)
+## Implemented contract (`D724API 0.7.2`)
 
 The API is a GPL-3.0 package and uses OTOBO's supported public frontend
 registration. Its canonical versioned base URL is:

@@ -8,7 +8,7 @@ use warnings;
 use Test2::V0;
 use Kernel::System::UnitTest::RegisterOM;
 
-$Kernel::OM->ObjectParamAdd( 'Kernel::System::UnitTest::Helper' => { RestoreDatabase => 1 } );
+$Kernel::OM->ObjectParamAdd( 'Kernel::System::UnitTest::Helper' => { RestoreDatabase => 0 } );
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $DB     = $Kernel::OM->Get('Kernel::System::DB');
 my $API    = $Kernel::OM->Get('Kernel::System::D724::APIAuth');
@@ -30,7 +30,27 @@ for my $TenantID ( $Tenant, $Other ) {
     ), "tenant fixture $TenantID created" );
 }
 
+my $Handle = $DB->Connect();
+$Handle->commit() if !$Handle->{AutoCommit};
+ok( $Handle->{AutoCommit}, 'API authentication test starts in production-style AutoCommit mode' );
 my $Admin = { ID => 'api-admin', TenantIDs => [$Tenant], RoleBindings => { $Tenant => ['tenant_admin'] } };
+ok( $DB->BeginWork(), 'outer transaction starts for API ownership regression' );
+my $NestedClientID = "nested-$Tenant";
+my $Nested = $API->ClientCreate(
+    Subject => $Admin, TenantID => $Tenant, Name => 'Nested transaction ownership', Role => 'requester',
+    UserID => 1, TokenTTL => 60, RateLimit => 2, ClientID => $NestedClientID,
+);
+ok( $Nested->{Success}, 'client create joins an existing caller transaction' );
+ok( !$Handle->{AutoCommit}, 'client create does not commit the caller transaction' );
+ok( $DB->Rollback(), 'caller can roll back its transaction after client create' );
+$DB->Prepare( SQL => 'SELECT COUNT(*) FROM d724_api_client WHERE client_id = ?', Bind => [ \$NestedClientID ] );
+my ($NestedClientCount) = $DB->FetchrowArray();
+is( $NestedClientCount, 0, 'caller rollback removes nested client and its audit mutation' );
+my $NestedDedupeKey = "api-client:$NestedClientID:version:1";
+$DB->Prepare( SQL => 'SELECT COUNT(*) FROM d724_audit_event WHERE tenant_id = ? AND dedupe_key = ?', Bind => [ \$Tenant, \$NestedDedupeKey ] );
+my ($NestedAuditCount) = $DB->FetchrowArray();
+is( $NestedAuditCount, 0, 'caller rollback removes the nested client audit event' );
+
 my $Created = $API->ClientCreate(
     Subject => $Admin, TenantID => $Tenant, Name => 'Acceptance Integration', Role => 'requester',
     UserID => 1, TokenTTL => 60, RateLimit => 2, ClientID => "integration-$Tenant",

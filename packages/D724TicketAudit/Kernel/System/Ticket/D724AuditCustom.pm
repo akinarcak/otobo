@@ -13,13 +13,15 @@ use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.1';
+our $VERSION = '0.8.3';
 our $D724SearchContext;
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
 my $OriginalTicketSearch      = Kernel::System::Ticket::TicketSearch->can('TicketSearch');
 my $OriginalTicketTitleUpdate = \&Kernel::System::Ticket::TicketTitleUpdate;
 my $OriginalTicketQueueSet    = \&Kernel::System::Ticket::TicketQueueSet;
+my $OriginalTicketTypeSet     = \&Kernel::System::Ticket::TicketTypeSet;
+my $OriginalTicketServiceSet  = \&Kernel::System::Ticket::TicketServiceSet;
 my $OriginalTicketCustomerSet = \&Kernel::System::Ticket::TicketCustomerSet;
 my $OriginalTicketLockSet     = \&Kernel::System::Ticket::TicketLockSet;
 my $OriginalTicketStateSet    = \&Kernel::System::Ticket::TicketStateSet;
@@ -94,6 +96,8 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
     };
     $Wrap->( 'TicketTitleUpdate',       $OriginalTicketTitleUpdate, 'ticket.title.updated',       'Title' );
     $Wrap->( 'TicketQueueSet',          $OriginalTicketQueueSet,    'ticket.queue.updated',       'Queue' );
+    $Wrap->( 'TicketTypeSet',           $OriginalTicketTypeSet,     'ticket.type.updated',        'Type' );
+    $Wrap->( 'TicketServiceSet',        $OriginalTicketServiceSet,  'ticket.service.updated',     'Service' );
     $Wrap->( 'TicketCustomerSet',       $OriginalTicketCustomerSet, 'ticket.customer.updated',    'Customer' );
     $Wrap->( 'TicketLockSet',           $OriginalTicketLockSet,     'ticket.lock.updated',        'Lock' );
     $Wrap->( 'TicketStateSet',          $OriginalTicketStateSet,    'ticket.state.updated',       'State' );

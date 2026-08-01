@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
-our $VERSION = '0.7.1';
+our $VERSION = '0.7.2';
 our @ObjectDependencies = ( 'Kernel::Config', 'Kernel::System::DB' );
 
 sub Configure {
@@ -41,9 +41,10 @@ sub Run {
         $Self->PrintError('Database unavailable.');
         return $Self->ExitCodeError();
     }
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
     my ( $TokenCount, $RateCount, $MetricCount );
     my $OK = eval {
-        $DB->BeginWork() if $Handle->{AutoCommit};
+        $DB->BeginWork() if $OwnTransaction;
         $DB->Prepare(
             SQL => "SELECT COUNT(*) FROM d724_api_token WHERE (status = 'revoked' OR expires_at <= current_timestamp) AND create_time < DATE_SUB(current_timestamp, INTERVAL ? DAY)",
             Bind => [ \$TokenDays ],
@@ -71,11 +72,11 @@ sub Run {
             SQL => 'DELETE FROM d724_api_metric WHERE window_start < DATE_SUB(current_timestamp, INTERVAL ? HOUR)',
             Bind => [ \$MetricHours ],
         ) or die "METRIC_DELETE_FAILED\n";
-        $Handle->commit() if !$Handle->{AutoCommit};
+        $Handle->commit() if $OwnTransaction;
         1;
     };
     if (!$OK) {
-        eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        eval { $DB->Rollback() } if $OwnTransaction;
         $Self->PrintError('API retention cleanup failed.');
         return $Self->ExitCodeError();
     }

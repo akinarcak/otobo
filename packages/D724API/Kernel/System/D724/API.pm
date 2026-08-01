@@ -8,7 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.7.1';
+our $VERSION = '0.7.2';
 our @ObjectDependencies = (
     'Kernel::System::CustomerUser',
     'Kernel::System::D724::APIAuth',

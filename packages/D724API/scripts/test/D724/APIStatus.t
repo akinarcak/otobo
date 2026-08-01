@@ -6,7 +6,7 @@ use v5.24; use strict; use warnings; use Test2::V0; use Kernel::System::UnitTest
 my $Command=$Kernel::OM->Get('Kernel::System::Console::Command::Admin::D724::APIStatus');
 my $Status=$Command->StatusData();
 ok($Status->{Success},'API storage status succeeds');
-is($Status->{Version},'0.7.1','status reports package version');
+is($Status->{Version},'0.7.2','status reports package version');
 ok($Status->{Transport}->{CanonicalMount},'canonical /api/v1 PSGI mount is installed');
 ok($Status->{Transport}->{OpenAPI31},'OpenAPI 3.1 contract is installed and parseable');
 ok($Status->{Transport}->{WebhookContract},'webhook subscription contract is installed');

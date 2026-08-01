@@ -10,7 +10,7 @@ use warnings;
 use Digest::SHA qw(sha256_hex);
 use Encode ();
 
-our $VERSION = '0.7.1';
+our $VERSION = '0.7.2';
 our @ObjectDependencies = (
     'Kernel::Config', 'Kernel::System::D724::Audit', 'Kernel::System::D724::TenantGuard',
     'Kernel::System::DB', 'Kernel::System::Log', 'Kernel::System::Main',
@@ -38,8 +38,9 @@ sub ClientCreate {
 
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     my $Handle = $DB->Connect(); return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
     my $Result; my $OK = eval {
-        $DB->BeginWork() if $Handle->{AutoCommit};
+        $DB->BeginWork() if $OwnTransaction;
         my @Values = ( $ClientID, @Param{qw(TenantID Name)}, $Hash, $Param{Role}, 'active', $Param{TokenTTL}, $Param{RateLimit}, $Param{UserID}, $Param{UserID} );
         my @Bind = map { \$_ } @Values;
         die "CLIENT_INSERT_FAILED\n" if !$DB->Do(
@@ -52,11 +53,11 @@ sub ClientCreate {
             Details => { role => $Param{Role}, token_ttl => $Param{TokenTTL}, rate_limit => $Param{RateLimit} },
         );
         die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
-        $Handle->commit() if !$Handle->{AutoCommit};
+        $Handle->commit() if $OwnTransaction;
         $Result = { Success => 1, Data => { ClientID => $ClientID, ClientSecret => $Secret, TenantID => $Param{TenantID}, Role => $Param{Role}, Version => 1 } };
         1;
     };
-    if (!$OK) { my $Failure = $@; eval { $DB->Rollback() } if !$Handle->{AutoCommit}; return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'CLIENT_CREATE_FAILED' ) }
+    if (!$OK) { my $Failure = $@; eval { $DB->Rollback() } if $OwnTransaction; return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'CLIENT_CREATE_FAILED' ) }
     return $Result;
 }
 
@@ -72,8 +73,9 @@ sub TokenIssue {
     my $TokenHash = sha256_hex($Token); my $TTL = $Client->{TokenTTL};
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     my $Handle = $DB->Connect(); return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
     my $OK = eval {
-        $DB->BeginWork() if $Handle->{AutoCommit};
+        $DB->BeginWork() if $OwnTransaction;
         my @Values = ( $TokenHash, $Client->{ClientID}, $TTL ); my @Bind = map { \$_ } @Values;
         die "TOKEN_INSERT_FAILED\n" if !$DB->Do(
             SQL => "INSERT INTO d724_api_token (token_hash, client_id, expires_at, status, create_time) VALUES (?, ?, DATE_ADD(current_timestamp, INTERVAL ? SECOND), 'active', current_timestamp)",
@@ -87,11 +89,11 @@ sub TokenIssue {
             Details => { token_fingerprint => $Fingerprint, expires_in => 0 + $TTL },
         );
         die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
-        $Handle->commit() if !$Handle->{AutoCommit};
+        $Handle->commit() if $OwnTransaction;
         1;
     };
     if (!$OK) {
-        my $Failure = $@; eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        my $Failure = $@; eval { $DB->Rollback() } if $OwnTransaction;
         return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'TOKEN_ISSUE_FAILED' );
     }
     return { Success => 1, Data => { AccessToken => $Token, TokenType => 'Bearer', ExpiresIn => $TTL, TenantID => $Client->{TenantID}, Role => $Client->{Role} } };
@@ -123,8 +125,9 @@ sub ClientSecretRotate {
     my $NextVersion = $Client->{Version} + 1;
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     my $Handle = $DB->Connect(); return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
     my $OK = eval {
-        $DB->BeginWork() if $Handle->{AutoCommit};
+        $DB->BeginWork() if $OwnTransaction;
         my @Values = ( $Hash, $Param{UserID}, $Client->{ClientID}, $Param{TenantID}, $Param{ExpectedVersion} );
         my @Bind = map { \$_ } @Values;
         die "CLIENT_ROTATE_FAILED\n" if !$DB->Do(
@@ -144,11 +147,11 @@ sub ClientSecretRotate {
             ToState => 'active', Details => { version => $NextVersion, all_active_tokens_revoked => 1 },
         );
         die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
-        $Handle->commit() if !$Handle->{AutoCommit};
+        $Handle->commit() if $OwnTransaction;
         1;
     };
     if (!$OK) {
-        my $Failure = $@; eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        my $Failure = $@; eval { $DB->Rollback() } if $OwnTransaction;
         return $Self->_Error('VERSION_CONFLICT') if $Failure =~ /VERSION_CONFLICT/;
         return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'CLIENT_ROTATE_FAILED' );
     }
@@ -178,9 +181,10 @@ sub ClientRevoke {
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     my $Handle = $DB->Connect();
     return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
     my $NextVersion = $Client->{Version} + 1;
     my $OK = eval {
-        $DB->BeginWork() if $Handle->{AutoCommit};
+        $DB->BeginWork() if $OwnTransaction;
         my @ClientValues = ( $Param{UserID}, $Client->{ClientID}, $Param{TenantID}, $Client->{Version} );
         my @ClientBind = map { \$_ } @ClientValues;
         die "CLIENT_REVOKE_FAILED\n" if !$DB->Do(
@@ -201,12 +205,12 @@ sub ClientRevoke {
             ToState => 'revoked', Details => { version => $NextVersion },
         );
         die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
-        $Handle->commit() if !$Handle->{AutoCommit};
+        $Handle->commit() if $OwnTransaction;
         1;
     };
     if (!$OK) {
         my $Failure = $@;
-        eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        eval { $DB->Rollback() } if $OwnTransaction;
         return $Self->_Error('VERSION_CONFLICT') if $Failure =~ /VERSION_CONFLICT/;
         return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'CLIENT_REVOKE_FAILED' );
     }
@@ -254,8 +258,9 @@ sub TokenRevoke {
     my ( $ClientID, $TenantID ) = $DB->FetchrowArray();
     return $Self->_Error('TOKEN_INVALID') if !$ClientID;
     my $Handle = $DB->Connect(); return $Self->_Error('DATABASE_UNAVAILABLE') if !$Handle;
+    my $OwnTransaction = $Handle->{AutoCommit} ? 1 : 0;
     my $OK = eval {
-        $DB->BeginWork() if $Handle->{AutoCommit};
+        $DB->BeginWork() if $OwnTransaction;
         die "TOKEN_REVOKE_FAILED\n" if !$DB->Do(
             SQL => "UPDATE d724_api_token SET status = 'revoked' WHERE token_hash = ? AND status = 'active'", Bind => [ \$Hash ],
         );
@@ -266,11 +271,11 @@ sub TokenRevoke {
             ToState => 'revoked', Details => { token_fingerprint => $Fingerprint },
         );
         die "AUDIT_WRITE_FAILED\n" if !$Audit->{Success};
-        $Handle->commit() if !$Handle->{AutoCommit};
+        $Handle->commit() if $OwnTransaction;
         1;
     };
     if (!$OK) {
-        my $Failure = $@; eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        my $Failure = $@; eval { $DB->Rollback() } if $OwnTransaction;
         return $Self->_Error( $Failure =~ /AUDIT/ ? 'AUDIT_WRITE_FAILED' : 'TOKEN_REVOKE_FAILED' );
     }
     return { Success => 1 };

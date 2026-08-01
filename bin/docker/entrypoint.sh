@@ -52,6 +52,33 @@ function handle_docker_firsttime() {
     mv $g_dir_careoncloud_next/docker_firsttime $g_dir_careoncloud_next/docker_firsttime_handled
 }
 
+# Existing application volumes are intentionally not overwritten at web start.
+# The canonical API mount is a core runtime file, though, and an older volume
+# may predate its introduction. Add it only when absent so an explicit core
+# update remains responsible for replacing an existing file.
+function ensure_canonical_psgi() {
+
+    local source_psgi="$g_dir_careoncloud_next/bin/psgi-bin/careoncloud.psgi"
+    local target_psgi="$CAREONCLOUD_HOME/bin/psgi-bin/careoncloud.psgi"
+
+    if [ -f "$target_psgi" ]; then
+        return
+    fi
+
+    if [ ! -f "$source_psgi" ]; then
+        print_error "canonical PSGI source is missing: $source_psgi"
+        exit 1
+    fi
+
+    mkdir -p "$(dirname "$target_psgi")"
+    cp --archive "$source_psgi" "$target_psgi"
+    {
+        date
+        echo "Restored missing canonical PSGI mount: $target_psgi"
+        echo
+    } >> "$g_update_log"
+}
+
 # An easy way to start bash.
 # Or list files.
 function exec_whatever() {
@@ -253,6 +280,8 @@ if [ "$1" = "web" ]; then
     if [ -f "$g_dir_careoncloud_next/docker_firsttime" ]; then
         handle_docker_firsttime
     fi
+
+    ensure_canonical_psgi
 
     # start webserver, passing the optional second parameter
     exec_web "${2:-deployment}"

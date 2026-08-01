@@ -1,5 +1,18 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-02 — P0.2 API transaction ownership correction
+
+- `D724API` transaction paths now capture ownership before calling `BeginWork()` and commit or roll back only transactions they opened themselves. This covers client create, token issue/revoke, secret rotation, client revoke, and retention cleanup.
+- `APIAuth.t` now contains an outer-transaction regression: a nested client creation must leave the caller transaction open, and the caller rollback must remove both the client and its audit mutation.
+- Evidence: `VERIFIED_BY_CURRENT_TEST`. On 2026-08-02, `APIAuth.t` passed with 59 tests in an isolated transient container using the CareOnCloud candidate app volume and the test-server MariaDB. The active `d724-esm` web and daemon containers were not changed. Test artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/api-auth-0.7.2-test.log`. Rollback: restore `packages/D724API` from the adjacent timestamped backup and restore the candidate-volume files from `/opt/careoncloud/.codex-backup-p0-api-20260802`; neither rollback affects the active old OTOBO volumes.
+- `RISK` / candidate recovery: the first isolated `APIStatus.t` run found `bin/psgi-bin/careoncloud.psgi` absent from the candidate app volume. Copying the canonical core file to that unused candidate volume made `APIStatus.t` pass 25 tests; artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/api-status-0.7.2-rerun.log`. `bin/docker/entrypoint.sh` now restores this file only when absent and fails closed if the image source is absent; Bash syntax was checked on the test server. A fresh candidate web start using a newly built image is still required before cutover.
+
+## 2026-08-02 — P0.2 ticket audit coverage inventory
+
+- `VERIFIED_IN_CODE`: [Ticket audit coverage inventory](security/TICKET-AUDIT-COVERAGE.md) records the covered ticket writes and the four remaining P0 core mutations. No claim of full TicketAudit coverage is made.
+- `VERIFIED_BY_CURRENT_TEST`: `D724TicketAudit 0.8.2` adds transaction-atomic `TicketTypeSet` coverage. Candidate MariaDB regression `TicketAudit.t` passed 64 tests, including audit-disabled type rollback, successful scope-version advancement, and normalized `ticket.type.updated` evidence. Artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/ticket-audit-0.8.2-test.log`.
+- `VERIFIED_BY_CURRENT_TEST`: `D724TicketAudit 0.8.3` adds transaction-atomic `TicketServiceSet` coverage. Candidate MariaDB regression `TicketAudit.t` passed 71 tests, including audit-disabled service rollback, successful scope-version advancement, and normalized `ticket.service.updated` evidence. Artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/ticket-audit-0.8.3-test.log`. The test service fixture is removed by its exact database ID because the core exposes no `ServiceDelete` API.
+
 Son dogrulama: `2026-07-25`
 
 ## Calisan ve kanitlanmis
