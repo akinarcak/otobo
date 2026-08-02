@@ -15,6 +15,11 @@
 - `VERIFIED_BY_CURRENT_TEST`: `D724TicketAudit 0.8.4` adds `TicketDelete` and same-tenant `TicketMerge` coverage. Candidate MariaDB regression `TicketAudit.t` passed 95 tests, including audit-disabled delete/merge rollback, cross-tenant merge rejection, two-scope merge version advancement, normalized merge/delete evidence, and chain verification. Artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/ticket-audit-0.8.4-test.log`. `RISK`: core delete dispatches index/storage hooks outside the MariaDB audit contract; the rollback case produced an Elasticsearch version-conflict log, so cross-system atomicity is not claimed.
 - `VERIFIED_BY_CURRENT_TEST`: `D724TicketAudit 0.8.5` adds transaction-aware `TicketSLASet` and `TicketPendingTimeSet` coverage. Candidate MariaDB regression `TicketAudit.t` passed 108 tests, including audit-disabled SLA/pending-time rollback, successful scope-version advancement, normalized `ticket.sla.updated` / `ticket.pending_time.updated` evidence, and fixture foreign-key cleanup. Artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/ticket-audit-0.8.5-test.log`.
 
+## 2026-08-02 — P0.2 indirect ticket write-route inventory
+
+- `VERIFIED_IN_CODE`: [Indirect ticket write-route inventory](security/TICKET-AUDIT-INDIRECT-ROUTES.md) confirms that Generic Interface TicketCreate/TicketUpdate and several event modules call the standard wrapped ticket methods. This is method-level coverage only; a multi-field Generic Interface update is not request-atomic today.
+- `PARTIAL`: Chat uses its own `ArticleCreate` backend and is not covered by the MIME article wrapper. Long-running scheduler/daemon route regression has not been retained. These remain P0 acceptance gaps.
+
 Son dogrulama: `2026-07-25`
 
 ## Calisan ve kanitlanmis
