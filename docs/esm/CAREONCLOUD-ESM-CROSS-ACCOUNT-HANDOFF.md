@@ -29,11 +29,11 @@ Parola, private key ve GitHub token bu devir dosyasına veya Git’e yazılmayac
 - Çalışma dalı: `codex/esm-foundation`; çalışma ağacı temizdir.
 - Tamamlanan son P0 hedefi: D724TicketAudit 0.8.19 nested timeout/parent rollback sözleşmesi ve manuel Foundation dispatch kapısı.
 - Kanıt: `Test-Foundation.ps1`, `Test-SourceArtifact.ps1`, `Test-CareOnCloudBrand.ps1`, `Test-CriticalLanguage.ps1` ve `Test-CpanSbom.ps1` mevcut commit üzerinde başarılıdır (statik/provenance); güncel runtime adayı hâlâ `TEST_EXISTS_NOT_RERUN` / `RISK`.
-- Açık sonraki hedef: BuildKit-capable izole runner ile güncel aday image ve temiz lifecycle runtime kabulü. Test sunucusunda Buildx yok; aktif `d724-esm-*` servislerine dokunulmadı.
+- Açık sonraki hedef: Ayrı Compose project/volume/port ile güncel aday image üzerinde temiz lifecycle runtime kabulü. Test sunucusunda Buildx 0.34.1 çalışıyor; aktif `d724-esm-*` servislerine dokunulmadı.
 - `Test-Foundation.ps1` 18 D724 paket manifesti ve dosya listesini geçti.
 - CI’de repository dependency Trivy taraması ve temiz lifecycle sonrası `d724/esm:dev` OS/library image taraması tanımlı.
 - Temiz lifecycle ve yerel `Build`/`Up` yolları `docker buildx version` önkoşulu ile korunuyor.
-- Test sunucusunda Docker Compose mevcut, fakat `docker buildx` yok; legacy builder Dockerfile heredoc `RUN` bloklarını boş çalıştırabildiği için güncel runtime image kabulü yapılmadı.
+- Test sunucusunda Docker Compose 2.40.3 ve kullanıcı-local Docker Buildx 0.34.1 mevcut; güncel aday image üretildi. Eski `d724/esm:dev` image’ı kullanıcı onayıyla kaldırıldı; aktif servisler korunuyor.
 - Aktif eski servisler korunmalıdır: `d724-esm-web-1`, `d724-esm-daemon-1`, `d724-esm-db-1`, `d724-esm-redis-1`, `d724-esm-elastic-1`.
 - Bu nedenle aşağıdaki iddialar runtime kabulü değildir: eski `d724/esm:dev` imajı, eski volume’lar, tarihsel MariaDB test logları veya yalnız Perl syntax kontrolü.
 
