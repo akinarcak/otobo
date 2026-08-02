@@ -8,7 +8,7 @@ CareOnCloud ESM, kurumların BT ve kurumsal hizmetlerini tek platformdan yönetm
 
 - Ürün adı: **CareOnCloud ESM**
 - Slogan: **Hizmet Bulutta, Kontrol Sizde.**
-- Lisans: GNU General Public License v3.0 veya sonrası
+- Lisans: GNU General Public License v3.0 only (`GPL-3.0-only`)
 - Üretici: Data Market Bilgi Hizmetleri A.Ş.
 - Ürün adresi: [esm.arcak.net](https://esm.arcak.net)
 
@@ -18,7 +18,7 @@ CareOnCloud adı, logosu ve ticari hizmetleri GPL kapsamındaki yazılım lisans
 
 Ürüne özgü yetenekler `packages/D724*` altında sürümlenen CareOnCloud paketleri olarak geliştirilir. Yerel ve test ortamı profili `development/d724` altındadır. Mimari kararlar, güvenlik sınırları ve yayın durumu [docs/esm](docs/esm) dizininde tutulur.
 
-Aktif geliştirme dalı `codex/esm-foundation` dalıdır. Katkılar GPL-3.0-or-later ile uyumlu olmalı; tenant izolasyonu, audit atomikliği ve çapraz müşteri erişim testlerini korumalıdır.
+Aktif geliştirme dalı `codex/esm-foundation` dalıdır. Katkılar GPL-3.0-only ile uyumlu olmalı; tenant izolasyonu, audit atomikliği ve çapraz müşteri erişim testlerini korumalıdır.
 
 ## Açık kaynak kökeni
 

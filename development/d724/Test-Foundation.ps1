@@ -26,6 +26,21 @@ if ($MissingFiles) {
     throw "Required foundation files are missing: $($MissingFiles -join ', ')"
 }
 
+$LicensePolicyFiles = @(
+    'README.md',
+    'NOTICE',
+    'docs/esm/GPL-COMMERCIAL.md'
+)
+foreach ($RelativePath in $LicensePolicyFiles) {
+    $PolicyText = Get-Content (Join-Path $RepositoryRoot $RelativePath) -Raw
+    if ($PolicyText -notmatch 'GPL-3\.0-only') {
+        throw "License policy is not explicit in $RelativePath."
+    }
+    if ($PolicyText -match 'GPL-3\.0-or-later') {
+        throw "License policy conflicts with GPL-3.0-only in $RelativePath."
+    }
+}
+
 $PackageSources = Get-ChildItem (Join-Path $RepositoryRoot 'packages') -Filter '*.sopm' -Recurse
 if (-not $PackageSources) {
     throw 'No D724 package sources were found.'
@@ -37,8 +52,8 @@ foreach ($PackageSourceFile in $PackageSources) {
     if ($PackageName -ne $PackageSourceFile.Directory.Name) {
         throw "Package name and directory differ: $PackageName"
     }
-    if ($PackageSource.careoncloud_package.License -notmatch 'GENERAL PUBLIC LICENSE Version 3') {
-        throw "$PackageName must declare GPL version 3."
+    if ([string] $PackageSource.careoncloud_package.License -ne 'GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007') {
+        throw "$PackageName must declare the repository GPL-3.0-only package license."
     }
     foreach ($File in $PackageSource.careoncloud_package.Filelist.File) {
         $PackageFile = Join-Path $PackageDirectory $File.Location
