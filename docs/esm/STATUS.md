@@ -2,6 +2,10 @@
 
 ## 2026-08-02 — P0 BuildKit aday image üretimi
 
+## 2026-08-02 — P0 izole aday web health kabulü
+
+- `VERIFIED_BY_CURRENT_TEST`: The candidate image `d724/esm:candidate-dd198c0da` was started in the separate Compose project `careoncloud-candidate-dd198c0da` with new MariaDB, Redis, application, and update volumes and host port `127.0.0.1:18080`. MariaDB and Redis reported healthy; the CareOnCloud web container reported healthy and served `GET /health` with HTTP 200. The active `d724-esm-*` project remained unchanged. This is isolated startup/health evidence only; the 18-package lifecycle, authenticated UI, and MariaDB business-regression suite remain open.
+
 - `VERIFIED_BY_CURRENT_TEST`: On the test server, user-local Docker Buildx `v0.34.1` built `d724/esm:candidate-dd198c0da` from commit `dd198c0dace3a8573fa3946c3651e52517993edb`. The image digest is `sha256:56001da61bf1b66576a85fdc3b33d5c0068bf0bc3da384ed0603aea66514d4ec` and its OCI revision label matches the exact source commit. The Linux build required the repository `.gitattributes` fix forcing `bin/docker/carton` to LF; no source/runtime semantics were changed. This proves candidate image construction and source-to-image provenance only; no candidate Compose lifecycle, MariaDB acceptance, or cutover was run.
 - Cleanup: obsolete candidate archives/checkout, reclaimable BuildKit cache, unused clean app volumes, and (with explicit user approval) the stale non-CareOnCloud `d724/esm:dev` image were removed after the build. Active `d724-esm-*` containers, ESM/DB volumes, candidate image, and preserved historical shallow checkout were not removed. Active container IDs/statuses were unchanged; free space after cleanup is 4.4G.
 
