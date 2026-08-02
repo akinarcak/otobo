@@ -29,6 +29,7 @@
 ## 2026-08-02 — P0 logical database backup/restore acceptance
 
 - `VERIFIED_BY_CURRENT_TEST`: taze, ayrik MariaDB/Redis/application-volume adayinda `careoncloud_esm` database'i mantiksal olarak `mariadb-dump --single-transaction --routines --events` ile alindi ve farkli, once bos `careoncloud_restore_probe` database'ine geri yuklendi. Kaynak ve restore table sayilari `139/139` esitti; restore edilen probe kaydi okundu ve dump SHA-256 kaydedildi. Kanit: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/backup-restore-acceptance.log`. `d724-backup-restore-20260802` aday projesinin sadece kendi DB/app/update volume'lari, container'lari, network'u ve dump'i silindi; aktif `d724-esm` degismedi. Bu kanit logical MariaDB restore kapsar; application volume restore, RPO/RTO olcumu, encrypted/off-host backup ve production cutover kapsami disindadir.
+- `VERIFIED_BY_CURRENT_TEST`: iki yeni, gecici Docker application volume'unda olusturulan probe dosya agaci tar archive ile backup alindi ve bos hedef volume'e restore edildi; probe SHA-256 degeri esitti. Kanit: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/application-volume-restore-acceptance.log`. Kaynak archive ve iki aday volume islem sonunda silindi; bu sadece Docker volume tar/restore mekanizmasini kapsar, gercek uygulama volume'u, encrypted/off-host backup, RPO/RTO ve blue/green cutover kapsamini kapsamaz.
 
 ## 2026-08-02 — P0 migration execution safety
 
