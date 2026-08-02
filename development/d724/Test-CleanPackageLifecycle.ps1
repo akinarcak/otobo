@@ -53,6 +53,8 @@ try {
     Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', 'mkdir -p /tmp/d724-pkgs /tmp/d724-package-out')
     & docker cp (Join-Path $PSScriptRoot 'Accept-GenericInterfaceTicketUpdate.pl') ($WebContainer + ':/tmp/Accept-GenericInterfaceTicketUpdate.pl')
     if ($LASTEXITCODE -ne 0) { throw 'Could not copy Generic Interface acceptance script into the clean lifecycle container.' }
+    & docker cp (Join-Path $PSScriptRoot 'Accept-SchedulerTicketPendingCheck.pl') ($WebContainer + ':/tmp/Accept-SchedulerTicketPendingCheck.pl')
+    if ($LASTEXITCODE -ne 0) { throw 'Could not copy scheduler acceptance script into the clean lifecycle container.' }
     foreach ($Package in $Packages) {
         $Source = Join-Path $RepositoryRoot "packages/$Package"
         if (-not (Test-Path $Source -PathType Container)) { throw "Package source is missing: $Package" }
@@ -80,8 +82,22 @@ deployment=$(bin/careoncloud.Console.pl Admin::Package::List --show-deployment-i
 printf '%s\n' "$deployment"
 ! printf '%s\n' "$deployment" | grep -q 'Not OK'
 printf '%s\n' "$deployment" | grep -c 'Pck. Status: OK' | grep -qx 6
+'@
+    Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', $LifecycleCommand)
+    Invoke-Compose -ComposeArguments @('restart', 'web')
+    $Ready = $false
+    for ($Attempt = 1; $Attempt -le 60; $Attempt++) {
+        $Health = (& docker inspect --format '{{.State.Health.Status}}' $WebContainer 2>$null).Trim()
+        if ($Health -eq 'healthy') { $Ready = $true; break }
+        Start-Sleep -Seconds 2
+    }
+    if (-not $Ready) { throw 'Clean lifecycle web container did not become healthy after package activation.' }
+
+    $AcceptanceCommand = @'
+set -euo pipefail
 bin/careoncloud.Console.pl Admin::User::SetPassword admin "$D724_GI_ACCEPTANCE_PASSWORD" >/dev/null
 D724_GI_ACCEPTANCE_PASSWORD="$D724_GI_ACCEPTANCE_PASSWORD" perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-GenericInterfaceTicketUpdate.pl
+perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-SchedulerTicketPendingCheck.pl
 bin/careoncloud.Console.pl Dev::UnitTest::Run --package D724Problem
 opm=$(find /tmp/d724-package-out -maxdepth 1 -name 'D724Problem-*.opm' -print -quit)
 bin/careoncloud.Console.pl Admin::Package::Uninstall "$opm"
@@ -92,7 +108,7 @@ fi
 bin/careoncloud.Console.pl Admin::Package::Install --force "$opm"
 bin/careoncloud.Console.pl Dev::UnitTest::Run --package D724Problem
 '@
-    Invoke-Compose -ComposeArguments @('exec', '-T', '-e', "D724_GI_ACCEPTANCE_PASSWORD=$GenericInterfacePassword", 'web', 'sh', '-lc', $LifecycleCommand)
+    Invoke-Compose -ComposeArguments @('exec', '-T', '-e', "D724_GI_ACCEPTANCE_PASSWORD=$GenericInterfacePassword", 'web', 'sh', '-lc', $AcceptanceCommand)
     Write-Host 'Clean D724Problem package lifecycle acceptance passed.'
 }
 finally {

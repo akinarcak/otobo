@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.8.10';
+our $VERSION = '0.8.12';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -309,6 +309,33 @@ sub GenericInterfaceTicketUpdateRun {
     return $Result->{Value} if $Result->{Success};
     return $Result->{Response} if ref $Result->{Response} eq 'HASH';
     return { Success => 0, ErrorMessage => 'TicketUpdate transaction rolled back' };
+}
+
+sub SchedulerPendingCheckReconcile {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('TICKET_ID_INVALID') if ( $Param{TicketID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return { Success => 1 } if ( $Param{BeforeState} // q{} ) eq ( $Param{AfterState} // q{} );
+    return $Self->_TransactionRun(
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $Param{TicketID} );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope || $Scope->{Status} ne 'active';
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Param{UserID}, $Param{TicketID}, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE d724_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $Param{TicketID}, UserID => $Param{UserID},
+                Action => 'ticket.state.updated', Version => $Version,
+                FromState => $Self->_StateToken( $Param{BeforeState} ), ToState => $Self->_StateToken( $Param{AfterState} ),
+                Details => { field => 'state', source => 'scheduler.pending_check', version => $Version },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1 };
+        },
+    );
 }
 
 sub _ChatArticleMutationRun {

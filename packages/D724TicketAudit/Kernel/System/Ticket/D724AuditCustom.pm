@@ -13,9 +13,10 @@ use Kernel::GenericInterface::Operation::Ticket::TicketUpdate ();
 use Kernel::GenericInterface::Operation::Ticket::Common ();
 use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
+use Kernel::System::Console::Command::Maint::Ticket::PendingCheck ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.10';
+our $VERSION = '0.8.12';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -43,6 +44,7 @@ my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Com
 my $OriginalGITicketUpdateRun = Kernel::GenericInterface::Operation::Ticket::TicketUpdate->can('Run');
 my $OriginalESSearch          = Kernel::System::Elasticsearch->can('TicketSearch');
 my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch::Search->can('PrepareRequest');
+my $OriginalPendingCheckRun   = Kernel::System::Console::Command::Maint::Ticket::PendingCheck->can('Run');
 
 {
     no warnings 'redefine'; ## no critic
@@ -206,6 +208,47 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->GenericInterfaceTicketUpdateRun(
             Operation => $Self, Original => $OriginalGITicketUpdateRun, Param => \%Param,
         );
+    };
+
+    *Kernel::System::Console::Command::Maint::Ticket::PendingCheck::Run = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalPendingCheckRun->( $Self, %Param )
+            if !$Kernel::OM->Get('Kernel::Config')->Get('D724::TicketPolicy::Enabled');
+
+        my $DB = $Kernel::OM->Get('Kernel::System::DB');
+        return $Self->ExitCodeError() if !$DB->Prepare(
+            SQL => "SELECT key_name FROM d724_tenant WHERE status = 'active' ORDER BY key_name",
+        );
+        my @TenantIDs;
+        while ( my @Row = $DB->FetchrowArray() ) { push @TenantIDs, $Row[0] }
+        for my $TenantID (@TenantIDs) {
+            my $Result = $Kernel::OM->Get('Kernel::System::D724::TicketPolicy')->AutomationScopeRun(
+                TenantID => $TenantID, JobName => 'ticket-pending-check',
+                Code => sub {
+                    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+                    my @TicketIDs = $TicketObject->TicketSearch(
+                        Result => 'ARRAY', StateType => 'pending auto', UserID => 1,
+                    );
+                    my %Before;
+                    for my $TicketID (@TicketIDs) {
+                        my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+                        $Before{$TicketID} = $Ticket{State};
+                    }
+                    local $TicketObject->{D724TicketAuditSuppress} = 1;
+                    my $ExitCode = $OriginalPendingCheckRun->( $Self, %Param );
+                    for my $TicketID (@TicketIDs) {
+                        my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+                        my $Reconcile = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->SchedulerPendingCheckReconcile(
+                            TicketID => $TicketID, UserID => 1, BeforeState => $Before{$TicketID}, AfterState => $Ticket{State},
+                        );
+                        return 1 if !$Reconcile->{Success};
+                    }
+                    return $ExitCode;
+                },
+            );
+            return $Self->ExitCodeError() if !$Result->{Success} || $Result->{Data}->{Result};
+        }
+        return $Self->ExitCodeOk();
     };
 }
 

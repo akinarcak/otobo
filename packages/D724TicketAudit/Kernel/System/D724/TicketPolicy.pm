@@ -8,7 +8,7 @@ use v5.24;
 use strict;
 use warnings;
 
-our $VERSION = '0.8.10';
+our $VERSION = '0.8.12';
 
 our @ObjectDependencies = (
     'Kernel::System::CustomerUser',
@@ -17,6 +17,8 @@ our @ObjectDependencies = (
     'Kernel::System::DB',
     'Kernel::System::Log',
 );
+
+our $AutomationContext;
 
 sub new {
     my ($Type) = @_;
@@ -88,6 +90,14 @@ sub TicketAccessCheck {
 sub ContextResolve {
     my ( $Self, %Param ) = @_;
 
+    if ($AutomationContext) {
+        return {
+            Success => 1, TenantIDs => [ $AutomationContext->{TenantID} ], Unrestricted => 0,
+            Subject => $AutomationContext->{Subject}, SubjectType => 'Automation',
+            Reason => 'ALLOW_AUTOMATION_TENANT_SCOPE',
+        };
+    }
+
     if ( $Param{UserID} ) {
         my $Context = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->ContextGet(
             UserID => $Param{UserID},
@@ -115,6 +125,25 @@ sub ContextResolve {
     }
 
     return $Self->_Deny('SUBJECT_CONTEXT_MISSING');
+}
+
+sub AutomationScopeRun {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Deny('AUTOMATION_CODE_MISSING') if ref $Param{Code} ne 'CODE';
+    my $Authorization = $Kernel::OM->Get('Kernel::System::D724::TenantGuard')->AutomationAuthorize(
+        TenantID => $Param{TenantID}, JobName => $Param{JobName},
+    );
+    return { Success => 0, Error => $Authorization->{Error}, Reason => $Authorization->{Reason} }
+        if !$Authorization->{Success};
+
+    my $Result;
+    my $OK = eval {
+        local $AutomationContext = { TenantID => $Param{TenantID}, Subject => $Authorization->{Subject} };
+        $Result = $Param{Code}->();
+        1;
+    };
+    return { Success => 0, Error => 'AUTOMATION_EXECUTION_FAILED', Reason => $@ || 'UNKNOWN' } if !$OK;
+    return { Success => 1, Data => { Result => $Result, Subject => $Authorization->{Subject} } };
 }
 
 sub _TenantActive {

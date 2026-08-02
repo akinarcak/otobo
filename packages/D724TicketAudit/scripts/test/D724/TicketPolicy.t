@@ -76,6 +76,20 @@ is(
     'FORBIDDEN',
     'unknown agent has no implicit search scope',
 );
+my $AutomationScope = $Policy->AutomationScopeRun(
+    TenantID => $TenantA, JobName => 'ticket-pending-check',
+    Code => sub { return $Policy->SearchScopeApply( Param => { Result => 'ARRAY' } ) },
+);
+ok( $AutomationScope->{Success}, 'trusted automation scope is authorized for an active tenant' );
+is(
+    $AutomationScope->{Data}->{Result}->{Param}->{CustomerID}, [$TenantA],
+    'trusted automation scope injects only its tenant search predicate',
+);
+is(
+    $Policy->AutomationScopeRun( TenantID => $TenantB, JobName => '../unsafe', Code => sub { return 1 } )->{Error},
+    'JOB_NAME_INVALID',
+    'unsafe automation job name is denied before code execution',
+);
 
 my @Visible = $Ticket->TicketSearch( UserID => 1, Result => 'ARRAY', Title => 'Policy ticket*' );
 is( \@Visible, [ $TicketIDs[0] ], 'core TicketSearch returns only the bound tenant ticket' );

@@ -1,8 +1,8 @@
 # Ticket audit indirect write-route inventory
 
 **Status:** `VERIFIED_BY_CURRENT_TEST` for the Generic Interface update route
-on 2026-08-02. This inventory distinguishes that evidence from the remaining
-method-level scheduler and daemon coverage.
+and the core scheduler pending-check route on 2026-08-02. This inventory
+distinguishes those route-specific results from remaining daemon coverage.
 
 ## Generic Interface ticket operations
 
@@ -43,7 +43,12 @@ the coverage does not claim cross-system atomicity.
 Several inherited ticket event modules call the standard wrapped setters (for
 example pending-time reset, forced state/owner changes, and lock actions), so
 their individual ticket-field mutations enter the current method wrappers.
-This is only `VERIFIED_IN_CODE`; no long-running daemon candidate regression
-has been retained. GenericAgent, scheduler task execution, direct DB writes,
-and external side effects need dedicated route-level testing before they can be
-called fully covered.
+
+`VERIFIED_BY_CURRENT_TEST`: the core `Maint::Ticket::PendingCheck` command was
+executed through the real scheduler task-worker fork and Cron handler in a
+fresh isolated Compose candidate. The package runs the command per active
+tenant under TenantGuard automation authorization and reconciles each observed
+state transition with a scope-lock/audit transaction. The retained result
+proves the pending-check route advances the ticket scope and audit chain; it
+does not cover GenericAgent, other scheduler/daemon jobs, direct DB writes, or
+external side effects.
