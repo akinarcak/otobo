@@ -53,4 +53,4 @@ $Manifest = [ordered]@{
     (($Manifest | ConvertTo-Json -Depth 8) + [Environment]::NewLine),
     [System.Text.UTF8Encoding]::new($false)
 )
-Write-Output "Generated source artifact and manifest for $Commit: $ArchivePath"
+Write-Output "Generated source artifact and manifest for ${Commit}: $ArchivePath"
