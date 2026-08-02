@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'development/d724/**'
+      - 'packages/D724*/**'
+      - 'Kernel/**'
+      - 'bin/docker/**'
       - 'docs/esm/**'
       - '.github/workflows/d724-foundation.yml'
   push:
@@ -11,6 +14,9 @@ on:
       - 'codex/esm-*'
     paths:
       - 'development/d724/**'
+      - 'packages/D724*/**'
+      - 'Kernel/**'
+      - 'bin/docker/**'
       - 'docs/esm/**'
       - '.github/workflows/d724-foundation.yml'
 

@@ -47,10 +47,18 @@ foreach ($PackageSourceFile in $PackageSources) {
             throw "$PackageName file list entry is not tracked by Git: $RepositoryRelativePath"
         }
         if ($File.Location -match '\.xml$') {
-            [xml] (Get-Content $PackageFile -Raw) | Out-Null
+            [xml] $PackageXML = Get-Content $PackageFile -Raw
+            if ($PackageXML.otobo_config -eq $null) {
+                throw "$PackageName XML must use the framework otobo_config root: $($File.Location)"
+            }
+            if ([string] $PackageXML.otobo_config.init -notin @('Framework', 'Application', 'Config', 'Changes')) {
+                throw "$PackageName XML has an invalid otobo_config init value: $($File.Location)"
+            }
         }
     }
 }
+
+Write-Host "Validated $($PackageSources.Count) D724 package manifests and file lists."
 
 $ComposeText = Get-Content (Join-Path $PSScriptRoot 'compose.yml') -Raw
 if ($ComposeText -notmatch '\$\{D724_BIND_ADDRESS:-127\.0\.0\.1\}') {
