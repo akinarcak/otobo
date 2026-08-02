@@ -127,6 +127,23 @@ foreach ($PackageSourceFile in $PackageSources) {
 
 Write-Host "Validated $($PackageSources.Count) D724 package manifests and file lists."
 
+[xml] $TicketAuditManifest = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/D724TicketAudit.sopm') -Raw
+$TicketAuditPackageVersion = $TicketAuditManifest.SelectSingleNode('/careoncloud_package/Version').InnerText
+$TicketAuditStatusSource = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/Console/Command/Admin/D724/TicketAuditStatus.pm') -Raw
+$TicketAuditStatusRegression = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/scripts/test/D724/TicketAuditStatus.t') -Raw
+foreach ($RequiredStatusVersionContract in @(
+    "our `$VERSION = '$TicketAuditPackageVersion'",
+    'Version => $VERSION',
+    'D724TicketAudit $VERSION:',
+    "is( `$Status->{Version}, '$TicketAuditPackageVersion', 'status identifies current package version' )"
+)) {
+    $Present = $TicketAuditStatusSource -match [regex]::Escape($RequiredStatusVersionContract) `
+        -or $TicketAuditStatusRegression -match [regex]::Escape($RequiredStatusVersionContract)
+    if (!$Present) {
+        throw "TicketAudit status version is not aligned with package $TicketAuditPackageVersion`: $RequiredStatusVersionContract"
+    }
+}
+
 $CleanLifecycleScript = Get-Content (Join-Path $PSScriptRoot 'Test-CleanPackageLifecycle.ps1') -Raw
 foreach ($RequiredRuntimeContract in @(
     '/opt/careoncloud/bin/psgi-bin/careoncloud.psgi',
