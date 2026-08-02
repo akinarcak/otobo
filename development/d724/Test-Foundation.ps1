@@ -27,6 +27,7 @@ $RequiredFiles = @(
     'development/d724/migrate-careoncloud-brand.sh',
     'development/d724/Accept-GenericInterfaceTicketUpdate.pl',
     'development/d724/Accept-SchedulerTicketPendingCheck.pl',
+    'development/d724/Accept-GenericAgentTenantScope.pl',
     'packages/D724Foundation/D724Foundation.sopm'
 )
 
@@ -211,6 +212,17 @@ foreach ($RequiredTicketCreateAcceptanceContract in @(
 )) {
     if ($GenericInterfaceAcceptance -notmatch [regex]::Escape($RequiredTicketCreateAcceptanceContract)) {
         throw "Generic Interface TicketCreate acceptance is missing required contract: $RequiredTicketCreateAcceptanceContract"
+    }
+}
+
+$GenericAgentAcceptance = Get-Content (Join-Path $PSScriptRoot 'Accept-GenericAgentTenantScope.pl') -Raw
+foreach ($RequiredGenericAgentAcceptanceContract in @(
+    'GenericAgent crossed tenant scope',
+    'GenericAgent priority audit event missing',
+    'GenericAgent tenant audit chain verification failed'
+)) {
+    if ($GenericAgentAcceptance -notmatch [regex]::Escape($RequiredGenericAgentAcceptanceContract)) {
+        throw "GenericAgent tenant acceptance is missing required contract: $RequiredGenericAgentAcceptanceContract"
     }
 }
 

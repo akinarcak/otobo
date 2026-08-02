@@ -72,6 +72,8 @@ test "$(tr -d '\r\n' < /opt/careoncloud_install/careoncloud_next/git-commit.txt)
     if ($LASTEXITCODE -ne 0) { throw 'Could not copy Generic Interface acceptance script into the clean lifecycle container.' }
     & docker cp (Join-Path $PSScriptRoot 'Accept-SchedulerTicketPendingCheck.pl') ($WebContainer + ':/tmp/Accept-SchedulerTicketPendingCheck.pl')
     if ($LASTEXITCODE -ne 0) { throw 'Could not copy scheduler acceptance script into the clean lifecycle container.' }
+    & docker cp (Join-Path $PSScriptRoot 'Accept-GenericAgentTenantScope.pl') ($WebContainer + ':/tmp/Accept-GenericAgentTenantScope.pl')
+    if ($LASTEXITCODE -ne 0) { throw 'Could not copy GenericAgent acceptance script into the clean lifecycle container.' }
     foreach ($Package in $Packages) {
         $Source = Join-Path $RepositoryRoot "packages/$Package"
         if (-not (Test-Path $Source -PathType Container)) { throw "Package source is missing: $Package" }
@@ -127,6 +129,7 @@ set -euo pipefail
 bin/careoncloud.Console.pl Admin::User::SetPassword admin "$D724_GI_ACCEPTANCE_PASSWORD" >/dev/null
 D724_GI_ACCEPTANCE_PASSWORD="$D724_GI_ACCEPTANCE_PASSWORD" perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-GenericInterfaceTicketUpdate.pl
 perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-SchedulerTicketPendingCheck.pl
+perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-GenericAgentTenantScope.pl
 for package in \
     D724Foundation D724TenantGuard D724Audit D724TenantDirectory D724Catalog \
     D724Request D724TicketAudit D724CMDB D724Change D724Commitment D724Webhook \
