@@ -53,7 +53,7 @@ sub CustomReport {
     @Dimensions = grep { !$Seen{"d:$_"}++ } @Dimensions;
     @Metrics    = grep { !$Seen{"m:$_"}++ } @Metrics;
 
-    my @Select = ( map { $Dimension{$_}->{SQL} } @Dimensions, map { $Metric{$_}->{SQL} } @Metrics );
+    my @Select = ( ( map { $Dimension{$_}->{SQL} } @Dimensions ), ( map { $Metric{$_}->{SQL} } @Metrics ) );
     my @Where = ( 'r.tenant_id = ?', 'r.create_time >= ?', 'r.create_time < DATE_ADD(?, INTERVAL 1 DAY)' );
     my @BindValue = ( $Param{TenantID}, $Param{From}, $Param{To} );
     if ( defined $Param{Status} && length $Param{Status} ) {
