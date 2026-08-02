@@ -14,6 +14,7 @@ use Kernel::GenericInterface::Operation::Ticket::TicketUpdate ();
 use Kernel::GenericInterface::Operation::Ticket::Common ();
 use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
+use Kernel::System::GenericAgent ();
 use Kernel::System::Console::Command::Maint::Ticket::PendingCheck ();
 
 our $ObjectManagerDisabled = 1;
@@ -47,6 +48,7 @@ my $OriginalGITicketUpdateRun = Kernel::GenericInterface::Operation::Ticket::Tic
 my $OriginalESSearch          = Kernel::System::Elasticsearch->can('TicketSearch');
 my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch::Search->can('PrepareRequest');
 my $OriginalPendingCheckRun   = Kernel::System::Console::Command::Maint::Ticket::PendingCheck->can('Run');
+my $OriginalGenericAgentJobRun = Kernel::System::GenericAgent->can('JobRun');
 
 {
     no warnings 'redefine'; ## no critic
@@ -260,6 +262,28 @@ my $OriginalPendingCheckRun   = Kernel::System::Console::Command::Maint::Ticket:
             return $Self->ExitCodeError() if !$Result->{Success} || $Result->{Data}->{Result};
         }
         return $Self->ExitCodeOk();
+    };
+
+    *Kernel::System::GenericAgent::JobRun = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalGenericAgentJobRun->( $Self, %Param )
+            if !$Kernel::OM->Get('Kernel::Config')->Get('D724::TicketPolicy::Enabled');
+
+        my $DB = $Kernel::OM->Get('Kernel::System::DB');
+        return if !$DB->Prepare(
+            SQL => "SELECT key_name FROM d724_tenant WHERE status = 'active' ORDER BY key_name",
+        );
+        my @TenantIDs;
+        while ( my @Row = $DB->FetchrowArray() ) { push @TenantIDs, $Row[0] }
+
+        for my $TenantID (@TenantIDs) {
+            my $Result = $Kernel::OM->Get('Kernel::System::D724::TicketPolicy')->AutomationScopeRun(
+                TenantID => $TenantID, JobName => 'generic-agent',
+                Code => sub { return $OriginalGenericAgentJobRun->( $Self, %Param ) },
+            );
+            return if !$Result->{Success} || !$Result->{Data}->{Result};
+        }
+        return 1;
     };
 }
 

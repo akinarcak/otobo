@@ -57,16 +57,16 @@ Several inherited ticket event modules call the standard wrapped setters (for
 example pending-time reset, forced state/owner changes, and lock actions), so
 their individual ticket-field mutations enter the current method wrappers.
 
-`VERIFIED_IN_CODE` / `RISK`: database-backed GenericAgent work is executed by
-`SchedulerTaskWorker::GenericAgent` as `UserID => 1`. For example,
-`GenericAgent::AutoPriorityIncrease` reaches the wrapped `TicketPrioritySet`
-method, so its single-ticket mutation receives the scope/audit transaction
-contract. However, the job's ticket selection and execution are not wrapped in
-`D724::TicketPolicy->AutomationScopeRun`; the administrative user context can
-therefore remain unrestricted before that mutation is reached. GenericAgent is
-not accepted as tenant-isolated, request-atomic, or daemon-regression-tested.
-It needs a tenant-scoped job selection/execution adapter and a clean candidate
-cross-tenant negative acceptance before this status may change.
+`VERIFIED_IN_CODE` / `RISK`: database-backed GenericAgent
+work is executed by `SchedulerTaskWorker::GenericAgent` as `UserID => 1`.
+`D724TicketAudit 0.8.14` now wraps `GenericAgent::JobRun`, enumerates active
+tenants, and runs the original job once per tenant in
+`D724::TicketPolicy->AutomationScopeRun`. The existing `TicketSearch` wrapper
+then supplies that automation context's tenant `CustomerID` filter before the
+job can select tickets; for example, `AutoPriorityIncrease` subsequently uses
+the wrapped `TicketPrioritySet` mutation. This is source-level coverage only:
+it is not yet tenant-isolation, atomic-request, or daemon-regression acceptance.
+A clean candidate cross-tenant GenericAgent acceptance is still required.
 
 `VERIFIED_BY_CURRENT_TEST`: the core `Maint::Ticket::PendingCheck` command was
 executed through the real scheduler task-worker fork and Cron handler in a

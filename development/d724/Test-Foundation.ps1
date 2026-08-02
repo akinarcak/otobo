@@ -154,6 +154,17 @@ foreach ($RequiredTicketCreateAtomicityContract in @(
     }
 }
 
+foreach ($RequiredGenericAgentTenantContract in @(
+    'Kernel::System::GenericAgent::JobRun',
+    "JobName => 'generic-agent'",
+    'AutomationScopeRun',
+    "SELECT key_name FROM d724_tenant WHERE status = 'active' ORDER BY key_name"
+)) {
+    if ($TicketAuditWrapper -notmatch [regex]::Escape($RequiredGenericAgentTenantContract)) {
+        throw "TicketAudit is missing the GenericAgent tenant contract: $RequiredGenericAgentTenantContract"
+    }
+}
+
 $GenericInterfaceAcceptance = Get-Content (Join-Path $PSScriptRoot 'Accept-GenericInterfaceTicketUpdate.pl') -Raw
 foreach ($RequiredTicketCreateAcceptanceContract in @(
     "Type => 'Ticket::TicketCreate'",
