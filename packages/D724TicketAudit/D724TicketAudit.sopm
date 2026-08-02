@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <careoncloud_package version="1.0">
-    <Name>D724TicketAudit</Name><Version>0.8.7</Version><Framework>11.1.x</Framework>
+    <Name>D724TicketAudit</Name><Version>0.8.9</Version><Framework>11.1.x</Framework>
     <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Tenant-safe OTOBO ticket search and Generic Interface reads with transaction-atomic mutation audit.</Description>

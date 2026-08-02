@@ -9,12 +9,13 @@ use strict;
 use warnings;
 use Kernel::System::Ticket::Article::Backend::MIMEBase ();
 use Kernel::System::Ticket::Article::Backend::Chat ();
+use Kernel::GenericInterface::Operation::Ticket::TicketUpdate ();
 use Kernel::GenericInterface::Operation::Ticket::Common ();
 use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.7';
+our $VERSION = '0.8.9';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -39,6 +40,7 @@ my $OriginalChatArticleCreate = \&Kernel::System::Ticket::Article::Backend::Chat
 my $OriginalChatArticleUpdate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleUpdate;
 my $OriginalChatArticleDelete = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleDelete;
 my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Common->can('CheckAccessPermissions');
+my $OriginalGITicketUpdateRun = Kernel::GenericInterface::Operation::Ticket::TicketUpdate->can('Run');
 my $OriginalESSearch          = Kernel::System::Elasticsearch->can('TicketSearch');
 my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch::Search->can('PrepareRequest');
 
@@ -195,6 +197,15 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
             TicketID => $Param{TicketID}, Action => $Action, %Identity,
         );
         return $Policy->{Success} ? 1 : undef;
+    };
+
+    *Kernel::GenericInterface::Operation::Ticket::TicketUpdate::Run = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalGITicketUpdateRun->( $Self, %Param )
+            if !$Kernel::OM->Get('Kernel::Config')->Get('D724::TicketAudit::Enabled');
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->GenericInterfaceTicketUpdateRun(
+            Operation => $Self, Original => $OriginalGITicketUpdateRun, Param => \%Param,
+        );
     };
 }
 

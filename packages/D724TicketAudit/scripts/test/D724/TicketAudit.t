@@ -255,6 +255,20 @@ ok( $ChatBackend->ArticleDelete( TicketID => $TicketID, ArticleID => $ChatArticl
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatVersion + 2, 'successful chat article delete advances scope version once' );
 $ChatEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ChatArticleID" );
 is( [ map { $_->{Action} } @{ $ChatEvents->{Data} } ], [qw(ticket.chat_article.created ticket.chat_article.updated ticket.chat_article.deleted)], 'chat article lifecycle emits normalized audit events' );
+my %BeforeGIUpdate = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+my $BeforeGIUpdateVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
+my $GIUpdateRollback = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->GenericInterfaceTicketUpdateRun(
+    Operation => bless( {}, 'D724TicketAuditGIUpdateTest' ), Param => { Data => { TicketID => $TicketID } },
+    Original => sub {
+        my ( $Operation, %Param ) = @_;
+        ok( $Ticket->TicketTitleUpdate( TicketID => $TicketID, Title => 'Generic Interface rollback title', UserID => 1 ), 'GI inner title mutation succeeds before request failure' );
+        return { Success => 0, ErrorMessage => 'intentional GI request failure' };
+    },
+);
+ok( !$GIUpdateRollback->{Success}, 'Generic Interface request failure is returned after rollback' );
+my %AfterGIUpdate = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterGIUpdate{Title}, $BeforeGIUpdate{Title}, 'failed Generic Interface request rolls all ticket mutations back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $BeforeGIUpdateVersion, 'failed Generic Interface request rolls scope mutations back' );
 ok(
     !$Ticket->TicketCustomerSet( TicketID => $TicketID, No => $OtherTenant, User => 'other-user', UserID => 1 ),
     'ticket cannot be reassigned across tenant boundary',

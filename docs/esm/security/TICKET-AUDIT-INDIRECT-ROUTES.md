@@ -12,10 +12,13 @@ queue, lock, type, pending time, state, service, SLA, customer, priority,
 owner, and responsible. The `D724TicketAudit` method wrappers therefore apply
 their tenant-scope and per-mutation audit transaction contract to those calls.
 
-`TicketUpdate` performs its fields sequentially. It is **not** evidence that a
-multi-field Generic Interface request has an all-or-nothing transaction across
-all of its setter calls. That request-level atomicity remains a P0 acceptance
-gap and requires a dedicated operation-level adapter plus regression coverage.
+`TicketUpdate` performs its fields sequentially. `D724TicketAudit` now wraps
+the operation's `Run` method in one transaction; nested ticket mutation
+wrappers use savepoints. The candidate regression verifies that a request whose
+later step fails rolls an earlier successful title mutation, its scope version,
+and its audit mutation back. This is adapter-boundary coverage; an
+authenticated Generic Interface transport contract test with a real multi-field
+request is still required before claiming end-to-end transport acceptance.
 
 ## Article backends
 

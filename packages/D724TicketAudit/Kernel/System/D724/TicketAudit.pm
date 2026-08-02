@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.8.7';
+our $VERSION = '0.8.9';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -291,6 +291,26 @@ sub ChatArticleDeleteRun {
     return $Self->_ChatArticleMutationRun( %Param, Action => 'ticket.chat_article.deleted', ToState => 'deleted' );
 }
 
+sub GenericInterfaceTicketUpdateRun {
+    my ( $Self, %Param ) = @_;
+    my $TicketID = $Param{Param}->{Data}->{TicketID};
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            return if !$TicketID;
+            eval { $Kernel::OM->Get('Kernel::System::Ticket')->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Response = $Param{Original}->( $Param{Operation}, %{ $Param{Param} } );
+            return { Success => 1, Value => $Response } if ref $Response eq 'HASH' && $Response->{Success};
+            return { Success => 0, Error => 'GENERIC_INTERFACE_TICKET_UPDATE_FAILED', Response => $Response };
+        },
+    );
+    return $Result->{Value} if $Result->{Success};
+    return $Result->{Response} if ref $Result->{Response} eq 'HASH';
+    return { Success => 0, ErrorMessage => 'TicketUpdate transaction rolled back' };
+}
+
 sub _ChatArticleMutationRun {
     my ( $Self, %Param ) = @_;
     my $Call = $Param{Param};
@@ -474,7 +494,30 @@ sub _TransactionRun {
     my $DB = $Kernel::OM->Get('Kernel::System::DB');
     my $Handle = $DB->Connect();
     return $Self->_Error('TRANSACTION_CONNECTION_FAILED') if !$Handle;
-    return $Param{Code}->() if !$Handle->{AutoCommit};
+    if ( !$Handle->{AutoCommit} ) {
+        my $Savepoint = 'd724_ticket_audit_' . int( rand 1_000_000_000 );
+        my $Result;
+        my $OK = eval {
+            die "TRANSACTION_SAVEPOINT_FAILED\n" if !$DB->Do( SQL => "SAVEPOINT $Savepoint" );
+            $Result = $Param{Code}->();
+            die "TRANSACTION_RESULT_INVALID\n" if ref $Result ne 'HASH' || !exists $Result->{Success};
+            my $SQL = $Result->{Success} ? "RELEASE SAVEPOINT $Savepoint" : "ROLLBACK TO SAVEPOINT $Savepoint";
+            die "TRANSACTION_SAVEPOINT_FINALIZE_FAILED\n" if !$DB->Do( SQL => $SQL );
+            1;
+        };
+        if ( !$OK ) {
+            my $Failure = $@ || 'TRANSACTION_FAILED';
+            eval { $DB->Do( SQL => "ROLLBACK TO SAVEPOINT $Savepoint" ) };
+            $Self->_Log("D724 ticket audit nested transaction failed: $Failure");
+            $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
+            return $Self->_Error('TRANSACTION_FAILED');
+        }
+        if ( !$Result->{Success} ) {
+            $Self->_Log("D724 ticket audit mutation rejected: $Result->{Error}");
+            $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
+        }
+        return $Result;
+    }
     my $Result;
     my $OK = eval {
         die "TRANSACTION_START_FAILED\n" if !$DB->BeginWork();
