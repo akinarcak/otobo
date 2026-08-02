@@ -150,6 +150,19 @@ foreach ($RequiredCleanPackage in @(
 if ($CleanLifecycleScript -notmatch [regex]::Escape("grep -qx 18")) {
     throw 'Clean package lifecycle must require all 18 D724 package deployments.'
 }
+foreach ($RequiredCleanTestPackage in @(
+    'D724Foundation', 'D724TenantGuard', 'D724Audit', 'D724TenantDirectory',
+    'D724Catalog', 'D724Request', 'D724TicketAudit', 'D724Problem', 'D724CMDB',
+    'D724Change', 'D724Commitment', 'D724Webhook', 'D724API', 'D724Identity',
+    'D724SCIM', 'D724Reporting', 'D724Assist', 'D724Observability'
+)) {
+    if ($CleanLifecycleScript -notmatch [regex]::Escape($RequiredCleanTestPackage)) {
+        throw "Clean package lifecycle does not run required D724 test package: $RequiredCleanTestPackage"
+    }
+}
+if ($CleanLifecycleScript -notmatch [regex]::Escape('Dev::UnitTest::Run --package "$package"')) {
+    throw 'Clean package lifecycle must execute the full installed-package UnitTest loop.'
+}
 
 $TicketAuditWrapper = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/Ticket/D724AuditCustom.pm') -Raw
 $TicketAuditService = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/D724/TicketAudit.pm') -Raw

@@ -127,6 +127,13 @@ set -euo pipefail
 bin/careoncloud.Console.pl Admin::User::SetPassword admin "$D724_GI_ACCEPTANCE_PASSWORD" >/dev/null
 D724_GI_ACCEPTANCE_PASSWORD="$D724_GI_ACCEPTANCE_PASSWORD" perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-GenericInterfaceTicketUpdate.pl
 perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-SchedulerTicketPendingCheck.pl
+for package in \
+    D724Foundation D724TenantGuard D724Audit D724TenantDirectory D724Catalog \
+    D724Request D724TicketAudit D724CMDB D724Change D724Commitment D724Webhook \
+    D724API D724Identity D724SCIM D724Reporting D724Assist D724Observability
+do
+    bin/careoncloud.Console.pl Dev::UnitTest::Run --package "$package"
+done
 bin/careoncloud.Console.pl Dev::UnitTest::Run --package D724Problem
 opm=$(find /tmp/d724-package-out -maxdepth 1 -name 'D724Problem-*.opm' -print -quit)
 bin/careoncloud.Console.pl Admin::Package::Uninstall "$opm"
@@ -138,7 +145,7 @@ bin/careoncloud.Console.pl Admin::Package::Install --force "$opm"
 bin/careoncloud.Console.pl Dev::UnitTest::Run --package D724Problem
 '@
     Invoke-Compose -ComposeArguments @('exec', '-T', '-e', "D724_GI_ACCEPTANCE_PASSWORD=$GenericInterfacePassword", 'web', 'sh', '-lc', $AcceptanceCommand)
-    Write-Host 'Clean D724Problem package lifecycle acceptance passed.'
+    Write-Host 'Clean D724 package lifecycle acceptance passed.'
 }
 finally {
     if (Test-Path $EnvironmentFile) {

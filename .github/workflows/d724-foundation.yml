@@ -75,6 +75,6 @@ jobs:
           path: artifacts/careoncloud-cpan-sbom.cdx.json
           if-no-files-found: error
 
-      - name: Accept clean D724Problem package lifecycle
+      - name: Accept clean D724 package lifecycle
         shell: pwsh
         run: ./development/d724/Test-CleanPackageLifecycle.ps1
