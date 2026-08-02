@@ -44,6 +44,14 @@ try {
     }
     if (-not $Ready) { throw 'Clean lifecycle web container did not become healthy.' }
 
+    $RuntimeContract = @'
+set -eu
+test -f /opt/careoncloud/bin/psgi-bin/careoncloud.psgi
+test -f /opt/careoncloud_install/careoncloud_next/bin/psgi-bin/careoncloud.psgi
+grep -F 'careoncloud.psgi' /opt/careoncloud_install/entrypoint.sh >/dev/null
+'@
+    Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', $RuntimeContract)
+
     $QuickSetupOutput = Invoke-Compose -ComposeArguments @(
         'exec', '-T', 'web', 'bin/docker/quick_setup.pl',
         '--db-password', $DatabasePassword,

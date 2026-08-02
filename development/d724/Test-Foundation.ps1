@@ -107,6 +107,17 @@ foreach ($PackageSourceFile in $PackageSources) {
 
 Write-Host "Validated $($PackageSources.Count) D724 package manifests and file lists."
 
+$CleanLifecycleScript = Get-Content (Join-Path $PSScriptRoot 'Test-CleanPackageLifecycle.ps1') -Raw
+foreach ($RequiredRuntimeContract in @(
+    '/opt/careoncloud/bin/psgi-bin/careoncloud.psgi',
+    '/opt/careoncloud_install/careoncloud_next/bin/psgi-bin/careoncloud.psgi',
+    "grep -F 'careoncloud.psgi' /opt/careoncloud_install/entrypoint.sh"
+)) {
+    if ($CleanLifecycleScript -notmatch [regex]::Escape($RequiredRuntimeContract)) {
+        throw "Clean package lifecycle is missing the CareOnCloud image runtime contract: $RequiredRuntimeContract"
+    }
+}
+
 $ComposeText = Get-Content (Join-Path $PSScriptRoot 'compose.yml') -Raw
 if ($ComposeText -notmatch '\$\{D724_BIND_ADDRESS:-127\.0\.0\.1\}') {
     throw 'Compose must default its HTTP bind address to localhost.'
