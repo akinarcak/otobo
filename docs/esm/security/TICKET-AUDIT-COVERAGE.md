@@ -56,6 +56,17 @@ both writes and advance the scope twice. Foundation locks these assertions.
 Candidate MariaDB execution is still required before runtime acceptance is
 claimed.
 
+### Deferred flag-specific design
+
+`TicketFlagSet` and `TicketFlagDelete` are not generic ticket-field mutations:
+they persist rows keyed by `TicketID`, flag `Key`, and acting `UserID`, and
+`TicketFlagDelete` also supports an `AllUsers` bulk branch. A future adapter
+must capture the per-user/bulk before-state from `TicketFlagGet`, protect the
+ticket tenant scope, audit the exact flag key and actor scope, clear the ticket
+flag cache on rollback/failure, and test both set and delete paths. Until that
+adapter exists, watcher/seen flags remain outside the transaction-atomic audit
+claim.
+
 ## Implementation order and acceptance gate
 
 1. Keep every newly discovered direct ticket write behind the same immutable
