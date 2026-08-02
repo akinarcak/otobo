@@ -230,7 +230,7 @@ foreach ($Template in $PublicIssueTemplates) {
     }
 }
 
-$SecretScanRoots = @('packages', 'development/d724', 'docs/esm', '.github') |
+$SecretScanRoots = @('packages', 'development', 'docs', '.github', 'Kernel', 'bin', 'scripts') |
     ForEach-Object { Join-Path $RepositoryRoot $_ } |
     Where-Object { Test-Path $_ }
 $SecretPatterns = @(
@@ -238,13 +238,41 @@ $SecretPatterns = @(
     '(?i)\bAKIA[0-9A-Z]{16}\b',
     '(?i)\bgh[pousr]_[A-Za-z0-9_]{20,}\b'
 )
+$KnownSecretFixtureFiles = @(
+    (Join-Path $RepositoryRoot 'scripts/test/SMIME.t')
+)
+$KnownSecretFixtureRoots = @(
+    (Join-Path $RepositoryRoot 'scripts/test/sample')
+)
 foreach ($Root in $SecretScanRoots) {
     foreach ($Candidate in Get-ChildItem $Root -Recurse -File) {
+        if ($Candidate.FullName -in $KnownSecretFixtureFiles) {
+            continue
+        }
+        if ($KnownSecretFixtureRoots | Where-Object { $Candidate.FullName.StartsWith($_ + [System.IO.Path]::DirectorySeparatorChar, [System.StringComparison]::OrdinalIgnoreCase) }) {
+            continue
+        }
         $CandidateText = Get-Content $Candidate.FullName -Raw -ErrorAction Stop
         foreach ($Pattern in $SecretPatterns) {
             if ($CandidateText -match $Pattern) {
                 throw "Potential committed secret material in $($Candidate.FullName)"
             }
+        }
+    }
+}
+foreach ($RootReleaseFile in @(
+    'careoncloud.elasticsearch.dockerfile',
+    'careoncloud.nginx.dockerfile',
+    'careoncloud.selenium-chrome.dockerfile',
+    'careoncloud.web.dockerfile',
+    'cpanfile.docker',
+    'cpanfile.docker.snapshot'
+)) {
+    $Candidate = Join-Path $RepositoryRoot $RootReleaseFile
+    $CandidateText = Get-Content $Candidate -Raw -ErrorAction Stop
+    foreach ($Pattern in $SecretPatterns) {
+        if ($CandidateText -match $Pattern) {
+            throw "Potential committed secret material in $Candidate"
         }
     }
 }
