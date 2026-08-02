@@ -1,5 +1,10 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-03 — P0 TicketAudit runtime kabulü
+
+- `VERIFIED_BY_CURRENT_TEST`: Kalan iki TicketAudit failure transaction-depth kaybı değildi. Başarılı unknown-channel mutation sonrasında ticket/article cache temizlenmediği için GI rollback snapshot'ı stale kalıyordu; merge içindeki farklı Ticket nesnesinin unlock-timeout adapter'ı ise global merge suppression'ını aşarak version-2 dedupe anahtarını tüketiyordu.
+- `VERIFIED_BY_CURRENT_TEST`: `9ec8f132a` cache invalidation ve merge audit ownership düzeltmesi izole aday ortamına kuruldu. D724TicketAudit 4 dosya / 227 test `PASS`; Foundation 18 paket manifesti/dosya listesi kapısı da `PASS`. Expected fail-closed policy logları test failure değildir. Aktif `d724-esm-*` servisleri değiştirilmedi.
+
 ## 2026-08-02 — P0 temiz aday paket regresyonu
 
 - `VERIFIED_BY_CURRENT_TEST`: Temiz aday MariaDB/Redis/web ortamında 18 D724 SOPM paketi yeniden build/install edildi; kurulum döngüsü tamamlandı. Paket testlerinde Foundation, TenantGuard, Audit, TenantDirectory, Catalog, Request, Problem, CMDB, Change, Commitment, Webhook, Identity, SCIM, Assist ve Observability paketleri `PASS` oldu.

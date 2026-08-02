@@ -1,6 +1,6 @@
 # CareOnCloud ESM — Hesaplar Arası Tek Devir Dosyası
 
-**Devir tarihi:** 2026-08-02  
+**Devir tarihi:** 2026-08-03  
 **Repo:** `https://github.com/akinarcak/otobo`  
 **Çalışma dalı:** `codex/esm-foundation`  
 **Durum:** Geliştirme prototipi; üretime hazır değildir.
@@ -25,11 +25,11 @@ Parola, private key ve GitHub token bu devir dosyasına veya Git’e yazılmayac
 
 ## Mevcut kanıt durumu
 
-- Son commit: `bc157ccde49694f0cfb532e82af87d40b966821f docs(esm): record static P0 gate rerun`.
+- Son doğrulanmış kod commit'i: `9ec8f132a fix(esm): preserve ticket cache and merge audit ownership`.
 - Çalışma dalı: `codex/esm-foundation`; çalışma ağacı temizdir.
-- Tamamlanan son P0 hedefi: D724TicketAudit 0.8.19 nested timeout/parent rollback sözleşmesi ve manuel Foundation dispatch kapısı.
-- Kanıt: `Test-Foundation.ps1`, `Test-SourceArtifact.ps1`, `Test-CareOnCloudBrand.ps1`, `Test-CriticalLanguage.ps1` ve `Test-CpanSbom.ps1` mevcut commit üzerinde başarılıdır (statik/provenance); güncel runtime adayı hâlâ `TEST_EXISTS_NOT_RERUN` / `RISK`.
-- Açık sonraki hedef: Ayrı Compose project/volume/port ile güncel aday image üzerinde temiz lifecycle runtime kabulü. Test sunucusunda Buildx 0.34.1 çalışıyor; aktif `d724-esm-*` servislerine dokunulmadı.
+- Tamamlanan son P0 hedefi: D724TicketAudit cache/merge audit ownership düzeltmesi, quick-setup legacy fixture temizliği ve izole aday runtime kabulü.
+- Kanıt: D724TicketAudit 4 dosya / 227 test, D724API 6 dosya / 160 test ve D724Reporting 4 dosya / 73 test güncel adayda `PASS`; `Test-Foundation.ps1` mevcut kaynakta `PASS`. Aktif `d724-esm-*` servislerine dokunulmadı.
+- Açık sonraki hedef: Kaynak commit'iyle etiketlenmiş yeni image üzerinden tam `Test-CleanPackageLifecycle.ps1` kabulünü tek koşuda çalıştırmak ve aday image provenance'ını son commit'e taşımak.
 - `Test-Foundation.ps1` 18 D724 paket manifesti ve dosya listesini geçti.
 - CI’de repository dependency Trivy taraması ve temiz lifecycle sonrası `d724/esm:dev` OS/library image taraması tanımlı.
 - Temiz lifecycle ve yerel `Build`/`Up` yolları `docker buildx version` önkoşulu ile korunuyor.
