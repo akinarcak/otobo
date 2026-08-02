@@ -124,7 +124,8 @@ my $OriginalGenericAgentJobRun = Kernel::System::GenericAgent->can('JobRun');
         no strict 'refs'; ## no critic
         *{"Kernel::System::Ticket::$Method"} = sub {
             my ( $Self, %Param ) = @_;
-            return $Original->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+            return $Original->( $Self, %Param )
+                if $Self->{D724TicketAuditSuppress} || $D724TicketAuditMergeSuppress;
             return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->MutationRun(
                 TicketObject => $Self, Original => $Original, Param => \%Param,
                 Action => $Action, Field => $Field, AllowNested => $AllowNested,

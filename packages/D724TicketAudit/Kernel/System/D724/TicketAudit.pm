@@ -355,6 +355,10 @@ sub InvalidArticleDeleteRun {
             return { Success => 1, Value => $Success };
         },
     );
+    if ( $Result->{Success} ) {
+        eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+        eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+    }
     return $Result->{Success} ? $Result->{Value} : undef;
 }
 
