@@ -1,5 +1,10 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-02 — P0 BuildKit aday image üretimi
+
+- `VERIFIED_BY_CURRENT_TEST`: On the test server, user-local Docker Buildx `v0.34.1` built `d724/esm:candidate-dd198c0da` from commit `dd198c0dace3a8573fa3946c3651e52517993edb`. The image digest is `sha256:56001da61bf1b66576a85fdc3b33d5c0068bf0bc3da384ed0603aea66514d4ec` and its OCI revision label matches the exact source commit. The Linux build required the repository `.gitattributes` fix forcing `bin/docker/carton` to LF; no source/runtime semantics were changed. This proves candidate image construction and source-to-image provenance only; no candidate Compose lifecycle, MariaDB acceptance, or cutover was run.
+- Cleanup: obsolete candidate archives/checkout and reclaimable BuildKit cache were removed after the build; active `d724-esm-*` containers, ESM/DB volumes, and preserved historical shallow checkout were not removed. Free space after cleanup was 1.6G.
+
 ## 2026-08-02 — P0 runner read-only doğrulaması
 
 - `VERIFIED_BY_CURRENT_TEST` (read-only runner probe): `test@100.86.171.110` accepted the configured test credentials. Docker Compose `2.40.3` is available, filesystem free space is `4.7G`, and the expected active containers are `d724-esm-elastic-1`, `d724-esm-daemon-1`, `d724-esm-web-1`, `d724-esm-redis-1`, and `d724-esm-db-1`. `docker buildx` is unavailable, so no candidate build or lifecycle was started. No active service was changed.
