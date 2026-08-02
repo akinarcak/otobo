@@ -64,8 +64,10 @@ $ServiceID = $Webservice->WebserviceAdd(
 die "webservice add failed\n" if !$ServiceID;
 
 my $NewTitle = 'Generic Interface acceptance after update';
+local @ENV{qw(http_proxy HTTP_PROXY https_proxy HTTPS_PROXY all_proxy ALL_PROXY)};
+delete @ENV{qw(http_proxy HTTP_PROXY https_proxy HTTPS_PROXY all_proxy ALL_PROXY)};
 my $Response = HTTP::Tiny->new( timeout => 20 )->post(
-    "http://127.0.0.1:5000/nph-genericinterface.pl/Webservice/$ServiceName/TicketUpdate",
+    "http://127.0.0.1:5000/careoncloud/nph-genericinterface.pl/Webservice/$ServiceName/TicketUpdate",
     {
         headers => { 'content-type' => 'application/json' },
         content => $JSON->encode({
@@ -76,8 +78,14 @@ my $Response = HTTP::Tiny->new( timeout => 20 )->post(
 );
 die "Generic Interface HTTP response failed: $Response->{status}\n" if !$Response->{success};
 my $Payload = eval { $JSON->decode( $Response->{content} ) };
-die "Generic Interface response is not JSON\n" if !$Payload || ref $Payload ne 'HASH' || !$Payload->{Success};
+if ( !$Payload || ref $Payload ne 'HASH' || ( $Payload->{TicketID} // 0 ) != $TicketID ) {
+    my $ContentType = $Response->{headers}->{'content-type'} // q{};
+    my $Preview = substr( $Response->{content} // q{}, 0, 240 );
+    $Preview =~ s{[^\x20-\x7e]}{ }gsmx;
+    die "Generic Interface response is invalid ($ContentType): $Preview\n";
+}
 
+$Ticket->_TicketCacheClear( TicketID => $TicketID );
 my %Updated = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $UserID );
 die "HTTP title update did not persist\n" if $Updated{Title} ne $NewTitle;
 die "HTTP priority update did not persist\n" if $Updated{Priority} ne '4 high';

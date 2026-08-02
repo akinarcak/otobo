@@ -1,8 +1,8 @@
 # Ticket audit indirect write-route inventory
 
-**Status:** `VERIFIED_IN_CODE` on 2026-08-02. This inventory distinguishes
-method-level coverage from request-level atomicity and does not claim runtime
-acceptance for every route.
+**Status:** `VERIFIED_BY_CURRENT_TEST` for the Generic Interface update route
+on 2026-08-02. This inventory distinguishes that evidence from the remaining
+method-level scheduler and daemon coverage.
 
 ## Generic Interface ticket operations
 
@@ -16,9 +16,13 @@ their tenant-scope and per-mutation audit transaction contract to those calls.
 the operation's `Run` method in one transaction; nested ticket mutation
 wrappers use savepoints. The candidate regression verifies that a request whose
 later step fails rolls an earlier successful title mutation, its scope version,
-and its audit mutation back. This is adapter-boundary coverage; an
-authenticated Generic Interface transport contract test with a real multi-field
-request is still required before claiming end-to-end transport acceptance.
+and its audit mutation back.
+
+An isolated clean candidate also accepted an authenticated REST request through
+`/careoncloud/nph-genericinterface.pl` that changed title and priority in one
+request. The database re-read verified both values, scope version `1 -> 3`, the
+two normalized audit actions, and a valid tenant audit chain. Evidence:
+`/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/gi-http-acceptance.log`.
 
 ## Article backends
 

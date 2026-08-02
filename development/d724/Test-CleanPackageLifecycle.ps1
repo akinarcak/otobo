@@ -81,7 +81,7 @@ printf '%s\n' "$deployment"
 ! printf '%s\n' "$deployment" | grep -q 'Not OK'
 printf '%s\n' "$deployment" | grep -c 'Pck. Status: OK' | grep -qx 6
 bin/careoncloud.Console.pl Admin::User::SetPassword admin "$D724_GI_ACCEPTANCE_PASSWORD" >/dev/null
-D724_GI_ACCEPTANCE_PASSWORD="$D724_GI_ACCEPTANCE_PASSWORD" perl /tmp/Accept-GenericInterfaceTicketUpdate.pl
+D724_GI_ACCEPTANCE_PASSWORD="$D724_GI_ACCEPTANCE_PASSWORD" perl -I. -IKernel/cpan-lib -ICustom /tmp/Accept-GenericInterfaceTicketUpdate.pl
 bin/careoncloud.Console.pl Dev::UnitTest::Run --package D724Problem
 opm=$(find /tmp/d724-package-out -maxdepth 1 -name 'D724Problem-*.opm' -print -quit)
 bin/careoncloud.Console.pl Admin::Package::Uninstall "$opm"
