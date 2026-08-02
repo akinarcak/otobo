@@ -133,7 +133,9 @@ foreach ($RequiredRuntimeContract in @(
     '/opt/careoncloud_install/careoncloud_next/bin/psgi-bin/careoncloud.psgi',
     "grep -F 'careoncloud.psgi' /opt/careoncloud_install/entrypoint.sh",
     'D724_GIT_COMMIT=$GitCommit',
-    'D724_EXPECTED_GIT_COMMIT=$GitCommit'
+    'D724_EXPECTED_GIT_COMMIT=$GitCommit',
+    'docker buildx version',
+    'legacy builder cannot execute the CareOnCloud Dockerfile heredoc RUN blocks'
 )) {
     if ($CleanLifecycleScript -notmatch [regex]::Escape($RequiredRuntimeContract)) {
         throw "Clean package lifecycle is missing the CareOnCloud image runtime contract: $RequiredRuntimeContract"
@@ -322,7 +324,11 @@ foreach ($RequiredVulnerabilityScanContract in @(
     'scanners: vuln',
     'severity: HIGH,CRITICAL',
     "exit-code: '1'",
-    'trivy-fs-results.json'
+    'trivy-fs-results.json',
+    'scan-type: image',
+    'image-ref: d724/esm:dev',
+    'vuln-type: os,library',
+    'trivy-image-results.json'
 )) {
     if ($FoundationWorkflow -notmatch [regex]::Escape($RequiredVulnerabilityScanContract)) {
         throw "Foundation workflow is missing the vulnerability scan contract: $RequiredVulnerabilityScanContract"
