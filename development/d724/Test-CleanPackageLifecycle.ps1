@@ -80,6 +80,8 @@ test "$(tr -d '\r\n' < /opt/careoncloud_install/careoncloud_next/git-commit.txt)
     Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', 'mkdir -p /tmp/d724-pkgs /tmp/d724-package-out')
     & docker cp (Join-Path $PSScriptRoot 'Accept-GenericInterfaceTicketUpdate.pl') ($WebContainer + ':/tmp/Accept-GenericInterfaceTicketUpdate.pl')
     if ($LASTEXITCODE -ne 0) { throw 'Could not copy Generic Interface acceptance script into the clean lifecycle container.' }
+    & docker cp (Join-Path $PSScriptRoot 'Clean-QuickSetupTicket.pl') ($WebContainer + ':/tmp/Clean-QuickSetupTicket.pl')
+    if ($LASTEXITCODE -ne 0) { throw 'Could not copy quick-setup fixture cleanup script into the clean lifecycle container.' }
     & docker cp (Join-Path $PSScriptRoot 'Accept-SchedulerTicketPendingCheck.pl') ($WebContainer + ':/tmp/Accept-SchedulerTicketPendingCheck.pl')
     if ($LASTEXITCODE -ne 0) { throw 'Could not copy scheduler acceptance script into the clean lifecycle container.' }
     & docker cp (Join-Path $PSScriptRoot 'Accept-GenericAgentTenantScope.pl') ($WebContainer + ':/tmp/Accept-GenericAgentTenantScope.pl')
@@ -91,8 +93,9 @@ test "$(tr -d '\r\n' < /opt/careoncloud_install/careoncloud_next/git-commit.txt)
         if ($LASTEXITCODE -ne 0) { throw "Could not copy $Package into the clean lifecycle container." }
     }
 
-    $LifecycleCommand = @'
+$LifecycleCommand = @'
 set -euo pipefail
+perl -I. -IKernel/cpan-lib -ICustom /tmp/Clean-QuickSetupTicket.pl
 build_install() {
     package="$1"
     sopm="/tmp/d724-pkgs/$package/$package.sopm"
