@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<careoncloud_config version="2.0" init="Application">
+<otobo_config version="2.0" init="Application">
     <Setting Name="D724::Audit::Enabled" Required="1" Valid="1">
         <Description Translatable="1">Enables tenant-safe normalized D724 audit events.</Description>
         <Navigation>Core::D724::Audit</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
@@ -12,4 +12,4 @@
         <Description Translatable="1">Deployment-specific secret salt used to pseudonymize source IP addresses.</Description>
         <Navigation>Core::D724::Audit</Navigation><Value><Item ValueType="String">replace-in-production-with-secret-store-value</Item></Value>
     </Setting>
-</careoncloud_config>
+</otobo_config>

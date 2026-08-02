@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<careoncloud_config version="2.0" init="Application">
+<otobo_config version="2.0" init="Application">
     <Setting Name="D724::API::Enabled" Required="1" Valid="1">
         <Description Translatable="1">Enable the fail-closed D724 API authorization core.</Description>
         <Navigation>Core::D724::API</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
@@ -59,4 +59,4 @@
             </Item>
         </Value>
     </Setting>
-</careoncloud_config>
+</otobo_config>

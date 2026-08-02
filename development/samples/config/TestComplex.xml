@@ -2,7 +2,7 @@
 <!--
     * This file is for testing development purpose only!
 -->
-<careoncloud_config version="2.0" init="Application">
+<otobo_config version="2.0" init="Application">
    <Setting Name="TestAoA" Required="1" Valid="1">
         <Description Translatable="1">Test AoA.</Description>
         <Navigation>TestComplex</Navigation>
@@ -468,4 +468,4 @@
             </Hash>
         </Value>
     </Setting>
-</careoncloud_config>
+</otobo_config>

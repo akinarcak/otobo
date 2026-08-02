@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<careoncloud_config version="2.0" init="Config">
+<otobo_config version="2.0" init="Config">
     <Setting Name="Cache::Redis###Server" Required="1" Valid="1">
         <Description Translatable="1">Redis server address. Example: 127.0.0.1:6379.</Description>
         <Navigation>Core::Cache</Navigation>
@@ -21,4 +21,4 @@
             <Item ValueType="Checkbox">0</Item>
         </Value>
     </Setting>
-</careoncloud_config>
+</otobo_config>

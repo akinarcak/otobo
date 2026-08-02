@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<careoncloud_config version="2.0" init="Framework">
+<otobo_config version="2.0" init="Framework">
     <Setting Name="SecureMode" Required="1" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.</Description>
         <Navigation>Core</Navigation>
@@ -11111,4 +11111,4 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <!-- End Namespaces -->
-</careoncloud_config>
+</otobo_config>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<careoncloud_config version="2.0" init="Application">
+<otobo_config version="2.0" init="Application">
     <Setting Name="D724::SCIM::Enabled" Required="1" Valid="1">
         <Description Translatable="1">Enable tenant-isolated SCIM 2.0 provisioning.</Description>
         <Navigation>Core::D724::SCIM</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
@@ -21,4 +21,4 @@
             <Item Key="NavBarName"></Item>
         </Hash></Item></Value>
     </Setting>
-</careoncloud_config>
+</otobo_config>

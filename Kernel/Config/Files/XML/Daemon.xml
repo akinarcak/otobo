@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<careoncloud_config version="2.0" init="Application">
+<otobo_config version="2.0" init="Application">
     <Setting Name="Frontend::Module###AgentDaemonInfo" Required="0" Valid="1">
         <Description Translatable="1">Frontend module registration for the agent interface.</Description>
         <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
@@ -880,4 +880,4 @@
             </Hash>
         </Value>
     </Setting>
-</careoncloud_config>
+</otobo_config>

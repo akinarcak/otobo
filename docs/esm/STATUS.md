@@ -23,6 +23,10 @@
 
 ## 2026-08-02 — P0.4 candidate package-install gate
 
+- `VERIFIED_BY_CURRENT_TEST`: the candidate console supports `Dev::Package::Build` and `Admin::Package::Install` (not `Admin::Package::Build`). A transient container built the D724Problem OPM, installed 0.2.0, then upgraded it to 0.2.2 on the unused candidate app volume and MariaDB. The package manager applied the `d724_problem` schema and loaded `D724::Problem::Enabled = 1`.
+- `VERIFIED_BY_CURRENT_TEST`: D724Problem 0.2.2 uses savepoints when called inside a caller-owned transaction, so an audit write failure rolls back only the Problem mutation. Candidate regressions passed: `Problem.t` 20, `ProblemFrontend.t` 6, and `ProblemStatus.t` 2. Artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/problem-package-0.2.2-upgrade-tests.log`. Active `d724-esm` web and daemon containers were not changed.
+- `VERIFIED_IN_CODE` / candidate compatibility: internal SysConfig XML schema names were restored from `careoncloud_config` to the framework-required `otobo_config`; CareOnCloud remains the product-facing name. This prevents package configuration deployment from silently skipping settings.
+
 - `RISK`: Candidate MariaDB runtime acceptance for `D724Problem 0.2.0` was attempted with all three package tests. It failed because `d724_problem` is absent from the candidate database; copying source files alone does not apply the manifest `DatabaseInstall` schema. The candidate console has no `Admin::Package::Build` command, so a reproducible OPM build/install/upgrade pipeline is required before this package can be accepted. Test artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/problem-candidate.log`. The failed test left zero `problem-%` tenant fixtures.
 
 Son dogrulama: `2026-07-25`

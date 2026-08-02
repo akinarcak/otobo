@@ -2,7 +2,7 @@
 <!--
     * This file is for testing development purpose only!
 -->
-<careoncloud_config version="2.0" init="Application">
+<otobo_config version="2.0" init="Application">
     <Setting Name="TestString" Required="0" Valid="1">
         <Description Translatable="1">String item.</Description>
         <Navigation>Test</Navigation>
@@ -643,4 +643,4 @@
             </Hash>
         </Value>
     </Setting>
-</careoncloud_config>
+</otobo_config>

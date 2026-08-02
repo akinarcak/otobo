@@ -66,7 +66,7 @@ Parses a XML file into a list of Perl structures and meta data.
     my $PerlStructure = $SysConfigXMLObject->SettingListParse(
         XMLInput => '
             <?xml version="1.0" encoding="utf-8"?>
-            <careoncloud_config version="2.0" init="Application">
+            <otobo_config version="2.0" init="Application">
                 <Setting Name="Test1" Required="1" Valid="1">
                     <Description Translatable="1">Test 1.</Description>
                     <Navigation>Core::Ticket</Navigation>
@@ -81,7 +81,7 @@ Parses a XML file into a list of Perl structures and meta data.
                         <Item ValueType="File">/usr/bin/gpg</Item>
                     </Value>
                 </Setting>
-            </careoncloud_config>
+            </otobo_config>
         ',
         XMLFilename => 'Test.xml'
     );
@@ -161,15 +161,15 @@ sub SettingListParse {
         return;
     }
 
-    # Don't require that 'careoncloud_config' is the root in order to be compatible older behavior
+    # Don't require that 'otobo_config' is the root in order to be compatible older behavior
     my $ConfigNode;
     {
-        ( $ConfigNode, my @OtherConfigNodes ) = $Document->findnodes('descendant-or-self::careoncloud_config');
+        ( $ConfigNode, my @OtherConfigNodes ) = $Document->findnodes('descendant-or-self::otobo_config');
 
         if ( !$ConfigNode ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Invalid XML format found in $XMLFilename: node 'careoncloud_config' not found",
+                Message  => "Invalid XML format found in $XMLFilename: node 'otobo_config' not found",
             );
 
             return;
@@ -178,7 +178,7 @@ sub SettingListParse {
         if (@OtherConfigNodes) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Invalid XML format found in $XMLFilename: multiple 'careoncloud_config' nodes found",
+                Message  => "Invalid XML format found in $XMLFilename: multiple 'otobo_config' nodes found",
             );
 
             return;

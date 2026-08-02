@@ -246,7 +246,7 @@ sub CleanLicenseHeaderInDir {
 
 =head2 MigrateXMLConfig()
 
-replace the XML element I<otrs_config> to I<careoncloud_config>.
+replace the XML element I<otrs_config> to I<otobo_config>.
 
     $OTRSToOTOBOObject->MigrateXMLConfig(
         File         => '/opt/otobo/Test.pm',
@@ -277,8 +277,8 @@ sub MigrateXMLConfig {
     return 1 unless $Content =~ m{<otrs_config.*?version="2.0"};
 
     # now the actual transformation
-    $Content =~ s{^<otrs_config}{<careoncloud_config}gsmx;
-    $Content =~ s{^</otrs_config}{</careoncloud_config}gsmx;
+    $Content =~ s{^<otrs_config}{<otobo_config}gsmx;
+    $Content =~ s{^</otrs_config}{</otobo_config}gsmx;
 
     # Save result in the original file
     my $SaveSuccess = $MainObject->FileWrite(
