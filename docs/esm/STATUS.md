@@ -26,6 +26,10 @@
 
 - `VERIFIED_IN_CODE`: `security/TENANT-PATH-MATRIX.md`, merkezi policy, directory, katalog, request, API, ticket/GI, search, cache, reporting, webhook ve scheduler yollarini ilgili test/kabul artefaktlariyla esler. Native OTOBO ekranlari, tum Generic Interface operasyonlari, diger daemonlar ve platform-admin bypass'i acikca `PARTIAL` olarak isaretlenmistir; bu nedenle tam tenant izolasyonu iddiasi yoktur.
 
+## 2026-08-02 — P0 CareOnCloud security policy
+
+- `VERIFIED_IN_CODE`: root `SECURITY.md` upstream-only/fork-excluding policy yerine CareOnCloud kapsamı, private GitHub vulnerability reporting URL'i, 3 is gunu acknowledgement, 7 takvim gunu critical response hedefi, CVE koordinasyonu ve managed customer bildirimini tanimlar. Foundation kapisi bu zorunlu terimleri ve eski `security@otobo.org`/fork-exclusion dilinin yoklugunu denetler. `RISK`: GitHub private vulnerability reporting ayarinin `akinarcak/otobo` reposunda etkin oldugu mevcut oturumda API ile dogrulanamadi; versioned release oncesi repository owner tarafindan etkinlestirilmeli ve ekrandan kanitlanmalidir.
+
 ## 2026-08-02 — P0 logical database backup/restore acceptance
 
 - `VERIFIED_BY_CURRENT_TEST`: taze, ayrik MariaDB/Redis/application-volume adayinda `careoncloud_esm` database'i mantiksal olarak `mariadb-dump --single-transaction --routines --events` ile alindi ve farkli, once bos `careoncloud_restore_probe` database'ine geri yuklendi. Kaynak ve restore table sayilari `139/139` esitti; restore edilen probe kaydi okundu ve dump SHA-256 kaydedildi. Kanit: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/backup-restore-acceptance.log`. `d724-backup-restore-20260802` aday projesinin sadece kendi DB/app/update volume'lari, container'lari, network'u ve dump'i silindi; aktif `d724-esm` degismedi. Bu kanit logical MariaDB restore kapsar; application volume restore, RPO/RTO olcumu, encrypted/off-host backup ve production cutover kapsami disindadir.

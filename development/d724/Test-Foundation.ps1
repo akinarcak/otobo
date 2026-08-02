@@ -7,6 +7,7 @@ $ErrorActionPreference = 'Stop'
 $RepositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $RequiredFiles = @(
     'LICENSE',
+    'SECURITY.md',
     'COPYING-Third-Party',
     'docs/esm/PRODUCT.md',
     'docs/esm/ARCHITECTURE.md',
@@ -44,6 +45,27 @@ foreach ($RelativePath in $LicensePolicyFiles) {
     }
     if ($PolicyText -match 'GPL-3\.0-or-later') {
         throw "License policy conflicts with GPL-3.0-only in $RelativePath."
+    }
+}
+
+$SecurityPolicy = Get-Content (Join-Path $RepositoryRoot 'SECURITY.md') -Raw
+$RequiredSecurityPolicyTerms = @(
+    'github.com/akinarcak/otobo/security/advisories/new',
+    'within three business days',
+    'within seven calendar days',
+    'CVE assignment',
+    'Managed customers',
+    'candidate builds',
+    'not excluded because this repository is a fork'
+)
+foreach ($Term in $RequiredSecurityPolicyTerms) {
+    if ($SecurityPolicy -notmatch [regex]::Escape($Term)) {
+        throw "Security policy is missing required term: $Term"
+    }
+}
+foreach ($ForbiddenTerm in @('security@otobo.org', 'forks of OTOBO', 'OTOBO Team Vulnerability Disclosure Policy')) {
+    if ($SecurityPolicy -match [regex]::Escape($ForbiddenTerm)) {
+        throw "Security policy retains upstream-only disclosure language: $ForbiddenTerm"
     }
 }
 
