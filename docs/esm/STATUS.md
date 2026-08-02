@@ -2,6 +2,7 @@
 
 ## 2026-08-02 — P0.5 lisans metadata tutarlılığı
 
+- `VERIFIED_BY_CURRENT_TEST`: OCI image license labels in the CareOnCloud web, Alpine web, nginx, Elasticsearch, and Selenium Dockerfiles are now the SPDX value `GPL-3.0-only`. The foundation gate rejects the prior `GNU General Public License v3.0 or later` label, keeping release-image metadata aligned with the repository license policy. This is a repository metadata contract, not legal advice.
 - `VERIFIED_BY_CURRENT_TEST`: CareOnCloud kaynak ve paket politikası `GPL-3.0-only` olarak tekleştirildi. D724 paket kaynak başlıkları, Foundation tanılama manifesti, API kontratı ve ticari politika zaten bu tanımla uyumluydu; root README ve NOTICE'daki eski `GPL-3.0-or-later` ifadesi `GPL-3.0-only` olarak düzeltildi. SOPM'lerin tam GPL v3 metadatası (`GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007`) aynı lisans tercihini taşır.
 - `Test-Foundation.ps1` artık README, NOTICE ve GPL-COMMERCIAL politikasında açık `GPL-3.0-only` tanımını ve çelişen `GPL-3.0-or-later` ifadesinin yokluğunu; tüm D724 SOPM manifestlerinde de kanonik GPL v3 metadatasını zorunlu kılar. Upstream telif ve GPL bildirimleri korunur. Bu bir hukuki görüş değil, depodaki metadata sözleşmesidir.
 

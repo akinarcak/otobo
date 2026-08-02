@@ -101,7 +101,7 @@ LABEL maintainer='CareOnCloud ESM <esm@arcak.net>'
 LABEL org.opencontainers.image.authors='CareOnCloud ESM <esm@arcak.net>'
 LABEL org.opencontainers.image.description='CareOnCloud ESM is an open-source enterprise service management platform'
 LABEL org.opencontainers.image.documentation='https://esm.arcak.net'
-LABEL org.opencontainers.image.licenses='GNU General Public License v3.0 or later'
+LABEL org.opencontainers.image.licenses='GPL-3.0-only'
 LABEL org.opencontainers.image.url='https://github.com/RotherOSS/otobo'
 LABEL org.opencontainers.image.vendor='CareOn Secure Cloud Services'
 

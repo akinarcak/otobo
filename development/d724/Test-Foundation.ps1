@@ -48,6 +48,23 @@ foreach ($RelativePath in $LicensePolicyFiles) {
     }
 }
 
+$ContainerLicenseFiles = @(
+    'careoncloud.elasticsearch.dockerfile',
+    'careoncloud.nginx.dockerfile',
+    'careoncloud.selenium-chrome.dockerfile',
+    'careoncloud.web.dockerfile',
+    'development/docker/careoncloud.web.alpine.dockerfile'
+)
+foreach ($RelativePath in $ContainerLicenseFiles) {
+    $DockerfileText = Get-Content (Join-Path $RepositoryRoot $RelativePath) -Raw
+    if ($DockerfileText -notmatch "org\.opencontainers\.image\.licenses='GPL-3\.0-only'") {
+        throw "Container license label is not GPL-3.0-only in $RelativePath."
+    }
+    if ($DockerfileText -match 'GNU General Public License v3\.0 or later') {
+        throw "Container license label conflicts with GPL-3.0-only in $RelativePath."
+    }
+}
+
 $SecurityPolicy = Get-Content (Join-Path $RepositoryRoot 'SECURITY.md') -Raw
 $RequiredSecurityPolicyTerms = @(
     'github.com/akinarcak/otobo/security/advisories/new',
