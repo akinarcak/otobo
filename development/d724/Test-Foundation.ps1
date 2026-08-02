@@ -203,10 +203,14 @@ foreach ($RequiredInvalidArticleContract in @(
     'Kernel::System::Ticket::Article::Backend::Invalid::ArticleDelete',
     'InvalidArticleDeleteRun',
     'ticket.unknown_channel_article.deleted',
-    'INVALID_ARTICLE_DELETE_FAILED'
+    'INVALID_ARTICLE_DELETE_FAILED',
+    'failed unknown-channel delete rolls backend mutation back',
+    'successful unknown-channel delete advances scope version once',
+    'unknown-channel delete emits one normalized audit event'
 )) {
     $Present = $TicketAuditWrapper -match [regex]::Escape($RequiredInvalidArticleContract) `
-        -or $TicketAuditService -match [regex]::Escape($RequiredInvalidArticleContract)
+        -or $TicketAuditService -match [regex]::Escape($RequiredInvalidArticleContract) `
+        -or $TicketAuditRegression -match [regex]::Escape($RequiredInvalidArticleContract)
     if (!$Present) {
         throw "TicketAudit is missing the Invalid article delete contract: $RequiredInvalidArticleContract"
     }

@@ -255,6 +255,52 @@ ok( $ChatBackend->ArticleDelete( TicketID => $TicketID, ArticleID => $ChatArticl
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatVersion + 2, 'successful chat article delete advances scope version once' );
 $ChatEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ChatArticleID" );
 is( [ map { $_->{Action} } @{ $ChatEvents->{Data} } ], [qw(ticket.chat_article.created ticket.chat_article.updated ticket.chat_article.deleted)], 'chat article lifecycle emits normalized audit events' );
+my %BeforeInvalidDelete = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+my $BeforeInvalidDeleteVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
+my $InvalidArticleID = 900000000 + int rand 99999999;
+my $InvalidDeleteOriginal = sub {
+    my ( $Backend, %Param ) = @_;
+    my @Values = ( 'Unknown-channel delete marker', $Param{TicketID} );
+    my @Bind = map { \$_ } @Values;
+    return $DB->Do( SQL => 'UPDATE ticket SET title = ? WHERE id = ?', Bind => \@Bind );
+};
+my $InvalidBackend = bless( {}, 'D724TicketAuditInvalidBackendTest' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok(
+    !$Kernel::OM->Get('Kernel::System::D724::TicketAudit')->InvalidArticleDeleteRun(
+        ArticleBackend => $InvalidBackend, Original => $InvalidDeleteOriginal,
+        Param => { TicketID => $TicketID, ArticleID => $InvalidArticleID, CommunicationChannelID => 999, UserID => 1 },
+    ),
+    'unknown-channel article delete fails closed when audit is unavailable',
+);
+my %AfterInvalidDeleteFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterInvalidDeleteFailure{Title}, $BeforeInvalidDelete{Title}, 'failed unknown-channel delete rolls backend mutation back' );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version},
+    $BeforeInvalidDeleteVersion,
+    'failed unknown-channel delete rolls scope version back',
+);
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->InvalidArticleDeleteRun(
+        ArticleBackend => $InvalidBackend, Original => $InvalidDeleteOriginal,
+        Param => { TicketID => $TicketID, ArticleID => $InvalidArticleID, CommunicationChannelID => 999, UserID => 1 },
+    ),
+    'unknown-channel article delete succeeds after audit recovers',
+);
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version},
+    $BeforeInvalidDeleteVersion + 1,
+    'successful unknown-channel delete advances scope version once',
+);
+my $InvalidDeleteEvents = $Audit->List(
+    Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$InvalidArticleID",
+);
+is(
+    [ map { $_->{Action} } @{ $InvalidDeleteEvents->{Data} } ],
+    ['ticket.unknown_channel_article.deleted'],
+    'unknown-channel delete emits one normalized audit event',
+);
 my %BeforeGIUpdate = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
 my $BeforeGIUpdateVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
 my $GIUpdateRollback = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->GenericInterfaceTicketUpdateRun(
