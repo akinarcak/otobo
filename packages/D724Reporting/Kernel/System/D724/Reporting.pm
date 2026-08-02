@@ -83,7 +83,7 @@ sub CustomReport {
         Data => {
             TenantID => $Param{TenantID}, From => $Param{From}, To => $Param{To},
             Dimensions => \@Dimensions, Metrics => \@Metrics,
-            Columns => [ map { $Dimension{$_}->{Label} } @Dimensions, map { $Metric{$_}->{Label} } @Metrics ],
+            Columns => [ ( map { $Dimension{$_}->{Label} } @Dimensions ), ( map { $Metric{$_}->{Label} } @Metrics ) ],
             Rows => \@Rows,
         },
     };
