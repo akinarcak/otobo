@@ -68,6 +68,11 @@ the wrapped `TicketPrioritySet` mutation. This is source-level coverage only:
 it is not yet tenant-isolation, atomic-request, or daemon-regression acceptance.
 A clean candidate cross-tenant GenericAgent acceptance is still required.
 
+The `8db2629` source snapshot compiled `D724AuditCustom` and
+`D724::TicketAudit` in an isolated container using the test server's available
+Perl runtime. This is syntax-only evidence; it does not exercise the scheduler,
+tenant filter, MariaDB transaction, or failure rollback.
+
 `VERIFIED_BY_CURRENT_TEST`: the core `Maint::Ticket::PendingCheck` command was
 executed through the real scheduler task-worker fork and Cron handler in a
 fresh isolated Compose candidate. The package runs the command per active
