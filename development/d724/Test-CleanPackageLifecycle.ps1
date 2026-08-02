@@ -32,6 +32,16 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     throw 'Docker is required for clean package lifecycle acceptance.'
 }
 
+# The CareOnCloud Dockerfiles use Dockerfile frontend heredoc RUN blocks. The
+# legacy builder silently accepts those blocks as empty input, producing a
+# misleading later runtime failure (for example, missing local::lib). Fail
+# before creating any candidate containers when the BuildKit frontend is not
+# available on the runner.
+$BuildxVersion = & docker buildx version 2>$null
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace(($BuildxVersion -join "`n"))) {
+    throw 'Docker Buildx is required for clean package lifecycle acceptance; the legacy builder cannot execute the CareOnCloud Dockerfile heredoc RUN blocks.'
+}
+
 $DatabasePassword = New-RandomSecret
 $GenericInterfacePassword = New-RandomSecret
 @(
