@@ -355,6 +355,10 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `VERIFIED_BY_CURRENT_TEST`: Admin status komutlarinin kullaniciya gosterilen aciklama ve metin basliklari `CareOnCloud` olarak guncellendi (Audit, Commitment, Observability, Reporting, TenantDirectory ve Webhook). Foundation kapisi gecti.
 - `RISK`: Paket adlari, Perl namespace'leri, DB tablolari, config anahtarlari, SOPM yollari ve sabit API error code'lari teknik uyumluluk kimlikleri olarak korunmustur; bu fazda genis kapsamli rename yapilmamistir.
 
+## 2026-08-03 - CareOnCloud marka gecisi, genisletilmis admin dili
+
+- `VERIFIED_BY_CURRENT_TEST`: API, Catalog, Commitment, Reporting, Request, TenantGuard, TenantCache ve TicketAudit admin komutlarinin kullaniciya gorunen aciklama/basliklari `CareOnCloud` olarak guncellendi. Foundation kapisi gecti; teknik TicketAudit status kontrati uyumluluk etiketiyle korundu. Commit `6ccda1eb6`.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
