@@ -25,7 +25,7 @@ Parola, private key ve GitHub token bu devir dosyasına veya Git’e yazılmayac
 
 ## Mevcut kanıt durumu
 
-- Son commit: `30dfb0052 docs(esm): add cross-account handoff guide`.
+- Son commit: `2be901620 docs(esm): label historical candidate snapshot`.
 - Çalışma ağacı son kontrolde temizdi.
 - `Test-Foundation.ps1` 18 D724 paket manifesti ve dosya listesini geçti.
 - CI’de repository dependency Trivy taraması ve temiz lifecycle sonrası `d724/esm:dev` OS/library image taraması tanımlı.
