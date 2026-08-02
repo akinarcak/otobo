@@ -14,7 +14,7 @@ use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.6';
+our $VERSION = '0.8.7';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -36,6 +36,8 @@ my $OriginalResponsibleSet    = \&Kernel::System::Ticket::TicketResponsibleSet;
 my $OriginalTicketPrioritySet = \&Kernel::System::Ticket::TicketPrioritySet;
 my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate;
 my $OriginalChatArticleCreate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleCreate;
+my $OriginalChatArticleUpdate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleUpdate;
+my $OriginalChatArticleDelete = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleDelete;
 my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Common->can('CheckAccessPermissions');
 my $OriginalESSearch          = Kernel::System::Elasticsearch->can('TicketSearch');
 my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch::Search->can('PrepareRequest');
@@ -143,6 +145,22 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
         return $OriginalChatArticleCreate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ChatArticleCreateRun(
             ArticleBackend => $Self, Original => $OriginalChatArticleCreate, Param => \%Param,
+        );
+    };
+
+    *Kernel::System::Ticket::Article::Backend::Chat::ArticleUpdate = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalChatArticleUpdate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ChatArticleUpdateRun(
+            ArticleBackend => $Self, Original => $OriginalChatArticleUpdate, Param => \%Param,
+        );
+    };
+
+    *Kernel::System::Ticket::Article::Backend::Chat::ArticleDelete = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalChatArticleDelete->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ChatArticleDeleteRun(
+            ArticleBackend => $Self, Original => $OriginalChatArticleDelete, Param => \%Param,
         );
     };
 

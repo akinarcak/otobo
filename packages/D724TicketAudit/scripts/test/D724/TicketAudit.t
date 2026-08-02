@@ -237,6 +237,24 @@ my $ChatEvents = $Audit->List(
     Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ChatArticleID",
 );
 is( [ map { $_->{Action} } @{ $ChatEvents->{Data} } ], ['ticket.chat_article.created'], 'chat article emits one normalized audit event' );
+my @UpdatedChatMessages = (
+    { ChatterID => 'audit-agent', ChatterName => 'Audit Agent', ChatterType => 'agent', MessageText => 'Updated audited chat message', SystemGenerated => 0, CreateTime => '2030-01-02 03:05:05' },
+);
+my $ChatVersion = $AlternateTypeID ? 10 : 9;
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$ChatBackend->ArticleUpdate( TicketID => $TicketID, ArticleID => $ChatArticleID, Key => 'ChatMessageList', Value => \@UpdatedChatMessages, UserID => 1 ), 'chat article update fails closed when audit is unavailable' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatVersion, 'failed chat article update rolls scope version back' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $ChatBackend->ArticleUpdate( TicketID => $TicketID, ArticleID => $ChatArticleID, Key => 'ChatMessageList', Value => \@UpdatedChatMessages, UserID => 1 ), 'chat article update succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatVersion + 1, 'successful chat article update advances scope version once' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$ChatBackend->ArticleDelete( TicketID => $TicketID, ArticleID => $ChatArticleID, UserID => 1 ), 'chat article delete fails closed when audit is unavailable' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatVersion + 1, 'failed chat article delete rolls scope version back' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $ChatBackend->ArticleDelete( TicketID => $TicketID, ArticleID => $ChatArticleID, UserID => 1 ), 'chat article delete succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatVersion + 2, 'successful chat article delete advances scope version once' );
+$ChatEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ChatArticleID" );
+is( [ map { $_->{Action} } @{ $ChatEvents->{Data} } ], [qw(ticket.chat_article.created ticket.chat_article.updated ticket.chat_article.deleted)], 'chat article lifecycle emits normalized audit events' );
 ok(
     !$Ticket->TicketCustomerSet( TicketID => $TicketID, No => $OtherTenant, User => 'other-user', UserID => 1 ),
     'ticket cannot be reassigned across tenant boundary',
@@ -308,7 +326,7 @@ ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket delete 
 ok( !$Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 ), 'successful audited delete removes the ticket row' );
 my $DeletedScope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID );
 is( $DeletedScope->{Status}, 'deleted', 'successful audited delete retains deleted scope tombstone' );
-is( $DeletedScope->{Version}, $AlternateTypeID ? 11 : 10, 'successful audited delete advances scope version once' );
+is( $DeletedScope->{Version}, $AlternateTypeID ? 13 : 12, 'successful audited delete advances scope version once' );
 my $DeleteEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
 is( $DeleteEvents->{Data}->[-1]->{Action}, 'ticket.deleted', 'successful delete emits normalized audit evidence' );
 ok( $Ticket->TicketDelete( TicketID => $LegacyTicketID, UserID => 1 ), 'legacy ticket fixture is removed' );
