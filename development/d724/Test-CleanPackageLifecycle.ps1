@@ -6,7 +6,7 @@ $RepositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $ComposeFile = Join-Path $PSScriptRoot 'compose.yml'
 $Project = "d724-package-lifecycle-$PID"
 $EnvironmentFile = Join-Path ([System.IO.Path]::GetTempPath()) "$Project.env"
-$Packages = @('D724Foundation', 'D724TenantGuard', 'D724TenantDirectory', 'D724Audit', 'D724Problem')
+$Packages = @('D724Foundation', 'D724TenantGuard', 'D724TenantDirectory', 'D724Audit', 'D724TicketAudit', 'D724Problem')
 
 function New-RandomSecret {
     $Bytes = New-Object byte[] 24
@@ -26,6 +26,7 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
 }
 
 $DatabasePassword = New-RandomSecret
+$GenericInterfacePassword = New-RandomSecret
 @(
     "D724_DB_ROOT_PASSWORD=$DatabasePassword",
     'D724_BIND_ADDRESS=127.0.0.1',
@@ -43,13 +44,15 @@ try {
     }
     if (-not $Ready) { throw 'Clean lifecycle web container did not become healthy.' }
 
-    Invoke-Compose -ComposeArguments @(
+    $QuickSetupOutput = Invoke-Compose -ComposeArguments @(
         'exec', '-T', 'web', 'bin/docker/quick_setup.pl',
         '--db-password', $DatabasePassword,
         '--http-type', 'http', '--http-port', '18080',
         '--fqdn', 'localhost', '--add-admin-user'
     )
     Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', 'mkdir -p /tmp/d724-pkgs /tmp/d724-package-out')
+    & docker cp (Join-Path $PSScriptRoot 'Accept-GenericInterfaceTicketUpdate.pl') ($WebContainer + ':/tmp/Accept-GenericInterfaceTicketUpdate.pl')
+    if ($LASTEXITCODE -ne 0) { throw 'Could not copy Generic Interface acceptance script into the clean lifecycle container.' }
     foreach ($Package in $Packages) {
         $Source = Join-Path $RepositoryRoot "packages/$Package"
         if (-not (Test-Path $Source -PathType Container)) { throw "Package source is missing: $Package" }
@@ -71,11 +74,14 @@ build_install D724Foundation
 build_install D724TenantGuard
 build_install D724TenantDirectory
 build_install D724Audit
+build_install D724TicketAudit
 build_install D724Problem
 deployment=$(bin/careoncloud.Console.pl Admin::Package::List --show-deployment-info)
 printf '%s\n' "$deployment"
 ! printf '%s\n' "$deployment" | grep -q 'Not OK'
-printf '%s\n' "$deployment" | grep -c 'Pck. Status: OK' | grep -qx 5
+printf '%s\n' "$deployment" | grep -c 'Pck. Status: OK' | grep -qx 6
+bin/careoncloud.Console.pl Admin::User::SetPassword admin "$D724_GI_ACCEPTANCE_PASSWORD" >/dev/null
+D724_GI_ACCEPTANCE_PASSWORD="$D724_GI_ACCEPTANCE_PASSWORD" perl /tmp/Accept-GenericInterfaceTicketUpdate.pl
 bin/careoncloud.Console.pl Dev::UnitTest::Run --package D724Problem
 opm=$(find /tmp/d724-package-out -maxdepth 1 -name 'D724Problem-*.opm' -print -quit)
 bin/careoncloud.Console.pl Admin::Package::Uninstall "$opm"
@@ -86,7 +92,7 @@ fi
 bin/careoncloud.Console.pl Admin::Package::Install --force "$opm"
 bin/careoncloud.Console.pl Dev::UnitTest::Run --package D724Problem
 '@
-    Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', $LifecycleCommand)
+    Invoke-Compose -ComposeArguments @('exec', '-T', '-e', "D724_GI_ACCEPTANCE_PASSWORD=$GenericInterfacePassword", 'web', 'sh', '-lc', $LifecycleCommand)
     Write-Host 'Clean D724Problem package lifecycle acceptance passed.'
 }
 finally {
