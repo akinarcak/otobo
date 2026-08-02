@@ -332,7 +332,7 @@ sub _TransactionRun {
     };
     if (!$OK) {
         eval { $DB->Rollback() } if !$Handle->{AutoCommit};
-        $Kernel::OM->Get('Kernel::System::Log')->Log( Priority => 'error', Message => "D724 webhook transaction failed: " . ( $@ || 'unknown' ) );
+        $Kernel::OM->Get('Kernel::System::Log')->Log( Priority => 'error', Message => "CareOnCloud webhook transaction failed: " . ( $@ || 'unknown' ) );
         return $Self->_Error('TRANSACTION_FAILED');
     }
     return $Result;

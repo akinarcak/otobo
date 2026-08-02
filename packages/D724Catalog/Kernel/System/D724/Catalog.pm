@@ -541,7 +541,7 @@ sub _TransactionRun {
         my $Failure = $@ || 'TRANSACTION_FAILED';
         eval { $DB->Rollback() } if !$Handle->{AutoCommit};
         $Kernel::OM->Get('Kernel::System::Log')->Log(
-            Priority => 'error', Message => "D724 catalog transaction failed: $Failure",
+            Priority => 'error', Message => "CareOnCloud catalog transaction failed: $Failure",
         );
         return $Self->_Error( Error => 'TRANSACTION_FAILED' );
     }

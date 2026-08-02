@@ -27,7 +27,7 @@ sub TicketCreateRun {
     my $Call = $Param{Param};
     my $TenantID = $Call->{CustomerNo} // $Call->{CustomerID} // q{};
     if ( !$Self->_TenantActive($TenantID) ) {
-        $Self->_Log("D724 ticket create rejected: tenant missing or inactive ($TenantID)");
+        $Self->_Log("CareOnCloud ticket create rejected: tenant missing or inactive ($TenantID)");
         return;
     }
     my $Result = $Self->_TransactionRun(
@@ -624,12 +624,12 @@ sub _TransactionRun {
         if ( !$OK ) {
             my $Failure = $@ || 'TRANSACTION_FAILED';
             eval { $DB->Do( SQL => "ROLLBACK TO SAVEPOINT $Savepoint" ) };
-            $Self->_Log("D724 ticket audit nested transaction failed: $Failure");
+            $Self->_Log("CareOnCloud ticket audit nested transaction failed: $Failure");
             $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
             return $Self->_Error('TRANSACTION_FAILED');
         }
         if ( !$Result->{Success} ) {
-            $Self->_Log("D724 ticket audit mutation rejected: $Result->{Error}");
+            $Self->_Log("CareOnCloud ticket audit mutation rejected: $Result->{Error}");
             $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
         }
         return $Result;
@@ -646,12 +646,12 @@ sub _TransactionRun {
     if ( !$OK ) {
         my $Failure = $@ || 'TRANSACTION_FAILED';
         eval { $DB->Rollback() } if !$Handle->{AutoCommit};
-        $Self->_Log("D724 ticket audit transaction failed: $Failure");
+        $Self->_Log("CareOnCloud ticket audit transaction failed: $Failure");
         $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
         return $Self->_Error('TRANSACTION_FAILED');
     }
     if ( !$Result->{Success} ) {
-        $Self->_Log("D724 ticket audit mutation rejected: $Result->{Error}");
+        $Self->_Log("CareOnCloud ticket audit mutation rejected: $Result->{Error}");
         $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
     }
     return $Result;

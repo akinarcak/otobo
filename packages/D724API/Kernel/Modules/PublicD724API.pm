@@ -25,7 +25,7 @@ sub Run {
     my $Output = eval { $Self->_Run() };
     if ($@) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
-            Priority => 'error', Message => 'D724 API transport failed before response completion.',
+            Priority => 'error', Message => 'CareOnCloud API transport failed before response completion.',
         );
         $Output = $Self->_Respond( Code => 500, Error => 'INTERNAL_ERROR' );
     }
@@ -40,7 +40,7 @@ sub Run {
     };
     if ( !$Metric || !$Metric->{Success} && ( $Metric->{Error} // q{} ) ne 'METRICS_DISABLED' ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
-            Priority => 'error', Message => 'D724 API metric write failed.',
+            Priority => 'error', Message => 'CareOnCloud API metric write failed.',
         );
     }
     return $Output;
