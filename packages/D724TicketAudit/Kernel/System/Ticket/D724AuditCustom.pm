@@ -18,7 +18,7 @@ use Kernel::System::GenericAgent ();
 use Kernel::System::Console::Command::Maint::Ticket::PendingCheck ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.13';
+our $VERSION = '0.8.14';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 

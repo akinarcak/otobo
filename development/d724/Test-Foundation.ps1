@@ -169,6 +169,13 @@ if ($CleanLifecycleScript -notmatch [regex]::Escape('Dev::UnitTest::Run --packag
 $TicketAuditWrapper = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/Ticket/D724AuditCustom.pm') -Raw
 $TicketAuditService = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/D724/TicketAudit.pm') -Raw
 $TicketAuditRegression = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/scripts/test/D724/TicketAudit.t') -Raw
+[xml] $TicketAuditManifest = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/D724TicketAudit.sopm') -Raw
+$TicketAuditVersion = [string] $TicketAuditManifest.SelectSingleNode('/careoncloud_package/Version').InnerText
+foreach ($TicketAuditSource in @($TicketAuditWrapper, $TicketAuditService)) {
+    if ($TicketAuditSource -notmatch [regex]::Escape("our `$VERSION = '$TicketAuditVersion';")) {
+        throw "D724TicketAudit source version does not match manifest version $TicketAuditVersion."
+    }
+}
 foreach ($RequiredTicketCreateAtomicityContract in @(
     'Kernel::GenericInterface::Operation::Ticket::TicketCreate::Run',
     'GenericInterfaceTicketCreateRun',
