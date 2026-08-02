@@ -91,7 +91,7 @@ Cikis: oneri kabul orani >= %50, ortalama isleme suresinde >= %20 azalma; yanlis
 
 ## Ilk backlog sirasi
 
-1. `AUD-01b-core`: kalan ticket delete/merge/type/service/SLA/pending ve Chat article, Generic Interface/SLA scheduler mutasyonlari icin transaction/outbox audit completeness, retention/legal hold ve WORM sink
+1. `AUD-01b-core`: kapsanan direct ticket mutatorlari, Chat lifecycle, Generic Interface `TicketUpdate` ve core pending-check scheduler yolundan sonra; Generic Interface `TicketCreate` request-atomic kabulü, GenericAgent/diger scheduler-daemon yolları, non-MIME article backend'leri, harici eklenti/dogrudan DB yazimlari, cross-system index/storage side effect'leri ile retention/legal hold ve WORM sink icin audit/outbox completeness
 2. `SEC-03b-idp/SEC-03c`: gerçek dış IdP uçtan uca kabulü ve logout/session politikası; ardından SCIM 2.0 yaşam döngüsü ve membership reconciliation
 3. `API-01d-ops` (tamamlandi, 2026-07-25): bounded-cardinality route latency/error metrikleri, 168 saat retention, webhook throughput/backlog/dead-letter alarmlari ve 12 bagimsiz writer concurrent kabul testi
 4. `OBS-01b`: operasyon dashboard'u, OpenTelemetry export'u ve alarm teslim kanallari (Prometheus cekirdegi tamamlandi)

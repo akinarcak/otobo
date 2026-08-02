@@ -286,7 +286,7 @@ Son dogrulama: `2026-07-25`
 - Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u, D724 cache ve aktif Elasticsearch ticket aramasi tenant scope'a baglidir. Generic Interface operasyon-bazli role/action matrisi aciktir.
 - OTOBO paket şema çeviricisinin çok sütunlu foreign key sınırlaması, idempotent post-install/upgrade sertleştiricisi ve health doğrulamasıyla giderilmiştir.
 - OTOBO paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
-- Request lifecycle, D724 katalog, tenant-directory ve kapsanan OTOBO ticket/MIME article mutasyonlari atomiktir. Ticket delete/merge/type/service/SLA/pending, Chat article, Generic Interface ve commitment scheduler gibi diger yazim adapter'lari henuz ayni transaction/outbox completeness garantisine sahip degildir.
+- Request lifecycle, D724 katalog, tenant-directory, kapsanan OTOBO ticket/MIME article, Chat lifecycle, Generic Interface `TicketUpdate` ve core pending-check scheduler mutasyonlari transaction-atomic audit kanitina sahiptir. Generic Interface `TicketCreate` request-level atomiklik kabulü, GenericAgent ve diger scheduler/daemon yolları, non-MIME article backend'leri, harici eklenti/dogrudan DB yazimlari ile index/storage gibi cross-system side effect'ler ayni completeness garantisinin disindadir.
 
 ## Henuz urun sayilmayan kapsam
 
