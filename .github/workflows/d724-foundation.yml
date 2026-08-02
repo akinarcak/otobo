@@ -42,6 +42,10 @@ jobs:
         shell: pwsh
         run: ./development/d724/Test-CareOnCloudBrand.ps1
 
+      - name: Validate critical customer and agent translations
+        shell: pwsh
+        run: ./development/d724/Test-CriticalLanguage.ps1
+
       - name: Accept clean D724Problem package lifecycle
         shell: pwsh
         run: ./development/d724/Test-CleanPackageLifecycle.ps1

@@ -17,6 +17,7 @@ sub Data {
         'Report scope'                  => 'Rapor kapsamı',
         'Custom report designer'        => 'Özelleştirilebilir rapor tasarımcısı',
         'Customer'                      => 'Müşteri',
+        'Please select'                 => 'Lütfen seçin',
         'From'                          => 'Başlangıç',
         'To'                            => 'Bitiş',
         'Refresh'                       => 'Yenile',

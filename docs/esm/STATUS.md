@@ -5,6 +5,10 @@
 - `VERIFIED_BY_CURRENT_TEST`: CareOnCloud kaynak ve paket politikası `GPL-3.0-only` olarak tekleştirildi. D724 paket kaynak başlıkları, Foundation tanılama manifesti, API kontratı ve ticari politika zaten bu tanımla uyumluydu; root README ve NOTICE'daki eski `GPL-3.0-or-later` ifadesi `GPL-3.0-only` olarak düzeltildi. SOPM'lerin tam GPL v3 metadatası (`GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007`) aynı lisans tercihini taşır.
 - `Test-Foundation.ps1` artık README, NOTICE ve GPL-COMMERCIAL politikasında açık `GPL-3.0-only` tanımını ve çelişen `GPL-3.0-or-later` ifadesinin yokluğunu; tüm D724 SOPM manifestlerinde de kanonik GPL v3 metadatasını zorunlu kılar. Upstream telif ve GPL bildirimleri korunur. Bu bir hukuki görüş değil, depodaki metadata sözleşmesidir.
 
+## 2026-08-02 — P0.5 kritik TR/EN kaynak sözleşmesi
+
+- `VERIFIED_BY_CURRENT_TEST`: Müşteri Hizmet Kataloğu ve ajan Operasyon Merkezi için kaynak-temelli TR/EN kapısı eklendi. `Test-CriticalLanguage.ps1`, şablondaki sabit `Translate(...)` anahtarlarının ilgili `tr_D724*` sözlüğünde bulunmasını, dosyaların katı UTF-8 olmasını ve yaygın mojibake işaretlerini içermemesini doğrular. Operations Center'daki eksik `Please select` çevirisi `Lütfen seçin` olarak tamamlandı. Bu statik sözleşme, authenticated runtime portal/agent kabulünün yerini tutmaz.
+
 ## 2026-08-02 — P0.2 tenant yol ve negatif test envanteri
 
 - `VERIFIED_IN_CODE`: `security/TENANT-PATH-MATRIX.md`, merkezi policy, directory, katalog, request, API, ticket/GI, search, cache, reporting, webhook ve scheduler yollarini ilgili test/kabul artefaktlariyla esler. Native OTOBO ekranlari, tum Generic Interface operasyonlari, diger daemonlar ve platform-admin bypass'i acikca `PARTIAL` olarak isaretlenmistir; bu nedenle tam tenant izolasyonu iddiasi yoktur.
