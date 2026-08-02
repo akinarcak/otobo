@@ -107,10 +107,10 @@
 
 Son dogrulama: `2026-07-25`
 
-## Calisan ve kanitlanmis
+## Kaynakta dogrulanan ve runtime kaniti sinirli
 
 - OTOBO `rel-11_1` tabanli GitHub forku ve `codex/esm-foundation` gelistirme dali.
-- Kaynak koddan uretilen `d724/esm:dev` container image'i.
+- Kaynak ve paket kapilari dogrulandi; guncel `d724/esm:dev` CareOnCloud image runtime kabulü BuildKit-capable runner bekliyor.
 - MariaDB, Redis, OTOBO web ve daemon servislerinden olusan izole Compose profili.
 - Digest-pinned Elasticsearch 8.19.3 servisi; yalniz Docker ic aginda, cluster `green`, OTOBO resmi connection testi basarili.
 - Ozel test aginda HTTP health ve agent giris sayfasi: HTTP 200.

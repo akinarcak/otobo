@@ -174,7 +174,7 @@ Depoda paket bazlı Perl testleri, HTTP kabul scriptleri ve operasyon kontrol ko
 - SCIM gerçek MariaDB kabulü.
 - Prometheus endpoint için eksik/yanlış/doğru Bearer sonucunun `401/401/200` olması.
 - Marka sözleşmesi testi ve `git diff --check`.
-- Yeni CareOnCloud Docker imajının başarıyla oluşturulması.
+- Önceki aday denemelerinde CareOnCloud imajı oluşturulmuştu; mevcut test sunucusunda güncel kaynakla runtime imaj kabulü BuildKit-capable runner eksikliği nedeniyle yeniden kanıtlanmadı.
 
 Ancak mevcut çalışma ağacı yaklaşık 500 dosyalık geniş ve henüz commitlenmemiş değişiklik içerir. Son marka geçişi sonrasında **tam test paketi yeniden çalıştırılmamıştır**. Eski tarihli test sayıları güncel çalışma ağacının nihai kanıtı sayılmamalıdır.
 
@@ -191,8 +191,8 @@ Ancak mevcut çalışma ağacı yaklaşık 500 dosyalık geniş ve henüz commit
 1. Dış adres şu anda erişilebilirdir.
 2. Hizmet veren `web` ve `daemon` konteynerleri eski çalışma kümesidir; arayüzde/eski URL ve header/cookie alanlarında eski marka kalıntıları olabilir.
 3. Yeni CareOnCloud kaynak kopyası sunucuda `/home/test/careoncloud-releases/20260725` altındadır.
-4. Yeni Docker imajı başarıyla üretilmiştir: `d724/esm:dev`, image ID başlangıcı `82636a1675f8...`.
-5. Yeni `careoncloud_esm` veritabanına 175 tablo kopyalanmış; yeni CareOnCloud adlı app/update volume'ları oluşturulmuştur.
+4. Güncel kaynak için yeni Docker imajı henüz kabul edilmemiştir: sunucuda `docker buildx` yoktur ve legacy builder Dockerfile heredoc bloklarını çalıştırmadığı için bu deneme runtime kanıtı sayılmaz.
+5. Önceki aday hazırlığında yeni `careoncloud_esm` veritabanına 175 tablo kopyalanmış ve yeni CareOnCloud app/update volume'ları oluşturulmuştur; bu tarihsel hazırlık güncel runtime kabulü değildir.
 6. Eski veritabanı, volume ve imajlar geri dönüş için silinmemiştir.
 7. **Mavi/yeşil aday çalıştırma, `/careoncloud/index.pl` kabulü, paket upgrade/install kontrolü ve nihai port kesimi henüz yapılmamıştır.**
 
