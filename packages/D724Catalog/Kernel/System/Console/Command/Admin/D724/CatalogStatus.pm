@@ -47,7 +47,7 @@ sub Run {
         Success => $Success ? 1 : 0,
         Enabled => $Enabled,
         Package => 'D724Catalog',
-        Version => '0.6.1',
+        Version => '0.7.0',
         Tables  => \%Tables,
         TenantConstraints => $Constraint,
     };

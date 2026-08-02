@@ -11,7 +11,7 @@ use Kernel::System::UnitTest::RegisterOM;
 my $Status = $Kernel::OM->Get('Kernel::System::Console::Command::Admin::D724::ReportingStatus')->StatusData();
 ok( $Status->{Success}, 'reporting status is healthy' );
 is( $Status->{Package}, 'D724Reporting', 'status identifies package' );
-is( $Status->{Version}, '0.3.1', 'status identifies version' );
+is( $Status->{Version}, '0.4.1', 'status identifies version' );
 ok( $Status->{Enabled}, 'reporting is enabled' );
 ok( $Status->{ConfigValid}, 'range configuration is valid' );
 is( $Status->{CacheTTLSeconds}, 60, 'tenant summary cache TTL is explicit' );

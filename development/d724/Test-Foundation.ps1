@@ -127,6 +127,38 @@ foreach ($PackageSourceFile in $PackageSources) {
 
 Write-Host "Validated $($PackageSources.Count) D724 package manifests and file lists."
 
+foreach ($StatusPackageSourceFile in $PackageSources) {
+    [xml] $StatusPackageManifest = Get-Content $StatusPackageSourceFile.FullName -Raw
+    $PackageName = [string] $StatusPackageManifest.careoncloud_package.Name
+    $PackageVersion = $StatusPackageManifest.SelectSingleNode('/careoncloud_package/Version').InnerText
+    $StatusBaseName = $PackageName -replace '^D724', ''
+    $PackageDirectory = Join-Path $RepositoryRoot "packages/$PackageName"
+    $StatusSource = Get-ChildItem $PackageDirectory -Recurse -File -Filter "$($StatusBaseName)Status.pm" |
+        Select-Object -First 1
+    if ($StatusSource) {
+        $StatusSourceContent = Get-Content $StatusSource.FullName -Raw
+        if (
+            $StatusSourceContent -match 'Version\s*=>' `
+            -and $StatusSourceContent -notmatch [regex]::Escape($PackageVersion)
+        ) {
+            throw "$PackageName status source does not identify manifest version $PackageVersion`: $($StatusSource.FullName)"
+        }
+    }
+    $StatusRegression = Get-ChildItem $PackageDirectory -Recurse -File -Filter "$($StatusBaseName)Status.t" |
+        Select-Object -First 1
+    if ($StatusRegression) {
+        $StatusRegressionContent = Get-Content $StatusRegression.FullName -Raw
+        if (
+            $StatusRegressionContent -match '\$Status->\{Version\}' `
+            -and $StatusRegressionContent -notmatch [regex]::Escape($PackageVersion)
+        ) {
+            throw "$PackageName status regression does not expect manifest version $PackageVersion`: $($StatusRegression.FullName)"
+        }
+    }
+}
+
+Write-Host 'Validated primary package status versions against manifests.'
+
 [xml] $TicketAuditManifest = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/D724TicketAudit.sopm') -Raw
 $TicketAuditPackageVersion = $TicketAuditManifest.SelectSingleNode('/careoncloud_package/Version').InnerText
 $TicketAuditStatusSource = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/Console/Command/Admin/D724/TicketAuditStatus.pm') -Raw

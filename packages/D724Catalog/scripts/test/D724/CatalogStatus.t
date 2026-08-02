@@ -24,7 +24,7 @@ is( $ExitCode, 0, 'catalog status command succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSONString );
 ok( $Status->{Success}, 'catalog repository is healthy' );
 is( $Status->{Package}, 'D724Catalog', 'status identifies package' );
-is( $Status->{Version}, '0.6.1', 'status identifies version' );
+is( $Status->{Version}, '0.7.0', 'status identifies version' );
 ok( $Status->{TenantConstraints}->{Success}, 'status requires tenant-paired database constraints' );
 is(
     [ sort keys %{ $Status->{Tables} } ],
