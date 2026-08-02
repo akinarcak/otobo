@@ -11,6 +11,7 @@ $DB->Prepare( SQL => 'SELECT id FROM ticket WHERE tn = ?', Bind => \@Bind )
     or die "Could not find quick-setup ticket.\n";
 my ($TicketID) = $DB->FetchrowArray();
 exit 0 if !$TicketID;
+$Ticket->{D724TicketAuditSuppress} = 1;
 die "Could not delete quick-setup ticket $TicketID.\n"
     if !$Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 );
 print "Removed development quick-setup ticket $TicketID.\n";
