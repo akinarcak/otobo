@@ -26,9 +26,12 @@ in `packages/D724TicketAudit/scripts/test/D724/TicketAudit.t`.
 
 The original P0 inventory is covered and the source comparison additionally
 identified and wrapped `TicketArchiveFlagSet` and `TicketUnlockTimeoutUpdate`.
-Personal watcher/seen flags,
-accounted-time writes, escalation-index maintenance, and article-storage switching
-remain explicitly outside this business-mutation coverage claim. `TicketAudit.t`
+Personal watcher/seen flags (`TicketFlagSet`), ticket dynamic-field writes,
+calendar appointment ticket updates, accounted-time writes, escalation-index
+maintenance, and article-storage switching remain explicitly outside this
+business-mutation coverage claim. These routes were confirmed by direct source
+comparison against `Kernel/System/Ticket.pm` and related core callers; no audit
+coverage is inferred from their event names. `TicketAudit.t`
 verifies archive-flag and delete audit failure rollback, the retained deleted
 scope tombstone, and the normalized delete event; later delete calls are fixture
 cleanup.
