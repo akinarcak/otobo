@@ -13,7 +13,7 @@ our @ObjectDependencies = ('Kernel::Config', 'Kernel::System::DB', 'Kernel::Syst
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Validate D724 tenant-safe reporting dependencies and configuration.');
+    $Self->Description('Validate CareOnCloud tenant-safe reporting dependencies and configuration.');
     $Self->AddOption( Name => 'json', Description => 'Print JSON.', Required => 0, HasValue => 0 );
     return;
 }

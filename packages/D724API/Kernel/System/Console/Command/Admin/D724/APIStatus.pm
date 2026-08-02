@@ -16,7 +16,7 @@ our @ObjectDependencies = (
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Validate D724 API authorization storage, transport and operational invariants.');
+    $Self->Description('Validate CareOnCloud API authorization storage, transport and operational invariants.');
     $Self->AddOption(
         Name => 'json', Description => 'Print JSON.', Required => 0, HasValue => 0,
     );
@@ -225,7 +225,7 @@ sub Run {
         );
     }
     else {
-        $Self->Print("D724API $VERSION: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n");
+        $Self->Print("CareOnCloud API $VERSION: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n");
     }
     return $Status->{Success} ? $Self->ExitCodeOk() : $Self->ExitCodeError();
 }

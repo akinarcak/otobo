@@ -17,7 +17,7 @@ our @ObjectDependencies = ('Kernel::System::DB', 'Kernel::System::JSON');
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Validate the D724 commitment schema and print operational counts.');
+    $Self->Description('Validate the CareOnCloud commitment schema and print operational counts.');
     $Self->AddOption( Name => 'json', Description => 'Print JSON.', Required => 0, HasValue => 0 );
     return;
 }

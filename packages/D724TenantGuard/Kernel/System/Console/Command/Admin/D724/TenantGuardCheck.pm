@@ -20,7 +20,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Evaluate a D724 tenant authorization decision.');
+    $Self->Description('Evaluate a CareOnCloud tenant authorization decision.');
     $Self->AddOption(
         Name        => 'subject-id',
         Description => 'Trusted server-side subject identifier.',

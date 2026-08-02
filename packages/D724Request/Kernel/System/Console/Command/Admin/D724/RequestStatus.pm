@@ -15,7 +15,7 @@ our @ObjectDependencies = ('Kernel::System::DB', 'Kernel::System::JSON');
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Validate the D724 request orchestration schema and print counts.');
+    $Self->Description('Validate the CareOnCloud request orchestration schema and print counts.');
     $Self->AddOption( Name => 'json', Description => 'Print JSON.', Required => 0, HasValue => 0 );
     return;
 }
@@ -44,7 +44,7 @@ sub Run {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
     else {
-        $Self->Print("D724 request status\nRequests: $Counts{Requests}\nPending approvals: $Counts{PendingApprovals}\nOpen tasks: $Counts{OpenTasks}\n");
+        $Self->Print("CareOnCloud request status\nRequests: $Counts{Requests}\nPending approvals: $Counts{PendingApprovals}\nOpen tasks: $Counts{OpenTasks}\n");
         $Self->Print( $Success ? "Status: OK\n" : "Status: FAILED\n" );
     }
     return $Success ? $Self->ExitCodeOk() : $Self->ExitCodeError();

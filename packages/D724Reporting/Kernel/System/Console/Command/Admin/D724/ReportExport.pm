@@ -13,7 +13,7 @@ our @ObjectDependencies = ('Kernel::System::D724::Reporting');
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Export a tenant-scoped, privacy-minimized D724 operational report.');
+    $Self->Description('Export a tenant-scoped, privacy-minimized CareOnCloud operational report.');
     for my $Option (
         [ 'tenant-id', 'Tenant identifier.', '^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$' ],
         [ 'from', 'Inclusive date (YYYY-MM-DD).', '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' ],

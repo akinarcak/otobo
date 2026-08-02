@@ -22,7 +22,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Validate the D724 tenant-safe service catalog repository.');
+    $Self->Description('Validate the CareOnCloud tenant-safe service catalog repository.');
     $Self->AddOption(
         Name        => 'json',
         Description => 'Print machine-readable JSON output.',
@@ -62,7 +62,7 @@ sub Run {
         );
     }
     else {
-        $Self->Print("D724 service catalog status\n");
+        $Self->Print("CareOnCloud service catalog status\n");
         $Self->Print( 'Repository: ' . ( $Enabled ? 'enabled' : 'disabled' ) . "\n" );
         for my $Table ( sort keys %Tables ) {
             $Self->Print( "$Table: " . ( $Tables{$Table} ? 'OK' : 'MISSING' ) . "\n" );

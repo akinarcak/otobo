@@ -14,7 +14,7 @@ our @ObjectDependencies = ( 'Kernel::Config', 'Kernel::System::DB', 'Kernel::Sys
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Report D724 OTOBO ticket tenant-binding and audit adapter health.');
+    $Self->Description('Report CareOnCloud OTOBO ticket tenant-binding and audit adapter health.');
     $Self->AddOption( Name => 'json', Description => 'Print JSON.', Required => 0, HasValue => 0 );
     return;
 }
@@ -67,7 +67,7 @@ sub Run {
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, Pretty => 1, SortKeys => 1 ) . "\n" );
     }
-    else { $Self->Print("D724TicketAudit $VERSION: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n") }
+    else { $Self->Print("CareOnCloud TicketAudit $VERSION: (D724TicketAudit $VERSION: " . ( $Status->{Success} ? 'OK' : 'FAILED' ) . ")\n") }
     return $Status->{Success} ? $Self->ExitCodeOk() : $Self->ExitCodeError();
 }
 

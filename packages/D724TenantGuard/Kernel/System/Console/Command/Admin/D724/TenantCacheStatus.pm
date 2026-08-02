@@ -14,7 +14,7 @@ our @ObjectDependencies = ('Kernel::Config', 'Kernel::System::Cache', 'Kernel::S
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Validate the D724 tenant cache adapter and persistent backend configuration.');
+    $Self->Description('Validate the CareOnCloud tenant cache adapter and persistent backend configuration.');
     $Self->AddOption( Name => 'json', Description => 'Print JSON.', Required => 0, HasValue => 0 );
     return;
 }
@@ -48,7 +48,7 @@ sub Run {
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
-    else { $Self->Print( 'D724 tenant cache status: ' . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n" ) }
+    else { $Self->Print( 'CareOnCloud tenant cache status: ' . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n" ) }
     return $Status->{Success} ? $Self->ExitCodeOk() : $Self->ExitCodeError();
 }
 
