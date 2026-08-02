@@ -13,6 +13,7 @@ $RequiredFiles = @(
     'docs/esm/ROADMAP.md',
     'docs/esm/GPL-COMMERCIAL.md',
     'docs/esm/security/TENANT-PATH-MATRIX.md',
+    'docs/esm/branding/MIGRATION-SAFETY.md',
     'development/d724/compose.yml',
     'development/d724/.env.example',
     'development/d724/Test-CleanPackageLifecycle.ps1',
@@ -20,6 +21,7 @@ $RequiredFiles = @(
     'development/d724/Test-CriticalLanguage.ps1',
     'development/d724/Generate-CpanSbom.ps1',
     'development/d724/Test-CpanSbom.ps1',
+    'development/d724/migrate-careoncloud-brand.sh',
     'development/d724/Accept-GenericInterfaceTicketUpdate.pl',
     'development/d724/Accept-SchedulerTicketPendingCheck.pl',
     'packages/D724Foundation/D724Foundation.sopm'

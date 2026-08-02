@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # CareOnCloud ESM enterprise service management platform.
-# GPL-3.0-or-later. See LICENSE and NOTICE.
+# GPL-3.0-only. See LICENSE and NOTICE.
 
 set -Eeuo pipefail
 
@@ -12,6 +12,8 @@ Usage:
 Options:
   --execute                    Perform the migration. Without it, print the plan only.
   --compose-file PATH          Compose file (default: development/d724/compose.yml).
+  --compose-project NAME       Explicit Compose project to operate on (required with --execute).
+  --allow-writer-stop          Confirm that web and daemon writers for that project may be stopped.
   --env-file PATH              Environment file containing D724_DB_ROOT_PASSWORD.
   --old-app-volume NAME        Existing application volume (required with --execute).
   --old-update-volume NAME     Existing update volume (optional).
@@ -29,6 +31,7 @@ USAGE
 }
 
 ComposeFile='development/d724/compose.yml'
+ComposeProject=''
 EnvFile=''
 OldAppVolume=''
 OldUpdateVolume=''
@@ -41,11 +44,14 @@ NewDBPassword=''
 printf -v MigrationTimestamp '%(%Y%m%dT%H%M%SZ)T' -1
 BackupDir="careoncloud-migration-backup-$MigrationTimestamp"
 Execute=0
+AllowWriterStop=0
 
 while (( $# )); do
     case "$1" in
         --execute) Execute=1; shift ;;
         --compose-file) ComposeFile="$2"; shift 2 ;;
+        --compose-project) ComposeProject="$2"; shift 2 ;;
+        --allow-writer-stop) AllowWriterStop=1; shift ;;
         --env-file) EnvFile="$2"; shift 2 ;;
         --old-app-volume) OldAppVolume="$2"; shift 2 ;;
         --old-update-volume) OldUpdateVolume="$2"; shift 2 ;;
@@ -62,7 +68,7 @@ while (( $# )); do
 done
 
 compose() {
-    local Args=( compose --file "$ComposeFile" )
+    local Args=( compose --project-name "$ComposeProject" --file "$ComposeFile" )
     if [[ -n "$EnvFile" ]]; then
         Args+=( --env-file "$EnvFile" )
     fi
@@ -98,6 +104,7 @@ done
 cat <<PLAN
 CareOnCloud ESM brand migration plan
   compose file      : $ComposeFile
+  compose project   : ${ComposeProject:-<required with --execute>}
   old app volume    : ${OldAppVolume:-<must be supplied for execution>}
   old update volume : ${OldUpdateVolume:-<not copied>}
   new app volume    : $NewAppVolume
@@ -115,6 +122,9 @@ fi
 command -v docker >/dev/null || { echo 'docker is required.' >&2; exit 1; }
 docker compose version >/dev/null
 [[ -f "$ComposeFile" ]] || { echo "Compose file not found: $ComposeFile" >&2; exit 1; }
+[[ -n "$ComposeProject" ]] || { echo '--compose-project is required with --execute.' >&2; exit 2; }
+require_name 'compose project' "$ComposeProject"
+(( AllowWriterStop )) || { echo '--allow-writer-stop is required with --execute.' >&2; exit 2; }
 [[ -n "$OldAppVolume" ]] || { echo '--old-app-volume is required with --execute.' >&2; exit 2; }
 [[ -n "$NewDBPassword" ]] || { echo '--new-db-password is required with --execute.' >&2; exit 2; }
 require_secret "$NewDBPassword"
@@ -126,6 +136,22 @@ fi
 docker volume inspect "$OldAppVolume" >/dev/null
 if [[ -n "$OldUpdateVolume" ]]; then
     docker volume inspect "$OldUpdateVolume" >/dev/null
+fi
+if docker volume inspect "$NewAppVolume" >/dev/null 2>&1; then
+    echo "New app volume already exists: $NewAppVolume" >&2
+    exit 2
+fi
+if docker volume inspect "$NewUpdateVolume" >/dev/null 2>&1; then
+    echo "New update volume already exists: $NewUpdateVolume" >&2
+    exit 2
+fi
+
+NewDatabaseExists="$(compose exec -T db sh -lc \
+    'exec mariadb -N -uroot -p"$MYSQL_ROOT_PASSWORD" -e "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name=\"$1\""' \
+    sh "$NewDatabase" | tr -d '\r')"
+if [[ "$NewDatabaseExists" != 0 ]]; then
+    echo "New database already exists: $NewDatabase" >&2
+    exit 2
 fi
 
 mkdir -p "$BackupDir"
@@ -139,6 +165,7 @@ compose exec -T db sh -lc \
     'exec mariadb-dump --single-transaction --routines --events -uroot -p"$MYSQL_ROOT_PASSWORD" --databases "$1"' \
     sh "$OldDatabase" >"$BackupDir/${OldDatabase}.sql"
 test -s "$BackupDir/${OldDatabase}.sql"
+BackupSHA256="$(sha256sum "$BackupDir/${OldDatabase}.sql" | awk '{print $1}')"
 
 echo 'Creating CareOnCloud volumes...'
 docker volume create "$NewAppVolume" >/dev/null
@@ -194,6 +221,8 @@ old_app_volume=$OldAppVolume
 new_app_volume=$NewAppVolume
 old_update_volume=$OldUpdateVolume
 new_update_volume=$NewUpdateVolume
+logical_backup_sha256=$BackupSHA256
+rollback=stop_project_and_restore_old_database_and_old_volumes; old resources were not modified by this copy-only migration
 RESULT
 
 echo "Copy migration completed and verified ($NewTableCount tables)."

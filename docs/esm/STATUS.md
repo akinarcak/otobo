@@ -26,6 +26,10 @@
 
 - `VERIFIED_IN_CODE`: `security/TENANT-PATH-MATRIX.md`, merkezi policy, directory, katalog, request, API, ticket/GI, search, cache, reporting, webhook ve scheduler yollarini ilgili test/kabul artefaktlariyla esler. Native OTOBO ekranlari, tum Generic Interface operasyonlari, diger daemonlar ve platform-admin bypass'i acikca `PARTIAL` olarak isaretlenmistir; bu nedenle tam tenant izolasyonu iddiasi yoktur.
 
+## 2026-08-02 — P0 migration execution safety
+
+- `VERIFIED_BY_CURRENT_TEST`: copy migration betiği artık execute modunda açık `--compose-project` ve `--allow-writer-stop` onayı olmadan çalışmaz. Kaynak volume'lar var olmalı; hedef volume/database yoksa fail-closed olur. Mantıksal dump SHA-256 değeri ve rollback yönü sonuç kaydına yazılır. Test sunucusunda Bash syntax ve non-mutating plan modu çalıştı. Bu, backup restore/RPO/RTO provası değildir.
+
 ## 2026-08-02 — P0.2 API transaction ownership correction
 
 - `D724API` transaction paths now capture ownership before calling `BeginWork()` and commit or roll back only transactions they opened themselves. This covers client create, token issue/revoke, secret rotation, client revoke, and retention cleanup.
