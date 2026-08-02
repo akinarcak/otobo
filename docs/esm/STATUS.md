@@ -1,5 +1,11 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-02 — P0 aday paket regresyonu
+
+- `VERIFIED_BY_CURRENT_TEST`: İzole aday Compose ortamında 18 D724 SOPM paketi başarıyla build/install edildi; paket listesi tüm paketleri `OK` bildirdi ve aday web yeniden başlatma sonrasında healthy kaldı.
+- `FIX_APPLIED`: `D724TicketAudit` runtime testindeki iki `scalar grep` ifadesi Test2 parser'ında derleme hatası oluşturuyordu; grep sonucu parantezlenerek belirsizlik giderildi. Foundation statik kapısı tekrar geçti.
+- `RISK`: D724TicketAudit tam runtime test paketi bu düzeltme aday image'a yeniden paketlenip kurulmadan tekrar koşulmadı. İlk denemede TicketAuditStatus taze DB fixture eksikliği nedeniyle 5 assertion, TicketAudit.t ise parser hatası nedeniyle durdu; P0 runtime kabulü henüz tamamlanmadı.
+
 ## 2026-08-02 — P0 BuildKit aday image üretimi
 
 ## 2026-08-02 — P0 izole aday web health kabulü

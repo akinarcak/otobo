@@ -217,7 +217,7 @@ is(
 );
 my $ArchiveEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
 is(
-    scalar grep { $_->{Action} eq 'ticket.archive_flag.updated' } @{ $ArchiveEvents->{Data} },
+    scalar( grep { $_->{Action} eq 'ticket.archive_flag.updated' } @{ $ArchiveEvents->{Data} } ),
     1,
     'archive update emits one normalized audit event',
 );
@@ -244,7 +244,7 @@ is(
 );
 my $UnlockEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
 is(
-    scalar grep { $_->{Action} eq 'ticket.unlock_timeout.updated' } @{ $UnlockEvents->{Data} },
+    scalar( grep { $_->{Action} eq 'ticket.unlock_timeout.updated' } @{ $UnlockEvents->{Data} } ),
     1,
     'direct unlock-timeout update emits one normalized audit event',
 );
