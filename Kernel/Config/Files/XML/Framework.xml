@@ -3474,7 +3474,7 @@
         <Description Translatable="1">Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBO Notifications</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloud ESM Notifications</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationSenderEmail" Required="1" Valid="1">
@@ -3488,7 +3488,7 @@
         <Description Translatable="1">Defines the subject for notification mails sent to agents, with token about new requested password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password request</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password request</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationBodyLostPasswordToken" Required="1" Valid="1">
@@ -3497,7 +3497,7 @@
         <Value>
             <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
 
-You or someone impersonating you has requested to change your OTOBO
+You or someone impersonating you has requested to change your CareOnCloud ESM
 password.
 
 If you want to do this, click on the link below. You will receive another email containing the password.
@@ -3512,7 +3512,7 @@ If you did not request a new password, please ignore this email.
         <Description Translatable="1">Defines the subject for notification mails sent to agents, about new password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationBodyLostPassword" Required="1" Valid="1">
@@ -3522,7 +3522,7 @@ If you did not request a new password, please ignore this email.
             <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
 
 
-Here's your new OTOBO password.
+Here's your new CareOnCloud ESM password.
 
 New password: &lt;OTOBO_NEWPW&gt;
 
@@ -4122,7 +4122,7 @@ You can log in via the following URL:
         <Description Translatable="1">Defines the subject for notification mails sent to customers, with token about new requested password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password request</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password request</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelBodyLostPasswordToken" Required="1" Valid="1">
@@ -4131,7 +4131,7 @@ You can log in via the following URL:
         <Value>
             <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
 
-You or someone impersonating you has requested to change your OTOBO
+You or someone impersonating you has requested to change your CareOnCloud ESM
 password.
 
 If you want to do this, click on this link. You will receive another email containing the password.
@@ -4146,7 +4146,7 @@ If you did not request a new password, please ignore this email.
         <Description Translatable="1">Defines the subject for notification mails sent to customers, about new password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelBodyLostPassword" Required="1" Valid="1">
@@ -4166,7 +4166,7 @@ New password: &lt;OTOBO_NEWPW&gt;
         <Description Translatable="1">Defines the subject for notification mails sent to customers, about new account.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO Account!</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM account!</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelBodyNewAccount" Required="1" Valid="1">
@@ -4175,7 +4175,7 @@ New password: &lt;OTOBO_NEWPW&gt;
         <Value>
             <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
 
-You or someone impersonating you has created a new OTOBO account for
+You or someone impersonating you has created a new CareOnCloud ESM account for
 you.
 
 Full name: &lt;OTOBO_USERFIRSTNAME&gt; &lt;OTOBO_USERLASTNAME&gt;
@@ -7740,7 +7740,7 @@ via the Preferences button after logging in.
         <Navigation>Frontend::Customer::View::Login</Navigation>
         <Value>
             <Hash>
-                <Item Key="LoginText" Translatable="1">Your Tickets. Your OTOBO.</Item>
+                <Item Key="LoginText" Translatable="1">Your tickets. Your CareOnCloud ESM.</Item>
                 <Item Key="Background">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;common/img/LoginBG.jpg</Item>
             </Hash>
         </Value>
@@ -7851,7 +7851,7 @@ via the Preferences button after logging in.
         <Navigation>Frontend::Customer::View::Dashboard::Configuration</Navigation>
         <Value>
             <Hash>
-                <Item Key="WelcomeText" Translatable="1">Welcome %s, to your OTOBO.</Item>
+                <Item Key="WelcomeText" Translatable="1">Welcome %s, to CareOnCloud ESM.</Item>
                 <Item Key="Name">UserFirstname</Item>
                 <Item Key="SubText">This service portal is available to you all day every day.</Item>
             </Hash>
@@ -8704,12 +8704,12 @@ via the Preferences button after logging in.
         <Value>
             <Hash>
                 <Item Key="Module">Kernel::Output::HTML::Dashboard::News</Item>
-                <Item Key="Title" Translatable="1">OTOBO News</Item>
-                <Item Key="Description" Translatable="1">News about OTOBO.</Item>
+                <Item Key="Title" Translatable="1">CareOnCloud ESM announcements</Item>
+                <Item Key="Description" Translatable="1">CareOnCloud ESM announcements are available from your service team.</Item>
                 <Item Key="Block">ContentSmall</Item>
                 <Item Key="Limit">6</Item>
                 <Item Key="Group">admin</Item>
-                <Item Key="Default">1</Item>
+                <Item Key="Default">0</Item>
                 <Item Key="CacheTTL">360</Item>
                 <Item Key="Mandatory">0</Item>
             </Hash>

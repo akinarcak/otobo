@@ -13,6 +13,10 @@
 
 - `VERIFIED_BY_CURRENT_TEST`: Framework dashboard'un kullanıcıya görünen varsayılan `OTOBO 11.1` başlığı, açıklaması ve upstream bağlantısı CareOnCloud ESM metni ile ürün bağlantısına çevrildi. Kaynak marka sözleşmesi bu ayarları doğrular. Aday runtime'da authenticated agent dashboard render kabulü henüz çalıştırılmamıştır.
 
+## 2026-08-02 — P0.4 varsayılan e-posta ve müşteri yüzeyi marka düzeltmesi
+
+- `VERIFIED_BY_CURRENT_TEST`: Varsayılan agent/customer parola ve yeni hesap bildirimleri CareOnCloud ESM adıyla güncellendi. Customer login/dashboard metinleri CareOnCloud ESM'e çevrildi; upstream News dashboard backend'i varsayılan olarak kapatıldı ve CareOnCloud duyuru metni aldı. Kaynak marka sözleşmesi bu aktif varsayılanları denetler. Persist edilmiş eski SysConfig değerleri için candidate upgrade/konfigürasyon rebuild kabulü henüz çalıştırılmamıştır.
+
 ## 2026-08-02 — P0 release CPAN SBOM kapısı
 
 - `VERIFIED_BY_CURRENT_TEST`: `Generate-CpanSbom.ps1`, Docker web build'inde deployment modunda kullanılan kilitli `cpanfile.docker.snapshot` kaynağından deterministik CycloneDX 1.5 CPAN dependency SBOM'u üretir. `Test-CpanSbom.ps1` formatı, component sayısını ve her CPAN purl'ını doğrular; CI artifact'i olarak yükler. Kapsam yalnız CPAN build distributions'tır: Debian/OS paketleri, base-image digest'i, container image inventory, vulnerability scan ve imzalı release artifact henüz tamamlanmamıştır.
