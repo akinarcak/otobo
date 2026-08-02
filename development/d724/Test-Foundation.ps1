@@ -280,6 +280,31 @@ foreach ($RequiredArchiveFlagContract in @(
     }
 }
 
+foreach ($RequiredUnlockTimeoutContract in @(
+    'Kernel::System::Ticket::TicketUnlockTimeoutUpdate',
+    'ticket.unlock_timeout.updated',
+    'our $NestedMutationFailure',
+    'AllowNested => $AllowNested',
+    'NESTED_TICKET_MUTATION_FAILED',
+    'unlock-timeout update fails closed when audit is unavailable',
+    'failed MIMEBase parent rolls nested unlock-timeout value back',
+    'nested unlock-timeout audit failure rolls MIMEBase parent back',
+    'successful MIMEBase parent advances timeout and article scope versions consecutively',
+    'failed Chat parent rolls nested unlock-timeout value back',
+    'nested unlock-timeout audit failure rolls Chat parent back',
+    'successful Chat parent advances timeout and article scope versions consecutively',
+    'direct unlock-timeout update emits one normalized audit event',
+    'nested unlock-timeout audit failure rolls lock parent back',
+    'successful lock parent advances timeout and lock scope versions consecutively'
+)) {
+    $Present = $TicketAuditWrapper -match [regex]::Escape($RequiredUnlockTimeoutContract) `
+        -or $TicketAuditService -match [regex]::Escape($RequiredUnlockTimeoutContract) `
+        -or $TicketAuditRegression -match [regex]::Escape($RequiredUnlockTimeoutContract)
+    if (!$Present) {
+        throw "TicketAudit is missing the unlock-timeout parent transaction contract: $RequiredUnlockTimeoutContract"
+    }
+}
+
 foreach ($RequiredGenericAgentTenantContract in @(
     'Kernel::System::GenericAgent::JobRun',
     "JobName => 'generic-agent'",

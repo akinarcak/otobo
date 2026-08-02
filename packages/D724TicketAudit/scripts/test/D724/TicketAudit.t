@@ -222,6 +222,56 @@ is(
     'archive update emits one normalized audit event',
 );
 
+my $UnlockVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
+my %BeforeUnlock = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$Ticket->TicketUnlockTimeoutUpdate( TicketID => $TicketID, UnlockTimeout => 1, UserID => 1 ), 'unlock-timeout update fails closed when audit is unavailable' );
+my %AfterUnlockFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterUnlockFailure{UnlockTimeout}, $BeforeUnlock{UnlockTimeout}, 'failed audited unlock-timeout update rolls ticket value back' );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version},
+    $UnlockVersion,
+    'failed unlock-timeout update rolls scope version back',
+);
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $Ticket->TicketUnlockTimeoutUpdate( TicketID => $TicketID, UnlockTimeout => 1, UserID => 1 ), 'unlock-timeout update succeeds after audit recovers' );
+my %AfterUnlockSuccess = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterUnlockSuccess{UnlockTimeout}, 1, 'successful audited unlock-timeout update persists value' );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version},
+    $UnlockVersion + 1,
+    'successful unlock-timeout update advances scope version once',
+);
+my $UnlockEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
+is(
+    scalar grep { $_->{Action} eq 'ticket.unlock_timeout.updated' } @{ $UnlockEvents->{Data} },
+    1,
+    'direct unlock-timeout update emits one normalized audit event',
+);
+
+my $OriginalAuditRecord = \&Kernel::System::D724::TicketAudit::_AuditRecord;
+my $LockVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
+{
+    no warnings 'redefine'; ## no critic
+    local *Kernel::System::D724::TicketAudit::_AuditRecord = sub {
+        my ( $Self, %Param ) = @_;
+        return { Success => 0, Error => 'INJECTED_TIMEOUT_AUDIT_FAILURE' }
+            if ( $Param{Action} // q{} ) eq 'ticket.unlock_timeout.updated';
+        return $OriginalAuditRecord->( $Self, %Param );
+    };
+    ok( !$Ticket->TicketLockSet( TicketID => $TicketID, Lock => 'lock', UserID => 1 ), 'nested unlock-timeout audit failure rolls lock parent back' );
+}
+my %AfterInjectedLockFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterInjectedLockFailure{Lock}, 'unlock', 'nested timeout audit failure restores parent lock value' );
+is( $AfterInjectedLockFailure{UnlockTimeout}, 1, 'nested timeout audit failure restores lock parent timeout' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $LockVersion, 'nested timeout audit failure restores lock parent scope version' );
+ok( $Ticket->TicketLockSet( TicketID => $TicketID, Lock => 'lock', UserID => 1 ), 'lock parent succeeds after nested timeout audit recovers' );
+my %AfterLockSuccess = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterLockSuccess{Lock}, 'lock', 'successful lock parent persists lock value' );
+isnt( $AfterLockSuccess{UnlockTimeout}, 1, 'successful lock parent persists nested timeout value' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $LockVersion + 2, 'successful lock parent advances timeout and lock scope versions consecutively' );
+ok( $Ticket->TicketUnlockTimeoutUpdate( TicketID => $TicketID, UnlockTimeout => 1, UserID => 1 ), 'MIMEBase rollback fixture resets unlock timeout through audited direct path' );
+
 my $ArticleBackend = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForChannel( ChannelName => 'Internal' );
 is(
     $ArticleBackend->{ArticleStorageModule},
@@ -235,19 +285,40 @@ my %Article = (
     ContentType => 'text/plain; charset=utf-8', HistoryType => 'AddNote', HistoryComment => 'D724 audit acceptance',
     UserID => 1, NoAgentNotify => 1,
 );
+my $MIMEVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
 ok( !$ArticleBackend->ArticleCreate(%Article), 'article create fails closed when audit is unavailable' );
 is( [ $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList( TicketID => $TicketID ) ], [], 'failed audited article leaves no article row' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 8 : 7, 'failed article create rolls scope version back' );
+my %AfterMIMEFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterMIMEFailure{UnlockTimeout}, 1, 'failed MIMEBase parent rolls nested unlock-timeout value back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $MIMEVersion, 'failed article create rolls parent and nested scope versions back' );
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+{
+    no warnings 'redefine'; ## no critic
+    local *Kernel::System::D724::TicketAudit::_AuditRecord = sub {
+        my ( $Self, %Param ) = @_;
+        return { Success => 0, Error => 'INJECTED_TIMEOUT_AUDIT_FAILURE' }
+            if ( $Param{Action} // q{} ) eq 'ticket.unlock_timeout.updated';
+        return $OriginalAuditRecord->( $Self, %Param );
+    };
+    ok( !$ArticleBackend->ArticleCreate(%Article), 'nested unlock-timeout audit failure rolls MIMEBase parent back' );
+}
+is( [ $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList( TicketID => $TicketID ) ], [], 'nested timeout audit failure leaves no MIMEBase article row' );
+my %AfterInjectedMIMEFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterInjectedMIMEFailure{UnlockTimeout}, 1, 'nested timeout audit failure restores MIMEBase parent timeout' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $MIMEVersion, 'nested timeout audit failure restores MIMEBase parent scope version' );
 my $ArticleID = $ArticleBackend->ArticleCreate(%Article);
 ok( $ArticleID, 'article create succeeds after audit recovers' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 9 : 8, 'successful article advances scope version once' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $MIMEVersion + 2, 'successful MIMEBase parent advances timeout and article scope versions consecutively' );
+my %AfterMIMESuccess = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+isnt( $AfterMIMESuccess{UnlockTimeout}, 1, 'successful MIMEBase parent persists nested unlock-timeout value' );
 my $ArticleEvents = $Audit->List(
     Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ArticleID",
 );
 is( [ map { $_->{Action} } @{ $ArticleEvents->{Data} } ], ['ticket.article.created'], 'article emits one normalized audit event' );
 ok( !exists $ArticleEvents->{Data}->[0]->{Details}->{body}, 'article body is excluded from audit details' );
+is( $Ticket->TicketUnlockTimeoutUpdate( TicketID => $TicketID, UnlockTimeout => 1, UserID => 1 ), 1, 'chat rollback fixture resets unlock timeout through audited direct path' );
+my $ChatCreateVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
 my $ChatBackend = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForChannel( ChannelName => 'Chat' );
 ok( $ChatBackend, 'chat article backend resolves in the candidate runtime' );
 my %ChatArticle = (
@@ -260,11 +331,29 @@ my %ChatArticle = (
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
 ok( !$ChatBackend->ArticleCreate(%ChatArticle), 'chat article create fails closed when audit is unavailable' );
 is( scalar $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList( TicketID => $TicketID ), 1, 'failed audited chat create leaves no additional article row' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 9 : 8, 'failed chat article create rolls scope version back' );
+my %AfterChatFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterChatFailure{UnlockTimeout}, 1, 'failed Chat parent rolls nested unlock-timeout value back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatCreateVersion, 'failed chat article create rolls parent and nested scope versions back' );
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+{
+    no warnings 'redefine'; ## no critic
+    local *Kernel::System::D724::TicketAudit::_AuditRecord = sub {
+        my ( $Self, %Param ) = @_;
+        return { Success => 0, Error => 'INJECTED_TIMEOUT_AUDIT_FAILURE' }
+            if ( $Param{Action} // q{} ) eq 'ticket.unlock_timeout.updated';
+        return $OriginalAuditRecord->( $Self, %Param );
+    };
+    ok( !$ChatBackend->ArticleCreate(%ChatArticle), 'nested unlock-timeout audit failure rolls Chat parent back' );
+}
+is( scalar $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList( TicketID => $TicketID ), 1, 'nested timeout audit failure leaves no additional Chat article row' );
+my %AfterInjectedChatFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterInjectedChatFailure{UnlockTimeout}, 1, 'nested timeout audit failure restores Chat parent timeout' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatCreateVersion, 'nested timeout audit failure restores Chat parent scope version' );
 my $ChatArticleID = $ChatBackend->ArticleCreate(%ChatArticle);
 ok( $ChatArticleID, 'chat article create succeeds after audit recovers' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 10 : 9, 'successful chat article advances scope version once' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatCreateVersion + 2, 'successful Chat parent advances timeout and article scope versions consecutively' );
+my %AfterChatSuccess = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+isnt( $AfterChatSuccess{UnlockTimeout}, 1, 'successful Chat parent persists nested unlock-timeout value' );
 my $ChatEvents = $Audit->List(
     Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ChatArticleID",
 );
@@ -272,7 +361,7 @@ is( [ map { $_->{Action} } @{ $ChatEvents->{Data} } ], ['ticket.chat_article.cre
 my @UpdatedChatMessages = (
     { ChatterID => 'audit-agent', ChatterName => 'Audit Agent', ChatterType => 'agent', MessageText => 'Updated audited chat message', SystemGenerated => 0, CreateTime => '2030-01-02 03:05:05' },
 );
-my $ChatVersion = $AlternateTypeID ? 10 : 9;
+my $ChatVersion = $ChatCreateVersion + 2;
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
 ok( !$ChatBackend->ArticleUpdate( TicketID => $TicketID, ArticleID => $ChatArticleID, Key => 'ChatMessageList', Value => \@UpdatedChatMessages, UserID => 1 ), 'chat article update fails closed when audit is unavailable' );
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $ChatVersion, 'failed chat article update rolls scope version back' );
@@ -413,8 +502,8 @@ $Events = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 
 is(
     [ map { $_->{Action} } @{ $Events->{Data} } ],
     $AlternateTypeID
-        ? [qw(ticket.created ticket.state.updated ticket.type.updated ticket.service.updated ticket.sla.updated ticket.pending_time.updated ticket.title.updated ticket.customer.updated)]
-        : [qw(ticket.created ticket.state.updated ticket.service.updated ticket.sla.updated ticket.pending_time.updated ticket.title.updated ticket.customer.updated)],
+        ? [qw(ticket.created ticket.state.updated ticket.type.updated ticket.service.updated ticket.sla.updated ticket.pending_time.updated ticket.title.updated ticket.customer.updated ticket.archive_flag.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated ticket.lock.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated)]
+        : [qw(ticket.created ticket.state.updated ticket.service.updated ticket.sla.updated ticket.pending_time.updated ticket.title.updated ticket.customer.updated ticket.archive_flag.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated ticket.lock.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated ticket.unlock_timeout.updated)],
     'failed/no-op updates leave no orphan event and successful mutations emit one event each',
 );
 like( $Events->{Data}->[ $AlternateTypeID ? 7 : 6 ]->{ToState}, qr{\Asha256:[0-9a-f]{40}\z}, 'long customer state uses deterministic hash token' );
@@ -424,6 +513,7 @@ is(
 );
 ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket tenant audit chain verifies' );
 
+my $BeforeDeleteVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
 ok( !$Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket delete fails closed when audit is unavailable' );
 my %DeleteAfterFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
@@ -434,7 +524,7 @@ ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket delete 
 ok( !$Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 ), 'successful audited delete removes the ticket row' );
 my $DeletedScope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID );
 is( $DeletedScope->{Status}, 'deleted', 'successful audited delete retains deleted scope tombstone' );
-is( $DeletedScope->{Version}, $AlternateTypeID ? 13 : 12, 'successful audited delete advances scope version once' );
+is( $DeletedScope->{Version}, $BeforeDeleteVersion + 1, 'successful audited delete advances scope version once' );
 my $DeleteEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
 is( $DeleteEvents->{Data}->[-1]->{Action}, 'ticket.deleted', 'successful delete emits normalized audit evidence' );
 ok( $Ticket->TicketDelete( TicketID => $LegacyTicketID, UserID => 1 ), 'legacy ticket fixture is removed' );

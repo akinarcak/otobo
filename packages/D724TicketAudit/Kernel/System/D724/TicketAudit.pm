@@ -9,7 +9,8 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.8.18';
+our $VERSION = '0.8.19';
+our $NestedMutationFailure;
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -148,6 +149,7 @@ sub MutationRun {
     return $Param{Original}->( $Param{TicketObject}, %{$Call} ) if !$Self->_Enabled();
     my $TicketID = $Call->{TicketID};
     return if !$TicketID;
+    my $ParentFailure = $NestedMutationFailure;
     my $Result = $Self->_TransactionRun(
         OnFailure => sub { $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $TicketID ) },
         Code => sub {
@@ -158,9 +160,22 @@ sub MutationRun {
                 return $Self->_Error('TENANT_CHANGE_FORBIDDEN') if length $RequestedTenant && $RequestedTenant ne $Scope->{TenantID};
             }
             my %Before = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
-            local $Param{TicketObject}->{D724TicketAuditSuppress} = 1;
-            my $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            my $NestedFailure = 0;
+            my $Value;
+            if ( $Param{AllowNested} ) {
+                local $NestedMutationFailure = \$NestedFailure;
+                $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            }
+            else {
+                local $Param{TicketObject}->{D724TicketAuditSuppress} = 1;
+                $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            }
             return $Self->_Error('TICKET_MUTATION_FAILED') if !$Value;
+            return $Self->_Error('NESTED_TICKET_MUTATION_FAILED') if $NestedFailure;
+            if ( $Param{AllowNested} ) {
+                $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+                return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            }
             my %After = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
             my $From = $Param{Field} eq 'Customer'
                 ? join( q{|}, $Before{CustomerID} // q{}, $Before{CustomerUserID} // q{} )
@@ -188,6 +203,7 @@ sub MutationRun {
             return { Success => 1, Value => $Value };
         },
     );
+    ${$ParentFailure} = 1 if ref $ParentFailure eq 'SCALAR' && !$Result->{Success};
     return $Result->{Success} ? $Result->{Value} : undef;
 }
 
@@ -211,8 +227,13 @@ sub ArticleCreateRun {
             my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
             return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
             local $Param{ArticleBackend}->{D724TicketAuditSuppress} = 1;
+            my $NestedFailure = 0;
+            local $NestedMutationFailure = \$NestedFailure;
             my $ArticleID = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
             return $Self->_Error('ARTICLE_CREATE_FAILED') if !$ArticleID;
+            return $Self->_Error('NESTED_TICKET_MUTATION_FAILED') if $NestedFailure;
+            $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
             my $Version = $Scope->{Version} + 1;
             my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
             my @Bind = map { \$_ } @Values;
@@ -253,8 +274,13 @@ sub ChatArticleCreateRun {
             my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
             return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
             local $Param{ArticleBackend}->{D724TicketAuditSuppress} = 1;
+            my $NestedFailure = 0;
+            local $NestedMutationFailure = \$NestedFailure;
             my $ArticleID = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
             return $Self->_Error('CHAT_ARTICLE_CREATE_FAILED') if !$ArticleID;
+            return $Self->_Error('NESTED_TICKET_MUTATION_FAILED') if $NestedFailure;
+            $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
             my $Version = $Scope->{Version} + 1;
             my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
             my @Bind = map { \$_ } @Values;

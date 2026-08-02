@@ -19,7 +19,7 @@ use Kernel::System::GenericAgent ();
 use Kernel::System::Console::Command::Maint::Ticket::PendingCheck ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.18';
+our $VERSION = '0.8.19';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -28,6 +28,7 @@ my $OriginalTicketDelete      = \&Kernel::System::Ticket::TicketDelete;
 my $OriginalTicketMerge       = \&Kernel::System::Ticket::TicketMerge;
 my $OriginalTicketSearch      = Kernel::System::Ticket::TicketSearch->can('TicketSearch');
 my $OriginalTicketTitleUpdate = \&Kernel::System::Ticket::TicketTitleUpdate;
+my $OriginalUnlockTimeoutUpdate = \&Kernel::System::Ticket::TicketUnlockTimeoutUpdate;
 my $OriginalTicketQueueSet    = \&Kernel::System::Ticket::TicketQueueSet;
 my $OriginalTicketTypeSet     = \&Kernel::System::Ticket::TicketTypeSet;
 my $OriginalTicketServiceSet  = \&Kernel::System::Ticket::TicketServiceSet;
@@ -119,25 +120,26 @@ my $OriginalGenericAgentJobRun = Kernel::System::GenericAgent->can('JobRun');
     };
 
     my $Wrap = sub {
-        my ( $Method, $Original, $Action, $Field ) = @_;
+        my ( $Method, $Original, $Action, $Field, $AllowNested ) = @_;
         no strict 'refs'; ## no critic
         *{"Kernel::System::Ticket::$Method"} = sub {
             my ( $Self, %Param ) = @_;
             return $Original->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
             return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->MutationRun(
                 TicketObject => $Self, Original => $Original, Param => \%Param,
-                Action => $Action, Field => $Field,
+                Action => $Action, Field => $Field, AllowNested => $AllowNested,
             );
         };
     };
     $Wrap->( 'TicketTitleUpdate',       $OriginalTicketTitleUpdate, 'ticket.title.updated',       'Title' );
+    $Wrap->( 'TicketUnlockTimeoutUpdate', $OriginalUnlockTimeoutUpdate, 'ticket.unlock_timeout.updated', 'UnlockTimeout' );
     $Wrap->( 'TicketQueueSet',          $OriginalTicketQueueSet,    'ticket.queue.updated',       'Queue' );
     $Wrap->( 'TicketTypeSet',           $OriginalTicketTypeSet,     'ticket.type.updated',        'Type' );
     $Wrap->( 'TicketServiceSet',        $OriginalTicketServiceSet,  'ticket.service.updated',     'Service' );
     $Wrap->( 'TicketSLASet',            $OriginalTicketSLASet,      'ticket.sla.updated',         'SLAID' );
     $Wrap->( 'TicketPendingTimeSet',    $OriginalPendingTimeSet,    'ticket.pending_time.updated', 'UntilTime' );
     $Wrap->( 'TicketCustomerSet',       $OriginalTicketCustomerSet, 'ticket.customer.updated',    'Customer' );
-    $Wrap->( 'TicketLockSet',           $OriginalTicketLockSet,     'ticket.lock.updated',        'Lock' );
+    $Wrap->( 'TicketLockSet',           $OriginalTicketLockSet,     'ticket.lock.updated',        'Lock', 1 );
     $Wrap->( 'TicketStateSet',          $OriginalTicketStateSet,    'ticket.state.updated',       'State' );
     $Wrap->( 'TicketOwnerSet',          $OriginalTicketOwnerSet,    'ticket.owner.updated',       'OwnerID' );
     $Wrap->( 'TicketResponsibleSet',    $OriginalResponsibleSet,    'ticket.responsible.updated', 'ResponsibleID' );

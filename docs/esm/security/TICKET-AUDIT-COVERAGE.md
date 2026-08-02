@@ -12,7 +12,8 @@ the following core writes and sends them through the transaction-aware
 - `TicketCreate`
 - `TicketTitleUpdate`, `TicketQueueSet`, `TicketCustomerSet`, `TicketLockSet`
 - `TicketStateSet`, `TicketTypeSet`, `TicketServiceSet`, `TicketOwnerSet`, `TicketResponsibleSet`, `TicketPrioritySet`
-- `TicketSLASet`, `TicketPendingTimeSet`, and `TicketArchiveFlagSet`
+- `TicketSLASet`, `TicketPendingTimeSet`, `TicketArchiveFlagSet`, and
+  `TicketUnlockTimeoutUpdate`
 - `TicketDelete` (retains a `deleted` scope tombstone) and same-tenant `TicketMerge`
 - MIMEBase `ArticleCreate`, inherited by the Email, Internal, and Phone
   communication-channel backends
@@ -24,37 +25,33 @@ in `packages/D724TicketAudit/scripts/test/D724/TicketAudit.t`.
 ## Direct ticket mutator inventory
 
 The original P0 inventory is covered and the source comparison additionally
-identified and wrapped `TicketArchiveFlagSet`. Personal watcher/seen flags,
+identified and wrapped `TicketArchiveFlagSet` and `TicketUnlockTimeoutUpdate`.
+Personal watcher/seen flags,
 accounted-time writes, escalation-index maintenance, and article-storage switching
 remain explicitly outside this business-mutation coverage claim. `TicketAudit.t`
 verifies archive-flag and delete audit failure rollback, the retained deleted
 scope tombstone, and the normalized delete event; later delete calls are fixture
 cleanup.
 
-### Open P0 design decision: unlock-timeout writes
+### Unlock-timeout parent transaction contract
 
 `TicketUnlockTimeoutUpdate` writes the core ticket `timeout` field directly and
-is not currently wrapped. A direct application of the generic mutation wrapper
-is unsafe: MIMEBase and Chat article creation call this method inside their own
-audited transaction but do not check its return value. A nested timeout audit
-could therefore fail while article creation continues. If it succeeds and
-advances the ticket scope, the enclosing article audit still attempts its
-compare-and-swap with the earlier scope version and can fail with
-`VERSION_CONFLICT`.
+is now wrapped by the generic mutation contract. `TicketLockSet`, MIMEBase, and
+Chat article creation also call it inside their audited parent transaction
+without checking its return value, so `D724TicketAudit 0.8.19` uses an explicit,
+parent-linked nested-mutation failure context. Any inner mutation failure makes
+the parent operation fail closed and roll back. After a successful inner timeout
+audit, the parent re-locks the scope and uses the current version for its own
+compare-and-swap. Nested execution is enabled only for `TicketLockSet`; other
+generic ticket setters retain their existing suppression boundary.
 
-This route requires an explicit higher-model design decision before code changes:
-
-1. Record timeout and article creation as two consecutive audit mutations, make
-   nested failure abort the parent operation, and refresh/lock the scope version
-   before the parent audit; or
-2. coalesce the derived timeout change into the parent article audit while keeping
-   direct timeout calls independently audited through an explicit parent context.
-
-Acceptance must cover direct calls plus MIMEBase and Chat article creation,
-audit-disabled rollback of both writes, consecutive or coalesced scope semantics,
-no orphan audit event, no silently ignored nested failure, and tenant-chain
-verification. Until that decision and candidate regression are complete,
-unlock-timeout audit completeness is not claimed.
+The resulting contract records timeout and its lock/article parent as two
+consecutive audit mutations. The regression covers direct calls, the lock
+parent, and MIMEBase and Chat article creation. Targeted timeout-only audit
+failure must roll every parent mutation back; successful parents must persist
+both writes and advance the scope twice. Foundation locks these assertions.
+Candidate MariaDB execution is still required before runtime acceptance is
+claimed.
 
 ## Implementation order and acceptance gate
 
