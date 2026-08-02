@@ -12,3 +12,4 @@ Kernel/Language/** merge=ours
 *.sopm text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
+bin/docker/carton text eol=lf
