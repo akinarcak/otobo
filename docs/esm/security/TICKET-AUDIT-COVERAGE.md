@@ -31,6 +31,31 @@ verifies archive-flag and delete audit failure rollback, the retained deleted
 scope tombstone, and the normalized delete event; later delete calls are fixture
 cleanup.
 
+### Open P0 design decision: unlock-timeout writes
+
+`TicketUnlockTimeoutUpdate` writes the core ticket `timeout` field directly and
+is not currently wrapped. A direct application of the generic mutation wrapper
+is unsafe: MIMEBase and Chat article creation call this method inside their own
+audited transaction but do not check its return value. A nested timeout audit
+could therefore fail while article creation continues. If it succeeds and
+advances the ticket scope, the enclosing article audit still attempts its
+compare-and-swap with the earlier scope version and can fail with
+`VERSION_CONFLICT`.
+
+This route requires an explicit higher-model design decision before code changes:
+
+1. Record timeout and article creation as two consecutive audit mutations, make
+   nested failure abort the parent operation, and refresh/lock the scope version
+   before the parent audit; or
+2. coalesce the derived timeout change into the parent article audit while keeping
+   direct timeout calls independently audited through an explicit parent context.
+
+Acceptance must cover direct calls plus MIMEBase and Chat article creation,
+audit-disabled rollback of both writes, consecutive or coalesced scope semantics,
+no orphan audit event, no silently ignored nested failure, and tenant-chain
+verification. Until that decision and candidate regression are complete,
+unlock-timeout audit completeness is not claimed.
+
 ## Implementation order and acceptance gate
 
 1. Keep every newly discovered direct ticket write behind the same immutable
