@@ -190,6 +190,38 @@ ok(
     'customer user can change inside immutable tenant boundary',
 );
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 8 : 7, 'customer user update advances scope version' );
+
+$Helper->ConfigSettingChange( Key => 'Ticket::ArchiveSystem', Value => 1 );
+$Helper->ConfigSettingChange( Key => 'Ticket::ArchiveSystem::RemoveSeenFlags', Value => 0 );
+$Helper->ConfigSettingChange( Key => 'Ticket::ArchiveSystem::RemoveTicketWatchers', Value => 0 );
+my $ArchiveVersion = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version};
+my %BeforeArchive = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $BeforeArchive{ArchiveFlag}, 'n', 'ticket starts outside the archive' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$Ticket->TicketArchiveFlagSet( TicketID => $TicketID, ArchiveFlag => 'y', UserID => 1 ), 'archive update fails closed when audit is unavailable' );
+my %AfterArchiveFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterArchiveFailure{ArchiveFlag}, 'n', 'failed audited archive update rolls ticket flag back' );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version},
+    $ArchiveVersion,
+    'failed archive update rolls scope version back',
+);
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $Ticket->TicketArchiveFlagSet( TicketID => $TicketID, ArchiveFlag => 'y', UserID => 1 ), 'archive update succeeds after audit recovers' );
+my %AfterArchiveSuccess = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $AfterArchiveSuccess{ArchiveFlag}, 'y', 'successful audited archive update persists ticket flag' );
+is(
+    $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version},
+    $ArchiveVersion + 1,
+    'successful archive update advances scope version once',
+);
+my $ArchiveEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
+is(
+    scalar grep { $_->{Action} eq 'ticket.archive_flag.updated' } @{ $ArchiveEvents->{Data} },
+    1,
+    'archive update emits one normalized audit event',
+);
+
 my $ArticleBackend = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForChannel( ChannelName => 'Internal' );
 is(
     $ArticleBackend->{ArticleStorageModule},

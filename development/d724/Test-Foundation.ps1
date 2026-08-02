@@ -265,6 +265,21 @@ foreach ($RequiredInvalidArticleContract in @(
     }
 }
 
+foreach ($RequiredArchiveFlagContract in @(
+    'Kernel::System::Ticket::TicketArchiveFlagSet',
+    'ticket.archive_flag.updated',
+    'archive update fails closed when audit is unavailable',
+    'failed audited archive update rolls ticket flag back',
+    'successful archive update advances scope version once',
+    'archive update emits one normalized audit event'
+)) {
+    $Present = $TicketAuditWrapper -match [regex]::Escape($RequiredArchiveFlagContract) `
+        -or $TicketAuditRegression -match [regex]::Escape($RequiredArchiveFlagContract)
+    if (!$Present) {
+        throw "TicketAudit is missing the archive-flag mutation contract: $RequiredArchiveFlagContract"
+    }
+}
+
 foreach ($RequiredGenericAgentTenantContract in @(
     'Kernel::System::GenericAgent::JobRun',
     "JobName => 'generic-agent'",

@@ -12,7 +12,7 @@ the following core writes and sends them through the transaction-aware
 - `TicketCreate`
 - `TicketTitleUpdate`, `TicketQueueSet`, `TicketCustomerSet`, `TicketLockSet`
 - `TicketStateSet`, `TicketTypeSet`, `TicketServiceSet`, `TicketOwnerSet`, `TicketResponsibleSet`, `TicketPrioritySet`
-- `TicketSLASet` and `TicketPendingTimeSet`
+- `TicketSLASet`, `TicketPendingTimeSet`, and `TicketArchiveFlagSet`
 - `TicketDelete` (retains a `deleted` scope tombstone) and same-tenant `TicketMerge`
 - MIMEBase `ArticleCreate`, inherited by the Email, Internal, and Phone
   communication-channel backends
@@ -23,8 +23,11 @@ in `packages/D724TicketAudit/scripts/test/D724/TicketAudit.t`.
 
 ## Direct ticket mutator inventory
 
-The known direct core ticket mutators identified in the original P0 inventory
-are wrapped. `TicketAudit.t` verifies delete audit failure rollback, the retained deleted
+The original P0 inventory is covered and the source comparison additionally
+identified and wrapped `TicketArchiveFlagSet`. Personal watcher/seen flags,
+accounted-time writes, escalation-index maintenance, and article-storage switching
+remain explicitly outside this business-mutation coverage claim. `TicketAudit.t`
+verifies archive-flag and delete audit failure rollback, the retained deleted
 scope tombstone, and the normalized delete event; later delete calls are fixture
 cleanup.
 

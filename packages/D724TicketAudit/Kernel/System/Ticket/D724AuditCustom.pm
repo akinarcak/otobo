@@ -19,7 +19,7 @@ use Kernel::System::GenericAgent ();
 use Kernel::System::Console::Command::Maint::Ticket::PendingCheck ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.17';
+our $VERSION = '0.8.18';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -39,6 +39,7 @@ my $OriginalTicketStateSet    = \&Kernel::System::Ticket::TicketStateSet;
 my $OriginalTicketOwnerSet    = \&Kernel::System::Ticket::TicketOwnerSet;
 my $OriginalResponsibleSet    = \&Kernel::System::Ticket::TicketResponsibleSet;
 my $OriginalTicketPrioritySet = \&Kernel::System::Ticket::TicketPrioritySet;
+my $OriginalArchiveFlagSet    = \&Kernel::System::Ticket::TicketArchiveFlagSet;
 my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate;
 my $OriginalChatArticleCreate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleCreate;
 my $OriginalChatArticleUpdate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleUpdate;
@@ -141,6 +142,7 @@ my $OriginalGenericAgentJobRun = Kernel::System::GenericAgent->can('JobRun');
     $Wrap->( 'TicketOwnerSet',          $OriginalTicketOwnerSet,    'ticket.owner.updated',       'OwnerID' );
     $Wrap->( 'TicketResponsibleSet',    $OriginalResponsibleSet,    'ticket.responsible.updated', 'ResponsibleID' );
     $Wrap->( 'TicketPrioritySet',       $OriginalTicketPrioritySet, 'ticket.priority.updated',    'Priority' );
+    $Wrap->( 'TicketArchiveFlagSet',    $OriginalArchiveFlagSet,    'ticket.archive_flag.updated', 'ArchiveFlag' );
 
     *Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate = sub {
         my ( $Self, %Param ) = @_;
