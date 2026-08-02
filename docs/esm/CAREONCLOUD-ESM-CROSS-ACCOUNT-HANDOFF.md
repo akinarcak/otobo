@@ -1,6 +1,6 @@
 # CareOnCloud ESM — Hesaplar Arası Tek Devir Dosyası
 
-**Devir tarihi:** 2026-08-03  
+**Devir tarihi:** 2026-08-03
 **Repo:** `https://github.com/akinarcak/otobo`  
 **Çalışma dalı:** `codex/esm-foundation`  
 **Durum:** Geliştirme prototipi; üretime hazır değildir.
