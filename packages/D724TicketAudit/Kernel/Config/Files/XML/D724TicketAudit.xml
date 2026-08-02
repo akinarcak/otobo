@@ -23,6 +23,6 @@
     <Setting Name="Ticket::CustomModule###724-D724TicketAudit" Required="1" Valid="1">
         <Description Translatable="1">Loads the D724 transaction and audit wrapper for OTOBO ticket repository mutations.</Description>
         <Navigation>Core::Ticket</Navigation>
-        <Value><Item ValueType="PerlModule" ValueFilter="Kernel/System/Ticket/*.pm">Kernel::System::Ticket::D724AuditCustom</Item></Value>
+        <Value><Item ValueType="String">Kernel::System::Ticket::D724AuditCustom</Item></Value>
     </Setting>
 </otobo_config>

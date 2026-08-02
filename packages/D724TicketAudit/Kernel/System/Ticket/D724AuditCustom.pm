@@ -15,7 +15,7 @@ use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.9';
+our $VERSION = '0.8.10';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
