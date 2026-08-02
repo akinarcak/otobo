@@ -1,5 +1,10 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-02 — P0 temiz aday paket regresyonu
+
+- `VERIFIED_BY_CURRENT_TEST`: Temiz aday MariaDB/Redis/web ortamında 18 D724 SOPM paketi yeniden build/install edildi; kurulum döngüsü tamamlandı. Paket testlerinde Foundation, TenantGuard, Audit, TenantDirectory, Catalog, Request, Problem, CMDB, Change, Commitment, Webhook, Identity, SCIM, Assist ve Observability paketleri `PASS` oldu.
+- `RISK`: Temiz adayda D724TicketAudit (227 test), D724API (160 test) ve D724Reporting (73 test) paketleri `FAIL` oldu. TicketAudit artık parser derleme hatası vermiyor; kalan sonuçlar runtime/fixture regresyonu olarak ayrıştırılmayı bekliyor. P0 tam runtime kabulü tamamlanmış değildir.
+
 ## 2026-08-02 — P0 aday paket regresyonu
 
 - `VERIFIED_BY_CURRENT_TEST`: İzole aday Compose ortamında 18 D724 SOPM paketi başarıyla build/install edildi; paket listesi tüm paketleri `OK` bildirdi ve aday web yeniden başlatma sonrasında healthy kaldı.
