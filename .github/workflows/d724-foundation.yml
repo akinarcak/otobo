@@ -38,6 +38,10 @@ jobs:
         shell: pwsh
         run: ./development/d724/Test-Foundation.ps1 -RequireDocker
 
+      - name: Validate CareOnCloud source brand contract
+        shell: pwsh
+        run: ./development/d724/Test-CareOnCloudBrand.ps1
+
       - name: Accept clean D724Problem package lifecycle
         shell: pwsh
         run: ./development/d724/Test-CleanPackageLifecycle.ps1
