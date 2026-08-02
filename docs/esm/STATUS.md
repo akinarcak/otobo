@@ -28,7 +28,7 @@
 
 ## 2026-08-02 — P0 CareOnCloud security policy
 
-- `VERIFIED_IN_CODE`: root `SECURITY.md` upstream-only/fork-excluding policy yerine CareOnCloud kapsamı, private GitHub vulnerability reporting URL'i, 3 is gunu acknowledgement, 7 takvim gunu critical response hedefi, CVE koordinasyonu ve managed customer bildirimini tanimlar. Foundation kapisi bu zorunlu terimleri ve eski `security@otobo.org`/fork-exclusion dilinin yoklugunu denetler. `RISK` / `VERIFIED_BY_CURRENT_BROWSER`: repository owner oturumunda `Settings > Advanced Security` ekrani private reporting icin `Enable` dugmesini gosterdi; ayar su anda kapali. Bu turda harici repo ayari degistirilmedi. Versioned release oncesi owner tarafindan etkinlestirilmeli ve yeniden kanitlanmalidir.
+- `VERIFIED_IN_CODE`: root `SECURITY.md` upstream-only/fork-excluding policy yerine CareOnCloud kapsamı, private GitHub vulnerability reporting URL'i, 3 is gunu acknowledgement, 7 takvim gunu critical response hedefi, CVE koordinasyonu ve managed customer bildirimini tanimlar. Foundation kapisi bu zorunlu terimleri ve eski `security@otobo.org`/fork-exclusion dilinin yoklugunu denetler. `VERIFIED_BY_CURRENT_BROWSER`: repository owner oturumunda `Settings > Advanced Security` ekrani kaydedilmis ayari `Disable private vulnerability reporting` dugmesiyle gosterdi; private reporting etkindir. Versioned release oncesi supported-version bakim taahhutleri ayri olarak somutlastirilmalidir.
 
 ## 2026-08-02 — P0 logical database backup/restore acceptance
 
