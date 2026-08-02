@@ -2,6 +2,8 @@
 
 ## 2026-08-03 — P0 TicketAudit runtime kabulü
 
+- `VERIFIED_BY_CURRENT_TEST`: Sabit uzak test script'iyle 18 D724 paketinin tamamı ardışık olarak çalıştırıldı ve her paket `All tests successful` döndürdü. D724TicketAudit 227, API 160 ve Reporting 73 test dahil edildi; negatif-path SQL/policy logları beklenen assertion kanıtıdır.
+
 - `VERIFIED_BY_CURRENT_TEST`: Kalan iki TicketAudit failure transaction-depth kaybı değildi. Başarılı unknown-channel mutation sonrasında ticket/article cache temizlenmediği için GI rollback snapshot'ı stale kalıyordu; merge içindeki farklı Ticket nesnesinin unlock-timeout adapter'ı ise global merge suppression'ını aşarak version-2 dedupe anahtarını tüketiyordu.
 - `VERIFIED_BY_CURRENT_TEST`: `9ec8f132a` cache invalidation ve merge audit ownership düzeltmesi izole aday ortamına kuruldu. D724TicketAudit 4 dosya / 227 test `PASS`; Foundation 18 paket manifesti/dosya listesi kapısı da `PASS`. Expected fail-closed policy logları test failure değildir. Aktif `d724-esm-*` servisleri değiştirilmedi.
 
