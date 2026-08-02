@@ -88,7 +88,7 @@ sub Run {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
     else {
-        $Self->Print("D724 webhook status\nSubscriptions: $Counts{Subscriptions}\nActive: $Counts{Active}\nMaximum cursor lag: $Counts{MaximumCursorLag}\nPending/retry/dead: $Counts{PendingDeliveries}/$Counts{RetryDeliveries}/$Counts{DeadDeliveries}\nHealthy: " . ( $Status->{Health}->{Healthy} ? 'YES' : 'NO' ) . "\nStatus: " . ( $Success ? 'OK' : 'FAILED' ) . "\n");
+        $Self->Print("CareOnCloud webhook status\nSubscriptions: $Counts{Subscriptions}\nActive: $Counts{Active}\nMaximum cursor lag: $Counts{MaximumCursorLag}\nPending/retry/dead: $Counts{PendingDeliveries}/$Counts{RetryDeliveries}/$Counts{DeadDeliveries}\nHealthy: " . ( $Status->{Health}->{Healthy} ? 'YES' : 'NO' ) . "\nStatus: " . ( $Success ? 'OK' : 'FAILED' ) . "\n");
     }
     return $Success ? $Self->ExitCodeOk() : $Self->ExitCodeError();
 }

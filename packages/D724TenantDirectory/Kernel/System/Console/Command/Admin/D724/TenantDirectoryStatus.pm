@@ -40,7 +40,7 @@ sub Run {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
     else {
-        $Self->Print("D724 tenant directory status\nTenants: $Counts{Tenants}\nActive memberships: $Counts{ActiveMemberships}\n");
+        $Self->Print("CareOnCloud tenant directory status\nTenants: $Counts{Tenants}\nActive memberships: $Counts{ActiveMemberships}\n");
         $Self->Print( $Success ? "Status: OK\n" : "Status: FAILED\n" );
     }
     return $Success ? $Self->ExitCodeOk() : $Self->ExitCodeError();

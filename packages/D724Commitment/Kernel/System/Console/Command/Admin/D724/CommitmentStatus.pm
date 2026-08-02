@@ -77,7 +77,7 @@ sub Run {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
     else {
-        $Self->Print("D724 commitment status\nActive policies: $Counts{Policies}\nObjectives: $Counts{Objectives}\nActive commitments: $Counts{Active}\nBreached: $Counts{Breached}\nPending escalations: $Counts{PendingEscalations}\nDelivered escalations: $Counts{DeliveredEscalations}\nDead escalations: $Counts{DeadEscalations}\nReplayed escalations: $Counts{ReplayedEscalations}\n");
+        $Self->Print("CareOnCloud commitment status\nActive policies: $Counts{Policies}\nObjectives: $Counts{Objectives}\nActive commitments: $Counts{Active}\nBreached: $Counts{Breached}\nPending escalations: $Counts{PendingEscalations}\nDelivered escalations: $Counts{DeliveredEscalations}\nDead escalations: $Counts{DeadEscalations}\nReplayed escalations: $Counts{ReplayedEscalations}\n");
         $Self->Print( $Success ? "Status: OK\n" : "Status: FAILED\n" );
     }
     return $Success ? $Self->ExitCodeOk() : $Self->ExitCodeError();

@@ -350,6 +350,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - Elasticsearch webservice ID `1`, surumlu YAML ve idempotent konfigurator ile `http://elastic:9200` private host'una sabitlendi; OTOBO `Maint::Elasticsearch::TestConnection` basarili.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
+## 2026-08-03 - CareOnCloud marka gecisi, admin status dili
+
+- `VERIFIED_BY_CURRENT_TEST`: Admin status komutlarinin kullaniciya gosterilen aciklama ve metin basliklari `CareOnCloud` olarak guncellendi (Audit, Commitment, Observability, Reporting, TenantDirectory ve Webhook). Foundation kapisi gecti.
+- `RISK`: Paket adlari, Perl namespace'leri, DB tablolari, config anahtarlari, SOPM yollari ve sabit API error code'lari teknik uyumluluk kimlikleri olarak korunmustur; bu fazda genis kapsamli rename yapilmamistir.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.

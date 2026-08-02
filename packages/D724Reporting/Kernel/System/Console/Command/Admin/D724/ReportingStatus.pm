@@ -41,7 +41,7 @@ sub Run {
     if ( $Self->GetOption('json') ) {
         $Self->Print( $Kernel::OM->Get('Kernel::System::JSON')->Encode( Data => $Status, SortKeys => 1, Pretty => 1 ) );
     }
-    else { $Self->Print( 'D724 reporting status: ' . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n" ) }
+    else { $Self->Print( 'CareOnCloud reporting status: ' . ( $Status->{Success} ? 'OK' : 'FAILED' ) . "\n" ) }
     return $Status->{Success} ? $Self->ExitCodeOk() : $Self->ExitCodeError();
 }
 1;
