@@ -25,7 +25,7 @@ Parola, private key ve GitHub token bu devir dosyasına veya Git’e yazılmayac
 
 ## Mevcut kanıt durumu
 
-- Son commit: `fb7b5fc42 ci(esm): allow full candidate acceptance window`.
+- Son commit: `30dfb0052 docs(esm): add cross-account handoff guide`.
 - Çalışma ağacı son kontrolde temizdi.
 - `Test-Foundation.ps1` 18 D724 paket manifesti ve dosya listesini geçti.
 - CI’de repository dependency Trivy taraması ve temiz lifecycle sonrası `d724/esm:dev` OS/library image taraması tanımlı.
@@ -103,4 +103,3 @@ Kanıt seviyesi: VERIFIED_IN_CODE / VERIFIED_BY_CURRENT_TEST / TEST_EXISTS_NOT_R
 Açık sonraki hedef: <tek hedef>
 Runner/erişim notu: <Buildx, disk, servis etkisi>
 ```
-
