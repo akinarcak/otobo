@@ -1,6 +1,7 @@
 name: D724 ESM foundation
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'development/d724/**'

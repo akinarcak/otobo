@@ -412,6 +412,7 @@ foreach ($RootReleaseFile in @(
 
 $FoundationWorkflow = Get-Content (Join-Path $RepositoryRoot '.github/workflows/d724-foundation.yml') -Raw
 foreach ($RequiredVulnerabilityScanContract in @(
+    'workflow_dispatch:',
     'timeout-minutes: 45',
     'aquasecurity/trivy-action@v0.36.0',
     'scan-type: fs',
