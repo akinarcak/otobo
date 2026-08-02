@@ -14,7 +14,7 @@ our @ObjectDependencies = ('Kernel::System::D724::TicketAudit');
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Backfill immutable tenant scope and audit evidence for legacy OTOBO tickets with an active D724 customer tenant.');
+    $Self->Description('Backfill immutable tenant scope and audit evidence for legacy OTOBO tickets with an active CareOnCloud customer tenant.');
     $Self->AddOption( Name => 'actor-user-id', Description => 'OTOBO user recorded as migration actor.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
     $Self->AddOption( Name => 'tenant-id', Description => 'Optional single tenant filter.', Required => 0, HasValue => 1, ValueRegex => qr{[a-z0-9][a-z0-9_-]{1,127}}smx );
     $Self->AddOption( Name => 'limit', Description => 'Maximum tickets in one atomic batch.', Required => 0, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );

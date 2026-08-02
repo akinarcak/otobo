@@ -18,7 +18,7 @@ our @ObjectDependencies = (
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Grant a tenant-bound D724 role using an existing tenant administrator context.');
+    $Self->Description('Grant a tenant-bound CareOnCloud role using an existing tenant administrator context.');
     $Self->AddOption( Name => 'tenant-id', Description => 'Tenant identifier.', Required => 1, HasValue => 1, ValueRegex => qr{[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}}smx );
     $Self->AddOption( Name => 'actor-user-id', Description => 'Existing authorized agent user ID.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
     $Self->AddOption( Name => 'member-login', Description => 'Existing agent login receiving the role.', Required => 1, HasValue => 1, ValueRegex => qr{.+}smx );

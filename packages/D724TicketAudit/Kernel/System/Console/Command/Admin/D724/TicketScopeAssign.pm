@@ -14,7 +14,7 @@ our @ObjectDependencies = ('Kernel::System::D724::TicketAudit');
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Explicitly assign one legacy OTOBO ticket to an active D724 tenant with atomic audit evidence.');
+    $Self->Description('Explicitly assign one legacy OTOBO ticket to an active CareOnCloud tenant with atomic audit evidence.');
     $Self->AddOption( Name => 'ticket-id', Description => 'Legacy OTOBO ticket ID.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
     $Self->AddOption( Name => 'tenant-id', Description => 'Active D724 tenant identifier.', Required => 1, HasValue => 1, ValueRegex => qr{[a-z0-9][a-z0-9_-]{1,127}}smx );
     $Self->AddOption( Name => 'actor-user-id', Description => 'OTOBO user recorded as migration actor.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
