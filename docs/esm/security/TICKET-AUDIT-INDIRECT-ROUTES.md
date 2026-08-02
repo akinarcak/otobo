@@ -12,11 +12,14 @@ queue, lock, type, pending time, state, service, SLA, customer, priority,
 owner, and responsible. The `D724TicketAudit` method wrappers therefore apply
 their tenant-scope and per-mutation audit transaction contract to those calls.
 
-`TicketUpdate` performs its fields sequentially. `D724TicketAudit` now wraps
-the operation's `Run` method in one transaction; nested ticket mutation
-wrappers use savepoints. The candidate regression verifies that a request whose
-later step fails rolls an earlier successful title mutation, its scope version,
-and its audit mutation back.
+`TicketCreate` and `TicketUpdate` are wrapped at the operation `Run` boundary
+in one transaction; nested ticket mutation wrappers use savepoints. The
+`TicketCreate` source regression creates a ticket and then forces the enclosing
+request to fail, asserting that no ticket row remains. The `TicketUpdate`
+candidate regression verifies that a request whose later step fails rolls an
+earlier successful title mutation, its scope version, and its audit mutation
+back. A current candidate MariaDB rerun is still required before the
+`TicketCreate` route is called accepted.
 
 An isolated clean candidate also accepted an authenticated REST request through
 `/careoncloud/nph-genericinterface.pl` that changed title and priority in one

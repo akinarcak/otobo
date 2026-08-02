@@ -269,6 +269,22 @@ ok( !$GIUpdateRollback->{Success}, 'Generic Interface request failure is returne
 my %AfterGIUpdate = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
 is( $AfterGIUpdate{Title}, $BeforeGIUpdate{Title}, 'failed Generic Interface request rolls all ticket mutations back' );
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $BeforeGIUpdateVersion, 'failed Generic Interface request rolls scope mutations back' );
+my $GICreateNumber = 'D724GIC' . $Helper->GetRandomID();
+my $GICreateRollback = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->GenericInterfaceTicketCreateRun(
+    Operation => bless( {}, 'D724TicketAuditGICreateTest' ), Param => { Data => { Ticket => { Title => 'GI create rollback' } } },
+    Original => sub {
+        my ( $Operation, %Param ) = @_;
+        my $CreatedTicketID = $Ticket->TicketCreate(
+            TN => $GICreateNumber, Title => 'Generic Interface create rollback', QueueID => $QueueID,
+            Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
+            CustomerID => $Tenant, CustomerUser => 'gi-create-rollback-user', OwnerID => 1, UserID => 1,
+        );
+        ok( $CreatedTicketID, 'GI inner ticket creation succeeds before request failure' );
+        return { Success => 0, ErrorMessage => 'intentional GI create request failure' };
+    },
+);
+ok( !$GICreateRollback->{Success}, 'Generic Interface create request failure is returned after rollback' );
+ok( !$Ticket->TicketIDLookup( TicketNumber => $GICreateNumber, UserID => 1 ), 'failed Generic Interface create leaves no ticket row' );
 ok(
     !$Ticket->TicketCustomerSet( TicketID => $TicketID, No => $OtherTenant, User => 'other-user', UserID => 1 ),
     'ticket cannot be reassigned across tenant boundary',

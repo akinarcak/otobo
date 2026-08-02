@@ -120,6 +120,23 @@ foreach ($RequiredRuntimeContract in @(
     }
 }
 
+$TicketAuditWrapper = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/Ticket/D724AuditCustom.pm') -Raw
+$TicketAuditService = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/Kernel/System/D724/TicketAudit.pm') -Raw
+$TicketAuditRegression = Get-Content (Join-Path $RepositoryRoot 'packages/D724TicketAudit/scripts/test/D724/TicketAudit.t') -Raw
+foreach ($RequiredTicketCreateAtomicityContract in @(
+    'Kernel::GenericInterface::Operation::Ticket::TicketCreate::Run',
+    'GenericInterfaceTicketCreateRun',
+    'GENERIC_INTERFACE_TICKET_CREATE_FAILED',
+    'failed Generic Interface create leaves no ticket row'
+)) {
+    $Present = $TicketAuditWrapper -match [regex]::Escape($RequiredTicketCreateAtomicityContract) `
+        -or $TicketAuditService -match [regex]::Escape($RequiredTicketCreateAtomicityContract) `
+        -or $TicketAuditRegression -match [regex]::Escape($RequiredTicketCreateAtomicityContract)
+    if (!$Present) {
+        throw "TicketAudit is missing the Generic Interface TicketCreate atomicity contract: $RequiredTicketCreateAtomicityContract"
+    }
+}
+
 $ComposeText = Get-Content (Join-Path $PSScriptRoot 'compose.yml') -Raw
 if ($ComposeText -notmatch '\$\{D724_BIND_ADDRESS:-127\.0\.0\.1\}') {
     throw 'Compose must default its HTTP bind address to localhost.'

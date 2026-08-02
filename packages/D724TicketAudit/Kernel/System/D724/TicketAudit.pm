@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.8.12';
+our $VERSION = '0.8.13';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -309,6 +309,24 @@ sub GenericInterfaceTicketUpdateRun {
     return $Result->{Value} if $Result->{Success};
     return $Result->{Response} if ref $Result->{Response} eq 'HASH';
     return { Success => 0, ErrorMessage => 'TicketUpdate transaction rolled back' };
+}
+
+sub GenericInterfaceTicketCreateRun {
+    my ( $Self, %Param ) = @_;
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $Kernel::OM->Get('Kernel::System::Cache')->CleanUp( Type => 'Ticket' ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear() };
+        },
+        Code => sub {
+            my $Response = $Param{Original}->( $Param{Operation}, %{ $Param{Param} } );
+            return { Success => 1, Value => $Response } if ref $Response eq 'HASH' && $Response->{Success};
+            return { Success => 0, Error => 'GENERIC_INTERFACE_TICKET_CREATE_FAILED', Response => $Response };
+        },
+    );
+    return $Result->{Value} if $Result->{Success};
+    return $Result->{Response} if ref $Result->{Response} eq 'HASH';
+    return { Success => 0, ErrorMessage => 'TicketCreate transaction rolled back' };
 }
 
 sub SchedulerPendingCheckReconcile {

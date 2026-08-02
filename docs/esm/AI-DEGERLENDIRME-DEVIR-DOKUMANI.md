@@ -159,7 +159,7 @@ Uygulanan başlıca kontroller:
 - Rapor dışa aktarımında PII azaltma ve CSV formula koruması.
 - Prometheus metriklerinde dinamik tenant/PII etiketi kullanmama.
 
-Kalan kritik eksik: Generic Interface `TicketCreate` için request-level atomiklik kabulü, GenericAgent ve diğer scheduler/daemon yazımları, non-MIME article backend'leri, harici eklenti/doğrudan DB yazımları ve index/storage gibi cross-system side effect'ler aynı transaction/outbox audit completeness garantisine sahip değildir. Bu nedenle “tam tenant izolasyonu ve tam değiştirilemez audit” iddiası bağımsız test olmadan yapılmamalıdır.
+Kalan kritik eksik: Generic Interface `TicketCreate` source-level request transaction/rollback regresyonuna sahiptir ancak candidate MariaDB kabulü bekler; GenericAgent ve diğer scheduler/daemon yazımları, non-MIME article backend'leri, harici eklenti/doğrudan DB yazımları ve index/storage gibi cross-system side effect'ler aynı transaction/outbox audit completeness garantisine sahip değildir. Bu nedenle “tam tenant izolasyonu ve tam değiştirilemez audit” iddiası bağımsız test olmadan yapılmamalıdır.
 
 ## 7. Test ve doğrulama kanıtı
 
@@ -224,7 +224,7 @@ Bu nedenle marka/veri geçişi “hazırlandı fakat canlı kesim tamamlanmadı�
 ### P0 — ticari pilot öncesi
 
 - Tam tenant veri sızıntısı ve yetki testi.
-- Generic Interface `TicketCreate`, GenericAgent/diger scheduler-daemon, non-MIME article backend, harici eklenti/doğrudan DB ve cross-system side effect yollarında atomik audit/outbox kapsamı.
+- Generic Interface `TicketCreate` candidate MariaDB kabulü; GenericAgent/diger scheduler-daemon, non-MIME article backend, harici eklenti/doğrudan DB ve cross-system side effect yollarında atomik audit/outbox kapsamı.
 - Gerçek dış OIDC sağlayıcısıyla uçtan uca SSO, logout/session politikası ve MFA beklentisi.
 - Yedek/restore ve upgrade provası; RPO/RTO ölçümü.
 - Cloudflare Access/WAF, origin sertleştirme ve bağımsız sızma testi.
