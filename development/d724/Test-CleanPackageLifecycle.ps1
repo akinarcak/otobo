@@ -6,7 +6,12 @@ $RepositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
 $ComposeFile = Join-Path $PSScriptRoot 'compose.yml'
 $Project = "d724-package-lifecycle-$PID"
 $EnvironmentFile = Join-Path ([System.IO.Path]::GetTempPath()) "$Project.env"
-$Packages = @('D724Foundation', 'D724TenantGuard', 'D724TenantDirectory', 'D724Audit', 'D724TicketAudit', 'D724Problem')
+$Packages = @(
+    'D724Foundation', 'D724TenantGuard', 'D724Audit', 'D724TenantDirectory',
+    'D724Catalog', 'D724Request', 'D724TicketAudit', 'D724Problem', 'D724CMDB',
+    'D724Change', 'D724Commitment', 'D724Webhook', 'D724API', 'D724Identity',
+    'D724SCIM', 'D724Reporting', 'D724Assist', 'D724Observability'
+)
 $GitCommit = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
 if ($GitCommit -notmatch '\A[0-9a-f]{40}\z') { throw "Could not resolve the source Git commit: $GitCommit" }
 
@@ -86,14 +91,26 @@ build_install() {
 }
 build_install D724Foundation
 build_install D724TenantGuard
-build_install D724TenantDirectory
 build_install D724Audit
+build_install D724TenantDirectory
+build_install D724Catalog
+build_install D724Request
 build_install D724TicketAudit
 build_install D724Problem
+build_install D724CMDB
+build_install D724Change
+build_install D724Commitment
+build_install D724Webhook
+build_install D724API
+build_install D724Identity
+build_install D724SCIM
+build_install D724Reporting
+build_install D724Assist
+build_install D724Observability
 deployment=$(bin/careoncloud.Console.pl Admin::Package::List --show-deployment-info)
 printf '%s\n' "$deployment"
 ! printf '%s\n' "$deployment" | grep -q 'Not OK'
-printf '%s\n' "$deployment" | grep -c 'Pck. Status: OK' | grep -qx 6
+printf '%s\n' "$deployment" | grep -c 'Pck. Status: OK' | grep -qx 18
 '@
     Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', $LifecycleCommand)
     Invoke-Compose -ComposeArguments @('restart', 'web')
