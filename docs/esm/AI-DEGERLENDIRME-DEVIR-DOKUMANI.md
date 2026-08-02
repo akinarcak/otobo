@@ -251,7 +251,7 @@ Bu nedenle marka/veri geçişi “hazırlandı fakat canlı kesim tamamlanmadı�
 
 - Çalışma dizini: `D724 ESM` deposu.
 - Geliştirme dalı: `codex/esm-foundation`.
-- Çalışma ağacı son devir kontrolünde temizdir; güncel dal `codex/esm-foundation`, son commit `47e87966f8` (`docs(esm): sync current handoff state`). Kullanıcı değişikliklerini silen toplu reset/checkout yine yapılmamalıdır.
+- Çalışma ağacı son devir kontrolünde temizdir; güncel dal `codex/esm-foundation`, son commit `bc157ccde4` (`docs(esm): record static P0 gate rerun`). Kullanıcı değişikliklerini silen toplu reset/checkout yine yapılmamalıdır.
 - Marka geçişi; silinen eski adlı dosyalar ve eklenen yeni adlı dosyalar nedeniyle özellikle geniş diff üretmektedir.
 - Release arşivleri ve problem paketi kaynak arşivleri çalışma ağacında izlenmeyen dosyalardır; hangilerinin sürüm kontrolüne gireceği ayrıca belirlenmelidir.
 - Git history tek başına mevcut prototip durumunu açıklamayabilir; bu belge ve `docs/esm/` altındaki tasarım belgeleri birlikte okunmalıdır.
