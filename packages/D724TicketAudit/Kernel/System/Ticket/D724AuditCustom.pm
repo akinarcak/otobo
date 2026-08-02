@@ -8,12 +8,13 @@ use v5.24;
 use strict;
 use warnings;
 use Kernel::System::Ticket::Article::Backend::MIMEBase ();
+use Kernel::System::Ticket::Article::Backend::Chat ();
 use Kernel::GenericInterface::Operation::Ticket::Common ();
 use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.5';
+our $VERSION = '0.8.6';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -34,6 +35,7 @@ my $OriginalTicketOwnerSet    = \&Kernel::System::Ticket::TicketOwnerSet;
 my $OriginalResponsibleSet    = \&Kernel::System::Ticket::TicketResponsibleSet;
 my $OriginalTicketPrioritySet = \&Kernel::System::Ticket::TicketPrioritySet;
 my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate;
+my $OriginalChatArticleCreate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleCreate;
 my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Common->can('CheckAccessPermissions');
 my $OriginalESSearch          = Kernel::System::Elasticsearch->can('TicketSearch');
 my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch::Search->can('PrepareRequest');
@@ -133,6 +135,14 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
         return $OriginalArticleCreate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress} || $D724TicketAuditMergeSuppress;
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ArticleCreateRun(
             ArticleBackend => $Self, Original => $OriginalArticleCreate, Param => \%Param,
+        );
+    };
+
+    *Kernel::System::Ticket::Article::Backend::Chat::ArticleCreate = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalChatArticleCreate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ChatArticleCreateRun(
+            ArticleBackend => $Self, Original => $OriginalChatArticleCreate, Param => \%Param,
         );
     };
 

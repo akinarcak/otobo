@@ -18,7 +18,8 @@
 ## 2026-08-02 — P0.2 indirect ticket write-route inventory
 
 - `VERIFIED_IN_CODE`: [Indirect ticket write-route inventory](security/TICKET-AUDIT-INDIRECT-ROUTES.md) confirms that Generic Interface TicketCreate/TicketUpdate and several event modules call the standard wrapped ticket methods. This is method-level coverage only; a multi-field Generic Interface update is not request-atomic today.
-- `PARTIAL`: Chat uses its own `ArticleCreate` backend and is not covered by the MIME article wrapper. Long-running scheduler/daemon route regression has not been retained. These remain P0 acceptance gaps.
+- `VERIFIED_BY_CURRENT_TEST`: `D724TicketAudit 0.8.6` adds transaction-aware Chat `ArticleCreate` coverage. Candidate MariaDB regression `TicketAudit.t` passed 115 tests, including audit-disabled chat article rollback, successful scope-version advancement, and normalized `ticket.chat_article.created` evidence. Artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/ticket-audit-0.8.6-test.log`.
+- `PARTIAL`: Chat article edits/deletes and long-running scheduler/daemon route regression have not been retained. These remain P0 acceptance gaps.
 
 Son dogrulama: `2026-07-25`
 
