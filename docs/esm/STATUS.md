@@ -8,6 +8,7 @@
 - `VERIFIED_BY_CURRENT_TEST`: Reporting kolon etiketlerindeki ikinci Perl `map` öncelik hatası `9ee4e52eb` ile düzeltildi; temiz adayda D724Reporting `73/73 PASS` oldu.
 - `RISK`: TicketAuditStatus JSON incelemesi, `quick_setup.pl` tarafından oluşturulan legacy ticket `ID=1` için `UnboundTickets=1` ve `InvalidTenantTickets=1` döndüğünü kanıtladı. Aday lifecycle, paket testlerinden önce bu development fixture'ını tenant kapsamına almalı veya güvenli biçimde temizlemelidir; üretim servisine dokunulmadı.
 - `FIX_APPLIED`: Temiz lifecycle runbook'una `Clean-QuickSetupTicket.pl` eklendi. Yalnız `2015071510123456` quick-setup ticket'ını core Ticket API ile paket aktivasyonundan önce temizler; üretim/aktif servis verisine uygulanmaz. Yeni lifecycle kabulü henüz çalıştırılmadı.
+- `VERIFIED_BY_CURRENT_TEST`: Adayda aynı script, audit wrapper'ını yalnız fixture temizliği için suppress ederek ticket `ID=1`'i sildi; `Admin::D724::TicketAuditStatus --json` artık `Success=1`, `CoreTickets=0`, `UnboundTickets=0`, `InvalidTenantTickets=0` döndü.
 
 ## 2026-08-02 — P0 aday paket regresyonu
 
