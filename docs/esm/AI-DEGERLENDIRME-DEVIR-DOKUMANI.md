@@ -176,7 +176,7 @@ Depoda paket bazlı Perl testleri, HTTP kabul scriptleri ve operasyon kontrol ko
 - Marka sözleşmesi testi ve `git diff --check`.
 - Önceki aday denemelerinde CareOnCloud imajı oluşturulmuştu; mevcut test sunucusunda güncel kaynakla runtime imaj kabulü BuildKit-capable runner eksikliği nedeniyle yeniden kanıtlanmadı.
 
-Ancak mevcut çalışma ağacı yaklaşık 500 dosyalık geniş ve henüz commitlenmemiş değişiklik içerir. Son marka geçişi sonrasında **tam test paketi yeniden çalıştırılmamıştır**. Eski tarihli test sayıları güncel çalışma ağacının nihai kanıtı sayılmamalıdır.
+Mevcut çalışma ağacı bu devir güncellemesinde temizdir; yine de son marka geçişi sonrasında **tam test paketi yeniden çalıştırılmamıştır**. Eski tarihli test sayıları güncel çalışma ağacının nihai kanıtı sayılmamalıdır.
 
 ## 8. Canlı/test sunucusunun güncel durumu
 

@@ -105,7 +105,7 @@
 
 - `RISK`: Candidate MariaDB runtime acceptance for `D724Problem 0.2.0` was attempted with all three package tests. It failed because `d724_problem` is absent from the candidate database; copying source files alone does not apply the manifest `DatabaseInstall` schema. The candidate console has no `Admin::Package::Build` command, so a reproducible OPM build/install/upgrade pipeline is required before this package can be accepted. Test artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/problem-candidate.log`. The failed test left zero `problem-%` tenant fixtures.
 
-Son dogrulama: `2026-07-25`
+Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontrolleri; guncel runtime image kabulü bekliyor)
 
 ## Kaynakta dogrulanan ve runtime kaniti sinirli
 
