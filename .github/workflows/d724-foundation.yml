@@ -46,6 +46,19 @@ jobs:
         shell: pwsh
         run: ./development/d724/Test-CriticalLanguage.ps1
 
+      - name: Generate and validate CPAN SBOM
+        shell: pwsh
+        run: |
+          ./development/d724/Test-CpanSbom.ps1
+          ./development/d724/Generate-CpanSbom.ps1
+
+      - name: Upload CPAN SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: careoncloud-cpan-sbom
+          path: artifacts/careoncloud-cpan-sbom.cdx.json
+          if-no-files-found: error
+
       - name: Accept clean D724Problem package lifecycle
         shell: pwsh
         run: ./development/d724/Test-CleanPackageLifecycle.ps1
