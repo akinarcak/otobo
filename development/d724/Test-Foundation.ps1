@@ -75,6 +75,14 @@ foreach ($Pattern in $ForbiddenPatterns) {
     }
 }
 
+$PublicIssueTemplates = Get-ChildItem (Join-Path $RepositoryRoot '.github/ISSUE_TEMPLATE') -File -ErrorAction Stop
+foreach ($Template in $PublicIssueTemplates) {
+    $TemplateText = Get-Content $Template.FullName -Raw
+    if ($TemplateText -match '(?i)\boto(?:bo|rs)\b') {
+        throw "Public issue template retains an upstream product brand: $($Template.Name)"
+    }
+}
+
 if ($RequireDocker) {
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
         throw 'Docker is required for this validation mode.'

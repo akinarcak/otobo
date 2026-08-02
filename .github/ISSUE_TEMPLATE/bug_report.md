@@ -8,16 +8,16 @@ assignees: ''
 ---
 
 <!--
-  Thanks for reporting to the OTOBO project!
+  Thanks for reporting to the CareOnCloud ESM project!
   Please, DO NOT DELETE ANY TEXT from this template! (unless instructed).
 -->
 
 ### Environment
 
 - Server OS Distribution: <!-- [e.g. Ubuntu 22.04 LTS, Debian 11] -->
-- OTOBO installation type: <!-- [e.g. Docker, Podman, Kubernetes, Native Apache, Native Nginx] -->
+- CareOnCloud ESM installation type: <!-- [e.g. Docker, Podman, Kubernetes, Native Apache, Native Nginx] -->
 - Browser: <!-- [e.g. Chrome, Firefox, Safari] -->
-- OTOBO version: <!-- [e.g. 11.0.1] -->
+- CareOnCloud ESM version: <!-- [e.g. 0.1.0] -->
 
 ### Expected behavior
 
