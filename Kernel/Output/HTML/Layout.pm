@@ -695,8 +695,8 @@ sub Login {
             :
             '';
         $Self->SetCookie(
-            Key     => 'OTOBOBrowserHasCookie',
-            Name    => 'OTOBOBrowserHasCookie',
+            Key     => 'CareOnCloudBrowserHasCookie',
+            Name    => 'CareOnCloudBrowserHasCookie',
             Value   => 1,
             Expires => $Expires,
         );
@@ -884,7 +884,7 @@ sub Login {
         $Param{ColorDefinitions} .= "--col$Color:$ColorDefinitions->{ $Color };";
     }
 
-    # declare headers including the X-OTOBO-Login header field
+    # declare headers including the X-CareOnCloud-Login header field
     $Self->_AddHeadersToResponseObject(
         XLoginHeader => 1,
     );
@@ -1668,7 +1668,7 @@ sub _AddHeadersToResponseObject {
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
     if ( !$ConfigObject->Get('Secure::DisableBanner') ) {
-        $Headers{'X-Powered-By'} = join ' ', $ConfigObject->Get('Product'), $ConfigObject->Get('Version'), '(https://otobo.io/)';
+        $Headers{'X-Powered-By'} = join ' ', $ConfigObject->Get('ProductName'), $ConfigObject->Get('Version');
     }
 
     if (
@@ -1681,7 +1681,7 @@ sub _AddHeadersToResponseObject {
 
     # With this X-Header, Core.AJAX can recognize that the AJAX request returned the login page (session timeout) and perform a redirect.
     if ( $Param{XLoginHeader} ) {
-        $Headers{'X-OTOBO-Login'} = $Self->{Baselink};
+        $Headers{'X-CareOnCloud-Login'} = $Self->{Baselink};
     }
 
     my $ResponseObject = $Kernel::OM->Get('Kernel::System::Web::Response');
@@ -4043,8 +4043,8 @@ sub CustomerLogin {
 
         # set a cookie tentatively for checking cookie support
         $Self->SetCookie(
-            Key     => 'OTOBOBrowserHasCookie',
-            Name    => 'OTOBOBrowserHasCookie',
+            Key     => 'CareOnCloudBrowserHasCookie',
+            Name    => 'CareOnCloudBrowserHasCookie',
             Value   => 1,
             Expires => $Expires,
         );

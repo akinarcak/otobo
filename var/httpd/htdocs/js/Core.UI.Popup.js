@@ -168,7 +168,7 @@ Core.UI.Popup = (function (TargetNS) {
     function CurrentIsPopupWindow() {
         var PopupType;
 
-        if (window.name.match(/OTOBOPopup_([^_]+)_.+/)) {
+        if (window.name.match(/CareOnCloudPopup_([^_]+)_.+/)) {
             PopupType = RegExp.$1;
         }
 
@@ -271,7 +271,7 @@ Core.UI.Popup = (function (TargetNS) {
             // Therefore we check if the popup is a real OTOBO popup.
             // IE9 can't read the WindowType property from the window object,
             // so we check for the correct popup window name now.
-            if (Value.name.match(/OTOBOPopup_.+/)) {
+            if (Value.name.match(/CareOnCloudPopup_.+/)) {
                 Size++;
             }
         });
@@ -294,7 +294,7 @@ Core.UI.Popup = (function (TargetNS) {
             // Therefore we check if the popup is a real OTOBO popup.
             // IE9 can't read the WindowType property from the window object,
             // so we check for the correct popup window name now.
-            if (Value.name.match(/OTOBOPopup_.+/)) {
+            if (Value.name.match(/CareOnCloudPopup_.+/)) {
                 TargetNS.ClosePopup(Value);
             }
         });
@@ -312,7 +312,7 @@ Core.UI.Popup = (function (TargetNS) {
     TargetNS.RegisterPopupAtParentWindow = function (WindowObject) {
         var Type;
 
-        /OTOBOPopup_([^_]+)_.*/.exec(WindowObject.name);
+        /CareOnCloudPopup_([^_]+)_.*/.exec(WindowObject.name);
         Type = RegExp.$1;
 
         if (typeof OpenPopups[Type] === 'undefined') {
@@ -493,7 +493,7 @@ Core.UI.Popup = (function (TargetNS) {
                     WindowName = 'PopupOTOBO_' + Type + '_' + Date.parse(new Date());
                 }
                 else {
-                    WindowName = 'OTOBOPopup_' + Type + '_' + Date.parse(new Date());
+                    WindowName = 'CareOnCloudPopup_' + Type + '_' + Date.parse(new Date());
                 }
 
                 if (WindowMode === 'Popup') {
@@ -619,7 +619,7 @@ Core.UI.Popup = (function (TargetNS) {
                 PopupObject = PopupType;
 
                 // we can now find out the type of the popup based on the popup object
-                if (PopupObject && typeof PopupObject.name !== 'undefined' && PopupObject.name.match(/OTOBOPopup_([^_]+)_.+/)) {
+                if (PopupObject && typeof PopupObject.name !== 'undefined' && PopupObject.name.match(/CareOnCloudPopup_([^_]+)_.+/)) {
                     PopupType = RegExp.$1;
                 }
 

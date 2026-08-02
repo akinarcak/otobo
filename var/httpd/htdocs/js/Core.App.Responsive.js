@@ -194,7 +194,7 @@ Core.App.Responsive = (function (TargetNS) {
         // Check DesktopMode
         /*eslint-disable otobo/no-window*/
         try {
-            if ((top.location.href !== location.href && window.name.search(/^OTOBOPopup_/) === -1) || parseInt(localStorage.getItem("DesktopMode"), 10) > 0) {
+            if ((top.location.href !== location.href && window.name.search(/^CareOnCloudPopup_/) === -1) || parseInt(localStorage.getItem("DesktopMode"), 10) > 0) {
                 /*eslint-enable otobo/no-window*/
 
                 // if the DesktopMode has been triggered manually, we add a switch to the footer

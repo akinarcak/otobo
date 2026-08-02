@@ -76,6 +76,10 @@ $FrameworkXML = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'Kernel
 $DaemonXML = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'Kernel/Config/Files/XML/Daemon.xml')
 $PSGI = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'bin/psgi-bin/careoncloud.psgi')
 $Compose = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'development/d724/compose.yml')
+$Layout = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'Kernel/Output/HTML/Layout.pm')
+$AgentInterface = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'Kernel/System/Web/InterfaceAgent.pm')
+$CustomerInterface = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'Kernel/System/Web/InterfaceCustomer.pm')
+$Ajax = Get-Content -Raw -LiteralPath (Join-Path $RepositoryRoot 'var/httpd/htdocs/js/Core.AJAX.js')
 
 Assert-True ($FrameworkXML -match '<Item ValueType="String" ValueRegex="">careoncloud/</Item>') 'ScriptAlias is not careoncloud/.'
 Assert-True ($FrameworkXML -match '<Item ValueType="String" ValueRegex="">/careoncloud-web/</Item>') 'Frontend::WebPath is not /careoncloud-web/.'
@@ -84,6 +88,13 @@ Assert-True ($PSGI -match "mount '/careoncloud' => \`$CareOnCloudApp") 'Canonica
 Assert-True ($PSGI -notmatch "mount '/otobo'") 'Legacy public PSGI mount must not be present.'
 Assert-True ($Compose -match 'careoncloud-app:/opt/careoncloud') 'CareOnCloud application volume mapping is missing.'
 Assert-True ($Compose -match 'careoncloud-update:/opt/careoncloud_update') 'CareOnCloud update volume mapping is missing.'
+Assert-True ($FrameworkXML -match '<Item ValueType="String" ValueRegex="">CareOnCloud ESM</Item>') 'ProductName is not CareOnCloud ESM.'
+Assert-True ($Layout -match "X-CareOnCloud-Login") 'CareOnCloud login response header is missing.'
+Assert-True ($Layout -notmatch "X-OTOBO-Login") 'Legacy login response header remains.'
+Assert-True ($Layout -match "CareOnCloudBrowserHasCookie") 'CareOnCloud browser cookie is missing from Layout.'
+Assert-True ($AgentInterface -match "CareOnCloudBrowserHasCookie") 'CareOnCloud browser cookie is missing from agent interface.'
+Assert-True ($CustomerInterface -match "CareOnCloudBrowserHasCookie") 'CareOnCloud browser cookie is missing from customer interface.'
+Assert-True ($Ajax -match "X-CareOnCloud-Login") 'CareOnCloud AJAX login header handling is missing.'
 
 if ($Failures.Count) {
     $Failures | ForEach-Object { Write-Error $_ -ErrorAction Continue }

@@ -868,7 +868,7 @@ Core.AJAX = (function (TargetNS) {
             OldUrl = location.href,
             NewUrl = Core.Config.Get('Baselink') + "RequestedURL=" + encodeURIComponent(OldUrl);
 
-        if (Headers.match(/X-OTOBO-Login: /i)) {
+        if (Headers.match(/X-CareOnCloud-Login: /i)) {
             location.href = NewUrl;
             return true;
         }

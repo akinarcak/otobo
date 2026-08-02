@@ -266,8 +266,8 @@ sub _Content {
                 '';
             my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
             $LayoutObject->SetCookie(
-                Key     => 'OTOBOBrowserHasCookie',
-                Name    => 'OTOBOBrowserHasCookie',
+                Key     => 'CareOnCloudBrowserHasCookie',
+                Name    => 'CareOnCloudBrowserHasCookie',
                 Value   => 1,
                 Expires => $Expires,
             );
@@ -329,7 +329,7 @@ sub _Content {
         );
 
         # check if the browser supports cookies
-        if ( $ParamObject->GetCookie( Key => 'OTOBOBrowserHasCookie' ) ) {
+        if ( $ParamObject->GetCookie( Key => 'CareOnCloudBrowserHasCookie' ) ) {
             $Kernel::OM->ObjectParamAdd(
                 'Kernel::Output::HTML::Layout' => {
                     BrowserHasCookie => 1,
@@ -461,11 +461,11 @@ sub _Content {
             Expires      => $Expires,
         );
 
-        # delete the OTOBOBrowserHasCookie cookie
+        # delete the CareOnCloudBrowserHasCookie cookie
         Kernel::Output::HTML::Layout->SetCookie(
             RegisterInOM => 1,
-            Key          => 'OTOBOBrowserHasCookie',
-            Name         => 'OTOBOBrowserHasCookie',
+            Key          => 'CareOnCloudBrowserHasCookie',
+            Name         => 'CareOnCloudBrowserHasCookie',
             Value        => '',
             Expires      => '-1y',
         );
@@ -820,8 +820,8 @@ sub _Content {
                     :
                     '';
                 $LayoutObject->SetCookie(
-                    Key     => 'OTOBOBrowserHasCookie',
-                    Name    => 'OTOBOBrowserHasCookie',
+                    Key     => 'CareOnCloudBrowserHasCookie',
+                    Name    => 'CareOnCloudBrowserHasCookie',
                     Value   => 1,
                     Expires => $Expires,
                 );
@@ -934,8 +934,8 @@ sub _Content {
 
                     # set a cookie tentatively for checking cookie support
                     $LayoutObject->SetCookie(
-                        Key     => 'OTOBOBrowserHasCookie',
-                        Name    => 'OTOBOBrowserHasCookie',
+                        Key     => 'CareOnCloudBrowserHasCookie',
+                        Name    => 'CareOnCloudBrowserHasCookie',
                         Value   => 1,
                         Expires => $Expires,
                     );

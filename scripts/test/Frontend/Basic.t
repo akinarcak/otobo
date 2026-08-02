@@ -166,7 +166,7 @@ for my $BaseURL ( sort keys %Frontends ) {
             );
 
             ok(
-                !scalar $Response->header('X-OTOBO-Login'),
+                !scalar $Response->header('X-CareOnCloud-Login'),
                 "no OTOBO login screen ($URL)",
             );
 
