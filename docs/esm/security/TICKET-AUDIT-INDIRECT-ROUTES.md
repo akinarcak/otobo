@@ -21,6 +21,12 @@ earlier successful title mutation, its scope version, and its audit mutation
 back. A current candidate MariaDB rerun is still required before the
 `TicketCreate` route is called accepted.
 
+The clean lifecycle candidate acceptance configures both temporary REST routes.
+For `TicketCreate` it creates a tenant-bound customer user, sends an
+authenticated request, and verifies the created ticket's immutable scope,
+normalized creation audit, and tenant chain. This acceptance is committed but
+not yet rerun against the current image.
+
 An isolated clean candidate also accepted an authenticated REST request through
 `/careoncloud/nph-genericinterface.pl` that changed title and priority in one
 request. The database re-read verified both values, scope version `1 -> 3`, the

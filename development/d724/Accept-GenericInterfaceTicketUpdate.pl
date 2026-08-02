@@ -17,7 +17,7 @@ local $Kernel::OM = Kernel::System::ObjectManager->new();
 my $JSON       = JSON::PP->new->canonical;
 my $UserID     = 2; # quick_setup.pl's explicitly-created admin user
 my $TenantID   = 'gi-acceptance';
-my $ServiceName = 'D724AcceptanceTicketUpdate';
+my $ServiceName = 'D724AcceptanceTicketLifecycle';
 my $Webservice = $Kernel::OM->Get('Kernel::System::GenericInterface::Webservice');
 my $ServiceID;
 
@@ -30,6 +30,14 @@ my $Bootstrap = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->Boots
     Confirm => 1, TenantID => $TenantID, Name => 'Generic Interface acceptance', UserID => $UserID,
 );
 die "tenant bootstrap failed\n" if !$Bootstrap->{Success};
+
+my $CustomerLogin = 'gi.create.' . time() . q{@example.invalid};
+my $CustomerAdded = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserAdd(
+    Source => 'CustomerUser', UserFirstname => 'Generic', UserLastname => 'Interface',
+    UserCustomerID => $TenantID, UserLogin => $CustomerLogin, UserPassword => 'not-used-by-this-acceptance',
+    UserEmail => $CustomerLogin, ValidID => 1, UserID => $UserID,
+);
+die "customer user add failed\n" if !$CustomerAdded;
 
 my $Ticket = $Kernel::OM->Get('Kernel::System::Ticket');
 my $TicketID = $Ticket->TicketCreate(
@@ -49,6 +57,10 @@ $ServiceID = $Webservice->WebserviceAdd(
         Debugger => { DebugThreshold => 'error', TestMode => '0' },
         Provider => {
             Operation => {
+                TicketCreate => {
+                    Description => 'Ephemeral D724 Generic Interface ticket-create acceptance endpoint',
+                    MappingInbound => {}, MappingOutbound => {}, Type => 'Ticket::TicketCreate',
+                },
                 TicketUpdate => {
                     Description => 'Ephemeral D724 Generic Interface acceptance endpoint',
                     MappingInbound => {}, MappingOutbound => {}, Type => 'Ticket::TicketUpdate',
@@ -56,7 +68,10 @@ $ServiceID = $Webservice->WebserviceAdd(
             },
             Transport => {
                 Type => 'HTTP::REST',
-                Config => { RouteOperationMapping => { TicketUpdate => { RequestMethod => ['POST'], Route => '/TicketUpdate' } } },
+                Config => { RouteOperationMapping => {
+                    TicketCreate => { RequestMethod => ['POST'], Route => '/TicketCreate' },
+                    TicketUpdate => { RequestMethod => ['POST'], Route => '/TicketUpdate' },
+                } },
             },
         },
     },
@@ -102,4 +117,45 @@ die "HTTP update audit events missing\n" if !$Action{'ticket.title.updated'} || 
 my $Verify = $Kernel::OM->Get('Kernel::System::D724::Audit')->Verify( Subject => $Subject, TenantID => $TenantID );
 die "audit chain verification failed\n" if !$Verify->{Success} || !$Verify->{Valid};
 
-say $JSON->pretty->encode({ success => JSON::PP::true, ticket_id => 0 + $TicketID, scope_version => 0 + $After->{Version} });
+my $CreatedTitle = 'Generic Interface HTTP ticket create acceptance';
+my $CreateResponse = HTTP::Tiny->new( timeout => 20 )->post(
+    "http://127.0.0.1:5000/careoncloud/nph-genericinterface.pl/Webservice/$ServiceName/TicketCreate",
+    {
+        headers => { 'content-type' => 'application/json' },
+        content => $JSON->encode({
+            UserLogin => 'admin', Password => $Password,
+            Ticket => {
+                Title => $CreatedTitle, CustomerUser => $CustomerLogin,
+                Queue => 'Raw', State => 'new', Priority => '3 normal',
+            },
+            Article => {
+                CommunicationChannel => 'Internal', SenderType => 'agent', IsVisibleForCustomer => 1,
+                Subject => 'Generic Interface HTTP create', Body => 'Atomic ticket-create acceptance article.',
+                AutoResponseType => 'auto reply', From => $CustomerLogin,
+                ContentType => 'text/plain; charset=utf-8', HistoryType => 'NewTicket',
+                HistoryComment => 'Generic Interface create acceptance',
+            },
+        }),
+    },
+);
+die "Generic Interface TicketCreate HTTP response failed: $CreateResponse->{status}\n" if !$CreateResponse->{success};
+my $CreatePayload = eval { $JSON->decode( $CreateResponse->{content} ) };
+my $CreatedTicketID = $CreatePayload && ref $CreatePayload eq 'HASH' ? $CreatePayload->{TicketID} : 0;
+die "Generic Interface TicketCreate response is invalid\n" if !$CreatedTicketID;
+$Ticket->_TicketCacheClear( TicketID => $CreatedTicketID );
+my %Created = $Ticket->TicketGet( TicketID => $CreatedTicketID, DynamicFields => 0, UserID => $UserID );
+die "HTTP TicketCreate title did not persist\n" if $Created{Title} ne $CreatedTitle || $Created{CustomerID} ne $TenantID;
+my $CreatedScope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $CreatedTicketID );
+die "HTTP TicketCreate scope is invalid\n" if !$CreatedScope || $CreatedScope->{TenantID} ne $TenantID || $CreatedScope->{Version} != 1;
+my $CreatedEvents = $Kernel::OM->Get('Kernel::System::D724::Audit')->List(
+    Subject => $Subject, TenantID => $TenantID, ObjectType => 'ticket', ObjectID => "$CreatedTicketID", Limit => 100,
+);
+die "HTTP TicketCreate audit list failed\n" if !$CreatedEvents->{Success};
+die "HTTP TicketCreate audit event missing\n" if !grep { $_->{Action} eq 'ticket.created' } @{ $CreatedEvents->{Data} };
+my $CreatedVerify = $Kernel::OM->Get('Kernel::System::D724::Audit')->Verify( Subject => $Subject, TenantID => $TenantID );
+die "HTTP TicketCreate audit chain verification failed\n" if !$CreatedVerify->{Success} || !$CreatedVerify->{Valid};
+
+say $JSON->pretty->encode({
+    success => JSON::PP::true, update_ticket_id => 0 + $TicketID, update_scope_version => 0 + $After->{Version},
+    created_ticket_id => 0 + $CreatedTicketID, created_scope_version => 0 + $CreatedScope->{Version},
+});

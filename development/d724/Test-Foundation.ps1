@@ -137,6 +137,19 @@ foreach ($RequiredTicketCreateAtomicityContract in @(
     }
 }
 
+$GenericInterfaceAcceptance = Get-Content (Join-Path $PSScriptRoot 'Accept-GenericInterfaceTicketUpdate.pl') -Raw
+foreach ($RequiredTicketCreateAcceptanceContract in @(
+    "Type => 'Ticket::TicketCreate'",
+    "Route => '/TicketCreate'",
+    'HTTP TicketCreate scope is invalid',
+    'HTTP TicketCreate audit event missing',
+    'HTTP TicketCreate audit chain verification failed'
+)) {
+    if ($GenericInterfaceAcceptance -notmatch [regex]::Escape($RequiredTicketCreateAcceptanceContract)) {
+        throw "Generic Interface TicketCreate acceptance is missing required contract: $RequiredTicketCreateAcceptanceContract"
+    }
+}
+
 $ComposeText = Get-Content (Join-Path $PSScriptRoot 'compose.yml') -Raw
 if ($ComposeText -notmatch '\$\{D724_BIND_ADDRESS:-127\.0\.0\.1\}') {
     throw 'Compose must default its HTTP bind address to localhost.'
