@@ -25,8 +25,11 @@ Parola, private key ve GitHub token bu devir dosyasına veya Git’e yazılmayac
 
 ## Mevcut kanıt durumu
 
-- Son commit: `2be901620 docs(esm): label historical candidate snapshot`.
-- Çalışma ağacı son kontrolde temizdi.
+- Son commit: `47e87966f8136b996933aa34a07f0b1f4aa1da00 docs(esm): sync current handoff state`.
+- Çalışma dalı: `codex/esm-foundation`; çalışma ağacı temizdir.
+- Tamamlanan son P0 hedefi: D724TicketAudit 0.8.19 nested timeout/parent rollback sözleşmesi ve manuel Foundation dispatch kapısı.
+- Kanıt: `Test-Foundation.ps1` ve `Test-SourceArtifact.ps1` mevcut commit üzerinde başarılıdır (statik/provenance); güncel runtime adayı hâlâ `TEST_EXISTS_NOT_RERUN` / `RISK`.
+- Açık sonraki hedef: BuildKit-capable izole runner ile güncel aday image ve temiz lifecycle runtime kabulü. Test sunucusunda Buildx yok; aktif `d724-esm-*` servislerine dokunulmadı.
 - `Test-Foundation.ps1` 18 D724 paket manifesti ve dosya listesini geçti.
 - CI’de repository dependency Trivy taraması ve temiz lifecycle sonrası `d724/esm:dev` OS/library image taraması tanımlı.
 - Temiz lifecycle ve yerel `Build`/`Up` yolları `docker buildx version` önkoşulu ile korunuyor.
