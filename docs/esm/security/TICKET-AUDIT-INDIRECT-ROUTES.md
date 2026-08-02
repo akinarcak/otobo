@@ -39,13 +39,18 @@ two normalized audit actions, and a valid tenant audit chain. Evidence:
 
 ## Article backends
 
-The MIME database backend and the separate Chat backend are wrapped and have
-candidate MariaDB regression coverage. Chat create, update, and delete writes
-use the same scope lock and transaction-aware audit contract, with
+The wrapped `MIMEBase::ArticleCreate` path is inherited by the Email, Internal,
+and Phone communication-channel backends. The separate Chat backend is wrapped
+directly and has candidate MariaDB regression coverage for create, update, and
+delete. Chat writes use the same scope lock and transaction-aware audit contract, with
 `ticket.chat_article.created`, `ticket.chat_article.updated`, and
 `ticket.chat_article.deleted` evidence. The candidate regression verifies that
 audit-disabled updates and deletes roll the database mutation and scope version
 back, then verifies the recovered lifecycle path.
+
+The `Invalid` fallback backend deliberately rejects article create/update, but
+has its own unknown-channel metadata delete route. It is not wrapped and remains
+outside the accepted coverage boundary.
 
 Chat update rebuilds the core article search index. As with core ticket delete,
 that external indexing side effect is outside the MariaDB transaction boundary;

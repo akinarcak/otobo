@@ -14,7 +14,8 @@ the following core writes and sends them through the transaction-aware
 - `TicketStateSet`, `TicketTypeSet`, `TicketServiceSet`, `TicketOwnerSet`, `TicketResponsibleSet`, `TicketPrioritySet`
 - `TicketSLASet` and `TicketPendingTimeSet`
 - `TicketDelete` (retains a `deleted` scope tombstone) and same-tenant `TicketMerge`
-- database-backed MIME `ArticleCreate`
+- MIMEBase `ArticleCreate`, inherited by the Email, Internal, and Phone
+  communication-channel backends
 
 The corresponding tests cover create, state/title/customer mutations, article
 creation, audit failure rollback, no-op behavior, and tenant-chain validation
@@ -41,7 +42,11 @@ but core index and storage hooks can have external side effects. In the current
 candidate run Elasticsearch reported a delete version conflict after the DB
 rollback path, so full cross-system atomicity is not claimed.
 
-Chat article, non-MIME article backends, Generic Interface write adapters, and
-scheduler/daemon mutations remain separate P0 inventory items. Generic
-Interface read/history/update access policy exists, but it is not evidence of
-transaction-atomic audit coverage for every write route.
+The separate Chat backend has its own create/update/delete wrappers and
+candidate regression coverage. The fallback `Invalid` backend intentionally
+does not create or update articles, but it can delete unknown-channel metadata
+through its own path; that exceptional delete route remains a separate P0
+inventory item. Generic Interface write adapters and scheduler/daemon mutations
+remain separate P0 items. Generic Interface read/history/update access policy
+exists, but it is not evidence of transaction-atomic audit coverage for every
+write route.

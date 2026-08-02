@@ -191,6 +191,13 @@ foreach ($RequiredTicketCreateAtomicityContract in @(
     }
 }
 
+foreach ($MIMEBackend in @('Email', 'Internal', 'Phone')) {
+    $MIMEBackendSource = Get-Content (Join-Path $RepositoryRoot "Kernel/System/Ticket/Article/Backend/$MIMEBackend.pm") -Raw
+    if ($MIMEBackendSource -notmatch [regex]::Escape("use parent 'Kernel::System::Ticket::Article::Backend::MIMEBase'")) {
+        throw "Article backend $MIMEBackend no longer inherits the wrapped MIMEBase mutation path."
+    }
+}
+
 foreach ($RequiredGenericAgentTenantContract in @(
     'Kernel::System::GenericAgent::JobRun',
     "JobName => 'generic-agent'",
