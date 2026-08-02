@@ -1,5 +1,9 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-02 — P0 runner read-only doğrulaması
+
+- `VERIFIED_BY_CURRENT_TEST` (read-only runner probe): `test@100.86.171.110` accepted the configured test credentials. Docker Compose `2.40.3` is available, filesystem free space is `4.7G`, and the expected active containers are `d724-esm-elastic-1`, `d724-esm-daemon-1`, `d724-esm-web-1`, `d724-esm-redis-1`, and `d724-esm-db-1`. `docker buildx` is unavailable, so no candidate build or lifecycle was started. No active service was changed.
+
 ## 2026-08-02 — P0 statik kapı yeniden doğrulaması
 
 - `VERIFIED_BY_CURRENT_TEST`: Current clean commit `a5ea92d7c7bce7ff89c75966cca4d471f5a159a3` passed `Test-CareOnCloudBrand.ps1` (16 required paths, 15 forbidden paths, 18 packages), `Test-CriticalLanguage.ps1` (2 protected customer/agent journeys), and `Test-CpanSbom.ps1` (201 components). These are source/metadata contracts only; authenticated runtime and current candidate MariaDB acceptance remain open.
