@@ -75,6 +75,21 @@ jobs:
           path: artifacts/careoncloud-cpan-sbom.cdx.json
           if-no-files-found: error
 
+      - name: Generate and validate source artifact
+        shell: pwsh
+        run: |
+          ./development/d724/Test-SourceArtifact.ps1
+          ./development/d724/Generate-SourceArtifact.ps1
+
+      - name: Upload source artifact and manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: careoncloud-source-artifact
+          path: |
+            artifacts/careoncloud-esm-source-*.zip
+            artifacts/careoncloud-esm-source-*.manifest.json
+          if-no-files-found: error
+
       - name: Accept clean D724 package lifecycle
         shell: pwsh
         run: ./development/d724/Test-CleanPackageLifecycle.ps1

@@ -22,6 +22,8 @@ $RequiredFiles = @(
     'development/d724/Test-CriticalLanguage.ps1',
     'development/d724/Generate-CpanSbom.ps1',
     'development/d724/Test-CpanSbom.ps1',
+    'development/d724/Generate-SourceArtifact.ps1',
+    'development/d724/Test-SourceArtifact.ps1',
     'development/d724/migrate-careoncloud-brand.sh',
     'development/d724/Accept-GenericInterfaceTicketUpdate.pl',
     'development/d724/Accept-SchedulerTicketPendingCheck.pl',
