@@ -22,6 +22,13 @@ function Assert-Command {
     }
 }
 
+function Assert-Buildx {
+    $BuildxVersion = & docker buildx version 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace(($BuildxVersion -join "`n"))) {
+        throw 'Docker Buildx is required for image build or startup; the legacy builder cannot execute the CareOnCloud Dockerfile heredoc RUN blocks.'
+    }
+}
+
 function Invoke-Compose {
     param([Parameter(ValueFromRemainingArguments)][string[]] $Arguments)
 
@@ -85,9 +92,11 @@ switch ($Action) {
         Write-Host 'Compose configuration is valid.'
     }
     'Build' {
+        Assert-Buildx
         Invoke-Compose build web
     }
     'Up' {
+        Assert-Buildx
         Invoke-Compose up --detach --build
         $HttpPort = Get-EnvironmentValue -Name 'D724_HTTP_PORT' -Default '8080'
         Write-Host "D724 ESM is starting at http://127.0.0.1:$HttpPort/"
