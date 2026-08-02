@@ -372,6 +372,10 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `VERIFIED_BY_CURRENT_TEST`: `test@100.86.171.110` uzerinde aday web `healthy`, db/redis `healthy`, daemon `Up`; disk kullanimi `%76` (6.5 GB bos). Aktif `d724-esm-*` servisleri degistirilmedi.
 - `GAP`: Aday imaji halen `d724/esm:candidate-f00f22e7b`; yerel son commit `473f71d32` oldugu icin son marka dilimi henuz adaya aktarilmamistir. Sunucu dirty kaynak agaci ezilmeden aktarim bekliyor.
 
+## 2026-08-03 - P0 dil ve kaynak artefakti kapilari
+
+- `VERIFIED_BY_CURRENT_TEST`: CriticalLanguage iki müşteri/agent yolunu geçti; SourceArtifact sözleşmesi commit `95b53b12103bbd608dda691b0b08c021b06318e3` için manifestli ZIP üretti ve doğruladı.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
