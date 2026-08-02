@@ -8,10 +8,12 @@
 
 ## 2026-08-02 — P0.5 kritik TR/EN kaynak sözleşmesi
 
+- `VERIFIED_BY_CURRENT_TEST` (static only): `Test-CriticalLanguage.ps1` passed on the current `606eb6f` source snapshot for the two protected customer/agent journeys. This verifies UTF-8 and required translation keys in the selected source templates; it is not an authenticated runtime localization acceptance.
 - `VERIFIED_BY_CURRENT_TEST`: Müşteri Hizmet Kataloğu ve ajan Operasyon Merkezi için kaynak-temelli TR/EN kapısı eklendi. `Test-CriticalLanguage.ps1`, şablondaki sabit `Translate(...)` anahtarlarının ilgili `tr_D724*` sözlüğünde bulunmasını, dosyaların katı UTF-8 olmasını ve yaygın mojibake işaretlerini içermemesini doğrular. Operations Center'daki eksik `Please select` çevirisi `Lütfen seçin` olarak tamamlandı. Bu statik sözleşme, authenticated runtime portal/agent kabulünün yerini tutmaz.
 
 ## 2026-08-02 — P0.4 dashboard runtime marka düzeltmesi
 
+- `VERIFIED_BY_CURRENT_TEST` (static only): `Test-CareOnCloudBrand.ps1` passed on the current `606eb6f` source snapshot, checking 16 required product paths, 15 forbidden runtime-brand paths, and 18 package directories. This is source contract evidence only; authenticated runtime screens and generated emails remain separate acceptance work.
 - `VERIFIED_BY_CURRENT_TEST`: Framework dashboard'un kullanıcıya görünen varsayılan `OTOBO 11.1` başlığı, açıklaması ve upstream bağlantısı CareOnCloud ESM metni ile ürün bağlantısına çevrildi. Kaynak marka sözleşmesi bu ayarları doğrular. Aday runtime'da authenticated agent dashboard render kabulü henüz çalıştırılmamıştır.
 
 ## 2026-08-02 — P0.4 varsayılan e-posta ve müşteri yüzeyi marka düzeltmesi
