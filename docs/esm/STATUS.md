@@ -1,5 +1,10 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-02 — P0 statik kapı yeniden doğrulaması
+
+- `VERIFIED_BY_CURRENT_TEST`: Current clean commit `a5ea92d7c7bce7ff89c75966cca4d471f5a159a3` passed `Test-CareOnCloudBrand.ps1` (16 required paths, 15 forbidden paths, 18 packages), `Test-CriticalLanguage.ps1` (2 protected customer/agent journeys), and `Test-CpanSbom.ps1` (201 components). These are source/metadata contracts only; authenticated runtime and current candidate MariaDB acceptance remain open.
+- Runner note: the configured test-server SSH key was not accepted in this session; no remote mutation was attempted. The documented BuildKit-capable runner remains the next P0 runtime prerequisite.
+
 ## 2026-08-02 — P0.5 lisans metadata tutarlılığı
 
 - `VERIFIED_BY_CURRENT_TEST`: OCI image license labels in the CareOnCloud web, Alpine web, nginx, Elasticsearch, and Selenium Dockerfiles are now the SPDX value `GPL-3.0-only`. The foundation gate rejects the prior `GNU General Public License v3.0 or later` label, keeping release-image metadata aligned with the repository license policy. This is a repository metadata contract, not legal advice.
