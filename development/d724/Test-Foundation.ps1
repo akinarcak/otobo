@@ -14,6 +14,7 @@ $RequiredFiles = @(
     'docs/esm/GPL-COMMERCIAL.md',
     'development/d724/compose.yml',
     'development/d724/.env.example',
+    'development/d724/Test-CleanPackageLifecycle.ps1',
     'packages/D724Foundation/D724Foundation.sopm'
 )
 
