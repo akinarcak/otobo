@@ -203,6 +203,38 @@ ok( !$Ticket->TicketCreate(
 ), 'ticket creation without an active tenant fails closed' );
 ok( !$Ticket->TicketIDLookup( TicketNumber => $UnscopedNumber, UserID => 1 ), 'tenantless rejection leaves no ticket row' );
 
+my $MergeMainID = $Ticket->TicketCreate(
+    TN => 'D724MM' . $Helper->GetRandomID(), Title => 'Merge target ticket', QueueID => $QueueID,
+    Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
+    CustomerID => $Tenant, CustomerUser => 'merge-main-user', OwnerID => 1, UserID => 1,
+);
+my $MergeSourceID = $Ticket->TicketCreate(
+    TN => 'D724MS' . $Helper->GetRandomID(), Title => 'Merge source ticket', QueueID => $QueueID,
+    Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
+    CustomerID => $Tenant, CustomerUser => 'merge-source-user', OwnerID => 1, UserID => 1,
+);
+my $CrossTenantMergeID = $Ticket->TicketCreate(
+    TN => 'D724MX' . $Helper->GetRandomID(), Title => 'Cross tenant merge source', QueueID => $QueueID,
+    Lock => 'unlock', StateID => $StateID, PriorityID => $PriorityID,
+    CustomerID => $OtherTenant, CustomerUser => 'cross-merge-user', OwnerID => 1, UserID => 1,
+);
+ok( $MergeMainID && $MergeSourceID && $CrossTenantMergeID, 'merge ticket fixtures are created with tenant scopes' );
+ok( !$Ticket->TicketMerge( MainTicketID => $MergeMainID, MergeTicketID => $CrossTenantMergeID, UserID => 1 ), 'cross-tenant merge fails closed' );
+my %CrossTenantMergeAfter = $Ticket->TicketGet( TicketID => $CrossTenantMergeID, DynamicFields => 0, UserID => 1 );
+is( $CrossTenantMergeAfter{StateID}, $StateID, 'cross-tenant merge leaves source ticket unchanged' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$Ticket->TicketMerge( MainTicketID => $MergeMainID, MergeTicketID => $MergeSourceID, UserID => 1 ), 'same-tenant merge fails closed when audit is unavailable' );
+my %MergeSourceAfterFailure = $Ticket->TicketGet( TicketID => $MergeSourceID, DynamicFields => 0, UserID => 1 );
+is( $MergeSourceAfterFailure{StateID}, $StateID, 'failed audited merge rolls source ticket state back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $MergeMainID )->{Version}, 1, 'failed merge rolls target scope version back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $MergeSourceID )->{Version}, 1, 'failed merge rolls source scope version back' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $Ticket->TicketMerge( MainTicketID => $MergeMainID, MergeTicketID => $MergeSourceID, UserID => 1 ), 'same-tenant merge succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $MergeMainID )->{Version}, 2, 'successful merge advances target scope version once' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $MergeSourceID )->{Version}, 2, 'successful merge advances source scope version once' );
+my $MergeEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$MergeSourceID" );
+is( [ map { $_->{Action} } @{ $MergeEvents->{Data} } ], [qw(ticket.created ticket.merged)], 'merge source receives one normalized merge event' );
+
 $Events = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
 is(
     [ map { $_->{Action} } @{ $Events->{Data} } ],
@@ -218,12 +250,30 @@ is(
 );
 ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket tenant audit chain verifies' );
 
-ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket fixture is removed' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket delete fails closed when audit is unavailable' );
+my %DeleteAfterFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+ok( $DeleteAfterFailure{TicketID}, 'failed audited delete rolls the ticket row back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Status}, 'active', 'failed audited delete keeps the scope active' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket delete succeeds after audit recovers' );
+ok( !$Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 ), 'successful audited delete removes the ticket row' );
+my $DeletedScope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID );
+is( $DeletedScope->{Status}, 'deleted', 'successful audited delete retains deleted scope tombstone' );
+is( $DeletedScope->{Version}, $AlternateTypeID ? 8 : 7, 'successful audited delete advances scope version once' );
+my $DeleteEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
+is( $DeleteEvents->{Data}->[-1]->{Action}, 'ticket.deleted', 'successful delete emits normalized audit evidence' );
 ok( $Ticket->TicketDelete( TicketID => $LegacyTicketID, UserID => 1 ), 'legacy ticket fixture is removed' );
 ok( $Ticket->TicketDelete( TicketID => $InvalidLegacyTicketID, UserID => 1 ), 'invalid legacy ticket fixture is removed' );
+ok( $Ticket->TicketDelete( TicketID => $MergeMainID, UserID => 1 ), 'merge target fixture is removed' );
+ok( $Ticket->TicketDelete( TicketID => $MergeSourceID, UserID => 1 ), 'merge source fixture is removed' );
+ok( $Ticket->TicketDelete( TicketID => $CrossTenantMergeID, UserID => 1 ), 'cross-tenant merge fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$TicketID ] ), 'ticket scope fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$LegacyTicketID ] ), 'legacy ticket scope fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$InvalidLegacyTicketID ] ), 'explicit legacy ticket scope fixture is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$MergeMainID ] ), 'merge target scope fixture is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$MergeSourceID ] ), 'merge source scope fixture is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$CrossTenantMergeID ] ), 'cross-tenant merge scope fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_event WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit events are removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_head WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit head is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM service WHERE id = ?', Bind => [ \$ServiceID ] ), 'ticket audit service fixture is removed' );

@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.8.3';
+our $VERSION = '0.8.4';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -50,6 +50,93 @@ sub TicketCreateRun {
             );
             return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
             return { Success => 1, Value => $TicketID };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub TicketDeleteRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{TicketObject}, %{$Call} ) if !$Self->_Enabled();
+    my $TicketID = $Call->{TicketID};
+    return if !$TicketID;
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub { $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $TicketID ) },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope || $Scope->{Status} ne 'active';
+            my %Ticket = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            return $Self->_Error('TICKET_NOT_FOUND') if !$Ticket{TicketID};
+            local $Param{TicketObject}->{D724TicketAuditSuppress} = 1;
+            my $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            return $Self->_Error('TICKET_DELETE_FAILED') if !$Value;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => "UPDATE d724_ticket_scope SET status = 'deleted', version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?",
+                Bind => \@Bind,
+            );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => 'ticket.deleted', Version => $Version, FromState => 'active', ToState => 'deleted',
+                Details => { ticket_number => $Ticket{TicketNumber} // q{}, title => $Ticket{Title} // q{}, version => $Version },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $Value };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub TicketMergeRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{TicketObject}, %{$Call} ) if !$Self->_Enabled();
+    my ( $MainTicketID, $MergeTicketID ) = @{$Call}{qw(MainTicketID MergeTicketID)};
+    return if !$MainTicketID || !$MergeTicketID || $MainTicketID == $MergeTicketID;
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $MainTicketID );
+            $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $MergeTicketID );
+        },
+        Code => sub {
+            my @IDs = sort { $a <=> $b } ( $MainTicketID, $MergeTicketID );
+            my %Scope;
+            for my $TicketID (@IDs) {
+                $Scope{$TicketID} = $Self->_ScopeLock( TicketID => $TicketID );
+                return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope{$TicketID} || $Scope{$TicketID}->{Status} ne 'active';
+            }
+            return $Self->_Error('CROSS_TENANT_MERGE_FORBIDDEN') if $Scope{$MainTicketID}->{TenantID} ne $Scope{$MergeTicketID}->{TenantID};
+            my %Main = $Param{TicketObject}->TicketGet( TicketID => $MainTicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my %Merge = $Param{TicketObject}->TicketGet( TicketID => $MergeTicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            return $Self->_Error('TICKET_NOT_FOUND') if !$Main{TicketID} || !$Merge{TicketID};
+            local $Param{TicketObject}->{D724TicketAuditSuppress} = 1;
+            local $Kernel::System::Ticket::D724AuditCustom::D724TicketAuditMergeSuppress = 1;
+            my $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            return $Self->_Error('TICKET_MERGE_FAILED') if !$Value || $Value eq 'NoValidMergeStates';
+            my $TenantID = $Scope{$MainTicketID}->{TenantID};
+            for my $TicketID ( $MainTicketID, $MergeTicketID ) {
+                my $Version = $Scope{$TicketID}->{Version} + 1;
+                my @Values = ( $Call->{UserID}, $TicketID, $Scope{$TicketID}->{Version} );
+                my @Bind = map { \$_ } @Values;
+                return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                    SQL => 'UPDATE d724_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+                );
+                my $IsMain = $TicketID == $MainTicketID;
+                my $Audit = $Self->_AuditRecord(
+                    TenantID => $TenantID, TicketID => $TicketID, UserID => $Call->{UserID}, Version => $Version,
+                    Action => $IsMain ? 'ticket.merge.received' : 'ticket.merged', FromState => $IsMain ? 'active' : 'active', ToState => $IsMain ? 'merged_content_received' : 'merged',
+                    Details => {
+                        ticket_number => $IsMain ? $Main{TicketNumber} // q{} : $Merge{TicketNumber} // q{},
+                        counterpart_ticket_id => $IsMain ? $MergeTicketID : $MainTicketID,
+                        counterpart_ticket_number => $IsMain ? $Merge{TicketNumber} // q{} : $Main{TicketNumber} // q{}, version => $Version,
+                    },
+                );
+                return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            }
+            return { Success => 1, Value => $Value };
         },
     );
     return $Result->{Success} ? $Result->{Value} : undef;

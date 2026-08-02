@@ -13,10 +13,13 @@ use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.3';
+our $VERSION = '0.8.4';
 our $D724SearchContext;
+our $D724TicketAuditMergeSuppress;
 
 my $OriginalTicketCreate      = \&Kernel::System::Ticket::TicketCreate;
+my $OriginalTicketDelete      = \&Kernel::System::Ticket::TicketDelete;
+my $OriginalTicketMerge       = \&Kernel::System::Ticket::TicketMerge;
 my $OriginalTicketSearch      = Kernel::System::Ticket::TicketSearch->can('TicketSearch');
 my $OriginalTicketTitleUpdate = \&Kernel::System::Ticket::TicketTitleUpdate;
 my $OriginalTicketQueueSet    = \&Kernel::System::Ticket::TicketQueueSet;
@@ -41,6 +44,22 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
         return $OriginalTicketCreate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->TicketCreateRun(
             TicketObject => $Self, Original => $OriginalTicketCreate, Param => \%Param,
+        );
+    };
+
+    *Kernel::System::Ticket::TicketDelete = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalTicketDelete->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->TicketDeleteRun(
+            TicketObject => $Self, Original => $OriginalTicketDelete, Param => \%Param,
+        );
+    };
+
+    *Kernel::System::Ticket::TicketMerge = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalTicketMerge->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->TicketMergeRun(
+            TicketObject => $Self, Original => $OriginalTicketMerge, Param => \%Param,
         );
     };
 
@@ -107,7 +126,7 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
 
     *Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleCreate = sub {
         my ( $Self, %Param ) = @_;
-        return $OriginalArticleCreate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $OriginalArticleCreate->( $Self, %Param ) if $Self->{D724TicketAuditSuppress} || $D724TicketAuditMergeSuppress;
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ArticleCreateRun(
             ArticleBackend => $Self, Original => $OriginalArticleCreate, Param => \%Param,
         );

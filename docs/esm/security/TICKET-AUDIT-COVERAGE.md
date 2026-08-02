@@ -12,6 +12,7 @@ the following core writes and sends them through the transaction-aware
 - `TicketCreate`
 - `TicketTitleUpdate`, `TicketQueueSet`, `TicketCustomerSet`, `TicketLockSet`
 - `TicketStateSet`, `TicketTypeSet`, `TicketServiceSet`, `TicketOwnerSet`, `TicketResponsibleSet`, `TicketPrioritySet`
+- `TicketDelete` (retains a `deleted` scope tombstone) and same-tenant `TicketMerge`
 - database-backed MIME `ArticleCreate`
 
 The corresponding tests cover create, state/title/customer mutations, article
@@ -25,24 +26,26 @@ The upstream-derived core exposes these mutation methods in
 
 | Priority | Core method | Core location | Current outcome |
 | --- | --- | --- | --- |
-| 1 | `TicketDelete` | line 713 | no tenant-scope/audit atomicity guarantee |
-| 2 | `TicketMerge` | line 6386 | no source/destination tenant/audit guarantee |
-| 3 | `TicketSLASet` | line 3427 | no normalized mutation audit |
-| 4 | `TicketPendingTimeSet` | line 4023 | no normalized mutation audit |
+| 1 | `TicketSLASet` | line 3427 | no normalized mutation audit |
+| 2 | `TicketPendingTimeSet` | line 4023 | no normalized mutation audit |
 
-The existing `TicketDelete` calls in `TicketAudit.t` are fixture cleanup only;
-they do not prove delete auditing or rollback behavior.
+`TicketAudit.t` now verifies delete audit failure rollback, the retained deleted
+scope tombstone, and the normalized delete event; later delete calls are fixture
+cleanup.
 
 ## Implementation order and acceptance gate
 
-1. Add `TicketDelete` and `TicketMerge` adapters first. Both must obtain an
-   immutable scope before changing data; merge must reject different tenants.
-2. Add SLA and pending-time adapters through the existing
+1. Add SLA and pending-time adapters through the existing
    `MutationRun` pattern where the before/after ticket fields are stable.
-3. For every adapter add success, audit-disabled rollback, cross-tenant
+2. For every adapter add success, audit-disabled rollback, cross-tenant
    rejection where applicable, no orphan audit event, and chain verification.
-4. Run the package test against the candidate MariaDB runtime and retain its
+3. Run the package test against the candidate MariaDB runtime and retain its
    output before calling the path covered.
+
+`TicketDelete` database state and audit/scope tombstone are verified together,
+but core index and storage hooks can have external side effects. In the current
+candidate run Elasticsearch reported a delete version conflict after the DB
+rollback path, so full cross-system atomicity is not claimed.
 
 Chat article, non-MIME article backends, Generic Interface write adapters, and
 scheduler/daemon mutations remain separate P0 inventory items. Generic
