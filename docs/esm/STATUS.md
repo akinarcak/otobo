@@ -9,6 +9,14 @@
 
 - `VERIFIED_BY_CURRENT_TEST`: Müşteri Hizmet Kataloğu ve ajan Operasyon Merkezi için kaynak-temelli TR/EN kapısı eklendi. `Test-CriticalLanguage.ps1`, şablondaki sabit `Translate(...)` anahtarlarının ilgili `tr_D724*` sözlüğünde bulunmasını, dosyaların katı UTF-8 olmasını ve yaygın mojibake işaretlerini içermemesini doğrular. Operations Center'daki eksik `Please select` çevirisi `Lütfen seçin` olarak tamamlandı. Bu statik sözleşme, authenticated runtime portal/agent kabulünün yerini tutmaz.
 
+## 2026-08-02 — P0.4 dashboard runtime marka düzeltmesi
+
+- `VERIFIED_BY_CURRENT_TEST`: Framework dashboard'un kullanıcıya görünen varsayılan `OTOBO 11.1` başlığı, açıklaması ve upstream bağlantısı CareOnCloud ESM metni ile ürün bağlantısına çevrildi. Kaynak marka sözleşmesi bu ayarları doğrular. Aday runtime'da authenticated agent dashboard render kabulü henüz çalıştırılmamıştır.
+
+## 2026-08-02 — P0 release CPAN SBOM kapısı
+
+- `VERIFIED_BY_CURRENT_TEST`: `Generate-CpanSbom.ps1`, Docker web build'inde deployment modunda kullanılan kilitli `cpanfile.docker.snapshot` kaynağından deterministik CycloneDX 1.5 CPAN dependency SBOM'u üretir. `Test-CpanSbom.ps1` formatı, component sayısını ve her CPAN purl'ını doğrular; CI artifact'i olarak yükler. Kapsam yalnız CPAN build distributions'tır: Debian/OS paketleri, base-image digest'i, container image inventory, vulnerability scan ve imzalı release artifact henüz tamamlanmamıştır.
+
 ## 2026-08-02 — P0.2 tenant yol ve negatif test envanteri
 
 - `VERIFIED_IN_CODE`: `security/TENANT-PATH-MATRIX.md`, merkezi policy, directory, katalog, request, API, ticket/GI, search, cache, reporting, webhook ve scheduler yollarini ilgili test/kabul artefaktlariyla esler. Native OTOBO ekranlari, tum Generic Interface operasyonlari, diger daemonlar ve platform-admin bypass'i acikca `PARTIAL` olarak isaretlenmistir; bu nedenle tam tenant izolasyonu iddiasi yoktur.
