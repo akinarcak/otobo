@@ -15,7 +15,8 @@
 
 ## 2026-08-02 — P0.4 varsayılan e-posta ve müşteri yüzeyi marka düzeltmesi
 
-- `VERIFIED_BY_CURRENT_TEST`: Varsayılan agent/customer parola ve yeni hesap bildirimleri CareOnCloud ESM adıyla güncellendi. Customer login/dashboard metinleri CareOnCloud ESM'e çevrildi; upstream News dashboard backend'i varsayılan olarak kapatıldı ve CareOnCloud duyuru metni aldı. Kaynak marka sözleşmesi bu aktif varsayılanları denetler. Persist edilmiş eski SysConfig değerleri için candidate upgrade/konfigürasyon rebuild kabulü henüz çalıştırılmamıştır.
+- `VERIFIED_BY_CURRENT_TEST`: Varsayılan agent/customer parola ve yeni hesap bildirimleri CareOnCloud ESM adıyla güncellendi. Customer login/dashboard metinleri CareOnCloud ESM'e çevrildi; upstream News dashboard backend'i varsayılan olarak kapatıldı ve CareOnCloud duyuru metni aldı. Kaynak marka sözleşmesi bu aktif varsayılanları denetler.
+- `VERIFIED_BY_CURRENT_TEST`: yeni isimli, taze MariaDB/Redis/application volume adayında `quick_setup.pl` sonrası `Admin::Config::Read`, bildirim adını `CareOnCloud ESM Notifications`, customer login/dashboard metinlerini CareOnCloud olarak ve News backend `Default: '0'` ile geri okudu. Kanıt: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/brand-sysconfig-acceptance.log`. Geçici `d724-brand-sysconfig-20260802` Compose projesi, network ve yalnız kendi volume'ları kaldırıldı; aktif `d724-esm` servisleri değiştirilmedi. Bu kabul persisted eski kurulumların upgrade migration'ını veya authenticated HTML render'ını kapsamaz.
 
 ## 2026-08-02 — P0 release CPAN SBOM kapısı
 
