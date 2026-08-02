@@ -21,6 +21,10 @@
 - `VERIFIED_BY_CURRENT_TEST`: `D724TicketAudit 0.8.6` adds transaction-aware Chat `ArticleCreate` coverage. Candidate MariaDB regression `TicketAudit.t` passed 115 tests, including audit-disabled chat article rollback, successful scope-version advancement, and normalized `ticket.chat_article.created` evidence. Artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/ticket-audit-0.8.6-test.log`.
 - `PARTIAL`: Chat article edits/deletes and long-running scheduler/daemon route regression have not been retained. These remain P0 acceptance gaps.
 
+## 2026-08-02 — P0.4 candidate package-install gate
+
+- `RISK`: Candidate MariaDB runtime acceptance for `D724Problem 0.2.0` was attempted with all three package tests. It failed because `d724_problem` is absent from the candidate database; copying source files alone does not apply the manifest `DatabaseInstall` schema. The candidate console has no `Admin::Package::Build` command, so a reproducible OPM build/install/upgrade pipeline is required before this package can be accepted. Test artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/problem-candidate.log`. The failed test left zero `problem-%` tenant fixtures.
+
 Son dogrulama: `2026-07-25`
 
 ## Calisan ve kanitlanmis
