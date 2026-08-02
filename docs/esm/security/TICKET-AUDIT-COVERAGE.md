@@ -43,10 +43,10 @@ candidate run Elasticsearch reported a delete version conflict after the DB
 rollback path, so full cross-system atomicity is not claimed.
 
 The separate Chat backend has its own create/update/delete wrappers and
-candidate regression coverage. The fallback `Invalid` backend intentionally
-does not create or update articles, but it can delete unknown-channel metadata
-through its own path; that exceptional delete route remains a separate P0
-inventory item. Generic Interface write adapters and scheduler/daemon mutations
-remain separate P0 items. Generic Interface read/history/update access policy
-exists, but it is not evidence of transaction-atomic audit coverage for every
-write route.
+candidate regression coverage. `D724TicketAudit 0.8.15` also wraps the fallback
+`Invalid` backend's unknown-channel metadata delete route in its own
+scope/audit transaction. Its candidate regression is still required before the
+route is accepted. Generic Interface write adapters and scheduler/daemon
+mutations remain separate P0 items. Generic Interface read/history/update
+access policy exists, but it is not evidence of transaction-atomic audit
+coverage for every write route.

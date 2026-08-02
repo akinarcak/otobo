@@ -49,8 +49,10 @@ audit-disabled updates and deletes roll the database mutation and scope version
 back, then verifies the recovered lifecycle path.
 
 The `Invalid` fallback backend deliberately rejects article create/update, but
-has its own unknown-channel metadata delete route. It is not wrapped and remains
-outside the accepted coverage boundary.
+has its own unknown-channel metadata delete route. `D724TicketAudit 0.8.15`
+wraps that delete in a scope/audit transaction and records
+`ticket.unknown_channel_article.deleted`; candidate runtime regression remains
+required before it is accepted.
 
 Chat update rebuilds the core article search index. As with core ticket delete,
 that external indexing side effect is outside the MariaDB transaction boundary;

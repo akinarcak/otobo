@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
 
-our $VERSION = '0.8.14';
+our $VERSION = '0.8.15';
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::D724::Audit',
@@ -289,6 +289,47 @@ sub ChatArticleDeleteRun {
     my ( $Self, %Param ) = @_;
     return $Param{Original}->( $Param{ArticleBackend}, %{ $Param{Param} } ) if !$Self->_Enabled();
     return $Self->_ChatArticleMutationRun( %Param, Action => 'ticket.chat_article.deleted', ToState => 'deleted' );
+}
+
+sub InvalidArticleDeleteRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{ArticleBackend}, %{$Call} ) if !$Self->_Enabled();
+    my ( $TicketID, $ArticleID ) = @{$Call}{qw(TicketID ArticleID)};
+    return if !$TicketID || !$ArticleID;
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            local $Param{ArticleBackend}->{D724TicketAuditSuppress} = 1;
+            my $Success = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
+            return $Self->_Error('INVALID_ARTICLE_DELETE_FAILED') if !$Success;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE d724_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => 'ticket.unknown_channel_article.deleted', Version => $Version, FromState => q{}, ToState => 'deleted',
+                ObjectType => 'ticket_article', ObjectID => $ArticleID,
+                Details => {
+                    ticket_number => $Ticket{TicketNumber} // q{}, version => $Version,
+                    communication_channel_id => $Call->{CommunicationChannelID} // q{}, storage => 'unknown_channel',
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $Success };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
 }
 
 sub GenericInterfaceTicketUpdateRun {

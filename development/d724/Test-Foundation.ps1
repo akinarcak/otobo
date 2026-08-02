@@ -197,6 +197,18 @@ foreach ($MIMEBackend in @('Email', 'Internal', 'Phone')) {
         throw "Article backend $MIMEBackend no longer inherits the wrapped MIMEBase mutation path."
     }
 }
+foreach ($RequiredInvalidArticleContract in @(
+    'Kernel::System::Ticket::Article::Backend::Invalid::ArticleDelete',
+    'InvalidArticleDeleteRun',
+    'ticket.unknown_channel_article.deleted',
+    'INVALID_ARTICLE_DELETE_FAILED'
+)) {
+    $Present = $TicketAuditWrapper -match [regex]::Escape($RequiredInvalidArticleContract) `
+        -or $TicketAuditService -match [regex]::Escape($RequiredInvalidArticleContract)
+    if (!$Present) {
+        throw "TicketAudit is missing the Invalid article delete contract: $RequiredInvalidArticleContract"
+    }
+}
 
 foreach ($RequiredGenericAgentTenantContract in @(
     'Kernel::System::GenericAgent::JobRun',

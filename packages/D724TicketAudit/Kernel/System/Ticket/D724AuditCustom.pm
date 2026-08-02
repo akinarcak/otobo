@@ -9,6 +9,7 @@ use strict;
 use warnings;
 use Kernel::System::Ticket::Article::Backend::MIMEBase ();
 use Kernel::System::Ticket::Article::Backend::Chat ();
+use Kernel::System::Ticket::Article::Backend::Invalid ();
 use Kernel::GenericInterface::Operation::Ticket::TicketCreate ();
 use Kernel::GenericInterface::Operation::Ticket::TicketUpdate ();
 use Kernel::GenericInterface::Operation::Ticket::Common ();
@@ -18,7 +19,7 @@ use Kernel::System::GenericAgent ();
 use Kernel::System::Console::Command::Maint::Ticket::PendingCheck ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.14';
+our $VERSION = '0.8.15';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -42,6 +43,7 @@ my $OriginalArticleCreate     = \&Kernel::System::Ticket::Article::Backend::MIME
 my $OriginalChatArticleCreate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleCreate;
 my $OriginalChatArticleUpdate = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleUpdate;
 my $OriginalChatArticleDelete = \&Kernel::System::Ticket::Article::Backend::Chat::ArticleDelete;
+my $OriginalInvalidArticleDelete = \&Kernel::System::Ticket::Article::Backend::Invalid::ArticleDelete;
 my $OriginalGIAccessCheck     = Kernel::GenericInterface::Operation::Ticket::Common->can('CheckAccessPermissions');
 my $OriginalGITicketCreateRun = Kernel::GenericInterface::Operation::Ticket::TicketCreate->can('Run');
 my $OriginalGITicketUpdateRun = Kernel::GenericInterface::Operation::Ticket::TicketUpdate->can('Run');
@@ -169,6 +171,14 @@ my $OriginalGenericAgentJobRun = Kernel::System::GenericAgent->can('JobRun');
         return $OriginalChatArticleDelete->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
         return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ChatArticleDeleteRun(
             ArticleBackend => $Self, Original => $OriginalChatArticleDelete, Param => \%Param,
+        );
+    };
+
+    *Kernel::System::Ticket::Article::Backend::Invalid::ArticleDelete = sub {
+        my ( $Self, %Param ) = @_;
+        return $OriginalInvalidArticleDelete->( $Self, %Param ) if $Self->{D724TicketAuditSuppress};
+        return $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->InvalidArticleDeleteRun(
+            ArticleBackend => $Self, Original => $OriginalInvalidArticleDelete, Param => \%Param,
         );
     };
 
