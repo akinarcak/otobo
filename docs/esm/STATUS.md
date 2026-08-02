@@ -1,5 +1,10 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-03 — CareOnCloud marka geçişi, güvenli ilk dilim
+
+- `VERIFIED_BY_CURRENT_TEST`: Kullanıcıya/log’a görünen runtime hata mesajlarındaki `D724` öneki Catalog, Request, Webhook, TenantDirectory, TicketAudit ve Public API adapter’larında `CareOnCloud` olarak değiştirildi. Foundation kapısı geçti; commit `c6b676206`.
+- `RISK`: Paket adları, Perl namespace’leri, DB tabloları, config anahtarları, SOPM yolları ve sabit API error code’ları teknik sözleşmedir; bunlar migration/upgrade planı olmadan değiştirilmedi. Depoda kalan `D724` referansları korunmuş compatibility kimlikleridir.
+
 ## 2026-08-03 — P0 TicketAudit runtime kabulü
 
 - `VERIFIED_BY_CURRENT_TEST`: Sabit uzak test script'iyle 18 D724 paketinin tamamı ardışık olarak çalıştırıldı ve her paket `All tests successful` döndürdü. D724TicketAudit 227, API 160 ve Reporting 73 test dahil edildi; negatif-path SQL/policy logları beklenen assertion kanıtıdır.
