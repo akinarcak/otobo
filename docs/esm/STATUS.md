@@ -21,6 +21,7 @@
 
 ## 2026-08-02 — P0 release CPAN SBOM kapısı
 
+- `VERIFIED_IN_CODE`: the Foundation workflow path filters now include every CareOnCloud root Dockerfile, the development Dockerfiles, the locked CPAN snapshot, and repository license/security metadata that its gates inspect. A change to those release inputs therefore triggers the same static Foundation, brand, SBOM, and clean-package lifecycle workflow instead of silently bypassing it. GitHub Actions execution for the fork remains unverified.
 - `VERIFIED_BY_CURRENT_TEST`: `Generate-CpanSbom.ps1`, Docker web build'inde deployment modunda kullanılan kilitli `cpanfile.docker.snapshot` kaynağından deterministik CycloneDX 1.5 CPAN dependency SBOM'u üretir. `Test-CpanSbom.ps1` formatı, component sayısını ve her CPAN purl'ını doğrular; CI artifact'i olarak yükler. Kapsam yalnız CPAN build distributions'tır: Debian/OS paketleri, base-image digest'i, container image inventory, vulnerability scan ve imzalı release artifact henüz tamamlanmamıştır.
 
 ## 2026-08-02 — P0.2 tenant yol ve negatif test envanteri

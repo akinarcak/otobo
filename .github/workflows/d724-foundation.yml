@@ -7,7 +7,15 @@ on:
       - 'packages/D724*/**'
       - 'Kernel/**'
       - 'bin/docker/**'
+      - 'development/docker/**'
       - 'docs/esm/**'
+      - 'careoncloud*.dockerfile'
+      - 'cpanfile.docker.snapshot'
+      - 'README.md'
+      - 'NOTICE'
+      - 'SECURITY.md'
+      - 'LICENSE'
+      - 'COPYING-Third-Party'
       - '.github/workflows/d724-foundation.yml'
   push:
     branches:
@@ -17,7 +25,15 @@ on:
       - 'packages/D724*/**'
       - 'Kernel/**'
       - 'bin/docker/**'
+      - 'development/docker/**'
       - 'docs/esm/**'
+      - 'careoncloud*.dockerfile'
+      - 'cpanfile.docker.snapshot'
+      - 'README.md'
+      - 'NOTICE'
+      - 'SECURITY.md'
+      - 'LICENSE'
+      - 'COPYING-Third-Party'
       - '.github/workflows/d724-foundation.yml'
 
 permissions:
