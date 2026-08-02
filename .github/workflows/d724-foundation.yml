@@ -90,6 +90,27 @@ jobs:
             artifacts/careoncloud-esm-source-*.manifest.json
           if-no-files-found: error
 
+      - name: Scan repository dependencies for high and critical vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          vuln-type: library
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: json
+          output: trivy-fs-results.json
+          exit-code: '1'
+
+      - name: Upload repository vulnerability scan
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: careoncloud-trivy-fs-results
+          path: trivy-fs-results.json
+          if-no-files-found: warn
+
       - name: Accept clean D724 package lifecycle
         shell: pwsh
         run: ./development/d724/Test-CleanPackageLifecycle.ps1

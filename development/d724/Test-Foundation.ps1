@@ -249,6 +249,20 @@ foreach ($Root in $SecretScanRoots) {
     }
 }
 
+$FoundationWorkflow = Get-Content (Join-Path $RepositoryRoot '.github/workflows/d724-foundation.yml') -Raw
+foreach ($RequiredVulnerabilityScanContract in @(
+    'aquasecurity/trivy-action@v0.36.0',
+    'scan-type: fs',
+    'scanners: vuln',
+    'severity: HIGH,CRITICAL',
+    "exit-code: '1'",
+    'trivy-fs-results.json'
+)) {
+    if ($FoundationWorkflow -notmatch [regex]::Escape($RequiredVulnerabilityScanContract)) {
+        throw "Foundation workflow is missing the vulnerability scan contract: $RequiredVulnerabilityScanContract"
+    }
+}
+
 if ($RequireDocker) {
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
         throw 'Docker is required for this validation mode.'
