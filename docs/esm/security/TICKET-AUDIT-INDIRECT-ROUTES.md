@@ -27,6 +27,10 @@ authenticated request, and verifies the created ticket's immutable scope,
 normalized creation audit, and tenant chain. This acceptance is committed but
 not yet rerun against the current image.
 
+The `0ea96a4` source snapshot compiled that lifecycle script in an isolated
+container using the test server's available Perl runtime. This is syntax-only
+evidence and does not accept the HTTP route or its transactional persistence.
+
 An isolated clean candidate also accepted an authenticated REST request through
 `/careoncloud/nph-genericinterface.pl` that changed title and priority in one
 request. The database re-read verified both values, scope version `1 -> 3`, the
