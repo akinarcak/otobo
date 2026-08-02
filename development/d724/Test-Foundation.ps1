@@ -83,6 +83,25 @@ foreach ($Template in $PublicIssueTemplates) {
     }
 }
 
+$SecretScanRoots = @('packages', 'development/d724', 'docs/esm', '.github') |
+    ForEach-Object { Join-Path $RepositoryRoot $_ } |
+    Where-Object { Test-Path $_ }
+$SecretPatterns = @(
+    '(?m)-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----',
+    '(?i)\bAKIA[0-9A-Z]{16}\b',
+    '(?i)\bgh[pousr]_[A-Za-z0-9_]{20,}\b'
+)
+foreach ($Root in $SecretScanRoots) {
+    foreach ($Candidate in Get-ChildItem $Root -Recurse -File) {
+        $CandidateText = Get-Content $Candidate.FullName -Raw -ErrorAction Stop
+        foreach ($Pattern in $SecretPatterns) {
+            if ($CandidateText -match $Pattern) {
+                throw "Potential committed secret material in $($Candidate.FullName)"
+            }
+        }
+    }
+}
+
 if ($RequireDocker) {
     if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
         throw 'Docker is required for this validation mode.'
