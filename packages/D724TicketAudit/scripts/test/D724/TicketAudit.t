@@ -33,6 +33,7 @@ for my $TenantID ( $Tenant, $OtherTenant ) {
 
 my $Ticket = $Kernel::OM->Get('Kernel::System::Ticket');
 my $ServiceObject = $Kernel::OM->Get('Kernel::System::Service');
+my $SLAObject = $Kernel::OM->Get('Kernel::System::SLA');
 my $QueueID = $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup( Queue => 'Raw' );
 my $StateID = $Kernel::OM->Get('Kernel::System::State')->StateLookup( State => 'new' );
 my $PriorityID = $Kernel::OM->Get('Kernel::System::Priority')->PriorityLookup( Priority => '3 normal' );
@@ -41,6 +42,11 @@ my $ServiceID = $ServiceObject->ServiceAdd(
     Name => 'Ticket audit service ' . $Helper->GetRandomID(), Comment => 'ticket audit fixture', ValidID => 1, UserID => 1,
 );
 ok( $ServiceID, 'ticket audit service fixture is created' );
+my $SLAID = $SLAObject->SLAAdd(
+    Name => 'Ticket audit SLA ' . $Helper->GetRandomID(), ServiceIDs => [$ServiceID], ValidID => 1,
+    Comment => 'ticket audit fixture', UserID => 1,
+);
+ok( $SLAID, 'ticket audit SLA fixture is created' );
 
 $Helper->ConfigSettingChange( Key => 'D724::TicketAudit::Enabled', Value => 0 );
 my $LegacyNumber = 'D724LG' . $Helper->GetRandomID();
@@ -154,15 +160,36 @@ $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
 ok( $Ticket->TicketServiceSet( TicketID => $TicketID, ServiceID => $ServiceID, UserID => 1 ), 'service update succeeds after audit recovers' );
 is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 4 : 3, 'successful service update advances scope version once' );
 
+my %SLABefore = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$Ticket->TicketSLASet( TicketID => $TicketID, SLAID => $SLAID, UserID => 1 ), 'SLA update fails closed when audit is unavailable' );
+my %SLAAfterFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $SLAAfterFailure{SLAID} // q{}, $SLABefore{SLAID} // q{}, 'failed audited SLA update rolls ticket SLA back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 4 : 3, 'failed SLA update rolls scope version back' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $Ticket->TicketSLASet( TicketID => $TicketID, SLAID => $SLAID, UserID => 1 ), 'SLA update succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 5 : 4, 'successful SLA update advances scope version once' );
+
+my %PendingBefore = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+my $PendingAt = '2030-01-02 03:04:05';
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
+ok( !$Ticket->TicketPendingTimeSet( TicketID => $TicketID, String => $PendingAt, UserID => 1 ), 'pending-time update fails closed when audit is unavailable' );
+my %PendingAfterFailure = $Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 );
+is( $PendingAfterFailure{RealTillTimeNotUsed} // q{}, $PendingBefore{RealTillTimeNotUsed} // q{}, 'failed audited pending-time update rolls ticket value back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 5 : 4, 'failed pending-time update rolls scope version back' );
+$Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
+ok( $Ticket->TicketPendingTimeSet( TicketID => $TicketID, String => $PendingAt, UserID => 1 ), 'pending-time update succeeds after audit recovers' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 6 : 5, 'successful pending-time update advances scope version once' );
+
 ok( $Ticket->TicketTitleUpdate( TicketID => $TicketID, Title => 'Atomic tenant ticket updated', UserID => 1 ), 'ticket title update succeeds' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 5 : 4, 'title update advances scope version' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 7 : 6, 'title update advances scope version' );
 ok( $Ticket->TicketTitleUpdate( TicketID => $TicketID, Title => 'Atomic tenant ticket updated', UserID => 1 ), 'same title replay succeeds' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 5 : 4, 'no-op title replay does not advance scope version' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 7 : 6, 'no-op title replay does not advance scope version' );
 ok(
     $Ticket->TicketCustomerSet( TicketID => $TicketID, No => $Tenant, User => 'ticket-test-user-2', UserID => 1 ),
     'customer user can change inside immutable tenant boundary',
 );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 6 : 5, 'customer user update advances scope version' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 8 : 7, 'customer user update advances scope version' );
 my $ArticleBackend = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForChannel( ChannelName => 'Internal' );
 is(
     $ArticleBackend->{ArticleStorageModule},
@@ -179,11 +206,11 @@ my %Article = (
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 0 );
 ok( !$ArticleBackend->ArticleCreate(%Article), 'article create fails closed when audit is unavailable' );
 is( [ $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList( TicketID => $TicketID ) ], [], 'failed audited article leaves no article row' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 6 : 5, 'failed article create rolls scope version back' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 8 : 7, 'failed article create rolls scope version back' );
 $Helper->ConfigSettingChange( Key => 'D724::Audit::Enabled', Value => 1 );
 my $ArticleID = $ArticleBackend->ArticleCreate(%Article);
 ok( $ArticleID, 'article create succeeds after audit recovers' );
-is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 7 : 6, 'successful article advances scope version once' );
+is( $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID )->{Version}, $AlternateTypeID ? 9 : 8, 'successful article advances scope version once' );
 my $ArticleEvents = $Audit->List(
     Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket_article', ObjectID => "$ArticleID",
 );
@@ -239,13 +266,13 @@ $Events = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 
 is(
     [ map { $_->{Action} } @{ $Events->{Data} } ],
     $AlternateTypeID
-        ? [qw(ticket.created ticket.state.updated ticket.type.updated ticket.service.updated ticket.title.updated ticket.customer.updated)]
-        : [qw(ticket.created ticket.state.updated ticket.service.updated ticket.title.updated ticket.customer.updated)],
+        ? [qw(ticket.created ticket.state.updated ticket.type.updated ticket.service.updated ticket.sla.updated ticket.pending_time.updated ticket.title.updated ticket.customer.updated)]
+        : [qw(ticket.created ticket.state.updated ticket.service.updated ticket.sla.updated ticket.pending_time.updated ticket.title.updated ticket.customer.updated)],
     'failed/no-op updates leave no orphan event and successful mutations emit one event each',
 );
-like( $Events->{Data}->[ $AlternateTypeID ? 5 : 4 ]->{ToState}, qr{\Asha256:[0-9a-f]{40}\z}, 'long customer state uses deterministic hash token' );
+like( $Events->{Data}->[ $AlternateTypeID ? 7 : 6 ]->{ToState}, qr{\Asha256:[0-9a-f]{40}\z}, 'long customer state uses deterministic hash token' );
 is(
-    $Events->{Data}->[ $AlternateTypeID ? 5 : 4 ]->{Details}->{to_value}, "$Tenant|ticket-test-user-2",
+    $Events->{Data}->[ $AlternateTypeID ? 7 : 6 ]->{Details}->{to_value}, "$Tenant|ticket-test-user-2",
     'full customer mutation value remains available in normalized details',
 );
 ok( $Audit->Verify( Subject => $Subject, TenantID => $Tenant )->{Valid}, 'ticket tenant audit chain verifies' );
@@ -260,7 +287,7 @@ ok( $Ticket->TicketDelete( TicketID => $TicketID, UserID => 1 ), 'ticket delete 
 ok( !$Ticket->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => 1 ), 'successful audited delete removes the ticket row' );
 my $DeletedScope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $TicketID );
 is( $DeletedScope->{Status}, 'deleted', 'successful audited delete retains deleted scope tombstone' );
-is( $DeletedScope->{Version}, $AlternateTypeID ? 8 : 7, 'successful audited delete advances scope version once' );
+is( $DeletedScope->{Version}, $AlternateTypeID ? 10 : 9, 'successful audited delete advances scope version once' );
 my $DeleteEvents = $Audit->List( Subject => $Subject, TenantID => $Tenant, ObjectType => 'ticket', ObjectID => "$TicketID" );
 is( $DeleteEvents->{Data}->[-1]->{Action}, 'ticket.deleted', 'successful delete emits normalized audit evidence' );
 ok( $Ticket->TicketDelete( TicketID => $LegacyTicketID, UserID => 1 ), 'legacy ticket fixture is removed' );
@@ -276,6 +303,8 @@ ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind =>
 ok( $DB->Do( SQL => 'DELETE FROM d724_ticket_scope WHERE ticket_id = ?', Bind => [ \$CrossTenantMergeID ] ), 'cross-tenant merge scope fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_event WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit events are removed' );
 ok( $DB->Do( SQL => 'DELETE FROM d724_audit_head WHERE tenant_id = ?', Bind => [ \$Tenant ] ), 'ticket audit head is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM service_sla WHERE service_id = ? AND sla_id = ?', Bind => [ \$ServiceID, \$SLAID ] ), 'ticket audit service/SLA fixture link is removed' );
+ok( $DB->Do( SQL => 'DELETE FROM sla WHERE id = ?', Bind => [ \$SLAID ] ), 'ticket audit SLA fixture is removed' );
 ok( $DB->Do( SQL => 'DELETE FROM service WHERE id = ?', Bind => [ \$ServiceID ] ), 'ticket audit service fixture is removed' );
 for my $TenantID ( $Tenant, $OtherTenant ) {
     ok( $DB->Do( SQL => 'DELETE FROM d724_tenant WHERE key_name = ?', Bind => [ \$TenantID ] ), "tenant fixture $TenantID is removed" );

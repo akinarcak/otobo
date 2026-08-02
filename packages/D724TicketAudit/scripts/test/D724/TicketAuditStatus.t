@@ -15,7 +15,7 @@ is( $ExitCode, 0, 'ticket audit status command succeeds' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSON );
 ok( $Status->{Success}, 'ticket audit schema is healthy' );
 is( $Status->{Package}, 'D724TicketAudit', 'status identifies package' );
-is( $Status->{Version}, '0.8.4', 'status identifies version' );
+is( $Status->{Version}, '0.8.5', 'status identifies version' );
 ok( $Status->{SearchPolicy}->{Enabled}, 'tenant search policy is enabled' );
 ok( $Status->{SearchPolicy}->{ConfigValid}, 'only the supported ticket index is declared tenant-safe' );
 is( $Status->{SearchPolicy}->{DirectUnscopedRequest}, 'deny', 'unscoped direct search behavior is explicit' );

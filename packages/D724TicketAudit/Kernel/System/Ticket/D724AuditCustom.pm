@@ -13,7 +13,7 @@ use Kernel::GenericInterface::Invoker::Elasticsearch::Search ();
 use Kernel::System::Elasticsearch ();
 
 our $ObjectManagerDisabled = 1;
-our $VERSION = '0.8.4';
+our $VERSION = '0.8.5';
 our $D724SearchContext;
 our $D724TicketAuditMergeSuppress;
 
@@ -25,6 +25,8 @@ my $OriginalTicketTitleUpdate = \&Kernel::System::Ticket::TicketTitleUpdate;
 my $OriginalTicketQueueSet    = \&Kernel::System::Ticket::TicketQueueSet;
 my $OriginalTicketTypeSet     = \&Kernel::System::Ticket::TicketTypeSet;
 my $OriginalTicketServiceSet  = \&Kernel::System::Ticket::TicketServiceSet;
+my $OriginalTicketSLASet      = \&Kernel::System::Ticket::TicketSLASet;
+my $OriginalPendingTimeSet    = \&Kernel::System::Ticket::TicketPendingTimeSet;
 my $OriginalTicketCustomerSet = \&Kernel::System::Ticket::TicketCustomerSet;
 my $OriginalTicketLockSet     = \&Kernel::System::Ticket::TicketLockSet;
 my $OriginalTicketStateSet    = \&Kernel::System::Ticket::TicketStateSet;
@@ -117,6 +119,8 @@ my $OriginalESPrepareRequest  = Kernel::GenericInterface::Invoker::Elasticsearch
     $Wrap->( 'TicketQueueSet',          $OriginalTicketQueueSet,    'ticket.queue.updated',       'Queue' );
     $Wrap->( 'TicketTypeSet',           $OriginalTicketTypeSet,     'ticket.type.updated',        'Type' );
     $Wrap->( 'TicketServiceSet',        $OriginalTicketServiceSet,  'ticket.service.updated',     'Service' );
+    $Wrap->( 'TicketSLASet',            $OriginalTicketSLASet,      'ticket.sla.updated',         'SLAID' );
+    $Wrap->( 'TicketPendingTimeSet',    $OriginalPendingTimeSet,    'ticket.pending_time.updated', 'UntilTime' );
     $Wrap->( 'TicketCustomerSet',       $OriginalTicketCustomerSet, 'ticket.customer.updated',    'Customer' );
     $Wrap->( 'TicketLockSet',           $OriginalTicketLockSet,     'ticket.lock.updated',        'Lock' );
     $Wrap->( 'TicketStateSet',          $OriginalTicketStateSet,    'ticket.state.updated',       'State' );
