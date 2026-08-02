@@ -12,6 +12,7 @@ $RequiredFiles = @(
     'docs/esm/ARCHITECTURE.md',
     'docs/esm/ROADMAP.md',
     'docs/esm/GPL-COMMERCIAL.md',
+    'docs/esm/security/TENANT-PATH-MATRIX.md',
     'development/d724/compose.yml',
     'development/d724/.env.example',
     'development/d724/Test-CleanPackageLifecycle.ps1',
