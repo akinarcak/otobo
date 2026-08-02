@@ -7,6 +7,8 @@ $ComposeFile = Join-Path $PSScriptRoot 'compose.yml'
 $Project = "d724-package-lifecycle-$PID"
 $EnvironmentFile = Join-Path ([System.IO.Path]::GetTempPath()) "$Project.env"
 $Packages = @('D724Foundation', 'D724TenantGuard', 'D724TenantDirectory', 'D724Audit', 'D724TicketAudit', 'D724Problem')
+$GitCommit = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
+if ($GitCommit -notmatch '\A[0-9a-f]{40}\z') { throw "Could not resolve the source Git commit: $GitCommit" }
 
 function New-RandomSecret {
     $Bytes = New-Object byte[] 24
@@ -30,7 +32,8 @@ $GenericInterfacePassword = New-RandomSecret
 @(
     "D724_DB_ROOT_PASSWORD=$DatabasePassword",
     'D724_BIND_ADDRESS=127.0.0.1',
-    'D724_HTTP_PORT=18080'
+    'D724_HTTP_PORT=18080',
+    "D724_GIT_COMMIT=$GitCommit"
 ) | Set-Content -Encoding utf8 $EnvironmentFile
 
 try {
@@ -49,8 +52,9 @@ set -eu
 test -f /opt/careoncloud/bin/psgi-bin/careoncloud.psgi
 test -f /opt/careoncloud_install/careoncloud_next/bin/psgi-bin/careoncloud.psgi
 grep -F 'careoncloud.psgi' /opt/careoncloud_install/entrypoint.sh >/dev/null
+test "$(tr -d '\r\n' < /opt/careoncloud_install/careoncloud_next/git-commit.txt)" = "$D724_EXPECTED_GIT_COMMIT"
 '@
-    Invoke-Compose -ComposeArguments @('exec', '-T', 'web', 'sh', '-lc', $RuntimeContract)
+    Invoke-Compose -ComposeArguments @('exec', '-T', '-e', "D724_EXPECTED_GIT_COMMIT=$GitCommit", 'web', 'sh', '-lc', $RuntimeContract)
 
     $QuickSetupOutput = Invoke-Compose -ComposeArguments @(
         'exec', '-T', 'web', 'bin/docker/quick_setup.pl',

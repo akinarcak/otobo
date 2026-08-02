@@ -111,7 +111,9 @@ $CleanLifecycleScript = Get-Content (Join-Path $PSScriptRoot 'Test-CleanPackageL
 foreach ($RequiredRuntimeContract in @(
     '/opt/careoncloud/bin/psgi-bin/careoncloud.psgi',
     '/opt/careoncloud_install/careoncloud_next/bin/psgi-bin/careoncloud.psgi',
-    "grep -F 'careoncloud.psgi' /opt/careoncloud_install/entrypoint.sh"
+    "grep -F 'careoncloud.psgi' /opt/careoncloud_install/entrypoint.sh",
+    'D724_GIT_COMMIT=$GitCommit',
+    'D724_EXPECTED_GIT_COMMIT=$GitCommit'
 )) {
     if ($CleanLifecycleScript -notmatch [regex]::Escape($RequiredRuntimeContract)) {
         throw "Clean package lifecycle is missing the CareOnCloud image runtime contract: $RequiredRuntimeContract"
