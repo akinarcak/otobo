@@ -536,3 +536,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: Release workflow upgraded to Buildx/setup actions v4/v7, enables `progress: plain` and `pull: true`, and passes an explicit non-local `DOCKER_TAG` so the Dockerfile deterministically uses the locked deployment snapshot.
 - `VERIFIED_BY_CURRENT_TEST`: Release workflow contract test passed after the change; commit `8b61ed9f9` was pushed.
 - `RISK`: A fresh candidate tag run is still required to confirm observable CPAN progress and reach SBOM/Cosign; previous runs were canceled before those steps.
+
+## 2026-08-03 - Build action input correction
+
+- `VERIFIED_BY_CURRENT_TEST`: Candidate run `30821523907` reached Buildx but reported the authoritative action warning `Unexpected input(s) 'progress'`; the run was canceled before image build. No SBOM or signature was produced.
+- `DONE_AND_VERIFIED`: Removed the unsupported `progress` input and its contract assertion; the release workflow contract test passed. Commit `5e31e8150` was pushed.
+- `RISK`: A fresh candidate tag run remains necessary to validate the corrected action invocation and signed release path.
