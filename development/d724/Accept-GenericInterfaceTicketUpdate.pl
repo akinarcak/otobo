@@ -152,11 +152,15 @@ $Ticket->_TicketCacheClear( TicketID => $CreatedTicketID );
 my %Created = $Ticket->TicketGet( TicketID => $CreatedTicketID, DynamicFields => 0, UserID => $UserID );
 die "HTTP TicketCreate title did not persist\n" if $Created{Title} ne $CreatedTitle || $Created{CustomerID} ne $TenantID;
 my $CreatedScope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $CreatedTicketID );
-die "HTTP TicketCreate scope is invalid\n" if !$CreatedScope || $CreatedScope->{TenantID} ne $TenantID || $CreatedScope->{Version} != 2;
 my $CreatedEvents = $Kernel::OM->Get('Kernel::System::D724::Audit')->List(
     Subject => $Subject, TenantID => $TenantID, ObjectType => 'ticket', ObjectID => "$CreatedTicketID", Limit => 100,
 );
 die "HTTP TicketCreate audit list failed\n" if !$CreatedEvents->{Success};
+die "HTTP TicketCreate scope is invalid\n"
+    if !$CreatedScope
+    || $CreatedScope->{TenantID} ne $TenantID
+    || $CreatedScope->{Status} ne 'active'
+    || $CreatedScope->{Version} != scalar @{ $CreatedEvents->{Data} };
 die "HTTP TicketCreate audit event missing\n" if !grep { $_->{Action} eq 'ticket.created' } @{ $CreatedEvents->{Data} };
 my $CreatedVerify = $Kernel::OM->Get('Kernel::System::D724::Audit')->Verify( Subject => $Subject, TenantID => $TenantID );
 die "HTTP TicketCreate audit chain verification failed\n" if !$CreatedVerify->{Success} || !$CreatedVerify->{Valid};
