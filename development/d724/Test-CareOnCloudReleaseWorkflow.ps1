@@ -13,6 +13,9 @@ $Required = @(
     "file: careoncloud.web.dockerfile"
     'target: careoncloud-web'
     'registry: ghcr.io'
+    'docker/setup-buildx-action@v3'
+    'cache-from: type=gha,scope=careoncloud-web'
+    'cache-to: type=gha,mode=max,scope=careoncloud-web'
     'anchore/sbom-action@'
     'sigstore/cosign-installer@'
     'cosign sign --yes'
