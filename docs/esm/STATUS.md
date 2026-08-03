@@ -459,6 +459,12 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Adayda çeviri dosyası Perl syntax kontrolünden geçti; D724Request 4 dosya / 62 test ile `PASS` oldu.
 - `RISK`: Aday container'a tek dosya syntax doğrulaması için aktarıldı; kalıcı paket güncellemesi bir sonraki 18 paket build/install döngüsünde yapılmalı. Canlı cluster değiştirilmedi.
 
+## 2026-08-03 - Agent menüleri Türkçe çeviri kapsamı
+
+- `DONE_AND_VERIFIED`: D724Assist, D724CMDB ve D724Change paketlerine Agent Assistant, Service Portfolio ve Change Enablement menü/başlık çevirileri eklendi ve her SOPM filelist'ine kaydedildi.
+- `VERIFIED_BY_CURRENT_TEST`: Üç yeni dil dosyası aday container'ında Perl syntax kontrolünden geçti; paket XML manifestleri parse edildi. Assist 19, CMDB 61 ve Change 25 test ile `PASS` oldu.
+- `RISK`: Bu tur paket kaynakları Git'e alındı; aday runtime'da kalıcı görünürlük için tüm 18 paket build/install döngüsü ve dil seçiciyle iki ayrı HTTP kabulü hâlâ gereklidir. Canlı cluster değiştirilmedi.
+
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
 - `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
