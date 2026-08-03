@@ -476,6 +476,7 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Güncel HEAD paket arşivi adayda 18 paket build/install döngüsünden geçirildi ve tam regresyon `exit code 0` ile tamamlandı. Yeni i18n paketleri dahil edildi; beklenen deny-policy/FK logları negatif test assertion'larıdır.
 - `DONE_AND_VERIFIED`: Türkçe `Agent Assistant` karşılığı ürün terminolojisi kararıyla `Destek Asistanı` olarak standardize edildi (commit `f90ba2d44`).
 - `RISK`: Bu son tek satır terminoloji değişikliği regresyon tamamlandıktan sonra yapıldı; kalıcı aday görünürlüğü için `careoncloud-all-packages-latest-i18n.tar` arşivinin yeniden kurulması/aktarılması ve i18n HTTP kabulü gerekir. Canlı cluster değiştirilmedi.
+- `VERIFIED_BY_CURRENT_TEST`: `careoncloud-all-packages-latest-i18n.tar` aktarılmış, 18 paketin tamamı adayda yeniden build/install edilmiş ve tam regresyon tekrar `exit code 0` ile sonuçlanmıştır. Aday web/daemon/db/redis servisleri ayakta kalmış, aktif `d724-esm-*` servislerine dokunulmamıştır.
 
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
