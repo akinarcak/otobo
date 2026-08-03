@@ -407,6 +407,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `VERIFIED_BY_CURRENT_TEST`: Kullanici tarafindan `/tmp/careoncloud-ticketaudit.tar` olarak aktarilan yerel son TicketAudit paketi aday web container'inda build/install edildi. Quick-setup legacy ticket `ID=1` temizlendikten sonra `D724TicketAudit` 4 dosya / 227 test ile `All tests successful`, `Result: PASS` verdi. `TicketAudit.t`, `TicketAuditStatus.t`, `TicketPolicy.t` ve `SearchPolicy.t` dahil edildi.
 - `SCOPE`: Bu kanit aday f00 image + temiz aday MariaDB/Redis/application volume'unda alindi; aktif `d724-esm-*` ve Yetka degistirilmedi. Beklenen deny-policy loglari assertion kanitidir.
 
+## 2026-08-03 - Aday 18 paket regresyon matrisi
+
+- `VERIFIED_BY_CURRENT_TEST`: Foundation 16, TenantGuard 192, Audit 29, TenantDirectory 57, Catalog 89, Request 62, TicketAudit 227, Problem 28, CMDB 61, Change 25, Commitment 121, Webhook 61, Identity 71, SCIM 60, Assist 19 ve Observability 37 test PASS verdi.
+- `RISK`: D724API 160 testte 2 failure (API.t fixture ticket scope eksigi); D724Reporting 73 testte 15 failure (Reporting v0.4.1 bos selected-column SQL uretiyor). Bunlar adayda kurulu kaynak surumlerinin mevcut kanitidir; yerel son tum paket commitleri adaya aktarilmis degildir.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
