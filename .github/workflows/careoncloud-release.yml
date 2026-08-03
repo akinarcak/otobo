@@ -56,6 +56,8 @@ jobs:
           target: careoncloud-web
           push: true
           tags: ${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}
+          cache-from: type=gha,scope=careoncloud-web
+          cache-to: type=gha,mode=max,scope=careoncloud-web
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
