@@ -487,6 +487,7 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 
 - `DONE_AND_VERIFIED`: Upstream OTOBO release workflow'una dokunmadan `.github/workflows/careoncloud-release.yml` eklendi. Manuel veya `careoncloud-v*` tag tetiklemesiyle `careoncloud.web.dockerfile` içindeki `careoncloud-web` target'ını GHCR'a immutable tag ile iter, CycloneDX SBOM artifact'i üretir ve GitHub OIDC üzerinden Cosign keyless imza atar.
 - `RISK`: Workflow GitHub Actions üzerinde henüz çalıştırılmadı; GHCR repository/package izinleri ve release tag politikası ayrıca doğrulanmalı. Bu workflow canlı cutover yapmaz.
+- `VERIFIED_BY_CURRENT_TEST`: `development/d724/Test-CareOnCloudReleaseWorkflow.ps1` workflow'un CareOnCloud Dockerfile/target, GHCR, SBOM, Cosign ve OIDC izinlerini içerdiğini; upstream OTOBO image hedefi içermediğini doğruluyor.
 
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
