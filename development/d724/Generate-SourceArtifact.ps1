@@ -6,7 +6,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $RepositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
-$Status = @(& git -C $RepositoryRoot status --short)
+$Status = @(
+    & git -C $RepositoryRoot status --short |
+        Where-Object { $_ -notmatch '^\?\? artifacts/' }
+)
 if ($Status) {
     throw 'A release source artifact requires a clean Git working tree.'
 }
