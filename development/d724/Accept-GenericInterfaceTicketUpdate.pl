@@ -142,7 +142,8 @@ my $CreateResponse = HTTP::Tiny->new( timeout => 20 )->post(
 die "Generic Interface TicketCreate HTTP response failed: $CreateResponse->{status}\n" if !$CreateResponse->{success};
 my $CreatePayload = eval { $JSON->decode( $CreateResponse->{content} ) };
 my $CreatedTicketID = $CreatePayload && ref $CreatePayload eq 'HASH' ? $CreatePayload->{TicketID} : 0;
-if ( !$CreatedTicketID ) {
+my $CreatedArticleID = $CreatePayload && ref $CreatePayload eq 'HASH' ? $CreatePayload->{ArticleID} : 0;
+if ( !$CreatedTicketID || !$CreatedArticleID ) {
     my $ContentType = $CreateResponse->{headers}->{'content-type'} // q{};
     my $Preview = substr( $CreateResponse->{content} // q{}, 0, 240 );
     $Preview =~ s{[^\x20-\x7e]}{ }gsmx;
@@ -156,12 +157,19 @@ my $CreatedEvents = $Kernel::OM->Get('Kernel::System::D724::Audit')->List(
     Subject => $Subject, TenantID => $TenantID, ObjectType => 'ticket', ObjectID => "$CreatedTicketID", Limit => 100,
 );
 die "HTTP TicketCreate audit list failed\n" if !$CreatedEvents->{Success};
+my $CreatedArticleEvents = $Kernel::OM->Get('Kernel::System::D724::Audit')->List(
+    Subject => $Subject, TenantID => $TenantID, ObjectType => 'ticket_article', ObjectID => "$CreatedArticleID", Limit => 100,
+);
+die "HTTP TicketCreate article audit list failed\n" if !$CreatedArticleEvents->{Success};
+my @CreatedAuditEvents = ( @{ $CreatedEvents->{Data} }, @{ $CreatedArticleEvents->{Data} } );
 die "HTTP TicketCreate scope is invalid\n"
     if !$CreatedScope
     || $CreatedScope->{TenantID} ne $TenantID
     || $CreatedScope->{Status} ne 'active'
-    || $CreatedScope->{Version} != scalar @{ $CreatedEvents->{Data} };
+    || $CreatedScope->{Version} != scalar @CreatedAuditEvents;
 die "HTTP TicketCreate audit event missing\n" if !grep { $_->{Action} eq 'ticket.created' } @{ $CreatedEvents->{Data} };
+die "HTTP TicketCreate article audit event missing\n"
+    if !grep { $_->{Action} eq 'ticket.article.created' } @{ $CreatedArticleEvents->{Data} };
 my $CreatedVerify = $Kernel::OM->Get('Kernel::System::D724::Audit')->Verify( Subject => $Subject, TenantID => $TenantID );
 die "HTTP TicketCreate audit chain verification failed\n" if !$CreatedVerify->{Success} || !$CreatedVerify->{Valid};
 
