@@ -412,6 +412,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `VERIFIED_BY_CURRENT_TEST`: Foundation 16, TenantGuard 192, Audit 29, TenantDirectory 57, Catalog 89, Request 62, TicketAudit 227, Problem 28, CMDB 61, Change 25, Commitment 121, Webhook 61, Identity 71, SCIM 60, Assist 19 ve Observability 37 test PASS verdi.
 - `RISK`: D724API 160 testte 2 failure (API.t fixture ticket scope eksigi); D724Reporting 73 testte 15 failure (Reporting v0.4.1 bos selected-column SQL uretiyor). Bunlar adayda kurulu kaynak surumlerinin mevcut kanitidir; yerel son tum paket commitleri adaya aktarilmis degildir.
 
+## 2026-08-03 - P0 aday tam regresyon kabulü
+
+- `VERIFIED_BY_CURRENT_TEST`: Yerel API + Reporting paket arşivi adayda kuruldu; ardından 18 paket regresyon scripti tam olarak `exit code 0` ile tamamlandi. API 160 ve Reporting 73 test dahil tum paketler `All tests successful` verdi. Beklenen deny-policy/FK loglari negatif assertion kanitidir.
+- `SCOPE`: Aday f00 imaji, izole `127.0.0.1:18080` portu ve aday MariaDB/Redis/application volume'lari; aktif `d724-esm-*` ve Yetka degistirilmedi. Quick-setup legacy ticket temizligi test oncesi uygulandi.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
