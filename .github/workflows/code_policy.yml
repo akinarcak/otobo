@@ -121,5 +121,15 @@ jobs:
             - name: 'install eslint'
               run: cd codepolicy && npm install eslint && npm install @eslint/js && npm install globals
 
+            - id: d724-codepolicy-files
+              uses: tj-actions/changed-files@v47
+              with:
+                files: |
+                  development/d724/**/*.pl
+                  packages/D724*/**/*.pm
+                  packages/D724*/**/*.pl
+                  packages/D724*/**/*.t
+
             - name: 'run CodePolicy'
-              run: codepolicy/bin/otobo.CodePolicy.pl -l ${{ steps.changed-files.outputs.all_changed_files }}
+              if: steps.d724-codepolicy-files.outputs.any_changed == 'true'
+              run: codepolicy/bin/otobo.CodePolicy.pl -l ${{ steps.d724-codepolicy-files.outputs.all_changed_files }}
