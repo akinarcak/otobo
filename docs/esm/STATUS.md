@@ -530,3 +530,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 
 - `VERIFIED_BY_CURRENT_TEST`: Candidate run `30821129445` successfully initialized the cache-capable Buildx builder and reached the image build step; the workflow API emitted no build progress and remained unchanged, so the run was canceled after 3m22s. SBOM and Cosign were not reached.
 - `RISK`: This is an infrastructure/build-duration observation, not a release success. The full CPAN deployment layer needs a separately observable/prewarmed build path before the signed release gate can be claimed.
+
+## 2026-08-03 - Release build observability hardening
+
+- `DONE_AND_VERIFIED`: Release workflow upgraded to Buildx/setup actions v4/v7, enables `progress: plain` and `pull: true`, and passes an explicit non-local `DOCKER_TAG` so the Dockerfile deterministically uses the locked deployment snapshot.
+- `VERIFIED_BY_CURRENT_TEST`: Release workflow contract test passed after the change; commit `8b61ed9f9` was pushed.
+- `RISK`: A fresh candidate tag run is still required to confirm observable CPAN progress and reach SBOM/Cosign; previous runs were canceled before those steps.
