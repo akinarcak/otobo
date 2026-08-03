@@ -58,7 +58,6 @@ jobs:
           file: careoncloud.web.dockerfile
           target: careoncloud-web
           pull: true
-          progress: plain
           build-args: |
             DOCKER_TAG=careoncloud-${{ steps.tag.outputs.tag }}
           push: true

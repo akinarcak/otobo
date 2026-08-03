@@ -15,7 +15,6 @@ $Required = @(
     'registry: ghcr.io'
     'docker/setup-buildx-action@v4'
     'docker/build-push-action@v7'
-    'progress: plain'
     'DOCKER_TAG=careoncloud-${{ steps.tag.outputs.tag }}'
     'cache-from: type=gha,scope=careoncloud-web'
     'cache-to: type=gha,mode=max,scope=careoncloud-web'
