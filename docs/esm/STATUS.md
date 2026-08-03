@@ -507,3 +507,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: The same candidate session selected `Europe/Istanbul`; the time-zone warning disappeared after save. All observed authenticated links remained under `/careoncloud/index.pl`.
 - `DONE_AND_VERIFIED`: Returning the candidate session to English retained the canonical `/careoncloud/` routes and English navigation, proving both selectable UI languages without touching production services.
 - `RISK`: This is candidate-only browser evidence using a temporary acceptance user; signed release-tag execution, live cutover/rollback and production acceptance remain open.
+
+## 2026-08-03 - Candidate release workflow execution
+
+- `VERIFIED_BY_CURRENT_TEST`: Release workflow contract test passed and candidate tag `careoncloud-v0.0.0-candidate.817d13ebb` reached GitHub Actions run `30820150916`; checkout, immutable-tag validation and GHCR authentication completed successfully.
+- `RISK`: The remote Docker build produced no streamed logs and remained in the build step; the candidate-only run was canceled after 6m31s to avoid unbounded runner consumption. SBOM and Cosign steps therefore did not execute. No production image or service was changed.
+- `NEXT`: Optimize or prebuild the release image path (the current Docker context is approximately 352 MB and performs the full CPAN deployment) before rerunning the candidate tag workflow; retain the failed/canceled run as evidence rather than claiming a signed release.
