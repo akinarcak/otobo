@@ -439,3 +439,8 @@ Asagidaki maddeler tamamlanmadan ticari ESM `1.0` hedefi gerceklesmis sayilmaz:
 - yedek/geri donus, upgrade, SBOM ve imzali release sureci.
 
 Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış IdP kabulü, logout/session politikası ve SCIM yaşam döngüsü; OpenTelemetry export'u, operasyon dashboard'u ve alarm teslim kanalları. Buna paralel kalan ticket/Chat/SLA adapter'ları, transactional outbox ve immutable dış arşivdir.
+# 2026-08-03 Current candidate source synchronization
+
+- VERIFIED_BY_CURRENT_TEST: all 18 current package sources were transferred, rebuilt and installed in the isolated candidate; the 18-package regression exited with code 0, including API (160) and Reporting (73) tests.
+- SCOPE: only the careoncloud-candidate-f00f22e7b compose project was changed; active d724-esm services, volumes and Yetka data were untouched.
+- RISK: candidate image remains d724/esm:candidate-f00f22e7b; a fresh image build, SBOM and signed release are still open.
