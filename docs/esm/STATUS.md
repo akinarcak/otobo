@@ -396,6 +396,12 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `VERIFIED_BY_CURRENT_TEST`: Aday compose f00 imajina uyarlanarak `127.0.0.1:18080` portunda yeniden baslatildi; web, db, redis healthy, daemon Up. Aktif `d724-esm-*` servisleri degistirilmedi.
 - `GAP`: Temiz MariaDB volume'unda `careoncloud_esm` kullanicisi/schemas bootstrap edilmedigi icin unit test DB baglantisi `Access denied` ile duruyor. Quick setup + package install sonraki aday adimidir.
 
+## 2026-08-03 - Temiz aday bootstrap ve TicketAudit ayrisik failure
+
+- `VERIFIED_BY_CURRENT_TEST`: Aday DB `quick_setup.pl` ile bootstrap edildi; 18 paket eski aday kaynak kopyasindan build/install edildi ve ilk 6 paket (Foundation, TenantGuard, Audit, TenantDirectory, Catalog, Request) PASS verdi.
+- `RISK`: TicketAudit grubunda `TicketAudit.t` kaynak derleme hatasi (`Test2::Tools::Compare::is` eksik arguman, no plan) ve `TicketAuditStatus.t` 5 failure goruldu. Bu aday kaynak kopyasi yerel son marka/TicketAudit commitlerini icermiyor; sonucu guncel kod regresyonu olarak genelleme.
+- `NEXT`: Yerel son committen aday package tar'i/build context'i aktar; eski kaynak kopyasini kullanmadan OPM kur ve TicketAudit grubunu yeniden kos.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
