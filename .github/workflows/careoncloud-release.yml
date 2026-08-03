@@ -48,6 +48,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push CareOnCloud image
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -78,6 +79,4 @@ jobs:
         uses: sigstore/cosign-installer@v3.9.0
 
       - name: Sign immutable image by keyless OIDC
-        env:
-          COSIGN_EXPERIMENTAL: '1'
-        run: cosign sign --yes "${{ env.IMAGE }}@$(docker image inspect "${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}" --format '{{index .RepoDigests 0}}' | cut -d@ -f2)"
+        run: cosign sign --yes "${{ env.IMAGE }}@${{ steps.build.outputs.digest }}"
