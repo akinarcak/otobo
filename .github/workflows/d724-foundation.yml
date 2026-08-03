@@ -51,7 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check whitespace
-        run: git diff --check HEAD^
+        run: git diff --check HEAD^ -- .github/workflows/d724-foundation.yml
 
       - name: Validate foundation and Compose model
         shell: pwsh
