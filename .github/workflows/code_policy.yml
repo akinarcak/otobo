@@ -113,6 +113,11 @@ jobs:
                 ref: master
                 path: codepolicy
 
+            - name: 'set up supported Node.js for ESLint'
+              uses: actions/setup-node@v6
+              with:
+                node-version: '20.19.0'
+
             - name: 'install eslint'
               run: cd codepolicy && npm install eslint && npm install @eslint/js && npm install globals
 
