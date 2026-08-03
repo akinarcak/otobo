@@ -51,6 +51,7 @@ ENV DIR_OPT_CAREONCLOUD_UPDATE=/opt/careoncloud_update
 RUN apt-get update\
  && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install\
  "build-essential"\
+ "linux-libc-dev"\
  "pkg-config"\
  "libpq-dev"\
  "libxml2-dev"\
