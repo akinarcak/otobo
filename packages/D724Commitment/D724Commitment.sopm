@@ -117,6 +117,7 @@
     </DatabaseUpgrade>
     <DatabaseUninstall Type="pre"><TableDrop Name="d724_escalation_outbox" /><TableDrop Name="d724_commitment_event" /><TableDrop Name="d724_commitment_instance" /><TableDrop Name="d724_commitment_objective" /><TableDrop Name="d724_commitment_policy" /></DatabaseUninstall>
     <Filelist>
+        <File Permission="644" Location="Kernel/Language/tr_D724Commitment.pm" />
         <File Permission="644" Location="Kernel/Config/Files/XML/D724Commitment.xml" />
         <File Permission="644" Location="Kernel/System/D724/Commitment.pm" />
         <File Permission="644" Location="Kernel/System/D724/EscalationDispatcher.pm" />

@@ -465,6 +465,12 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Üç yeni dil dosyası aday container'ında Perl syntax kontrolünden geçti; paket XML manifestleri parse edildi. Assist 19, CMDB 61 ve Change 25 test ile `PASS` oldu.
 - `RISK`: Bu tur paket kaynakları Git'e alındı; aday runtime'da kalıcı görünürlük için tüm 18 paket build/install döngüsü ve dil seçiciyle iki ayrı HTTP kabulü hâlâ gereklidir. Canlı cluster değiştirilmedi.
 
+## 2026-08-03 - Commitment ve Problem Türkçe menüleri
+
+- `DONE_AND_VERIFIED`: D724Commitment ve D724Problem için Türkçe dil dosyaları eklendi; taahhüt/uyarı/ihlal ve problem yönetimi menü terimleri çevrildi, SOPM filelist'lerine kaydedildi.
+- `VERIFIED_BY_CURRENT_TEST`: Manifest XML parse edildi, iki dil dosyası aday container'ında syntax kontrolünden geçti. Commitment 121 ve Problem 28 test ile `PASS` oldu.
+- `RISK`: Aday web worker'larında kalıcı dil cache yenilemesi ve tüm paketlerin birleşik yeniden kurulumu hâlâ açık; canlı cluster değiştirilmedi.
+
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
 - `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
