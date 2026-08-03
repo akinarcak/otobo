@@ -142,7 +142,12 @@ my $CreateResponse = HTTP::Tiny->new( timeout => 20 )->post(
 die "Generic Interface TicketCreate HTTP response failed: $CreateResponse->{status}\n" if !$CreateResponse->{success};
 my $CreatePayload = eval { $JSON->decode( $CreateResponse->{content} ) };
 my $CreatedTicketID = $CreatePayload && ref $CreatePayload eq 'HASH' ? $CreatePayload->{TicketID} : 0;
-die "Generic Interface TicketCreate response is invalid\n" if !$CreatedTicketID;
+if ( !$CreatedTicketID ) {
+    my $ContentType = $CreateResponse->{headers}->{'content-type'} // q{};
+    my $Preview = substr( $CreateResponse->{content} // q{}, 0, 240 );
+    $Preview =~ s{[^\x20-\x7e]}{ }gsmx;
+    die "Generic Interface TicketCreate response is invalid ($ContentType): $Preview\n";
+}
 $Ticket->_TicketCacheClear( TicketID => $CreatedTicketID );
 my %Created = $Ticket->TicketGet( TicketID => $CreatedTicketID, DynamicFields => 0, UserID => $UserID );
 die "HTTP TicketCreate title did not persist\n" if $Created{Title} ne $CreatedTitle || $Created{CustomerID} ne $TenantID;
