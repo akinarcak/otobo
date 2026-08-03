@@ -132,7 +132,7 @@ my $CreateResponse = HTTP::Tiny->new( timeout => 20 )->post(
             Article => {
                 CommunicationChannel => 'Internal', SenderType => 'agent', IsVisibleForCustomer => 1,
                 Subject => 'Generic Interface HTTP create', Body => 'Atomic ticket-create acceptance article.',
-                AutoResponseType => 'auto reply', From => $CustomerLogin,
+                AutoResponseType => 'auto reply',
                 ContentType => 'text/plain; charset=utf-8', HistoryType => 'NewTicket',
                 HistoryComment => 'Generic Interface create acceptance',
             },
