@@ -444,3 +444,8 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - VERIFIED_BY_CURRENT_TEST: all 18 current package sources were transferred, rebuilt and installed in the isolated candidate; the 18-package regression exited with code 0, including API (160) and Reporting (73) tests.
 - SCOPE: only the careoncloud-candidate-f00f22e7b compose project was changed; active d724-esm services, volumes and Yetka data were untouched.
 - RISK: candidate image remains d724/esm:candidate-f00f22e7b; a fresh image build, SBOM and signed release are still open.
+# 2026-08-03 UI/URL P1 gözlem kaydı
+
+- `RISK`: Aday ekran görüntüsünde kullanıcıya görünen adres yolu `/otobo/index.pl?Action=AgentD724Operations`; CareOnCloud kullanıcı yüzünde `/careoncloud` canonical yolu henüz doğrulanmış değil.
+- `RISK`: Aynı Türkçe agent oturumunda `Report scope`, `Please select a time zone...` ve bazı menü/alan metinleri İngilizce kalırken diğer menüler Türkçe görünüyor. Bu, dil paketinin eksik olmasından veya aktif dil/cache kapsamının tutarsız olmasından kaynaklanabilir; paket kaynaklarında ilgili çeviri anahtarları ayrıca kabul testine alınmalı.
+- `NEXT`: URL rewrite/canonical path'i adayda izole doğrula; Reporting ve ortak agent chrome için TR/EN metin envanteri çıkar, eksik anahtarları güncelle ve iki dilde ekran kabulü çalıştır. Üretim origin'inde değişiklik yapılmayacak.
