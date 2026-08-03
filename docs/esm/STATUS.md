@@ -547,3 +547,8 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 
 - `VERIFIED_BY_CURRENT_TEST`: Candidate run `30821704656` passed checkout, tag resolution, GHCR login and Buildx setup. It then remained in the image build step without progress or API timestamp updates and was canceled after 1m56s; SBOM/Cosign were not reached.
 - `RISK`: Repeated no-progress behavior is now isolated to the remote Docker build stage, not action input validation. No production image/service was changed and no signed release is claimed.
+
+## 2026-08-03 - Static P1/P2 contract regression sweep
+
+- `VERIFIED_BY_CURRENT_TEST`: On commit `ec5f168aa`, CareOnCloud brand contract passed (16 required paths, 15 forbidden paths, 18 packages), critical customer/agent language contract passed for 2 journeys, canonical proxy contract passed, and release workflow contract passed.
+- `RISK`: These deterministic source contracts do not substitute for the still-open remote image build, SBOM upload, Cosign signature, or live cutover/rollback evidence.
