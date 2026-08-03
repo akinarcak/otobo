@@ -402,6 +402,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `RISK`: TicketAudit grubunda `TicketAudit.t` kaynak derleme hatasi (`Test2::Tools::Compare::is` eksik arguman, no plan) ve `TicketAuditStatus.t` 5 failure goruldu. Bu aday kaynak kopyasi yerel son marka/TicketAudit commitlerini icermiyor; sonucu guncel kod regresyonu olarak genelleme.
 - `NEXT`: Yerel son committen aday package tar'i/build context'i aktar; eski kaynak kopyasini kullanmadan OPM kur ve TicketAudit grubunu yeniden kos.
 
+## 2026-08-03 - Guncel TicketAudit aday runtime kabulü
+
+- `VERIFIED_BY_CURRENT_TEST`: Kullanici tarafindan `/tmp/careoncloud-ticketaudit.tar` olarak aktarilan yerel son TicketAudit paketi aday web container'inda build/install edildi. Quick-setup legacy ticket `ID=1` temizlendikten sonra `D724TicketAudit` 4 dosya / 227 test ile `All tests successful`, `Result: PASS` verdi. `TicketAudit.t`, `TicketAuditStatus.t`, `TicketPolicy.t` ve `SearchPolicy.t` dahil edildi.
+- `SCOPE`: Bu kanit aday f00 image + temiz aday MariaDB/Redis/application volume'unda alindi; aktif `d724-esm-*` ve Yetka degistirilmedi. Beklenen deny-policy loglari assertion kanitidir.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
