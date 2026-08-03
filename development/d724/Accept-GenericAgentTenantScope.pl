@@ -10,15 +10,18 @@ use Kernel::System::ObjectManager;
 
 local $Kernel::OM = Kernel::System::ObjectManager->new();
 my $UserID = 2; # quick_setup.pl's explicitly-created admin user
+$Kernel::OM->Get('Kernel::Config')->Set( Key => 'D724::TenantGuard::Enabled', Value => 1 );
+$Kernel::OM->Get('Kernel::Config')->Set( Key => 'D724::TenantGuard::AllowPlatformAdmin', Value => 1 );
 my $Suffix = time() . q{-} . int rand 10_000;
 my $TenantA = "generic-agent-a-$Suffix";
 my $TenantB = "generic-agent-b-$Suffix";
 my $Directory = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory');
+my $Platform = { ID => 'generic-agent-platform', Roles => ['platform_admin'], TenantIDs => ['bootstrap'] };
 for my $TenantID ( $TenantA, $TenantB ) {
-    my $Bootstrap = $Directory->Bootstrap(
-        Confirm => 1, TenantID => $TenantID, Name => "GenericAgent acceptance $TenantID", UserID => $UserID,
+    my $Created = $Directory->TenantCreate(
+        Subject => $Platform, TenantID => $TenantID, Name => "GenericAgent acceptance $TenantID", UserID => $UserID,
     );
-    die "tenant bootstrap failed for $TenantID\n" if !$Bootstrap->{Success};
+    die "tenant create failed for $TenantID\n" if !$Created->{Success};
 }
 
 my $Ticket = $Kernel::OM->Get('Kernel::System::Ticket');
