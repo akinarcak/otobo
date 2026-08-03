@@ -519,3 +519,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: `.github/workflows/careoncloud-release.yml` now uses a dedicated GitHub Actions cache scope for the CareOnCloud web image (`cache-from`/`cache-to`, `mode=max`) so subsequent immutable candidate builds can reuse the expensive CPAN and image layers without changing the image contents or signing policy.
 - `VERIFIED_BY_CURRENT_TEST`: `Test-CareOnCloudReleaseWorkflow.ps1` passed after the cache change; commit `78e745b1e` was pushed to `codex/esm-foundation`.
 - `RISK`: A fresh candidate run is still required to prove the cache-backed build reaches SBOM and Cosign; the prior run was canceled before those steps.
+
+## 2026-08-03 - Release cache driver correction
+
+- `VERIFIED_BY_CURRENT_TEST`: Candidate run `30820904874` failed immediately with the authoritative BuildKit error `Cache export is not supported for the docker driver`; no image, SBOM or signature was produced.
+- `DONE_AND_VERIFIED`: The release workflow now provisions `docker/setup-buildx-action@v3` before using the GitHub Actions cache backend, and the workflow contract test covers both the builder and cache settings. Commit `5e8a7a5af` was pushed.
+- `RISK`: A new candidate tag run is required to prove the corrected builder reaches image push, SBOM upload and Cosign signing.
