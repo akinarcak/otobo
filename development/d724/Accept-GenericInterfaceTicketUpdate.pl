@@ -152,7 +152,7 @@ $Ticket->_TicketCacheClear( TicketID => $CreatedTicketID );
 my %Created = $Ticket->TicketGet( TicketID => $CreatedTicketID, DynamicFields => 0, UserID => $UserID );
 die "HTTP TicketCreate title did not persist\n" if $Created{Title} ne $CreatedTitle || $Created{CustomerID} ne $TenantID;
 my $CreatedScope = $Kernel::OM->Get('Kernel::System::D724::TicketAudit')->ScopeGet( TicketID => $CreatedTicketID );
-die "HTTP TicketCreate scope is invalid\n" if !$CreatedScope || $CreatedScope->{TenantID} ne $TenantID || $CreatedScope->{Version} != 1;
+die "HTTP TicketCreate scope is invalid\n" if !$CreatedScope || $CreatedScope->{TenantID} ne $TenantID || $CreatedScope->{Version} != 2;
 my $CreatedEvents = $Kernel::OM->Get('Kernel::System::D724::Audit')->List(
     Subject => $Subject, TenantID => $TenantID, ObjectType => 'ticket', ObjectID => "$CreatedTicketID", Limit => 100,
 );
