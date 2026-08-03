@@ -483,6 +483,11 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Aday web container'ında güncel `tr_D724Assist`, `tr_D724CMDB`, `tr_D724Change`, `tr_D724Commitment`, `tr_D724Problem` ve `tr_D724Request` dosyalarının tamamı mevcut; aday web/db/redis sağlıklı, daemon `Up`.
 - `VERIFIED_BY_CURRENT_TEST`: Güncel checkout'ta CareOnCloud brand contract (16 required, 15 forbidden path, 18 package) ve canonical proxy contract testleri tekrar `PASS` oldu.
 
+## 2026-08-03 - CareOnCloud imzalı release workflow taslağı
+
+- `DONE_AND_VERIFIED`: Upstream OTOBO release workflow'una dokunmadan `.github/workflows/careoncloud-release.yml` eklendi. Manuel veya `careoncloud-v*` tag tetiklemesiyle `careoncloud.web.dockerfile` içindeki `careoncloud-web` target'ını GHCR'a immutable tag ile iter, CycloneDX SBOM artifact'i üretir ve GitHub OIDC üzerinden Cosign keyless imza atar.
+- `RISK`: Workflow GitHub Actions üzerinde henüz çalıştırılmadı; GHCR repository/package izinleri ve release tag politikası ayrıca doğrulanmalı. Bu workflow canlı cutover yapmaz.
+
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
 - `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
