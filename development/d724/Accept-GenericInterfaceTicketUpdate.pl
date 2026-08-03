@@ -31,7 +31,7 @@ my $Bootstrap = $Kernel::OM->Get('Kernel::System::D724::TenantDirectory')->Boots
 );
 die "tenant bootstrap failed\n" if !$Bootstrap->{Success};
 
-my $CustomerLogin = 'gi.create.' . time() . q{@example.invalid};
+my $CustomerLogin = 'gi.create.' . time() . q{@example.com};
 my $CustomerAdded = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserAdd(
     Source => 'CustomerUser', UserFirstname => 'Generic', UserLastname => 'Interface',
     UserCustomerID => $TenantID, UserLogin => $CustomerLogin, UserPassword => 'not-used-by-this-acceptance',
