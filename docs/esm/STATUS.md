@@ -513,3 +513,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Release workflow contract test passed and candidate tag `careoncloud-v0.0.0-candidate.817d13ebb` reached GitHub Actions run `30820150916`; checkout, immutable-tag validation and GHCR authentication completed successfully.
 - `RISK`: The remote Docker build produced no streamed logs and remained in the build step; the candidate-only run was canceled after 6m31s to avoid unbounded runner consumption. SBOM and Cosign steps therefore did not execute. No production image or service was changed.
 - `NEXT`: Optimize or prebuild the release image path (the current Docker context is approximately 352 MB and performs the full CPAN deployment) before rerunning the candidate tag workflow; retain the failed/canceled run as evidence rather than claiming a signed release.
+
+## 2026-08-03 - Release build cache hardening
+
+- `DONE_AND_VERIFIED`: `.github/workflows/careoncloud-release.yml` now uses a dedicated GitHub Actions cache scope for the CareOnCloud web image (`cache-from`/`cache-to`, `mode=max`) so subsequent immutable candidate builds can reuse the expensive CPAN and image layers without changing the image contents or signing policy.
+- `VERIFIED_BY_CURRENT_TEST`: `Test-CareOnCloudReleaseWorkflow.ps1` passed after the cache change; commit `78e745b1e` was pushed to `codex/esm-foundation`.
+- `RISK`: A fresh candidate run is still required to prove the cache-backed build reaches SBOM and Cosign; the prior run was canceled before those steps.
