@@ -542,3 +542,8 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Candidate run `30821523907` reached Buildx but reported the authoritative action warning `Unexpected input(s) 'progress'`; the run was canceled before image build. No SBOM or signature was produced.
 - `DONE_AND_VERIFIED`: Removed the unsupported `progress` input and its contract assertion; the release workflow contract test passed. Commit `5e31e8150` was pushed.
 - `RISK`: A fresh candidate tag run remains necessary to validate the corrected action invocation and signed release path.
+
+## 2026-08-03 - Corrected release action run
+
+- `VERIFIED_BY_CURRENT_TEST`: Candidate run `30821704656` passed checkout, tag resolution, GHCR login and Buildx setup. It then remained in the image build step without progress or API timestamp updates and was canceled after 1m56s; SBOM/Cosign were not reached.
+- `RISK`: Repeated no-progress behavior is now isolated to the remote Docker build stage, not action input validation. No production image/service was changed and no signed release is claimed.
