@@ -480,6 +480,7 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Aday `127.0.0.1:18080/careoncloud/index.pl` HTTP `200` döndürüyor; `X-CareOnCloud-Login`, `X-Powered-By: CareOnCloud ESM 11.1.x` ve `CareOnCloudBrowserHasCookie` canonical `/careoncloud/` yolu ile geliyor. Yanıtta kalan OTOBO/OTRS satırları upstream yasal telif yorumlarıdır; kullanıcı yüzü başlık/logo ve URL'ler CareOnCloud'dur.
 - `RISK`: Bu HTTP kanıtı anonim login yüzeyidir; authenticated Türkçe/İngilizce agent ekranı ve canlı Cloudflare cutover kabulü hâlâ yapılmadı.
 - `VERIFIED_BY_CURRENT_TEST`: Güncel HEAD `332b355c6c43cac0c98d28928c704d95882717fb` için temiz detached worktree'de SourceArtifact manifest, güncel Git commit ve archive SHA-256 sözleşmesi tekrar `PASS` oldu.
+- `VERIFIED_BY_CURRENT_TEST`: Aday web container'ında güncel `tr_D724Assist`, `tr_D724CMDB`, `tr_D724Change`, `tr_D724Commitment`, `tr_D724Problem` ve `tr_D724Request` dosyalarının tamamı mevcut; aday web/db/redis sağlıklı, daemon `Up`.
 
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
