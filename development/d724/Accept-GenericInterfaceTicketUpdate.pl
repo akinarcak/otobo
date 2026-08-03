@@ -14,6 +14,7 @@ my $Password = $ENV{D724_GI_ACCEPTANCE_PASSWORD} // q{};
 die "D724_GI_ACCEPTANCE_PASSWORD is required\n" if length $Password < 16;
 
 local $Kernel::OM = Kernel::System::ObjectManager->new();
+$Kernel::OM->Get('Kernel::Config')->Set( Key => 'CheckEmailAddresses', Value => 0 );
 my $JSON       = JSON::PP->new->canonical;
 my $UserID     = 2; # quick_setup.pl's explicitly-created admin user
 my $TenantID   = 'gi-acceptance';
