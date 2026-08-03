@@ -450,6 +450,8 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `RISK`: Aynı Türkçe agent oturumunda `Report scope`, `Please select a time zone...` ve bazı menü/alan metinleri İngilizce kalırken diğer menüler Türkçe görünüyor. Bu, dil paketinin eksik olmasından veya aktif dil/cache kapsamının tutarsız olmasından kaynaklanabilir; paket kaynaklarında ilgili çeviri anahtarları ayrıca kabul testine alınmalı.
 - `NEXT`: URL rewrite/canonical path'i adayda izole doğrula; Reporting ve ortak agent chrome için TR/EN metin envanteri çıkar, eksik anahtarları güncelle ve iki dilde ekran kabulü çalıştır. Üretim origin'inde değişiklik yapılmayacak.
 - `VERIFIED_BY_CURRENT_TEST`: Aday kaynak `Kernel/Config/Files/ZZZAAuto.pm` içinde `ScriptAlias = careoncloud/` bulunuyor. Canlı `https://esm.arcak.net/otobo/index.pl?Action=AgentD724Operations` HTTP 200 dönerken `/careoncloud/index.pl` HTTP 404; canlı yanıtında `Set-Cookie: OTOBOBrowserHasCookie` ve `x-powered-by: OTOBO 11.1.x` mevcut. Bu, aday kodundan bağımsız canlı deployment/cutover gap'idir.
+- `DONE_AND_VERIFIED`: Upstream `/otobo` örneklerini değiştirmeden `scripts/apache2-httpd-careoncloud-plack-proxy.include.conf` canonical `/careoncloud/` ve `/careoncloud-web/` route'ları için eklendi. `development/d724/Test-CareOnCloudProxyConfig.ps1` statik route sözleşmesini ve legacy route sızıntısını kontrol ediyor; test `PASS`.
+- `RISK`: Bu dosya henüz canlı vhost'a bağlanmadı. Aday portta ayrı vhost, login/cookie/static asset ve geri dönüş testi tamamlanmadan enable edilmemelidir.
 
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
