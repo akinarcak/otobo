@@ -48,15 +48,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Buildx cache-capable builder
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build and push CareOnCloud image
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: careoncloud.web.dockerfile
           target: careoncloud-web
+          pull: true
+          progress: plain
+          build-args: |
+            DOCKER_TAG=careoncloud-${{ steps.tag.outputs.tag }}
           push: true
           tags: ${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}
           cache-from: type=gha,scope=careoncloud-web
