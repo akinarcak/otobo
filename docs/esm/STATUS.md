@@ -494,3 +494,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
 - `VERIFIED_BY_CURRENT_TEST`: Güncel dosya aday web container'ında Perl syntax kontrolünden geçti; D724Reporting 4 dosya / 73 test ile `PASS` oldu.
 - `RISK`: `/otobo/` canonical URL ve diğer karışık dil metinleri ayrı aday kabul işidir; bu değişiklik yalnızca çekirdek uyarı çevirisini düzeltir.
+## 2026-08-03 - P1 clean lifecycle and image security gate
+
+- `VERIFIED_BY_CURRENT_TEST`: GitHub Actions run `30817232194` for commit `26ba933b3` passed the complete D724 foundation workflow, including clean package lifecycle, 18-package regression, source artifact, SBOM, and repository/image vulnerability gates.
+- `DONE_AND_VERIFIED`: The image scan initially reported ten HIGH `linux-libc-dev` findings; `careoncloud.web.dockerfile` now explicitly installs the patched package and the rebuilt image scan passed.
+- `DONE_AND_VERIFIED`: Generic Interface TicketCreate and GenericAgent tenant fixtures are isolated and audit-aware; their clean-container acceptance completed successfully.
+- `RISK`: Authenticated Turkish/English UI acceptance, the actual signed release tag workflow, and production cutover remain intentionally open. Production services were not changed.
