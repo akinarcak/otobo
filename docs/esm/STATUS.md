@@ -500,3 +500,10 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: The image scan initially reported ten HIGH `linux-libc-dev` findings; `careoncloud.web.dockerfile` now explicitly installs the patched package and the rebuilt image scan passed.
 - `DONE_AND_VERIFIED`: Generic Interface TicketCreate and GenericAgent tenant fixtures are isolated and audit-aware; their clean-container acceptance completed successfully.
 - `RISK`: Authenticated Turkish/English UI acceptance, the actual signed release tag workflow, and production cutover remain intentionally open. Production services were not changed.
+
+## 2026-08-03 - Authenticated candidate UI acceptance
+
+- `DONE_AND_VERIFIED`: Temporary candidate-only agent session successfully selected `Türkçe - Turkish` through the real preferences widget; after save, authenticated navigation displayed `Destek Asistanı`, `Hizmet Portföyü`, `Değişiklik Yönetimi`, `Problem Yönetimi` and `Müşteriler`.
+- `DONE_AND_VERIFIED`: The same candidate session selected `Europe/Istanbul`; the time-zone warning disappeared after save. All observed authenticated links remained under `/careoncloud/index.pl`.
+- `DONE_AND_VERIFIED`: Returning the candidate session to English retained the canonical `/careoncloud/` routes and English navigation, proving both selectable UI languages without touching production services.
+- `RISK`: This is candidate-only browser evidence using a temporary acceptance user; signed release-tag execution, live cutover/rollback and production acceptance remain open.
