@@ -525,3 +525,8 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Candidate run `30820904874` failed immediately with the authoritative BuildKit error `Cache export is not supported for the docker driver`; no image, SBOM or signature was produced.
 - `DONE_AND_VERIFIED`: The release workflow now provisions `docker/setup-buildx-action@v3` before using the GitHub Actions cache backend, and the workflow contract test covers both the builder and cache settings. Commit `5e8a7a5af` was pushed.
 - `RISK`: A new candidate tag run is required to prove the corrected builder reaches image push, SBOM upload and Cosign signing.
+
+## 2026-08-03 - Candidate Buildx run observation
+
+- `VERIFIED_BY_CURRENT_TEST`: Candidate run `30821129445` successfully initialized the cache-capable Buildx builder and reached the image build step; the workflow API emitted no build progress and remained unchanged, so the run was canceled after 3m22s. SBOM and Cosign were not reached.
+- `RISK`: This is an infrastructure/build-duration observation, not a release success. The full CPAN deployment layer needs a separately observable/prewarmed build path before the signed release gate can be claimed.
