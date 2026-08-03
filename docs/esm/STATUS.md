@@ -386,6 +386,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `VERIFIED_BY_CURRENT_TEST`: Yalnizca `careoncloud-candidate-f00f22e7b` Compose projesinin container/volume'lari kaldirildi; aktif `d724-esm-*` container/volume'lari ve Yetka verileri degistirilmedi.
 - `GAP`: Aday yeniden baslatma, compose'un zorunlu `D724_DB_ROOT_PASSWORD` interpolation'i icin mevcut secret'in guvenli aktarim komutu cozulene kadar bekliyor. Aday imaji hostta mevcut, ancak aday servisleri su anda down.
 
+## 2026-08-03 - Aday compose referans uyumsuzlugu
+
+- `GAP`: Aday compose dosyasi silinmis eski `d724/esm:candidate-dd198c0da` imajini referansliyor; f00 imaji da daha sonra temizlendiginden temiz lifecycle baslatilamadi. Kismi aday container/volume'lari kaldirildi. Aktif `d724-esm-*` servisleri saglikli ve degistirilmedi.
+- `NEXT`: Yerel son committen yeni aday build context/compose olustur, aday imajini build et, sonra quick setup + 18 paket regression kos.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
