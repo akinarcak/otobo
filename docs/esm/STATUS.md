@@ -376,6 +376,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 
 - `VERIFIED_BY_CURRENT_TEST`: CriticalLanguage iki müşteri/agent yolunu geçti; SourceArtifact sözleşmesi commit `95b53b12103bbd608dda691b0b08c021b06318e3` için manifestli ZIP üretti ve doğruladı.
 
+## 2026-08-03 - Aday tekrar regresyonu, kirli fixture sinyali
+
+- `RISK`: Aday `candidate-f00f22e7b` icinde gercek 18 paket regresyon scripti calistirildi. Foundation, TenantGuard, Audit, TenantDirectory, Catalog ve Request dahil onceki paketler `PASS`; TicketAudit toplam 227 testte `TicketAuditStatus.t` 11 testten 5 failure ile kosuyu durdurdu. Hatalar saglik status snapshot'inda yetim/eski ticket fixture'lari oldugunu gosteriyor. Yeni marka commitleri bu imajda yoktur.
+- `NEXT`: Aday MariaDB/volume fixture'larini aktif `d724-esm-*` servislerinden tamamen ayri temiz bir aday lifecycle ile yeniden kurup regresyonu tekrarla.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
