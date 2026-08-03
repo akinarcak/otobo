@@ -479,6 +479,7 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: `careoncloud-all-packages-latest-i18n.tar` aktarılmış, 18 paketin tamamı adayda yeniden build/install edilmiş ve tam regresyon tekrar `exit code 0` ile sonuçlanmıştır. Aday web/daemon/db/redis servisleri ayakta kalmış, aktif `d724-esm-*` servislerine dokunulmamıştır.
 - `VERIFIED_BY_CURRENT_TEST`: Aday `127.0.0.1:18080/careoncloud/index.pl` HTTP `200` döndürüyor; `X-CareOnCloud-Login`, `X-Powered-By: CareOnCloud ESM 11.1.x` ve `CareOnCloudBrowserHasCookie` canonical `/careoncloud/` yolu ile geliyor. Yanıtta kalan OTOBO/OTRS satırları upstream yasal telif yorumlarıdır; kullanıcı yüzü başlık/logo ve URL'ler CareOnCloud'dur.
 - `RISK`: Bu HTTP kanıtı anonim login yüzeyidir; authenticated Türkçe/İngilizce agent ekranı ve canlı Cloudflare cutover kabulü hâlâ yapılmadı.
+- `VERIFIED_BY_CURRENT_TEST`: Güncel HEAD `332b355c6c43cac0c98d28928c704d95882717fb` için temiz detached worktree'de SourceArtifact manifest, güncel Git commit ve archive SHA-256 sözleşmesi tekrar `PASS` oldu.
 
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
