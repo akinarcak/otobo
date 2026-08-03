@@ -47,6 +47,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Check whitespace
         run: git diff --check HEAD^
