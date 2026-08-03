@@ -5,7 +5,7 @@ use utf8;
 sub Data {
     my $Self = shift;
     my %Translation = (
-        'Agent Assistant' => 'Ajan Yardımcısı',
+        'Agent Assistant' => 'Destek Asistanı',
         'Explainable similar-case recommendations.' => 'Açıklanabilir benzer vaka önerileri.',
         'Find similar resolved requests without sending tenant data externally.' => 'Tenant verilerini dışarı göndermeden benzer sonuçlanmış talepleri bulun.',
     );
