@@ -471,6 +471,12 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Manifest XML parse edildi, iki dil dosyası aday container'ında syntax kontrolünden geçti. Commitment 121 ve Problem 28 test ile `PASS` oldu.
 - `RISK`: Aday web worker'larında kalıcı dil cache yenilemesi ve tüm paketlerin birleşik yeniden kurulumu hâlâ açık; canlı cluster değiştirilmedi.
 
+## 2026-08-03 - Güncel i18n paket regresyonu
+
+- `VERIFIED_BY_CURRENT_TEST`: Güncel HEAD paket arşivi adayda 18 paket build/install döngüsünden geçirildi ve tam regresyon `exit code 0` ile tamamlandı. Yeni i18n paketleri dahil edildi; beklenen deny-policy/FK logları negatif test assertion'larıdır.
+- `DONE_AND_VERIFIED`: Türkçe `Agent Assistant` karşılığı ürün terminolojisi kararıyla `Destek Asistanı` olarak standardize edildi (commit `f90ba2d44`).
+- `RISK`: Bu son tek satır terminoloji değişikliği regresyon tamamlandıktan sonra yapıldı; kalıcı aday görünürlüğü için `careoncloud-all-packages-latest-i18n.tar` arşivinin yeniden kurulması/aktarılması ve i18n HTTP kabulü gerekir. Canlı cluster değiştirilmedi.
+
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
 - `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
