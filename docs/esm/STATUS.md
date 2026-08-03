@@ -381,6 +381,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `RISK`: Aday `candidate-f00f22e7b` icinde gercek 18 paket regresyon scripti calistirildi. Foundation, TenantGuard, Audit, TenantDirectory, Catalog ve Request dahil onceki paketler `PASS`; TicketAudit toplam 227 testte `TicketAuditStatus.t` 11 testten 5 failure ile kosuyu durdurdu. Hatalar saglik status snapshot'inda yetim/eski ticket fixture'lari oldugunu gosteriyor. Yeni marka commitleri bu imajda yoktur.
 - `NEXT`: Aday MariaDB/volume fixture'larini aktif `d724-esm-*` servislerinden tamamen ayri temiz bir aday lifecycle ile yeniden kurup regresyonu tekrarla.
 
+## 2026-08-03 - Aday fixture temizligi ve yeniden baslatma gap'i
+
+- `VERIFIED_BY_CURRENT_TEST`: Yalnizca `careoncloud-candidate-f00f22e7b` Compose projesinin container/volume'lari kaldirildi; aktif `d724-esm-*` container/volume'lari ve Yetka verileri degistirilmedi.
+- `GAP`: Aday yeniden baslatma, compose'un zorunlu `D724_DB_ROOT_PASSWORD` interpolation'i icin mevcut secret'in guvenli aktarim komutu cozulene kadar bekliyor. Aday imaji hostta mevcut, ancak aday servisleri su anda down.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
