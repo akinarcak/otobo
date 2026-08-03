@@ -5684,7 +5684,7 @@ sub Data {
 
         # Perl Module: Kernel/Output/HTML/Notification/AgentTimeZoneCheck.pm
         'Please select a time zone in your preferences and confirm it by clicking the save button.' =>
-            '',
+            'Lütfen tercihlerinizden bir saat dilimi seçin ve kaydet düğmesine tıklayarak onaylayın.',
 
         # Perl Module: Kernel/Output/HTML/Notification/CustomerOnline.pm
         'Online Customer: %s' => 'Çevrimiçi Müşteri: %s',

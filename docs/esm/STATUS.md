@@ -449,3 +449,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `RISK`: Aday ekran görüntüsünde kullanıcıya görünen adres yolu `/otobo/index.pl?Action=AgentD724Operations`; CareOnCloud kullanıcı yüzünde `/careoncloud` canonical yolu henüz doğrulanmış değil.
 - `RISK`: Aynı Türkçe agent oturumunda `Report scope`, `Please select a time zone...` ve bazı menü/alan metinleri İngilizce kalırken diğer menüler Türkçe görünüyor. Bu, dil paketinin eksik olmasından veya aktif dil/cache kapsamının tutarsız olmasından kaynaklanabilir; paket kaynaklarında ilgili çeviri anahtarları ayrıca kabul testine alınmalı.
 - `NEXT`: URL rewrite/canonical path'i adayda izole doğrula; Reporting ve ortak agent chrome için TR/EN metin envanteri çıkar, eksik anahtarları güncelle ve iki dilde ekran kabulü çalıştır. Üretim origin'inde değişiklik yapılmayacak.
+
+## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
+
+- `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
+- `VERIFIED_BY_CURRENT_TEST`: Güncel dosya aday web container'ında Perl syntax kontrolünden geçti; D724Reporting 4 dosya / 73 test ile `PASS` oldu.
+- `RISK`: `/otobo/` canonical URL ve diğer karışık dil metinleri ayrı aday kabul işidir; bu değişiklik yalnızca çekirdek uyarı çevirisini düzeltir.
