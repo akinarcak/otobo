@@ -59,6 +59,7 @@
     <DatabaseUpgrade Type="post"><TableAlter Name="d724_request_task" Version="0.2.1"><ColumnAdd Name="assigned_group" Required="true" Default="" Size="128" Type="VARCHAR" /></TableAlter></DatabaseUpgrade>
     <DatabaseUninstall Type="pre"><TableDrop Name="d724_request_task" /><TableDrop Name="d724_request_approval" /><TableDrop Name="d724_request" /></DatabaseUninstall>
     <Filelist>
+        <File Permission="644" Location="Kernel/Language/tr_D724Request.pm" />
         <File Permission="644" Location="Kernel/Config/Files/XML/D724Request.xml" />
         <File Permission="644" Location="Kernel/System/D724/Request.pm" />
         <File Permission="644" Location="Kernel/Modules/CustomerD724Request.pm" />

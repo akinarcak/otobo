@@ -453,6 +453,12 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: Upstream `/otobo` örneklerini değiştirmeden `scripts/apache2-httpd-careoncloud-plack-proxy.include.conf` canonical `/careoncloud/` ve `/careoncloud-web/` route'ları için eklendi. `development/d724/Test-CareOnCloudProxyConfig.ps1` statik route sözleşmesini ve legacy route sızıntısını kontrol ediyor; test `PASS`.
 - `RISK`: Bu dosya henüz canlı vhost'a bağlanmadı. Aday portta ayrı vhost, login/cookie/static asset ve geri dönüş testi tamamlanmadan enable edilmemelidir.
 
+## 2026-08-03 - Request menusu Türkçe çeviri kapsamı
+
+- `DONE_AND_VERIFIED`: D724Request paketinde eksik olan `tr_D724Request.pm` eklendi; `D724 Requests` ve temel request workbench terimleri Türkçeleştirildi ve SOPM filelist'e alındı.
+- `VERIFIED_BY_CURRENT_TEST`: Adayda çeviri dosyası Perl syntax kontrolünden geçti; D724Request 4 dosya / 62 test ile `PASS` oldu.
+- `RISK`: Aday container'a tek dosya syntax doğrulaması için aktarıldı; kalıcı paket güncellemesi bir sonraki 18 paket build/install döngüsünde yapılmalı. Canlı cluster değiştirilmedi.
+
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
 - `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
