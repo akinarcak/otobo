@@ -391,6 +391,11 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `GAP`: Aday compose dosyasi silinmis eski `d724/esm:candidate-dd198c0da` imajini referansliyor; f00 imaji da daha sonra temizlendiginden temiz lifecycle baslatilamadi. Kismi aday container/volume'lari kaldirildi. Aktif `d724-esm-*` servisleri saglikli ve degistirilmedi.
 - `NEXT`: Yerel son committen yeni aday build context/compose olustur, aday imajini build et, sonra quick setup + 18 paket regression kos.
 
+## 2026-08-03 - Aday yeniden ayakta, DB bootstrap eksigi
+
+- `VERIFIED_BY_CURRENT_TEST`: Aday compose f00 imajina uyarlanarak `127.0.0.1:18080` portunda yeniden baslatildi; web, db, redis healthy, daemon Up. Aktif `d724-esm-*` servisleri degistirilmedi.
+- `GAP`: Temiz MariaDB volume'unda `careoncloud_esm` kullanicisi/schemas bootstrap edilmedigi icin unit test DB baglantisi `Access denied` ile duruyor. Quick setup + package install sonraki aday adimidir.
+
 ## Bilerek ertelenen
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
