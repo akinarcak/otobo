@@ -22,8 +22,8 @@ use warnings;
 use parent qw(Kernel::System::Console::BaseCommand);
 
 our @ObjectDependencies = (
+    'Kernel::System::Cache',
     'Kernel::System::DB',
-    'Kernel::System::Encode',
 );
 
 =head1 NAME
@@ -126,8 +126,9 @@ sub Run {
         $Self->Print("<yellow>Dry run. Pass --execute to write the changes.</yellow>\n\n");
     }
 
-    my $TotalRows   = 0;
-    my $TotalValues = 0;
+    my $TotalRows     = 0;
+    my $TotalValues   = 0;
+    my $SkippedBinary = 0;
 
     TABLE:
     for my $Entry (@Tables) {
@@ -163,6 +164,15 @@ sub Run {
             for my $Value (@Values) {
                 if ( !defined $Value ) {
                     push @NewValues, $Value;
+                    next VALUE;
+                }
+
+                # Some of these columns are declared as LONGBLOB. Only text is
+                # rewritten; anything holding a NUL byte is left untouched so a
+                # binary payload can never be corrupted by a substitution.
+                if ( index( $Value, "\0" ) >= 0 ) {
+                    push @NewValues, $Value;
+                    $SkippedBinary++ if $Value =~ m{(?:OTOBO_|X-OTOBO-|otobo_infotile|otobo_stats)};
                     next VALUE;
                 }
 
@@ -212,8 +222,19 @@ sub Run {
     $Self->Print("\n$TotalValues value(s) in $TotalRows row(s)");
     $Self->Print( $Execute ? " <green>updated</green>.\n" : " <yellow>would be updated</yellow>.\n" );
 
+    if ($SkippedBinary) {
+        $Self->Print(
+            "<yellow>$SkippedBinary binary value(s) carry a legacy identifier and were left alone; inspect them by hand.</yellow>\n"
+        );
+    }
+
     if ( $Execute && $TotalRows ) {
-        $Self->Print("\n<yellow>Now run: bin/careoncloud.Console.pl Maint::Config::Rebuild</yellow>\n");
+
+        # The rows were written behind the ORM, so every cached copy is stale.
+        $Kernel::OM->Get('Kernel::System::Cache')->CleanUp();
+
+        $Self->Print("\nCache cleared.\n");
+        $Self->Print("<yellow>Now run: bin/careoncloud.Console.pl Maint::Config::Rebuild</yellow>\n");
     }
 
     return $Self->ExitCodeOk();
