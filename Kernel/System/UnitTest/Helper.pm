@@ -134,7 +134,61 @@ sub new {
         $Self->DisableAsyncCalls();
     }
 
+    # The tenant policy denies every subject that has no tenant binding, and the
+    # inherited test suite creates throwaway agents that have none. Left enabled it
+    # makes TicketCreate() return undef, which cascades into thousands of unrelated
+    # failures. Suspend it by default; the policy has its own coverage under
+    # development/careoncloud/Accept-{Ticket,Search}Policy.pl, and a test that wants
+    # the policy active can pass KeepTenantPolicy.
+    if ( !$Param{KeepTenantPolicy} ) {
+        $Self->SuspendTenantPolicy();
+    }
+
     return $Self;
+}
+
+=head2 SuspendTenantPolicy()
+
+Turns the tenant scoping policies off for the remainder of the current test
+process.
+
+    $Helper->SuspendTenantPolicy();
+
+Only the in-memory configuration is changed, so nothing leaks into the database
+or into other test scripts.
+
+=cut
+
+sub SuspendTenantPolicy {
+    my ($Self) = @_;
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    # These are the five that wrap core ticket and search behaviour. The remaining
+    # CareOnCloud::*::Enabled switches gate their own feature modules and do not
+    # interfere with the inherited tests, so they stay on.
+    SETTING:
+    for my $Setting (
+        qw(
+        CareOnCloud::TicketAudit::Enabled
+        CareOnCloud::TicketPolicy::Enabled
+        CareOnCloud::SearchPolicy::Enabled
+        CareOnCloud::TenantGuard::Enabled
+        CareOnCloud::TenantCache::Enabled
+        )
+        )
+    {
+        # Only touch settings that this installation actually knows about, so the
+        # helper keeps working when the packages are not installed.
+        next SETTING if !defined $ConfigObject->Get($Setting);
+
+        $ConfigObject->Set(
+            Key   => $Setting,
+            Value => 0,
+        );
+    }
+
+    return 1;
 }
 
 =head2 GetRandomID()

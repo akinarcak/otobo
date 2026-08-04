@@ -325,7 +325,7 @@ my @Tests = (
         },
         RichText => 0,
         Template => 'Test <CareOnCloud_CUSTOMER_SUBJECT[3]>',
-        Result   => 'Test oto [...]',
+        Result   => 'Test car [...]',
     },
     {
         Line => __LINE__,
