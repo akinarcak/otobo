@@ -61,12 +61,15 @@ sub _InstallCareOnCloudExtensions {
     my ( $Self, $Context ) = @_;
 
     # Already installed, nothing to do.
-    return if $Context->stash()->get('CareOnCloud ESM');
+    # Note that this name is the Template::Toolkit plugin name, resolved against
+    # PLUGIN_BASE as Kernel::Output::Template::Plugin::CareOnCloud. It is an
+    # identifier, not display text, so it carries no product suffix.
+    return if $Context->stash()->get('CareOnCloud');
 
     #
-    # Load the CareOnCloud ESM plugin. This will register some filters and functions.
+    # Load the CareOnCloud plugin. This will register some filters and functions.
     #
-    $Context->stash()->set( 'CareOnCloud ESM', $Context->plugin('CareOnCloud ESM') );
+    $Context->stash()->set( 'CareOnCloud', $Context->plugin('CareOnCloud') );
 
     #
     # The RenderBlock macro makes it possible to use the old dtl:block-Style block calls
