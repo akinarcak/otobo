@@ -584,6 +584,12 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: Renamed the release workflow step from `Generate SPDX SBOM` to `Generate CycloneDX SBOM`; the action continues to emit `format: cyclonedx-json` and the artifact contents are unchanged.
 - `VERIFIED_BY_CURRENT_TEST`: Release workflow contract test passed after the naming correction; commit `02a8de71c` was pushed.
 
+## 2026-08-04 - GitHub Actions cache measurement
+
+- `VERIFIED_BY_CURRENT_TEST`: GitHub cache API reported 44 active caches totaling 1.319 GiB (`1,415,847,893` bytes). BuildKit-related entries accounted for 37 caches / 0.952 GiB, with entries from `2026-08-03T14:49:39Z` through `2026-08-04T06:19:02Z`.
+- `DONE_AND_VERIFIED`: The current cache footprint is well below the repository's 10 GiB Actions cache limit; no eviction or pressure signal was observed, so no `mode=min` or registry-cache migration is justified by current evidence.
+- `RISK`: GitHub cache eviction is policy-driven and can change with future workflow runs; remeasure before a release if the active footprint approaches the limit.
+
 ## 2026-08-04 - Cache fix verified: tag changes no longer rebuild the CPAN layer
 
 - `VERIFIED_BY_CURRENT_TEST`: After commit `41fc6a9b1` removed the `DOCKER_TAG` build-arg, run `30883159985` (tag `probe3`) repopulated the cache under the new key in 4m50s, and run `30883550612` (tag `probe4`) completed its build and push in **9 seconds** with `#11 [base 7/7] RUN` reported `CACHED` and zero `Successfully installed` lines. `carton install` did not execute at all.

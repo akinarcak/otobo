@@ -242,6 +242,14 @@ yaziyor. Cikti dogru, ad yaniltici. Uyumluluk dokumantasyonunda "SPDX SBOM ureti
 **Durum (4 Agustos 2026):** Workflow adimi `Generate CycloneDX SBOM` olarak yeniden
 adlandirildi; `format: cyclonedx-json` ile uyumlu isimlendirme commit `02a8de71c` ile
 push edildi. Cikti formatinda degisiklik yoktur.
+
+## GHA cache olcumu (4 Agustos 2026)
+
+GitHub cache API olcumu: 44 aktif cache, toplam 1.319 GiB (1,415,847,893 byte).
+BuildKit girdileri 37 cache / 0.952 GiB. En eski BuildKit girdisi 2026-08-03 14:49:39Z,
+en yeni 2026-08-04 06:19:02Z. Mevcut footprint 10 GiB repo limitinin altinda; tahliye
+belirtisi yok. Bu nedenle `mode=min` veya registry cache gecisi icin kanit yok. Release
+oncesi footprint yeniden olculmeli.
 denmesi riskini tasir. Adi duzeltmek yeterli.
 
 ### 9.3 Hala acik olan release kapilari
