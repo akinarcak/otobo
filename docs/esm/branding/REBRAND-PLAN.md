@@ -136,6 +136,23 @@ bin/careoncloud.Console.pl Maint::Config::Rebuild
 Hedef tablo zaten varsa komut çalışmayı reddeder; sessizce gölgelenmiş veri riskini almaz.
 Web ve daemon durdurulmuşken çalıştırılmalıdır.
 
+### Sıralama önemli
+
+Paketleri yeniden kurmadan **önce** eski `Kernel/Config/Files/XML/D724*.xml` dosyaları
+silinmelidir. Aksi halde paket kurulumu yapılandırmayı o dizinden yeniden üretir ve göçün
+az önce çevirdiği `D724::` ayarları geri gelir. Bu, test sunucusundaki ilk çalıştırmada
+oldu; 62 yetim ayar `Maint::Config::Rebuild --cleanup` ile temizlendi.
+
+Doğrulanmış sıra:
+
+1. Yedek al, daemon'ı durdur.
+2. Kodu dağıt, yeniden adlandırılan eski dosyaları sil.
+3. `MigratePackageNamespace --execute`.
+4. Eski `D724*.xml` dosyalarını sil.
+5. Paketleri `.opm` olarak derleyip `Admin::Package::Install --force` ile kur.
+6. `Maint::Config::Rebuild --cleanup --deploy-acls --deploy-processes`.
+7. Önbellekleri temizle, servisleri başlat, doğrula.
+
 ### Compose proje adı değişti
 
 `development/careoncloud/compose.yml` artık `name: careoncloud-esm`. Canlı yığın hâlâ
