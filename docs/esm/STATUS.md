@@ -552,3 +552,24 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 
 - `VERIFIED_BY_CURRENT_TEST`: On commit `ec5f168aa`, CareOnCloud brand contract passed (16 required paths, 15 forbidden paths, 18 packages), critical customer/agent language contract passed for 2 journeys, canonical proxy contract passed, and release workflow contract passed.
 - `RISK`: These deterministic source contracts do not substitute for the still-open remote image build, SBOM upload, Cosign signature, or live cutover/rollback evidence.
+
+## 2026-08-04 - Release build "stall" root cause: premature cancellation, not a build defect
+
+- `DONE_AND_VERIFIED`: The reported build stall was a measurement error, not a defect. The GitHub Actions run-level `updatedAt` field does not tick while a single step runs long; it only updates on step transitions. `gh run view --log` likewise returns nothing for an in-progress run. Both were read as "no progress" and every run was canceled below the image's normal ~7 minute build time.
+- `VERIFIED_BY_CURRENT_TEST`: The last log lines before each cancellation show healthy progress. Run `30820150916` — the first run, before any workflow change — had already finished building and was at `#27 pushing layer 1.03GB / 1.43GB` when it was canceled at 6m16s. Run `30821704656` was at `#16 25.97 Successfully installed DBI-1.651` when canceled at 1m29s.
+- `VERIFIED_BY_CURRENT_TEST`: Independent corroboration from the same day and runner class: in foundation run `30817232194`, step `Accept clean D724 package lifecycle` ran 8m15s, built `careoncloud.web.dockerfile` successfully, and the following step scanned the built image and passed. The Dockerfile was never failing on GitHub runners.
+- `RISK`: `cache-to` exports only at the end of a build, so every cancellation also prevented the cache from ever being written. Each rerun therefore started cold and looked equally slow, which reinforced the false diagnosis. The added cache was not ineffective; it was never given the chance to persist.
+
+## 2026-08-04 - Signed release chain completed end to end
+
+- `VERIFIED_BY_CURRENT_TEST`: Run `30824056768` on commit `e82d348c1` completed the full chain with `conclusion: success` in 9m55s, with the workflow left **unmodified** and dispatched via `workflow_dispatch` so the experiment would not be confounded. Build and push 7m04s, SBOM 1m57s, SBOM upload 2s, Cosign install 1s, keyless OIDC signature 4s.
+- `VERIFIED_BY_CURRENT_TEST`: Image digest `sha256:e6075fb47fc43e085c703822745a9356f402499ea6dd99571a0df058a8239255` pushed to `ghcr.io/akinarcak/otobo/careoncloud:v0.0.0-probe.e82d348c1`. SBOM artifact `careoncloud-sbom-v0.0.0-probe.e82d348c1` is 1,287,359 bytes with `expired=false`. Cosign v2.5.0 keyless OIDC recorded `tlog entry created with index: 2335222741` and pushed the signature to GHCR.
+- `SCOPE`: Candidate-only `workflow_dispatch` probe tags. Production services, live cutover, `d724-esm-*` containers/volumes and Yetka data were not touched. Only `v0.0.0-probe*` images were pushed to GHCR.
+- `RISK`: This proves the release mechanism, not a release. An actual `careoncloud-v*` tag, live cutover and rollback rehearsal remain open.
+
+## 2026-08-04 - DOCKER_TAG build-arg measured as a CPAN cache invalidator
+
+- `VERIFIED_BY_CURRENT_TEST`: Controlled experiment on the same commit `e82d348c1` with the same workflow, differing only in image tag. Run `30824056768` build+push 7m04s; run `30882609007` build+push 4m45s with base layers 1/7 through 6/7 reported `CACHED` and base layer 7/7 (`carton install`) reinstalling 213 CPAN distributions in 211.9s. The cache hit stopped precisely at the layer that consumes the `DOCKER_TAG` ARG.
+- `DONE_AND_VERIFIED`: The `DOCKER_TAG=careoncloud-<tag>` build-arg was removed from `.github/workflows/careoncloud-release.yml` in commit `41fc6a9b1`. It provided no function: the Dockerfile default `unspecified` already fails the `local-*` test and selects the locked `carton install --deployment` path. The version label it appears to feed is out of scope in the `careoncloud-web` stage regardless, because ARGs do not cross a `FROM` boundary and that stage never redeclares it.
+- `VERIFIED_BY_CURRENT_TEST`: `Test-CareOnCloudReleaseWorkflow.ps1` passed after the change and now carries a regression guard that fails if a `DOCKER_TAG=` build-arg is reintroduced.
+- `DONE_AND_VERIFIED`: `docs/esm/NOTES-FOR-CODEX.md` records the root cause, the measurement error that produced it, and the operating rules to avoid repeating it.

@@ -1,0 +1,172 @@
+# Codex icin devir notu: release image build "takilmasi" vakasi
+
+**Tarih:** 4 Agustos 2026
+**Branch:** `codex/esm-foundation`
+**Konu:** `.github/workflows/careoncloud-release.yml` build adiminin "ilerleme uretmeden takildigi" teshisi
+**Sonuc:** Teshis yanlisti. Build hicbir zaman takilmadi. Tam release zinciri degistirilmemis workflow ile CI'da tamamlandi.
+
+---
+
+## 1. Ozet
+
+Bes ardisik run'da build adiminin "takildigi" raporlandi ve her biri iptal edildi. Gercekte
+build adimi **her seferinde saglikli ilerliyordu** ve normal suresi olan ~7 dakikanin
+altinda kesildi.
+
+Workflow'a **hicbir degisiklik yapmadan**, sadece iptal etmeden calistirildiginda tam zincir
+`success` verdi:
+
+> Run [30824056768](https://github.com/akinarcak/otobo/actions/runs/30824056768) — toplam 9dk55sn
+> build/push -> SBOM -> artifact upload -> Cosign keyless OIDC imzasi
+
+---
+
+## 2. Kok neden: run seviyesindeki `updatedAt` bir ilerleme gostergesi degildir
+
+Teshis, GitHub Actions API'sindeki run nesnesinin `updatedAt` alaninin degismemesine
+dayandirilmisti.
+
+**Bu alan, tek bir adim uzun sure calisirken tick etmez.** Yalnizca adim gecislerinde
+guncellenir. Dolayisiyla:
+
+- `updatedAt` sabit  ==  "tek adim hala calisiyor"
+- `updatedAt` sabit  =/=  "takildi"
+
+Ayni sekilde `gh run view --log` **tamamlanmamis** bir run icin log dondurmez; bu da
+"log uretmiyor" izlenimini guclendirdi. Calisan bir adimin ciktisini gormek icin
+web UI'daki canli log akisi veya `gh run view --log` **run bittikten sonra** kullanilmalidir.
+
+### Iptal anindaki gercek durumlar
+
+Iptal edilen run'larin son log satirlari, hepsinin ilerlemekte oldugunu gosteriyor:
+
+| Run | Build adimi suresi | Iptal anindaki gercek durum |
+|---|---|---|
+| 30820150916 | 6dk16sn | **Build bitmis**, image push %72: `#27 pushing layer 1.03GB / 1.43GB` |
+| 30820904874 | — | `Cache export is not supported for the docker driver` (kendi kendine acilan hata) |
+| 30821129445 | 3dk22sn | CPAN kurulumu ilerliyordu |
+| 30821523907 | — | `Unexpected input(s) 'progress'` |
+| 30821704656 | 1dk29sn | `#16 25.97 Successfully installed DBI-1.651` |
+| **30824056768** | **7dk04sn** | **Kesilmedi -> `success`** |
+
+`30820150916` ozellikle onemli: hicbir "duzeltme" yapilmamis **ilk** run'di ve image'i
+GHCR'a iterken, 1.43 GB'in 1.03 GB'i gitmisken iptal edildi. Bitmesine muhtemelen
+1-2 dakika kalmisti. Yani sorun daha ilk denemede yoktu.
+
+### Bagimsiz corroborating kanit
+
+Ayni gun, ayni tip runner'da gecen foundation run [30817232194](https://github.com/akinarcak/otobo/actions/runs/30817232194)
+icindeki `Accept clean D724 package lifecycle` adimi **8dk15sn** surdu, `careoncloud.web.dockerfile`'i
+**basariyla build etti** ve bir sonraki adim ("Scan built CareOnCloud image") o image'i tarayip gecti.
+
+Yani Dockerfile'in GitHub Actions runner'inda tek uzun adim olarak ~8 dakikada sorunsuz
+build oldugu, release workflow'undan bagimsiz olarak zaten kanitlanmisti.
+
+---
+
+## 3. Teshisi kendini besleyen donguye ceviren ikincil mekanizma
+
+`cache-to` export'u build'in **sonunda** calisir.
+
+Her run bitmeden iptal edildigi icin cache **hic yazilamadi** -> her yeni run yine sifirdan
+(soguk) basladi -> yine yavas gorundu -> yine iptal edildi.
+
+Eklenen GitHub Actions cache'inin fayda vermemesinin sebebi cache'in kendisi degil,
+**hic yazilamamis olmasiydi.** Bu, "cache eklendi ama ise yaramadi, demek ki sorun daha
+derinde" seklinde yanlis bir cikarima yol acti.
+
+---
+
+## 4. Yapilan bes "duzeltme"nin degerlendirmesi
+
+Hicbiri var olan bir sorunu hedeflemiyordu:
+
+| Degisiklik | Gercek gerekce | Durum |
+|---|---|---|
+| `docker/setup-buildx-action` eklendi | `cache-to` eklendigi icin gerekti | Kendi acilan sorunun cozumu |
+| GHA cache (`cache-from`/`cache-to`) | Var olmayan yavasligi cozmek icin | Faydali ama sorunun sebebi degildi |
+| `pull: true` | — | Notr |
+| `progress` input | Desteklenmeyen input, run'i bozdu | Geri alindi |
+| `DOCKER_TAG` explicit build-arg | — | **Zararli, bkz. bolum 6** |
+
+`Cache export is not supported for the docker driver` hatasi da dahil olmak uzere, sonradan
+cozulen hatalarin bir kismi **ilk teshisin kendisi tarafindan yaratilmisti.**
+
+---
+
+## 5. Kanitlanmis release zinciri
+
+Run `30824056768`, `workflow_dispatch` ile `codex/esm-foundation` uzerinde, workflow
+**degistirilmeden** calistirildi (deneyi kirletmemek icin yeni commit/tag olusturulmadi).
+
+| Adim | Sure | Sonuc |
+|---|---|---|
+| Build and push CareOnCloud image | 7dk04sn | `success` |
+| Generate SPDX SBOM | 1dk57sn | `success` |
+| Upload SBOM | 2sn | `success` |
+| Install Cosign | 1sn | `success` |
+| Sign immutable image by keyless OIDC | 4sn | `success` |
+
+Artefaktlar:
+
+- **Image digest:** `sha256:e6075fb47fc43e085c703822745a9356f402499ea6dd99571a0df058a8239255`
+- **Push hedefi:** `ghcr.io/akinarcak/otobo/careoncloud:v0.0.0-probe.e82d348c1`
+- **SBOM artifact:** `careoncloud-sbom-v0.0.0-probe.e82d348c1`, 1.287.359 bayt, `expired=false`
+- **Cosign:** v2.5.0 keyless OIDC, `tlog entry created with index: 2335222741`,
+  `Pushing signature to: ghcr.io/akinarcak/otobo/careoncloud`
+
+Rekor transparency log kaydi (`2335222741`) imzanin bagimsiz dogrulanabilir kanitidir.
+
+Gercek build suresi ~7 dakika; workflow'daki `timeout-minutes: 45` limitine yaklasilmadi bile.
+195 CPAN dagitimi / 648 modul kuruluyor, bu sure normaldir.
+
+---
+
+## 6. Ayri bulgu: `DOCKER_TAG` build-arg'i
+
+"Explicit build arg" olarak eklenen `DOCKER_TAG=careoncloud-${{ steps.tag.outputs.tag }}`
+degeri, Dockerfile'da pahali `carton install` RUN'indan **hemen once** tuketiliyor
+(`careoncloud.web.dockerfile`, `ARG DOCKER_TAG=unspecified`).
+
+Deger her release'te degistigi icin CPAN katmaninin cache anahtarini bozma riski tasir.
+
+Ustelik **hicbir islevsel fayda saglamaz**: Dockerfile'daki tek kullanimi
+`if [[ $DOCKER_TAG == local-* ]]` kosuludur; varsayilan deger `unspecified` zaten
+`local-*` desenine uymaz ve istenen `carton install --deployment` yoluna girer.
+
+> Olcum sonucu ve alinan aksiyon icin `STATUS.md` icindeki ilgili kayda bakiniz.
+
+---
+
+## 7. Bir daha tekrarlanmamasi icin kurallar
+
+1. **Bir CI adimini, o adimin bilinen normal suresini bilmeden iptal etme.**
+   Bu image icin referans: build+push ~7 dk, tam zincir ~10 dk.
+
+2. **`updatedAt` alanini ilerleme gostergesi olarak kullanma.** Uzun tek adimlarda tick etmez.
+   Ilerleme icin web UI canli log akisini kullan, ya da adim `startedAt` degerinden gecen
+   sureyi hesapla.
+
+3. **`gh run view --log` calisan run icin bos doner.** Bu "log uretmiyor" demek degildir.
+
+4. **`timeout-minutes` zaten bir guvenlik agidir.** 45 dakikalik limit varken adimi
+   2 dakikada elle kesmek, guvenlik agini devre disi birakip yerine daha kotu bir
+   sezgi koymaktir. Runner tuketimi endisesi varsa cozum `timeout-minutes` degerini
+   dusurmektir, elle iptal degil.
+
+5. **Bir "duzeltme" uygulamadan once, teshisi yanlislayabilecek en ucuz deneyi yap.**
+   Burada o deney "workflow'u degistirmeden bir kez sonuna kadar calistirmak"ti ve
+   ~10 dakika surerdi. Bunun yerine bes ayri degisiklik yapildi ve bir kismi yeni
+   hatalar uretti.
+
+6. **Degisiklik yaparken deneyi kirletme.** Kok neden dogrulanmadan once workflow'a
+   dokunmak, sonucun hangi degisikligeden geldigini belirsizlestirir. Once degistirilmemis
+   haliyle olc, sonra tek degisken degistir.
+
+---
+
+## 8. Uretim dokunulmadi
+
+Bu calismada yalnizca `workflow_dispatch` ile aday (`probe`) tag'leri kullanildi.
+Uretim servisleri, canli cutover, `d724-esm-*` container/volume'lari ve Yetka verileri
+degistirilmedi. GHCR'a yalnizca `v0.0.0-probe*` etiketli aday image'lar itildi.
