@@ -286,3 +286,87 @@ index `2339281679`. Bu probe tag'idir; gercek release veya canli cutover degildi
 artifact'i `careoncloud-sbom-v0.1.0` (1,287,333 byte, ID `8883513965`), Rekor
 index `2339297418`. Bu, ilk gercek imzali release image'idir; canli cutover ve
 rollback ayri kontrollu adimlar olarak kalir.
+
+## 10. UX/UI mimari denetimi (4 Agustos 2026)
+
+### 10.1 Ne yapildi
+
+`docs/esm/CLAUDE-FABLE-UX-ARCHITECTURE-AUDIT-PROMPT.md` talimati uygulandi ve
+`docs/esm/UX-ARCHITECTURE-AUDIT-2026-08-04.md` uretildi. Denetim Fable ile degil
+Claude Opus 5 ile yapildi. Yalniz dokuman uretildi; kaynak kod, yapilandirma,
+canli veri ve container degistirilmedi.
+
+### 10.2 Devralan icin en onemli tespit
+
+Canli ortam (`esm.arcak.net`) guncel kaynagin karsiligi degildir. Rebrand oncesi
+eski dagitimdir:
+
+- `/careoncloud/index.pl` -> 404, `/otobo/index.pl` -> 200, `/careoncloud-web/` -> 404
+- Oysa `Kernel/Config/Defaults.pm:112` ve `:360` kaynakta zaten dogru
+
+Bu ayrimi yapmadan bulgu onceliklendirilmemelidir. Talimatin §5 hipotezlerinin bir
+kismi dagitim gecikmesidir (cutover cozer), bir kismi guncel kaynakta durur
+(cutover cozmez).
+
+### 10.3 Cutover'in cozmedigi, kaynakta duran P0'lar
+
+- `Kernel/Output/HTML/Layout.pm:4221` — hardcoded `'Your Tickets. Your OTOBO.'`
+  musteri giris ekraninin basligi olarak basiliyor
+- `Kernel/Config/Files/XML/Framework.xml:8726,8727,8763,9267` — otobo.io RSS,
+  otobo.io CDN gorseli ve `HomePage www.otobo.io`
+- `Kernel/Language/tr.pm:156,2967,3069` — `TAKVIM`, `PANO`, `BILETLER` ALL CAPS
+- `AdminD724Catalog.tt` 0 `<label>` / 9 `placeholder`;
+  `AdminD724Commitment.tt` 1 `<label>` / 5 `placeholder`; SLA politikasi ham JSON
+  textarea'sinda yazdiriliyor
+- `AgentD724Request.tt` ve `AdminD724Commitment.tt` — `onchange="this.form.submit()"`
+  ile tenant degistiriliyor, secenekler ham `TenantID`
+- D724 paketlerinde hic CSS/JS yok; `D724KPIGrid`/`D724KPI` siniflari tanimsiz
+  (calisma zamaninda `display:block` olarak dogrulandi)
+- `<html lang>` bos — WCAG 3.1.1 (A) ihlali. Gorunur sonucu da var: kolon basliklari
+  CSS `text-transform: uppercase` ile buyutuluyor, ancak `lang` bos oldugu icin
+  tarayici Turkce buyuk harf kuralini uygulamiyor. Kaynak metin "yeni" olan baslik
+  ekranda noktasiz I ile cikiyor; Turkce kuralda noktali buyuk I olmasi gerekir.
+  Yani bos `lang` yalniz ekran okuyucuyu degil, gozle gorulen metni de bozuyor.
+- `CustomerD724Request.pm` yalniz `Submit` alt-eylemine sahip; musteri actigi talebi
+  takip edebilecegi bir ekran yok
+- D724 AccessKey `p` cakismasi: CMDB Service Portfolio ve Problem Management
+
+### 10.4 Test bosluğu
+
+`development/d724/Test-CareOnCloudBrand.ps1` yalniz dosya yolu tarar (14 yasakli
+yol) ve iki icerik kontrolu yapar. Ekrana basilan metni taramaz. `Layout.pm:4221`
+bu yuzden marka kapisindan gecmistir. Sablon (`*.tt`), `Layout.pm` ve
+`Framework.xml` icin string taramasi eklenmelidir; allow-list README, NOTICE,
+UPSTREAM.md, LICENSE, telif basliklari ve `Kernel/Language/*.pm` olmalidir.
+
+### 10.5 Demo verisi — kod degil, veri sorunu
+
+Canlida ~40 gercek Turk sirketi adina kayitli demo tenant var. Master Context
+§13.4 bunu yasak davranis sayar. Ancak kaynak tarandi: bu adlar guncel kod
+tabaninda yoktur. `Seed-CareOnCloudShowcase.pl` (`Marmara Bank Demo`,
+`Anadolu Moda Demo`, `Perakende360 Demo`), `Seed-D724Demo.pl`
+(`D724 Demo Company`) ve `Seed-CareOnCloudManagedServicesCatalog.pl` tamamen
+sentetik ad uretir. Yani eski canli DB verisidir; cozum veri temizligi ve CI'a
+yasakli isim taramasi eklemektir.
+
+Canlida dogrulanan demo musteri hesaplari (hepsi `valid`): `demo.customer`
+(`d724-demo`), `bank.demo` (`showcase-bank`), `moda.demo` (`showcase-fashion`),
+`retail.demo` (`showcase-retail`). Paralolar seed sirasinda
+`CAREONCLOUD_DEMO_PASSWORD` ile atanmistir. Yeni hesap olusturulmadi.
+
+### 10.6 Gozlenmeyen alanlar
+
+Musteri portali ic sayfalari calisir halde gorulmedi; raporda yalniz kaynak
+koddan, `VERIFIED_IN_SOURCE` etiketiyle degerlendirildi. Ticket detay/arama/kuyruk
+ekranlari, hata ve yetki reddi durumlari da gozlenmedi. Aday imaj
+(`careoncloud-v0.1.0`) aday portta ayaga kaldirildiginda gozlem turu
+tekrarlanmali ve rapor guncellenmelidir.
+
+### 10.7 Devralan icin ilk is
+
+Raporun J bolumunde iki sprintlik atomik is kartlari hazir. Sprint 1'in en yuksek
+oncelikli karti kozmetik degildir: `J6b` canli demo verisinin sentetiklestirilmesi,
+`J1` musteri giris ekranindaki OTOBO markasinin kaldirilmasi, `J2` bunu koruyacak
+test taramasinin eklenmesi. `K` bolumunde urun sahibinin karar vermesi gereken 9
+madde var; `K-1` (Request/Ticket iliskisi) agent kabuğunu, `K-2` (katalog
+terminolojisi) musteri portalini bloklar.

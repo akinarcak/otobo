@@ -1,5 +1,23 @@
 # CareOnCloud ESM Durum Kaydı
 
+## 2026-08-04 — UX/UI mimari denetimi yürütüldü
+
+- `DONE_AND_VERIFIED`: `CLAUDE-FABLE-UX-ARCHITECTURE-AUDIT-PROMPT.md` talimatı uygulandı ve `docs/esm/UX-ARCHITECTURE-AUDIT-2026-08-04.md` üretildi. Talimatın zorunlu tuttuğu A–K bölümlerinin tamamı mevcut: yönetici özeti, kanıt kaydı, 15 alanlı UX skor kartı, as-is ekran/yolculuk haritası, P0–P3 bulgular backlog'u, rol bazlı hedef bilgi mimarisi, 12 hedef ekran taslağı, tasarım sistemi başlangıç paketi, aşamalı yol haritası, iki sprintlik atomik iş kartları ve karar günlüğü.
+- `SCOPE`: Denetim Claude Fable tarafından değil, Claude Opus 5 tarafından yapıldı. Yalnız dokümantasyon üretildi; hiçbir kaynak kod, yapılandırma, canlı veri veya container değiştirilmedi.
+- `VERIFIED_IN_CODE`: Kaynak kanıtları — `Kernel/Output/HTML/Layout.pm:4221` içinde hardcoded `'Your Tickets. Your OTOBO.'`; `Kernel/Language/tr.pm:156,2967,3069` ALL-CAPS TR menü terimleri; `Framework.xml:8726,8727,8763,9267` otobo.io bağlantı/besleme/görsel kayıtları; `AdminD724Catalog.tt` 0 `<label>` / 9 `placeholder`, `AdminD724Commitment.tt` 1 `<label>` / 5 `placeholder`; `AgentD724Request.tt` ve `AdminD724Commitment.tt` içinde `onchange="this.form.submit()"` ile ham `TenantID`; D724 paketlerinde hiç CSS/JS yok, `D724KPIGrid`/`D724KPI` sınıfları tanımsız; D724 AccessKey `p` çakışması (CMDB/Problem); `CustomerD724Request.pm` yalnız `Submit` alt-eylemine sahip, müşteri talep takip ekranı yok.
+- `VERIFIED_BY_CURRENT_TEST`: Canlı gözlem `https://esm.arcak.net` üzerinde yapıldı. `/careoncloud/index.pl` 404, `/otobo/index.pl` 200, `/careoncloud-web/` 404 — **kanonik yol cutover'ı canlıda hâlâ yapılmamış**. Müşteri giriş ekranında `Your Tickets. Your OTOBO.` başlığı ve OTOBO arka plan görseli. Agent dashboard HTML'inde 98 `otobo` geçişi ve canlı otobo.io bağlantıları. `<html lang>` boş; bunun sonucu olarak CSS büyük harf dönüşümü Türkçeyi bozuyor (`YENI`, `YENİ` olmalı). `AgentPreferences` içinde `translate.otobo.org` bağlantısı, `Türkçe - Turkish (in process)` etiketi, 50 dilin listelenmesi ve varsayılan saat diliminin `UTC` olması. `D724KPIGrid` çalışma zamanında `display:block` — kaynak tahmini doğrulandı.
+- `RISK`: Canlı ortam **güncel kaynağın karşılığı değildir**; rebrand öncesi eski dağıtımdır. Bu nedenle canlı gözlemler güncel kaynağın değil, önceki sürümün kanıtıdır. Aday imaj (`careoncloud-v0.1.0`) ayağa kaldırıldığında gözlem turu tekrarlanmalıdır.
+- `RISK`: Canlıda ~40 gerçek Türk şirketi adına kayıtlı demo tenant bulunuyor; Master Context §13.4 bunu yasak davranış sayar. Kaynak tarandı: bu adlar **güncel kod tabanında yoktur**, üç seed script'i de sentetik ad üretir. Dolayısıyla bu bir eski canlı DB verisi sorunudur ve demo öncesi veri temizliğiyle kapatılmalıdır.
+- `RISK`: Marka sözleşme testi (`development/d724/Test-CareOnCloudBrand.ps1`) yalnız dosya yolu tarar, ekrana basılan metni taramaz; `Layout.pm:4221` bu yüzden testlerden geçmiştir. Şablon ve Perl string taraması eklenmelidir.
+- `NOT_OBSERVED / NEEDS_ACCESS`: Müşteri portalı iç sayfaları çalışır hâlde görülmedi (yalnız kaynak koddan değerlendirildi). Ticket detay/arama/kuyruk ekranları, hata ve yetki reddi durumları da gözlenmedi. Dört demo müşteri hesabının (`demo.customer`, `bank.demo`, `moda.demo`, `retail.demo`) canlıda mevcut ve `valid` olduğu `AdminCustomerUser` üzerinden doğrulandı; yeni hesap oluşturulmadı.
+- `ROLLBACK`: Yalnız doküman eklendi. Geri dönüş için bu commit revert edilir; başka hiçbir bileşen etkilenmez.
+
+## 2026-08-04 — UX/UI mimari denetim brief'i
+
+- `DONE_AND_VERIFIED`: Claude Fable'ın yalnız agent dashboard görselini değil müşteri, agent, hizmet sahibi, platform yöneticisi, MSP yöneticisi ve denetçi deneyimlerinin tamamını incelemesi için `docs/esm/CLAUDE-FABLE-UX-ARCHITECTURE-AUDIT-PROMPT.md` hazırlandı.
+- `SCOPE`: Brief; kanıt seviyeleri, ekran/rota envanteri, kritik yolculuklar, rol bazlı bilgi mimarisi, TR/EN terminoloji, WCAG 2.2 AA, responsive davranış, tasarım sistemi, teknik UI ayrışma seçenekleri, P0–P3 yol haritası ve ilk iki sprint için atomik iş kartlarını zorunlu çıktı hâline getirir.
+- `RISK`: Bu belge tasarım denetiminin talimatıdır; Fable incelemesi ve hedef tasarımlar henüz üretilmiş veya kaynak kodda uygulanmış değildir. Fable'ın erişemediği ekranlar `NOT_OBSERVED / NEEDS_ACCESS` olarak kalmalıdır.
+
 ## 2026-08-03 — CareOnCloud marka geçişi, güvenli ilk dilim
 
 - `VERIFIED_BY_CURRENT_TEST`: Kullanıcıya/log’a görünen runtime hata mesajlarındaki `D724` öneki Catalog, Request, Webhook, TenantDirectory, TicketAudit ve Public API adapter’larında `CareOnCloud` olarak değiştirildi. Foundation kapısı geçti; commit `c6b676206`.
