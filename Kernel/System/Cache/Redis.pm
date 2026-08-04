@@ -22,7 +22,7 @@ use Encode qw(encode);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',

@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2012-2019 Znuny GmbH, http://znuny.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -23,7 +23,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::MockTime qw(FixedTimeSet FixedTimeUnset);
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 use Kernel::System::VariableCheck qw(:all);

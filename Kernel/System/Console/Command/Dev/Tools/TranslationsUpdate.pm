@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -29,7 +29,7 @@ use File::Copy     qw(copy);
 use Lingua::Translit ();
 use Pod::Strip       ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::Language              ();
 use Kernel::System::VariableCheck qw(DataIsDifferent IsArrayRefWithData IsHashRefWithData);
 
@@ -965,7 +965,7 @@ sub WritePerlLanguageFile {
 
         $NewOut = <<"EOF";
 $Separator
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 $Separator
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/

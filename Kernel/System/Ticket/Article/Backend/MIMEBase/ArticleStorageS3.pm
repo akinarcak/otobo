@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
@@ -29,7 +29,7 @@ use parent qw(Kernel::System::Ticket::Article::Backend::MIMEBase::Base);
 use Mojo::Date;
 use Mojo::URL;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsStringWithData);
 use Kernel::System::Storage::S3   ();
 

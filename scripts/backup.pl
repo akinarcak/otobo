@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -32,7 +32,7 @@ use Cwd          qw(abs_path getcwd);
 # CPAN modules
 use Path::Class qw(dir);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::ObjectManager ();
 
 # file scoped option variables

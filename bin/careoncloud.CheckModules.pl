@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -102,7 +102,7 @@ use Term::ReadLine;    # avoids error when checking for Term::ReadLine::Gnu
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::MinimalPerlVersion    ();
 use Kernel::System::Environment   ();
 use Kernel::System::VariableCheck qw(IsHashRefWithData IsArrayRefWithData);

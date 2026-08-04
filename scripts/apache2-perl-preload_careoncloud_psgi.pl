@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
@@ -32,7 +32,7 @@ use v5.24;
 use Apache2::ServerUtil     ();
 use Plack::Handler::Apache2 ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 BEGIN {
     return unless Apache2::ServerUtil::restart_count() > 1;

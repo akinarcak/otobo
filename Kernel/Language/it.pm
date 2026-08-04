@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2003,2008 Remo Catelotti <Remo.Catelotti at eutelia.it>
 # Copyright (C) 2003 Gabriele Santilli <gsantilli at omnibus.net>

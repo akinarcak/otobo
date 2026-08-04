@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2012-2020 Znuny GmbH, http://znuny.com/
@@ -27,7 +27,7 @@ use warnings;
 # CPAN modules
 use List::AllUtils qw(any none);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (

@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
@@ -26,7 +26,7 @@ use Data::Peek        qw(DDump);
 use JSON::PP          ();
 use Types::Serialiser ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # set up $Kernel::OM
 
 # get DB object

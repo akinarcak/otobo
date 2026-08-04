@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Kernel/Language/cs.pm - provides Czech language translation
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/

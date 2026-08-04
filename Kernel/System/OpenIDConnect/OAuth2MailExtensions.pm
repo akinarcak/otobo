@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -28,7 +28,7 @@ use Net::SMTP;
 use Mail::IMAPClient ();
 use IO::Socket::SSL  ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 # the actual routines to encode OAuth2 in a XOAUTH2 resp. OAUTHBEARER conforming way
 # see https://documentation.open-xchange.com/7.10.2/middleware/mail/dovecot/oauth_2.0_with_postfix_and_dovecot.html

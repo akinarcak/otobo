@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -31,7 +31,7 @@ use Try::Tiny;
 use DateTime 1.08 ();
 use DateTime::Locale ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 # Inform the object manager about the hard dependencies.
 # This module must be discarded when one of the hard dependencies has been discarded.

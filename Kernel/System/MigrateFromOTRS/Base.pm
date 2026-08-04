@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -33,7 +33,7 @@ use File::Path     qw(make_path);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -1862,7 +1862,7 @@ sub _ChangeLicenseHeaderRules {
             New => [
                 "#!/usr/bin/perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 ",
                 "# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -1897,7 +1897,7 @@ sub _ChangeLicenseHeaderRules {
             ],
             New => [
                 "# --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 ",
                 "# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -1932,7 +1932,7 @@ sub _ChangeLicenseHeaderRules {
             ],
             New => [
                 "// --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 ",
                 "// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
@@ -1965,7 +1965,7 @@ sub _ChangeLicenseHeaderRules {
                 },
             ],
             New => [
-                "/* OTOBO is a web-based ticketing system for service organisations.
+                "/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 ",
                 "Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
