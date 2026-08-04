@@ -5976,33 +5976,33 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => 'Az adatbázis épségellenőrzései.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => 'Az ACL-beállítások üzembe állítása.',
         'Deployment completed, perfect!' => 'Az üzembe állítás befejeződött, tökéletes!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => 'Az automatikus válaszok adatbázistábla költöztetése.',
         'Migration failed.' => 'A költöztetés sikertelen.',
         'Migrate database table auto_response.' => 'Az automatikus válasz adatbázistábla költöztetése.',
         'Migration completed, perfect!' => 'A költöztetés befejeződött, tökéletes!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
         'CareOnCloud ESM Cache cleanup.' => 'Az CareOnCloud ESM gyorsítótárának törlése.',
         'Completed.' => 'Befejezve.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => 'OTRS-adatok->%s szükséges!',
         'Can\'t access OTRS home directory: %s!' => 'Nem lehet elérni az OTRS saját könyvtárát: %s!',
         'All needed files copied and migrated, perfect!' => 'Az összes szükséges fájl átmásolva és költöztetve, tökéletes!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => 'Adatbázis másolása.',
         'Skipped...' => 'Kihagyva…',
         'System was unable to connect to OTRS database.' => 'A rendszer nem tudott kapcsolódni az OTRS adatbázisához.',
         'System was unable to complete data transfer.' => 'A rendszer nem tudta befejezni az adatátvitelt.',
         'Data transfer completed.' => 'Az adatátvitel befejeződött.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
         'Check if CareOnCloud ESM version is correct.' => 'Annak ellenőrzése, hogy az CareOnCloud ESM verziója helyes-e.',
         'Check if CareOnCloud ESM and OTRS connect is possible.' => 'Annak ellenőrzése, hogy az CareOnCloud ESM és az OTRS összekapcsolása lehetséges-e.',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => 'Nem lehet megnyitni a RELEASE fájlt az OTRS saját könyvtárából: %s!',
@@ -6020,13 +6020,13 @@ sub Data {
             'Ismeretlen PRODUCT található az OTRS RELEASE fájlban: %s. Az elvárt értékek: %s.',
         'OTRS Version is correct: %s.' => 'Az OTRS verziója helyes: %s.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => 'Az ITSM adatbázistábláinak költöztetése.',
         'Nothing to do, as the table \'%s\' does not exist.' => 'Nincs mit tenni, mivel a(z) „%s” tábla nem létezik.',
         'UPDATE of the table \'%s\' failed.' => 'A(z) „%s” tábla FRISSÍTÉSE sikertelen.',
         'Migration completed.' => 'A költöztetés befejeződött.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => 'A konfigurációs beállítások költöztetése.',
         'An error occurred during system configuration data migration or no configuration exists.' =>
             'Hiba történt a rendszerbeállítási adatok költöztetése során, vagy nem léteznek a beállítások.',
@@ -6034,14 +6034,14 @@ sub Data {
             'Hiba történt a rendszerbeállítások költöztetése során az XML-tartalom adatbázisba írásakor.',
         'SysConfig data migration completed.' => 'A rendszerbeállítás adatainak költöztetése befejeződött.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => 'A webszolgáltatás beállításainak költöztetése.',
         'Failed - see the log!' => 'Sikertelen – nézze meg a naplót!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => 'Az értesítés adatbázistábla költöztetése.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             'Nem lehet megnyitni a „Kernel/Config.pm” fájlt az OTRS saját könyvtárából: %s!',
         'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => 'Annak ellenőrzése, hogy a „Kernel/Config.pm” létezik-e az CareOnCloud ESM saját könyvtárában.',
@@ -6050,46 +6050,46 @@ sub Data {
         'Can\'t connect to OTRS file directory.' => 'Nem lehet kapcsolódni az OTRS fájlkönyvtárához.',
         'Connect to OTRS file directory is possible.' => 'Az OTRS fájlkönyvtárához való kapcsolódás lehetséges.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => 'Az adatbázis-kapcsolódás és az épségellenőrzések próbája.',
         'Could not create database object.' => 'Nem sikerült létrehozni az adatbázis-objektumot.',
         'Database connect and sanity checks completed.' => 'Az adatbázis-kapcsolódás és az épségellenőrzések befejeződtek.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => 'Annak ellenőrzése, hogy az összes szükséges csomag telepítve van-e.',
         'The following packages are only installed in OTRS:' => 'A következő csomagok csak az OTRS-ben vannak telepítve:',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             'Telepítse (vagy távolítsa el) a csomagokat a költöztetés előtt. Ha egy csomag eddig még nem létezik az OTOBO-hoz, akkor vegye fel a kapcsolatot az OTOBO csapattal a bugs\@otobo.org címen. Meg fogjuk találni a megoldást.',
         'The same packages are installed on both systems, perfect!' => 'Ugyanazok a csomagok vannak telepítve mindkét rendszeren, tökéletes!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => 'Csomagra jellemző feladatok',
         'Done -' => 'Kész –',
         'Failed at -' => 'Sikertelen itt –',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => 'Annak ellenőrzése, hogy az összes szükséges Perl-modul telepítve van-e.',
         '%s script does not exist.' => 'A(z) %s parancsfájl nem létezik.',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             'Egy vagy több szükséges Perl-modul hiányzik. Telepítse azokat az ajánlásoknak megfelelően, majd futtassa újra a költöztető parancsfájlt.',
         'All required Perl modules have been installed, perfect!' => 'Az összes szükséges Perl-modul telepítve van, tökéletes!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => 'A levelezési szűrő költöztetése.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => 'A folyamatkezelés beállításainak üzembe állítása.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => 'A válaszsablon adatbázistábla költöztetése.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => 'A megszólítás adatbázistábla költöztetése.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => 'Az aláírás adatbázistábla költöztetése.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => 'A statisztikák költöztetése.',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -6321,7 +6321,7 @@ sub Data {
         'Certificate check' => 'Tanúsítvány-ellenőrzés',
         'Found obsolete cryptographic function.' => 'Elavult kriptográfiai függvény található.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
         'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM lemezpartíció',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
@@ -6356,37 +6356,37 @@ sub Data {
         'There should be more than 60% free swap space.' => '60%-nál több szabad lapozófájlnak kellene lennie.',
         'There should be no more than 200 MB swap space used.' => '200 MB-nál nem kellene több lapozófájlt használni.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
         'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => 'Bejegyzés keresési index állapot',
         'Indexed Articles' => 'Indexelt bejegyzések',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => 'Bejegyzések kommunikációs csatornánként',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => 'Bejövő kommunikációk',
         'Outgoing communications' => 'Kimenő kommunikációk',
         'Failed communications' => 'Sikertelen kommunikációk',
         'Average processing time of communications (s)' => 'Kommunikációk átlagos feldolgozási ideje (mp)',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => 'Kommunikációs napló fiókjának állapota (az elmúlt 24 óra)',
         'No connections found.' => 'Nem találhatók kapcsolatok.',
         'ok' => 'OK',
         'permanent connection errors' => 'állandó kommunikációs hibák',
         'intermittent connection errors' => 'időszakos kommunikációs hibák',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => 'Konfigurációs beállítások',
         'Could not determine value.' => 'Nem sikerült meghatározni az értéket.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => 'Démon',
         'Daemon is running.' => 'A démon fut.',
         'Daemon is not running.' => 'A démon nem fut.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => 'Adatbázis rekordok',
         'Ticket History Entries' => 'Jegy előzmény bejegyzések',
         'Articles' => 'Bejegyzések',
@@ -6401,26 +6401,26 @@ sub Data {
         'Tickets Per Month (avg)' => 'Jegyek havonta (átlag)',
         'Open Tickets' => 'Nyitott jegyek',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => 'Alapértelmezett adminisztrátor jelszó',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             'Biztonsági kockázat: a root@localhost ügyintéző fióknak még mindig az alapértelmezett jelszava van. Változtassa meg, vagy érvénytelenítse a fiókot.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => 'E-mail várakozási sor',
         'Emails queued for sending' => 'Küldéshez sorba állított e-mailek',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => 'FQDN (tartománynév)',
         'Please configure your FQDN setting.' => 'Állítsa be az FQDN beállítását.',
         'Domain Name' => 'Tartománynév',
         'Your FQDN setting is invalid.' => 'Az FQDN beállítás érvénytelen.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => 'Fájlrendszer írhatóság',
         'The file system on your CareOnCloud ESM partition is not writable.' => 'Az CareOnCloud ESM partíció fájlrendszere nem írható.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => 'Örökölt konfigurációs biztonsági mentések',
         'No legacy configuration backup files found.' => 'Nem találhatók örökölt biztonsági mentés fájlok.',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -6428,7 +6428,7 @@ sub Data {
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             'Az örökölt konfigurációs biztonsági mentés fájlok többé nem szükségesek a telepített csomagokhoz, távolítsa el azokat a Kernel/Config/Backups mappából.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => 'Csomagtelepítési állapot',
         'Some packages have locally modified files.' => 'Néhány csomag helyileg módosított fájlokkal rendelkezik.',
         'Some packages are not correctly installed.' => 'Néhány csomag nincs megfelelően telepítve.',
@@ -6438,44 +6438,44 @@ sub Data {
         'Some packages are not allowed for the current framework version.' =>
             'Néhány csomag nem engedélyezett a jelenlegi keretrendszer verzióhoz.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => 'Csomaglista',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => 'Munkamenet-konfigurációs beállítások',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => 'Várakozási sorba helyezett levelek',
         'There are emails in var/spool that CareOnCloud ESM could not process.' => 'Olyan levelek találhatók a var/spool mappában, amelyeket az CareOnCloud ESM nem tudott feldolgozni.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             'A rendszer-azonosító beállítás érvénytelen, csak számjegyeket tartalmazhat.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => 'Alapértelmezett jegytípus',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             'A beállított alapértelmezett jegytípus érvénytelen vagy hiányzik. Változtassa meg a Ticket::Type::Default beállításait, és válasszon egy érvényes jegytípust.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => 'Jegyindexelő modul',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             'Több mint 60 000 jegye van, ezért a StaticDB háttérprogramot kellene használnia. További információkért nézze meg az adminisztrátori kézikönyvet (Teljesítmény finomhangolás).',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => 'Érvénytelen felhasználók zárolt jegyekkel',
         'There are invalid users with locked tickets.' => 'Zárolt jegyekkel rendelkező érvénytelen felhasználók vannak.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             'Nem kellene 8000 nyitott jegynél többel rendelkeznie a rendszeren.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => 'Jegykeresés indexelő modul',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             'Az indexelési folyamat kényszeríti az eredeti bejegyzésszöveg tárolását a bejegyzés keresési indexében anélkül, hogy szűrőket hajtana végre vagy a kiszűrendő szavak listáit alkalmazná. Ez meg fogja növelni a keresési index méretét, és ezért lelassíthatja a szabad-szavas kereséseket.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'Árva rekordok a ticket_lock_index táblában',
         'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'A „ticket_lock_index” tábla árva rekordokat tartalmaz. Futtassa a bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" parancsot a StaticDB index tisztításához.',
@@ -6483,7 +6483,7 @@ sub Data {
         'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'A „ticket_index” tábla árva rekordokat tartalmaz. Futtassa a bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" parancsot a StaticDB index tisztításához.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => 'Időbeállítások',
         'Server time zone' => 'Kiszolgáló időzónája',
         'CareOnCloud ESM time zone' => 'CareOnCloud ESM időzóna',
@@ -6492,13 +6492,13 @@ sub Data {
         'User default time zone is not set.' => 'A felhasználó alapértelmezett időzónája nincs beállítva.',
         'Calendar time zone is not set.' => 'A naptár időzónája nincs beállítva.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => 'UI – ügyintézői felszín használat',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => 'UI – ügyintézői téma használat',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => 'UI – különleges statisztikák',
         'Agents using custom main menu ordering' => 'Egyéni menürendezést használó ügyintézők',
         'Agents using favourites for the admin overview' => 'Kedvenceket használó ügyintézők az adminisztrációs áttekintőnél',
@@ -7185,7 +7185,7 @@ sub Data {
         'Grouped' => 'Csoportosított',
         'Stacked' => 'Halmozott',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => 'Folyam',
         'Expanded' => 'Kifeszített',
 

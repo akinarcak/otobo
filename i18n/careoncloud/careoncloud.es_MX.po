@@ -19530,153 +19530,153 @@ msgstr ""
 msgid "Sanity checks for database."
 msgstr "Comprobaciones de limpieza para la base de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
 msgid "Deploy the ACL configuration."
 msgstr "Despliegue de la configuración ACL."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
 msgid "Deployment completed, perfect!"
 msgstr "Despliegue completado, ¡perfecto!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migrate database table auto_responses."
 msgstr "Migrar la tabla de la base de datos auto_responses."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migration failed."
 msgstr "La migración falló."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migrate database table auto_response."
 msgstr "Migrar la tabla de la base de datos auto_response."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migration completed, perfect!"
 msgstr "Migración completada, ¡perfecto!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
 msgid "CareOnCloud ESM Cache cleanup."
 msgstr "Limpieza de la caché de CareOnCloud ESM."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
 msgid "Completed."
 msgstr "Completado."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
 msgid "Need OTRSData->%s!"
 msgstr "¡Necesita OTRSData->%s!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
 #, fuzzy
 #| msgid "Can't access OTRS Home: %s!"
 msgid "Can't access OTRS home directory: %s!"
 msgstr "¡No se puede acceder a OTRS Home: %s!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
 msgid "All needed files copied and migrated, perfect!"
 msgstr "Todos los archivos necesarios copiados y migrados, ¡perfecto!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "Copy database."
 msgstr "Copiar base de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "Skipped..."
 msgstr "Omitiendo..."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "System was unable to connect to OTRS database."
 msgstr "El sistema no pudo conectarse a la base de datos OTRS."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "System was unable to complete data transfer."
 msgstr "El sistema no pudo completar la transferencia de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "Data transfer completed."
 msgstr "Transferencia de datos completada."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if CareOnCloud ESM version is correct."
 msgstr "Compruebe si la versión de CareOnCloud ESM es correcta."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if CareOnCloud ESM and OTRS connect is possible."
 msgstr "Compruebe si la conexión de CareOnCloud ESM y OTRS es posible."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 #, fuzzy
 #| msgid "Can't open RELEASE file from OTRSHome: %s!"
 msgid "Can't open RELEASE file from OTRS home directory: %s!"
 msgstr "¡No se puede abrir el archivo RELEASE de OTRSHome: %s!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if CareOnCloud ESM and OTRS version is correct."
 msgstr "Compruebe si la versión de CareOnCloud ESM y OTRS es correcta."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "%s does not exist!"
 msgstr "¡%s no existe!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "No CareOnCloud ESM system found!"
 msgstr "¡No se ha encontrado ningún sistema CareOnCloud ESM!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "You are trying to run this script on the wrong framework version %s!"
 msgstr ""
 "¡Está intentando ejecutar este script en la versión de framework %s "
 "incorrecta!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "CareOnCloud ESM Version is correct: %s."
 msgstr "La versión de CareOnCloud ESM es correcta: %s."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if OTRS version is correct."
 msgstr "Compruebe si la versión de OTRS es correcta."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "OTRS RELEASE file %s does not exist!"
 msgstr ""
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Can't read OTRS RELEASE file: %s"
 msgstr ""
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "No OTRS system found!"
 msgstr "¡No se ha encontrado ningún sistema OTRS!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Unknown PRODUCT found in OTRS RELEASE file: %s. Expected values are %s."
 msgstr ""
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "OTRS Version is correct: %s."
 msgstr "La versión de OTRS es correcta: %s."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "Migrate ITSM database tables."
 msgstr ""
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "Nothing to do, as the table '%s' does not exist."
 msgstr ""
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "UPDATE of the table '%s' failed."
 msgstr ""
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "Migration completed."
 msgstr ""
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 msgid "Migrate configuration settings."
 msgstr "Migrar los ajustes de configuración."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 #, fuzzy
 #| msgid ""
 #| "An error occurred during SysConfig data migration or no configuration "
@@ -19688,7 +19688,7 @@ msgstr ""
 "Se ha producido un error durante la migración de datos de SysConfig o no "
 "existe ninguna configuración."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 #, fuzzy
 #| msgid "An error occurred during SysConfig migration when writing XML to DB."
 msgid ""
@@ -19698,73 +19698,73 @@ msgstr ""
 "Se ha producido un error durante la migración de SysConfig al escribir XML "
 "en la base de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 msgid "SysConfig data migration completed."
 msgstr "Se ha completado la migración de datos de SysConfig."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
 msgid "Migrate web service configuration."
 msgstr "Migrar la configuración del servicio web."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
 msgid "Failed - see the log!"
 msgstr "Falló - ¡vea el registro!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
 msgid "Migrate database table notification."
 msgstr "Migrar la tabla de notificación de la base de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 #, fuzzy
 #| msgid "Can't open Kernel/Config.pm file from OTRSHome: %s!"
 msgid "Can't open Kernel/Config.pm file from OTRS home directory: %s!"
 msgstr "¡No se puede abrir el archivo Kernel/Config.pm desde OTRSHome: %s!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Check if Kernel/Config.pm exists in CareOnCloud ESM home."
 msgstr "Compruebe si Kernel/Config.pm existe en el home de CareOnCloud ESM."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Kernel/Config.pm exists in CareOnCloud ESM home"
 msgstr "Kernel/Config.pm existe en el home de CareOnCloud ESM"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 #, fuzzy
 #| msgid "Check if we are able to connect to OTRS Home."
 msgid "Check if we are able to connect to OTRS home directory."
 msgstr "Compruebe si podemos conectarnos a l home de OTRS."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Can't connect to OTRS file directory."
 msgstr "No se puede conectar al directorio de archivos OTRS."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Connect to OTRS file directory is possible."
 msgstr "La conexión al directorio de archivos OTRS es posible."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
 msgid "Try database connect and sanity checks."
 msgstr ""
 "Prueba la conexión a la base de datos y las comprobaciones de integridad."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
 msgid "Could not create database object."
 msgstr "No se ha podido crear el objeto base de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
 msgid "Database connect and sanity checks completed."
 msgstr ""
 "Conexión de la base de datos y comprobaciones de integridad completadas."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid "Check if all necessary packages are installed."
 msgstr "Compruebe si todos los paquetes necesarios están instalados."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid "The following packages are only installed in OTRS:"
 msgstr "Los siguientes paquetes sólo se instalan en OTRS:"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid ""
 "Please install (or uninstall) the packages before migration. If a package "
 "doesn't exist for CareOnCloud ESM so far, please contact the CareOnCloud ESM Team at bugs\\"
@@ -19774,31 +19774,31 @@ msgstr ""
 "paquete no existe para CareOnCloud ESM, por favor contacte con el equipo de CareOnCloud ESM en "
 "bugs\\\\@otobo.org. Encontraremos una solución."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid "The same packages are installed on both systems, perfect!"
 msgstr "Los mismos paquetes están instalados en ambos sistemas, ¡perfecto!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
 msgid "Package specific tasks"
 msgstr "Tareas específicas del paquete"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
 msgid "Done -"
 msgstr "Terminado -"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
 msgid "Failed at -"
 msgstr "Falló en -"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid "Check if all needed Perl modules have been installed."
 msgstr "Compruebe si se han instalado todos los módulos Perl necesarios."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid "%s script does not exist."
 msgstr "El script %s no existe."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid ""
 "One or more required Perl modules are missing. Please install them as "
 "recommended, and run the migration script again."
@@ -19806,31 +19806,31 @@ msgstr ""
 "Faltan uno o más módulos Perl necesarios. Por favor, instálelos como se "
 "recomienda y ejecute de nuevo el script de migración."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid "All required Perl modules have been installed, perfect!"
 msgstr "Se han instalado todos los módulos Perl necesarios, ¡perfecto!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
 msgid "Migrate postmaster filter."
 msgstr "Migrar el filtro postmaster."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
 msgid "Deploy the process management configuration."
 msgstr "Despliegue de la configuración de gestión de procesos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
 msgid "Migrate database table response_template."
 msgstr "Migrar la tabla de la base de datos response_template."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
 msgid "Migrate database table salutation."
 msgstr "Migrar la tabla de saludos de la base de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
 msgid "Migrate database table signature."
 msgstr "Migrar la tabla de firmas de la base de datos."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
 msgid "Migrate statistics."
 msgstr "Migrar las estadísticas."
 
@@ -20468,7 +20468,7 @@ msgstr ""
 msgid "Found obsolete cryptographic function."
 msgstr ""
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
 msgid "CareOnCloud ESM Disk Partition"
 msgstr "Partición en disco para CareOnCloud ESM"
 
@@ -20544,135 +20544,135 @@ msgstr "Debe estar libre mas del 60% del swap."
 msgid "There should be no more than 200 MB swap space used."
 msgstr "No deben de usarse más de 200 MB del swap."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
 msgid "CareOnCloud ESM"
 msgstr "CareOnCloud ESM"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
 msgid "Article Search Index Status"
 msgstr "Estado del índice de búsqueda de artículos"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
 msgid "Indexed Articles"
 msgstr "Artículos Indexados"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
 msgid "Articles Per Communication Channel"
 msgstr "Artículos por canal de comunicación"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Incoming communications"
 msgstr "Comunicaciones entrantes"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Outgoing communications"
 msgstr "Comunicaciones salientes"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Failed communications"
 msgstr "Comunicaciones fallidas"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Average processing time of communications (s)"
 msgstr "Tiempo medio de procesamiento de las comunicaciones (s)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "Communication Log Account Status (last 24 hours)"
 msgstr "Registro de comunicaciones Estado de la cuenta (últimas 24 horas)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "No connections found."
 msgstr "No se ha encontrado ninguna conexión."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "ok"
 msgstr "Vale"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "permanent connection errors"
 msgstr "errores de conexión permanentes"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "intermittent connection errors"
 msgstr "errores de conexión intermitentes"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
 msgid "Config Settings"
 msgstr "Ajustes de configuración"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
 msgid "Could not determine value."
 msgstr "No es posible determinar el valor."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
 msgid "Daemon"
 msgstr "Demonio"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
 msgid "Daemon is running."
 msgstr "Demonio en ejecución."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
 msgid "Daemon is not running."
 msgstr "El demonio no está en ejecución."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Database Records"
 msgstr "Registros de la base de datos"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Ticket History Entries"
 msgstr "Entradas del Historial de Tickets"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Articles"
 msgstr "Artículos"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Attachments (DB, Without HTML)"
 msgstr "Adjuntos (BD, Sin HTML)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Customers With At Least One Ticket"
 msgstr "Clientes Con Al Menos Un ticket"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Dynamic Field Values"
 msgstr "Valores para campos dinámicos"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Invalid Dynamic Fields"
 msgstr "Campos Dinámicos Invalidos"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Invalid Dynamic Field Values"
 msgstr "Valorres del Campo Dinámico Invalidos"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "GenericInterface Webservices"
 msgstr "Interfaz genérica de servicios web"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Process Tickets"
 msgstr "Proceso de Tickets"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Months Between First And Last Ticket"
 msgstr "Meses Entre el Primer y Último Ticket"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Tickets Per Month (avg)"
 msgstr "Tickets por Mes (promedio)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Open Tickets"
 msgstr "Tickets Abiertos"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
 msgid "Default Admin Password"
 msgstr "Contraseña predeterminada del Administrador"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
 msgid ""
 "Security risk: the agent account root@localhost still has the default "
 "password. Please change it or invalidate the account."
@@ -20681,51 +20681,51 @@ msgstr ""
 "contraseña predeterminada. Por favor cambie la contraseña o invalide la "
 "cuenta."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
 msgid "Email Sending Queue"
 msgstr "Cola de envío de correo electrónico"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
 msgid "Emails queued for sending"
 msgstr "Correos electrónicos en cola para enviar"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "FQDN (domain name)"
 msgstr "FQDN (nombre de dominio)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "Please configure your FQDN setting."
 msgstr "Por favor configure su FQDN."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "Domain Name"
 msgstr "Nombre de Dominio"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "Your FQDN setting is invalid."
 msgstr ""
 "La configuración de su FQDN (nombre de dominio totalmente calificado) es "
 "inválido."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
 msgid "File System Writable"
 msgstr "Sistema de Archivo con permisos de Escritura"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
 msgid "The file system on your CareOnCloud ESM partition is not writable."
 msgstr "El sistema de archivos de su partición CareOnCloud ESM no es escribible."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid "Legacy Configuration Backups"
 msgstr "Copias de seguridad de la configuración heredada"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid "No legacy configuration backup files found."
 msgstr ""
 "No se han encontrado archivos de copia de seguridad de la configuración "
 "heredada."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid ""
 "Legacy configuration backup files found in Kernel/Config/Backups folder, but "
 "they might still be required by some packages."
@@ -20734,7 +20734,7 @@ msgstr ""
 "encuentran en la carpeta Kernel/Config/Backups, pero pueden seguir siendo "
 "necesarios para algunos paquetes."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid ""
 "Legacy configuration backup files are no longer needed for the installed "
 "packages, please remove them from Kernel/Config/Backups folder."
@@ -20743,61 +20743,61 @@ msgstr ""
 "necesarios para los paquetes instalados, por favor, elimínelos de la carpeta "
 "Kernel/Config/Backups."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Package Installation Status"
 msgstr "Estado de la Instalación del Paquete"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages have locally modified files."
 msgstr "Algunos paquetes tienen archivos modificados localmente."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages are not correctly installed."
 msgstr "Algunos paquetes no están correctamente instalados."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Package Verification Status"
 msgstr "Estado de verificación del paquete"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages are not verified by the CareOnCloud ESM Team."
 msgstr "Algunos paquetes no son verificados por el equipo de CareOnCloud ESM."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Package Framework Version Status"
 msgstr "Estado de la versión del Framework"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages are not allowed for the current framework version."
 msgstr ""
 "Algunos paquetes no están permitidos para la versión actual del framework."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
 msgid "Package List"
 msgstr "Lista de Paquetes"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
 msgid "Session Config Settings"
 msgstr "Ajustes de configuración de la sesión"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
 msgid "Spooled Emails"
 msgstr "Mensajes de correo electrónico en cola"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
 msgid "There are emails in var/spool that CareOnCloud ESM could not process."
 msgstr "Hay correos electrónicos en var/spool que CareOnCloud ESM no ha podido procesar."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
 msgid "Your SystemID setting is invalid, it should only contain digits."
 msgstr ""
 "La configuración de su SystemID no es válida, sólo debería contener dígitos."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
 msgid "Default Ticket Type"
 msgstr "Tipo de Ticket Predeterminado"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
 msgid ""
 "The configured default ticket type is invalid or missing. Please change the "
 "setting Ticket::Type::Default and select a valid ticket type."
@@ -20805,11 +20805,11 @@ msgstr ""
 "El tipo de ticket configurado por defecto no es válido o no existe. Cambie "
 "el ajuste Ticket::Type::Default y seleccione un tipo de ticket válido."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
 msgid "Ticket Index Module"
 msgstr "Módulo de Indices de Tickets"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
 msgid ""
 "You have more than 60,000 tickets and should use the StaticDB backend. See "
 "admin manual (Performance Tuning) for more information."
@@ -20818,23 +20818,23 @@ msgstr ""
 "el manual del administrador (Performance Tuning) para obtener más "
 "información."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
 msgid "Invalid Users with Locked Tickets"
 msgstr "Usuarios no válidos con tickets bloqueados"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
 msgid "There are invalid users with locked tickets."
 msgstr "Hay usuarios no válidos con entradas bloqueadas."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
 msgid "You should not have more than 8,000 open tickets in your system."
 msgstr "No debería tener más de 8,000 tickets abiertos en su sistema."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
 msgid "Ticket Search Index Module"
 msgstr "Módulo Búsquedas Indexadas de Tickets"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
 msgid ""
 "The indexing process forces the storage of the original article text in the "
 "article search index, without executing filters or applying stop word lists. "
@@ -20846,11 +20846,11 @@ msgstr ""
 "listas de palabras de parada. Esto aumentará el tamaño del índice de "
 "búsqueda y, por tanto, puede ralentizar las búsquedas de texto completo."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid "Orphaned Records In ticket_lock_index Table"
 msgstr "Registros huérfanos en la tabla ticket_lock_index"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid ""
 "Table ticket_lock_index contains orphaned records. Please run bin/"
 "careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" to clean the StaticDB "
@@ -20860,11 +20860,11 @@ msgstr ""
 "bin/careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" para limpiar el "
 "índice de StaticDB."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid "Orphaned Records In ticket_index Table"
 msgstr "Registros huérfanos en la tabla ticket_index"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid ""
 "Table ticket_index contains orphaned records. Please run bin/"
 "careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" to clean the StaticDB "
@@ -20874,51 +20874,51 @@ msgstr ""
 "careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" para limpiar el índice "
 "de StaticDB."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "Time Settings"
 msgstr "Ajustes de tiempo"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "Server time zone"
 msgstr "Zona horaria del servidor"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "CareOnCloud ESM time zone"
 msgstr "Zona horaria de CareOnCloud ESM"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "CareOnCloud ESM time zone is not set."
 msgstr "La zona horaria de CareOnCloud ESM no está configurada."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "User default time zone"
 msgstr "Zona horaria por defecto del usuario"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "User default time zone is not set."
 msgstr "La zona horaria por defecto del usuario no está configurada."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "Calendar time zone is not set."
 msgstr "La zona horaria del calendario no está configurada."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
 msgid "UI - Agent Skin Usage"
 msgstr "UI - Uso de la interfaz del agente"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
 msgid "UI - Agent Theme Usage"
 msgstr "IU - Uso del tema del agente"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
 msgid "UI - Special Statistics"
 msgstr "IU - Estadísticas especiales"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
 msgid "Agents using custom main menu ordering"
 msgstr "Agentes que utilizan la ordenación personalizada del menú principal"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
 msgid "Agents using favourites for the admin overview"
 msgstr ""
 "Agentes que utilizan los favoritos para la visión general del administrador"
@@ -22796,11 +22796,11 @@ msgstr "Agrupado"
 msgid "Stacked"
 msgstr "Apilado"
 
-#. JS File: OTOBOStackedAreaChart
+#. JS File: CareOnCloudStackedAreaChart
 msgid "Stream"
 msgstr "Flujo"
 
-#. JS File: OTOBOStackedAreaChart
+#. JS File: CareOnCloudStackedAreaChart
 msgid "Expanded"
 msgstr "Expandido"
 
@@ -37166,8 +37166,8 @@ msgstr "estadísticas"
 #~ "\"Diseño delgado\" interfaz que trata de ahorrar espacio en la pantalla "
 #~ "para los usuarios avanzados."
 
-#~ msgid "Autoloading of Znuny4OTOBOPasswordPolicy extensions."
-#~ msgstr "Carga automática de las extensiones Znuny4OTOBOPasswordPolicy."
+#~ msgid "Autoloading of Znuny4CareOnCloudPasswordPolicy extensions."
+#~ msgstr "Carga automática de las extensiones Znuny4CareOnCloudPasswordPolicy."
 
 #~ msgid "Balanced white skin by Felix Niklas (slim version)."
 #~ msgstr "Interfaz blanco equilibrado de Felix Niklas (versión liviana)."

@@ -57,7 +57,7 @@ all_perl_files_ok(@StrictDirs);
 my %FailureIsAccepted = (
     'Kernel/System/Auth/Radius.pm'               => 'Authen::Radius is not required',
     'Kernel/System/CustomerAuth/Radius.pm'       => 'Authen::Radius is not required',
-    'Kernel/cpan-lib/Devel/REPL/Plugin/OTOBO.pm' => 'Devel::REPL::Plugin is not required',
+    'Kernel/cpan-lib/Devel/REPL/Plugin/CareOnCloud.pm' => 'Devel::REPL::Plugin is not required',
     'Kernel/cpan-lib/Font/TTF/Win32.pm'          => 'Win32::Registry is not available, but never mind as Win32 is not supported',
     'Kernel/cpan-lib/PDF/API2/Win32.pm'          => 'Win32::TieRegistry is not available, but never mind as Win32 is not supported',
     'Kernel/cpan-lib/SOAP/Lite.pm'               => 'some strangeness concerning SOAP::Constants',

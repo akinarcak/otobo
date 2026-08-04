@@ -5971,33 +5971,33 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => 'Comprobaciones de limpieza para la base de datos.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => 'Despliegue de la configuración ACL.',
         'Deployment completed, perfect!' => 'Despliegue completado, ¡perfecto!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => 'Migrar la tabla de la base de datos auto_responses.',
         'Migration failed.' => 'La migración falló.',
         'Migrate database table auto_response.' => 'Migrar la tabla de la base de datos auto_response.',
         'Migration completed, perfect!' => 'Migración completada, ¡perfecto!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
         'CareOnCloud ESM Cache cleanup.' => 'Limpieza de la caché de CareOnCloud ESM.',
         'Completed.' => 'Completado.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => '¡Necesita OTRSData->%s!',
         'Can\'t access OTRS home directory: %s!' => '',
         'All needed files copied and migrated, perfect!' => 'Todos los archivos necesarios copiados y migrados, ¡perfecto!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => 'Copiar base de datos.',
         'Skipped...' => 'Omitiendo...',
         'System was unable to connect to OTRS database.' => 'El sistema no pudo conectarse a la base de datos OTRS.',
         'System was unable to complete data transfer.' => 'El sistema no pudo completar la transferencia de datos.',
         'Data transfer completed.' => 'Transferencia de datos completada.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
         'Check if CareOnCloud ESM version is correct.' => 'Compruebe si la versión de CareOnCloud ESM es correcta.',
         'Check if CareOnCloud ESM and OTRS connect is possible.' => 'Compruebe si la conexión de CareOnCloud ESM y OTRS es posible.',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
@@ -6015,13 +6015,13 @@ sub Data {
             '',
         'OTRS Version is correct: %s.' => 'La versión de OTRS es correcta: %s.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => '',
         'Nothing to do, as the table \'%s\' does not exist.' => '',
         'UPDATE of the table \'%s\' failed.' => '',
         'Migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => 'Migrar los ajustes de configuración.',
         'An error occurred during system configuration data migration or no configuration exists.' =>
             '',
@@ -6029,14 +6029,14 @@ sub Data {
             '',
         'SysConfig data migration completed.' => 'Se ha completado la migración de datos de SysConfig.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => 'Migrar la configuración del servicio web.',
         'Failed - see the log!' => 'Falló - ¡vea el registro!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => 'Migrar la tabla de notificación de la base de datos.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             '',
         'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => 'Compruebe si Kernel/Config.pm existe en el home de CareOnCloud ESM.',
@@ -6045,46 +6045,46 @@ sub Data {
         'Can\'t connect to OTRS file directory.' => 'No se puede conectar al directorio de archivos OTRS.',
         'Connect to OTRS file directory is possible.' => 'La conexión al directorio de archivos OTRS es posible.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => 'Prueba la conexión a la base de datos y las comprobaciones de integridad.',
         'Could not create database object.' => 'No se ha podido crear el objeto base de datos.',
         'Database connect and sanity checks completed.' => 'Conexión de la base de datos y comprobaciones de integridad completadas.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => 'Compruebe si todos los paquetes necesarios están instalados.',
         'The following packages are only installed in OTRS:' => 'Los siguientes paquetes sólo se instalan en OTRS:',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             'Por favor, instale (o desinstale) los paquetes antes de la migración. Si un paquete no existe para OTOBO, por favor contacte con el equipo de OTOBO en bugs\@otobo.org. Encontraremos una solución.',
         'The same packages are installed on both systems, perfect!' => 'Los mismos paquetes están instalados en ambos sistemas, ¡perfecto!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => 'Tareas específicas del paquete',
         'Done -' => 'Terminado -',
         'Failed at -' => 'Falló en -',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => 'Compruebe si se han instalado todos los módulos Perl necesarios.',
         '%s script does not exist.' => 'El script %s no existe.',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             'Faltan uno o más módulos Perl necesarios. Por favor, instálelos como se recomienda y ejecute de nuevo el script de migración.',
         'All required Perl modules have been installed, perfect!' => 'Se han instalado todos los módulos Perl necesarios, ¡perfecto!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => 'Migrar el filtro postmaster.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => 'Despliegue de la configuración de gestión de procesos.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => 'Migrar la tabla de la base de datos response_template.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => 'Migrar la tabla de saludos de la base de datos.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => 'Migrar la tabla de firmas de la base de datos.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => 'Migrar las estadísticas.',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -6316,7 +6316,7 @@ sub Data {
         'Certificate check' => '',
         'Found obsolete cryptographic function.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
         'CareOnCloud ESM Disk Partition' => 'Partición en disco para CareOnCloud ESM',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
@@ -6351,37 +6351,37 @@ sub Data {
         'There should be more than 60% free swap space.' => 'Debe estar libre mas del 60% del swap.',
         'There should be no more than 200 MB swap space used.' => 'No deben de usarse más de 200 MB del swap.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
         'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => 'Estado del índice de búsqueda de artículos',
         'Indexed Articles' => 'Artículos Indexados',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => 'Artículos por canal de comunicación',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => 'Comunicaciones entrantes',
         'Outgoing communications' => 'Comunicaciones salientes',
         'Failed communications' => 'Comunicaciones fallidas',
         'Average processing time of communications (s)' => 'Tiempo medio de procesamiento de las comunicaciones (s)',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => 'Registro de comunicaciones Estado de la cuenta (últimas 24 horas)',
         'No connections found.' => 'No se ha encontrado ninguna conexión.',
         'ok' => 'Vale',
         'permanent connection errors' => 'errores de conexión permanentes',
         'intermittent connection errors' => 'errores de conexión intermitentes',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => 'Ajustes de configuración',
         'Could not determine value.' => 'No es posible determinar el valor.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => 'Demonio',
         'Daemon is running.' => 'Demonio en ejecución.',
         'Daemon is not running.' => 'El demonio no está en ejecución.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => 'Registros de la base de datos',
         'Ticket History Entries' => 'Entradas del Historial de Tickets',
         'Articles' => 'Artículos',
@@ -6396,26 +6396,26 @@ sub Data {
         'Tickets Per Month (avg)' => 'Tickets por Mes (promedio)',
         'Open Tickets' => 'Tickets Abiertos',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => 'Contraseña predeterminada del Administrador',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             'Riesgo de seguridad: la cuenta del agente root@localhost todavía tiene la contraseña predeterminada. Por favor cambie la contraseña o invalide la cuenta.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => 'Cola de envío de correo electrónico',
         'Emails queued for sending' => 'Correos electrónicos en cola para enviar',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => 'FQDN (nombre de dominio)',
         'Please configure your FQDN setting.' => 'Por favor configure su FQDN.',
         'Domain Name' => 'Nombre de Dominio',
         'Your FQDN setting is invalid.' => 'La configuración de su FQDN (nombre de dominio totalmente calificado) es inválido.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => 'Sistema de Archivo con permisos de Escritura',
         'The file system on your CareOnCloud ESM partition is not writable.' => 'El sistema de archivos de su partición CareOnCloud ESM no es escribible.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => 'Copias de seguridad de la configuración heredada',
         'No legacy configuration backup files found.' => 'No se han encontrado archivos de copia de seguridad de la configuración heredada.',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -6423,7 +6423,7 @@ sub Data {
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             'Los archivos de copia de seguridad de la configuración heredada ya no son necesarios para los paquetes instalados, por favor, elimínelos de la carpeta Kernel/Config/Backups.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => 'Estado de la Instalación del Paquete',
         'Some packages have locally modified files.' => 'Algunos paquetes tienen archivos modificados localmente.',
         'Some packages are not correctly installed.' => 'Algunos paquetes no están correctamente instalados.',
@@ -6433,44 +6433,44 @@ sub Data {
         'Some packages are not allowed for the current framework version.' =>
             'Algunos paquetes no están permitidos para la versión actual del framework.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => 'Lista de Paquetes',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => 'Ajustes de configuración de la sesión',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => 'Mensajes de correo electrónico en cola',
         'There are emails in var/spool that CareOnCloud ESM could not process.' => 'Hay correos electrónicos en var/spool que CareOnCloud ESM no ha podido procesar.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             'La configuración de su SystemID no es válida, sólo debería contener dígitos.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => 'Tipo de Ticket Predeterminado',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             'El tipo de ticket configurado por defecto no es válido o no existe. Cambie el ajuste Ticket::Type::Default y seleccione un tipo de ticket válido.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => 'Módulo de Indices de Tickets',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             'Tiene más de 60.000 tickets y debería utilizar el backend StaticDB. Consulte el manual del administrador (Performance Tuning) para obtener más información.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => 'Usuarios no válidos con tickets bloqueados',
         'There are invalid users with locked tickets.' => 'Hay usuarios no válidos con entradas bloqueadas.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             'No debería tener más de 8,000 tickets abiertos en su sistema.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => 'Módulo Búsquedas Indexadas de Tickets',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             'El proceso de indexación obliga a almacenar el texto original del artículo en el índice de búsqueda de artículos, sin ejecutar filtros ni aplicar listas de palabras de parada. Esto aumentará el tamaño del índice de búsqueda y, por tanto, puede ralentizar las búsquedas de texto completo.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'Registros huérfanos en la tabla ticket_lock_index',
         'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'La tabla ticket_lock_index contiene registros huérfanos. Por favor, ejecute bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" para limpiar el índice de StaticDB.',
@@ -6478,7 +6478,7 @@ sub Data {
         'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'La tabla ticket_index contiene registros huérfanos. Por favor, ejecute bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" para limpiar el índice de StaticDB.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => 'Ajustes de tiempo',
         'Server time zone' => 'Zona horaria del servidor',
         'CareOnCloud ESM time zone' => 'Zona horaria de CareOnCloud ESM',
@@ -6487,13 +6487,13 @@ sub Data {
         'User default time zone is not set.' => 'La zona horaria por defecto del usuario no está configurada.',
         'Calendar time zone is not set.' => 'La zona horaria del calendario no está configurada.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => 'UI - Uso de la interfaz del agente',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => 'IU - Uso del tema del agente',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => 'IU - Estadísticas especiales',
         'Agents using custom main menu ordering' => 'Agentes que utilizan la ordenación personalizada del menú principal',
         'Agents using favourites for the admin overview' => 'Agentes que utilizan los favoritos para la visión general del administrador',
@@ -7180,7 +7180,7 @@ sub Data {
         'Grouped' => 'Agrupado',
         'Stacked' => 'Apilado',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => 'Flujo',
         'Expanded' => 'Expandido',
 

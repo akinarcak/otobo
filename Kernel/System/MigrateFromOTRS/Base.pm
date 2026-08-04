@@ -84,7 +84,7 @@ sub new {
 
 clean given file license header to CareOnCloud ESM style
 
-    $OTRSToOTOBOObject->CleanLicenseHeader(
+    $OTRSToCareOnCloudObject->CleanLicenseHeader(
         File         => '/opt/careoncloud/Test.pm',
         UserID        => 123,
     );
@@ -195,7 +195,7 @@ sub CleanLicenseHeader {
 
 clean given directory to CareOnCloud ESM style
 
-    $OTRSToOTOBOObject->CleanLicenseHeaderInDir(
+    $OTRSToCareOnCloudObject->CleanLicenseHeaderInDir(
         Path         => '/opt/careoncloud/',
         Filter       => '*',
         Recursive    => 1
@@ -248,7 +248,7 @@ sub CleanLicenseHeaderInDir {
 
 replace the XML element I<otrs_config> to I<otobo_config>.
 
-    $OTRSToOTOBOObject->MigrateXMLConfig(
+    $OTRSToCareOnCloudObject->MigrateXMLConfig(
         File         => '/opt/careoncloud/Test.pm',
     );
 
@@ -294,7 +294,7 @@ sub MigrateXMLConfig {
 
 clean given file to CareOnCloud ESM style
 
-    $OTRSToOTOBOObject->CleanOTRSFileToCareOnCloud ESMStyle(
+    $OTRSToCareOnCloudObject->CleanOTRSFileToCareOnCloud ESMStyle(
         FilePath         => '/opt/careoncloud/Test.pm',
         UserID           => 1,
     );
@@ -381,7 +381,7 @@ sub CleanOTRSFileToCareOnCloud ESMStyle {
 
 clean given directory to CareOnCloud ESM style
 
-    $OTRSToOTOBOObject->CleanOTRSFilesToCareOnCloud ESMStyleInDir(
+    $OTRSToCareOnCloudObject->CleanOTRSFilesToCareOnCloud ESMStyleInDir(
         Path         => '/opt/careoncloud/',
         Filter       => '*',
         Recursive    => 1
@@ -433,7 +433,7 @@ sub CleanOTRSFilesToCareOnCloud ESMStyleInDir {
 
 change the path and filenames from otrs to careoncloud
 
-    my $OK = $OTRSToOTOBOObject->ChangePathFileName(
+    my $OK = $OTRSToCareOnCloudObject->ChangePathFileName(
         File => "/opt/otrs/tmp/otrs/"
     );
 
@@ -498,7 +498,7 @@ sub ChangePathFileName {
 
 =head2 HandleFile()
 
-    my $Return = $OTRSToOTOBOObject->HandleFile(
+    my $Return = $OTRSToCareOnCloudObject->HandleFile(
         Target          => "/tmp/test.opm",
         File            => "/opt/otrs/var/tmp/",
         RwPath          => "/opt/otrs/var/tmp/",
@@ -591,7 +591,7 @@ sub HandleFile {
 
 create from .opm file a new clean .sopm file
 
-    my $ReturnPath = $OTRSToOTOBOObject->CopyOPMtoSOPMAndClean(
+    my $ReturnPath = $OTRSToCareOnCloudObject->CopyOPMtoSOPMAndClean(
         Source        => "/tmp/test.opm",
         TmpDirectory        => "/opt/otrs/var/tmp/",
     );
@@ -658,7 +658,7 @@ sub CopyOPMtoSOPMAndClean {
 
 get a file or directory from remote system, save to tmp directory, return Path.
 
-    my $ReturnPath = $OTRSToOTOBOObject->ExtractOPMPackage(
+    my $ReturnPath = $OTRSToCareOnCloudObject->ExtractOPMPackage(
         Source        => "/opt/otrs/",
         TmpDirectory        => "/opt/otrs/var/tmp/",
     );
@@ -716,7 +716,7 @@ sub ExtractOPMPackage {
 
 get a file or directory from remote system, save to tmp directory, return Path.
 
-    my $ReturnPath = $OTRSToOTOBOObject->CopyFileAndSaveAsTmp(
+    my $ReturnPath = $OTRSToCareOnCloudObject->CopyFileAndSaveAsTmp(
         FQDN        => "192.68.0.1",
         Path        => "opt/otrs/",
         SSHUser     => "root",
@@ -1644,7 +1644,7 @@ sub DBDirectBlobColumns {
 }
 
 # list of files that need to be copied
-sub CopyFileListfromOTRSToOTOBO {
+sub CopyFileListfromOTRSToCareOnCloud {
     my @Files = (
         '/Kernel/Config.pm',
         '/Kernel/Config.po',               # what is that ?
@@ -1673,7 +1673,7 @@ sub _ChangeFilePath {
         {
             FileTyp => 'All',
             Search  => 'OTRSBusiness',
-            Change  => 'OTOBOCommunity',
+            Change  => 'CareOnCloudCommunity',
         },
         {
             FileTyp => 'All',
@@ -1748,7 +1748,7 @@ sub _ChangeFileInfo {
         {
             FileType => 'All',
             Search   => 'OTRSBusiness',
-            Change   => 'OTOBOCommunity'
+            Change   => 'CareOnCloudCommunity'
         },
         {
             FileType => 'All',

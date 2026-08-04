@@ -1770,7 +1770,7 @@
     </Setting>
     <!--End Admin Interface -->
 
-    <!-- nofilter(TidyAll::Plugin::OTOBO::Znuny4OTOBO::Config::ACLKeysLevel3Actions) -->
+    <!-- nofilter(TidyAll::Plugin::OTOBO::Znuny4CareOnCloud::Config::ACLKeysLevel3Actions) -->
     <!-- AdminDynamicFieldImportExport -->
         <Setting Name="Frontend::Module###AdminDynamicFieldImportExport" Required="0" Valid="1">
             <Description Translatable="1">Frontend module registration for the admin interface.</Description>
@@ -1801,19 +1801,19 @@
                 <Hash>
                     <Item Key="JavaScript">
                         <Array>
-                            <Item>Core.Agent.Admin.Znuny4OTOBODynamicFieldImportExport.js</Item>
+                            <Item>Core.Agent.Admin.Znuny4CareOnCloudDynamicFieldImportExport.js</Item>
                         </Array>
                     </Item>
                 </Hash>
             </Value>
         </Setting>
     <!-- AdminDynamicField -->
-        <Setting Name="Frontend::Output::FilterElementPost###Znuny4OTOBOAdvancedDynamicFields" Required="0" Valid="1">
+        <Setting Name="Frontend::Output::FilterElementPost###Znuny4CareOnCloudAdvancedDynamicFields" Required="0" Valid="1">
             <Description Translatable="1">Defines the filter that processes the HTML templates.</Description>
             <Navigation>Frontend::Base::OutputFilter</Navigation>
             <Value>
                 <Hash>
-                    <Item Key="Module">Kernel::Output::HTML::FilterElementPost::Znuny4OTOBOAdvancedDynamicFields</Item>
+                    <Item Key="Module">Kernel::Output::HTML::FilterElementPost::Znuny4CareOnCloudAdvancedDynamicFields</Item>
                     <Item Key="Templates">
                         <Hash>
                             <Item Key="AdminDynamicField">1</Item>
@@ -1822,7 +1822,7 @@
                 </Hash>
             </Value>
         </Setting>
-        <Setting Name="Frontend::Template::GenerateBlockHooks###100-Znuny4OTOBOAdvancedDynamicFields" Required="1" Valid="1">
+        <Setting Name="Frontend::Template::GenerateBlockHooks###100-Znuny4CareOnCloudAdvancedDynamicFields" Required="1" Valid="1">
             <Description Translatable="1">Generate HTML comment hooks for the specified blocks so that filters can use them.</Description>
             <Navigation>Core</Navigation>
             <Value>
@@ -1872,7 +1872,7 @@
                         <Array>
                             <Item>Core.UI.AllocationList.js</Item>
                             <Item>Core.UI.Table.js</Item>
-                            <Item>Core.Agent.Admin.Znuny4OTOBODynamicFieldScreen.js</Item>
+                            <Item>Core.Agent.Admin.Znuny4CareOnCloudDynamicFieldScreen.js</Item>
                         </Array>
                     </Item>
                 </Hash>
@@ -1901,7 +1901,7 @@
                 </Hash>
             </Value>
         </Setting>
-        <Setting Name="Znuny4OTOBOAdvancedDynamicFields::DynamicFieldValid" Required="1" Valid="1">
+        <Setting Name="Znuny4CareOnCloudAdvancedDynamicFields::DynamicFieldValid" Required="1" Valid="1">
             <Description Translatable="1">This configuration defines if only valids or all (invalids) dynamic fields should be shown.</Description>
             <Navigation>Core</Navigation>
             <Value>
@@ -1912,7 +1912,7 @@
             </Value>
         </Setting>
         <!-- ITSMIncidentProblemManagement -->
-        <!-- Znuny4OTOBOAdvancedDynamicFields DynamicFieldScreens registration-->
+        <!-- Znuny4CareOnCloudAdvancedDynamicFields DynamicFieldScreens registration-->
         <Setting Name="DynamicFieldScreens###ITSMIncidentProblemManagement" Required="1" Valid="1">
             <Description Translatable="1">This configuration defines all possible screens to enable or disable dynamic fields.</Description>
             <Navigation>Frontend::Base::DynamicFieldScreens</Navigation>
@@ -1924,7 +1924,7 @@
             </Value>
         </Setting>
         <!-- ITSMChangeManagement -->
-        <!-- Znuny4OTOBOAdvancedDynamicFields DynamicFieldScreens registration-->
+        <!-- Znuny4CareOnCloudAdvancedDynamicFields DynamicFieldScreens registration-->
         <Setting Name="DynamicFieldScreens###ITSMChangeManagement" Required="1" Valid="1">
             <Description Translatable="1">This configuration defines all possible screens to enable or disable dynamic fields.</Description>
             <Navigation>Frontend::Base::DynamicFieldScreens</Navigation>

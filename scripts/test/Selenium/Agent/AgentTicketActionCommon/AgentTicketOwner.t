@@ -27,7 +27,7 @@ use Test2::V0;
 # CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # set up $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
-use Test2::Require::OTOBO::Selenium;         # run Selenium tests only when Selenium is configured
+use Test2::Require::CareOnCloud::Selenium;         # run Selenium tests only when Selenium is configured
 
 # get selenium object
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );

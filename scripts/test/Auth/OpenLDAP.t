@@ -27,7 +27,7 @@ use Net::LDAP::LDIF ();
 
 # CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Test2::Require::OTOBO::OpenLDAP;         # run OpenLDAP tests only when testing-openldap is reachable
+use Test2::Require::CareOnCloud::OpenLDAP;         # run OpenLDAP tests only when testing-openldap is reachable
 
 sub AlterConfig {
     my ($Settings) = @_;

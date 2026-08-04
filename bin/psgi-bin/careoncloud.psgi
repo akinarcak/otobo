@@ -634,7 +634,7 @@ my $CareOnCloudApp = builder {
         # handle the SysConfig setting HTTPSForceRedirect
         enable $RedirectToHTTPS;
 
-        enable 'OTOBO::PerformanceLog',
+        enable 'CareOnCloud::PerformanceLog',
             interface => 'Agent';
 
         Kernel::System::Web::InterfaceAgent->new(
@@ -646,7 +646,7 @@ my $CareOnCloudApp = builder {
 
         # check the SecureMode
         # Alternatively we could use Plack::Middleware::Access, but that modules is not available as a Debian package
-        enable 'OTOBO::SecureModeAccessFilter',
+        enable 'CareOnCloud::SecureModeAccessFilter',
             rules => [
                 deny => 'securemode_is_on',
             ];
@@ -660,7 +660,7 @@ my $CareOnCloudApp = builder {
 
         # check the SecureMode
         # Alternatively we could use Plack::Middleware::Access, but that modules is not available as a Debian package
-        enable 'OTOBO::SecureModeAccessFilter',
+        enable 'CareOnCloud::SecureModeAccessFilter',
             rules => [
                 deny => 'securemode_is_on',
             ];
@@ -680,7 +680,7 @@ my $CareOnCloudApp = builder {
         # handle the SysConfig setting HTTPSForceRedirect
         enable $RedirectToHTTPS;
 
-        enable 'OTOBO::PerformanceLog',
+        enable 'CareOnCloud::PerformanceLog',
             interface => 'Customer';
 
         enable $CheckCustomerInterfaceMiddleware;
@@ -695,7 +695,7 @@ my $CareOnCloudApp = builder {
         # handle the SysConfig setting HTTPSForceRedirect
         enable $RedirectToHTTPS;
 
-        enable 'OTOBO::PerformanceLog',
+        enable 'CareOnCloud::PerformanceLog',
             interface => 'Public';
 
         enable $CheckPublicInterfaceMiddleware;
@@ -712,7 +712,7 @@ my $CareOnCloudApp = builder {
 
         enable $RedirectToHTTPS;
 
-        enable 'OTOBO::PerformanceLog',
+        enable 'CareOnCloud::PerformanceLog',
             interface => 'Public';
 
         enable $CheckPublicInterfaceMiddleware;
@@ -774,7 +774,7 @@ my $CareOnCloudApp = builder {
 
         enable $RedirectToHTTPS;
 
-        enable 'OTOBO::PerformanceLog',
+        enable 'CareOnCloud::PerformanceLog',
             interface => 'Public';
 
         enable $CheckPublicInterfaceMiddleware;

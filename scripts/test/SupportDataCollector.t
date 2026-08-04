@@ -40,14 +40,14 @@ $Helper->ConfigSettingChange(
     Valid => 1,
     Key   => 'SupportDataCollector::DisablePlugins',
     Value => [
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment',
     ],
 );
 $Helper->ConfigSettingChange(
     Valid => 1,
     Key   => 'SupportDataCollector::IdentifierFilterBlacklist',
     Value => [
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::TimeSettings::UserDefaultTimeZone',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::TimeSettings::UserDefaultTimeZone',
     ],
 );
 
@@ -141,9 +141,9 @@ for my $ResultEntry ( @{ $Result{Result} || [] } ) {
 # Check if the identifier from the disabled plugions are not present.
 subtest 'SupportDataCollector::DisablePlugins disabled plugins should not be present' => sub {
     for my $DisabledPluginsIdentifier (
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment',
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment::Verification',
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment::FrameworkVersion',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment::Verification',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment::FrameworkVersion',
         )
     {
         ok( !$SeenIdentifier{$DisabledPluginsIdentifier}, "$DisabledPluginsIdentifier not present" );
@@ -152,8 +152,8 @@ subtest 'SupportDataCollector::DisablePlugins disabled plugins should not be pre
 
 # Check if the identifiers from the identifier filter blacklist are not present.
 ok(
-    !$SeenIdentifier{'Kernel::System::SupportDataCollector::Plugin::OTOBO::TimeSettings::UserDefaultTimeZone'},
-    "Collect() - SupportDataCollector::IdentifierFilterBlacklist - Kernel::System::SupportDataCollector::Plugin::OTOBO::TimeSettings::UserDefaultTimeZone should not be present"
+    !$SeenIdentifier{'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::TimeSettings::UserDefaultTimeZone'},
+    "Collect() - SupportDataCollector::IdentifierFilterBlacklist - Kernel::System::SupportDataCollector::Plugin::CareOnCloud::TimeSettings::UserDefaultTimeZone should not be present"
 );
 
 # cache tests

@@ -246,7 +246,7 @@ sub PerlInfoGet {
 
         # Add bundled modules and their version.
         # Only the modules that correspond to their distribution are listed here.
-        # Some modules, like Devel::REPL::Plugin::OTOBO, are supplied by CareOnCloud ESM
+        # Some modules, like Devel::REPL::Plugin::CareOnCloud, are supplied by CareOnCloud ESM
         my @BundledModules = Kernel::System::Environment->BundleModulesDeclarationGet;
         my %ModuleToVersion =
             map { $_ => $Self->ModuleVersionGet( Module => $_ ) }

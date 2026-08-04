@@ -27,7 +27,7 @@ use Test2::V0;
 
 # CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Test2::Require::OTOBO::Selenium;
+use Test2::Require::CareOnCloud::Selenium;
 use Kernel::System::UnitTest::Selenium;
 
 # get selenium object

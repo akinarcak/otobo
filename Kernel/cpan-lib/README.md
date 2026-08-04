@@ -80,7 +80,7 @@ The reason why specific files are not included in the bundle is not always evide
 
 These are Perl modules that belong to OTOBO but have to be in a specific namespace.
 
-    cp -r ../../../cpan-lib/Devel/REPL Devel    # the plugins Devel::REPL::Plugin::OTOBO is not on CPAN
+    cp -r ../../../cpan-lib/Devel/REPL Devel    # the plugins Devel::REPL::Plugin::CareOnCloud is not on CPAN
     cp -r ../../../cpan-lib/Plack Plack         # the Plack plugins are not on CPAN
     cp -r ../../../cpan-lib/Test2 Test2         # the OTOBO specific Test2::Require modules
     mkdir HTML

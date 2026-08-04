@@ -5979,33 +5979,33 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => 'Sanitetssjekker for database.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => 'Distribuer ACL-konfigurasjonen.',
         'Deployment completed, perfect!' => 'Utrullingen fullført, perfekt!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => 'Migrer databasetabell auto_responses.',
         'Migration failed.' => 'Migrering mislyktes.',
         'Migrate database table auto_response.' => 'Migrer databasetabell auto_response.',
         'Migration completed, perfect!' => 'Migrering fullført, perfekt!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
         'CareOnCloud ESM Cache cleanup.' => 'CareOnCloud ESM Cache-opprydding.',
         'Completed.' => 'Fullført.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => 'Trenger OTRSData->%s!',
         'Can\'t access OTRS home directory: %s!' => '',
         'All needed files copied and migrated, perfect!' => 'Alle nødvendige filer kopiert og migrert, perfekt!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => 'Kopier database.',
         'Skipped...' => 'Hoppet over...',
         'System was unable to connect to OTRS database.' => 'Systemet kunne ikke koble til OTRS-databasen.',
         'System was unable to complete data transfer.' => 'Systemet kunne ikke fullføre dataoverføringen.',
         'Data transfer completed.' => 'Dataoverføring fullført.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
         'Check if CareOnCloud ESM version is correct.' => 'Sjekk om CareOnCloud ESM-versjonen er riktig.',
         'Check if CareOnCloud ESM and OTRS connect is possible.' => 'Sjekk om CareOnCloud ESM og OTRS-tilkobling er mulig.',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
@@ -6023,13 +6023,13 @@ sub Data {
             'Ukjent PRODUKT funnet i OTRS RELASE-fil: %s. Forventede verdier er %s.',
         'OTRS Version is correct: %s.' => 'OTRS-versjonen er riktig: %s.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => 'Migrer ITSM-databasetabeller.',
         'Nothing to do, as the table \'%s\' does not exist.' => 'Ingenting å gjøre, siden tabellen \'%s\' ikke eksisterer.',
         'UPDATE of the table \'%s\' failed.' => 'OPPDATERING av tabellen \'%s\' mislyktes.',
         'Migration completed.' => 'Migrering fullført.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => 'Migrer konfigurasjonsinnstillinger.',
         'An error occurred during system configuration data migration or no configuration exists.' =>
             '',
@@ -6037,14 +6037,14 @@ sub Data {
             '',
         'SysConfig data migration completed.' => 'SysConfig-datamigrering fullført.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => 'Migrer nettjenestekonfigurasjon.',
         'Failed - see the log!' => 'Mislyktes - se loggen!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => 'Varsling om migrering av databasetabell.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             '',
         'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => 'Sjekk om Kernel/Config.pm finnes i CareOnCloud ESM home.',
@@ -6053,46 +6053,46 @@ sub Data {
         'Can\'t connect to OTRS file directory.' => 'Kan ikke koble til OTRS-filkatalogen.',
         'Connect to OTRS file directory is possible.' => 'Koble til OTRS filkatalog er mulig.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => 'Prøv databasetilkobling og tilregnelighetssjekker.',
         'Could not create database object.' => 'Kunne ikke opprette databaseobjekt.',
         'Database connect and sanity checks completed.' => 'Databasetilkobling og tilregnelighetskontroller fullført.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => 'Sjekk om alle nødvendige pakker er installert.',
         'The following packages are only installed in OTRS:' => 'Følgende pakker er kun installert i OTRS:',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             'Installer (eller avinstaller) pakkene før migrering. Hvis en pakke ikke eksisterer for OTOBO så langt, vennligst kontakt OTOBO-teamet på bugs\@otobo.org. Vi finner en løsning.',
         'The same packages are installed on both systems, perfect!' => 'De samme pakkene er installert på begge systemene, perfekt!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => 'Pakkespesifikke oppgaver',
         'Done -' => 'Ferdig -',
         'Failed at -' => 'Mislyktes på -',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => 'Sjekk om alle nødvendige Perl-moduler er installert.',
         '%s script does not exist.' => '%s-skriptet finnes ikke.',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             'En eller flere nødvendige Perl-moduler mangler. Installer dem som anbefalt, og kjør migreringsskriptet på nytt.',
         'All required Perl modules have been installed, perfect!' => 'Alle nødvendige Perl-moduler er installert, perfekt!',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => 'Migrer postmaster-filter.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => 'Distribuer prosessadministrasjonskonfigurasjonen.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => 'Migrer databasetabell responsmal.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => 'Migrer databasetabellhilsen.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => 'Migrer databasetabellsignatur.',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => 'Migrer statistikk.',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -6324,7 +6324,7 @@ sub Data {
         'Certificate check' => 'Sertifikatkontroll',
         'Found obsolete cryptographic function.' => 'Fant foreldet kryptografisk funksjon.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
         'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM diskpartisjon',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
@@ -6359,37 +6359,37 @@ sub Data {
         'There should be more than 60% free swap space.' => 'Det bør være mer enn 60% ledig swap diskplass.',
         'There should be no more than 200 MB swap space used.' => 'Det bær vær ikke være mer enn 200 MB brukt diskplass til swap.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
         'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => 'Artikkelsøkeindeksstatus',
         'Indexed Articles' => 'Indekserte artikler',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => 'Artikler per kommunikasjonskanal',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => 'Innkommende kommunikasjon',
         'Outgoing communications' => 'Utgående kommunikasjon',
         'Failed communications' => 'Mislykket kommunikasjon',
         'Average processing time of communications (s)' => 'Gjennomsnittlig behandlingstid for kommunikasjon(er)',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => 'Kommunikasjonsloggkontostatus (siste 24 timer)',
         'No connections found.' => 'Ingen tilkoblinger funnet.',
         'ok' => 'ok',
         'permanent connection errors' => 'permanente tilkoblingsfeil',
         'intermittent connection errors' => 'periodiske tilkoblingsfeil',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => 'Konfigurasjonsinnstillinger',
         'Could not determine value.' => 'Kunne ikke bestemme verdien.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => 'Agent',
         'Daemon is running.' => 'Daemon kjører.',
         'Daemon is not running.' => 'Agenten kjører ikke.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => 'Databaseposter',
         'Ticket History Entries' => 'Sakshistorikkoppføringer',
         'Articles' => 'Innlegg',
@@ -6404,26 +6404,26 @@ sub Data {
         'Tickets Per Month (avg)' => 'Saker per måned (gjennomsnittlig)',
         'Open Tickets' => 'Åpne saker',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => 'Standard administrator passord',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             'Sikkerhetsrisiko: agentkontoen root@localhost har fortsatt standardpassordet. Vennligst endre den eller ugyldiggjøre kontoen.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => 'Sendingskø for e-post',
         'Emails queued for sending' => 'E-poster i kø for sending',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => 'FQDN (fult domenenavn)',
         'Please configure your FQDN setting.' => 'Vennligst konfigurer din FQDN innstilling.',
         'Domain Name' => 'Domenenavn',
         'Your FQDN setting is invalid.' => 'Din FQDN innstilling er ugyldig.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => 'Filsystem Skrivbar',
         'The file system on your CareOnCloud ESM partition is not writable.' => 'Filsystemet for din CareOnCloud ESM partisjon er ikke mulig å skrive til.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => 'Eldre konfigurasjonssikkerhetskopier',
         'No legacy configuration backup files found.' => 'Finner ingen sikkerhetskopifiler for eldre konfigurasjoner.',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -6431,7 +6431,7 @@ sub Data {
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             'Sikkerhetskopieringsfiler for eldre konfigurasjoner er ikke lenger nødvendig for de installerte pakkene. Fjern dem fra mappen Kernel/Config/Backups.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => 'Installasjonsstatus for pakker',
         'Some packages have locally modified files.' => 'Noen pakker har lokalt modifiserte filer.',
         'Some packages are not correctly installed.' => 'Noen pakker er ikke riktig installert.',
@@ -6441,44 +6441,44 @@ sub Data {
         'Some packages are not allowed for the current framework version.' =>
             'Noen pakker er ikke tillatt for gjeldende rammeversjon.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => 'Pakkeliste',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => 'Innstillinger for øktkonfigurasjon',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => 'Spoolte e-poster',
         'There are emails in var/spool that CareOnCloud ESM could not process.' => 'Det er e-poster i var/spool som CareOnCloud ESM ikke kunne behandle.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             'Din SystemID innstilling er ugyldig, den kan bare inneholde tall.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => 'Standard sakstype',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             'Den konfigurerte standard sakstypen er ugyldig eller mangler. Vennligst endre innstillingen Ticket::Type::Standard og velg en gyldig sakstype.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => 'Saksindeksmodul',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             'Du har mer enn 60 000 saker og bør bruke StaticDB-backend. Se admin manual (Performance Tuning) for mer informasjon.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => 'Ugyldige brukere med låste saker',
         'There are invalid users with locked tickets.' => 'Det er ugyldige brukere med låste saker.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             'Du bør ikke ha mer enn 8000 åpne saker i systemet ditt.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => 'Modul for sakssøkindeks',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             'Indekseringsprosessen tvinger lagring av den opprinnelige artikkelteksten i artikkelsøkeindeksen, uten å utføre filtre eller bruke stoppordlister. Dette vil øke størrelsen på søkeindeksen og kan dermed redusere fulltekstsøk.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'Foreldreløse poster i ticket_lock_index-tabell',
         'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'Tabell ticket_lock_index inneholder foreldreløse poster. Vennligst kjør bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" for å rense StaticDB-indeksen.',
@@ -6486,7 +6486,7 @@ sub Data {
         'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'Tabell ticket_index inneholder foreldreløse poster. Vennligst kjør bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" for å rense StaticDB-indeksen.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => 'Tidsinnstillinger',
         'Server time zone' => 'Tjener tidssone',
         'CareOnCloud ESM time zone' => 'CareOnCloud ESM-tidssone',
@@ -6495,13 +6495,13 @@ sub Data {
         'User default time zone is not set.' => 'Brukerens standard tidssone er ikke angitt.',
         'Calendar time zone is not set.' => 'Kalenderens tidssone er ikke angitt.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => 'UI - Agents designbruk',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => 'UI – Agentdesignbruk',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => 'UI - Spesialstatistikk',
         'Agents using custom main menu ordering' => 'Agenter bruker tilpasset hovedmenybestilling',
         'Agents using favourites for the admin overview' => 'Agenter som bruker favoritter for adminoversikten',
@@ -7188,7 +7188,7 @@ sub Data {
         'Grouped' => 'Gruppert',
         'Stacked' => 'Stablet',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => 'Strøm',
         'Expanded' => 'Utvidet',
 

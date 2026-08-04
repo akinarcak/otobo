@@ -1751,7 +1751,7 @@ sub GetValidDynamicFields {
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $DynamicFieldValid = $ConfigObject->Get('Znuny4OTOBOAdvancedDynamicFields::DynamicFieldValid');
+    my $DynamicFieldValid = $ConfigObject->Get('Znuny4CareOnCloudAdvancedDynamicFields::DynamicFieldValid');
 
     my $DynamicFieldList = $Self->DynamicFieldListGet(
         %Param,

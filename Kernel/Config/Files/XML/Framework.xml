@@ -4678,7 +4678,7 @@ via the Preferences button after logging in.
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
                         <Item>thirdparty/canvg-1.4/canvg.js</Item>
@@ -8399,7 +8399,7 @@ via the Preferences button after logging in.
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
                         <Item>thirdparty/canvg-1.4/canvg.js</Item>
@@ -10497,7 +10497,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <!-- End SettingUser -->
-    <!-- nofilter(TidyAll::Plugin::OTOBO::Znuny4OTOBO::ACLKeysLevel3Actions) -->
+    <!-- nofilter(TidyAll::Plugin::OTOBO::Znuny4CareOnCloud::ACLKeysLevel3Actions) -->
     <Setting Name="Frontend::Module###ExternalURLJump" Required="0" Valid="0">
         <Description Translatable="1">Frontend module registration for the agent interface.</Description>
         <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
@@ -10647,7 +10647,7 @@ via the Preferences button after logging in.
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>Core.UI.AdvancedChart.js</Item>
                         <Item>Core.Agent.StatisticsReports.js</Item>
                     </Array>
@@ -10879,7 +10879,7 @@ via the Preferences button after logging in.
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
                         <Item>thirdparty/canvg-1.4/canvg.js</Item>

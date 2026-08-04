@@ -522,7 +522,7 @@
 #
 #                <div class="Header">
 #                    <h2>
-#                        [% Translate("Features for %s customers only") | html | ReplacePlaceholders(OTOBOCommunityLabel) %]
+#                        [% Translate("Features for %s customers only") | html | ReplacePlaceholders(CareOnCloudCommunityLabel) %]
 #                        → <a href="mailto:hallo@otobo.io">hallo@otobo.io</a>
 #                    </h2>
 #                </div>

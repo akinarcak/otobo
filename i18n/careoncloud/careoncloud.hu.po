@@ -19282,150 +19282,150 @@ msgstr ""
 msgid "Sanity checks for database."
 msgstr "Az adatbázis épségellenőrzései."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
 msgid "Deploy the ACL configuration."
 msgstr "Az ACL-beállítások üzembe állítása."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
 msgid "Deployment completed, perfect!"
 msgstr "Az üzembe állítás befejeződött, tökéletes!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migrate database table auto_responses."
 msgstr "Az automatikus válaszok adatbázistábla költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migration failed."
 msgstr "A költöztetés sikertelen."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migrate database table auto_response."
 msgstr "Az automatikus válasz adatbázistábla költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
 msgid "Migration completed, perfect!"
 msgstr "A költöztetés befejeződött, tökéletes!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
 msgid "CareOnCloud ESM Cache cleanup."
 msgstr "Az CareOnCloud ESM gyorsítótárának törlése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
 msgid "Completed."
 msgstr "Befejezve."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
 msgid "Need OTRSData->%s!"
 msgstr "OTRS-adatok->%s szükséges!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
 msgid "Can't access OTRS home directory: %s!"
 msgstr "Nem lehet elérni az OTRS saját könyvtárát: %s!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
 msgid "All needed files copied and migrated, perfect!"
 msgstr "Az összes szükséges fájl átmásolva és költöztetve, tökéletes!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "Copy database."
 msgstr "Adatbázis másolása."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "Skipped..."
 msgstr "Kihagyva…"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "System was unable to connect to OTRS database."
 msgstr "A rendszer nem tudott kapcsolódni az OTRS adatbázisához."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "System was unable to complete data transfer."
 msgstr "A rendszer nem tudta befejezni az adatátvitelt."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
 msgid "Data transfer completed."
 msgstr "Az adatátvitel befejeződött."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if CareOnCloud ESM version is correct."
 msgstr "Annak ellenőrzése, hogy az CareOnCloud ESM verziója helyes-e."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if CareOnCloud ESM and OTRS connect is possible."
 msgstr ""
 "Annak ellenőrzése, hogy az CareOnCloud ESM és az OTRS összekapcsolása lehetséges-e."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Can't open RELEASE file from OTRS home directory: %s!"
 msgstr "Nem lehet megnyitni a RELEASE fájlt az OTRS saját könyvtárából: %s!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if CareOnCloud ESM and OTRS version is correct."
 msgstr "Annak ellenőrzése, hogy az CareOnCloud ESM és az OTRS verziója helyes-e."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "%s does not exist!"
 msgstr "A(z) %s nem létezik!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "No CareOnCloud ESM system found!"
 msgstr "Nem található CareOnCloud ESM rendszer!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "You are trying to run this script on the wrong framework version %s!"
 msgstr "Ezt a parancsfájlt rossz keretrendszer-verzión (%s) próbálja futtatni!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "CareOnCloud ESM Version is correct: %s."
 msgstr "Az CareOnCloud ESM verziója helyes: %s."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Check if OTRS version is correct."
 msgstr "Annak ellenőrzése, hogy az OTRS verziója helyes-e."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "OTRS RELEASE file %s does not exist!"
 msgstr "A(z) %s OTRS RELEASE fájl nem létezik!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Can't read OTRS RELEASE file: %s"
 msgstr "Nem lehet olvasni az OTRS RELEASE fájlt: %s"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "No OTRS system found!"
 msgstr "Nem található OTRS rendszer!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "Unknown PRODUCT found in OTRS RELEASE file: %s. Expected values are %s."
 msgstr ""
 "Ismeretlen PRODUCT található az OTRS RELEASE fájlban: %s. Az elvárt értékek: "
 "%s."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
 msgid "OTRS Version is correct: %s."
 msgstr "Az OTRS verziója helyes: %s."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "Migrate ITSM database tables."
 msgstr "Az ITSM adatbázistábláinak költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "Nothing to do, as the table '%s' does not exist."
 msgstr "Nincs mit tenni, mivel a(z) „%s” tábla nem létezik."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "UPDATE of the table '%s' failed."
 msgstr "A(z) „%s” tábla FRISSÍTÉSE sikertelen."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
 msgid "Migration completed."
 msgstr "A költöztetés befejeződött."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 msgid "Migrate configuration settings."
 msgstr "A konfigurációs beállítások költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 msgid ""
 "An error occurred during system configuration data migration or no "
 "configuration exists."
@@ -19433,7 +19433,7 @@ msgstr ""
 "Hiba történt a rendszerbeállítási adatok költöztetése során, vagy nem "
 "léteznek a beállítások."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 msgid ""
 "An error occurred during system configuration migration when writing XML to "
 "DB."
@@ -19441,73 +19441,73 @@ msgstr ""
 "Hiba történt a rendszerbeállítások költöztetése során az XML-tartalom "
 "adatbázisba írásakor."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
 msgid "SysConfig data migration completed."
 msgstr "A rendszerbeállítás adatainak költöztetése befejeződött."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
 msgid "Migrate web service configuration."
 msgstr "A webszolgáltatás beállításainak költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
 msgid "Failed - see the log!"
 msgstr "Sikertelen – nézze meg a naplót!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
 msgid "Migrate database table notification."
 msgstr "Az értesítés adatbázistábla költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Can't open Kernel/Config.pm file from OTRS home directory: %s!"
 msgstr ""
 "Nem lehet megnyitni a „Kernel/Config.pm” fájlt az OTRS saját könyvtárából: "
 "%s!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Check if Kernel/Config.pm exists in CareOnCloud ESM home."
 msgstr ""
 "Annak ellenőrzése, hogy a „Kernel/Config.pm” létezik-e az CareOnCloud ESM saját "
 "könyvtárában."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Kernel/Config.pm exists in CareOnCloud ESM home"
 msgstr "A „Kernel/Config.pm” létezik az CareOnCloud ESM saját könyvtárában"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Check if we are able to connect to OTRS home directory."
 msgstr ""
 "Annak ellenőrzése, hogy képesek vagyunk-e kapcsolódni az OTRS saját "
 "könyvtárához."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Can't connect to OTRS file directory."
 msgstr "Nem lehet kapcsolódni az OTRS fájlkönyvtárához."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
 msgid "Connect to OTRS file directory is possible."
 msgstr "Az OTRS fájlkönyvtárához való kapcsolódás lehetséges."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
 msgid "Try database connect and sanity checks."
 msgstr "Az adatbázis-kapcsolódás és az épségellenőrzések próbája."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
 msgid "Could not create database object."
 msgstr "Nem sikerült létrehozni az adatbázis-objektumot."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
 msgid "Database connect and sanity checks completed."
 msgstr "Az adatbázis-kapcsolódás és az épségellenőrzések befejeződtek."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid "Check if all necessary packages are installed."
 msgstr "Annak ellenőrzése, hogy az összes szükséges csomag telepítve van-e."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid "The following packages are only installed in OTRS:"
 msgstr "A következő csomagok csak az OTRS-ben vannak telepítve:"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid ""
 "Please install (or uninstall) the packages before migration. If a package "
 "doesn't exist for CareOnCloud ESM so far, please contact the CareOnCloud ESM Team at bugs\\"
@@ -19517,32 +19517,32 @@ msgstr ""
 "csomag eddig még nem létezik az CareOnCloud ESM-hoz, akkor vegye fel a kapcsolatot az "
 "OTOBO csapattal a bugs\\\\@otobo.org címen. Meg fogjuk találni a megoldást."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
 msgid "The same packages are installed on both systems, perfect!"
 msgstr "Ugyanazok a csomagok vannak telepítve mindkét rendszeren, tökéletes!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
 msgid "Package specific tasks"
 msgstr "Csomagra jellemző feladatok"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
 msgid "Done -"
 msgstr "Kész –"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
 msgid "Failed at -"
 msgstr "Sikertelen itt –"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid "Check if all needed Perl modules have been installed."
 msgstr ""
 "Annak ellenőrzése, hogy az összes szükséges Perl-modul telepítve van-e."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid "%s script does not exist."
 msgstr "A(z) %s parancsfájl nem létezik."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid ""
 "One or more required Perl modules are missing. Please install them as "
 "recommended, and run the migration script again."
@@ -19550,31 +19550,31 @@ msgstr ""
 "Egy vagy több szükséges Perl-modul hiányzik. Telepítse azokat az "
 "ajánlásoknak megfelelően, majd futtassa újra a költöztető parancsfájlt."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
 msgid "All required Perl modules have been installed, perfect!"
 msgstr "Az összes szükséges Perl-modul telepítve van, tökéletes!"
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
 msgid "Migrate postmaster filter."
 msgstr "A levelezési szűrő költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
 msgid "Deploy the process management configuration."
 msgstr "A folyamatkezelés beállításainak üzembe állítása."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
 msgid "Migrate database table response_template."
 msgstr "A válaszsablon adatbázistábla költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
 msgid "Migrate database table salutation."
 msgstr "A megszólítás adatbázistábla költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
 msgid "Migrate database table signature."
 msgstr "Az aláírás adatbázistábla költöztetése."
 
-#. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+#. Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
 msgid "Migrate statistics."
 msgstr "A statisztikák költöztetése."
 
@@ -20191,7 +20191,7 @@ msgstr "Tanúsítvány-ellenőrzés"
 msgid "Found obsolete cryptographic function."
 msgstr "Elavult kriptográfiai függvény található."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
 msgid "CareOnCloud ESM Disk Partition"
 msgstr "CareOnCloud ESM lemezpartíció"
 
@@ -20268,135 +20268,135 @@ msgstr "60%-nál több szabad lapozófájlnak kellene lennie."
 msgid "There should be no more than 200 MB swap space used."
 msgstr "200 MB-nál nem kellene több lapozófájlt használni."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
 msgid "CareOnCloud ESM"
 msgstr "CareOnCloud ESM"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
 msgid "Article Search Index Status"
 msgstr "Bejegyzés keresési index állapot"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
 msgid "Indexed Articles"
 msgstr "Indexelt bejegyzések"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
 msgid "Articles Per Communication Channel"
 msgstr "Bejegyzések kommunikációs csatornánként"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Incoming communications"
 msgstr "Bejövő kommunikációk"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Outgoing communications"
 msgstr "Kimenő kommunikációk"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Failed communications"
 msgstr "Sikertelen kommunikációk"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
 msgid "Average processing time of communications (s)"
 msgstr "Kommunikációk átlagos feldolgozási ideje (mp)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "Communication Log Account Status (last 24 hours)"
 msgstr "Kommunikációs napló fiókjának állapota (az elmúlt 24 óra)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "No connections found."
 msgstr "Nem találhatók kapcsolatok."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "ok"
 msgstr "OK"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "permanent connection errors"
 msgstr "állandó kommunikációs hibák"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
 msgid "intermittent connection errors"
 msgstr "időszakos kommunikációs hibák"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
 msgid "Config Settings"
 msgstr "Konfigurációs beállítások"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
 msgid "Could not determine value."
 msgstr "Nem sikerült meghatározni az értéket."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
 msgid "Daemon"
 msgstr "Démon"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
 msgid "Daemon is running."
 msgstr "A démon fut."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
 msgid "Daemon is not running."
 msgstr "A démon nem fut."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Database Records"
 msgstr "Adatbázis rekordok"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Ticket History Entries"
 msgstr "Jegy előzmény bejegyzések"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Articles"
 msgstr "Bejegyzések"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Attachments (DB, Without HTML)"
 msgstr "Mellékletek (DB, HTML nélkül)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Customers With At Least One Ticket"
 msgstr "Legalább egy jeggyel rendelkező ügyfelek"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Dynamic Field Values"
 msgstr "Dinamikus mező értékek"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Invalid Dynamic Fields"
 msgstr "Érvénytelen dinamikus mezők"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Invalid Dynamic Field Values"
 msgstr "Érvénytelen dinamikus mező értékek"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "GenericInterface Webservices"
 msgstr "Általános felület webszolgáltatások"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Process Tickets"
 msgstr "Folyamatjegyek"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Months Between First And Last Ticket"
 msgstr "Az első és az utolsó jegy közti hónapok"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Tickets Per Month (avg)"
 msgstr "Jegyek havonta (átlag)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
 msgid "Open Tickets"
 msgstr "Nyitott jegyek"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
 msgid "Default Admin Password"
 msgstr "Alapértelmezett adminisztrátor jelszó"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
 msgid ""
 "Security risk: the agent account root@localhost still has the default "
 "password. Please change it or invalidate the account."
@@ -20404,47 +20404,47 @@ msgstr ""
 "Biztonsági kockázat: a root@localhost ügyintéző fióknak még mindig az "
 "alapértelmezett jelszava van. Változtassa meg, vagy érvénytelenítse a fiókot."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
 msgid "Email Sending Queue"
 msgstr "E-mail várakozási sor"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
 msgid "Emails queued for sending"
 msgstr "Küldéshez sorba állított e-mailek"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "FQDN (domain name)"
 msgstr "FQDN (tartománynév)"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "Please configure your FQDN setting."
 msgstr "Állítsa be az FQDN beállítását."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "Domain Name"
 msgstr "Tartománynév"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
 msgid "Your FQDN setting is invalid."
 msgstr "Az FQDN beállítás érvénytelen."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
 msgid "File System Writable"
 msgstr "Fájlrendszer írhatóság"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
 msgid "The file system on your CareOnCloud ESM partition is not writable."
 msgstr "Az CareOnCloud ESM partíció fájlrendszere nem írható."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid "Legacy Configuration Backups"
 msgstr "Örökölt konfigurációs biztonsági mentések"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid "No legacy configuration backup files found."
 msgstr "Nem találhatók örökölt biztonsági mentés fájlok."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid ""
 "Legacy configuration backup files found in Kernel/Config/Backups folder, but "
 "they might still be required by some packages."
@@ -20452,7 +20452,7 @@ msgstr ""
 "Örökölt konfigurációs biztonsági mentés fájlok találhatók a Kernel/Config/"
 "Backups mappában, de néhány csomagnak még szükségük lehet rájuk."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
 msgid ""
 "Legacy configuration backup files are no longer needed for the installed "
 "packages, please remove them from Kernel/Config/Backups folder."
@@ -20460,62 +20460,62 @@ msgstr ""
 "Az örökölt konfigurációs biztonsági mentés fájlok többé nem szükségesek a "
 "telepített csomagokhoz, távolítsa el azokat a Kernel/Config/Backups mappából."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Package Installation Status"
 msgstr "Csomagtelepítési állapot"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages have locally modified files."
 msgstr "Néhány csomag helyileg módosított fájlokkal rendelkezik."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages are not correctly installed."
 msgstr "Néhány csomag nincs megfelelően telepítve."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Package Verification Status"
 msgstr "Csomagellenőrzési állapot"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages are not verified by the CareOnCloud ESM Team."
 msgstr "Néhány csomagot nem ellenőrzött az CareOnCloud ESM csapat."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Package Framework Version Status"
 msgstr "Csomag keretrendszer verziójának állapota"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
 msgid "Some packages are not allowed for the current framework version."
 msgstr "Néhány csomag nem engedélyezett a jelenlegi keretrendszer verzióhoz."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
 msgid "Package List"
 msgstr "Csomaglista"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
 msgid "Session Config Settings"
 msgstr "Munkamenet-konfigurációs beállítások"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
 msgid "Spooled Emails"
 msgstr "Várakozási sorba helyezett levelek"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
 msgid "There are emails in var/spool that CareOnCloud ESM could not process."
 msgstr ""
 "Olyan levelek találhatók a var/spool mappában, amelyeket az CareOnCloud ESM nem tudott "
 "feldolgozni."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
 msgid "Your SystemID setting is invalid, it should only contain digits."
 msgstr ""
 "A rendszer-azonosító beállítás érvénytelen, csak számjegyeket tartalmazhat."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
 msgid "Default Ticket Type"
 msgstr "Alapértelmezett jegytípus"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
 msgid ""
 "The configured default ticket type is invalid or missing. Please change the "
 "setting Ticket::Type::Default and select a valid ticket type."
@@ -20524,11 +20524,11 @@ msgstr ""
 "Változtassa meg a Ticket::Type::Default beállításait, és válasszon egy "
 "érvényes jegytípust."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
 msgid "Ticket Index Module"
 msgstr "Jegyindexelő modul"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
 msgid ""
 "You have more than 60,000 tickets and should use the StaticDB backend. See "
 "admin manual (Performance Tuning) for more information."
@@ -20537,23 +20537,23 @@ msgstr ""
 "használnia. További információkért nézze meg az adminisztrátori kézikönyvet "
 "(Teljesítmény finomhangolás)."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
 msgid "Invalid Users with Locked Tickets"
 msgstr "Érvénytelen felhasználók zárolt jegyekkel"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
 msgid "There are invalid users with locked tickets."
 msgstr "Zárolt jegyekkel rendelkező érvénytelen felhasználók vannak."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
 msgid "You should not have more than 8,000 open tickets in your system."
 msgstr "Nem kellene 8000 nyitott jegynél többel rendelkeznie a rendszeren."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
 msgid "Ticket Search Index Module"
 msgstr "Jegykeresés indexelő modul"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
 msgid ""
 "The indexing process forces the storage of the original article text in the "
 "article search index, without executing filters or applying stop word lists. "
@@ -20565,11 +20565,11 @@ msgstr ""
 "kiszűrendő szavak listáit alkalmazná. Ez meg fogja növelni a keresési index "
 "méretét, és ezért lelassíthatja a szabad-szavas kereséseket."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid "Orphaned Records In ticket_lock_index Table"
 msgstr "Árva rekordok a ticket_lock_index táblában"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid ""
 "Table ticket_lock_index contains orphaned records. Please run bin/"
 "careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" to clean the StaticDB "
@@ -20579,11 +20579,11 @@ msgstr ""
 "careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" parancsot a StaticDB "
 "index tisztításához."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid "Orphaned Records In ticket_index Table"
 msgstr "Árva rekordok a ticket_index táblában"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
 msgid ""
 "Table ticket_index contains orphaned records. Please run bin/"
 "careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" to clean the StaticDB "
@@ -20593,51 +20593,51 @@ msgstr ""
 "careoncloud.Console.pl \"Maint::Ticket::QueueIndexCleanup\" parancsot a StaticDB "
 "index tisztításához."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "Time Settings"
 msgstr "Időbeállítások"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "Server time zone"
 msgstr "Kiszolgáló időzónája"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "CareOnCloud ESM time zone"
 msgstr "CareOnCloud ESM időzóna"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "CareOnCloud ESM time zone is not set."
 msgstr "Az CareOnCloud ESM időzónája nincs beállítva."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "User default time zone"
 msgstr "Felhasználó alapértelmezett időzónája"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "User default time zone is not set."
 msgstr "A felhasználó alapértelmezett időzónája nincs beállítva."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
 msgid "Calendar time zone is not set."
 msgstr "A naptár időzónája nincs beállítva."
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
 msgid "UI - Agent Skin Usage"
 msgstr "UI – ügyintézői felszín használat"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
 msgid "UI - Agent Theme Usage"
 msgstr "UI – ügyintézői téma használat"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
 msgid "UI - Special Statistics"
 msgstr "UI – különleges statisztikák"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
 msgid "Agents using custom main menu ordering"
 msgstr "Egyéni menürendezést használó ügyintézők"
 
-#. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+#. Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
 msgid "Agents using favourites for the admin overview"
 msgstr "Kedvenceket használó ügyintézők az adminisztrációs áttekintőnél"
 
@@ -22511,11 +22511,11 @@ msgstr "Csoportosított"
 msgid "Stacked"
 msgstr "Halmozott"
 
-#. JS File: OTOBOStackedAreaChart
+#. JS File: CareOnCloudStackedAreaChart
 msgid "Stream"
 msgstr "Folyam"
 
-#. JS File: OTOBOStackedAreaChart
+#. JS File: CareOnCloudStackedAreaChart
 msgid "Expanded"
 msgstr "Kifeszített"
 
@@ -37098,8 +37098,8 @@ msgstr "statisztikák"
 #~ "„Karcsú” felszín, amely képernyőhelyet próbál megspórolni a haladó "
 #~ "felhasználóknak."
 
-#~ msgid "Autoloading of Znuny4OTOBOPasswordPolicy extensions."
-#~ msgstr "A Znuny4OTOBOPasswordPolicy kiterjesztések automatikus betöltése."
+#~ msgid "Autoloading of Znuny4CareOnCloudPasswordPolicy extensions."
+#~ msgstr "A Znuny4CareOnCloudPasswordPolicy kiterjesztések automatikus betöltése."
 
 #~ msgid "Balanced white skin by Felix Niklas (slim version)."
 #~ msgstr "Kiegyenlített fehér felszín Felix Niklas-tól (karcsú változat)."

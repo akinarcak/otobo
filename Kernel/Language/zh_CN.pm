@@ -5977,33 +5977,33 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => '数据库完整性检查。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => '部署ACL配置。',
         'Deployment completed, perfect!' => '部署完成，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => '迁移数据库表单auto_responses。',
         'Migration failed.' => '迁移失败。',
         'Migrate database table auto_response.' => '迁移数据库表单auto_responses。',
         'Migration completed, perfect!' => '迁移完成，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
         'CareOnCloud ESM Cache cleanup.' => 'CareOnCloud ESM缓存清除。',
         'Completed.' => '完成。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => '需要 OTRSData->%s！',
         'Can\'t access OTRS home directory: %s!' => '',
         'All needed files copied and migrated, perfect!' => '所有需要的文件都已经复制并迁移了，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => '复制数据库。',
         'Skipped...' => '',
         'System was unable to connect to OTRS database.' => '系统无法连接OTRS数据库。',
         'System was unable to complete data transfer.' => '系统无法完成数据传递。',
         'Data transfer completed.' => '数据传递完成。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
         'Check if CareOnCloud ESM version is correct.' => '检查CareOnCloud ESM的版本是否正确。',
         'Check if CareOnCloud ESM and OTRS connect is possible.' => '检查CareOnCloud ESM和OTRS能否连接。',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
@@ -6021,13 +6021,13 @@ sub Data {
             '',
         'OTRS Version is correct: %s.' => 'OTRS版本正确：%s。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => '',
         'Nothing to do, as the table \'%s\' does not exist.' => '',
         'UPDATE of the table \'%s\' failed.' => '',
         'Migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => '迁移配置设置。',
         'An error occurred during system configuration data migration or no configuration exists.' =>
             '',
@@ -6035,14 +6035,14 @@ sub Data {
             '',
         'SysConfig data migration completed.' => 'SysConfig数据迁移完成了。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => '迁移网络服务配置。',
         'Failed - see the log!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => '迁移数据库表通知。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             '',
         'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => '检查CareOnCloud ESM主页中是否存在Kernel / Config.pm。',
@@ -6051,46 +6051,46 @@ sub Data {
         'Can\'t connect to OTRS file directory.' => '无法连接到OTRS文件目录。',
         'Connect to OTRS file directory is possible.' => '可能可以连接到OTRS文件目录。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => '尝试进行数据库连接和完整性检查。',
         'Could not create database object.' => '无法创建数据库对象。',
         'Database connect and sanity checks completed.' => '连接到数据库并且完整性检查完成。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => '检查是否所有需要的软件包都已经安装。',
         'The following packages are only installed in OTRS:' => '下面的软件包只安装到OTRS：',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             '请在迁移之前安装（或者卸载）这个软件包，如果某一个软件包没有适用OTOBO的，请通过bugs\@otobo.org联系OTOBO团队，我们会找到一个解决方案。',
         'The same packages are installed on both systems, perfect!' => '同样的软件包可以安装在两个系统上，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => '',
         'Done -' => '',
         'Failed at -' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => '检查是否所有需要的Perl模块都已经安装。',
         '%s script does not exist.' => '%s 脚本不存在。',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             '一个或多个需要的Perl模块缺失，请按照建议安装它们，而后重新运行迁移脚本。',
         'All required Perl modules have been installed, perfect!' => '所有需要的Perl模块都已经安装，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => '迁移邮件管理过滤器。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => '部署流程管理配置。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => '迁移数据库表单响应_模板。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => '迁移数据库表单称呼。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => '迁移数据库表单签名。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => '迁移统计数据。',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -6322,7 +6322,7 @@ sub Data {
         'Certificate check' => '',
         'Found obsolete cryptographic function.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
         'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM磁盘分区',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
@@ -6357,37 +6357,37 @@ sub Data {
         'There should be more than 60% free swap space.' => '需要至少60%的可用交换空间。',
         'There should be no more than 200 MB swap space used.' => '交换空间不应该使用超过200MB。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
         'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => '信件搜索索引状态',
         'Indexed Articles' => '索引过的信件',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => '信件/通信渠道',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => '传入的通信',
         'Outgoing communications' => '外发的通信',
         'Failed communications' => '失败的通信',
         'Average processing time of communications (s)' => '通信平均处理时间',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => '通讯日志帐号状态（最近24小时）',
         'No connections found.' => '找不到连接。',
         'ok' => 'OK',
         'permanent connection errors' => '永久性连接错误',
         'intermittent connection errors' => '间歇性连接错误',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => '配置设置',
         'Could not determine value.' => '不能确定参数值。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => '守护进程',
         'Daemon is running.' => '守护进程正在运行。',
         'Daemon is not running.' => '守护进程没有运行。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => '数据库记录',
         'Ticket History Entries' => '工单历史条目',
         'Articles' => '信件',
@@ -6402,26 +6402,26 @@ sub Data {
         'Tickets Per Month (avg)' => '平均每月工单数',
         'Open Tickets' => '处理中的工单',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => '默认的系统管理员密码',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             '安全风险：服务人员帐户root@localhost还在使用默认密码。请修改密码或禁用此帐户。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => '电子邮件发送队列',
         'Emails queued for sending' => '已排队准备发送的电子邮件',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => '正式域名',
         'Please configure your FQDN setting.' => '请配置您的正式域名。',
         'Domain Name' => '域名',
         'Your FQDN setting is invalid.' => '您的正式域名无效。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => '文件系统是可写的',
         'The file system on your CareOnCloud ESM partition is not writable.' => 'CareOnCloud ESM分区所有文件系统是不可写的。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => '遗留的配置备份',
         'No legacy configuration backup files found.' => '找不到遗留的配置备份文件。',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -6429,7 +6429,7 @@ sub Data {
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             '已安装的软件包不再需要旧的配置备份文件，请从 Kernel/Config/Backups 文件夹中删除它们。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => '软件包安装状态',
         'Some packages have locally modified files.' => '一些软件包有在本地修改过的文件。',
         'Some packages are not correctly installed.' => '一些软件包没有正确安装。',
@@ -6439,44 +6439,44 @@ sub Data {
         'Some packages are not allowed for the current framework version.' =>
             '一些软件包无法在当前的框架版本中使用。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => '软件包列表',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => '会话配置设置',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => '假脱机邮件',
         'There are emails in var/spool that CareOnCloud ESM could not process.' => 'var/spool 目录下有一些CareOnCloud ESM无法处理的邮件。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             '您的系统ID设置无效，它只能包含数字。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => '默认工单类型',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             '配置的默认工单类型无效或缺失，请修改设置Ticket::Type::Default，选择一个有效的工单类型。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => '工单索引模块',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             '您已经超过60000个工单，应该使用后端静态数据库。请参阅管理员手册（性能调优部分）查阅更多信息。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => '有锁定的工单的无效用户',
         'There are invalid users with locked tickets.' => '出现了有锁定的工单的无效用户。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             '您的系统不能有超过8000个处理中的工单。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => '工单搜索索引模块',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             '索引进程强制将原始信件文本存储在信件搜索索引中，而不执行过滤器或应用停用词列表。 这将增加搜索索引的大小，从而可能减慢全文搜索。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'ticket_lock_index 表中的孤儿记录',
         'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'ticket_lock_index 表中包含孤儿记录。请运行bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup"清理静态数据库的索引。',
@@ -6484,7 +6484,7 @@ sub Data {
         'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             'ticket_index表中包含孤儿记录，请运行bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup"，清理静态数据库的索引。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => '时间设置',
         'Server time zone' => '服务器时区',
         'CareOnCloud ESM time zone' => 'CareOnCloud ESM时区',
@@ -6493,13 +6493,13 @@ sub Data {
         'User default time zone is not set.' => '用户默认时区未设置。',
         'Calendar time zone is not set.' => '日历时区未设置。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => '用户界面 - 服务人员皮肤用法',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => '用户界面 - 服务人员主题用法',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => '用户界面 - 特殊的统计',
         'Agents using custom main menu ordering' => '服务人员使用定制的主菜单排序',
         'Agents using favourites for the admin overview' => '服务人员在系统管理概览使用收藏夹',
@@ -7186,7 +7186,7 @@ sub Data {
         'Grouped' => '分组的',
         'Stacked' => '堆叠的',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => '流',
         'Expanded' => '展开的',
 

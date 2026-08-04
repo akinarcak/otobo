@@ -102,7 +102,7 @@ sub Run {
 
         # Copy our own extension for Devel::REPL from previous cpan-lib folder.
         make_path("$CPAN2Dir/Devel/REPL/Plugin");
-        system("cp -r $CPANDir/Devel/REPL/Plugin/OTOBO.pm $CPAN2Dir/Devel/REPL/Plugin/OTOBO.pm");
+        system("cp -r $CPANDir/Devel/REPL/Plugin/CareOnCloud.pm $CPAN2Dir/Devel/REPL/Plugin/CareOnCloud.pm");
 
         # Replace cpan-lib folder.
         remove_tree($CPANDir) || die "Could not remove $CPANDir: $!.";

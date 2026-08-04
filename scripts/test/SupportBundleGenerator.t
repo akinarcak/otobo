@@ -55,7 +55,7 @@ $Helper->ConfigSettingChange(
     Valid => 1,
     Key   => 'SupportDataCollector::DisablePlugins',
     Value => [
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment',
     ],
 );
 

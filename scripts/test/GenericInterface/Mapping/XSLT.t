@@ -149,7 +149,7 @@ my @Tests = (
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
  extension-element-prefixes="careoncloud">
-<xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
+<xsl:import href="$Home/Kernel/GenericInterface/Mapping/CareOnCloudFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
 <NewRootElement>
@@ -180,7 +180,7 @@ my @Tests = (
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
  extension-element-prefixes="careoncloud">
-<xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
+<xsl:import href="$Home/Kernel/GenericInterface/Mapping/CareOnCloudFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
 <NewRootElement>
@@ -292,7 +292,7 @@ my @Tests = (
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
  extension-element-prefixes="careoncloud">
-<xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
+<xsl:import href="$Home/Kernel/GenericInterface/Mapping/CareOnCloudFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
 <NewRootElement>
@@ -363,7 +363,7 @@ my @Tests = (
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
  extension-element-prefixes="careoncloud">
-<xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
+<xsl:import href="$Home/Kernel/GenericInterface/Mapping/CareOnCloudFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
 <NewRootElement>
@@ -402,7 +402,7 @@ my @Tests = (
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
  extension-element-prefixes="careoncloud">
-<xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
+<xsl:import href="$Home/Kernel/GenericInterface/Mapping/CareOnCloudFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
 <NewRootElement>

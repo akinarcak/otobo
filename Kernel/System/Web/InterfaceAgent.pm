@@ -404,7 +404,7 @@ sub _Content {
             Name                     => 'PluginAsynchronous::ConcurrentUser',
             MaximumParallelInstances => 1,
             Data                     => {
-                Object   => 'Kernel::System::SupportDataCollector::PluginAsynchronous::OTOBO::ConcurrentUsers',
+                Object   => 'Kernel::System::SupportDataCollector::PluginAsynchronous::CareOnCloud::ConcurrentUsers',
                 Function => 'RunAsynchronous',
             },
         );

@@ -61,7 +61,7 @@ sub Run {
     if ( $TemplateName =~ m {ProcessManagement} ) {
 
         # Define SysConfig key to store the dynamic field names
-        my $ConfigKey = "OTOBOCommunity::DynamicFieldDB::$Self->{SessionID}::ProcessManagement";
+        my $ConfigKey = "CareOnCloudCommunity::DynamicFieldDB::$Self->{SessionID}::ProcessManagement";
 
         if ( $TemplateName eq 'ProcessManagement/DynamicField' ) {
 
@@ -132,9 +132,9 @@ sub Run {
     # Add a hidden input containing DynamicField names.
     my $Search  = '(\s+<input type="hidden" name="Action")';
     my $Replace = <<"END";
-\n<!--Start OTOBOCommunity-->
+\n<!--Start CareOnCloudCommunity-->
 <input type="hidden" name="DynamicFieldNamesStrg" id="DynamicFieldNamesStrg" value="$DynamicFieldNamesStrg" />
-<!--End OTOBOCommunity-->
+<!--End CareOnCloudCommunity-->
 END
 
     # For process management we need to add the hidden input before the closure of the field set.
