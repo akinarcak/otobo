@@ -135,7 +135,7 @@ sub SystemDataAdd {
 get system data for key
 
     my $SystemData = $SystemDataObject->SystemDataGet(
-        Key => 'OTOBO Version',
+        Key => 'CareOnCloud ESM Version',
     );
 
 returns value as a simple scalar, or undef if the key does not exist.
@@ -281,7 +281,7 @@ Returns true if update was successful or false if otherwise - for instance
 if key did not exist.
 
     my $Result = $SystemDataObject->SystemDataUpdate(
-        Key    => 'OTOBO Version',
+        Key    => 'CareOnCloud ESM Version',
         Value  => 'Some New Value',
         UserID => 123,
     );
@@ -348,7 +348,7 @@ Returns true if delete was successful or false if otherwise - for instance
 if key did not exist.
 
     $SystemDataObject->SystemDataDelete(
-        Key    => 'OTOBO Version',
+        Key    => 'CareOnCloud ESM Version',
         UserID => 123,
     );
 

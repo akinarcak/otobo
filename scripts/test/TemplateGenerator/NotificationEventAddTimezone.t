@@ -77,7 +77,7 @@ $ConfigObject->Set(
 # Set system timezone.
 my $SystemTimezone = 'UTC';
 $ConfigObject->Set(
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloud ESMTimeZone',
     Value => $SystemTimezone,
 );
 

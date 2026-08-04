@@ -203,7 +203,7 @@ around BUILDARGS => sub {
         $Kernel::OM->Get('Kernel::System::UnitTest::Helper')->GetTestHTTPHostname();
 
     # Remember the start system time for the selenium test run.
-    # This is needed for cleaning up OTOBO sessions.
+    # This is needed for cleaning up CareOnCloud ESM sessions.
     my $TestStartSystemTime = time;
 
     return $Class->$Orig(
@@ -276,7 +276,7 @@ sub RunTest {
 
 =head2 VerifiedGet()
 
-perform a get() call, but wait for the page to be fully loaded (works only within OTOBO).
+perform a get() call, but wait for the page to be fully loaded (works only within CareOnCloud ESM).
 Will throw an exception when the verification fails.
 
     $SeleniumObject->VerifiedGet(
@@ -319,7 +319,7 @@ sub VerifiedGet {
 
 =head2 VerifiedRefresh()
 
-perform a refresh() call, but wait for the page to be fully loaded (works only within OTOBO).
+perform a refresh() call, but wait for the page to be fully loaded (works only within CareOnCloud ESM).
 Will throw an exception if the verification fails.
 
     $SeleniumObject->VerifiedRefresh();
@@ -811,7 +811,7 @@ use this method to handle any Selenium exceptions.
     $SeleniumObject->HandleError($@);
 
 It will store a screen shot of the page in $OTOBO_HOME/var/httpd/htdocs/SeleniumScreenshots.
-If the folder /var/otobo-unittest exists, then a copy of the screenshot will be placed there too.
+If the folder /var/careoncloud-unittest exists, then a copy of the screenshot will be placed there too.
 
 =cut
 
@@ -833,9 +833,9 @@ sub HandleError {
 
     # If a shared screenshot folder is present, then we also store the screenshot there for external use.
     my $SharedScreenshotDir;
-    if ( -d -w '/var/otobo-unittest/' ) {
+    if ( -d -w '/var/careoncloud-unittest/' ) {
 
-        $SharedScreenshotDir = '/var/otobo-unittest/SeleniumScreenshots';
+        $SharedScreenshotDir = '/var/careoncloud-unittest/SeleniumScreenshots';
         mkdir $SharedScreenshotDir unless -e $SharedScreenshotDir;
         if ( !-d $SharedScreenshotDir ) {
             $Context->note("Could not create the directory $SharedScreenshotDir: $!");
@@ -890,7 +890,7 @@ sub HandleError {
         # If a shared screenshot folder is present, then we also store the screenshot there for external use.
         next WINDOW_HANDLE unless $SharedScreenshotDir;
 
-        my $SharedScreenshotDir = '/var/otobo-unittest/SeleniumScreenshots';
+        my $SharedScreenshotDir = '/var/careoncloud-unittest/SeleniumScreenshots';
         mkdir $SharedScreenshotDir unless -e $SharedScreenshotDir;
         if ( !-d $SharedScreenshotDir ) {
             $Context->note("Could not create the directory $SharedScreenshotDir: $!");

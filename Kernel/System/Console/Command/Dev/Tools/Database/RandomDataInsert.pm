@@ -49,7 +49,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Insert random data into the OTOBO database for testing purposes.');
+    $Self->Description('Insert random data into the CareOnCloud ESM database for testing purposes.');
 
     $Self->AddOption(
         Name        => 'generate-tickets',

@@ -1783,7 +1783,7 @@ sub AppointmentFutureTasksDelete {
 
 =head2 AppointmentFutureTasksUpdate()
 
-Update OTOBO daemon future task list for upcoming appointments.
+Update CareOnCloud ESM daemon future task list for upcoming appointments.
 
     my $Success = $AppointmentObject->AppointmentFutureTasksUpdate();
 
@@ -2127,7 +2127,7 @@ sub _AppointmentNotificationPrepare {
 
 =head2 AppointmentNotification()
 
-Will be triggered by the OTOBO daemon to fire events for appointments,
+Will be triggered by the CareOnCloud ESM daemon to fire events for appointments,
 that reaches it's reminder (notification) time.
 
     my $Success = $AppointmentObject->AppointmentNotification();

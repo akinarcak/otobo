@@ -182,7 +182,7 @@
                             <a href="https://doc.otobo.org/manual/installation/11.1/en/content/updating.html" target="_blank" class="CallForAction Fullsize Center"><span><i class="fa fa-external-link"></i>[% Translate("Go to updating instructions") | html %]</span></a>
                         </li>
                         <li>
-                            <a href="https://portal.rother-oss.com/otobo/customer.pl" target="_blank" class="CallForAction Fullsize Center"><span><i class="fa fa-external-link"></i>[% Translate("Go to the OTOBO customer portal") | html %]</span></a>
+                            <a href="https://portal.rother-oss.com/careoncloud/customer.pl" target="_blank" class="CallForAction Fullsize Center"><span><i class="fa fa-external-link"></i>[% Translate("Go to the CareOnCloud ESM customer portal") | html %]</span></a>
                         </li>
                     </ul>
                 </div>
@@ -196,27 +196,27 @@
                 </div>
                 <div class="Content">
                     [% IF Data.Type == 'InstallIncompatible' %]
-                    <h2>[% Translate("Package installation requires a patch level update of OTOBO.") | html %]</h2>
+                    <h2>[% Translate("Package installation requires a patch level update of CareOnCloud ESM.") | html %]</h2>
                     [% ELSIF Data.Type =='UpgradeIncompatible' %]
-                    <h2>[% Translate("Package update requires a patch level update of OTOBO.") | html %]</h2>
+                    <h2>[% Translate("Package update requires a patch level update of CareOnCloud ESM.") | html %]</h2>
                     [% END %]
-                    <p class="SpacingTop">[% Translate("Please note that your installed OTOBO version is %s.", Config("Version")) | html %]</p>
+                    <p class="SpacingTop">[% Translate("Please note that your installed CareOnCloud ESM version is %s.", Config("Version")) | html %]</p>
                     [% IF Data.RequiredMinimumVersion %]
-                    <p><span class="MinimumRequired">[% Translate("To install this package, you need to update OTOBO to version %s or newer.", Data.RequiredMinimumVersion) | html %]</span></p>
+                    <p><span class="MinimumRequired">[% Translate("To install this package, you need to update CareOnCloud ESM to version %s or newer.", Data.RequiredMinimumVersion) | html %]</span></p>
                     [% END %]
                     [% IF Data.RequiredMaximumVersion %]
-                    <p><span class="MaximumRequired">[% Translate("This package can only be installed on OTOBO version %s or older.", Data.RequiredMaximumVersion) | html %] </span></p>
+                    <p><span class="MaximumRequired">[% Translate("This package can only be installed on CareOnCloud ESM version %s or older.", Data.RequiredMaximumVersion) | html %] </span></p>
                     [% END %]
                     [% IF !Data.RequiredMinimumVersion && Data.RequiredFramework %]
-                    <p><span class="MaximumRequired">[% Translate("This package can only be installed on OTOBO version %s or newer.", Data.RequiredFramework) | html %] </span></p>
+                    <p><span class="MaximumRequired">[% Translate("This package can only be installed on CareOnCloud ESM version %s or newer.", Data.RequiredFramework) | html %] </span></p>
                     [% END %]
-                    <h2 class="SpacingTop">[% Translate("Why should I keep OTOBO up to date?") | html %]</h2>
+                    <h2 class="SpacingTop">[% Translate("Why should I keep CareOnCloud ESM up to date?") | html %]</h2>
                     <ul class="Default">
                         <li>
                             [% Translate("You will receive updates about relevant security issues.") | html %]
                         </li>
                         <li>
-                            [% Translate("You will receive updates for all other relevant OTOBO issues.") | html %]
+                            [% Translate("You will receive updates for all other relevant CareOnCloud ESM issues.") | html %]
                         </li>
                     </ul>
                     <h2 class="SpacingTop">[% Translate("How can I do a patch level update if I don’t have a contract?") | html %]</h2>
@@ -282,9 +282,9 @@
                     <h2>[% Translate(Data.Title) | html %]</h2>
                 </div>
                 <div class="Content">
-[% RenderBlockStart("OTOBOVerifyLogo") %]
-                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="OTOBOVerifyLogoBig" />
-[% RenderBlockEnd("OTOBOVerifyLogo") %]
+[% RenderBlockStart("CareOnCloud ESMVerifyLogo") %]
+                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="CareOnCloud ESMVerifyLogoBig" />
+[% RenderBlockEnd("CareOnCloud ESMVerifyLogo") %]
                     <div class="IntroInstall [% Data.VerifyCSSClass | html %]">
                         <h3>[% Data.Name | html %] [% Data.Version | html %]</h3>
                         [% Data.Description %]
@@ -371,7 +371,7 @@
                             <p class="FieldExplanation Error">
                                 [% Translate("Cloud services are currently disabled.") | html %]
                                 </br>
-                                [% Translate("OTOBO Verify can not continue!") | html %]
+                                [% Translate("CareOnCloud ESM Verify can not continue!") | html %]
                             </p>
                             <form action="[% Env("CGIHandle") %]" method="post">
                                 <input type="hidden" name="Action" value="AdminSystemConfiguration"/>
@@ -482,7 +482,7 @@
                             <tr>
                                 <td>
 [% RenderBlockStart("ShowLocalPackageVerifyLogo") %]
-                                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="OTOBOVerifyLogo" alt="[% Translate("This package is verified by CareOnCloud ESM") | html %]" />
+                                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="CareOnCloud ESMVerifyLogo" alt="[% Translate("This package is verified by CareOnCloud ESM") | html %]" />
 [% RenderBlockEnd("ShowLocalPackageVerifyLogo") %]
                                     <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=View;Name=[% Data.Name | uri %];Version=[% Data.Version | uri %]">[% Data.Name | html %]</a>
                                 </td>

@@ -14,7 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-<h1>[% Translate("OTOBO Test Page") | html %]</h1>
+<h1>[% Translate("CareOnCloud ESM Test Page") | html %]</h1>
 <hr/>
 # translation test
 <b>translation test</b><br/>

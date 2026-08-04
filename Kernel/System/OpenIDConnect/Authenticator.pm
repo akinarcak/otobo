@@ -45,7 +45,7 @@ authenticate incoming OIDC OAuth2 Tokens
 
 =head1 SYNOPSIS
 
-authenticate incoming OIDC OAuth2 Tokens based on the Otobo AuthModules
+authenticate incoming OIDC OAuth2 Tokens based on the CareOnCloud AuthModules
 
 create an object
 
@@ -162,7 +162,7 @@ sub Authenticate {
             }
         }
 
-        # resolve UserLogin from otobo user db table
+        # resolve UserLogin from careoncloud user db table
         my %UserData = $Kernel::OM->Get('Kernel::System::User')->GetUserData(
             User  => $UserLogin,
             Valid => 1,

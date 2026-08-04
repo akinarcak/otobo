@@ -91,7 +91,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOMigrateWebServiceConfiguration',
+            Task      => 'CareOnCloud ESMMigrateWebServiceConfiguration',
             SubTask   => 'Prepare.',
             StartTime => $Epoch,
         },
@@ -120,7 +120,7 @@ sub Run {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'OTOBOMigrateWebServiceConfiguration',
+                Task      => 'CareOnCloud ESMMigrateWebServiceConfiguration',
                 SubTask   => "Migrate $Name.",
                 StartTime => $Epoch,
             },

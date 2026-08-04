@@ -116,10 +116,10 @@ ok( !$Result->{Success}, 'Token scope does not include openid2' );
 $Result = $TokenObject->Validate(
     Token           => $Token,
     OpenIDConfig    => $OpenIDConfig,
-    AuthorizedParty => 'otobo',
+    AuthorizedParty => 'careoncloud',
 );
 
-ok( $Result->{Success}, 'Authorized party is otobo' );
+ok( $Result->{Success}, 'Authorized party is careoncloud' );
 
 $Result = $TokenObject->Validate(
     Token           => $Token,
@@ -131,16 +131,16 @@ ok( !$Result->{Success}, 'Aurhorized party is not unknown.' );
 $Result = $TokenObject->Validate(
     Token            => $Token,
     OpenIDConfig     => $OpenIDConfig,
-    ExpectedAudience => 'otobo',
+    ExpectedAudience => 'careoncloud',
 );
-ok( $Result->{Success}, 'AAudience includes otobo' );
+ok( $Result->{Success}, 'AAudience includes careoncloud' );
 
 $Result = $TokenObject->Validate(
     Token            => $Token,
     OpenIDConfig     => $OpenIDConfig,
-    ExpectedAudience => 'otobo2',
+    ExpectedAudience => 'careoncloud2',
 );
-ok( !$Result->{Success}, 'AAudience does not include otobo2' );
+ok( !$Result->{Success}, 'AAudience does not include careoncloud2' );
 
 #
 # assert on the spy log

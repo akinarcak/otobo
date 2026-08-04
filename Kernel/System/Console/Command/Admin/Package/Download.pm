@@ -42,7 +42,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Download all installed OTOBO packages.');
+    $Self->Description('Download all installed CareOnCloud ESM packages.');
 
     $Self->AddOption(
         Name        => 'package-name',

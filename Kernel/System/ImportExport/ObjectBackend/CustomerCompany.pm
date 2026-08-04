@@ -539,7 +539,7 @@ sub ImportDataSave {
         }
         else {
 
-            # Sanitize country if it isn't found in OTOBO to increase the chance it will
+            # Sanitize country if it isn't found in CareOnCloud ESM to increase the chance it will
             # Note that standardizing against the ISO 3166-1 list might be a better approach
             my $CountryList = $Kernel::OM->Get('Kernel::System::ReferenceData')->CountryList();
             if ( exists $CountryList->{ $Param{ImportDataRow}->[$Counter] } ) {

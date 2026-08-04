@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Export the contents of an OTOBO package to a directory.');
+    $Self->Description('Export the contents of a CareOnCloud ESM package to a directory.');
     $Self->AddOption(
         Name        => 'target-directory',
         Description => "Export contents of the package to the specified directory.",
@@ -39,7 +39,7 @@ sub Configure {
     );
     $Self->AddArgument(
         Name        => 'source-path',
-        Description => "Specify the path to an OTOBO package (opm) file that should be exported.",
+        Description => "Specify the path to a CareOnCloud ESM package (opm) file that should be exported.",
         Required    => 1,
         ValueRegex  => qr/.*/smx,
     );

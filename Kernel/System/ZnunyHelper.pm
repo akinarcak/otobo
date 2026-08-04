@@ -3767,7 +3767,7 @@ sub _WebserviceDelete {
 
 =item _WebservicesGet()
 
-gets a list of .yml files from $OTOBO/scripts/webservices
+gets a list of .yml files from $CareOnCloud ESM/scripts/webservices
 
     my $Result = $ZnunyHelperObject->_WebservicesGet(
         SubDir => 'Znuny4OTRSAssetDesk', # optional
@@ -4046,7 +4046,7 @@ sub _ProcessCreate {
 
 =item _ProcessesGet()
 
-gets a list of .yml files from $OTOBO/scripts/processes
+gets a list of .yml files from $CareOnCloud ESM/scripts/processes
 
     my $Result = $ZnunyHelperObject->_ProcessesGet(
         SubDir => 'Znuny4OTRSAssetDesk', # optional

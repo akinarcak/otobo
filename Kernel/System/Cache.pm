@@ -26,7 +26,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::Cache - Key/value based data cache for OTOBO
+Kernel::System::Cache - Key/value based data cache for CareOnCloud ESM
 
 =head1 DESCRIPTION
 
@@ -178,7 +178,7 @@ store a value in the cache.
     );
 
 The Type here refers to the group of entries that should be cached and cleaned up together,
-usually this will represent the OTOBO object that is supposed to be cached, like 'Ticket'.
+usually this will represent the CareOnCloud ESM object that is supposed to be cached, like 'Ticket'.
 
 The Key identifies the entry (together with the type) for retrieval and deletion of this value.
 

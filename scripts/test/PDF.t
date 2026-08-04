@@ -55,7 +55,7 @@ my $DocumentNew1 = $PDFObject->DocumentNew(
 is( $DocumentNew1, 1, 'DocumentNew() 1' );
 isa_ok( $PDFObject->{PDF}, ['PDF::API2'], 'got an instance of PDF::API2' );
 
-# DejaVueSans fonts are provided by OTOBO
+# DejaVueSans fonts are provided by CareOnCloud ESM
 my @FontDirs = $PDFObject->{PDF}->font_path;
 ok( ( any { $_ eq "$Home/var/fonts" } @FontDirs ), '$Home/var/fonts is the font path' );
 

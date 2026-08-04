@@ -56,7 +56,7 @@ sub new {
     return $Self;
 }
 
-sub _RotateOtoboLog {
+sub _RotateCareOnCloudLog {
 
     my ( $Self, %Param ) = @_;
 
@@ -80,7 +80,7 @@ sub _RotateOtoboLog {
 
     if ( $LogFileSize > $MaxSize ) {
 
-        # rotate the otobo.log
+        # rotate the careoncloud.log
         my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
 
         my $DateTimeString = $DateTimeObject->Format( Format => '%Y-%m-%dT%H:%M:%S' );
@@ -128,7 +128,7 @@ sub _RotateOtoboLog {
 sub Log {
     my ( $Self, %Param ) = @_;
 
-    $Self->_RotateOtoboLog();
+    $Self->_RotateCareOnCloudLog();
 
     my $FH;
 

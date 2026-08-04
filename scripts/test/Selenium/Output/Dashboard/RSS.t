@@ -72,11 +72,11 @@ $Selenium->RunTest(
                       <title>$RandomRSSTitle</title>
                       <link>https://www.otobo.org/$RandomRSSTitle</link>
                       <pubDate>Tue, 16 Jan 2018 09:00:07 +0000</pubDate>
-                      <dc:creator><![CDATA[Marketing OTOBO]]></dc:creator>
+                      <dc:creator><![CDATA[Marketing CareOnCloud ESM]]></dc:creator>
                       <category><![CDATA[Release and Security Notes]]></category>
-                      <category><![CDATA[Release Notes: OTOBO Community Solution]]></category>
+                      <category><![CDATA[Release Notes: CareOnCloud ESM Community Solution]]></category>
                       <guid isPermaLink=\"false\">https://www.otobo.org/?p=61580</guid>
-                      <description><![CDATA[&#160; January 16, 2018 — OTOBO, test]]></description>
+                      <description><![CDATA[&#160; January 16, 2018 — CareOnCloud ESM, test]]></description>
                       <content:encoded><![CDATA[<div class=\"row box-space-md\"> <div class=\"col-lg-12 col-md-12 col-sm-12 column1\"></div> </div>]]></content:encoded>
                   </item>
               </channel>

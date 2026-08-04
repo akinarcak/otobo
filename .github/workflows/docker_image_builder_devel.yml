@@ -31,27 +31,27 @@ jobs:
         include:
           -
             target:     'otobo-web'
-            dockerfile: 'otobo.web.dockerfile'
+            dockerfile: 'careoncloud.web.dockerfile'
             context:    '.'
             repository: 'rotheross/otobo'
           -
             target:     'otobo-elasticsearch'
-            dockerfile: 'otobo.elasticsearch.dockerfile'
+            dockerfile: 'careoncloud.elasticsearch.dockerfile'
             context:    'scripts/elasticsearch'
             repository: 'rotheross/otobo-elasticsearch'
           -
             target:     'otobo-nginx-webproxy'
-            dockerfile: 'otobo.nginx.dockerfile'
+            dockerfile: 'careoncloud.nginx.dockerfile'
             context:    'scripts/nginx'
             repository: 'rotheross/otobo-nginx-webproxy'
           -
             target:     'otobo-nginx-kerberos-webproxy'
-            dockerfile: 'otobo.nginx.dockerfile'
+            dockerfile: 'careoncloud.nginx.dockerfile'
             context:    'scripts/nginx'
             repository: 'rotheross/otobo-nginx-kerberos-webproxy'
           -
             target:     'otobo-selenium-chrome'
-            dockerfile: 'otobo.selenium-chrome.dockerfile'
+            dockerfile: 'careoncloud.selenium-chrome.dockerfile'
             context:    'scripts/test/sample'
             repository: 'rotheross/otobo-selenium-chrome'
 
@@ -79,9 +79,9 @@ jobs:
         name: Get the name of the Dockerfile
         id: get-dockerfile
         run: |
-          echo "dockerfile=${{ (matrix.target == 'otobo-nginx-kerberos-webproxy' && startsWith(github.ref_name, 'rel-10')) && 'otobo.nginx-kerberos.dockerfile' || matrix.dockerfile  }}" >> $GITHUB_OUTPUT
+          echo "dockerfile=${{ (matrix.target == 'otobo-nginx-kerberos-webproxy' && startsWith(github.ref_name, 'rel-10')) && 'careoncloud.nginx-kerberos.dockerfile' || matrix.dockerfile  }}" >> $GITHUB_OUTPUT
 
-      - name: 'check out the relevant OTOBO branch'
+      - name: 'check out the relevant CareOnCloud ESM branch'
         uses: actions/checkout@v6
 
       -

@@ -66,15 +66,15 @@ sub Run {
     # if system is not yet registered, sub-action should be 'register'
     if ( $RegistrationState ne 'registered' ) {
 
-        $Self->{Subaction} ||= 'OTOBOIDValidate';
+        $Self->{Subaction} ||= 'CareOnCloud ESMIDValidate';
 
         # sub-action can't be 'Deregister' or UpdateNow
         if ( $Self->{Subaction} eq 'Deregister' || $Self->{Subaction} eq 'UpdateNow' ) {
-            $Self->{Subaction} = 'OTOBOIDValidate';
+            $Self->{Subaction} = 'CareOnCloud ESMIDValidate';
         }
 
-        # during system registration, don't create breadcrumb item 'Validate OTOBO-ID'
-        $WithoutBreadcrumb = 1 if $Self->{Subaction} eq 'OTOBOIDValidate';
+        # during system registration, don't create breadcrumb item 'Validate CareOnCloud ID'
+        $WithoutBreadcrumb = 1 if $Self->{Subaction} eq 'CareOnCloud ESMIDValidate';
     }
 
     # get needed objects
@@ -85,7 +85,7 @@ sub Run {
     # Daemon not running screen
     # ------------------------------------------------------------ #
     if (
-        $Self->{Subaction} ne 'OTOBOIDValidate'
+        $Self->{Subaction} ne 'CareOnCloud ESMIDValidate'
         && $RegistrationState ne 'registered'
         && !$Self->_DaemonRunning()
         )
@@ -113,16 +113,16 @@ sub Run {
     }
 
     # ------------------------------------------------------------ #
-    # check OTOBO ID
+    # check CareOnCloud ESM ID
     # ------------------------------------------------------------ #
 
-    elsif ( $Self->{Subaction} eq 'CheckOTOBOID' ) {
+    elsif ( $Self->{Subaction} eq 'CheckCareOnCloud ESMID' ) {
 
-        my $OTOBOID  = $ParamObject->GetParam( Param => 'OTOBOID' )  || '';
+        my $CareOnCloud ESMID  = $ParamObject->GetParam( Param => 'CareOnCloud ESMID' )  || '';
         my $Password = $ParamObject->GetParam( Param => 'Password' ) || '';
 
         my %Response = $RegistrationObject->TokenGet(
-            OTOBOID  => $OTOBOID,
+            CareOnCloud ESMID  => $CareOnCloud ESMID,
             Password => $Password,
         );
 
@@ -132,8 +132,8 @@ sub Run {
             return $LayoutObject->Redirect(
                 OP => "Action=AdminRegistration;Subaction=$NextAction;Token="
                     . $LayoutObject->LinkEncode( $Response{Token} )
-                    . ';OTOBOID='
-                    . $LayoutObject->LinkEncode($OTOBOID),
+                    . ';CareOnCloud ESMID='
+                    . $LayoutObject->LinkEncode($CareOnCloud ESMID),
             );
         }
 
@@ -158,18 +158,18 @@ sub Run {
         );
 
         $LayoutObject->Block(
-            Name => 'OTOBOIDValidation',
+            Name => 'CareOnCloud ESMIDValidation',
             Data => \%Param,
         );
 
         $LayoutObject->Block(
-            Name => 'OTOBOIDValidationForm',
+            Name => 'CareOnCloud ESMIDValidationForm',
             Data => \%Param,
         );
 
         my $Block = $RegistrationState ne 'registered'
-            ? 'OTOBOIDRegistration'
-            : 'OTOBOIDDeregistration';
+            ? 'CareOnCloud ESMIDRegistration'
+            : 'CareOnCloud ESMIDDeregistration';
 
         $LayoutObject->Block(
             Name => $Block,
@@ -185,9 +185,9 @@ sub Run {
     }
 
     # ------------------------------------------------------------ #
-    # OTOBO ID validation
+    # CareOnCloud ESM ID validation
     # ------------------------------------------------------------ #
-    elsif ( $Self->{Subaction} eq 'OTOBOIDValidate' ) {
+    elsif ( $Self->{Subaction} eq 'CareOnCloud ESMIDValidate' ) {
 
         my $Output = $LayoutObject->Header();
         $Output .= $LayoutObject->NavigationBar();
@@ -202,7 +202,7 @@ sub Run {
         my $EntitlementStatus = 'forbidden';
 
         $LayoutObject->Block(
-            Name => 'OTOBOIDValidation',
+            Name => 'CareOnCloud ESMIDValidation',
             Data => \%Param,
         );
 
@@ -210,18 +210,18 @@ sub Run {
         if ( $RegistrationState ne 'registered' && !$Self->_DaemonRunning() ) {
 
             $LayoutObject->Block(
-                Name => 'OTOBOIDValidationDaemonNotRunning',
+                Name => 'CareOnCloud ESMIDValidationDaemonNotRunning',
             );
         }
         else {
 
             $LayoutObject->Block(
-                Name => 'OTOBOIDValidationForm',
+                Name => 'CareOnCloud ESMIDValidationForm',
                 Data => \%Param,
             );
         }
 
-        my $Block = $RegistrationState ne 'registered' ? 'OTOBOIDRegistration' : 'OTOBOIDDeregistration';
+        my $Block = $RegistrationState ne 'registered' ? 'CareOnCloud ESMIDRegistration' : 'CareOnCloud ESMIDDeregistration';
         $LayoutObject->Block(
             Name => $Block,
         );
@@ -242,7 +242,7 @@ sub Run {
 
         my %GetParam;
         $GetParam{Token}   = $ParamObject->GetParam( Param => 'Token' );
-        $GetParam{OTOBOID} = $ParamObject->GetParam( Param => 'OTOBOID' );
+        $GetParam{CareOnCloud ESMID} = $ParamObject->GetParam( Param => 'CareOnCloud ESMID' );
 
         my $Output = $LayoutObject->Header();
         $Output .= $LayoutObject->NavigationBar();
@@ -275,7 +275,7 @@ sub Run {
             Name => 'Registration',
             Data => {
                 FQDN         => $ConfigObject->Get('FQDN'),
-                OTOBOVersion => $ConfigObject->Get('Version'),
+                CareOnCloud ESMVersion => $ConfigObject->Get('Version'),
                 PerlVersion  => sprintf( "%vd", $^V ),
                 %Param,
                 %GetParam,
@@ -300,7 +300,7 @@ sub Run {
 
         my %GetParam;
         $GetParam{Token}   = $ParamObject->GetParam( Param => 'Token' );
-        $GetParam{OTOBOID} = $ParamObject->GetParam( Param => 'OTOBOID' );
+        $GetParam{CareOnCloud ESMID} = $ParamObject->GetParam( Param => 'CareOnCloud ESMID' );
 
         my $Output = $LayoutObject->Header();
         $Output .= $LayoutObject->NavigationBar();
@@ -334,7 +334,7 @@ sub Run {
         $LayoutObject->ChallengeTokenCheck();
 
         my ( %GetParam, %Errors );
-        for my $Parameter (qw(SupportDataSending Type Description OTOBOID Token)) {
+        for my $Parameter (qw(SupportDataSending Type Description CareOnCloud ESMID Token)) {
             $GetParam{$Parameter} = $ParamObject->GetParam( Param => $Parameter ) || '';
         }
 
@@ -350,7 +350,7 @@ sub Run {
 
             $RegistrationObject->Register(
                 Token              => $GetParam{Token},
-                OTOBOID            => $GetParam{OTOBOID},
+                CareOnCloud ESMID            => $GetParam{CareOnCloud ESMID},
                 SupportDataSending => $GetParam{SupportDataSending} || 'No',
                 Type               => $GetParam{Type},
                 Description        => $GetParam{Description},
@@ -428,7 +428,7 @@ sub Run {
             Name => 'Edit',
             Data => {
                 FQDN         => $ConfigObject->Get('FQDN'),
-                OTOBOVersion => $ConfigObject->Get('Version'),
+                CareOnCloud ESMVersion => $ConfigObject->Get('Version'),
                 PerlVersion  => sprintf( "%vd", $^V ),
                 %Param,
             },
@@ -485,7 +485,7 @@ sub Run {
         $LayoutObject->ChallengeTokenCheck();
 
         $RegistrationObject->Deregister(
-            OTOBOID => $ParamObject->GetParam( Param => 'OTOBOID' ),
+            CareOnCloud ESMID => $ParamObject->GetParam( Param => 'CareOnCloud ESMID' ),
             Token   => $ParamObject->GetParam( Param => 'Token' ),
         );
 
@@ -609,7 +609,7 @@ sub _SentDataOverview {
             PerlVersion        => sprintf( "%vd", $^V ),
             OSType             => $OSInfo{OS},
             OSVersion          => $OSInfo{OSName},
-            OTOBOVersion       => $ConfigObject->Get('Version'),
+            CareOnCloud ESMVersion       => $ConfigObject->Get('Version'),
             FQDN               => $ConfigObject->Get('FQDN'),
             DatabaseVersion    => $Kernel::OM->Get('Kernel::System::DB')->Version(),
             SupportDataSending => $Param{SupportDataSending} || $RegistrationData{SupportDataSending} || 'No',

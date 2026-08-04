@@ -57,11 +57,11 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::Package - to manage OTOBO packages and repositories
+Kernel::System::Package - to manage CareOnCloud ESM packages and repositories
 
 =head1 DESCRIPTION
 
-All functions to manage OTOBO packages and repositories.
+All functions to manage CareOnCloud ESM packages and repositories.
 
 =head1 PUBLIC INTERFACE
 
@@ -1403,7 +1403,7 @@ sub PackageOnlineList {
     }
     if ( !defined $Param{Cache} ) {
 
-        if ( $Param{URL} =~ m{ \.otobo\.org\/ }xms ) {
+        if ( $Param{URL} =~ m{ \.careoncloud\.org\/ }xms ) {
             $Param{Cache} = 1;
         }
         else {
@@ -1431,7 +1431,7 @@ sub PackageOnlineList {
     my $Filelist;
     if ( !$Param{FromCloud} ) {
 
-        my $XML = $Self->_Download( URL => $Param{URL} . '/otobo.xml' );
+        my $XML = $Self->_Download( URL => $Param{URL} . '/careoncloud.xml' );
         return if !$XML;
 
         my @XMLARRAY = $Kernel::OM->Get('Kernel::System::XML')->XMLParse( String => $XML );
@@ -1869,10 +1869,10 @@ sub PackageVerify {
         $PackageVerifyInfo = {
             Description =>
                 Translatable(
-                "<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>"
+                "<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>"
                 ),
             Title =>
-                Translatable('Package not verified by the OTOBO community!'),
+                Translatable('Package not verified by the CareOnCloud ESM community!'),
             PackageInstallPossible => 1,
         };
     }
@@ -1884,7 +1884,7 @@ sub PackageVerify {
                 '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>'
                 ),
             Title =>
-                Translatable('Package not verified by the OTOBO community!'),
+                Translatable('Package not verified by the CareOnCloud ESM community!'),
             PackageInstallPossible => 0,
         };
     }
@@ -1967,7 +1967,7 @@ sub PackageVerify {
             $Self->{PackageVerifyInfo} = {
                 Description =>
                     Translatable(
-                    "<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>"
+                    "<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>"
                     ),
                 Title =>
                     Translatable('Verification not possible (e.g. no internet connection)!'),
@@ -3172,8 +3172,8 @@ sub PackageUpgradeAll {
         Result => 'short',
     );
 
-    # Do not upgrade the packages that are integrated in OTOBO core now.
-    # This is relevant for upgrading from OTOBO 10 to OTOBO 11.
+    # Do not upgrade the packages that are integrated in CareOnCloud ESM core now.
+    # This is relevant for upgrading from CareOnCloud ESM 10 to CareOnCloud ESM 11.
     #
     # The special case of the 'ITSM' bundle package is also handled here. This means
     # that 'ITSM' in not upgraded, but the individual parts are updated.
@@ -3335,7 +3335,7 @@ sub PackageUpgradeAll {
 
 =head2 _GetIntegratedPackages()
 
-List of packages the were integrated into OTOBO core. Categorized by major and minor versions.
+List of packages the were integrated into CareOnCloud ESM core. Categorized by major and minor versions.
 
 =cut
 
@@ -4066,7 +4066,7 @@ sub _PackageFileCheck {
 
 =head2 _FileInstall()
 
-Update or create files below the OTOBO home directory or below a specified directory.
+Update or create files below the CareOnCloud ESM home directory or below a specified directory.
 
 Additionally this method creates a backup if needed.
 
@@ -4083,7 +4083,7 @@ Return undef on failure, 1 on success.
         Permission  => '644',     # unix file permissions
     };
 
-    # File install below the OTOBO home directory
+    # File install below the CareOnCloud ESM home directory
     my $FileInstallOk = $PackageObject->_FileInstall(
         File => $File,
     );
@@ -4462,7 +4462,7 @@ The sections I<DatabaseUninstall> and I<CodeUninstall> in the SOPM file are igno
 
     $Success = $PackageObject->_PackageUninstallMerged(
         Name        => 'SomePackage',
-        Home        => 'OTOBO Home path',     # Optional
+        Home        => 'CareOnCloud ESM Home path',     # Optional
         DeleteSaved => 1,                     # Either 1 or 0. Optional with the default being 1.
                                               # If set to 1 it also deletes .save files
     );
@@ -4561,7 +4561,7 @@ sub _PackageUninstallMerged {
                     next FILE_HASH;
                 }
 
-                # remove package file that is not in OTOBO core
+                # remove package file that is not in CareOnCloud ESM core
                 if ( !$MainObject->FileDelete( Location => $RealFile ) ) {
                     $Kernel::OM->Get('Kernel::System::Log')->Log(
                         Priority => 'error',
@@ -5331,8 +5331,8 @@ sub _ConfiguredRepositoryDefinitionGet {
 
     return () if !%RepositoryList;
 
-    # we will not provide individual repos per version starting with OTOBO 11.0 - this section can be removed with OTOBO 11.1
-    my @Matches = grep { $_ =~ m{https://ftp\.otobo\.org/pub/otobo/packages-itsm/bundle\d}msxi } sort keys %RepositoryList;
+    # we will not provide individual repos per version starting with CareOnCloud ESM 11.0 - this section can be removed with CareOnCloud ESM 11.1
+    my @Matches = grep { $_ =~ m{https://ftp\.careoncloud\.org/pub/careoncloud/packages-itsm/bundle\d}msxi } sort keys %RepositoryList;
 
     return %RepositoryList if !@Matches;
 

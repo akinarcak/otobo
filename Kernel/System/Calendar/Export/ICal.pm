@@ -358,7 +358,7 @@ sub Export {
                 }
                 if (@Teams) {
                     $ICalEvent->add_properties(
-                        "x-otobo-team" => join( ',', @Teams ),
+                        "x-careoncloud-team" => join( ',', @Teams ),
                     );
                 }
             }
@@ -383,7 +383,7 @@ sub Export {
                 }
                 if (@Users) {
                     $ICalEvent->add_properties(
-                        "x-otobo-resource" => join( ',', @Users ),
+                        "x-careoncloud-resource" => join( ',', @Users ),
                     );
                 }
             }
@@ -404,7 +404,7 @@ sub Export {
 
             if (@LinkArray) {
                 $ICalEvent->add_properties(
-                    "x-otobo-plugin-$PluginKey" => join( ',', @LinkArray ),
+                    "x-careoncloud-plugin-$PluginKey" => join( ',', @LinkArray ),
                 );
             }
         }
@@ -439,7 +439,7 @@ sub Export {
     # Include product name and version in product ID property for debugging purposes, by redefining
     #   external library method.
     sub Data::ICal::product_id {    ## no critic qw(OTOBO::RequireCamelCase)
-        return 'OTOBO ' . $Kernel::OM->Get('Kernel::Config')->Get('Version');
+        return 'CareOnCloud ESM ' . $Kernel::OM->Get('Kernel::Config')->Get('Version');
     }
 }
 

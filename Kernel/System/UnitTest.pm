@@ -41,7 +41,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::UnitTest - functions to run all or some OTOBO unit test scripts
+Kernel::System::UnitTest - functions to run all or some CareOnCloud ESM unit test scripts
 
 =head1 DESCRIPTION
 
@@ -251,7 +251,7 @@ sub Run {
             PACKAGE:
             for my $Package (@Packages) {
 
-                # Special package name. Get test scripts in OTOBO core.
+                # Special package name. Get test scripts in CareOnCloud ESM core.
                 if ( $Package eq 'core' ) {
                     my $ChecksumFile = "$Home/ARCHIVE";
                     my $ChecksumFileArrayRef;

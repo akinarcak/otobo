@@ -45,8 +45,8 @@ sub Configure {
     $Self->Description('Scan CPAN dependencies in Kernel/cpan-lib and in the system for known vulnerabilities.');
 
     $Self->AddOption(
-        Name        => 'dump-otobo-evaluations',
-        Description => 'Show the relevance for OTOBO of advisories evaluated by the OTOBO team',
+        Name        => 'dump-careoncloud-evaluations',
+        Description => 'Show the relevance for CareOnCloud ESM of advisories evaluated by the CareOnCloud ESM team',
         Required    => 0,
         HasValue    => 0,
     );
@@ -58,9 +58,9 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     # get options
-    my $DoDumpEvaluations = $Self->GetOption('dump-otobo-evaluations');
+    my $DoDumpEvaluations = $Self->GetOption('dump-careoncloud-evaluations');
 
-    my %Evaluations = $Self->GetOtoboEvaluations;
+    my %Evaluations = $Self->GetCareOnCloudEvaluations;
 
     my $JSONObject = $Kernel::OM->Get('Kernel::System::JSON');
 
@@ -92,9 +92,9 @@ sub Run {
     # performance if this command is run often.
     # Please see bug#14666 for more information.
     #
-    # Normalize the pathes before comparing them as @INC has pathes like '/opt/otobo/bin/psgi-bin/../../Custom'.
+    # Normalize the pathes before comparing them as @INC has pathes like '/opt/careoncloud/bin/psgi-bin/../../Custom'.
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my $Home         = abs_path( $ConfigObject->Get('Home') // '/opt/otobo' );
+    my $Home         = abs_path( $ConfigObject->Get('Home') // '/opt/careoncloud' );
     my @PathsToScan;
     PATH:
     for my $Path (@INC) {
@@ -105,10 +105,10 @@ sub Run {
 
         # older Perls have '.' in @INC. This path is not excluded, just to stay on the safe side
 
-        # ignore the search pathes with OTOBO files
+        # ignore the search pathes with CareOnCloud ESM files
         my $AbsPath = abs_path($Path);
 
-        next PATH if $AbsPath eq $Home;             # OTOBO home folder
+        next PATH if $AbsPath eq $Home;             # CareOnCloud ESM home folder
         next PATH if $AbsPath eq "$Home/Custom";    # Custom folder
 
         push @PathsToScan, $Path;
@@ -116,7 +116,7 @@ sub Run {
 
     my $Result = $Audit->command( 'installed', @PathsToScan );
 
-    # Consider the evaluations by the OTOBO team
+    # Consider the evaluations by the CareOnCloud ESM team
     my $NumRelevantAdvisories = 0;
     for my $DistName ( keys $Result->{dists}->%* ) {
         my $Dist = $Result->{dists}->{$DistName};
@@ -142,7 +142,7 @@ sub Run {
 
             if ($EvaluationApplies) {
                 $Advisory->{otobo_evaluation} = $Evaluation;
-                $NumRelevantAdvisories += $Evaluation->{is_relevant_for_otobo};
+                $NumRelevantAdvisories += $Evaluation->{is_relevant_for_careoncloud};
             }
             else {
 
@@ -153,7 +153,7 @@ sub Run {
         }
     }
 
-    # tell about the OTOBO evaluation
+    # tell about the CareOnCloud ESM evaluation
     $Result->{meta}->{total_otobo_relevant_advisories} = $NumRelevantAdvisories;
 
     $Self->Print(
@@ -169,31 +169,31 @@ sub Run {
     return $NumAdvisories ? 1 : 0;
 }
 
-sub GetOtoboEvaluations {
+sub GetCareOnCloudEvaluations {
     my %Reason = (
         Mojolicious => <<'END_REASON',
 This advisory is about default encryption settings when creating a new Mojolicious app.
-But OTOBO uses Mojolicious in a very limited way, only as a helper for the S3 compatible backend.
+But CareOnCloud ESM uses Mojolicious in a very limited way, only as a helper for the S3 compatible backend.
 Therefore default settings for new applications are of no concern here.
 END_REASON
 
         cpanm => <<'END_REASON',
-In Docker based installations the commands /opt/otobo/bin/docker/carton and /usr/local/bin/cpanm
+In Docker based installations the commands /opt/careoncloud/bin/docker/carton and /usr/local/bin/cpanm
 have been patched to download source via HTTPS.
 END_REASON
 
         debian_unimportant => <<'END_REASON',
-Debian has classified the urgency of this advisory as unimportant. OTOBO does the same.
+Debian has classified the urgency of this advisory as unimportant. CareOnCloud ESM does the same.
 END_REASON
 
         ldaps => <<'END_REASON',
-The advisory is about default settings in the underlying module Net::LDAPS. In OTOBO the admin
+The advisory is about default settings in the underlying module Net::LDAPS. In CareOnCloud ESM the admin
 is responsible for setting up the connection to the LDAP server.
 END_REASON
 
         'xsendfile' => <<'END_REASON',
 The advisory is about the Plack middlewarx Plack::Middleware::XSendfile. This middleware is not used
-in OTOBO.
+in CareOnCloud ESM.
 END_REASON
 
         thirtytwo_bit_perl => <<'END_REASON',
@@ -201,52 +201,52 @@ The advisory is only relevant for 32bit builds of Perl. But this is a 64bit buil
 END_REASON
 
         text_linefold => <<'END_REASON',
-The advisory is about the module Text::LineFold. This module is not used in OTOBO.
+The advisory is about the module Text::LineFold. This module is not used in CareOnCloud ESM.
 It is installed only because it is included in Unicode::LineBreak.
 Unicode::LineBreak is installed because Unicode::GCString is needed by the test suite.
 
         crypt_with_md5 => <<'END_REASON',
 The advisory is relevant only when customer or user passwords are stored in the database in MD5 crypted form.
-Using MD5 for crypting passwords is discouraged in OTOBO. Therefore this advisory is not relevant in regular installations.
+Using MD5 for crypting passwords is discouraged in CareOnCloud ESM. Therefore this advisory is not relevant in regular installations.
 END_REASON
     );
 
     return
         'CPANSA-Mojolicious-2024-58134' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{Mojolicious},
         },
         'CPANSA-Mojolicious-2024-58135' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{Mojolicious},
         },
         'CPANSA-App-cpanminus-2024-45321' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{cpanm},
         },
         'CPANSA-File-Temp-2011-4116' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{debian_unimportant},
         },
         'CPANSA-Net-LDAPS-2020-16093' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{ldaps},
         },
         'CPANSA-Plack-2026-7381' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{xsendfile},
         },
         'CPANSA-perl-2026-8376' => {
             only_relevant_for_32bit_perl => 1,
-            is_relevant_for_otobo        => 0,
+            is_relevant_for_careoncloud        => 0,
             reason                       => $Reason{thirtytwo_bit_perl},
         },
         'CPANSA-Unicode-LineBreak-2026-8594' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{text_linefold},
         },
         'CPANSA-Crypt-PasswdMD5-2026-6659' => {
-            is_relevant_for_otobo => 0,
+            is_relevant_for_careoncloud => 0,
             reason                => $Reason{crypt_with_md5},
         },
         ;

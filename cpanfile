@@ -86,7 +86,7 @@ requires 'Plack', '!= 1.0053';
 # needed by Kernel/cpan-lib/Crypt/Random/Source.pm
 requires 'Sub::Exporter';
 
-# Template::Toolkit, the rendering engine of OTOBO.
+# Template::Toolkit, the rendering engine of CareOnCloud ESM.
 requires 'Template::Toolkit';
 
 # The fast data stash for Template::Toolkit.

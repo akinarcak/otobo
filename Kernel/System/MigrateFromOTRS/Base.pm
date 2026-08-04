@@ -82,10 +82,10 @@ sub new {
 
 =head2 CleanLicenseHeader()
 
-clean given file license header to OTOBO style
+clean given file license header to CareOnCloud ESM style
 
     $OTRSToOTOBOObject->CleanLicenseHeader(
-        File         => '/opt/otobo/Test.pm',
+        File         => '/opt/careoncloud/Test.pm',
         UserID        => 123,
     );
 
@@ -100,7 +100,7 @@ sub CleanLicenseHeader {
     open my $FileHandle, '<:encoding(utf-8)', $FilePathAndName;    ## no critic qw(OTOBO::ProhibitOpen InputOutput::RequireBriefOpen)
     if ( !$FileHandle ) {
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "File $FilePathAndName is empty / could not be read.",
             Priority => "error",
@@ -115,7 +115,7 @@ sub CleanLicenseHeader {
 
     if ( !$Parse ) {
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String =>
                 "File extension for file $FilePathAndName is not active - please check if you need to add a new regexp.",
@@ -156,7 +156,7 @@ sub CleanLicenseHeader {
     }
     if ( !$Good ) {
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "Could not replace license header of $FilePathAndName.",
             Priority => "error",
@@ -193,10 +193,10 @@ sub CleanLicenseHeader {
 
 =head2 CleanLicenseHeaderInDir()
 
-clean given directory to OTOBO style
+clean given directory to CareOnCloud ESM style
 
     $OTRSToOTOBOObject->CleanLicenseHeaderInDir(
-        Path         => '/opt/otobo/',
+        Path         => '/opt/careoncloud/',
         Filter       => '*',
         Recursive    => 1
         UserID       => 1,
@@ -249,7 +249,7 @@ sub CleanLicenseHeaderInDir {
 replace the XML element I<otrs_config> to I<otobo_config>.
 
     $OTRSToOTOBOObject->MigrateXMLConfig(
-        File         => '/opt/otobo/Test.pm',
+        File         => '/opt/careoncloud/Test.pm',
     );
 
 =cut
@@ -290,18 +290,18 @@ sub MigrateXMLConfig {
     return $SaveSuccess;
 }
 
-=head2 CleanOTRSFileToOTOBOStyle()
+=head2 CleanOTRSFileToCareOnCloud ESMStyle()
 
-clean given file to OTOBO style
+clean given file to CareOnCloud ESM style
 
-    $OTRSToOTOBOObject->CleanOTRSFileToOTOBOStyle(
-        FilePath         => '/opt/otobo/Test.pm',
+    $OTRSToOTOBOObject->CleanOTRSFileToCareOnCloud ESMStyle(
+        FilePath         => '/opt/careoncloud/Test.pm',
         UserID           => 1,
     );
 
 =cut
 
-sub CleanOTRSFileToOTOBOStyle {
+sub CleanOTRSFileToCareOnCloud ESMStyle {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
@@ -331,7 +331,7 @@ sub CleanOTRSFileToOTOBOStyle {
     open my $FileHandle, '<:encoding(utf-8)', $FilePathAndName;    ## no critic qw(OTOBO::ProhibitOpen)
     if ( !$FileHandle ) {
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "File $FilePathAndName is empty / could not be read.",
             Priority => 'error',
@@ -377,12 +377,12 @@ sub CleanOTRSFileToOTOBOStyle {
     return 1;
 }
 
-=head2 CleanOTRSFilesToOTOBOStyleInDir()
+=head2 CleanOTRSFilesToCareOnCloud ESMStyleInDir()
 
-clean given directory to OTOBO style
+clean given directory to CareOnCloud ESM style
 
-    $OTRSToOTOBOObject->CleanOTRSFilesToOTOBOStyleInDir(
-        Path         => '/opt/otobo/',
+    $OTRSToOTOBOObject->CleanOTRSFilesToCareOnCloud ESMStyleInDir(
+        Path         => '/opt/careoncloud/',
         Filter       => '*',
         Recursive    => 1
         UserID       => 1,
@@ -390,7 +390,7 @@ clean given directory to OTOBO style
 
 =cut
 
-sub CleanOTRSFilesToOTOBOStyleInDir {
+sub CleanOTRSFilesToCareOnCloud ESMStyleInDir {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
@@ -420,7 +420,7 @@ sub CleanOTRSFilesToOTOBOStyleInDir {
     );
 
     for my $File (@UncleanDirAndFileList) {
-        $Self->CleanOTRSFileToOTOBOStyle(
+        $Self->CleanOTRSFileToCareOnCloud ESMStyle(
             File   => $File,
             UserID => 1,
         );
@@ -431,7 +431,7 @@ sub CleanOTRSFilesToOTOBOStyleInDir {
 
 =head2 ChangePathFileName()
 
-change the path and filenames from otrs to otobo
+change the path and filenames from otrs to careoncloud
 
     my $OK = $OTRSToOTOBOObject->ChangePathFileName(
         File => "/opt/otrs/tmp/otrs/"
@@ -472,14 +472,14 @@ sub ChangePathFileName {
     if ( !-d $NewFileDirname ) {
         make_path($NewFileDirname) ||
 
-            # Log info to apache error log and OTOBO log (syslog or file)
+            # Log info to apache error log and CareOnCloud ESM log (syslog or file)
             $Self->MigrationLog(
                 String   => "Can\'t create directory $NewFileDirname: $!",
                 Priority => 'error',
             );
     }
 
-    # Log info to apache error log and OTOBO log (syslog or file)
+    # Log info to apache error log and CareOnCloud ESM log (syslog or file)
     $Self->MigrationLog(
         String   => 'Move file ' . $File . 'to' . $NewFile . ', cause cleanpath option is given.',
         Priority => 'notice',
@@ -487,7 +487,7 @@ sub ChangePathFileName {
 
     move( $File, $NewFile ) ||
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "The move operation failed: $!",
             Priority => 'error',
@@ -533,14 +533,14 @@ sub HandleFile {
 
             if ( mkdir $DirectoryCurrent ) {
 
-                # Log info to apache error log and OTOBO log (syslog or file)
+                # Log info to apache error log and CareOnCloud ESM log (syslog or file)
                 $Self->MigrationLog(
                     String   => "Create directory: $DirectoryCurrent.",
                     Priority => "notice",
                 );
             }
             else {
-                # Log info to apache error log and OTOBO log (syslog or file)
+                # Log info to apache error log and CareOnCloud ESM log (syslog or file)
                 $Self->MigrationLog(
                     String   => "Can't create directory: $DirectoryCurrent: $!",
                     Priority => "error",
@@ -619,7 +619,7 @@ sub CopyOPMtoSOPMAndClean {
 
     if ( !$ContentRefOPM || ref $ContentRefOPM ne 'SCALAR' || !defined $$ContentRefOPM ) {
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "File $SourcePath is empty / could not be read.",
             Priority => "error",
@@ -643,7 +643,7 @@ sub CopyOPMtoSOPMAndClean {
 
     if ( !$SOPMFile ) {
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => ".sopm File $SOPMFile could not be written.",
             Priority => "error",
@@ -694,7 +694,7 @@ sub ExtractOPMPackage {
 
     if ( !$Success ) {
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "Export failed of package $SourcePath to tempdir $TmpDirectory.",
             Priority => "error",
@@ -702,7 +702,7 @@ sub ExtractOPMPackage {
         return;
     }
     else {
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "Files export of package $SourcePath to $TmpDirectory done.",
             Priority => "error",
@@ -777,7 +777,7 @@ sub CopyFileAndSaveAsTmp {
         }
     }
     else {
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $Self->MigrationLog(
             String   => "Can't copy per rsync: $RsyncExec!",
             Priority => "error",
@@ -1113,7 +1113,7 @@ sub SettingUpdate {
 
 =head2 MigrationLog()
 
-MigrationLog the given string to OTOBO AND Apache Log for debugging migration.
+MigrationLog the given string to CareOnCloud ESM AND Apache Log for debugging migration.
 
     my $Result = $MigrateFromOTRSObject->MigrationLog(
         String => 'Logentry...',
@@ -1170,13 +1170,13 @@ sub PackageMigrateIgnorePackages {
                 PackageName => 'ShowDynamicField',
                 IgnoreType  => 'Ignore',
                 Comment     =>
-                    'HideShow package is in OTOBO standard integrated in a better version. We only migrate the config and database data.',
+                    'HideShow package is in CareOnCloud ESM standard integrated in a better version. We only migrate the config and database data.',
             },
             {
                 PackageName => 'TicketForms',
                 IgnoreType  => 'Ignore',
                 Comment     =>
-                    'TicketForms package is integrated in OTOBO standard in a better version. We only migrate the config and database data.',
+                    'TicketForms package is integrated in CareOnCloud ESM standard in a better version. We only migrate the config and database data.',
             },
             {
                 PackageName => 'RotherOSS-LongEscalationPerformanceBoost',
@@ -1187,62 +1187,62 @@ sub PackageMigrateIgnorePackages {
             {
                 PackageName => 'Znuny4OTRS-AdvancedDynamicFields',
                 IgnoreType  => 'Ignore',
-                Comment     => 'Znuny4OTRS-AdvancedDynamicFields package is integrated in OTOBO standard.',
+                Comment     => 'Znuny4OTRS-AdvancedDynamicFields package is integrated in CareOnCloud ESM standard.',
             },
             {
                 PackageName => 'Znuny4OTRS-AutoSelect',
                 IgnoreType  => 'Ignore',
-                Comment     => 'Znuny4OTRS-AutoSelect package is integrated in OTOBO standard in a newer version.',
+                Comment     => 'Znuny4OTRS-AutoSelect package is integrated in CareOnCloud ESM standard in a newer version.',
             },
             {
                 PackageName => 'Znuny4OTRS-EscalationSuspend',
                 IgnoreType  => 'Ignore',
-                Comment     => 'Znuny4OTRS-EscalationSuspend package is integrated in OTOBO standard in a newer version.',
+                Comment     => 'Znuny4OTRS-EscalationSuspend package is integrated in CareOnCloud ESM standard in a newer version.',
             },
             {
                 PackageName => 'Znuny4OTRS-ExternalURLJump',
                 IgnoreType  => 'Ignore',
-                Comment     => 'Znuny4OTRS-ExternalURLJump package is integrated in OTOBO standard.',
+                Comment     => 'Znuny4OTRS-ExternalURLJump package is integrated in CareOnCloud ESM standard.',
             },
             {
                 PackageName => 'Znuny4OTRS-QuickClose',
                 IgnoreType  => 'Ignore',
-                Comment     => 'Znuny4OTRS-QuickClose package is integrated in OTOBO standard.',
+                Comment     => 'Znuny4OTRS-QuickClose package is integrated in CareOnCloud ESM standard.',
             },
             {
                 PackageName => 'Znuny4OTRS-AutoCheckbox',
                 IgnoreType  => 'Uninstall',
-                Comment     => 'Znuny4OTRS-AutoCheckbox is not needed for OTOBO, we uninstall it',
+                Comment     => 'Znuny4OTRS-AutoCheckbox is not needed for CareOnCloud ESM, we uninstall it',
             },
             {
                 PackageName => 'OTRSBruteForceAttackProtection',
                 IgnoreType  => 'Ignore',
-                Comment     => 'OTRSBruteForceAttackProtection package is integrated in OTOBO standard in a newer version.',
+                Comment     => 'OTRSBruteForceAttackProtection package is integrated in CareOnCloud ESM standard in a newer version.',
             },
             {
                 PackageName => 'OTRSEscalationSuspend',
                 IgnoreType  => 'Ignore',
-                Comment     => 'OTRSEscalationSuspend package is integrated in OTOBO standard in a newer version.',
+                Comment     => 'OTRSEscalationSuspend package is integrated in CareOnCloud ESM standard in a newer version.',
             },
             {
                 PackageName => 'OTRSDynamicFieldDatabase',
                 IgnoreType  => 'Ignore',
-                Comment     => 'OTRSDynamicFieldDatabase package is integrated in OTOBO standard in a newer version.',
+                Comment     => 'OTRSDynamicFieldDatabase package is integrated in CareOnCloud ESM standard in a newer version.',
             },
             {
                 PackageName => 'OTRSDynamicFieldAttachment',
                 IgnoreType  => 'Ignore',
-                Comment     => 'OTRSDynamicFieldAttachment package is integrated in OTOBO standard in a newer version.',
+                Comment     => 'OTRSDynamicFieldAttachment package is integrated in CareOnCloud ESM standard in a newer version.',
             },
             {
                 PackageName => 'OTRSDynamicFieldWebService',
                 IgnoreType  => 'Ignore',
-                Comment     => 'OTRSDynamicFieldWebService package is integrated in OTOBO standard in a newer version.',
+                Comment     => 'OTRSDynamicFieldWebService package is integrated in CareOnCloud ESM standard in a newer version.',
             },
             {
                 PackageName => 'OTRSSystemConfigurationHistory',
                 IgnoreType  => 'Ignore',
-                Comment     => 'OTRSSystemConfigurationHistory is not needed for OTOBO. We only migrate the config and database data.',
+                Comment     => 'OTRSSystemConfigurationHistory is not needed for CareOnCloud ESM. We only migrate the config and database data.',
             },
         )
     );
@@ -1335,7 +1335,7 @@ sub DBSkipTables {
     );
 }
 
-# OTRS table name => OTOBO table name
+# OTRS table name => CareOnCloud ESM table name
 sub DBRenameTables {
 
     # the tables must be lower case
@@ -1348,7 +1348,7 @@ sub DBRenameTables {
     };
 }
 
-# OTOBO VARCHAR attribute shortened to 191 chars, because of InnoDB max key length
+# CareOnCloud ESM VARCHAR attribute shortened to 191 chars, because of InnoDB max key length
 # The values were determined by looking at the patches in scripts/database/careoncloud-schema.xml.
 sub DBShortenedColumns {
     return
@@ -1593,7 +1593,7 @@ sub DBShortenedColumns {
 # DBDirectBlobColumns.
 # Under MySQL binary data, often text in various encodings, is stored directly in LONGBLOB columns. This feature is called DirectBlob support.
 # For other database the DirectBlob feature is not supported. Either because the database does not support it, or because the
-# fitting data type is not used in the OTOBO schema. In these cases the data is base64 encoded.
+# fitting data type is not used in the CareOnCloud ESM schema. In these cases the data is base64 encoded.
 # This is an issue during migration from PostgreSQL to MySQL, as columns that are BASE64 in PostgreSQL are not encoded in MySQL.
 #
 # Confusingly not all LONGBLOB columns are handled in this way. Some columns are LONGBLOB, even though it is known that the
@@ -1678,12 +1678,12 @@ sub _ChangeFilePath {
         {
             FileTyp => 'All',
             Search  => 'OTRS',
-            Change  => 'OTOBO',
+            Change  => 'CareOnCloud ESM',
         },
         {
             FileTyp => 'All',
             Search  => 'otrs',
-            Change  => 'otobo',
+            Change  => 'careoncloud',
         },
         {
             FileTyp => 'All',
@@ -1742,8 +1742,8 @@ sub _ChangeFileInfo {
         },
         {
             FileType => 'All',
-            Search   => 'OTOBO Community Edition',
-            Change   => 'OTOBO Community'
+            Search   => 'CareOnCloud ESM Community Edition',
+            Change   => 'CareOnCloud ESM Community'
         },
         {
             FileType => 'All',
@@ -1753,17 +1753,17 @@ sub _ChangeFileInfo {
         {
             FileType => 'All',
             Search   => '((OTRS)) Community Edition',
-            Change   => 'OTOBO'
+            Change   => 'CareOnCloud ESM'
         },
         {
             FileType => 'All',
             Search   => 'OTRS 6',
-            Change   => 'OTOBO 10'
+            Change   => 'CareOnCloud ESM 10'
         },
         {
             FileType => 'All',
             Search   => 'OTRS Team',
-            Change   => 'OTOBO Team'
+            Change   => 'CareOnCloud ESM Team'
         },
         {
             FileType => 'All',
@@ -1790,20 +1790,20 @@ sub _ChangeFileInfo {
             FileType          => 'All',
             FileNameBlacklist => { 'Config.pm' => 1 },
             Search            => '(?<!(Copyright \(\S\) \d\d\d\d-\d\d\d\d ))OTRS',
-            Change            => 'OTOBO',
+            Change            => 'CareOnCloud ESM',
         },
         {
             FileType          => 'All',
             FileNameBlacklist => { 'Config.pm' => 1 },
             Search            => '(?<!(Copyright \(\S\) \d\d\d\d-\d\d\d\d OTRS AG, https:\/\/))otrs',
-            Change            => 'otobo'
+            Change            => 'careoncloud'
         },
         {
             # TODO: remove this rule, as it already is included in the preceeding rule
             FileType          => 'All',
             FileNameBlacklist => { 'Config.pm' => 1 },
             Search            => '(?<!(Copyright \(\S\) \d\d\d\d-\d\d\d\d OTRS AG, https:\/\/))"otrs"',
-            Change            => '"otobo"'
+            Change            => '"careoncloud"'
         },
         {
             # TODO: why is this included here
@@ -1851,7 +1851,7 @@ sub _ChangeLicenseHeaderRules {
                 },
                 {
                     while => qr/^#.+/,
-                    nkeep => qr/^#.+otobo/i,
+                    nkeep => qr/^#.+careoncloud/i,
                     until => qr/^# --/,
                 },
                 {
@@ -1887,7 +1887,7 @@ sub _ChangeLicenseHeaderRules {
                 },
                 {
                     while => qr/^#.+/,
-                    nkeep => qr/^#.+otobo/i,
+                    nkeep => qr/^#.+careoncloud/i,
                     until => qr/^# --/,
                 },
                 {
@@ -1922,7 +1922,7 @@ sub _ChangeLicenseHeaderRules {
                 },
                 {
                     while => qr/^\/\/ /,
-                    nkeep => qr/^\/\/.+otobo/i,
+                    nkeep => qr/^\/\/.+careoncloud/i,
                     until => qr/^\/\/ --/,
                 },
                 {
@@ -1956,7 +1956,7 @@ sub _ChangeLicenseHeaderRules {
                 },
                 {
                     while => qr/.?/,
-                    nkeep => qr/otobo/i,
+                    nkeep => qr/careoncloud/i,
                     until => qr/^\s*$/,
                 },
                 {

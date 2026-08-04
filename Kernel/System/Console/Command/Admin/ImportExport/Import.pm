@@ -165,7 +165,7 @@ sub Run {
         );
 
         if ( !$Result ) {
-            $Self->PrintError("\nError occurred. Import impossible! See the OTOBO log for details.\n");
+            $Self->PrintError("\nError occurred. Import impossible! See the CareOnCloud ESM log for details.\n");
 
             return $Self->ExitCodeError;
         }

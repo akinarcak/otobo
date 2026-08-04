@@ -58,7 +58,7 @@ sub Run {
             Value   => $CommandOutput,
             Message => Translatable(<<'END_MESSAGE'),
 CPAN::Audit reported that one or more installed Perl modules have known vulnerabilities.
-The report from CPAN::Audit has been annotated with evaluation by the OTOBO team.
+The report from CPAN::Audit has been annotated with evaluation by the CareOnCloud ESM team.
 Please note that there might be false positives for distributions patching Perl modules without changing their version number.'
 END_MESSAGE
         );

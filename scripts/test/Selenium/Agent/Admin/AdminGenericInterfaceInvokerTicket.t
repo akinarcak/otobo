@@ -77,7 +77,7 @@ $Selenium->RunTest(
         $Selenium->WaitFor(
             JavaScript =>
                 'return typeof(Core) == "object" && typeof(Core.App) == "object" && Core.App.PageLoadComplete'
-        ) || die "OTOBO API verification failed after page load.";
+        ) || die "CareOnCloud ESM API verification failed after page load.";
 
         # Write invoker name.
         $Selenium->find_element( '#Invoker', 'css' )->send_keys("Invoker $RandomID");

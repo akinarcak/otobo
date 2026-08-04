@@ -5,7 +5,7 @@ Bu dosyanın altındaki **"Fable'a verilecek ana talimat"** bölümü Claude Fab
 1. `docs/esm/CAREONCLOUD-ESM-AI-MASTER-CONTEXT.md` — kanonik ürün ve teknik talimat
 2. `docs/esm/STATUS.md` — doğrulanmış güncel durum ve açık riskler
 3. `docs/esm/NOTES-FOR-CODEX.md` — devir ve release kanıtları
-4. Güncel kaynak kod veya GitHub deposu: `akinarcak/otobo`, dal `codex/esm-foundation`
+4. Güncel kaynak kod veya GitHub deposu: `akinarcak/careoncloud`, dal `codex/esm-foundation`
 5. Canlı ve aday ortamların giriş, müşteri portalı, agent dashboard, talep, ticket, katalog, raporlama, CMDB, change ve admin ekran görüntüleri
 6. Kullanıcının paylaştığı güncel canlı agent dashboard ekran görüntüsü
 
@@ -41,7 +41,7 @@ CareOnCloud ESM'nin amacı yalnızca ticket yönetmek değildir. Ürün; IT, ins
 
 İlk hedef pazar 100–2.000 kullanıcı ölçeğindeki kurumlar, Türkçe hizmet masaları ve MSP'lerdir. İlk sürüm için “ServiceNow'un tam alternatifi” veya “kurumsal BI platformu” gibi kanıtlanmamış iddialar kullanma.
 
-OTOBO geçiş çekirdeğidir; nihai ürün arayüzü değildir. Önerilerin mevcut işleyen backend kabiliyetlerini korumalı ve yeni kullanıcı arayüzünü CareOnCloud domain/API sınırları üzerinden aşamalı olarak ayırmalıdır. Büyük çaplı bir “her şeyi yeniden yaz” önerisi verme.
+CareOnCloud ESM geçiş çekirdeğidir; nihai ürün arayüzü değildir. Önerilerin mevcut işleyen backend kabiliyetlerini korumalı ve yeni kullanıcı arayüzünü CareOnCloud domain/API sınırları üzerinden aşamalı olarak ayırmalıdır. Büyük çaplı bir “her şeyi yeniden yaz” önerisi verme.
 
 ### 3. İncelenecek kullanıcı rolleri
 
@@ -93,7 +93,7 @@ Her ekran için şu alanları içeren bir envanter oluştur:
 | Kullanıcı amacı | Kullanıcının tamamlamaya çalıştığı iş |
 | Mevcut UI teknolojisi | Template, skin, JavaScript veya yeni frontend katmanı |
 | Dil durumu | TR, EN, karışık veya çevrilemez sabit metin |
-| Marka durumu | CareOnCloud, OTOBO, D724 veya karışık |
+| Marka durumu | CareOnCloud, CareOnCloud ESM, D724 veya karışık |
 | UX durumu | Çalışır, sürtünmeli, kritik kusurlu, eksik |
 | Kanıt | Rota, ekran görüntüsü veya kaynak dosya |
 | Yeniden kullanım kararı | Koru, iyileştir, sar/adapter kullan, değiştir |
@@ -186,13 +186,13 @@ Türkçe ve İngilizceyi aynı önemde ele al. Aşağıdakileri incele:
 
 #### 4.6 Mevcut teknik yapıyla uygulanabilirlik
 
-Kaynakta görülen OTOBO Template Toolkit şablonları, Agent/Customer skin CSS yapısı, frontend modül kayıtları, D724 paket ekranları ve mevcut JavaScript bağımlılıklarını incele. Şu üç yaklaşımı karşılaştır:
+Kaynakta görülen CareOnCloud ESM Template Toolkit şablonları, Agent/Customer skin CSS yapısı, frontend modül kayıtları, D724 paket ekranları ve mevcut JavaScript bağımlılıklarını incele. Şu üç yaklaşımı karşılaştır:
 
 1. Eski şablon ve skin'leri kontrollü biçimde modernize etmek
 2. Yeni CareOnCloud uygulama kabuğunu mevcut backend/API üzerine kademeli eklemek
 3. Belirli ekranları strangler yaklaşımıyla yeni frontend'e taşımak
 
-Her yaklaşım için değer, risk, maliyet, erişilebilirlik, test edilebilirlik, OTOBO bağımlılığı ve geri dönüş kolaylığını değerlendir. Nihai öneriyi gerekçelendir.
+Her yaklaşım için değer, risk, maliyet, erişilebilirlik, test edilebilirlik, CareOnCloud ESM bağımlılığı ve geri dönüş kolaylığını değerlendir. Nihai öneriyi gerekçelendir.
 
 Master Context'teki ayrışma sırasını dikkate al:
 
@@ -206,17 +206,17 @@ Master Context'teki ayrışma sırasını dikkate al:
 8. Search ve knowledge
 9. Ticket/case
 10. E-posta işleme
-11. OTOBO DB/runtime bağımlılığının kaldırılması
+11. CareOnCloud ESM DB/runtime bağımlılığının kaldırılması
 
-Ticket ve e-posta çekirdeğini erken yeniden yazmayı önerme. Yeni ekranların doğrudan OTOBO tablosuna bağlanmasını da önerme; CareOnCloud domain/API veya açıkça tanımlanmış adapter sınırı kullan.
+Ticket ve e-posta çekirdeğini erken yeniden yazmayı önerme. Yeni ekranların doğrudan CareOnCloud ESM tablosuna bağlanmasını da önerme; CareOnCloud domain/API veya açıkça tanımlanmış adapter sınırı kullan.
 
 ### 5. Mevcut canlı ekranla ilgili doğrulanması gereken başlangıç bulguları
 
 Kullanıcının paylaştığı agent dashboard ekran görüntüsünde aşağıdaki sorunlar görülmektedir. Bunları başlangıç hipotezi olarak doğrula, genişlet veya yanlışla:
 
-- Adres satırında kullanıcıya görünen `/otobo/index.pl` yolu
+- Adres satırında kullanıcıya görünen `/careoncloud/index.pl` yolu
 - Aynı menüde Türkçe ve İngilizce modül adları
-- “Welcome to OTOBO!” gibi eski ürün verisi/metni
+- “Welcome to CareOnCloud ESM!” gibi eski ürün verisi/metni
 - Kullanıcıya gösterilen İngilizce saat dilimi uyarısı
 - Eski ve yoğun yatay navigasyon
 - Birincil kullanıcı görevini öne çıkarmayan dashboard
@@ -311,7 +311,7 @@ Wireframe'lerde gerçekçi Türkçe örnek içerik kullan; lorem ipsum kullanma.
 
 #### H. Tasarım sistemi başlangıç paketi
 
-Token'ları, temel bileşenleri, varyantları, erişilebilirlik kurallarını ve hangi ekranlarda kullanılacaklarını belirt. Tasarım sisteminin eski OTOBO skin'ine nasıl köprülenip zamanla bağımsızlaştırılacağını açıkla.
+Token'ları, temel bileşenleri, varyantları, erişilebilirlik kurallarını ve hangi ekranlarda kullanılacaklarını belirt. Tasarım sisteminin eski CareOnCloud ESM skin'ine nasıl köprülenip zamanla bağımsızlaştırılacağını açıkla.
 
 #### I. Aşamalı geliştirme yol haritası
 
@@ -322,7 +322,7 @@ Planı yalnız tema isimleriyle değil, geliştirilebilir dilimlerle oluştur:
 - `P1 / Yeni agent çalışma kabuğu`
 - `P2 / Admin ve MSP deneyimi`
 - `P2 / Tasarım sistemi yaygınlaştırma`
-- `P3 / OTOBO UI bağımsızlığı`
+- `P3 / CareOnCloud ESM UI bağımsızlığı`
 
 Her dilim için:
 
@@ -361,7 +361,7 @@ Ayrıca işleri iki uygulama sınıfına ayır:
 - Bağımlılıklar
 - Geri dönüş yolu
 
-İlk sprint yalnız kozmetik makyaj olmasın. Kullanıcıya görünen `/otobo/`, OTOBO/D724 kalıntıları, karışık dil, saat dilimi uyarısı, eski fixture/veri, navigasyon tutarsızlığı ve kritik rol ana sayfaları P0 değerlendirmesine alınmalıdır.
+İlk sprint yalnız kozmetik makyaj olmasın. Kullanıcıya görünen `/careoncloud/`, CareOnCloud ESM/D724 kalıntıları, karışık dil, saat dilimi uyarısı, eski fixture/veri, navigasyon tutarsızlığı ve kritik rol ana sayfaları P0 değerlendirmesine alınmalıdır.
 
 #### K. Karar günlüğü
 
@@ -374,7 +374,7 @@ Ayrıca işleri iki uygulama sınıfına ayır:
 - Yalnızca tek ekran veya yalnız görsel stil incelenmişse
 - Müşteri, agent ve admin deneyimleri ayrılmamışsa
 - Türkçe/İngilizce bütünlüğü somut kabul kriterlerine bağlanmamışsa
-- `/otobo/` ve OTOBO marka kalıntıları ele alınmamışsa
+- `/careoncloud/` ve CareOnCloud ESM marka kalıntıları ele alınmamışsa
 - Tenant/MSP bağlamı ve yetki görünürlüğü değerlendirilmemişse
 - WCAG 2.2 AA, klavye ve responsive kullanım incelenmemişse
 - Öneriler mevcut kaynak/teknik yapı ile ilişkilendirilmemişse
@@ -382,5 +382,5 @@ Ayrıca işleri iki uygulama sınıfına ayır:
 - Tasarım ile frontend/API/domain bağımlılıkları ayrıştırılmamışsa
 - Görülmeyen alanlar görülmüş gibi raporlanmışsa
 
-Sonuçta hedef; eski OTOBO agent panelinin renklerini değiştirmek değil, çalışan CareOnCloud kabiliyetlerini koruyarak **güvenilir, iki dilli, rol bazlı, erişilebilir ve aşamalı olarak bağımsızlaşabilen bir kurumsal hizmet deneyimi** tanımlamaktır.
+Sonuçta hedef; eski CareOnCloud ESM agent panelinin renklerini değiştirmek değil, çalışan CareOnCloud kabiliyetlerini koruyarak **güvenilir, iki dilli, rol bazlı, erişilebilir ve aşamalı olarak bağımsızlaşabilen bir kurumsal hizmet deneyimi** tanımlamaktır.
 

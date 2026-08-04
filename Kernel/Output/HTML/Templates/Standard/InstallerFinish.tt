@@ -30,8 +30,8 @@
 
                     <label>[% Translate("Start page") | html %]:</label>
                     <div class="Field">
-                        <a href="[% Data.Scheme || 'http' %]://[% Data.Host | html %]/[% Data.OTOBOHandle %]/index.pl">
-                            [% Data.Scheme || 'http' %]://[% Data.Host | html %]/[% Data.OTOBOHandle %]/index.pl
+                        <a href="[% Data.Scheme || 'http' %]://[% Data.Host | html %]/[% Data.CareOnCloud ESMHandle %]/index.pl">
+                            [% Data.Scheme || 'http' %]://[% Data.Host | html %]/[% Data.CareOnCloud ESMHandle %]/index.pl
                         </a>
                     </div>
                     <div class="Clear"></div>
@@ -50,7 +50,7 @@
 
                     <div class="Field Center">
                         <p>((enjoy))</p>
-                        <p>[% Translate("Your OTOBO Team") | html %]</p>
+                        <p>[% Translate("Your CareOnCloud ESM Team") | html %]</p>
                     </div>
                     <div class="Clear"></div>
                 </fieldset>

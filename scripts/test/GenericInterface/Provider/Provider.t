@@ -354,7 +354,7 @@ for my $Test (@Tests) {
                         );
                         $HTTPRequest = HTTP::Request->new(
                             'POST',
-                            "http://localhost/otobo/nph-genericinterface.pl/$PathInfo",
+                            "http://localhost/careoncloud/nph-genericinterface.pl/$PathInfo",
                             [
                                 'Content-Type'   => 'application/x-www-form-urlencoded',
                                 'Content-Length' => bytes::length($RequestData),
@@ -370,7 +370,7 @@ for my $Test (@Tests) {
                         );
                         $HTTPRequest = HTTP::Request->new(
                             'GET',
-                            "http://localhost/otobo/nph-genericinterface.pl/$PathInfo?$QueryString",
+                            "http://localhost/careoncloud/nph-genericinterface.pl/$PathInfo?$QueryString",
                             [
                                 'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8;',
                             ],

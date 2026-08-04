@@ -22,7 +22,7 @@ import * as CKEditor5Wrapper from 'ckeditor5';
 /**
  * @description
  *      Wrapper for CKEditor 5.
- *      The CKEditor is using ES6 module syntax that is not compatible with OTOBO's currently used ES5 syntax.
+ *      The CKEditor is using ES6 module syntax that is not compatible with CareOnCloud ESM's currently used ES5 syntax.
  *      This wrapper makes the relevant exported variables of the CKEditor available to the global scope.
  */
 window.CKEditor5Wrapper = CKEditor5Wrapper;

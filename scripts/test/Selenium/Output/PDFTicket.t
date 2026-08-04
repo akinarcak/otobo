@@ -262,7 +262,7 @@ $Selenium->RunTest(
                 ChannelName          => 'Email',
                 SenderType           => 'system',
                 IsVisibleForCustomer => 1,
-                From                 => 'OTOBO System <otobo@localhost>',
+                From                 => 'CareOnCloud ESM System <careoncloud@localhost>',
                 Cc                   => 'Cc ' . $RandomID . ' C <email@example.com>',
                 Subject              => 'Third Article Subject ' . $RandomID,
                 Body                 => 'Third Article body ' . $RandomID,
@@ -840,7 +840,7 @@ $Selenium->RunTest(
                 Interface => 'All',
             },
             {
-                Value     => 'OTOBO System',
+                Value     => 'CareOnCloud ESM System',
                 Message   => 'From: value is correct for Article#3',
                 Interface => 'All',
             },

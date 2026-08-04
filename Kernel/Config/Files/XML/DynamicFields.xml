@@ -296,7 +296,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Database Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -856,7 +856,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Contact Data Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1093,7 +1093,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Reference Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1239,7 +1239,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Lens Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1282,7 +1282,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1440,7 +1440,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Text Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1477,7 +1477,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Text Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1514,7 +1514,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Checkbox Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1551,7 +1551,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Drop-down Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1593,7 +1593,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Date Time Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1635,7 +1635,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Multiselect Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1677,7 +1677,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Field Set Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -1746,7 +1746,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Dynamic Fields Text Backend GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>

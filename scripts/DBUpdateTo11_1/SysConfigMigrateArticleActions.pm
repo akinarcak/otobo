@@ -51,7 +51,7 @@ sub Run {
     my $LogObject       = $Kernel::OM->Get('Kernel::System::Log');
     my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
 
-    # $OldConfig contains the old settings from OTOBO 11.0.x assuming
+    # $OldConfig contains the old settings from CareOnCloud ESM 11.0.x assuming
     # that Maint::Config::Rebuild hasn't run with the option --cleanup before.
     # Having executed Maint::Config::Rebuild without the cleanup option is fine.
     my $OldConfig = $ConfigObject->Get('Ticket::Frontend::Article::Actions');

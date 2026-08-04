@@ -30,7 +30,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('List all installed OTOBO package files.');
+    $Self->Description('List all installed CareOnCloud ESM package files.');
 
     return;
 }

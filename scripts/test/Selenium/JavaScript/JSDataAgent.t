@@ -60,7 +60,7 @@ $Selenium->RunTest(
             },
             {
                 Key           => 'CustomerPanelSessionName',
-                ExpectedValue => 'OTOBOUTValue',
+                ExpectedValue => 'CareOnCloud ESMUTValue',
             },
             {
                 Key           => 'CheckEmailAddresses',

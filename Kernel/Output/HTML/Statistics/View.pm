@@ -195,7 +195,7 @@ sub StatsParamsWidget {
     if ( $Stat->{StatType} eq 'dynamic' ) {
         my $SelectedTimeZone = $Self->_GetValidTimeZone( TimeZone => $LocalGetParam->( Param => 'TimeZone' ) )
             // $Stat->{TimeZone}
-            // Kernel::System::DateTime->OTOBOTimeZoneGet();
+            // Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet();
 
         my %TimeZoneBuildSelection = $Self->_TimeZoneBuildSelection();
 
@@ -827,7 +827,7 @@ sub GeneralSpecificationsWidget {
                 UserID => $Param{UserID}
             );
             $SelectedTimeZone = $Self->_GetValidTimeZone( TimeZone => $UserPreferences{UserTimeZone} )
-                // Kernel::System::DateTime->OTOBOTimeZoneGet();
+                // Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet();
         }
 
         my %TimeZoneBuildSelection = $Self->_TimeZoneBuildSelection();

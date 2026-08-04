@@ -1,6 +1,6 @@
 # SEC-03 Birleşik Kimlik Güven Sınırı
 
-`D724Identity`, CareOnCloud ESM'in OIDC/SAML ve sonraki SCIM adaptörleri için tenant-safe çekirdek sözleşmesidir. Sürüm 0.2.0, OTOBO'nun yerleşik JWKS/imza doğrulayıcısını kullanan Authorization Code akış güvenlik katmanını da içerir.
+`D724Identity`, CareOnCloud ESM'in OIDC/SAML ve sonraki SCIM adaptörleri için tenant-safe çekirdek sözleşmesidir. Sürüm 0.2.0, CareOnCloud ESM'nun yerleşik JWKS/imza doğrulayıcısını kullanan Authorization Code akış güvenlik katmanını da içerir.
 
 ## Değişmezler
 
@@ -16,7 +16,7 @@
 - Callback, state satırını transaction içinde kilitler; browser binding, PKCE S256, exact issuer/audience ve nonce doğrulamasından sonra akışı tek kullanımlık olarak tüketir.
 - Dönüş hedefi yalnız yerel `/careoncloud/...` yoludur. Open redirect kabul edilmez.
 - Discovery metadata issuer ile aynı HTTPS origin'den authorization, token ve JWKS endpoint'i vermeli; ID token algoritması yalnız `RS256` veya `ES256` olabilir.
-- Fork'un yerleşik OTOBO OAuth2 katmanı `code_challenge`/`S256` değerlerini authorization URL'sine ve exact `code_verifier` değerini token exchange formuna taşır; hatalı RFC 7636 değerleri ağ isteğinden önce reddedilir.
+- Fork'un yerleşik CareOnCloud ESM OAuth2 katmanı `code_challenge`/`S256` değerlerini authorization URL'sine ve exact `code_verifier` değerini token exchange formuna taşır; hatalı RFC 7636 değerleri ağ isteğinden önce reddedilir.
 
 ## Tamamlanan kapsam
 
@@ -25,7 +25,7 @@
 - Domain allow-list, bounded grup listesi ve rol allow-list'i.
 - İdempotent subject link'i ve login takeover koruması.
 - Status komutu ve production-style transaction rollback testi.
-- Authorization Code başlangıç sözleşmesi, PKCE S256, metadata güven sınırı, OTOBO JWKS doğrulayıcı delegasyonu ve replay engeli.
+- Authorization Code başlangıç sözleşmesi, PKCE S256, metadata güven sınırı, CareOnCloud ESM JWKS doğrulayıcı delegasyonu ve replay engeli.
 
 ## Sonraki kapı
 

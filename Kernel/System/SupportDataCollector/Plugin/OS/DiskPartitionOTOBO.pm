@@ -37,17 +37,17 @@ sub Run {
     # Check if used OS is a unixoid system
     return $Self->GetResults() unless $^O =~ m/linux|unix|netbsd|freebsd|darwin/i;
 
-    # Find OTOBO partition. "df -P" returns something like:
+    # Find CareOnCloud ESM partition. "df -P" returns something like:
     #   Filesystem     1024-blocks     Used Available Capacity Mounted on
     #   /dev/sda5         76371740 60836612  11612544      84% /
     # The complete command then gives /dev/sda5
     my $Home           = $Kernel::OM->Get('Kernel::Config')->Get('Home');
-    my $OTOBOPartition = `df -P $Home | tail -1 | cut -d' ' -f 1`;
-    chomp $OTOBOPartition;
+    my $CareOnCloud ESMPartition = `df -P $Home | tail -1 | cut -d' ' -f 1`;
+    chomp $CareOnCloud ESMPartition;
 
     $Self->AddResultInformation(
-        Label => Translatable('OTOBO Disk Partition'),
-        Value => $OTOBOPartition,
+        Label => Translatable('CareOnCloud ESM Disk Partition'),
+        Value => $CareOnCloud ESMPartition,
     );
 
     return $Self->GetResults();

@@ -368,7 +368,7 @@ sub GetTransportRecipients {
         if ( $Param{Notification}->{Data}->{RecipientEmail}->[0] ) {
             my $RecipientEmail = $Param{Notification}->{Data}->{RecipientEmail}->[0];
 
-            # replace OTOBOish attributes in recipient email
+            # replace CareOnCloud ESMish attributes in recipient email
             $RecipientEmail = $Self->_ReplaceTicketAttributes(
                 Ticket => $Param{Ticket},
                 Field  => $RecipientEmail,
@@ -379,7 +379,7 @@ sub GetTransportRecipients {
             if ( !IsArrayRefWithData($RecipientEmail) ) {
 
                 # Split multiple recipients on known delimiters: comma and semi-colon.
-                #   Do this after the OTOBO tags were replaced.
+                #   Do this after the CareOnCloud ESM tags were replaced.
                 @RecipientEmails = split /[;,\s]+/, $RecipientEmail;
             }
             else {

@@ -58,7 +58,7 @@ http_request(
     http_response {
         http_is_success();
         http_content_type('text/html');
-        http_content( match(qr/OTOBO Redirect/) );
+        http_content( match(qr/CareOnCloud ESM Redirect/) );
     },
     "testing $ExactRootURL",
 );
@@ -71,7 +71,7 @@ http_request(
     http_response {
         http_is_success();
         http_content_type('text/html');
-        http_content( match(qr/OTOBO Redirect/) );
+        http_content( match(qr/CareOnCloud ESM Redirect/) );
     },
     "testing $IndexHtmlURL",
 );

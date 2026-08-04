@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otobo_config version="2.0" init="Config">
-    <!-- Configuration overrides when OTOBO is running as a Docker container -->
+    <!-- Configuration overrides when CareOnCloud ESM is running as a Docker container -->
 
     <!--
     The CLDR project, https://cldr.unicode.org/, helps with internationalisation. It provides, among other things,

@@ -35,10 +35,10 @@
             <div class="Content">
             [% IF !Data.SystemIsRegistered %]
                 <p>
-                    [% Translate("System registration is a service of OTOBO team, which provides a lot of advantages!") | html %]
+                    [% Translate("System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!") | html %]
                 </p>
                 <p>
-                    [% Translate('Please note that the use of OTOBO cloud services requires the system to be registered.') | html %]
+                    [% Translate('Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.') | html %]
                 </p>
                 <p class="SpacingTop SpacingBottom">
                     <a class="CallForAction Fullsize Centered" href="[% Env("Baselink") %]Action=AdminRegistration">
@@ -50,7 +50,7 @@
                 </p>
             [% END %]
                 <p class="FieldExplanation">
-                    [% Translate("Here you can configure available cloud services that communicate securely with %s.", "cloud.otobo.ch") | html %]
+                    [% Translate("Here you can configure available cloud services that communicate securely with %s.", "cloud.careoncloud.ch") | html %]
                 </p>
             </div>
         </div>

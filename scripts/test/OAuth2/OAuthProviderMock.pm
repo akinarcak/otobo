@@ -49,8 +49,8 @@ sub GetTestOpenIDConfig {
     my $OpenIDConfig = {
         'ClientSettings' => {
             'ClientSecret' => '12345678987654321',
-            'ClientID'     => 'otobo',
-            'RedirectURI'  => 'http://localhost/otobo/index.pl?Action=Login',
+            'ClientID'     => 'careoncloud',
+            'RedirectURI'  => 'http://localhost/careoncloud/index.pl?Action=Login',
         },
         'ProviderSettings' => {
             'TTL'                 => 1800,
@@ -72,7 +72,7 @@ sub Payload {
 
     my $Scope    = $Param{Scope}    || "openid email profile roles";
     my $Audience = $Param{Audience} || [
-        "otobo",
+        "careoncloud",
         "account"
     ];
 
@@ -85,7 +85,7 @@ sub Payload {
         "aud" => $Audience,
         "sub" => "1f60c6d9-aaa4-4db1-aa8d-94091c8acc43",
         "typ" => "Bearer",
-        "azp" => "otobo",
+        "azp" => "careoncloud",
 
         #  "sid"                => "bac62d82-40f7-455c-9f3f-8e0316e61f5b",
         "acr"                => "1",
@@ -97,7 +97,7 @@ sub Payload {
         "family_name"        => "tester 1",
         "email"              => 'test1@example.com',
         "resource_access"    => {
-            "otobo" => {
+            "careoncloud" => {
                 "roles" => [
                     "agents"
                 ]

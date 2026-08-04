@@ -210,7 +210,7 @@
         </Value>
     </Setting>
     <Setting Name="Ticket::Article::Backend::MIMEBase::ArticleStorage" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.</Description>
+        <Description Translatable="1">Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.</Description>
         <Navigation>Core::CommunicationChannel::MIMEBase</Navigation>
         <Value>
             <Item ValueType="PerlModule" ValueFilter="Kernel/System/Ticket/Article/Backend/MIMEBase/ArticleStorage*.pm">Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleStorageDB</Item>
@@ -237,7 +237,7 @@
             <Item ValueType="Checkbox">1</Item>
         </Value>
     </Setting>
-    <Setting Name="OTOBOEscalationEvents::DecayTime" Required="0" Valid="1">
+    <Setting Name="CareOnCloud ESMEscalationEvents::DecayTime" Required="0" Valid="1">
         <Description Translatable="1">The duration in minutes after emitting an event, in which the new escalation notify and start events are suppressed.</Description>
         <Navigation>Core::Ticket</Navigation>
         <Value>
@@ -5498,7 +5498,7 @@
         </Value>
     </Setting>
     <Setting Name="Ticket::ViewableStateType" Required="1" Valid="1">
-        <Description Translatable="1">Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system's cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).</Description>
+        <Description Translatable="1">Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system's cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).</Description>
         <Navigation>Core::Ticket</Navigation>
         <Value>
             <Array>
@@ -10122,7 +10122,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Access Control Lists (ACL)</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10197,7 +10197,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Queues</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10303,7 +10303,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Templates</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10408,7 +10408,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Templates ↔ Queues</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10513,7 +10513,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Auto Responses</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10583,7 +10583,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Queues ↔ Auto Responses</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10653,7 +10653,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Attachments</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10723,7 +10723,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Templates ↔ Attachments</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10838,7 +10838,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Salutations</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10908,7 +10908,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Signatures</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10978,7 +10978,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Email Addresses</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -11048,7 +11048,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Ticket Notifications</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -11123,7 +11123,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Services</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -11228,7 +11228,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Service Level Agreements</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -11333,7 +11333,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Types</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -11439,7 +11439,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">States</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -11510,7 +11510,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Priorities</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -11581,7 +11581,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">GenericAgent</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -13014,7 +13014,7 @@ Thanks for your help!
         </Value>
     </Setting>
     <Setting Name="PostMaster::CheckFollowUpModule###0000-BounceEmail" Required="0" Valid="1">
-        <Description Translatable="1">Executes follow-up checks on OTOBO Header 'X-OTOBO-Bounce'.</Description>
+        <Description Translatable="1">Executes follow-up checks on CareOnCloud ESM Header 'X-OTOBO-Bounce'.</Description>
         <Navigation>Core::Email::PostMaster</Navigation>
         <Value>
             <Hash>
@@ -15319,7 +15319,7 @@ Thanks for your help!
         </Value>
     </Setting>
     <Setting Name="Ticket::OwnerResetOnUnlock" Required="1" Valid="1">
-        <Description Translatable="1">We have changed the default ticket unlock behavior in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and OTOBO version 10.0.</Description>
+        <Description Translatable="1">We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.</Description>
         <Navigation>Core::Ticket</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>

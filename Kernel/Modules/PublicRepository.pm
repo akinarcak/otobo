@@ -60,7 +60,7 @@ sub Run {
     my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
     # get repository index
-    if ( $File =~ /otobo.xml$/ ) {
+    if ( $File =~ /careoncloud.xml$/ ) {
 
         # get repository index
         my $Index = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
@@ -75,7 +75,7 @@ sub Run {
         $Index .= "</careoncloud_package_list>\n";
         return $LayoutObject->Attachment(
             Type        => 'inline',      # inline|attachment
-            Filename    => 'otobo.xml',
+            Filename    => 'careoncloud.xml',
             ContentType => 'text/xml',
             Content     => $Index,
         );

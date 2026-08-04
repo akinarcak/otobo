@@ -608,11 +608,11 @@ sub Run {
             }
         }
 
-        # Display any YAML error message as a normal otobo error message.
+        # Display any YAML error message as a normal careoncloud error message.
         if ( !IsHashRefWithData($ImportedConfig) ) {
             return $LayoutObject->ErrorScreen(
                 Message =>
-                    Translatable('The imported file has not valid YAML content! Please check OTOBO log for details'),
+                    Translatable('The imported file has not valid YAML content! Please check CareOnCloud ESM log for details'),
             );
         }
 
@@ -827,7 +827,7 @@ sub _ShowOverview {
 
             if ( !$Webservice->{Config} || !IsHashRefWithData( $Webservice->{Config} ) ) {
 
-                # Write an error message to the OTOBO log.
+                # Write an error message to the CareOnCloud ESM log.
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
                     Priority => 'error',
                     Message  => "Configuration of WebserviceID $WebserviceID is invalid!",
@@ -1092,7 +1092,7 @@ sub _ShowEdit {
     # Meta configuration for output blocks.
     my %CommTypeConfig = (
         Provider => {
-            Title                 => Translatable('OTOBO as provider'),
+            Title                 => Translatable('CareOnCloud ESM as provider'),
             SelectedTransport     => $ProviderData->{Transport}->{Type},
             ActionType            => 'Operation',
             ActionsTitle          => Translatable('Operations'),
@@ -1102,7 +1102,7 @@ sub _ShowEdit {
             ErrorHandlingPriority => $ErrorHandlingPriorityProvider,
         },
         Requester => {
-            Title                 => Translatable('OTOBO as requester'),
+            Title                 => Translatable('CareOnCloud ESM as requester'),
             SelectedTransport     => $RequesterData->{Transport}->{Type},
             ActionType            => 'Invoker',
             ActionsTitle          => Translatable('Invokers'),
@@ -1451,8 +1451,8 @@ sub _UpdateConfiguration {
 
     my $Configuration = $Param{Configuration};
 
-    # This function needs to be extended for further otobo versions
-    #   it could be that newer otobo versions has different configuration options
+    # This function needs to be extended for further careoncloud versions
+    #   it could be that newer careoncloud versions has different configuration options
     #   migration from previous version should be automatic and needs to be done here
     return $Configuration;
 }

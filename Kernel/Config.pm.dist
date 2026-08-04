@@ -31,12 +31,12 @@ Kernel::Config - settings that can be adapted by the user
 
 =head1 DESCRIPTION
 
-Most OTOBO configuration should be done via the OTOBO web interface
+Most CareOnCloud ESM configuration should be done via the CareOnCloud ESM web interface
 and the SysConfig. Only for some configuration, such as database
 credentials and customer data source changes, you should edit this
 file. For changes do customer data sources you can copy the definitions
 from F<Kernel/Config/Defaults.pm> and paste them into this file.
-The file F<Kernel/Config.pm> will not be overwritten when updating OTOBO.
+The file F<Kernel/Config.pm> will not be overwritten when updating CareOnCloud ESM.
 
 =cut
 
@@ -83,14 +83,14 @@ sub Load {
 #    $ENV{NLS_DATE_FORMAT} = 'YYYY-MM-DD HH24:MI:SS';
 #    $ENV{NLS_LANG}        = 'AMERICAN_AMERICA.AL32UTF8';
 
-    # Additional connect attributes for the standard 'otobo' database connection.
+    # Additional connect attributes for the standard 'careoncloud' database connection.
     # Set the attributes needed for encrypted database connections here.
 #    $Self->{DatabaseAttribute} = {};
 
     # ---------------------------------------------------- #
     # fs root directory, without trailing slash            #
     # ---------------------------------------------------- #
-    $Self->{Home} = '/opt/otobo';
+    $Self->{Home} = '/opt/careoncloud';
 
     # ---------------------------------------------------- #
     # insert your own config settings "here"               #

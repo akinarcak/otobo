@@ -75,7 +75,7 @@ sub new {
 
 =head2 NotificationEvent()
 
-replace all OTOBO smart tags in the notification body and subject
+replace all CareOnCloud ESM smart tags in the notification body and subject
 
     my %NotificationEvent = $CalendarTemplateGeneratorObject->NotificationEvent(
         AppointmentID => 123,

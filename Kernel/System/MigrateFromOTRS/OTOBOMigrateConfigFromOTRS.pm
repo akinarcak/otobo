@@ -84,8 +84,8 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOMigrateConfigFromOTRS',
-            SubTask   => "Migrate configuration to OTOBO.",
+            Task      => 'CareOnCloud ESMMigrateConfigFromOTRS',
+            SubTask   => "Migrate configuration to CareOnCloud ESM.",
             StartTime => $Epoch,
         },
     );
@@ -121,7 +121,7 @@ sub Run {
         Permission => '660',                     # unix file permissions
     );
 
-    $Self->CleanOTRSFileToOTOBOStyle(
+    $Self->CleanOTRSFileToCareOnCloud ESMStyle(
         File   => $TmpDirectory . '/' . 'SysConfigDump.sysconf',
         UserID => 1,
     );
@@ -156,10 +156,10 @@ sub Run {
             UserID            => 1,
         );
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $MigrationBaseObject->MigrationLog(
             String =>
-                "Reset config option $Configname, cause some changes in OTOBO. Please check the settings manualy.",
+                "Reset config option $Configname, cause some changes in CareOnCloud ESM. Please check the settings manualy.",
             Priority => "notice",
         );
     }
@@ -173,7 +173,7 @@ sub Run {
         )
         )
     {
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $MigrationBaseObject->MigrationLog(
             String   => "There was a problem writing XML to DB.",
             Priority => "error",
@@ -188,7 +188,7 @@ sub Run {
 
     # Write ZZZAAuto.pm
     my %DeployResult = $SysConfigObject->ConfigurationDeploy(
-        Comments    => $Param{Comments} || 'Migrate Configuration from OTRS to OTOBO',
+        Comments    => $Param{Comments} || 'Migrate Configuration from OTRS to CareOnCloud ESM',
         AllSettings => 1,
         Force       => 1,
         UserID      => 1,

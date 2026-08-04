@@ -49,43 +49,43 @@ my $OIDCConfiguration = $Kernel::OM->Get('Kernel::System::OpenIDConnect::Configu
 $DBObject->BeginWork();
 
 my $BaseURL     = 'http://localhost:2007/realms/master/protocol/openid-connect/auth';
-my $RedirectURI = 'https://your.otobo.url/otobo/index.pl?Action=AdminOAuthTokenStore&Subaction=OAuth';
+my $RedirectURI = 'https://your.careoncloud.url/careoncloud/index.pl?Action=AdminOAuthTokenStore&Subaction=OAuth';
 
 my $TestCases = [
     {
         Config => {
         },
-        Expectation => '?response_type=code&scope=openid&client_id=otobo&state=',
+        Expectation => '?response_type=code&scope=openid&client_id=careoncloud&state=',
     },
     {
         Config => {
             Scope => 'openid email profile http://weirdscope.com',
         },
-        Expectation => '?response_type=code&scope=openid%20email%20profile%20http%3A%2F%2Fweirdscope.com&client_id=otobo&state=',
+        Expectation => '?response_type=code&scope=openid%20email%20profile%20http%3A%2F%2Fweirdscope.com&client_id=careoncloud&state=',
     },
     {
         Config => {
             Resources => 'someapi http://weirdresource.com',
         },
-        Expectation => '?response_type=code&scope=openid&client_id=otobo&resource=someapi%20http%3A%2F%2Fweirdresource.com&state=',
+        Expectation => '?response_type=code&scope=openid&client_id=careoncloud&resource=someapi%20http%3A%2F%2Fweirdresource.com&state=',
     },
     {
         Config => {
             Token => 'id_token',
         },
-        Expectation => '?response_type=code&scope=openid&client_id=otobo&state=',
+        Expectation => '?response_type=code&scope=openid&client_id=careoncloud&state=',
     },
     {
         Config => {
             Login => 'someone@somedomain.com',
         },
-        Expectation => '?response_type=code&scope=openid&client_id=otobo&login_hint=someone%40somedomain.com&state=',
+        Expectation => '?response_type=code&scope=openid&client_id=careoncloud&login_hint=someone%40somedomain.com&state=',
     },
     {
         Config => {
             Prompt => 1,
         },
-        Expectation => '?response_type=code&scope=openid&client_id=otobo&prompt=login&state=',
+        Expectation => '?response_type=code&scope=openid&client_id=careoncloud&prompt=login&state=',
     },
 ];
 

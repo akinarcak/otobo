@@ -101,7 +101,7 @@ my $XMLContentRaw = <<'EOF',
 <Description Translatable="1">Test.</Description>
 <Navigation>Core</Navigation>
 <Value>
-    <Item ValueType="String" ValueRegex="">OTOBO 10</Item>
+    <Item ValueType="String" ValueRegex="">CareOnCloud ESM 10</Item>
 </Value>
 </Setting>
 EOF
@@ -127,7 +127,7 @@ EOF
                 Item => [
                     {
                         ValueType  => 'String',
-                        Content    => 'OTOBO 10',
+                        Content    => 'CareOnCloud ESM 10',
                         ValueRegex => '',
                     },
                 ],
@@ -145,7 +145,7 @@ my $DefaultID1 = $SysConfigDBObject->DefaultSettingAdd(
     XMLContentRaw    => $XMLContentRaw,
     XMLContentParsed => $XMLContentParsed,
     XMLFilename      => 'UnitTest.xml',
-    EffectiveValue   => 'OTOBO 10',
+    EffectiveValue   => 'CareOnCloud ESM 10',
     UserID           => $UserID,
 );
 $Self->IsNot(
@@ -167,7 +167,7 @@ my $DefaultID2 = $SysConfigDBObject->DefaultSettingAdd(
     XMLContentRaw    => $XMLContentRaw,
     XMLContentParsed => $XMLContentParsed,
     XMLFilename      => 'UnitTest.xml',
-    EffectiveValue   => 'OTOBO 10',
+    EffectiveValue   => 'CareOnCloud ESM 10',
     UserID           => $UserID,
 );
 $Self->IsNot(

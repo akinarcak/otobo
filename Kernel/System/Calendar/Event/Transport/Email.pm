@@ -197,7 +197,7 @@ sub GetTransportRecipients {
             if ( !IsArrayRefWithData($RecipientEmail) ) {
 
                 # Split multiple recipients on known delimiters: comma and semi-colon.
-                #   Do this after the OTOBO tags were replaced.
+                #   Do this after the CareOnCloud ESM tags were replaced.
                 @RecipientEmails = split /[;,\s]+/, $RecipientEmail;
             }
             else {

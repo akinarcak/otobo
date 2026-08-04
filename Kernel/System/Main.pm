@@ -806,13 +806,13 @@ extract the attributes 'Product' and 'Version' from a RELEASE file
 
     # specify either Directory and Filename
     my $ReleaseInfo = $MainObject->GetReleaseInfo(
-        Directory => '/opt/otobo',
+        Directory => '/opt/careoncloud',
         Filename  => 'RELEASE',
     );
 
     # or Location
     my $ReleaseInfo = $MainObject->GetReleaseInfo(
-        Location  => '/opt/otobo/RELEASE'
+        Location  => '/opt/careoncloud/RELEASE'
     );
 
 The returned value is a hashref. There are two possible keys: B<Product> and B<Version>.

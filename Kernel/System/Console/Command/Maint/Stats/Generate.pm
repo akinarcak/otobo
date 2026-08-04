@@ -39,7 +39,7 @@ sub Configure {
     my ( $Self, %Param ) = @_;
 
     $Self->Description(
-        'Generate (and send, optional) statistics which have been configured previously in the OTOBO statistics module.'
+        'Generate (and send, optional) statistics which have been configured previously in the CareOnCloud ESM statistics module.'
     );
     $Self->AddOption(
         Name        => 'number',
@@ -104,7 +104,7 @@ sub Configure {
     $Self->AddOption(
         Name        => 'language',
         Description =>
-            "Target language (e.g. de) for which the file should be generated (will be OTOBO default language or english as fallback if left empty).",
+            "Target language (e.g. de) for which the file should be generated (will be CareOnCloud ESM default language or english as fallback if left empty).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,

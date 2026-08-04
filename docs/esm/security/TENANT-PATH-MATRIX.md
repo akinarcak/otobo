@@ -1,10 +1,10 @@
 # P0.2 Tenant Yol ve Negatif Test Matrisi
 
-Durum: `PARTIAL`. Bu belge, CareOnCloud kodunda tenant sinirini kullanan yollarin mevcut kaynak ve test kanitini toplar. Bir satirin testi olmasi, tum OTOBO yuzeyinin tenant-izole oldugu anlamina gelmez.
+Durum: `PARTIAL`. Bu belge, CareOnCloud kodunda tenant sinirini kullanan yollarin mevcut kaynak ve test kanitini toplar. Bir satirin testi olmasi, tum CareOnCloud ESM yuzeyinin tenant-izole oldugu anlamina gelmez.
 
 ## Sinir sozlesmesi
 
-- Tenant karari `D724TenantGuard` tarafindan resource tenant'i ile verilir; request parametresi veya OTOBO grup/queue yetkisi tek basina sinir degildir.
+- Tenant karari `D724TenantGuard` tarafindan resource tenant'i ile verilir; request parametresi veya CareOnCloud ESM grup/queue yetkisi tek basina sinir degildir.
 - Diger tenant'taki kaynagin varligini gizlemesi gereken HTTP/API yollarinda `NOT_FOUND` tercih edilir; yetkili bir kaynaga yasak eylem `FORBIDDEN` olur.
 - Daemon ve scheduler mutasyonlari aktif tenant ve `automation:<job>` policy context'i olmadan calisamaz.
 
@@ -29,7 +29,7 @@ Durum: `PARTIAL`. Bu belge, CareOnCloud kodunda tenant sinirini kullanan yollari
 
 | Alan | Durum | Gerekli sonraki kanit |
 |---|---|---|
-| Native OTOBO agent/customer ekranlarindaki tum ticket read/query yollari | `PARTIAL` | Kimligi farkli iki tenant ile authenticated HTTP negative matrix; list, detail, history, attachment ve search |
+| Native CareOnCloud ESM agent/customer ekranlarindaki tum ticket read/query yollari | `PARTIAL` | Kimligi farkli iki tenant ile authenticated HTTP negative matrix; list, detail, history, attachment ve search |
 | Core Generic Interface operasyonlarinin tamami | `PARTIAL` | TicketCreate/get/history ve her mutator icin tenant negatif HTTP kabul |
 | GenericAgent, diger daemon job'lari ve harici yan etkiler | `PARTIAL` | Job bazli tenant context, mutasyon ve cross-tenant negatif kabul |
 | Dogrudan veritabani yazimi | `OUT_OF_SCOPE` | Uygulama policy sinirini bypass eder; deployment DB erisimi ayri operasyonel sertlestirme/pentest kapsamidir |

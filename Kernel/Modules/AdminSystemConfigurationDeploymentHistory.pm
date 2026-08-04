@@ -215,7 +215,7 @@ sub Run {
 
             return $LayoutObject->ErrorScreen(
                 Message =>
-                    'System Configuration could not be restored due to a unknown error, please check OTOBO logs for more information',
+                    'System Configuration could not be restored due to a unknown error, please check CareOnCloud ESM logs for more information',
             );
         }
 

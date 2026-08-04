@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 // --
 
-/*eslint-disable otobo/no-window*/
+/*eslint-disable careoncloud/no-window*/
 
 "use strict";
 
@@ -163,7 +163,7 @@ Core.UI.Popup = (function (TargetNS) {
      * @function
      * @returns {String} Returns the type of popup if one, undefined otherwise.
      * @description
-     *      Checks if current window is an OTOBO popup.
+     *      Checks if current window is a CareOnCloud ESM popup.
      */
     function CurrentIsPopupWindow() {
         var PopupType;
@@ -181,7 +181,7 @@ Core.UI.Popup = (function (TargetNS) {
      * @function
      * @returns {String} Returns the type of popup if one, undefined otherwise.
      * @description
-     *      Checks if current window is an OTOBO popup.
+     *      Checks if current window is a CareOnCloud ESM popup.
      */
     TargetNS.CurrentIsPopupWindow = function () {
         return CurrentIsPopupWindow();
@@ -268,7 +268,7 @@ Core.UI.Popup = (function (TargetNS) {
         CheckOpenPopups();
         $.each(OpenPopups, function (Key, Value) {
             // IE(7) treats windows in new tabs (opened with right-click) also as popups
-            // Therefore we check if the popup is a real OTOBO popup.
+            // Therefore we check if the popup is a real CareOnCloud ESM popup.
             // IE9 can't read the WindowType property from the window object,
             // so we check for the correct popup window name now.
             if (Value.name.match(/CareOnCloudPopup_.+/)) {
@@ -291,7 +291,7 @@ Core.UI.Popup = (function (TargetNS) {
         CheckOpenPopups();
         $.each(OpenPopups, function (Key, Value) {
             // IE(7) treats windows in new tabs (opened with right-click) also as popups
-            // Therefore we check if the popup is a real OTOBO popup.
+            // Therefore we check if the popup is a real CareOnCloud ESM popup.
             // IE9 can't read the WindowType property from the window object,
             // so we check for the correct popup window name now.
             if (Value.name.match(/CareOnCloudPopup_.+/)) {
@@ -747,4 +747,4 @@ Core.UI.Popup = (function (TargetNS) {
     return TargetNS;
 }(Core.UI.Popup || {}));
 
-/*eslint-enable otobo/no-window*/
+/*eslint-enable careoncloud/no-window*/

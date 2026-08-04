@@ -127,14 +127,14 @@ my $ExecuteXMLDBString = sub {
     return 1;
 };
 
-# get OTOBO Version
-my $OTOBOVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloud ESMVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
 
 # leave only major and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloud ESMVersion .= '.x';
 
 my $RandomID = $Helper->GetRandomID();
 
@@ -147,13 +147,13 @@ my %Packages = (
     <Vendor>Rother OSS GmbH</Vendor>
     <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
-    <Description Lang="en">Yet another OTOBO package that is only used as a test case in IfNotPackage.t.</Description>
-    <Framework>$OTOBOVersion</Framework>
+    <Description Lang="en">Yet another CareOnCloud ESM package that is only used as a test case in IfNotPackage.t.</Description>
+    <Framework>$CareOnCloud ESMVersion</Framework>
     <PackageIsVisible>1</PackageIsVisible>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsRemovable>1</PackageIsRemovable>
     <BuildDate>2016-03-04 18:02:26</BuildDate>
-    <BuildHost>otobo.master.mandalore.com</BuildHost>
+    <BuildHost>careoncloud.master.mandalore.com</BuildHost>
     <DatabaseInstall Type="post" IfNotPackage="Package2$RandomID">
         <TableCreate Type="post" Name="$RandomID">
             <Column AutoIncrement="true" Name="id" PrimaryKey="true" Required="true" Type="BIGINT"></Column>
@@ -171,13 +171,13 @@ EOF
     <Vendor>Rother OSS GmbH</Vendor>
     <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
-    <Description Lang="en">Yet another OTOBO package that is only used as a test case in IfNotPackage.t.</Description>
-    <Framework>$OTOBOVersion</Framework>
+    <Description Lang="en">Yet another CareOnCloud ESM package that is only used as a test case in IfNotPackage.t.</Description>
+    <Framework>$CareOnCloud ESMVersion</Framework>
     <PackageIsVisible>1</PackageIsVisible>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsRemovable>1</PackageIsRemovable>
     <BuildDate>2016-03-04 18:02:26</BuildDate>
-    <BuildHost>otobo.master.mandalore.com</BuildHost>
+    <BuildHost>careoncloud.master.mandalore.com</BuildHost>
 </careoncloud_package>
 EOF
 );

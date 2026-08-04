@@ -33,7 +33,7 @@ use Kernel::System::OpenIDConnect::OAuth2MailExtensions;
 no warnings('once');    ## no critic qw(TestingAndDebugging::ProhibitNoWarnings)
 
 # monkey patch support for XOAUTH2/OAUTHBEARER into Net::Cmd
-*Net::Cmd::Otobo_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::NetCmdOAuth2;
+*Net::Cmd::CareOnCloud_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::NetCmdOAuth2;
 
 use warnings('once');
 
@@ -90,7 +90,7 @@ sub _Authenticate {
             );
         }
 
-        my $NOM = $PopObject->Otobo_OAuth2(
+        my $NOM = $PopObject->CareOnCloud_OAuth2(
             $Auth,
             $Param{Login},
             $Token->{Token},

@@ -34,7 +34,7 @@ use Kernel::System::ObjectManager ();
 # create object manager
 local $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-otobo.SyncLDAP2DB',
+        LogPrefix => 'CareOnCloud ESM-careoncloud.SyncLDAP2DB',
     },
 );
 

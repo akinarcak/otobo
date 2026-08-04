@@ -125,11 +125,11 @@
                     <div class="Field">
                         [% IF Data.ESActive %]
                         <p class="FieldExplanation">
-                            [% Translate("Elasticsearch server was found, and it has been activated automatically for OTOBO.") | html %]
+                            [% Translate("Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.") | html %]
                         </p>
                         [% ELSE %]
                         <p class="FieldExplanation">
-                            [% Translate("Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate 'Elasticsearch::Active' and 'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext' in the SysConfig and run the otobo.Console command 'Maint::Elasticsearch::Migration'.") | html %]
+                            [% Translate("Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate 'Elasticsearch::Active' and 'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext' in the SysConfig and run the careoncloud.Console command 'Maint::Elasticsearch::Migration'.") | html %]
                         </p>
                         [% END %]
                     </div>

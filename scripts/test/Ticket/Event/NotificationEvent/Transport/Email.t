@@ -184,7 +184,7 @@ my $RandomID                  = $Helper->GetRandomNumber();
 my $DynamicFieldObject        = $Kernel::OM->Get('Kernel::System::DynamicField');
 my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
-my @FieldValue = ( 'aaatest@otoboexample.com', 'bbbtest@otoboexample.com', 'ccctest@otoboexample.com' );
+my @FieldValue = ( 'aaatest@careoncloudexample.com', 'bbbtest@careoncloudexample.com', 'ccctest@careoncloudexample.com' );
 
 my @DynamicFields = (
     {
@@ -264,7 +264,7 @@ for my $DynamicField (@DynamicFields) {
         $FieldValueSet = \@FieldValue;
     }
 
-    # Set DF value to ticket - test OTOBO tags in RecipientEmail.
+    # Set DF value to ticket - test CareOnCloud ESM tags in RecipientEmail.
     $Success = $DynamicFieldBackendObject->ValueSet(
         DynamicFieldConfig => $FieldIDConfig,
         ObjectID           => $TicketID,
@@ -294,7 +294,7 @@ my @Tests = (
         Data => {
             Events          => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientAgents => [$UserID],
-            RecipientEmail  => ['zzztest@otoboexample.com'],
+            RecipientEmail  => ['zzztest@careoncloudexample.com'],
         },
         ExpectedResults => [
             {
@@ -302,7 +302,7 @@ my @Tests = (
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zzztest@otoboexample.com'],
+                ToArray => ['zzztest@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -367,19 +367,19 @@ my @Tests = (
         Name => 'Multiple valid RecipientEmail',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail => ['zz1test@otoboexample.com, zz2test@otoboexample.com; zz3test@otoboexample.com'],
+            RecipientEmail => ['zz1test@careoncloudexample.com, zz2test@careoncloudexample.com; zz3test@careoncloudexample.com'],
         },
         ExpectedResults => [
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz3test@otoboexample.com'],
+                ToArray => ['zz3test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -388,19 +388,19 @@ my @Tests = (
         Name => 'Multiple valid RecipientEmail not separated by space with additional commas and semmi-colons',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail => ['zz1test@otoboexample.com,;,zz2test@otoboexample.com;;zz3test@otoboexample.com'],
+            RecipientEmail => ['zz1test@careoncloudexample.com,;,zz2test@careoncloudexample.com;;zz3test@careoncloudexample.com'],
         },
         ExpectedResults => [
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz3test@otoboexample.com'],
+                ToArray => ['zz3test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -409,25 +409,25 @@ my @Tests = (
         Name => 'Multiple valid and invalid RecipientEmail',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail => ['zz1test@otoboexample.com, asdfqwe; zz2test@otoboexample.com; e212355qwe.com'],
+            RecipientEmail => ['zz1test@careoncloudexample.com, asdfqwe; zz2test@careoncloudexample.com; e212355qwe.com'],
         },
         ExpectedResults => [
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
     },
     {
-        Name => 'Multiple valid with OTOBO-tags in RecipientEmail - Text type DynamicField',
+        Name => 'Multiple valid with CareOnCloud ESM-tags in RecipientEmail - Text type DynamicField',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientEmail =>
-                ["zz1test\@otoboexample.com, <OTOBO_TICKET_DynamicField_$FieldName[0]>, zz2test\@otoboexample.com;"],
+                ["zz1test\@careoncloudexample.com, <OTOBO_TICKET_DynamicField_$FieldName[0]>, zz2test\@careoncloudexample.com;"],
         },
         ExpectedResults => [
             {
@@ -435,21 +435,21 @@ my @Tests = (
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
     },
     {
-        Name => 'Multiple valid with OTOBO-tags in RecipientEmail - Dropdown type DynamicField',
+        Name => 'Multiple valid with CareOnCloud ESM-tags in RecipientEmail - Dropdown type DynamicField',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientEmail =>
-                ["zz1test\@otoboexample.com, <OTOBO_TICKET_DynamicField_$FieldName[1]>, zz2test\@otoboexample.com;"],
+                ["zz1test\@careoncloudexample.com, <OTOBO_TICKET_DynamicField_$FieldName[1]>, zz2test\@careoncloudexample.com;"],
         },
         ExpectedResults => [
             {
@@ -457,17 +457,17 @@ my @Tests = (
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
     },
     {
-        Name => 'Valid with OTOBO-tag in RecipientEmail - Multiselect type DynamicField',
+        Name => 'Valid with CareOnCloud ESM-tag in RecipientEmail - Multiselect type DynamicField',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientEmail =>

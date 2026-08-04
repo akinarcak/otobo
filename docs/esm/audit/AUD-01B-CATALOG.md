@@ -41,4 +41,4 @@ Service, offering, item ve schema yazim girisleri production `AutoCommit` baglan
 
 ## Acik core kapsam
 
-Bu milestone sonrasinda OTOBO ticket/MIME article cekirdek atomikligi `AUD-01b-ticket-core`, tenant-directory atomikligi `AUD-01b-directory` kapsaminda tamamlanmistir. Generic Interface, kalan ticket/Chat ve commitment scheduler/escalation adapter'lari aciktir.
+Bu milestone sonrasinda CareOnCloud ESM ticket/MIME article cekirdek atomikligi `AUD-01b-ticket-core`, tenant-directory atomikligi `AUD-01b-directory` kapsaminda tamamlanmistir. Generic Interface, kalan ticket/Chat ve commitment scheduler/escalation adapter'lari aciktir.

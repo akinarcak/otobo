@@ -605,7 +605,7 @@ sub Run {
                     );
 
                     # Convert start time to local system time zone.
-                    $DateTimeObject->ToOTOBOTimeZone();
+                    $DateTimeObject->ToCareOnCloud ESMTimeZone();
                     $GetParam{ $TimeType . 'TimeNewerDate' } = $DateTimeObject->ToString();
                 }
                 if (
@@ -628,7 +628,7 @@ sub Run {
                     );
 
                     # Convert stop time to local system time zone.
-                    $DateTimeObject->ToOTOBOTimeZone();
+                    $DateTimeObject->ToCareOnCloud ESMTimeZone();
                     $GetParam{ $TimeType . 'TimeOlderDate' } = $DateTimeObject->ToString();
                 }
             }

@@ -28,7 +28,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Find a file in an installed OTOBO package.');
+    $Self->Description('Find a file in an installed CareOnCloud ESM package.');
     $Self->AddArgument(
         Name        => 'search-path',
         Description => "Filename or path to search for.",
@@ -42,7 +42,7 @@ sub Configure {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    $Self->Print("<yellow>Searching in installed OTOBO packages...</yellow>\n");
+    $Self->Print("<yellow>Searching in installed CareOnCloud ESM packages...</yellow>\n");
 
     my $Hit      = 0;
     my $Filepath = $Self->GetArgument('search-path');
@@ -79,7 +79,7 @@ sub Run {
         return $Self->ExitCodeOk();
     }
 
-    $Self->PrintError("File $Filepath was not found in an installed OTOBO package.\n");
+    $Self->PrintError("File $Filepath was not found in an installed CareOnCloud ESM package.\n");
     return $Self->ExitCodeError();
 }
 

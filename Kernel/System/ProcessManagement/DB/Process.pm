@@ -1219,13 +1219,13 @@ Returns:
 
     my $ProcessDump = $ProcessObject->ProcessDump(
         ResultType  => 'FILE'                                                    # 'SCALAR' || 'HASH' || 'FILE'
-        Location    => '/opt/otobo/Kernel/Config/Files/ZZZProcessManagement.pm', # mandatory for ResultType = 'FILE'
+        Location    => '/opt/careoncloud/Kernel/Config/Files/ZZZProcessManagement.pm', # mandatory for ResultType = 'FILE'
         UserID      => 1,
     );
 
 Returns:
 
-    $ProcessDump = '/opt/otobo/Kernel/Config/Files/ZZZProcessManagement.pm';     # or undef if can't write the file
+    $ProcessDump = '/opt/careoncloud/Kernel/Config/Files/ZZZProcessManagement.pm';     # or undef if can't write the file
 
 or, when S3 is active
 
@@ -1438,7 +1438,7 @@ sub ProcessDump {
     {
         # build comment (therefore we need to trick out the filter)
         $PMFileOutput .= <<'EOF';
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::ZZZProcessManagement;
 use strict;

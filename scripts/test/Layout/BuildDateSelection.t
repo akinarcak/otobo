@@ -52,9 +52,9 @@ my @Tests = (
 
     {
         Name           => 'No options',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2016-02-10 09:04:23',                            # in OTOBO time zone
+        DateTimeString => '2016-02-10 09:04:23',                            # in CareOnCloud ESM time zone
         Config         => {},
         ExpectedValue  => '<select id="Month" name="Month" title="Month">
   <option value="2" selected>02</option>
@@ -68,9 +68,9 @@ my @Tests = (
     },
     {
         Name           => 'No options',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2016-02-10 23:04:23',                            # in OTOBO time zone
+        DateTimeString => '2016-02-10 23:04:23',                            # in CareOnCloud ESM time zone
         Config         => {},
         ExpectedValue  => '<select id="Month" name="Month" title="Month">
   <option value="2" selected>02</option>
@@ -84,9 +84,9 @@ my @Tests = (
     },
     {
         Name           => 'Long Format',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2016-02-10 09:04:23',    # in OTOBO time zone
+        DateTimeString => '2016-02-10 09:04:23',    # in CareOnCloud ESM time zone
         Config         => {
             Format => 'DateInputFormatLong',
         },
@@ -108,9 +108,9 @@ my @Tests = (
     },
     {
         Name           => 'Long Format',
-        OTOBOTimeZone  => 'Europe/Berlin',
+        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'America/New_York',
-        DateTimeString => '2016-05-01 04:24:06',    # in OTOBO time zone
+        DateTimeString => '2016-05-01 04:24:06',    # in CareOnCloud ESM time zone
         Config         => {
             Format => 'DateInputFormatLong',
         },
@@ -132,9 +132,9 @@ my @Tests = (
     },
     {
         Name           => 'Optional',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2016-10-02 09:04:23',    # in OTOBO time zone
+        DateTimeString => '2016-10-02 09:04:23',    # in CareOnCloud ESM time zone
         Config         => {
             Prefix       => 'Test',
             TestOptional => 1,
@@ -153,9 +153,9 @@ my @Tests = (
     },
     {
         Name           => 'Optional',
-        OTOBOTimeZone  => 'Europe/Berlin',
+        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2016-10-02 00:04:23',    # in OTOBO time zone
+        DateTimeString => '2016-10-02 00:04:23',    # in CareOnCloud ESM time zone
         Config         => {
             Prefix       => 'Test',
             TestOptional => 1,
@@ -174,9 +174,9 @@ my @Tests = (
     },
     {
         Name           => 'No Options (Input)',
-        OTOBOTimeZone  => 'Europe/Berlin',
+        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2016-10-02 00:04:23',    # in OTOBO time zone
+        DateTimeString => '2016-10-02 00:04:23',    # in CareOnCloud ESM time zone
         Config         => {},
         SetConfig      => {
             Key     => 'TimeInputFormat',
@@ -190,9 +190,9 @@ my @Tests = (
     },
     {
         Name           => 'Long Format (Input)',
-        OTOBOTimeZone  => 'Europe/Berlin',
+        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'UTC',
-        DateTimeString => '2016-10-02 00:04:23',    # in OTOBO time zone
+        DateTimeString => '2016-10-02 00:04:23',    # in CareOnCloud ESM time zone
         Config         => {
             Format => 'DateInputFormatLong',
         },
@@ -205,9 +205,9 @@ my @Tests = (
     },
     {
         Name           => 'Optional (Input)',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2016-06-08 23:04:23',    # in OTOBO time zone
+        DateTimeString => '2016-06-08 23:04:23',    # in CareOnCloud ESM time zone
         Config         => {
             Prefix       => 'Test',
             TestOptional => 1,
@@ -222,9 +222,9 @@ my @Tests = (
     # TODO: add more tests for the different parameters here!
     {
         Name           => 'Disabled',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2016-06-08 23:04:23',    # in OTOBO time zone
+        DateTimeString => '2016-06-08 23:04:23',    # in CareOnCloud ESM time zone
         Config         => {
             Disabled => 1,
         },
@@ -245,9 +245,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Long Format',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2014-06-08 23:24:23',    # in OTOBO time zone
+        DateTimeString => '2014-06-08 23:24:23',    # in CareOnCloud ESM time zone
         Config         => {
             Format   => 'DateInputFormatLong',
             Disabled => 1,
@@ -270,9 +270,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Optional',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2014-06-08 23:24:23',    # in OTOBO time zone
+        DateTimeString => '2014-06-08 23:24:23',    # in CareOnCloud ESM time zone
         Config         => {
             Prefix       => 'Test',
             TestOptional => 1,
@@ -292,9 +292,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled (Input)',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2014-06-08 23:24:23',    # in OTOBO time zone
+        DateTimeString => '2014-06-08 23:24:23',    # in CareOnCloud ESM time zone
         Config         => {
             Disabled => 1,
         },
@@ -310,9 +310,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled (Input)',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2014-06-09 01:24:23',    # in OTOBO time zone
+        DateTimeString => '2014-06-09 01:24:23',    # in CareOnCloud ESM time zone
         Config         => {
             Disabled => 1,
         },
@@ -328,9 +328,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Long Format (Input)',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2014-06-08 23:24:23',            # in OTOBO time zone
+        DateTimeString => '2014-06-08 23:24:23',            # in CareOnCloud ESM time zone
         Config         => {
             Format   => 'DateInputFormatLong',
             Disabled => 1,
@@ -344,9 +344,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Long Format (Input)',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2014-06-08 23:24:23',            # in OTOBO time zone
+        DateTimeString => '2014-06-08 23:24:23',            # in CareOnCloud ESM time zone
         Config         => {
             Format   => 'DateInputFormatLong',
             Disabled => 1,
@@ -360,9 +360,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Optional (Input)',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => undef,
-        DateTimeString => '2014-06-08 23:24:23',         # in OTOBO time zone
+        DateTimeString => '2014-06-08 23:24:23',         # in CareOnCloud ESM time zone
         Config         => {
             Prefix       => 'Test',
             TestOptional => 1,
@@ -376,9 +376,9 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Optional (Input)',
-        OTOBOTimeZone  => 'UTC',
+        CareOnCloud ESMTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
-        DateTimeString => '2014-06-08 23:24:23',         # in OTOBO time zone
+        DateTimeString => '2014-06-08 23:24:23',         # in CareOnCloud ESM time zone
         Config         => {
             Prefix       => 'Test',
             TestOptional => 1,
@@ -396,8 +396,8 @@ TESTCASE:
 for my $Test (@Tests) {
 
     $ConfigObject->Set(
-        Key   => 'OTOBOTimeZone',
-        Value => $Test->{OTOBOTimeZone},
+        Key   => 'CareOnCloud ESMTimeZone',
+        Value => $Test->{CareOnCloud ESMTimeZone},
     );
 
     my $DateTimeObject = $Kernel::OM->Create(
@@ -456,7 +456,7 @@ for my $Test (@Tests) {
         $Self->Is(
             $HTML,
             $Test->{ExpectedValue},
-            "BuildDateSelection(): $Test->{Name}, OTOBO time zone $Test->{OTOBOTimeZone}, "
+            "BuildDateSelection(): $Test->{Name}, CareOnCloud ESM time zone $Test->{CareOnCloud ESMTimeZone}, "
                 . ( $Test->{UserTimeZone} ? "user time zone $Test->{UserTimeZone}" : 'no user time zone' )
                 . ", date/time " . ( $DateTimeAsParams ? 'as explicit parameters' : 'via fixed date/time' ),
         );

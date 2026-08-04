@@ -603,7 +603,7 @@ for my $Test (@Tests) {
     }
 
     $Kernel::OM->Get('Kernel::Config')->Set(
-        Key   => 'OTOBOTimeZone',
+        Key   => 'CareOnCloud ESMTimeZone',
         Value => $Test->{TimeZone},
     );
 

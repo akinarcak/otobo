@@ -116,7 +116,7 @@ sub GeneratePDF {
         Y    => +44,
     );
 
-    my $FallbackHeadline = $LayoutObject->{LanguageObject}->Translate( "%s Report", 'OTOBO' );
+    my $FallbackHeadline = $LayoutObject->{LanguageObject}->Translate( "%s Report", 'CareOnCloud ESM' );
     $PDFObject->Text(
         Text     => $StatsReport{Config}->{Headline} || $FallbackHeadline,
         FontSize => 20,

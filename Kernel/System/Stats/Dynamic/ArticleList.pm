@@ -1601,16 +1601,16 @@ sub GetStatTable {
             for my $Attribute ( @{$SortedAttributesRef} ) {
                 next ATTRIBUTE if !$TicketAttributes{$Attribute};
 
-                # convert from OTOBO time zone to given time zone
+                # convert from CareOnCloud ESM time zone to given time zone
                 if (
                     $Param{TimeZone}
-                    && $Param{TimeZone} ne Kernel::System::DateTime->OTOBOTimeZoneGet()
+                    && $Param{TimeZone} ne Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet()
                     && $Ticket{$Attribute}
                     && $Ticket{$Attribute} =~ /\A(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2}):(\d{2})\z/
                     )
                 {
 
-                    $Ticket{$Attribute} = $StatsObject->_FromOTOBOTimeZone(
+                    $Ticket{$Attribute} = $StatsObject->_FromCareOnCloud ESMTimeZone(
                         String   => $Ticket{$Attribute},
                         TimeZone => $Param{TimeZone},
                     );

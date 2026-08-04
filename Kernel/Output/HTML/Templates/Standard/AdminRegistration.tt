@@ -33,8 +33,8 @@
             [% BreadcrumbPath.push({ Name => Translate("System Registration Overview"),}) %]
         [% CASE 'Register' %]
             [% BreadcrumbPath.push({ Name => Translate("Register System"),}) %]
-        [% CASE 'OTOBOIDValidate' %]
-            [% BreadcrumbPath.push({ Name => Translate("Validate OTOBO-ID"),}) %]
+        [% CASE 'CareOnCloud ESMIDValidate' %]
+            [% BreadcrumbPath.push({ Name => Translate("Validate CareOnCloud ID"),}) %]
         [% CASE 'Deregister' %]
             [% BreadcrumbPath.push({ Name => Translate("Deregister System"),}) %]
     [% END %]
@@ -74,13 +74,13 @@
 [% RenderBlockEnd("ActionSentDataOverview") %]
 [% RenderBlockStart("ActionDeregister") %]
                     <li>
-                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=OTOBOIDValidate" class="CallForAction Fullsize Center">
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=CareOnCloud ESMIDValidate" class="CallForAction Fullsize Center">
                             <span><i class="fa fa-sign-out"></i> [% Translate("Deregister system") | html %]</span>
                         </a>
                     </li>
 [% RenderBlockEnd("ActionDeregister") %]
                     <li>
-                        <a href="https://portal.rother-oss.com/external/otobosystems/overview" target="_blank" class="CallForAction Fullsize Center">
+                        <a href="https://portal.rother-oss.com/external/careoncloudsystems/overview" target="_blank" class="CallForAction Fullsize Center">
                             <span><i class="fa fa-external-link"></i> [% Translate("Overview of registered systems") | html %]</span>
                         </a>
                     </li>
@@ -100,7 +100,7 @@
             <div class="Content">
 
                 <div class="ServiceDescription">
-                    [% Translate("This system is registered with OTOBO Team.") | html %]
+                    [% Translate("This system is registered with CareOnCloud ESM Team.") | html %]
                 </div>
 
                 <fieldset class="TableLike">
@@ -135,36 +135,36 @@
             </div>
             <div class="Content">
                 <p>
-                    [% Translate("Please note that you can't register your system if OTOBO Daemon is not running correctly!") | html %]
+                    [% Translate("Please note that you can't register your system if CareOnCloud ESM Daemon is not running correctly!") | html %]
                     <a href="#" class="DaemonInfo">[% Translate("Instructions") | html %]</a>.
                 </p>
             </div>
             <div class="Clear"></div>
 [% RenderBlockEnd("DaemonNotRunning") %]
-[% RenderBlockStart("OTOBOIDDeregistrationNotPossible") %]
+[% RenderBlockStart("CareOnCloud ESMIDDeregistrationNotPossible") %]
             <div class="Header">
                 <h2>[% Translate("System Deregistration not Possible") | html %]</h2>
             </div>
             <div class="Clear"></div>
-[% RenderBlockEnd("OTOBOIDDeregistrationNotPossible") %]
-[% RenderBlockStart("OTOBOIDValidation") %]
+[% RenderBlockEnd("CareOnCloud ESMIDDeregistrationNotPossible") %]
+[% RenderBlockStart("CareOnCloud ESMIDValidation") %]
             <div class="Header">
-                <h2>[% Translate("OTOBO-ID Login") | html %]</h2>
+                <h2>[% Translate("CareOnCloud ID Login") | html %]</h2>
             </div>
             <div class="Content">
                 <form id="FormRegistration" method="post" class="Validate PreventMultipleSubmits">
                     <input type="hidden" name="BaseLink" value="[% Env("CGIHandle") %]" />
                     <input type="hidden" name="Action" value="[% Env("Action") %]" />
-                    <input type="hidden" name="Subaction" value="CheckOTOBOID" />
+                    <input type="hidden" name="Subaction" value="CheckCareOnCloud ESMID" />
 
-[% RenderBlockStart("OTOBOIDRegistration") %]
+[% RenderBlockStart("CareOnCloud ESMIDRegistration") %]
                     <div class="ServiceDescription">
                         <p>
-                            [% Translate("System registration is a service of OTOBO Team, which provides a lot of advantages!") | html %]
+                            [% Translate("System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!") | html %]
                             <a href="#" id="RegistrationMoreInfo">[% Translate("Read more") | html %]</a>.
                         </p>
                         <p>
-                            [% Translate("You need to log in with your OTOBO-ID to register your system.") | html %]
+                            [% Translate("You need to log in with your CareOnCloud ID to register your system.") | html %]
                             [% Translate("Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.") | html %]
                             <a href="#" id="RegistrationDataProtection">[% Translate("Data Protection") | html %]</a>
                         </p>
@@ -185,10 +185,10 @@
                                 [% Translate("We will inform you about our new services and offerings soon.") | html %]
                             </p>
 
-                            <h1>[% Translate("Can I use OTOBO without being registered?") | html %]</h1>
+                            <h1>[% Translate("Can I use CareOnCloud ESM without being registered?") | html %]</h1>
                             <p>
                                 [% Translate("System registration is optional.") | html %]
-                                [% Translate("You can download and use OTOBO without being registered.") | html %]
+                                [% Translate("You can download and use CareOnCloud ESM without being registered.") | html %]
                             </p>
 
                             <h1>[% Translate("Is it possible to deregister?") | html %]</h1>
@@ -198,8 +198,8 @@
 
                             <h1>[% Translate("Which data is transfered when registering?") | html %]</h1>
                             <p>
-                                [% Translate("A registered system sends the following data to OTOBO Team:") | html %]
-                                [% Translate("Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.") | html %]
+                                [% Translate("A registered system sends the following data to CareOnCloud ESM Team:") | html %]
+                                [% Translate("Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.") | html %]
                             </p>
 
                             <h1>[% Translate("Why do I have to provide a description for my system?") | html %]</h1>
@@ -207,7 +207,7 @@
                                 [% Translate("The description of the system is optional.") | html %] [% Translate("The description and system type you specify help you to identify and manage the details of your registered systems.") | html %]
                             </p>
 
-                            <h1>[% Translate("How often does my OTOBO system send updates?") | html %]</h1>
+                            <h1>[% Translate("How often does my CareOnCloud ESM system send updates?") | html %]</h1>
                             <p>
                                 [% Translate("Your system will send updates to the registration server at regular intervals.") | html %] [% Translate("Typically this would be around once every three days.") | html %]
                             </p>
@@ -221,7 +221,7 @@
                         <div class="TextDialog">
                         [% IF Env("UserLanguage") == 'de' %]
                             <p>
-                                Die OTOBO-Gruppe nimmt den Schutz Ihrer persönlichen Daten sehr ernst und hält sich strikt an Datenschutzgesetze. Alle Passwörter werden automatisch unkenntlich gemacht, bevor Informationen gesendet werden. Unter keinen Umständen werden jegliche Daten verkauft oder an unauthorisierte Dritte weitergegeben.
+                                Die CareOnCloud ESM-Gruppe nimmt den Schutz Ihrer persönlichen Daten sehr ernst und hält sich strikt an Datenschutzgesetze. Alle Passwörter werden automatisch unkenntlich gemacht, bevor Informationen gesendet werden. Unter keinen Umständen werden jegliche Daten verkauft oder an unauthorisierte Dritte weitergegeben.
                             </p>
                             <p>
                                 Die nachfolgende Erklärung gibt Ihnen einen Überblick darüber, wie wir diesen Schutz gewährleisten und welche Art von Daten zu welchem ​​Zweck erhoben werden.
@@ -229,22 +229,22 @@
 
                             <h1>Datenverarbeitung bei 'Systemregistrierung'</h1>
                             <p>
-                                Informationen welche über das 'Service Center' gesendet werden, werden von der OTOBO Team gespeichert. Das trifft nur auf Daten zu, die die OTOBO Team zur Performance- und Funktions-Analyse des OTOBO-Servers oder zur Kontaktaufnahme benötigt.
+                                Informationen welche über das 'Service Center' gesendet werden, werden von der CareOnCloud ESM Team gespeichert. Das trifft nur auf Daten zu, die die CareOnCloud ESM Team zur Performance- und Funktions-Analyse des CareOnCloud ESM-Servers oder zur Kontaktaufnahme benötigt.
                             </p>
 
                             <h1>Sicherheit von persönlichen Details</h1>
                             <p>
-                                Die OTOBO Team schützt Ihre persönlichen Daten von unauthorisiertem Zugriff. Die OTOBO Team versichert, dass Ihre auf dem Server gespeicherten persönlichen Daten vor unauthorisiertem Zugriff geschützt sind.
+                                Die CareOnCloud ESM Team schützt Ihre persönlichen Daten von unauthorisiertem Zugriff. Die CareOnCloud ESM Team versichert, dass Ihre auf dem Server gespeicherten persönlichen Daten vor unauthorisiertem Zugriff geschützt sind.
                             </p>
 
                             <h1>Offenlegung von Details</h1>
                             <p>
-                                Die OTOBO Gruppe wird Ihre Daten nicht an Dritte weitergeben, es sei denn diese werden zur weiteren Geschäftsabwicklung benötigt. Die OTOBO Gruppe wird Ihre Daten nur an öffentliche Einrichtungen und Behörden weiterleiten, wenn dies per Gesetz oder per Gerichtsbeschluss erforderlich ist.
+                                Die CareOnCloud ESM Gruppe wird Ihre Daten nicht an Dritte weitergeben, es sei denn diese werden zur weiteren Geschäftsabwicklung benötigt. Die CareOnCloud ESM Gruppe wird Ihre Daten nur an öffentliche Einrichtungen und Behörden weiterleiten, wenn dies per Gesetz oder per Gerichtsbeschluss erforderlich ist.
                             </p>
 
                             <h1>Änderung der Datenschutzbestimmungen</h1>
                             <p>
-                                Die OTOBO Team behält sich vor Sicherheits- und Datenschutzbestimmungen, wenn diese durch technische Entwicklungen notwendig sind, zu ändern In diesem Fall werden wir ebenfalls unsere Datenschutzbestimmungen anpassen. Bitte überprüfen Sie regelmäßig ob eine neuere Version unserer Datenschutzerklärung verfügbar ist.
+                                Die CareOnCloud ESM Team behält sich vor Sicherheits- und Datenschutzbestimmungen, wenn diese durch technische Entwicklungen notwendig sind, zu ändern In diesem Fall werden wir ebenfalls unsere Datenschutzbestimmungen anpassen. Bitte überprüfen Sie regelmäßig ob eine neuere Version unserer Datenschutzerklärung verfügbar ist.
                             </p>
 
                             <h1>Anspruch auf Information</h1>
@@ -258,7 +258,7 @@
                             </p>
                         [% ELSE %]
                             <p>
-                                Here at OTOBO Team we take the protection of your personal details very seriously and strictly adhere to data protection laws.
+                                Here at CareOnCloud ESM Team we take the protection of your personal details very seriously and strictly adhere to data protection laws.
                                 All passwords are automatically made unrecognizable before the information is sent.
                                 Under no circumstances will any data we obtain be sold or passed on to unauthorized third parties.
                             </p>
@@ -268,25 +268,25 @@
 
                             <h1>Data Handling with 'System Registration'</h1>
                             <p>
-                                Information received through the 'Service Center' is saved by OTOBO Team.
-                                This only applies to data that OTOBO Team requires to analyze the performance and function of the OTOBO server or to establish contact.
+                                Information received through the 'Service Center' is saved by CareOnCloud ESM Team.
+                                This only applies to data that CareOnCloud ESM Team requires to analyze the performance and function of the CareOnCloud ESM server or to establish contact.
                             </p>
 
                             <h1>Safety of Personal Details</h1>
                             <p>
-                                OTOBO Team protects your personal data from unauthorized access, use or publication.
-                                OTOBO Team ensures that the personal information you store on the server is protected from unauthorized access and publication.
+                                CareOnCloud ESM Team protects your personal data from unauthorized access, use or publication.
+                                CareOnCloud ESM Team ensures that the personal information you store on the server is protected from unauthorized access and publication.
                             </p>
 
                             <h1>Disclosure of Details</h1>
                             <p>
-                                OTOBO Team will not pass on your details to third parties unless required for business transactions.
-                                OTOBO Team will only pass on your details to entitled public institutions and authorities if required by law or court order.
+                                CareOnCloud ESM Team will not pass on your details to third parties unless required for business transactions.
+                                CareOnCloud ESM Team will only pass on your details to entitled public institutions and authorities if required by law or court order.
                             </p>
 
                             <h1>Amendment of Data Protection Policy</h1>
                             <p>
-                                OTOBO Team reserves the right to amend this security and data protection policy if required by technical developments.
+                                CareOnCloud ESM Team reserves the right to amend this security and data protection policy if required by technical developments.
                                 In this case we will also adapt our information regarding data protection accordingly.
                                 Please regularly refer to the latest version of our Data Protection Policy.
                             </p>
@@ -305,8 +305,8 @@
                         [% END %]
                         </div>
                     </div>
-[% RenderBlockEnd("OTOBOIDRegistration") %]
-[% RenderBlockStart("OTOBOIDDeregistration") %]
+[% RenderBlockEnd("CareOnCloud ESMIDRegistration") %]
+[% RenderBlockStart("CareOnCloud ESMIDDeregistration") %]
                     <div class="ServiceDescription">
                         <p>
                             [% Translate("If you deregister your system, you will lose these benefits:") | html %]
@@ -319,27 +319,27 @@
                                 [% Translate("With your system registration we can improve our services for you, because we have all relevant information available.") | html %]
                             </li>
                         </ul>
-                        <p>[% Translate("You need to log in with your OTOBO-ID to deregister your system.") | html %]</p>
+                        <p>[% Translate("You need to log in with your CareOnCloud ID to deregister your system.") | html %]</p>
                         <p>[% Translate("Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.") | html %]</p>
                     </div>
-[% RenderBlockEnd("OTOBOIDDeregistration") %]
-[% RenderBlockStart("OTOBOIDValidationDaemonNotRunning") %]
+[% RenderBlockEnd("CareOnCloud ESMIDDeregistration") %]
+[% RenderBlockStart("CareOnCloud ESMIDValidationDaemonNotRunning") %]
                     <div class="ServiceDescription">
                         <p>
-                            [% Translate("Please note that you can't register your system if OTOBO Daemon is not running correctly!") | html %]
+                            [% Translate("Please note that you can't register your system if CareOnCloud ESM Daemon is not running correctly!") | html %]
                             <a href="#" class="DaemonInfo">[% Translate("Instructions") | html %]</a>.
                         </p>
                     </div>
-[% RenderBlockEnd("OTOBOIDValidationDaemonNotRunning") %]
-[% RenderBlockStart("OTOBOIDValidationForm") %]
+[% RenderBlockEnd("CareOnCloud ESMIDValidationDaemonNotRunning") %]
+[% RenderBlockStart("CareOnCloud ESMIDValidationForm") %]
                     <fieldset class="TableLike">
-                        <label class="Mandatory" for="OTOBOID"><span class="Marker">*</span> [% Translate("OTOBO-ID") | html %]:</label>
+                        <label class="Mandatory" for="CareOnCloud ESMID"><span class="Marker">*</span> [% Translate("CareOnCloud ID") | html %]:</label>
                         <div class="Field">
-                            <input type="email" name="OTOBOID" id="OTOBOID" value="[% Data.OTOBOID | html %]" class="W50pc Validate_Required [% Data.EmailInvalid | html %]" maxlength="200"/>
-                            <div id="OTOBOIDError" class="TooltipErrorMessage">
+                            <input type="email" name="CareOnCloud ESMID" id="CareOnCloud ESMID" value="[% Data.CareOnCloud ESMID | html %]" class="W50pc Validate_Required [% Data.EmailInvalid | html %]" maxlength="200"/>
+                            <div id="CareOnCloud ESMIDError" class="TooltipErrorMessage">
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>
-                            <div id="OTOBOIDServerError" class="TooltipErrorMessage">
+                            <div id="CareOnCloud ESMIDServerError" class="TooltipErrorMessage">
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>
                         </div>
@@ -354,7 +354,7 @@
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>
                             <p class="FieldExplanation">
-                                        [% Translate("You don't have an OTOBO-ID yet?") | html %]
+                                        [% Translate("You don't have a CareOnCloud ID yet?") | html %]
                                 <a href="https://portal.rother-oss.com/" target="_blank">
                                             [% Translate("Sign up now") | html %]
                                 </a>
@@ -382,17 +382,17 @@
                         </div>
                         <div class="Clear"></div>
                     </fieldset>
-[% RenderBlockEnd("OTOBOIDValidationForm") %]
+[% RenderBlockEnd("CareOnCloud ESMIDValidationForm") %]
                 </form>
             </div>
-[% RenderBlockEnd("OTOBOIDValidation") %]
+[% RenderBlockEnd("CareOnCloud ESMIDValidation") %]
 [% RenderBlockStart("Registration") %]
             <div class="Header">
                 <h2>[% Translate("System Registration") | html %]</h2>
             </div>
             <div class="Content">
                 <div class="ServiceDescription">
-                            [% Translate("This data will be frequently transferred to OTOBO Team when you register this system.") | html %]
+                            [% Translate("This data will be frequently transferred to CareOnCloud ESM Team when you register this system.") | html %]
                 </div>
                 <div id="SystemDataListContainer" class="ListContainer">
                     <table class="DataTable SystemDataListContainer" id="SystemDataList">
@@ -408,8 +408,8 @@
                                 <td>[% Data.FQDN | html %]</td>
                             </tr>
                             <tr>
-                                <td>[% Translate("OTOBO Version") | html %]</td>
-                                <td>[% Data.OTOBOVersion | html %]</td>
+                                <td>[% Translate("CareOnCloud ESM Version") | html %]</td>
+                                <td>[% Data.CareOnCloud ESMVersion | html %]</td>
                             </tr>
                             <tr>
                                 <td>[% Translate("Database") | html %]</td>
@@ -431,7 +431,7 @@
                     <input type="hidden" name="Action" value="[% Env("Action") %]"/>
                     <input type="hidden" name="Subaction" value="AddAction"/>
                     <input type="hidden" name="Token" value="[% Data.Token | html %]"/>
-                    <input type="hidden" name="OTOBOID" value="[% Data.OTOBOID | html %]"/>
+                    <input type="hidden" name="CareOnCloud ESMID" value="[% Data.CareOnCloud ESMID | html %]"/>
 
                     <fieldset class="TableLike Registration">
 
@@ -458,7 +458,7 @@
                         <div class="Field">
                             <input type="checkbox" name="SupportDataSending" id="SupportDataSending" value="Yes" />
                             <p class="FieldExplanation">
-                                        [% Translate("This will allow the system to send additional support data information to OTOBO Team.") | html %] <br/>
+                                        [% Translate("This will allow the system to send additional support data information to CareOnCloud ESM Team.") | html %] <br/>
                                 <a href="[% Env("Baselink") %]Action=AdminSupportDataCollector" target="_blank">
                                             [% Translate("Support Data Collector") | html %]
                                 </a>
@@ -491,11 +491,11 @@
                     <input type="hidden" name="Action" value="[% Env("Action") %]"/>
                     <input type="hidden" name="Subaction" value="DeregisterAction"/>
                     <input type="hidden" name="Token" value="[% Data.Token | html %]"/>
-                    <input type="hidden" name="OTOBOID" value="[% Data.OTOBOID | html %]"/>
+                    <input type="hidden" name="CareOnCloud ESMID" value="[% Data.CareOnCloud ESMID | html %]"/>
 
                     <fieldset class="TableLike">
                         <div class="ServiceDescription">
-                                    [% Translate("Continuing with this step will deregister the system from OTOBO Team.") | html %]
+                                    [% Translate("Continuing with this step will deregister the system from CareOnCloud ESM Team.") | html %]
                         </div>
 
                         <div class="Field SpacingTop">
@@ -548,7 +548,7 @@
                         <div class="Field">
                             <input type="checkbox" name="SupportDataSending" id="SupportDataSending" value="Yes" [% Data.SupportDataSendingChecked %] />
                             <p class="FieldExplanation">
-                                        [% Translate("This will allow the system to send additional support data information to OTOBO Team.") | html %] <br/>
+                                        [% Translate("This will allow the system to send additional support data information to CareOnCloud ESM Team.") | html %] <br/>
                                 <a href="[% Env("Baselink") %]Action=AdminSupportDataCollector" target="_blank">
                                             [% Translate("Support Data Collector") | html %]
                                 </a>

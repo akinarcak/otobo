@@ -111,8 +111,8 @@ sub Run {
             );
 
             if ( $Self->{UserTimeZone} ) {
-                $StartTimeObject->ToOTOBOTimeZone();
-                $EndTimeObject->ToOTOBOTimeZone();
+                $StartTimeObject->ToCareOnCloud ESMTimeZone();
+                $EndTimeObject->ToCareOnCloud ESMTimeZone();
             }
 
             $GetParam{StartTime} = $StartTimeObject->ToString();

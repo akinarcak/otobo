@@ -924,7 +924,7 @@ my @Tests = (
         Success => 1,
     },
     {
-        Name   => 'Correct Ticket->OTOBO smart tags',
+        Name   => 'Correct Ticket->CareOnCloud ESM smart tags',
         Config => {
             UserID => $UserID,
             Ticket => \%Ticket,
@@ -1305,7 +1305,7 @@ for my $Test (@Tests) {
             # TODO: currently disabled, re-enable it when AgentNotification is fully switch to NotificationEvent
             # # if article is created by another user it is automatically sent also to Owner
             # if ( $OrigTest->{Config}->{Config}->{UserID} && $Attribute eq 'To' ) {
-            #     $ExpectedValue .= ', Admin OTOBO <root@localhost>'
+            #     $ExpectedValue .= ', Admin CareOnCloud ESM <root@localhost>'
             # }
 
             if ( $Test->{Article} ) {

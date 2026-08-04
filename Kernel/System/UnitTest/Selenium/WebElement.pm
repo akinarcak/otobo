@@ -49,7 +49,7 @@ our $ObjectManagerDisabled = 1;
 =head2 VerifiedSubmit()
 
 Submit a form element and wait for the page to be fully loaded.
-This works only in OTOBO.
+This works only in CareOnCloud ESM.
 
     $SeleniumWebElement->VerifiedSubmit();
 
@@ -66,7 +66,7 @@ sub VerifiedSubmit {
         $Self->driver()->WaitFor(
             JavaScript =>
                 'return typeof(Core) == "object" && typeof(Core.App) == "object" && Core.App.PageLoadComplete'
-        ) || $Context->throw("OTOBO API verification failed after element submit.");
+        ) || $Context->throw("CareOnCloud ESM API verification failed after element submit.");
     };
     my $Pass = run_subtest(
         'VerifiedSubmit',
@@ -88,7 +88,7 @@ sub VerifiedSubmit {
 =head2 VerifiedClick()
 
 click an element that causes a page get/reload/submit and wait for the page to be fully loaded.
-This works only in OTOBO.
+This works only in CareOnCloud ESM.
 
     $SeleniumWebElement->VerifiedClick(
         $Button             # optional, see Selenium docs
@@ -109,7 +109,7 @@ sub VerifiedClick {
         $Self->driver()->WaitFor(
             JavaScript =>
                 'return typeof(Core) == "object" && typeof(Core.App) == "object" && Core.App.PageLoadComplete'
-        ) || $Context->throw("OTOBO API verification failed after element click.");
+        ) || $Context->throw("CareOnCloud ESM API verification failed after element click.");
     };
 
     my $Pass = run_subtest(

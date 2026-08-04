@@ -287,7 +287,7 @@ sub CustomerName {
         if ( $Result->code() == 4 ) {
 
             # Result code 4 (LDAP_SIZELIMIT_EXCEEDED) is normal if there
-            # are more items in LDAP than search limit defined in OTOBO or
+            # are more items in LDAP than search limit defined in CareOnCloud ESM or
             # in LDAP server. Avoid spamming logs with such errors.
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'debug',
@@ -524,7 +524,7 @@ sub CustomerSearch {
         if ( $Result->code() == 4 ) {
 
             # Result code 4 (LDAP_SIZELIMIT_EXCEEDED) is normal if there
-            # are more items in LDAP than search limit defined in OTOBO or
+            # are more items in LDAP than search limit defined in CareOnCloud ESM or
             # in LDAP server. Avoid spamming logs with such errors.
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'debug',
@@ -1233,7 +1233,7 @@ sub CustomerIDList {
         if ( $Result->code() == 4 ) {
 
             # Result code 4 (LDAP_SIZELIMIT_EXCEEDED) is normal if there
-            # are more items in LDAP than search limit defined in OTOBO or
+            # are more items in LDAP than search limit defined in CareOnCloud ESM or
             # in LDAP server. Avoid spamming logs with such errors.
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'debug',

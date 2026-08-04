@@ -1128,8 +1128,8 @@ This method is misnamed as no notification is sent directly.
 Instead it emits events named like I<ArticleEmailSendingQueued>.
 The last part of the event name is the passed C<Status>.
 
-Currently these events are not used in OTOBO core. But they
-may be used by OTOBO packages.
+Currently these events are not used in CareOnCloud ESM core. But they
+may be used by CareOnCloud ESM packages.
 
 The passed user ID is taken from the SysConfig setting I<PostMasterUserID>.
 

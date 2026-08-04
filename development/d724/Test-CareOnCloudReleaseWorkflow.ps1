@@ -29,7 +29,7 @@ foreach ($Pattern in $Required) {
     }
 }
 if ($Workflow -match 'rotheross/otobo|otobo\.web\.dockerfile|target:\s*otobo') {
-    throw 'CareOnCloud release workflow contains an upstream OTOBO image target.'
+    throw 'CareOnCloud release workflow contains an upstream CareOnCloud ESM image target.'
 }
 
 # Regression guard. A per-release DOCKER_TAG build-arg is consumed by the

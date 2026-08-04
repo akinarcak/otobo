@@ -894,7 +894,7 @@ sub AutoResponse {
 
 =head2 NotificationEvent()
 
-replace all OTOBO smart tags in the notification body and subject
+replace all CareOnCloud ESM smart tags in the notification body and subject
 
     my %NotificationEvent = $TemplateGeneratorObject->NotificationEvent(
         TicketData            => $TicketDataHashRef,
@@ -1202,11 +1202,11 @@ is called recursively.
 
 The goal is to support parameter expansion in mailto links. So
 
-  <a href="mailto:user@timezoneinfo.org?subject=OTOBO%20UserDefaultTimeZone&amp;body=%3COTOBO_CONFIG_UserDefaultTimeZone%3E">mail to timezoneinfo</a>.
+  <a href="mailto:user@timezoneinfo.org?subject=CareOnCloud ESM%20UserDefaultTimeZone&amp;body=%3COTOBO_CONFIG_UserDefaultTimeZone%3E">mail to timezoneinfo</a>.
 
 would be expanded to:
 
-  <a href="mailto:user@timezoneinfo.org?subject=OTOBO%20UserDefaultTimeZone&amp;body=UTC">mail to timezoneinfo</a>.
+  <a href="mailto:user@timezoneinfo.org?subject=CareOnCloud ESM%20UserDefaultTimeZone&amp;body=UTC">mail to timezoneinfo</a>.
 
 =cut
 
@@ -1295,9 +1295,9 @@ sub _FindRecipientTimeZone {
         );
     }
 
-    # fall back to the OTOBO time zone
+    # fall back to the CareOnCloud ESM time zone
     return $UserPreferences{UserTimeZone} if $UserPreferences{UserTimeZone};
-    return $Kernel::OM->Create('Kernel::System::DateTime')->OTOBOTimeZoneGet();
+    return $Kernel::OM->Create('Kernel::System::DateTime')->CareOnCloud ESMTimeZoneGet();
 }
 
 =head2 _Replace()
@@ -1969,15 +1969,15 @@ sub _Replace {
 
                 # Get <OTOBO_EMAIL_DATE[]> from body and replace with received date.
                 # TODO: Clarify, as it rather looks like the current date is used.
-                # This tag will be able to use with supported OTOBO time zones
+                # This tag will be able to use with supported CareOnCloud ESM time zones
                 #   ( e.g. <OTOBO_EMAIL_DATE[Europe/Berlin]>, <OTOBO_EMAIL_DATE[Asia/Tokyo]>,
                 #   <OTOBO_EMAIL_DATE[America/Denver]> , ...).
                 # If you use tag without time in simple format as <OTOBO_EMAIL_DATE>,
-                #  time will be transformed into OTOBO SystemTimeZone.
+                #  time will be transformed into CareOnCloud ESM SystemTimeZone.
                 $Tag = $Start . 'OTOBO_EMAIL_DATE';
 
                 my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
-                my $SystemTimeZone = $DateTimeObject->OTOBOTimeZoneGet();
+                my $SystemTimeZone = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
 
                 $Param{Text} =~ s{
                     $Start

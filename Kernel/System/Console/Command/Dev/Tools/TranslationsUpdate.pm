@@ -46,7 +46,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Update the OTOBO translation files.');
+    $Self->Description('Update the CareOnCloud ESM translation files.');
     $Self->AddOption(
         Name        => 'language',
         Description => "Which language to use, omit to update all languages.",
@@ -56,7 +56,7 @@ sub Configure {
     );
     $Self->AddOption(
         Name        => 'module-directory',
-        Description => "Translate the OTOBO module in the given directory.",
+        Description => "Translate the CareOnCloud ESM module in the given directory.",
         Required    => 0,
         HasValue    => 1,
         ValueRegex  => qr/.*/smx,
@@ -80,7 +80,7 @@ sub Configure {
 
     $Self->AdditionalHelp(<<"EOF");
 
-<yellow>Translating OTOBO</yellow>
+<yellow>Translating CareOnCloud ESM</yellow>
 
 Make sure that you have a clean system with a current configuration. No modules may be installed or linked into the system!
 
@@ -185,7 +185,7 @@ sub HandleLanguage {
         $LanguageFile  = "$Home/Kernel/Language/$Language.pm";
         $TargetFile    = "$Home/Kernel/Language/$Language.pm";
         $TargetPOTFile = "$Home/i18n/careoncloud/careoncloud.pot";
-        $TargetPOFile  = "$Home/i18n/careoncloud/otobo.$WeblateLanguage.po";
+        $TargetPOFile  = "$Home/i18n/careoncloud/careoncloud.$WeblateLanguage.po";
     }
     else {
         $IsSubTranslation = 1;
@@ -548,7 +548,7 @@ sub HandleLanguage {
 
             # skip thirdparty files without custom markers
             if ( $File =~ m{\/js\/thirdparty\/}xmsg ) {
-                next FILE if ( $Content !~ m{\/\/\s*OTOBO}xmsg );
+                next FILE if ( $Content !~ m{\/\/\s*CareOnCloud ESM}xmsg );
             }
 
             $File =~ s{^.*/(.+?)\.js}{$1}smx;
@@ -623,7 +623,7 @@ sub HandleLanguage {
         );
     }
 
-    # Language file, which only contains the OTOBO core translations
+    # Language file, which only contains the CareOnCloud ESM core translations
     my $LanguageCoreObject = Kernel::Language->new(
         UserLanguage    => $Language,
         TranslationFile => 1,
@@ -824,7 +824,7 @@ sub WritePOTFile {
 
     $Kernel::OM->Get('Kernel::System::Main')->Require('Locale::PO') || die "Could not load Locale::PO";
 
-    my $Package = $Param{Module} // 'OTOBO';
+    my $Package = $Param{Module} // 'CareOnCloud ESM';
 
     # build creation date, only YEAR-MO-DA HO:MI is needed without seconds
     my $CreationDate = $Kernel::OM->Create('Kernel::System::DateTime')->Format(

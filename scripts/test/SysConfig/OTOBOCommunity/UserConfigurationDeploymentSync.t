@@ -103,7 +103,7 @@ my $SysConfigDBObject = $Kernel::OM->Get('Kernel::System::SysConfig::DB');
 my $UserDeploymentID;
 {
     my $EffectiveValueStrg = <<"END_PM";
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:2.0
 package Kernel::Config::Files::User::$UserID;
 use strict;

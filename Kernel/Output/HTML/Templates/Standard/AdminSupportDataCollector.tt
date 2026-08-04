@@ -38,7 +38,7 @@
                         <p class="FieldExplanation Error">
                             [% Translate("Cloud services are currently disabled.") | html %]
                             </br>
-                            [% Translate("Sending support data to OTOBO Team is not possible!") | html %]
+                            [% Translate("Sending support data to CareOnCloud ESM Team is not possible!") | html %]
                         </p>
                         <form action="[% Env("CGIHandle") %]" method="post">
                             <input type="hidden" name="Action" value="AdminSystemConfiguration"/>
@@ -56,7 +56,7 @@
 [% RenderBlockStart("NoteRegisteredSending") %]
                     [%  IF Config("Frontend::Module").AdminRegistration %]
                     <li>
-                        <p class="FieldExplanation">[% Translate("This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.") | html %]</p>
+                        <p class="FieldExplanation">[% Translate("This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.") | html %]</p>
                         <a href="[% Env("Baselink") %]Action=AdminRegistration;Subaction=Edit" class="CallForAction Fullsize Center">
                             <span><i class="fa fa-sign-in"></i> [% Translate("System Registration") | html %]</span>
                         </a>
@@ -80,9 +80,9 @@
                     <li>
                         <p class="FieldExplanation">
                             [% Translate("Currently this data is only shown in this system.") | html %]
-                            [% Translate("It is highly recommended to send this data to OTOBO Team in order to get better support.") | html %]
+                            [% Translate("It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.") | html %]
                             <br/>
-                            [% Translate("To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the 'send support data' option.)") | html %]
+                            [% Translate("To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the 'send support data' option.)") | html %]
                         </p>
                         <a href="[% Env("Baselink") %]Action=AdminRegistration" class="CallForAction Fullsize Center">
                             <span><i class="fa fa-sign-in"></i> [% Translate("System Registration") | html %]</span>
@@ -142,7 +142,7 @@
                         </button>
                         <span id="SendingAJAXLoader" class="Hidden" title="[% Translate("Sending") | html %]"></span>
                         <div class="FieldExplanation">
-                            [% Translate("The support bundle will be sent to OTOBO Team via email automatically.") | html %]
+                            [% Translate("The support bundle will be sent to CareOnCloud ESM Team via email automatically.") | html %]
                         </div>
                     </div>
                 </fieldset>
@@ -153,7 +153,7 @@
                             <span><i class="fa fa-download"></i> [% Translate("Download") | html %]</span>
                         </button>
                         <div class="FieldExplanation">
-                            [% Translate("A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.") | html %]
+                            [% Translate("A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.") | html %]
                         </div>
                     </div>
                 </fieldset>

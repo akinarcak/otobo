@@ -14,7 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-# Default configuration for OTOBO. All changes to this file will be lost after an
+# Default configuration for CareOnCloud ESM. All changes to this file will be lost after an
 # update, please use AdminSystemConfiguration to configure your system.
 
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
@@ -62,7 +62,7 @@ This module also holds examples of settings that may be used in F<Kernel/Config.
 
 =head2 LoadDefaults()
 
-loads the default values of settings that are required to run OTOBO even
+loads the default values of settings that are required to run CareOnCloud ESM even
 when it was not fully configured yet.
 
 These settings should be the same as the settings that are declared in
@@ -161,7 +161,7 @@ sub LoadDefaults {
 #    $ENV{NLS_LANG}        = 'AMERICAN_AMERICA.AL32UTF8';
 #    $ENV{NLS_LANG}        = 'GERMAN_GERMANY.AL32UTF8';
 
-    # Additional connect attributes for the main 'otobo' database connection.
+    # Additional connect attributes for the main 'careoncloud' database connection.
     # Set the attributes needed for encrypted database connections here.
     $Self->{DatabaseAttribute} = {};
 
@@ -187,9 +187,9 @@ sub LoadDefaults {
     #Alternatively specifying a subject alternative name SAN should work to. But this hasn't been tested.
 #    $Self->{DatabaseAttribute} = {
 #        mariadb_ssl                    => 1,
-#        mariadb_ssl_ca_file            => '/opt/otobo/tls/ca-cert.pem',
-#        mariadb_ssl_client_cert        => '/opt/otobo/tls/client-cert.pem',
-#        mariadb_ssl_client_key         => '/opt/otobo/tls/client-key.pem',
+#        mariadb_ssl_ca_file            => '/opt/careoncloud/tls/ca-cert.pem',
+#        mariadb_ssl_client_cert        => '/opt/careoncloud/tls/client-cert.pem',
+#        mariadb_ssl_client_key         => '/opt/careoncloud/tls/client-key.pem',
 #        mariadb_ssl_optional           => 0,
 #        mariadb_ssl_verify_server_cert => 1,
 #    };
@@ -462,7 +462,7 @@ sub LoadDefaults {
     $Self->{'LogModule::SysLog::Charset'} = 'utf-8';
 
     # param for LogModule Kernel::System::Log::File (required!)
-    $Self->{'LogModule::LogFile'} = '/tmp/otobo.log';
+    $Self->{'LogModule::LogFile'} = '/tmp/careoncloud.log';
 
     # param if the date (yyyy-mm) should be added as suffix to
     # logfile [0|1]
@@ -497,11 +497,11 @@ sub LoadDefaults {
 
     # --------------------------------------------------- #
     # authentication settings                             #
-    # (enable what you need, auth against otobo db,       #
+    # (enable what you need, auth against careoncloud db,       #
     # against LDAP directory, against HTTP basic auth,    #
     # against Radius server or against OpenIDConnect)     #
     # --------------------------------------------------- #
-    # This is the auth. module against the otobo db
+    # This is the auth. module against the careoncloud db
     $Self->{AuthModule} = 'Kernel::System::Auth::DB';
 
     # defines AuthSyncBackend (AuthSyncModule) for AuthModule
@@ -539,8 +539,8 @@ sub LoadDefaults {
 #    $Self->{'AuthModule::LDAP::StartTLS'} = 'required';
 
     # Check if the user is allowed to auth in a posixGroup
-    # (e. g. user needs to be in a group xyz to use otobo)
-#    $Self->{'AuthModule::LDAP::GroupDN'} = 'cn=otoboallow,ou=posixGroups,dc=example,dc=com';
+    # (e. g. user needs to be in a group xyz to use careoncloud)
+#    $Self->{'AuthModule::LDAP::GroupDN'} = 'cn=careoncloudallow,ou=posixGroups,dc=example,dc=com';
 #    $Self->{'AuthModule::LDAP::AccessAttr'} = 'memberUid';
     # for ldap posixGroups objectclass (just uid)
 #    $Self->{'AuthModule::LDAP::UserAttr'} = 'UID';
@@ -596,7 +596,7 @@ sub LoadDefaults {
     # for the latter the Action must be "Login"
 #    $Self->{'AuthModule::OpenIDConnect::Config'}{ClientSettings} = {
 #        ClientID    => 'abc123',
-#        RedirectURI => 'https://my.otobo.server/otobo/index.pl?Action=Login',
+#        RedirectURI => 'https://my.careoncloud.server/careoncloud/index.pl?Action=Login',
 #    };
     # For the authorization code flow the client secret has to be provided
 #    $Self->{'AuthModule::OpenIDConnect::Config'}{ClientSettings}{ClientSecret} = 's3cr3t';
@@ -620,18 +620,18 @@ sub LoadDefaults {
 #        UseNonce   => 1,      # add a nonce to request and token (this is primarily important for the implicit flow where it is enabled by default)
 #        RandLength => 22,     # length for state and nonce random strings - default: 22
 #        RandTTL    => 60 * 5, # valid time period for state and nonce (roughly the time a user can take to authenticate) - default: 300 s
-#        Leeway     => 2,      # leeway for small time differences between the OTOBO server and the OpenID provider - default: 2 s
+#        Leeway     => 2,      # leeway for small time differences between the CareOnCloud ESM server and the OpenID provider - default: 2 s
 #    };
     # Optionally enable user authorization via the id token - hashes can be used for complex claims
 #    $Self->{'AuthModule::OpenIDConnect::RoleMap'} = {
 #        TokenAttribute => {
-#            TokenRole1 => 'OTOBORole1',
-#            TokenRole2 => 'OTOBORole2',
+#            TokenRole1 => 'CareOnCloud ESMRole1',
+#            TokenRole2 => 'CareOnCloud ESMRole2',
 #        },
 #        TokenAttribute2 => {
 #            abc123 => {
-#                TokenRole1 => 'OTOBORole1',
-#                TokenRole3 => 'OTOBORole3',
+#                TokenRole1 => 'CareOnCloud ESMRole1',
+#                TokenRole3 => 'CareOnCloud ESMRole3',
 #            }
 #        },
 #    };
@@ -657,8 +657,8 @@ sub LoadDefaults {
     # Note:
     # If you use this module, you should use as fallback the following
     # config settings if user isn't login through apache ($ENV{REMOTE_USER}).
-#    $Self->{LoginURL} = 'http://host.example.com/not-authorised-for-otobo.html';
-#    $Self->{LogoutURL} = 'http://host.example.com/thanks-for-using-otobo.html';
+#    $Self->{LoginURL} = 'http://host.example.com/not-authorised-for-careoncloud.html';
+#    $Self->{LogoutURL} = 'http://host.example.com/thanks-for-using-careoncloud.html';
 
     # This is example configuration to auth. agents against a radius server.
 #    $Self->{'AuthModule'} = 'Kernel::System::Auth::Radius';
@@ -719,7 +719,7 @@ sub LoadDefaults {
 
 #    $Self->{'AuthSyncModule::LDAP::BaseDN'} = 'dc=example,dc=com';
 #    $Self->{'AuthSyncModule::LDAP::UID'} = 'uid';
-#    $Self->{'AuthSyncModule::LDAP::GroupDN'} = 'cn=otoboallow,ou=posixGroups,dc=example,dc=com';
+#    $Self->{'AuthSyncModule::LDAP::GroupDN'} = 'cn=careoncloudallow,ou=posixGroups,dc=example,dc=com';
 
     # The following is valid but would only be necessary if the
     # anonymous user do NOT have permission to read from the LDAP tree
@@ -775,11 +775,11 @@ sub LoadDefaults {
 
     # AuthSyncModule::LDAP::UserSyncGroupsDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # groups to otobo groups, define the following.)
+    # groups to careoncloud groups, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncGroupsDefinition'} = {
 #        # ldap group
-#        'cn=agent,o=otobo' => {
-#            # otobo group
+#        'cn=agent,o=careoncloud' => {
+#            # careoncloud group
 #            'admin' => {
 #                # permission
 #                rw => 1,
@@ -790,7 +790,7 @@ sub LoadDefaults {
 #                ro => 1,
 #            },
 #        },
-#        'cn=agent2,o=otobo' => {
+#        'cn=agent2,o=careoncloud' => {
 #            'users' => {
 #                rw => 1,
 #                ro => 1,
@@ -800,28 +800,28 @@ sub LoadDefaults {
 
     # AuthSyncModule::LDAP::UserSyncRolesDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # groups to otobo roles, define the following.)
+    # groups to careoncloud roles, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncRolesDefinition'} = {
 #        # ldap group
-#        'cn=agent,o=otobo' => {
-#            # otobo role
+#        'cn=agent,o=careoncloud' => {
+#            # careoncloud role
 #            'role1' => 1,
 #            'role2' => 0,
 #        },
-#        'cn=agent2,o=otobo' => {
+#        'cn=agent2,o=careoncloud' => {
 #            'role3' => 1,
 #        }
 #    };
 
     # AuthSyncModule::LDAP::UserSyncAttributeGroupsDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # attributes to otobo groups, define the following.)
+    # attributes to careoncloud groups, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncAttributeGroupsDefinition'} = {
 #        # ldap attribute
 #        'LDAPAttribute' => {
 #            # ldap attribute value
 #            'LDAPAttributeValue1' => {
-#                # otobo group
+#                # careoncloud group
 #                'admin' => {
 #                    # permission
 #                    rw => 1,
@@ -845,13 +845,13 @@ sub LoadDefaults {
 
     # AuthSyncModule::LDAP::UserSyncAttributeRolesDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # attributes to otobo roles, define the following.)
+    # attributes to careoncloud roles, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncAttributeRolesDefinition'} = {
 #        # ldap attribute
 #        'LDAPAttribute' => {
 #            # ldap attribute value
 #            'LDAPAttributeValue1' => {
-#                # otobo role
+#                # careoncloud role
 #                'role1' => 1,
 #                'role2' => 1,
 #            },
@@ -961,7 +961,7 @@ sub LoadDefaults {
 #    $Self->{SessionModule} = 'Kernel::System::AuthSession::FS';
 
     # SessionName
-    # (Name of the session key. E. g. Session, SessionID, OTOBO)
+    # (Name of the session key. E. g. Session, SessionID, CareOnCloud ESM)
     $Self->{SessionName} = 'CareOnCloudAgentInterface';
 
     # SessionCheckRemoteIP
@@ -1006,8 +1006,8 @@ sub LoadDefaults {
     # Time Settings
     # --------------------------------------------------- #
     # TimeZone
-    # (set the OTOBO time zone, default is UTC)
-#    $Self->{'OTOBOTimeZone'} = 'UTC';
+    # (set the CareOnCloud ESM time zone, default is UTC)
+#    $Self->{'CareOnCloud ESMTimeZone'} = 'UTC';
 
     # Time*
     # (Used for ticket age, escalation and system unlock calculation)
@@ -1274,7 +1274,7 @@ sub LoadDefaults {
     # Package::RepositoryList
     # (repository list)
 #    $Self->{'Package::RepositoryList'} = {
-#        'ftp://ftp.example.com/pub/otobo/misc/packages/' => '[Example] ftp://ftp.example.com/',
+#        'ftp://ftp.example.com/pub/careoncloud/misc/packages/' => '[Example] ftp://ftp.example.com/',
 #    };
 
     # Package::Timeout
@@ -1290,7 +1290,7 @@ sub LoadDefaults {
     # --------------------------------------------------- #
     $Self->{PGP}            = 0;
     $Self->{'PGP::Bin'}     = '/usr/bin/gpg';
-    $Self->{'PGP::Options'} = '--homedir /opt/otobo/.gnupg/ --batch --no-tty --yes';
+    $Self->{'PGP::Options'} = '--homedir /opt/careoncloud/.gnupg/ --batch --no-tty --yes';
 
 #    $Self->{'PGP::Options'} = '--batch --no-tty --yes';
 #    $Self->{'PGP::Key::Password'}->{'D2DF79FA'} = 1234;
@@ -1386,7 +1386,7 @@ sub LoadDefaults {
         'PreferenceGroup'  => 'Miscellaneous',
         'Key'     => '',
         'Label'   => 'Theme',
-        'Desc'    => 'Select your preferred theme for OTOBO.',
+        'Desc'    => 'Select your preferred theme for CareOnCloud ESM.',
         'Module'  => 'Kernel::Output::HTML::Preferences::Theme',
         'PrefKey' => 'UserTheme',
         'Prio'    => '3000',
@@ -1426,7 +1426,7 @@ You can log in via the following URL:
     # --------------------------------------------------- #
 
     # SessionName
-    # (Name of the session key. E. g. Session, SessionID, OTOBO)
+    # (Name of the session key. E. g. Session, SessionID, CareOnCloud ESM)
     $Self->{CustomerPanelSessionName} = 'CareOnCloudCustomerInterface';
 
     # CustomerPanelUserID
@@ -1435,7 +1435,7 @@ You can log in via the following URL:
 
     # CustomerGroupSupport (0 = compatible to previous behavior)
     # (if this is 1, the you need to set the group <-> customer user
-    # relations! http://host/otobo/index.pl?Action=AdminCustomerUserGroup
+    # relations! http://host/careoncloud/index.pl?Action=AdminCustomerUserGroup
     # otherway, each user is ro/rw in each group!)
     $Self->{CustomerGroupSupport} = 0;
 
@@ -1522,12 +1522,12 @@ via the Preferences button after logging in.
 
     # --------------------------------------------------- #
     # customer authentication settings                    #
-    # (enable what you need, auth against otobo db,       #
+    # (enable what you need, auth against careoncloud db,       #
     # against a LDAP directory, against HTTP basic        #
     # authentication, using OpenIDConnect,                #
     # and against Radius server)                          #
     # --------------------------------------------------- #
-    # This is the auth. module for the otobo db
+    # This is the auth. module for the careoncloud db
     # you can also configure it using a remote database
     $Self->{'Customer::AuthModule'}                       = 'Kernel::System::CustomerAuth::DB';
     $Self->{'Customer::AuthModule::DB::Table'}            = 'customer_user';
@@ -1568,8 +1568,8 @@ via the Preferences button after logging in.
 #    $Self->{'Customer::AuthModule::LDAP::UID'} = 'uid';
 
     # Check if the user is allowed to auth in a posixGroup
-    # (e. g. user needs to be in a group xyz to use otobo)
-#    $Self->{'Customer::AuthModule::LDAP::GroupDN'} = 'cn=otoboallow,ou=posixGroups,dc=example,dc=com';
+    # (e. g. user needs to be in a group xyz to use careoncloud)
+#    $Self->{'Customer::AuthModule::LDAP::GroupDN'} = 'cn=careoncloudallow,ou=posixGroups,dc=example,dc=com';
 #    $Self->{'Customer::AuthModule::LDAP::AccessAttr'} = 'memberUid';
     # for ldap posixGroups objectclass (just uid)
 #    $Self->{'Customer::AuthModule::LDAP::UserAttr'} = 'UID';
@@ -1619,7 +1619,7 @@ via the Preferences button after logging in.
     # for the latter the Action must be "Login"
 #    $Self->{'Customer::AuthModule::OpenIDConnect::Config'}{ClientSettings} = {
 #        ClientID    => 'abc123',
-#        RedirectURI => 'https://my.otobo.server/otobo/customer.pl?Action=Login',
+#        RedirectURI => 'https://my.careoncloud.server/careoncloud/customer.pl?Action=Login',
 #    };
     # For the authorization code flow the client secret has to be provided
 #    $Self->{'Customer::AuthModule::OpenIDConnect::Config'}{ClientSettings}{ClientSecret} = 's3cr3t';
@@ -1643,7 +1643,7 @@ via the Preferences button after logging in.
 #        UseNonce   => 1,      # add a nonce to request and token (this is primarily important for the implicit flow where it is enabled by default)
 #        RandLength => 22,     # length for state and nonce random strings - default: 22
 #        RandTTL    => 60 * 5, # valid time period for state and nonce (roughly the time a user can take to authenticate) - default: 300 s
-#        Leeway     => 2,      # leeway for small time differences between the OTOBO server and the OpenID provider - default: 2 s
+#        Leeway     => 2,      # leeway for small time differences between the CareOnCloud ESM server and the OpenID provider - default: 2 s
 #    };
     # For debugging purposes you can dump all IDTokens received to the log
 #    $Self->{'Customer::AuthModule::OpenIDConnect::Debug'}->{'LogIDToken'} = 1;
@@ -1662,8 +1662,8 @@ via the Preferences button after logging in.
 #    $Self->{'Customer::AuthModule::HTTPBasicAuth::ReplaceRegExp'} = '^(.+?)@.+?$';
     # If you use this module, you should use as fallback the following
     # config settings if user isn't login through apache ($ENV{REMOTE_USER})
-#    $Self->{CustomerPanelLoginURL} = 'http://host.example.com/not-authorised-for-otobo.html';
-#    $Self->{CustomerPanelLogoutURL} = 'http://host.example.com/thanks-for-using-otobo.html';
+#    $Self->{CustomerPanelLoginURL} = 'http://host.example.com/not-authorised-for-careoncloud.html';
+#    $Self->{CustomerPanelLogoutURL} = 'http://host.example.com/thanks-for-using-careoncloud.html';
 
     # This is example configuration to auth. agents against a radius server
 #    $Self->{'Customer::AuthModule'} = 'Kernel::System::Auth::Radius';
@@ -1719,8 +1719,8 @@ via the Preferences button after logging in.
 #            # Extra connect attributes can be used for secured connections
 #            Attribute => {
 #                mysql_ssl             => 1,
-#                mysql_ssl_client_cert => '/opt/otobo/tls/client-cert.pem',
-#                mysql_ssl_client_key  => '/opt/otobo/tls/client-key.pem',
+#                mysql_ssl_client_cert => '/opt/careoncloud/tls/client-cert.pem',
+#                mysql_ssl_client_key  => '/opt/careoncloud/tls/client-key.pem',
 #                mysql_ssl_optional    => 1,
 #            },
 #            User => '',
@@ -1797,7 +1797,7 @@ via the Preferences button after logging in.
             [ 'UserLogin',        Translatable('Username'),            'login',          1, 1, 'var', '', 0, undef, undef ],
             [ 'UserPassword',     Translatable('Password'),            'pw',             0, 0, 'var', '', 0, undef, undef ],
             [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '', 0, undef, undef ],
-#            [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '[% Env("CGIHandle") %]?Action=AgentTicketCompose;ResponseID=1;TicketID=[% Data.TicketID | uri %];ArticleID=[% Data.ArticleID | uri %]', 0, '', 'AsPopup OTOBOPopup_TicketAction' ],
+#            [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '[% Env("CGIHandle") %]?Action=AgentTicketCompose;ResponseID=1;TicketID=[% Data.TicketID | uri %];ArticleID=[% Data.ArticleID | uri %]', 0, '', 'AsPopup CareOnCloud ESMPopup_TicketAction' ],
             [ 'UserCustomerID',   Translatable('CustomerID'),          'customer_id',    0, 1, 'var', '', 0, undef, undef ],
 #            [ 'UserCustomerIDs',  Translatable('CustomerIDs'),         'customer_ids',   1, 0, 'var', '', 0, undef, undef ],
             [ 'UserPhone',        Translatable('Phone'),               'phone',          1, 0, 'var', '', 0, undef, undef ],
@@ -1916,8 +1916,8 @@ via the Preferences button after logging in.
 #            # Extra connect attributes can be used for secured connections
 #            Attribute => {
 #                mysql_ssl             => 1,
-#                mysql_ssl_client_cert => '/opt/otobo/tls/client-cert.pem',
-#                mysql_ssl_client_key  => '/opt/otobo/tls/client-key.pem',
+#                mysql_ssl_client_cert => '/opt/careoncloud/tls/client-cert.pem',
+#                mysql_ssl_client_key  => '/opt/careoncloud/tls/client-key.pem',
 #                mysql_ssl_optional    => 1,
 #            },
 #            User => '',
@@ -2208,11 +2208,11 @@ via the Preferences button after logging in.
     # --------------------------------------------------- #
     #                                                     #
     #             Start of config options!!!              #
-    #              OTOBO admin Priviledges                #
+    #              CareOnCloud ESM admin Priviledges                #
     #                                                     #
     # --------------------------------------------------- #
 
-    # WARNING!! Enabling these settings allows the OTOBO admin to execute any system call.
+    # WARNING!! Enabling these settings allows the CareOnCloud ESM admin to execute any system call.
     # This can be a security issue!
 
     # Allow syscalls via generic agent
@@ -2227,12 +2227,12 @@ via the Preferences button after logging in.
     # ---------------------------------------------------- #
     #$Self->{'Storage::S3::Active'}         = 1;
     #$Self->{'Storage::S3::Region'}         = 'eu-central-1';
-    #$Self->{'Storage::S3::Bucket'}         = 'otobo-bucket-testing';
-    #$Self->{'Storage::S3::HomePrefix'}     = 'OTOBO';
-    #$Self->{'Storage::S3::AccessKey'}      = 'minio-otobo';
-    #$Self->{'Storage::S3::SecretKey'}      = 'minio-otobo'; # more than 8 chars
+    #$Self->{'Storage::S3::Bucket'}         = 'careoncloud-bucket-testing';
+    #$Self->{'Storage::S3::HomePrefix'}     = 'CareOnCloud ESM';
+    #$Self->{'Storage::S3::AccessKey'}      = 'minio-careoncloud';
+    #$Self->{'Storage::S3::SecretKey'}      = 'minio-careoncloud'; # more than 8 chars
     #$Self->{'Storage::S3::MetadataPrefix'} = 'x-amz-meta-';
-    #$Self->{'Storage::S3::Delimiter'}      = '/'; # do not change this, as OTOBO relies on the delimiter being '/'
+    #$Self->{'Storage::S3::Delimiter'}      = '/'; # do not change this, as CareOnCloud ESM relies on the delimiter being '/'
 
     ## Some settings are specific for localstack and MinIO.
     #if ( 1 ) {
@@ -2354,7 +2354,7 @@ sub new {
     # load RELEASE file
     if ( -e !"$Self->{Home}/RELEASE" ) {
         print STDERR
-            "ERROR: $Self->{Home}/RELEASE does not exist! This file is needed by central system parts of OTOBO, the system will not work without this file.\n";
+            "ERROR: $Self->{Home}/RELEASE does not exist! This file is needed by central system parts of CareOnCloud ESM, the system will not work without this file.\n";
         die;
     }
 
@@ -2378,7 +2378,7 @@ sub new {
     }
     else {
         print STDERR
-            "ERROR: Can't read $Self->{Home}/RELEASE: $! This file is needed by central system parts of OTOBO, the system will not work without this file.\n";
+            "ERROR: Can't read $Self->{Home}/RELEASE: $! This file is needed by central system parts of CareOnCloud ESM, the system will not work without this file.\n";
         die;
     }
 
@@ -2474,7 +2474,7 @@ sub Translatable {
 }
 
 # Please see the documentation in Kernel/Config.pod.dist.
-# Not used in OTOBO core.
+# Not used in CareOnCloud ESM core.
 sub ConfigChecksum {
     my $Self = shift;
 

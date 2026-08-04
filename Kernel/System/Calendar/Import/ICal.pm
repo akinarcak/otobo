@@ -245,7 +245,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $StartTimeObject->ToOTOBOTimeZone();
+                $StartTimeObject->ToCareOnCloud ESMTimeZone();
             }
 
             $Parameters{StartTime} = $StartTimeObject->ToString();
@@ -285,7 +285,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $EndTimeObject->ToOTOBOTimeZone();
+                $EndTimeObject->ToCareOnCloud ESMTimeZone();
             }
 
             $Parameters{EndTime} = $EndTimeObject->ToString();
@@ -525,7 +525,7 @@ sub Import {
                         );
 
                         if ( !$Parameters{AllDay} ) {
-                            $ExcludeTimeObject->ToOTOBOTimeZone();
+                            $ExcludeTimeObject->ToCareOnCloud ESMTimeZone();
                         }
 
                         push @RecurrenceExclude, $ExcludeTimeObject->ToString();
@@ -540,12 +540,12 @@ sub Import {
 
             # get team
             if (
-                IsArrayRefWithData( $Properties->{'x-otobo-team'} )
-                && ref $Properties->{'x-otobo-team'}->[0] eq 'Data::ICal::Property'
-                && $Properties->{'x-otobo-team'}->[0]->{'value'}
+                IsArrayRefWithData( $Properties->{'x-careoncloud-team'} )
+                && ref $Properties->{'x-careoncloud-team'}->[0] eq 'Data::ICal::Property'
+                && $Properties->{'x-careoncloud-team'}->[0]->{'value'}
                 )
             {
-                my @Teams = split( /,/, $Properties->{'x-otobo-team'}->[0]->{'value'} );
+                my @Teams = split( /,/, $Properties->{'x-careoncloud-team'}->[0]->{'value'} );
 
                 if (@Teams) {
                     my @TeamIDs;
@@ -564,12 +564,12 @@ sub Import {
 
             # get resource
             if (
-                IsArrayRefWithData( $Properties->{'x-otobo-resource'} )
-                && ref $Properties->{'x-otobo-resource'}->[0] eq 'Data::ICal::Property'
-                && $Properties->{'x-otobo-resource'}->[0]->{'value'}
+                IsArrayRefWithData( $Properties->{'x-careoncloud-resource'} )
+                && ref $Properties->{'x-careoncloud-resource'}->[0] eq 'Data::ICal::Property'
+                && $Properties->{'x-careoncloud-resource'}->[0]->{'value'}
                 )
             {
-                my @Resources = split( /,/, $Properties->{'x-otobo-resource'}->[0]->{'value'} );
+                my @Resources = split( /,/, $Properties->{'x-careoncloud-resource'}->[0]->{'value'} );
 
                 if (@Resources) {
                     my @Users;
@@ -589,8 +589,8 @@ sub Import {
         # get available plugin keys suitable for lowercase search
         my $PluginKeys = $PluginObject->PluginKeys();
 
-        # plugin fields (start with 'x-otobo-plugin-')
-        my @PluginFields = grep { $_ =~ /x-otobo-plugin-/i } keys %{$Properties};
+        # plugin fields (start with 'x-careoncloud-plugin-')
+        my @PluginFields = grep { $_ =~ /x-careoncloud-plugin-/i } keys %{$Properties};
 
         PLUGINFIELD:
         for my $PluginField (@PluginFields) {
@@ -601,7 +601,7 @@ sub Import {
                 )
             {
                 # extract lowercase plugin key
-                my ($PluginKeyLC) = $PluginField =~ m/x-otobo-plugin-(.*)$/;
+                my ($PluginKeyLC) = $PluginField =~ m/x-careoncloud-plugin-(.*)$/;
 
                 # get proper plugin key
                 my $PluginKey = $PluginKeys->{$PluginKeyLC};
@@ -654,7 +654,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $RecurrenceIDObject->ToOTOBOTimeZone();
+                $RecurrenceIDObject->ToCareOnCloud ESMTimeZone();
             }
 
             $Param{RecurrenceID} = $RecurrenceIDObject->ToString();

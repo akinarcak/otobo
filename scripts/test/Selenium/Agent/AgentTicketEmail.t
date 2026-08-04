@@ -312,7 +312,7 @@ $Selenium->RunTest(
         ) || die "$SignatureText not found on page";
 
         # There is no redirect to the login page as support for SessionUseCookie = 1
-        # had been removed for OTOBO 11.1.x
+        # had been removed for CareOnCloud ESM 11.1.x
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AgentTicketEmail");
         $Selenium->find_no_element_ok( "#User",        'css' );
         $Selenium->find_no_element_ok( "#Password",    'css' );

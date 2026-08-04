@@ -79,7 +79,7 @@
 ## 2026-08-02 — P0.4 dashboard runtime marka düzeltmesi
 
 - `VERIFIED_BY_CURRENT_TEST` (static only): `Test-CareOnCloudBrand.ps1` passed on the current `606eb6f` source snapshot, checking 16 required product paths, 15 forbidden runtime-brand paths, and 18 package directories. This is source contract evidence only; authenticated runtime screens and generated emails remain separate acceptance work.
-- `VERIFIED_BY_CURRENT_TEST`: Framework dashboard'un kullanıcıya görünen varsayılan `OTOBO 11.1` başlığı, açıklaması ve upstream bağlantısı CareOnCloud ESM metni ile ürün bağlantısına çevrildi. Kaynak marka sözleşmesi bu ayarları doğrular. Aday runtime'da authenticated agent dashboard render kabulü henüz çalıştırılmamıştır.
+- `VERIFIED_BY_CURRENT_TEST`: Framework dashboard'un kullanıcıya görünen varsayılan `CareOnCloud ESM 11.1` başlığı, açıklaması ve upstream bağlantısı CareOnCloud ESM metni ile ürün bağlantısına çevrildi. Kaynak marka sözleşmesi bu ayarları doğrular. Aday runtime'da authenticated agent dashboard render kabulü henüz çalıştırılmamıştır.
 
 ## 2026-08-02 — P0.4 varsayılan e-posta ve müşteri yüzeyi marka düzeltmesi
 
@@ -95,7 +95,7 @@
 
 ## 2026-08-02 — P0.2 tenant yol ve negatif test envanteri
 
-- `VERIFIED_IN_CODE`: `security/TENANT-PATH-MATRIX.md`, merkezi policy, directory, katalog, request, API, ticket/GI, search, cache, reporting, webhook ve scheduler yollarini ilgili test/kabul artefaktlariyla esler. Native OTOBO ekranlari, tum Generic Interface operasyonlari, diger daemonlar ve platform-admin bypass'i acikca `PARTIAL` olarak isaretlenmistir; bu nedenle tam tenant izolasyonu iddiasi yoktur.
+- `VERIFIED_IN_CODE`: `security/TENANT-PATH-MATRIX.md`, merkezi policy, directory, katalog, request, API, ticket/GI, search, cache, reporting, webhook ve scheduler yollarini ilgili test/kabul artefaktlariyla esler. Native CareOnCloud ESM ekranlari, tum Generic Interface operasyonlari, diger daemonlar ve platform-admin bypass'i acikca `PARTIAL` olarak isaretlenmistir; bu nedenle tam tenant izolasyonu iddiasi yoktur.
 
 ## 2026-08-02 — P0 CareOnCloud security policy
 
@@ -114,7 +114,7 @@
 
 - `D724API` transaction paths now capture ownership before calling `BeginWork()` and commit or roll back only transactions they opened themselves. This covers client create, token issue/revoke, secret rotation, client revoke, and retention cleanup.
 - `APIAuth.t` now contains an outer-transaction regression: a nested client creation must leave the caller transaction open, and the caller rollback must remove both the client and its audit mutation.
-- Evidence: `VERIFIED_BY_CURRENT_TEST`. On 2026-08-02, `APIAuth.t` passed with 59 tests in an isolated transient container using the CareOnCloud candidate app volume and the test-server MariaDB. The active `d724-esm` web and daemon containers were not changed. Test artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/api-auth-0.7.2-test.log`. Rollback: restore `packages/D724API` from the adjacent timestamped backup and restore the candidate-volume files from `/opt/careoncloud/.codex-backup-p0-api-20260802`; neither rollback affects the active old OTOBO volumes.
+- Evidence: `VERIFIED_BY_CURRENT_TEST`. On 2026-08-02, `APIAuth.t` passed with 59 tests in an isolated transient container using the CareOnCloud candidate app volume and the test-server MariaDB. The active `d724-esm` web and daemon containers were not changed. Test artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/api-auth-0.7.2-test.log`. Rollback: restore `packages/D724API` from the adjacent timestamped backup and restore the candidate-volume files from `/opt/careoncloud/.codex-backup-p0-api-20260802`; neither rollback affects the active old CareOnCloud ESM volumes.
 - `RISK` / candidate recovery: the first isolated `APIStatus.t` run found `bin/psgi-bin/careoncloud.psgi` absent from the candidate app volume. Copying the canonical core file to that unused candidate volume made `APIStatus.t` pass 25 tests; artifact: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/api-status-0.7.2-rerun.log`. `bin/docker/entrypoint.sh` now restores this file only when absent and fails closed if the image source is absent; Bash syntax was checked on the test server. A fresh candidate web start using a newly built image is still required before cutover.
 
 ## 2026-08-02 — P0.2 ticket audit coverage inventory
@@ -152,7 +152,7 @@
 ## 2026-08-02 — P0.4 candidate package-install gate
 
 - `VERIFIED_IN_CODE` / `TEST_EXISTS_NOT_RERUN`: `Test-CleanPackageLifecycle.ps1` now builds and installs all 18 current D724 OPM packages in dependency order on a fresh candidate, requires 18 healthy deployment records, and runs every package's UnitTest suite after install. D724Problem is additionally tested before and after uninstall/reinstall. Package-wide upgrade/uninstall acceptance is still open and must not be inferred from this clean-install gate. A current CareOnCloud image is required to run the expanded lifecycle.
-- `RISK` / candidate-image provenance: the isolated attempt used the test server's `d724/esm:dev` tag (`sha256:f65ec8a0160d08c501bd1d3d22228b485c467231c9acda8c8fa58b773ecbd813`), but direct image inspection proved it lacks `/opt/careoncloud_install` and is not a CareOnCloud runtime image. Its `/otobo/index.pl` setup output and post-restart health failure therefore do **not** establish a source regression; authenticated CareOnCloud login/dashboard branding remains unaccepted. Evidence: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/authenticated-brand-acceptance.log`. The exact temporary Compose project, network, and volumes were removed; active `d724-esm` containers remained healthy. A historical `d9084ad` source snapshot had been prepared, but its first replacement image build did not finish within 10 minutes while the server had only 2.4 GB free; a current read-only `df -h /` check on 2026-08-02 found only 2.1 GB free. On 2026-08-02, an unused 661 MB partial candidate tree and 3.647 GB inactive build cache were removed only after proving no running container mounted the tree; free space became 5.2 GB and the preserved old image was not deleted. A manual source build then used Docker's legacy builder, which silently treated Dockerfile heredoc `RUN` bodies as empty and failed at the later `local::lib` check; Docker Compose 2.40.3 is present but the server has no `docker buildx` component. That legacy-builder result is tooling evidence only, not a source dependency or runtime regression. A BuildKit-capable candidate runner remains required. `Test-CleanPackageLifecycle.ps1` now asserts the mounted and image-side canonical PSGI files before setup, so a similarly stale image fails before package or brand evidence is claimed.
+- `RISK` / candidate-image provenance: the isolated attempt used the test server's `d724/esm:dev` tag (`sha256:f65ec8a0160d08c501bd1d3d22228b485c467231c9acda8c8fa58b773ecbd813`), but direct image inspection proved it lacks `/opt/careoncloud_install` and is not a CareOnCloud runtime image. Its `/careoncloud/index.pl` setup output and post-restart health failure therefore do **not** establish a source regression; authenticated CareOnCloud login/dashboard branding remains unaccepted. Evidence: `/home/test/careoncloud-releases/20260725/.codex-backup-p0-api-20260802/authenticated-brand-acceptance.log`. The exact temporary Compose project, network, and volumes were removed; active `d724-esm` containers remained healthy. A historical `d9084ad` source snapshot had been prepared, but its first replacement image build did not finish within 10 minutes while the server had only 2.4 GB free; a current read-only `df -h /` check on 2026-08-02 found only 2.1 GB free. On 2026-08-02, an unused 661 MB partial candidate tree and 3.647 GB inactive build cache were removed only after proving no running container mounted the tree; free space became 5.2 GB and the preserved old image was not deleted. A manual source build then used Docker's legacy builder, which silently treated Dockerfile heredoc `RUN` bodies as empty and failed at the later `local::lib` check; Docker Compose 2.40.3 is present but the server has no `docker buildx` component. That legacy-builder result is tooling evidence only, not a source dependency or runtime regression. A BuildKit-capable candidate runner remains required. `Test-CleanPackageLifecycle.ps1` now asserts the mounted and image-side canonical PSGI files before setup, so a similarly stale image fails before package or brand evidence is claimed.
 - `VERIFIED_IN_CODE`: the clean lifecycle acceptance now injects the exact checked-out Git commit into the Compose build and rejects an image unless its immutable `git-commit.txt` records that same commit, in addition to checking the canonical CareOnCloud PSGI files. This is a source-to-image provenance gate; it still requires a Docker-capable runner with sufficient disk to produce current runtime acceptance.
 - `VERIFIED_IN_CODE`: `Test-CleanPackageLifecycle.ps1` now requires `docker buildx version` before creating candidate containers and fails with an explicit remediation when only the legacy builder is available. This prevents the server-side heredoc failure from being misclassified as an application regression.
 - `VERIFIED_IN_CODE`: `Invoke-D724Dev.ps1` applies the same Buildx preflight to its `Build` and `Up` actions, so local candidate image creation cannot silently use the incompatible legacy builder.
@@ -179,12 +179,12 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 
 ## Kaynakta dogrulanan ve runtime kaniti sinirli
 
-- OTOBO `rel-11_1` tabanli GitHub forku ve `codex/esm-foundation` gelistirme dali.
+- CareOnCloud ESM `rel-11_1` tabanli GitHub forku ve `codex/esm-foundation` gelistirme dali.
 - Kaynak ve paket kapilari dogrulandi; guncel `d724/esm:dev` CareOnCloud image runtime kabulü BuildKit-capable runner bekliyor.
-- MariaDB, Redis, OTOBO web ve daemon servislerinden olusan izole Compose profili.
-- Digest-pinned Elasticsearch 8.19.3 servisi; yalniz Docker ic aginda, cluster `green`, OTOBO resmi connection testi basarili.
+- MariaDB, Redis, CareOnCloud ESM web ve daemon servislerinden olusan izole Compose profili.
+- Digest-pinned Elasticsearch 8.19.3 servisi; yalniz Docker ic aginda, cluster `green`, CareOnCloud ESM resmi connection testi basarili.
 - Ozel test aginda HTTP health ve agent giris sayfasi: HTTP 200.
-- OTOBO konsolundan SysConfig rebuild ve daemon status kontrolleri.
+- CareOnCloud ESM konsolundan SysConfig rebuild ve daemon status kontrolleri.
 - GPL-3.0 `D724Foundation 0.2.1` uyumluluk adlı CareOnCloud temel OPM paketi:
   - urun ve edition SysConfig ayarlari,
   - telemetry icin opt-in varsayilani,
@@ -232,7 +232,7 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
   - versioned ve whitelist-validasyonlu dinamik form semasi,
   - authenticated customer session'dan tenant tureten katalog portal modulu,
   - yalnizca tam aktif hierarchy listeleme ve parent availability kontrolu,
-  - HTML escape ve gercek OTOBO template render testleri,
+  - HTML escape ve gercek CareOnCloud ESM template render testleri,
   - tenant directory context'inden beslenen agent yonetim ekrani,
   - Service/Offering/Item lifecycle ve JSON form semasi yonetimi,
   - CSRF challenge token ve optimistic update formlari,
@@ -262,7 +262,7 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - `D724Problem 0.2.0` backend and agent RCA workbench is present in the current checkout. Problem state transitions use tenant-scoped row locking together with optimistic versions and transactional audit; creation has an audit-failure rollback regression case. Runtime acceptance is pending because this workspace currently has no Docker or Perl executable.
 - GPL-3.0 `D724TicketAudit 0.8.1` OPM paketi:
   - resmi `Ticket::CustomModule` extension noktasi ile cekirdek dosya fork'u olmadan repository wrapping,
-  - her OTOBO ticket icin immutable `d724_ticket_scope` tenant binding ve monoton mutation version'i,
+  - her CareOnCloud ESM ticket icin immutable `d724_ticket_scope` tenant binding ve monoton mutation version'i,
   - ticket create ile title/queue/customer/lock/state/owner/responsible/priority mutasyonlarinda domain+scope+audit tek transaction,
   - Email/Internal/Phone ortak MIME article create yolunda DB-storage zorunlulugu ve body icermeyen normalize audit,
   - audit hata enjeksiyonunda ticket state, article row/storage, customer migration, scope version ve cache rollback kaniti,
@@ -270,7 +270,7 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
   - toplu active-tenant backfill ve acik onayli tek-ticket CustomerID replacement komutlari,
   - status kapisinda `UnboundTickets=0`, `InvalidTenantTickets=0`,
   - sorgu-oncesi tenant filtresi, `CustomerIDRaw` bypass reddi ve immutable-scope tekil okuma,
-  - Generic Interface get/history/update ortak erisiminde OTOBO izni + tenant izni birlikte zorunlu,
+  - Generic Interface get/history/update ortak erisiminde CareOnCloud ESM izni + tenant izni birlikte zorunlu,
   - `integration.ticket.get/history/update` operasyon-bazlı matrisi; requester/auditor update reddi ve bilinmeyen operasyon için fail-closed davranış,
   - Elasticsearch TicketSearch oncesinde trusted directory/customer context ve merkezi `search.read` karari,
   - final ortak Elasticsearch invoker'inda `CustomerID` tenant filter'i; direct unscoped ve desteklenmeyen global index sorgularinda fail-closed,
@@ -279,7 +279,7 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - GPL-3.0 `D724Catalog 0.6.1`, `D724Request 0.4.8` ve `D724Commitment 0.3.8` entegrasyonu:
   - tenant-local commitment policy referansli katalog workflow'u,
   - request acilisinda immutable policy snapshot ve otomatik commitment baslatma,
-  - OTOBO calisma saatleri, tatil gunleri ve calendar timezone hesaplari,
+  - CareOnCloud ESM calisma saatleri, tatil gunleri ve calendar timezone hesaplari,
   - request status kurallarindan pause/resume ve due-time yeniden hesaplama,
   - warning/breach optimistic transition ve append-only system actor kaniti,
   - daemon tarafindan dakikada bir, tek paralel instance ile scheduled sweep,
@@ -288,12 +288,12 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
   - response/resolution/OLA hedefleri, validated-answer entitlement secimi ve idempotent escalation outbox,
   - authenticated HTTP akisi `REQ-0000000042`: iki hedef paused, onaydan sonra uc hedef running, ilk yanit ve fulfillment sonunda uc hedef met.
   - atomik lease, exponential retry ve dead-letter escalation dispatcher,
-  - tenant-role OTOBO email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
+  - tenant-role CareOnCloud ESM email notification, tenant-kapsamli fulfillment assignment ve allow-list/HMAC-SHA256 webhook adapter'lari.
 - GPL-3.0 `D724API 0.7.1` OPM paketi:
   - tenant-bazli bcrypt client credentials ve yalniz SHA-256 digest'i saklanan kisa omurlu opaque bearer token,
   - varsayilan-reddet role/action karari ve DB-atomik istemci/dakika rate limit,
   - tenant-admin client create ile auditli, optimistic-version ve idempotent client revoke; tum tokenlarin aninda iptali,
-  - OTOBO Public frontend uzerinden token, cursor'lu vaka listesi ve tek vaka JSON endpoint'leri,
+  - CareOnCloud ESM Public frontend uzerinden token, cursor'lu vaka listesi ve tek vaka JSON endpoint'leri,
   - immutable `d724_ticket_scope` SQL predicate'i; cross-tenant nesne varligini gizleyen `404`,
   - `no-store`, `nosniff`, bearer challenge ve `429 Retry-After` guvenlik basliklari,
   - secret/token yazdirmayan gercek HTTP kabulunde token/list/get `200`, bilinmeyen vaka `404`, revoke sonrasi ayni token `401`.
@@ -333,17 +333,17 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
   - immutable `(provider, subject)→login`, tenant login takeover koruması ve idempotent last-seen yenileme,
   - provider/ilk subject link mutation'ı ile audit olayının transaction-atomic yazımı,
   - digest-only state/nonce/verifier saklama, PKCE S256 ve browser binding; yerel dönüş yolu ve tek-kullanımlık callback,
-  - aynı-origin HTTPS discovery/JWKS ve yalnız RS256/ES256; OTOBO yerleşik JWKS/imza doğrulayıcısına delegasyon,
+  - aynı-origin HTTPS discovery/JWKS ve yalnız RS256/ES256; CareOnCloud ESM yerleşik JWKS/imza doğrulayıcısına delegasyon,
   - agent/customer surface bağlı web adapter'i, Secure/HttpOnly/SameSite=Lax flow cookie'si ve exact OIDC profile/redirect doğrulaması,
   - kurulumdaki mevcut DB/LDAP auth backend'ini koruyan fallback; callback sonrası preprovision ve aktif tenant üyeliği kapısı,
   - altı test dosyası / 71 test `PASS`, canlı agent/customer parola oturumları `302→200` ve status `Success=1`.
-- On üç CareOnCloud paketinin 52 dosyalık birleşik regresyonu `1016` test ile `PASS`; mevcut OTOBO OAuth2 testleriyle birlikte 59 dosya / `4042` test `PASS` (`2026-07-25`).
+- On üç CareOnCloud paketinin 52 dosyalık birleşik regresyonu `1016` test ile `PASS`; mevcut CareOnCloud ESM OAuth2 testleriyle birlikte 59 dosya / `4042` test `PASS` (`2026-07-25`).
 - Gercek oturumlu HTTP kabul akisi `REQ-0000000086`: create, approve, first-response, task-completed ve fulfilled olaylari bes farkli dedupe anahtariyla kaydedildi; ayni customer POST replay'i ayni request'i dondurdu ve olay sayisi bes kaldi; tenant zinciri `Valid=1` ve request durumu `fulfilled`.
 - Gercek hata enjeksiyonu `REQ-0000000102`: audit kapaliyken create icin tuketilen ID'de request/task/commitment/audit kalintisi `0`; ayni idempotency key ile retry basarili. Approval ve completed-task audit hatalarinda request/approval/task state ve version geri alindi; ayni optimistic version ile retry basarili, sonuc `fulfilled` ve uc commitment `met`.
 - Concurrent dedupe kabulunde iki bagimsiz writer ayni tenant/key icin `replay=0` ve `replay=1` dondu; veritabaninda tek event, sequence/head `1` kaldi.
 - Gercek katalog hata enjeksiyonu: service create audit hatasinda row `0`; update hatasinda ad/version degismedi; schema-set hatasinda schema row `0`. Ayni girdilerin retry'lari basarili oldu ve bes sirali katalog audit olayi uretildi; tenant zinciri `Valid=1`.
 - Gercek directory audit hata enjeksiyonu: audit kapaliyken membership grant `AUDIT_WRITE_FAILED` ve kalici row `0`; revoke hatasinda membership `active/version=1` kaldi. Audit geri geldiginde retry'lar `version=1` ve `version=2` ile basarili oldu; zincirde yalniz `tenant.created`, `tenant.membership.granted`, `tenant.membership.revoked` olaylari kaldi ve `Verify.Valid=1`.
-- Gercek OTOBO ticket kabul akisi: demo tenant ticket `D724AUD20260724001` / ID `9`, `open`, scope version `3`; `ticket.created`, `ticket.state.updated`, `ticket.article.created` olaylari ve gecerli tenant zinciri. Idempotent ikinci kabul calismasi `Created=0` ile ayni ticket ve uc olayi dondurdu.
+- Gercek CareOnCloud ESM ticket kabul akisi: demo tenant ticket `D724AUD20260724001` / ID `9`, `open`, scope version `3`; `ticket.created`, `ticket.state.updated`, `ticket.article.created` olaylari ve gecerli tenant zinciri. Idempotent ikinci kabul calismasi `Created=0` ile ayni ticket ve uc olayi dondurdu.
 - Legacy upgrade kabulunde bos CustomerID'li kurulum ticket'i `2015071510123456` acik replacement onayiyla `d724-demo` tenant'ina transaction-atomic atandi; iki cekirdek ticket'in ikisi de scoped, unbound/invalid sayilari `0`.
 - Tarihsel OPM SHA-256 kanıtı: Audit 0.2.0 `44604ad6aeb20d5e9eda2c25b28423f2eb6082037d06061f154b8fab13d4446d`, TenantDirectory 0.2.1 `024cfa1cc1298bd00459cc6cb88ecc99e868caac1beb9fa434dd814d06be7b28`, Catalog 0.5.2 `90dfeb6309bcaa89bcffe9acff4ec7e92031afff4bec7eb34bb313343a2795e5`, Request 0.4.6 `c8b5ddb9a9a0aed10e43094f9748ea7a6aca2089f41c0097236f6b57a7c51f46`, Commitment 0.3.8 `19bb3331b3efee9c3d143673fc7537720d3d98f11fc3bf69fa24f3c9229eb94c`.
 - TicketAudit 0.6.1 OPM SHA-256: `a574c4e22fef7520c7d86a7ab418f13243ae8e8963e742150b1c6d097e3d9e29`.
@@ -365,7 +365,7 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 - Cloudflare Tunnel üzerinden `https://esm.arcak.net` yayını aktiftir; origin yalnız `127.0.0.1:8088` systemd socket proxy üzerinden özel `100.86.171.110:8088` bind'ına ulaşır. Agent ve müşteri girişleri HTTP `200` ile doğrulanmıştır.
 - DD-YHE-02-R1 DORA uyumlu Careon hizmet kataloğu 6 ana alan, 51 yönetilen hizmet sunumu ve tenant başına 51 katalog öğesi olarak ürünleştirildi. Üç sentetik sektör demosunda mevcut iki sektörel öğeyle toplam `53` aktif katalog öğesi vardır.
 - Sentetik Marmara Bank Demo, Anadolu Moda Demo ve Perakende360 Demo tenant'larında toplam `36` request ve `99` commitment bulunur. Yönetici raporu kullanım ile katalog kapasitesini ayrı gösterir; hiçbir ad gerçek müşteri referansı değildir.
-- Elasticsearch webservice ID `1`, surumlu YAML ve idempotent konfigurator ile `http://elastic:9200` private host'una sabitlendi; OTOBO `Maint::Elasticsearch::TestConnection` basarili.
+- Elasticsearch webservice ID `1`, surumlu YAML ve idempotent konfigurator ile `http://elastic:9200` private host'una sabitlendi; CareOnCloud ESM `Maint::Elasticsearch::TestConnection` basarili.
 - Gelistirme kurulumunda varsayilan admin ve root parolalarinin otomatik rotasyonu.
 
 ## 2026-08-03 - CareOnCloud marka gecisi, admin status dili
@@ -439,10 +439,10 @@ Son dogrulama: `2026-08-02` (kaynak/statik kapilar ve aday sunucu durum kontroll
 
 - Test yayını Cloudflare Tunnel ve TLS ile açılmıştır; üretim öncesinde Cloudflare Access/WAF, origin sertleştirmesi, kalıcı secret yönetimi ve bağımsız güvenlik testi tamamlanmalıdır.
 - GitHub Actions workflow'u depoda bulunur ancak fork icin Actions calistirma politikasi ayrica etkinlestirilmelidir.
-- Katalog, cekirdek OTOBO ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u, D724 cache ve aktif Elasticsearch ticket aramasi tenant scope'a baglidir. Generic Interface operasyon-bazli role/action matrisi aciktir.
-- OTOBO paket şema çeviricisinin çok sütunlu foreign key sınırlaması, idempotent post-install/upgrade sertleştiricisi ve health doğrulamasıyla giderilmiştir.
-- OTOBO paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
-- Request lifecycle, D724 katalog, tenant-directory, kapsanan OTOBO ticket/MIME article, Chat lifecycle, Generic Interface `TicketUpdate` ve core pending-check scheduler mutasyonlari transaction-atomic audit kanitina sahiptir. Generic Interface `TicketCreate` source-level transaction ve rollback regresyonuna sahiptir ancak current candidate MariaDB kabulü bekler. GenericAgent ve diger scheduler/daemon yolları, non-MIME article backend'leri, harici eklenti/dogrudan DB yazimlari ile index/storage gibi cross-system side effect'ler ayni completeness garantisinin disindadir.
+- Katalog, cekirdek CareOnCloud ESM ticket yazimlari, TicketSearch, Generic Interface ortak ticket get/history/update erisimi, D724 commitment/webhook daemon isleri, operasyon rapor/export'u, D724 cache ve aktif Elasticsearch ticket aramasi tenant scope'a baglidir. Generic Interface operasyon-bazli role/action matrisi aciktir.
+- CareOnCloud ESM paket şema çeviricisinin çok sütunlu foreign key sınırlaması, idempotent post-install/upgrade sertleştiricisi ve health doğrulamasıyla giderilmiştir.
+- CareOnCloud ESM paket upgrade'inden sonra uzun omurlu Perl web worker'lari yeniden baslatilmalidir; aksi halde ayni anda eski ve yeni adapter kodu calisabilir. Test deploy runbook'u artik `web` ve `daemon` restart + HTTP health kontrolunu zorunlu kabul eder.
+- Request lifecycle, D724 katalog, tenant-directory, kapsanan CareOnCloud ESM ticket/MIME article, Chat lifecycle, Generic Interface `TicketUpdate` ve core pending-check scheduler mutasyonlari transaction-atomic audit kanitina sahiptir. Generic Interface `TicketCreate` source-level transaction ve rollback regresyonuna sahiptir ancak current candidate MariaDB kabulü bekler. GenericAgent ve diger scheduler/daemon yolları, non-MIME article backend'leri, harici eklenti/dogrudan DB yazimlari ile index/storage gibi cross-system side effect'ler ayni completeness garantisinin disindadir.
 
 ## Henuz urun sayilmayan kapsam
 
@@ -464,11 +464,11 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - RISK: candidate image remains d724/esm:candidate-f00f22e7b; a fresh image build, SBOM and signed release are still open.
 # 2026-08-03 UI/URL P1 gözlem kaydı
 
-- `RISK`: Aday ekran görüntüsünde kullanıcıya görünen adres yolu `/otobo/index.pl?Action=AgentD724Operations`; CareOnCloud kullanıcı yüzünde `/careoncloud` canonical yolu henüz doğrulanmış değil.
+- `RISK`: Aday ekran görüntüsünde kullanıcıya görünen adres yolu `/careoncloud/index.pl?Action=AgentD724Operations`; CareOnCloud kullanıcı yüzünde `/careoncloud` canonical yolu henüz doğrulanmış değil.
 - `RISK`: Aynı Türkçe agent oturumunda `Report scope`, `Please select a time zone...` ve bazı menü/alan metinleri İngilizce kalırken diğer menüler Türkçe görünüyor. Bu, dil paketinin eksik olmasından veya aktif dil/cache kapsamının tutarsız olmasından kaynaklanabilir; paket kaynaklarında ilgili çeviri anahtarları ayrıca kabul testine alınmalı.
 - `NEXT`: URL rewrite/canonical path'i adayda izole doğrula; Reporting ve ortak agent chrome için TR/EN metin envanteri çıkar, eksik anahtarları güncelle ve iki dilde ekran kabulü çalıştır. Üretim origin'inde değişiklik yapılmayacak.
-- `VERIFIED_BY_CURRENT_TEST`: Aday kaynak `Kernel/Config/Files/ZZZAAuto.pm` içinde `ScriptAlias = careoncloud/` bulunuyor. Canlı `https://esm.arcak.net/otobo/index.pl?Action=AgentD724Operations` HTTP 200 dönerken `/careoncloud/index.pl` HTTP 404; canlı yanıtında `Set-Cookie: OTOBOBrowserHasCookie` ve `x-powered-by: OTOBO 11.1.x` mevcut. Bu, aday kodundan bağımsız canlı deployment/cutover gap'idir.
-- `DONE_AND_VERIFIED`: Upstream `/otobo` örneklerini değiştirmeden `scripts/apache2-httpd-careoncloud-plack-proxy.include.conf` canonical `/careoncloud/` ve `/careoncloud-web/` route'ları için eklendi. `development/d724/Test-CareOnCloudProxyConfig.ps1` statik route sözleşmesini ve legacy route sızıntısını kontrol ediyor; test `PASS`.
+- `VERIFIED_BY_CURRENT_TEST`: Aday kaynak `Kernel/Config/Files/ZZZAAuto.pm` içinde `ScriptAlias = careoncloud/` bulunuyor. Canlı `https://esm.arcak.net/careoncloud/index.pl?Action=AgentD724Operations` HTTP 200 dönerken `/careoncloud/index.pl` HTTP 404; canlı yanıtında `Set-Cookie: CareOnCloud ESMBrowserHasCookie` ve `x-powered-by: CareOnCloud ESM 11.1.x` mevcut. Bu, aday kodundan bağımsız canlı deployment/cutover gap'idir.
+- `DONE_AND_VERIFIED`: Upstream `/careoncloud` örneklerini değiştirmeden `scripts/apache2-httpd-careoncloud-plack-proxy.include.conf` canonical `/careoncloud/` ve `/careoncloud-web/` route'ları için eklendi. `development/d724/Test-CareOnCloudProxyConfig.ps1` statik route sözleşmesini ve legacy route sızıntısını kontrol ediyor; test `PASS`.
 - `RISK`: Bu dosya henüz canlı vhost'a bağlanmadı. Aday portta ayrı vhost, login/cookie/static asset ve geri dönüş testi tamamlanmadan enable edilmemelidir.
 
 ## 2026-08-03 - Request menusu Türkçe çeviri kapsamı
@@ -495,7 +495,7 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: Türkçe `Agent Assistant` karşılığı ürün terminolojisi kararıyla `Destek Asistanı` olarak standardize edildi (commit `f90ba2d44`).
 - `RISK`: Bu son tek satır terminoloji değişikliği regresyon tamamlandıktan sonra yapıldı; kalıcı aday görünürlüğü için `careoncloud-all-packages-latest-i18n.tar` arşivinin yeniden kurulması/aktarılması ve i18n HTTP kabulü gerekir. Canlı cluster değiştirilmedi.
 - `VERIFIED_BY_CURRENT_TEST`: `careoncloud-all-packages-latest-i18n.tar` aktarılmış, 18 paketin tamamı adayda yeniden build/install edilmiş ve tam regresyon tekrar `exit code 0` ile sonuçlanmıştır. Aday web/daemon/db/redis servisleri ayakta kalmış, aktif `d724-esm-*` servislerine dokunulmamıştır.
-- `VERIFIED_BY_CURRENT_TEST`: Aday `127.0.0.1:18080/careoncloud/index.pl` HTTP `200` döndürüyor; `X-CareOnCloud-Login`, `X-Powered-By: CareOnCloud ESM 11.1.x` ve `CareOnCloudBrowserHasCookie` canonical `/careoncloud/` yolu ile geliyor. Yanıtta kalan OTOBO/OTRS satırları upstream yasal telif yorumlarıdır; kullanıcı yüzü başlık/logo ve URL'ler CareOnCloud'dur.
+- `VERIFIED_BY_CURRENT_TEST`: Aday `127.0.0.1:18080/careoncloud/index.pl` HTTP `200` döndürüyor; `X-CareOnCloud-Login`, `X-Powered-By: CareOnCloud ESM 11.1.x` ve `CareOnCloudBrowserHasCookie` canonical `/careoncloud/` yolu ile geliyor. Yanıtta kalan CareOnCloud ESM/OTRS satırları upstream yasal telif yorumlarıdır; kullanıcı yüzü başlık/logo ve URL'ler CareOnCloud'dur.
 - `RISK`: Bu HTTP kanıtı anonim login yüzeyidir; authenticated Türkçe/İngilizce agent ekranı ve canlı Cloudflare cutover kabulü hâlâ yapılmadı.
 - `VERIFIED_BY_CURRENT_TEST`: Güncel HEAD `332b355c6c43cac0c98d28928c704d95882717fb` için temiz detached worktree'de SourceArtifact manifest, güncel Git commit ve archive SHA-256 sözleşmesi tekrar `PASS` oldu.
 - `VERIFIED_BY_CURRENT_TEST`: Aday web container'ında güncel `tr_D724Assist`, `tr_D724CMDB`, `tr_D724Change`, `tr_D724Commitment`, `tr_D724Problem` ve `tr_D724Request` dosyalarının tamamı mevcut; aday web/db/redis sağlıklı, daemon `Up`.
@@ -503,15 +503,15 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 
 ## 2026-08-03 - CareOnCloud imzalı release workflow taslağı
 
-- `DONE_AND_VERIFIED`: Upstream OTOBO release workflow'una dokunmadan `.github/workflows/careoncloud-release.yml` eklendi. Manuel veya `careoncloud-v*` tag tetiklemesiyle `careoncloud.web.dockerfile` içindeki `careoncloud-web` target'ını GHCR'a immutable tag ile iter, CycloneDX SBOM artifact'i üretir ve GitHub OIDC üzerinden Cosign keyless imza atar.
+- `DONE_AND_VERIFIED`: Upstream CareOnCloud ESM release workflow'una dokunmadan `.github/workflows/careoncloud-release.yml` eklendi. Manuel veya `careoncloud-v*` tag tetiklemesiyle `careoncloud.web.dockerfile` içindeki `careoncloud-web` target'ını GHCR'a immutable tag ile iter, CycloneDX SBOM artifact'i üretir ve GitHub OIDC üzerinden Cosign keyless imza atar.
 - `RISK`: Workflow GitHub Actions üzerinde henüz çalıştırılmadı; GHCR repository/package izinleri ve release tag politikası ayrıca doğrulanmalı. Bu workflow canlı cutover yapmaz.
-- `VERIFIED_BY_CURRENT_TEST`: `development/d724/Test-CareOnCloudReleaseWorkflow.ps1` workflow'un CareOnCloud Dockerfile/target, GHCR, SBOM, Cosign ve OIDC izinlerini içerdiğini; upstream OTOBO image hedefi içermediğini doğruluyor.
+- `VERIFIED_BY_CURRENT_TEST`: `development/d724/Test-CareOnCloudReleaseWorkflow.ps1` workflow'un CareOnCloud Dockerfile/target, GHCR, SBOM, Cosign ve OIDC izinlerini içerdiğini; upstream CareOnCloud ESM image hedefi içermediğini doğruluyor.
 
 ## 2026-08-03 - Türkçe saat dilimi uyarısı düzeltmesi
 
 - `DONE_AND_VERIFIED`: `Kernel/Language/tr.pm` içindeki boş saat dilimi uyarısı Türkçe çeviriyle dolduruldu.
 - `VERIFIED_BY_CURRENT_TEST`: Güncel dosya aday web container'ında Perl syntax kontrolünden geçti; D724Reporting 4 dosya / 73 test ile `PASS` oldu.
-- `RISK`: `/otobo/` canonical URL ve diğer karışık dil metinleri ayrı aday kabul işidir; bu değişiklik yalnızca çekirdek uyarı çevirisini düzeltir.
+- `RISK`: `/careoncloud/` canonical URL ve diğer karışık dil metinleri ayrı aday kabul işidir; bu değişiklik yalnızca çekirdek uyarı çevirisini düzeltir.
 ## 2026-08-03 - P1 clean lifecycle and image security gate
 
 - `VERIFIED_BY_CURRENT_TEST`: GitHub Actions run `30817232194` for commit `26ba933b3` passed the complete D724 foundation workflow, including clean package lifecycle, 18-package regression, source artifact, SBOM, and repository/image vulnerability gates.
@@ -581,7 +581,7 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 ## 2026-08-04 - Signed release chain completed end to end
 
 - `VERIFIED_BY_CURRENT_TEST`: Run `30824056768` on commit `e82d348c1` completed the full chain with `conclusion: success` in 9m55s, with the workflow left **unmodified** and dispatched via `workflow_dispatch` so the experiment would not be confounded. Build and push 7m04s, SBOM 1m57s, SBOM upload 2s, Cosign install 1s, keyless OIDC signature 4s.
-- `VERIFIED_BY_CURRENT_TEST`: Image digest `sha256:e6075fb47fc43e085c703822745a9356f402499ea6dd99571a0df058a8239255` pushed to `ghcr.io/akinarcak/otobo/careoncloud:v0.0.0-probe.e82d348c1`. SBOM artifact `careoncloud-sbom-v0.0.0-probe.e82d348c1` is 1,287,359 bytes with `expired=false`. Cosign v2.5.0 keyless OIDC recorded `tlog entry created with index: 2335222741` and pushed the signature to GHCR.
+- `VERIFIED_BY_CURRENT_TEST`: Image digest `sha256:e6075fb47fc43e085c703822745a9356f402499ea6dd99571a0df058a8239255` pushed to `ghcr.io/akinarcak/careoncloud/careoncloud:v0.0.0-probe.e82d348c1`. SBOM artifact `careoncloud-sbom-v0.0.0-probe.e82d348c1` is 1,287,359 bytes with `expired=false`. Cosign v2.5.0 keyless OIDC recorded `tlog entry created with index: 2335222741` and pushed the signature to GHCR.
 - `SCOPE`: Candidate-only `workflow_dispatch` probe tags. Production services, live cutover, `d724-esm-*` containers/volumes and Yetka data were not touched. Only `v0.0.0-probe*` images were pushed to GHCR.
 - `RISK`: This proves the release mechanism, not a release. An actual `careoncloud-v*` tag, live cutover and rollback rehearsal remain open.
 
@@ -611,7 +611,7 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 ## 2026-08-04 - Post-label/SBOM probe release
 
 - `VERIFIED_BY_CURRENT_TEST`: Workflow dispatch run `30886247537` on commit `2123426a0` completed successfully with current label and CycloneDX naming changes. Build/push completed from cache in 9s; CycloneDX SBOM generation completed in 60s; upload, Cosign install and keyless signature all passed.
-- `VERIFIED_BY_CURRENT_TEST`: Probe image `ghcr.io/akinarcak/otobo/careoncloud:v0.0.0-probe.2123426a0` resolved to digest `sha256:7c999567722ca3847f1cd5104c015173dbb1584b51106075cacc8d0e16c664d9`; SBOM artifact upload completed (1,287,358 bytes); Rekor tlog index `2339281679` was recorded.
+- `VERIFIED_BY_CURRENT_TEST`: Probe image `ghcr.io/akinarcak/careoncloud/careoncloud:v0.0.0-probe.2123426a0` resolved to digest `sha256:7c999567722ca3847f1cd5104c015173dbb1584b51106075cacc8d0e16c664d9`; SBOM artifact upload completed (1,287,358 bytes); Rekor tlog index `2339281679` was recorded.
 - `SCOPE`: Probe tag only; no `careoncloud-v*` production release, live cutover, rollback or production acceptance was performed.
 
 ## 2026-08-04 - Cache fix verified: tag changes no longer rebuild the CPAN layer

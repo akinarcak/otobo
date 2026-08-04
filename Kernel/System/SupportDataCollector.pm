@@ -88,19 +88,19 @@ otherwise
         Result  => [
             {
                 Identifier  => 'Kernel::System::SupportDataCollector::OTOBO::Version',
-                DisplayPath => 'OTOBO',
+                DisplayPath => 'CareOnCloud ESM',
                 Status      => $StatusOK,
-                Label       => 'OTOBO Version'
+                Label       => 'CareOnCloud ESM Version'
                 Value       => '3.3.2',
                 Message     => '',
             },
             {
                 Identifier  => 'Kernel::System::SupportDataCollector::Apache::mod_perl',
-                DisplayPath => 'OTOBO',
+                DisplayPath => 'CareOnCloud ESM',
                 Status      => $StatusProblem,
                 Label       => 'mod_perl usage'
                 Value       => '0',
-                Message     => 'Please enable mod_perl to speed up OTOBO.',
+                Message     => 'Please enable mod_perl to speed up CareOnCloud ESM.',
             },
             {
                 Identifier       => 'Some::Identifier',

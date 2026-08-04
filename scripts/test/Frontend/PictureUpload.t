@@ -58,7 +58,7 @@ if ( !$Response->is_success() ) {
 
 # retrieve session id from LWP user agent cookies
 my $CookieObject = $UserAgent->cookie_jar();
-my $SessionID    = $CookieObject->get_cookies( 'web.local/otobo/', $ConfigObject->Get('SessionName') );
+my $SessionID    = $CookieObject->get_cookies( 'web.local/careoncloud/', $ConfigObject->Get('SessionName') );
 
 $Kernel::OM->ObjectParamAdd(
     'Kernel::Output::HTML::Layout' => {

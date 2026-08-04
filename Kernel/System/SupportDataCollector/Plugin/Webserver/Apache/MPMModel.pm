@@ -78,7 +78,7 @@ sub Run {
             Identifier => 'MPMModel',
             Label      => Translatable('MPM model'),
             Value      => $MPMModel,
-            Message    => Translatable("OTOBO requires apache to be run with the 'prefork' MPM model."),
+            Message    => Translatable("CareOnCloud ESM requires apache to be run with the 'prefork' MPM model."),
         );
     }
 

@@ -857,7 +857,7 @@ sub Run {
         if ( !$NotificationImport->{Success} ) {
             my $Message = $NotificationImport->{Message}
                 || Translatable(
-                    'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information'
+                    'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information'
                 );
             return $LayoutObject->ErrorScreen(
                 Message => $Message,

@@ -39,7 +39,7 @@ sub Configure {
     );
     $Self->AddOption(
         Name        => 'untrusted',
-        Description => "This will cause X-OTOBO email headers to be ignored.",
+        Description => "This will cause X-CareOnCloud ESM email headers to be ignored.",
         Required    => 0,
         HasValue    => 0,
     );

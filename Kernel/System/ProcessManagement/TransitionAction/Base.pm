@@ -100,7 +100,7 @@ sub _ReplaceTicketAttributes {
         # <OTOBO_Ticket_DynamicField_Name1> or <OTOBO_TICKET_DynamicField_Name1>
         # or
         # <OTOBO_TICKET_DynamicField_Name1_Value> or <OTOBO_Ticket_DynamicField_Name1_Value>.
-        # <OTOBO_Ticket_*> is deprecated and should be removed in further versions of OTOBO.
+        # <OTOBO_Ticket_*> is deprecated and should be removed in further versions of CareOnCloud ESM.
         my $Count = 0;
         REPLACEMENT:
         while (
@@ -310,7 +310,7 @@ sub _ReplaceAdditionalAttributes {
 
     my $TemplateGeneratorObject = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
 
-    # start replacing of OTOBO smart tags
+    # start replacing of CareOnCloud ESM smart tags
     for my $Attribute ( sort keys %{ $Param{Config} } ) {
 
         my $ConfigValue = $Param{Config}->{$Attribute};

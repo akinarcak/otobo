@@ -154,7 +154,7 @@ sub Array2CSV {
                     $Worksheet->write( $Row, $Col, "$DataRaw->[$Col]", $HeaderFormat );
                 }
                 else {
-                    # There are major problems with data recognition in Excel. OTOBO
+                    # There are major problems with data recognition in Excel. CareOnCloud ESM
                     #   ticket numbers will be recognized as numbers, but they are so big that
                     #   Excel will (incorrectly) round them. Prevent this by using write_string()
                     #   to protect the data. This might trigger formatting notifications in Excel,

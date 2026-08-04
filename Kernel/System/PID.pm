@@ -32,7 +32,7 @@ Kernel::System::PID - to manage PIDs, that is process id locks
 =head1 DESCRIPTION
 
 All functions to manage process id locks. Note that these process IDs are entities that are
-handled by OTOBO in the database table I<process_id>. They should not be confused with
+handled by CareOnCloud ESM in the database table I<process_id>. They should not be confused with
 the process IDs of the operating system.
 
 These process IDs act a like advisory locks. They allow to check whether a task

@@ -166,7 +166,7 @@ sub call {
 
     my $Debug = $Self->{Debug};
 
-    # The OTOBO modules which generate the content get their input
+    # The CareOnCloud ESM modules which generate the content get their input
     # from the Kernel::System::Web::Request singleton, that is the ParamObject.
     # Make the PSGI environment available to the constructor of the ParamObject.
     $Kernel::OM->ObjectParamAdd(
@@ -198,7 +198,7 @@ sub call {
 
     # no putput filters in InterfaceInstaller.
 
-    # The HTTP headers of the OTOBO web response object already have been set up.
+    # The HTTP headers of the CareOnCloud ESM web response object already have been set up.
     # Enhance it with the HTTP status code and the content.
     return $Kernel::OM->Get('Kernel::System::Web::Response')->Finalize(
         Content => $Content,

@@ -330,7 +330,7 @@ together with the test results.
 
 =cut
 
-# TODO: is that feature still useful ? AFAIK OTOBO has no test result upload service.
+# TODO: is that feature still useful ? AFAIK CareOnCloud ESM has no test result upload service.
 sub AttachSeleniumScreenshot {
     my ( $Self, %Param ) = @_;
 

@@ -14,10 +14,10 @@ our @ObjectDependencies = ('Kernel::System::D724::TicketAudit');
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Explicitly assign one legacy OTOBO ticket to an active CareOnCloud tenant with atomic audit evidence.');
-    $Self->AddOption( Name => 'ticket-id', Description => 'Legacy OTOBO ticket ID.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
+    $Self->Description('Explicitly assign one legacy CareOnCloud ESM ticket to an active CareOnCloud tenant with atomic audit evidence.');
+    $Self->AddOption( Name => 'ticket-id', Description => 'Legacy CareOnCloud ESM ticket ID.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
     $Self->AddOption( Name => 'tenant-id', Description => 'Active D724 tenant identifier.', Required => 1, HasValue => 1, ValueRegex => qr{[a-z0-9][a-z0-9_-]{1,127}}smx );
-    $Self->AddOption( Name => 'actor-user-id', Description => 'OTOBO user recorded as migration actor.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
+    $Self->AddOption( Name => 'actor-user-id', Description => 'CareOnCloud ESM user recorded as migration actor.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
     $Self->AddOption( Name => 'replace-customer-id', Description => 'Explicitly replace a mismatching legacy CustomerID with the tenant ID.', Required => 0, HasValue => 0 );
     $Self->AddOption( Name => 'confirm', Description => 'Explicitly confirm this migration write.', Required => 1, HasValue => 0 );
     return;

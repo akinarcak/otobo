@@ -508,7 +508,7 @@ sub Run {
                 Priority => 'Error',
                 Data     => "$Name $Version - "
                     . $LayoutObject->{LanguageObject}->Translate(
-                        "Package not verified by the OTOBO Team!"
+                        "Package not verified by the CareOnCloud ESM Team!"
                     ),
             );
         }
@@ -1560,8 +1560,8 @@ sub Run {
         $Source = %RepositoryRoot
             ?
 
-            # default repo is OTOBO Addons
-            { reverse %RepositoryRoot }->{'OTOBO Addons'} ? { reverse %RepositoryRoot }->{'OTOBO Addons'} :
+            # default repo is CareOnCloud ESM Addons
+            { reverse %RepositoryRoot }->{'CareOnCloud ESM Addons'} ? { reverse %RepositoryRoot }->{'CareOnCloud ESM Addons'} :
 
                 # alternatively take the first repo in %RepositoryRoot
                 ( sort { $a cmp $b } keys %RepositoryRoot )[0]
@@ -1871,7 +1871,7 @@ sub Run {
         );
     }
 
-    # Check if OTOBO Daemon is running in the background.
+    # Check if CareOnCloud ESM Daemon is running in the background.
     #   Get daemon state from the cache.
     my $DaemonRunning = $Kernel::OM->Get('Kernel::System::Cache')->Get(
         Type => 'DaemonRunning',
@@ -1935,7 +1935,7 @@ sub Run {
                 Priority => 'Error',
                 Data     => "$Package $NotVerifiedPackages{$Package} - "
                     . $LayoutObject->{LanguageObject}->Translate(
-                        "Package not verified by the OTOBO Team!"
+                        "Package not verified by the CareOnCloud ESM Team!"
                     ),
             );
         }
@@ -2239,7 +2239,7 @@ sub _InstallHandling {
 
         if ( $Verified eq 'verified' && !$Self->{CloudServicesDisabled} ) {
             $LayoutObject->Block(
-                Name => 'OTOBOVerifyLogo',
+                Name => 'CareOnCloud ESMVerifyLogo',
             );
         }
 
@@ -2312,7 +2312,7 @@ sub _InstallHandling {
 
             if ( $Verified eq 'verified' ) {
                 $LayoutObject->Block(
-                    Name => 'OTOBOVerifyLogo',
+                    Name => 'CareOnCloud ESMVerifyLogo',
                 );
             }
 
@@ -2551,7 +2551,7 @@ sub _GetFeatureAddonData {
     # as this is the only operation an unsuccessful request means that the operation was also
     # unsuccessful
     if ( !IsHashRefWithData($RequestResult) ) {
-        return Translatable('Can\'t connect to OTOBO Feature Add-on list server!');
+        return Translatable('Can\'t connect to CareOnCloud ESM Feature Add-on list server!');
     }
 
     my $OperationResult = $CloudServiceObject->OperationResultGet(
@@ -2561,10 +2561,10 @@ sub _GetFeatureAddonData {
     );
 
     if ( !IsHashRefWithData($OperationResult) ) {
-        return Translatable('Can\'t get OTOBO Feature Add-on list from server!');
+        return Translatable('Can\'t get CareOnCloud ESM Feature Add-on list from server!');
     }
     elsif ( !$OperationResult->{Success} ) {
-        return $OperationResult->{ErrorMessage} || Translatable('Can\'t get OTOBO Feature Add-on from server!');
+        return $OperationResult->{ErrorMessage} || Translatable('Can\'t get CareOnCloud ESM Feature Add-on from server!');
     }
 
     my $FAOFeed = $OperationResult->{Data}->{FAOs};

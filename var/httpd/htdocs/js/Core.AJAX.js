@@ -91,7 +91,7 @@ Core.AJAX = (function (TargetNS) {
             return;
         }
 
-        // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefore we handle the error manually.
+        // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefore we handle the error manually.
         Core.Exception.HandleFinalError(new Core.Exception.ApplicationError(ErrorMessage, 'CommunicationError'));
     }
 
@@ -991,7 +991,7 @@ Core.AJAX = (function (TargetNS) {
                 }
 
                 if (!Response) {
-                    // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefore we handle the error manually.
+                    // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefore we handle the error manually.
                     Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("Invalid JSON from: " + URL, 'CommunicationError'));
                 }
                 else {
@@ -1046,7 +1046,7 @@ Core.AJAX = (function (TargetNS) {
                 }
 
                 if (!Response) {
-                    // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefore we handle the error manually.
+                    // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefore we handle the error manually.
                     Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No content from: " + URL, 'CommunicationError'));
                 }
                 else if ($ElementToUpdate && isJQueryObject($ElementToUpdate) && $ElementToUpdate.length) {
@@ -1054,7 +1054,7 @@ Core.AJAX = (function (TargetNS) {
                     $ElementToUpdate.html(Response);
                 }
                 else {
-                    // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefore we handle the error manually.
+                    // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefore we handle the error manually.
                     Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No such element id: " + $ElementToUpdate.attr('id') + " in page!", 'CommunicationError'));
                 }
             },
@@ -1109,7 +1109,7 @@ Core.AJAX = (function (TargetNS) {
                     Core.App.Publish('Event.AJAX.FunctionCall.Callback', [Response]);
                 }
                 else {
-                    // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefore we handle the error manually.
+                    // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefore we handle the error manually.
                     Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("Invalid callback method: " + ((typeof Callback === 'undefined') ? 'undefined' : Callback.toString())));
                 }
             },

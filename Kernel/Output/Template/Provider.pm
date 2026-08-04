@@ -48,10 +48,10 @@ Kernel::Output::Template::Provider - Template Toolkit custom provider
 
 =head1 PUBLIC INTERFACE
 
-=head2 OTOBOInit()
+=head2 CareOnCloud ESMInit()
 
 performs some post-initialization and creates a bridge between Template::Toolkit
-and OTOBO by adding the OTOBO objects to the Provider object. This method must be
+and CareOnCloud ESM by adding the CareOnCloud ESM objects to the Provider object. This method must be
 called after instantiating the Provider object.
 
 Please note that we only store a weak reference to the LayoutObject to avoid ring
@@ -59,7 +59,7 @@ references.
 
 =cut
 
-sub OTOBOInit {
+sub CareOnCloud ESMInit {
     my ( $Self, %Param ) = @_;
 
     # Don't fetch LayoutObject via ObjectManager as there might be several instances involved
@@ -310,7 +310,7 @@ sub store {
 
 this is our template pre processor.
 
-It handles some OTOBO specific tags like [% InsertTemplate("TemplateName.tt") %]
+It handles some CareOnCloud ESM specific tags like [% InsertTemplate("TemplateName.tt") %]
 and also performs compile-time code injection (ChallengeToken element into forms).
 
 Besides that, it also makes sure the template is treated as UTF8.

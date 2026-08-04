@@ -456,7 +456,7 @@ sub Sync {
     # variable to store group permissions from ldap
     my %GroupPermissionsFromLDAP;
 
-    # sync ldap group 2 otobo group permissions
+    # sync ldap group 2 careoncloud group permissions
     my $UserSyncGroupsDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncGroupsDefinition' . $Self->{Count}
     );
@@ -571,7 +571,7 @@ sub Sync {
         }
     }
 
-    # sync ldap attribute 2 otobo group permissions
+    # sync ldap attribute 2 careoncloud group permissions
     my $UserSyncAttributeGroupsDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncAttributeGroupsDefinition' . $Self->{Count}
     );
@@ -706,7 +706,7 @@ sub Sync {
     # variable to store role permissions from ldap
     my %RolePermissionsFromLDAP;
 
-    # sync ldap group 2 otobo role permissions
+    # sync ldap group 2 careoncloud role permissions
     my $UserSyncRolesDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncRolesDefinition' . $Self->{Count}
     );
@@ -778,7 +778,7 @@ sub Sync {
         }
     }
 
-    # sync ldap attribute 2 otobo role permissions
+    # sync ldap attribute 2 careoncloud role permissions
     my $UserSyncAttributeRolesDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncAttributeRolesDefinition' . $Self->{Count}
     );

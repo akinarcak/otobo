@@ -129,7 +129,7 @@ Example 1 XML config:
 
 Example 2:
 
-The system is flexible enough to accommodate for extensions of OTOBO core.
+The system is flexible enough to accommodate for extensions of CareOnCloud ESM core.
 
     $Self->EventHandlerInit(
         Config     => 'ITSM::EventModule',

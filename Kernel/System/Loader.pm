@@ -82,7 +82,7 @@ Uses caching internally.
 
 With S3 support the returned value is the last part of the key of the object that is stored in S3.
 
-It is expected that the TargetDirectory is a directory below the OTOBO home directory.
+It is expected that the TargetDirectory is a directory below the CareOnCloud ESM home directory.
 
     my $TargetFilename = $LoaderObject->MinifyFiles(
         List  => [                                 # optional,  minify list of files
@@ -199,10 +199,10 @@ sub MinifyFiles {
     else {
         my $StorageS3Object = $Kernel::OM->Get('Kernel::System::Storage::S3');
 
-        # the target directory is below the OTOBO home dir, adapt that to S3
+        # the target directory is below the CareOnCloud ESM home dir, adapt that to S3
         my $FilePath = join '/', $TargetDirectory, $Filename;
         my $Home     = $Kernel::OM->Get('Kernel::Config')->Get('Home');    # without trailing slash
-        my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/otobo/var/httpd becomes var/httpd
+        my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/careoncloud/var/httpd becomes var/httpd
 
         $LoaderFileExists = $StorageS3Object->ObjectExists(
             Key => $Key,
@@ -273,10 +273,10 @@ sub MinifyFiles {
 
             my $StorageS3Object = $Kernel::OM->Get('Kernel::System::Storage::S3');
 
-            # the target directory is below the OTOBO home dir, adapt that to S3
+            # the target directory is below the CareOnCloud ESM home dir, adapt that to S3
             my $FilePath = join '/', $TargetDirectory, $Filename;
             my $Home     = $Kernel::OM->Get('Kernel::Config')->Get('Home');    # without trailing slash
-            my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/otobo/var/httpd becomes var/httpd
+            my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/careoncloud/var/httpd becomes var/httpd
             $StorageS3Object->StoreObject(
                 Key     => $Key,
                 Content => $Content,
@@ -526,7 +526,7 @@ Returns a list of deleted files.
 sub CacheDelete {
     my ($Self) = @_;
 
-    # the file system cache files are located below the OTOBO home dir
+    # the file system cache files are located below the CareOnCloud ESM home dir
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
     # for JavaScript there is only one cache folder

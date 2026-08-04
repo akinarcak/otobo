@@ -663,7 +663,7 @@ get a list of ticket owners within the given ticket id list
     returns
 
     $Values = {
-        1 => 'Admin OTOBO',
+        1 => 'Admin CareOnCloud ESM',
     };
 
 =cut
@@ -751,7 +751,7 @@ get a list of agents responsible for the tickets within the given ticket list
     returns
 
     $Values = {
-        1 => 'Admin OTOBO',
+        1 => 'Admin CareOnCloud ESM',
     };
 
 =cut

@@ -60,6 +60,6 @@ earlier notice or a fix requires a different timeline.
 
 ## Upstream relationship
 
-CareOnCloud ESM is derived from OTOBO. Upstream OTOBO vulnerabilities may also
+CareOnCloud ESM is derived from CareOnCloud ESM. Upstream CareOnCloud ESM vulnerabilities may also
 need to be reported to the upstream project, but CareOnCloud reports are in
 scope here and are not excluded because this repository is a fork.

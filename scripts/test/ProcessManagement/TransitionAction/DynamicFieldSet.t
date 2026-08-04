@@ -356,7 +356,7 @@ my @Tests = (
         Success        => 1,
     },
     {
-        Name   => 'Correct Using OTOBO Customer Data tag',
+        Name   => 'Correct Using CareOnCloud ESM Customer Data tag',
         Config => {
             UserID => $UserID,
             Ticket => \%Ticket,

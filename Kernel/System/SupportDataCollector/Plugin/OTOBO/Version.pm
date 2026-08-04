@@ -28,14 +28,14 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO');
+    return Translatable('CareOnCloud ESM');
 }
 
 sub Run {
     my $Self = shift;
 
     $Self->AddResultInformation(
-        Label => Translatable('OTOBO Version'),
+        Label => Translatable('CareOnCloud ESM Version'),
         Value => $Kernel::OM->Get('Kernel::Config')->Get('Version'),
     );
 

@@ -3,10 +3,10 @@
 ## Amaç
 
 CareOnCloud agent ve müşteri girişlerini tenant'a bağlı OIDC Authorization Code +
-PKCE akışına bağlamak; mevcut OTOBO DB parola girişini kesmeden kademeli SSO
+PKCE akışına bağlamak; mevcut CareOnCloud ESM DB parola girişini kesmeden kademeli SSO
 geçişi sağlamak.
 
-## OTOBO entegrasyon kararı
+## CareOnCloud ESM entegrasyon kararı
 
 `Kernel::System::Auth::D724OpenIDConnect` ve
 `Kernel::System::CustomerAuth::D724OpenIDConnect` birincil auth backend olarak
@@ -18,7 +18,7 @@ tenant'lar ve demo hesapları mevcut parola ekranını kullanmaya devam eder.
 ## Provider yapılandırması
 
 - Trust route kaynağı `d724_identity_provider` tablosudur.
-- Client secret yeni bir CareOnCloud tablosuna kopyalanmaz. OTOBO'nun mevcut
+- Client secret yeni bir CareOnCloud tablosuna kopyalanmaz. CareOnCloud ESM'nun mevcut
   `oidc_profiles` deposundaki `careoncloud:<tenant>:<provider>:<surface>` adlı profil kullanılır.
 - Profil `client_id` değeri trust route `audience` değeriyle exact eşleşmelidir.
 - Discovery sonucu `OIDCFlow::MetadataValidate` güven sınırından geçmeden redirect
@@ -46,7 +46,7 @@ tenant'lar ve demo hesapları mevcut parola ekranını kullanmaya devam eder.
 5. Authorization code exact verifier ile değiştirilir; ID token ham olarak loglanmaz.
 6. `OIDCFlow::CallbackVerify` JWKS/imza, exact issuer/audience, nonce, browser binding,
    PKCE ve replay kontrollerini transaction içinde tamamlar.
-7. Dönen login ilgili OTOBO agent/customer deposunda aktif ve aynı tenant'ta önceden
+7. Dönen login ilgili CareOnCloud ESM agent/customer deposunda aktif ve aynı tenant'ta önceden
    provision edilmiş olmalıdır. Otomatik kullanıcı/rol provision etme SCIM kapısına
    kadar yapılmaz.
 8. Başarı veya hata sonunda state cookie silinir. Başarıda yalnız flow tablosundaki

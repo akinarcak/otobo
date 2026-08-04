@@ -55,7 +55,7 @@ for my $ID ( 1 .. 3 ) {
 
     my $KeyOut   = "scripts/test/sample/SMIME/SMIMEPrivateKey-$ID.asc";
     my $CertOut  = "scripts/test/sample/SMIME/SMIMECertificate-$ID.asc";
-    my $Subject  = "/C=DE/ST=Bayern/L=Straubing/O=OTOBO/CN=unittest/emailAddress=$Email";
+    my $Subject  = "/C=DE/ST=Bayern/L=Straubing/O=CareOnCloud ESM/CN=unittest/emailAddress=$Email";
     my $Password = $Passwords{$ID};
 
     # add SubjectAltNames in special case 3

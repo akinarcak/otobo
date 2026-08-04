@@ -19,7 +19,7 @@ is( $Exit, 0, 'healthy cache configuration exits successfully' );
 my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $Output );
 ok( $Status->{Success}, 'status is healthy' );
 is( $Status->{MaximumTTLSeconds}, 600, 'configured maximum TTL is reported' );
-ok( $Status->{BackendAvailable}, 'OTOBO persistent cache backend is available' );
+ok( $Status->{BackendAvailable}, 'CareOnCloud ESM persistent cache backend is available' );
 ok( $Status->{BackendModule}, 'configured backend module is reported' );
 is( $Status->{NamespaceVersion}, 1, 'namespace contract version is reported' );
 ok( $Status->{PersistentOnly}, 'adapter persistent-only behavior is reported' );

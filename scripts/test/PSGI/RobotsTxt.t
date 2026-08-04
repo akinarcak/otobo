@@ -57,7 +57,7 @@ http_request(
     http_response {
         http_is_success();
         http_content_type('text/plain');
-        http_content( match(qr!Allow:\s+/otobo/public.pl!) );
+        http_content( match(qr!Allow:\s+/careoncloud/public.pl!) );
     },
     "testing $RobotsTxtURL",
 );

@@ -109,7 +109,7 @@ sub ColumnsList {
         }
     }
 
-    # Internally OTOBO is using lower case table names.
+    # Internally CareOnCloud ESM is using lower case table names.
     # But Oracle has upper case names.
     my $UcTable = uc $Param{Table};
     my $Rows    = $Param{DBObject}->SelectAll(
@@ -222,7 +222,7 @@ sub BlobColumnsList {
         }
     }
 
-    # Internally OTOBO is using lower case table names.
+    # Internally CareOnCloud ESM is using lower case table names.
     # But Oracle has upper case names.
     my $UcTable = uc $Param{Table};
     $Param{DBObject}->Prepare(
@@ -260,7 +260,7 @@ sub GetColumnInfos {
         }
     }
 
-    # Internally OTOBO is using lower case table names.
+    # Internally CareOnCloud ESM is using lower case table names.
     # But Oracle has upper case names.
     my $UcTable  = uc $Param{Table};
     my $UcColumn = uc $Param{Column};

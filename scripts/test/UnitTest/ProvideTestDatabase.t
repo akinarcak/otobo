@@ -65,7 +65,7 @@ else {
 
     @Tables = $DBObject->ListTables();
 
-    # Count number of table elements in OTOBO schema for comparison.
+    # Count number of table elements in CareOnCloud ESM schema for comparison.
     my $XMLString = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
         Location => $DatabaseXMLFiles[0],
     );
@@ -74,7 +74,7 @@ else {
     $Self->Is(
         scalar @Tables,
         $TableCount,
-        'OTOBO tables found',
+        'CareOnCloud ESM tables found',
     );
 }
 

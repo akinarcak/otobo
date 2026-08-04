@@ -529,7 +529,7 @@ sub ConfigSettingChange {
     my $PackageName = 'ZZZZUnitTest' . $Identifier;
 
     my $Code = <<"END_CODE";
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::$PackageName;
 use strict;
@@ -626,7 +626,7 @@ sub CustomCodeActivate {
     # There is no need to restart the webserver as the changed config
     # is picked up by Kernel::Config::new() for every request.
     # Often the test script is not even running on the same machine as the webserver.
-    # Or there are multiple web server running on different /opt/otobo dirs.
+    # Or there are multiple web server running on different /opt/careoncloud dirs.
 
     return 1;
 }
@@ -698,7 +698,7 @@ sub UseTmpArticleDir {
 
 =head2 DisableAsyncCalls()
 
-Disable scheduling of asynchronous tasks using C<AsynchronousExecutor> component of OTOBO daemon.
+Disable scheduling of asynchronous tasks using C<AsynchronousExecutor> component of CareOnCloud ESM daemon.
 
 =cut
 
@@ -730,11 +730,11 @@ receive all calls sent over system C<DBObject>.
 All database contents will be automatically dropped when the Helper object is destroyed.
 
     $Helper->ProvideTestDatabase(
-        DatabaseXMLString => $XML,      # (optional) OTOBO database XML schema to execute
+        DatabaseXMLString => $XML,      # (optional) CareOnCloud ESM database XML schema to execute
                                         # or
         DatabaseXMLFiles => [           # (optional) List of XML files to load and execute
-            '/opt/otobo/scripts/database/careoncloud-schema.xml',
-            '/opt/otobo/scripts/database/careoncloud-initial_insert.xml',
+            '/opt/careoncloud/scripts/database/careoncloud-schema.xml',
+            '/opt/careoncloud/scripts/database/careoncloud-initial_insert.xml',
         ],
     );
 
@@ -780,7 +780,7 @@ sub ProvideTestDatabase {
     my $PackageName = "ZZZZUnitTest$Identifier";
     $Self->CustomCodeActivate(
         Code => qq^
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::$PackageName;
 use strict;
@@ -963,17 +963,17 @@ sub TestDatabaseCleanup {
 
 =head2 DatabaseXMLExecute()
 
-Execute supplied XML against current database. Content of supplied XML or XMLFilename parameter must be valid OTOBO
+Execute supplied XML against current database. Content of supplied XML or XMLFilename parameter must be valid CareOnCloud ESM
 database XML schema.
 
     $Helper->DatabaseXMLExecute(
-        XML => $XML,     # OTOBO database XML schema to execute
+        XML => $XML,     # CareOnCloud ESM database XML schema to execute
     );
 
 Alternatively, it can also load an XML file to execute:
 
     $Helper->DatabaseXMLExecute(
-        XMLFile => '/path/to/file',  # OTOBO database XML file to execute
+        XMLFile => '/path/to/file',  # CareOnCloud ESM database XML file to execute
     );
 
 =cut

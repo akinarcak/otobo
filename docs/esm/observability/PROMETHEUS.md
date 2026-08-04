@@ -1,7 +1,7 @@
 # D724 Prometheus operasyon yuzeyi
 
 `D724Observability 0.1.0`, tenant kimligi veya PII icermeyen 20 sabit metrik
-serisini OTOBO Public frontend uzerinden sunar:
+serisini CareOnCloud ESM Public frontend uzerinden sunar:
 
 ```text
 GET /careoncloud/public.pl?Action=PublicD724Metrics
@@ -23,7 +23,7 @@ bin/careoncloud.Console.pl Admin::Config::Update --setting-name D724::Observabil
 bin/careoncloud.Console.pl Admin::Config::Update --setting-name D724::Observability::MetricsTokenSHA256 --value <digest>
 ```
 
-`--valid` ve `--value`, OTOBO komutunun birbirini dislayan islem kipleri oldugu
+`--valid` ve `--value`, CareOnCloud ESM komutunun birbirini dislayan islem kipleri oldugu
 icin iki ayri komuttur. Token komut satirina, repoya veya loga konulmamalidir.
 
 ## Kardinalite ve veri siniri

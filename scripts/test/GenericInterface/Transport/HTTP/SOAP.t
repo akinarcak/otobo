@@ -29,7 +29,7 @@ use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-# added for OTOBOTicketInvoker
+# added for CareOnCloud ESMTicketInvoker
 # Set fixed header blacklists.
 for my $Type (qw(Invoker Operation)) {
     $ConfigObject->Set(
@@ -3011,7 +3011,7 @@ for my $Test (@BasicTests) {
     };
 }
 
-# adapted for OTOBOTicketInvoker
+# adapted for CareOnCloud ESMTicketInvoker
 # Check operation request and response headers.
 # The string $ResponseHeaderPrefix is 25 chars long. It marks the headers that should be returned by RequesterPerformRequest()
 my $ResponseHeaderPrefix = 'Unittest' . $Helper->GetRandomNumber() . '-';

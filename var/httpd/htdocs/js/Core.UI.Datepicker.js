@@ -166,7 +166,7 @@ Core.UI.Datepicker = (function (TargetNS) {
             $DatepickerElement = $('<input>').attr('type', 'hidden').attr('id', 'Datepicker' + DatepickerCount);
             // insert DatepickerElement
             if ( Core.Config.Get('SessionName') === Core.Config.Get('CustomerPanelSessionName') ) {
-                // CustomerInterface (otobo style)
+                // CustomerInterface (careoncloud style)
                 let Container, $DateDiv;
                 let $Parent = $(Element.Day).parent();
                 if ($Parent.hasClass('oooDate')) {

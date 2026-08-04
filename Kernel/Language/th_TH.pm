@@ -318,25 +318,25 @@ sub Data {
         'Support data collector' => 'สนับสนุนการเก็บรวบรวมข้อมูล',
         'Hint' => 'คำแนะนำ',
         'Currently support data is only shown in this system.' => 'ข้อมูลสนับสนุนตอนนี้จะแสดงเฉพาะในระบบนี้',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
             '',
         'Configuration' => 'การกำหนดค่าการ',
         'Send support data' => 'ส่งข้อมูลการสนับสนุน',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
             '',
         'Update' => 'อัปเดต',
         'System Registration' => 'ระบบการลงทะเบียน',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'Register this System' => 'ลงทะเบียนระบบนี้',
         'System Registration is disabled for your system. Please check your configuration.' =>
             'ระบบการลงทะเบียนถูกปิดใช้งานสำหรับระบบของคุณ กรุณาตรวจสอบการตั้งค่าของคุณ',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
             '',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            'โปรดทราบว่าการใช้บริการคลาวด์ของ OTOBOต้องใช้ระบบที่จะถูกลงทะเบียน',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            'โปรดทราบว่าการใช้บริการคลาวด์ของ CareOnCloud ESMต้องใช้ระบบที่จะถูกลงทะเบียน',
         'Register this system' => 'ลงทะเบียนระบบนี้',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             'คุณสามารถกำหนดค่าการบริการคลาวด์ที่สามารถใช้ได้ที่นี่ซึ่งสามารถสื่อสารอย่างปลอดภัยกับ% s',
@@ -1030,7 +1030,7 @@ sub Data {
             '',
         'Please provide a unique name for this web service.' => 'โปรดระบุชื่อที่ไม่ซ้ำกันสำหรับweb service นี้',
         'Error handling module backend' => '',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
             '',
         'Processing options' => '',
         'Configure filters to control error handling module execution.' =>
@@ -1122,15 +1122,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             'โดยปกติจะใช้ชื่อนี้เพื่อเรียกการทำงานของweb serviceจากระยะไกล',
         'Invoker backend' => 'ผู้ร้องขอเบื้องหลัง',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            'โมดูลผู้ร้องขอเบื้องหลังของOTOBOนี้จะถูกเรียกเพื่อเตรียมข้อมูลที่จะส่งไปยังระบบระยะไกลและเพื่อประมวลผลข้อมูลการตอบสนอง',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            'โมดูลผู้ร้องขอเบื้องหลังของCareOnCloud ESMนี้จะถูกเรียกเพื่อเตรียมข้อมูลที่จะส่งไปยังระบบระยะไกลและเพื่อประมวลผลข้อมูลการตอบสนอง',
         'Mapping for outgoing request data' => 'แผนที่สำหรับข้อมูลการร้องขอขาออก',
         'Configure' => 'การกำหนดค่า',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            'ข้อมูลจากผู้ร้องขอของOTOBO  จะถูกดำเนินการจากแผนที่นี้เพื่อเปลี่ยนมันไปเป็นประเภทของข้อมูลที่คาดว่าเป็นระบบจากระยะไกล',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            'ข้อมูลจากผู้ร้องขอของCareOnCloud ESM  จะถูกดำเนินการจากแผนที่นี้เพื่อเปลี่ยนมันไปเป็นประเภทของข้อมูลที่คาดว่าเป็นระบบจากระยะไกล',
         'Mapping for incoming response data' => 'แผนที่สำหรับข้อมูลการตอบสนองที่เข้ามา',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            'ข้อมูลการตอบสนองจะถูกประมวลผลโดยแผนที่นี้เพื่อเปลี่ยนมันไปเป็นข้อมูลผู้ร้องขอตามการคาดการของ OTOBO ',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            'ข้อมูลการตอบสนองจะถูกประมวลผลโดยแผนที่นี้เพื่อเปลี่ยนมันไปเป็นข้อมูลผู้ร้องขอตามการคาดการของ CareOnCloud ESM ',
         'Asynchronous' => 'ไม่ตรงกัน',
         'Condition' => 'เงื่อนไข ',
         'Edit this event' => '',
@@ -1138,8 +1138,8 @@ sub Data {
         'Add Event' => 'เพิ่มกิจกรรม',
         'To add a new event select the event object and event name and click on the "+" button' =>
             'ในการเพิ่มกิจกรรมใหม่เลือกออปเจ็กต์กิจกรรมและชื่อกิจกรรมและคลิกที่ปุ่ม "+"',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            'ตัวกระตุ้นกิจกรรมที่ไม่ตรงกันจะถูกจัดการโดย OTOBO Scheduler Daemon ในเบื้องหลัง (แนะนำ)',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            'ตัวกระตุ้นกิจกรรมที่ไม่ตรงกันจะถูกจัดการโดย CareOnCloud ESM Scheduler Daemon ในเบื้องหลัง (แนะนำ)',
         'Synchronous event triggers would be processed directly during the web request.' =>
             'ตัวกระต้นกิจกรรมที่ตรงกันจะถูกประมวลผลโดยตรงในระหว่างการร้องขอเว็บ',
 
@@ -1276,7 +1276,7 @@ sub Data {
         'Enable Extended XSLT Mapping' => '',
         'Extended XSLT Mapping' => '',
         'Enable' => '',
-        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'otoboXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
             '',
 
         # Template: AdminGenericInterfaceOperationDefault
@@ -1287,11 +1287,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             'โดยปกติจะใช้ชื่อนี้เพื่อเรียกการทำงานของweb serviceนี้จากระยะไกล',
         'Operation backend' => 'การดำเนินงานเบื้องหลัง',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            'โมดูลผู้ร้องขอเบื้องหลังของOTOBOนี้จะถูกเรียกจากภายในเพื่อเพื่อดำเนินการตามคำขอและสร้างข้อมูลสำหรับการตอบสนอง',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            'โมดูลผู้ร้องขอเบื้องหลังของCareOnCloud ESMนี้จะถูกเรียกจากภายในเพื่อเพื่อดำเนินการตามคำขอและสร้างข้อมูลสำหรับการตอบสนอง',
         'Mapping for incoming request data' => 'แผนที่สำหรับข้อมูลการร้องขอขาเข้า',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            'ข้อมูลการร้องขอจะถูกประมวลผลโดยแผนที่นี้เพื่อเปลี่ยนมันไปเป็นข้อมูลตามการคาดการของ OTOBO',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            'ข้อมูลการร้องขอจะถูกประมวลผลโดยแผนที่นี้เพื่อเปลี่ยนมันไปเป็นข้อมูลตามการคาดการของ CareOnCloud ESM',
         'Mapping for outgoing response data' => 'แผนที่สำหรับข้อมูลการตอบสนองที่ส่งออก',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             'ข้อมูลการตอบสนองจะถูกประมวลผลโดยแผนที่นี้เพื่อเปลี่ยนมันไปเป็นข้อมูลการคาดการของระบบระยะไกล',
@@ -1309,8 +1309,8 @@ sub Data {
             'จำกัดการดำเนินการนี้เพื่อเจาะจงวิธีการร้องขอหากไม่มีวิธีการใดถูกเลือก คำขอทั้งหมดจะได้รับการยอมรับ',
         'Maximum message length' => 'ความยาวสูงสุดของข้อความ',
         'This field should be an integer number.' => 'ข้อมูลในช่องนี้ควรจะเป็นตัวเลข',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            'คุณสามารถระบุขนาดสูงสุด(ไบต์)ของข้อความREST ที่นี่ว่าOTOBO จะดำเนินการ',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            'คุณสามารถระบุขนาดสูงสุด(ไบต์)ของข้อความREST ที่นี่ว่าCareOnCloud ESM จะดำเนินการ',
         'Send Keep-Alive' => 'ส่ง Keep-Alive',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             'การกำหนดค่านี้ถูกกำหนดไว้ถ้าการติดต่อเข้ามาควรจะได้รับการปิดหรือคงถูกรักษาไว้',
@@ -1353,22 +1353,22 @@ sub Data {
         'Client Certificate' => '',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             '',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => '',
         'Client Certificate Key' => '',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             '',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => '',
         'Client Certificate Key Password' => '',
         'The password to open the SSL certificate if the key is encrypted.' =>
             '',
         'Certification Authority (CA) Certificate' => '',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             'เส้นทางแบบเต็มและชื่อของผู้มีอำนาจในการรับรองไฟล์ใบรับรองเพื่อตรวจใบรับรอง SSL',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => 'เช่น /opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => 'เช่น /opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => 'สารบบผู้ออกใบรับรอง (CA)',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             'เส้นทางแบบเต็มของไดเรกทอรีผู้มีสิทธิ์ออกใบรับรองซึ่งใบรับรองCAจะถูกเก็บไว้ในระบบไฟล์',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => 'เช่น /opt/otobo/var/certificates/SOAP/CA',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => 'เช่น /opt/careoncloud/var/certificates/SOAP/CA',
         'SSL hostname verification' => '',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             '',
@@ -1437,8 +1437,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             'เลือกวิธีที่ SOAP ตอบสนองฟังก์ชั่นการห่อหุ้มที่ควรจะสร้าง',
         'Response name free text' => 'ชื่อการตอบสนองข้อความฟรี',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            'คุณสามารถระบุขนาดสูงสุด(ไบต์)ของข้อความSOAP ที่OTOBO จะดำเนินการที่นี้',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            'คุณสามารถระบุขนาดสูงสุด(ไบต์)ของข้อความSOAP ที่CareOnCloud ESM จะดำเนินการที่นี้',
         'Encoding' => 'การเข้ารหัส',
         'The character encoding for the SOAP message contents.' => 'การเข้ารหัสตัวอักษรสำหรับเนื้อหาของข้อความ SOAP',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => '',
@@ -1478,10 +1478,10 @@ sub Data {
         'Provider transport' => 'ขนส่งผู้ให้บริการ',
         'Requester transport' => 'การขนส่งผู้ร้องขอ',
         'Debug threshold' => 'เกณฑ์การแก้ปัญหา',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            'ในโหมดผู้ให้บริการ OTOBO เสนอบริการเว็บที่ใช้โดยระบบทางไกล',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            'ในโหมดการร้องขอ, OTOBOใช้บริการเว็บของระบบทางไกล',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            'ในโหมดผู้ให้บริการ CareOnCloud ESM เสนอบริการเว็บที่ใช้โดยระบบทางไกล',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            'ในโหมดการร้องขอ, CareOnCloud ESMใช้บริการเว็บของระบบทางไกล',
         'Network transport' => 'เครือข่ายการขนส่ง',
         'Error Handling Modules' => '',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1592,7 +1592,7 @@ sub Data {
         'Filter for mail accounts' => '',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             '',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
             '',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             '',
@@ -1665,7 +1665,7 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => '',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+        'You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
             '',
 
         # Template: AdminOAuthTokenStore
@@ -1782,8 +1782,8 @@ sub Data {
         'PGP Management' => 'การจัดการ PGP',
         'Add PGP Key' => 'เพิ่มคีย์ PGP',
         'PGP support is disabled' => 'การสนับสนุน PGP จะถูกปิดใช้งาน',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            'เพื่อให้สามารถใช้ PGP ใน OTOBO คุณต้องเปิดการใช้งานก่อน',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            'เพื่อให้สามารถใช้ PGP ใน CareOnCloud ESM คุณต้องเปิดการใช้งานก่อน',
         'Enable PGP support' => 'เปิดใช้การสนับสนุน PGP',
         'Faulty PGP configuration' => 'การกำหนดค่า PGP ผิดพลาด',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1808,21 +1808,21 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             'คุณต้องการติดตั้งแพคเกจนี้อีกครั้งหรือไม่? การเปลี่ยนแปลงด้วยตนเองจะหายไป',
         'Go to updating instructions' => '',
-        'Go to the OTOBO customer portal' => '',
+        'Go to the CareOnCloud ESM customer portal' => '',
         'package information' => '',
-        'Package installation requires a patch level update of OTOBO.' =>
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
             '',
-        'Package update requires a patch level update of OTOBO.' => '',
-        'Please note that your installed OTOBO version is %s.' => '',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
+        'Package update requires a patch level update of CareOnCloud ESM.' => '',
+        'Please note that your installed CareOnCloud ESM version is %s.' => '',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
             '',
-        'This package can only be installed on OTOBO version %s or older.' =>
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
             '',
-        'This package can only be installed on OTOBO version %s or newer.' =>
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
             '',
-        'Why should I keep OTOBO up to date?' => '',
+        'Why should I keep CareOnCloud ESM up to date?' => '',
         'You will receive updates about relevant security issues.' => '',
-        'You will receive updates for all other relevant OTOBO issues.' =>
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
             '',
         'How can I do a patch level update if I don’t have a contract?' =>
             '',
@@ -1839,7 +1839,7 @@ sub Data {
         'Install' => 'ติดตั้ง',
         'Update repository information' => 'อัปเดตข้อมูลของพื้นที่เก็บข้อมูล',
         'Cloud services are currently disabled.' => 'บริการคลาวด์ถูกปิดการใช้งานในขณะนี้',
-        'OTOBO Verify can not continue!' => '',
+        'CareOnCloud ESM Verify can not continue!' => '',
         'Enable cloud services' => 'เปิดใช้บริการคลาวด์',
         'Update all installed packages' => '',
         'Online Repository' => 'พื้นที่เก็บข้อมูลออนไลน์',
@@ -1847,7 +1847,7 @@ sub Data {
         'Action' => 'การดำเนินการ',
         'Module documentation' => 'เอกสารของโมดูล',
         'Local Repository' => 'พื้นที่เก็บข้อมูลท้องถิ่น',
-        'This package is verified by OTOBOverify (tm)' => 'แพคเกจนี้ถูกตรวจสอบโดยOTOBOverify (tm)',
+        'This package is verified by CareOnCloud ESMverify (tm)' => 'แพคเกจนี้ถูกตรวจสอบโดยCareOnCloud ESMverify (tm)',
         'Uninstall' => 'ยกเลิกการติดตั้ง',
         'Package not correctly deployed! Please reinstall the package.' =>
             'ไม่สามารถใช้งานแพคเกจได้อย่างถูกต้อง! กรุณาติดตั้งแพคเกจ',
@@ -2222,27 +2222,27 @@ sub Data {
         'Edit System Registration' => '',
         'System Registration Overview' => '',
         'Register System' => '',
-        'Validate OTOBO-ID' => '',
+        'Validate CareOnCloud ID' => '',
         'Deregister System' => 'ระบบการยกเลิกการลงทะเบียน',
         'Edit details' => 'แก้ไขรายละเอียด',
         'Show transmitted data' => 'แสดงข้อมูลที่ส่ง',
         'Deregister system' => 'ยกเลิกการลงทะเบียนระบบ',
         'Overview of registered systems' => 'ภาพรวมของระบบการลงทะเบียน',
-        'This system is registered with OTOBO Team.' => '',
+        'This system is registered with CareOnCloud ESM Team.' => '',
         'System type' => 'ชนิดของระบบ',
         'Unique ID' => 'ID ที่ไม่ซ้ำกัน',
         'Last communication with registration server' => 'การสื่อสารกับเซิร์ฟเวอร์การลงทะเบียนครั้งล่าสุด',
         'System Registration not Possible' => '',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            'โปรดทราบว่าคุณไม่สามารถลงทะเบียนระบบของคุณ ถ้าหาก OTOBO Daemon ทำงานไม่ถูกต้อง!',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            'โปรดทราบว่าคุณไม่สามารถลงทะเบียนระบบของคุณ ถ้าหาก CareOnCloud ESM Daemon ทำงานไม่ถูกต้อง!',
         'Instructions' => 'คำแนะนำ',
         'System Deregistration not Possible' => '',
-        'OTOBO-ID Login' => 'OTOBO-ID เข้าสู่ระบบ ',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
+        'CareOnCloud ID Login' => 'CareOnCloud ID เข้าสู่ระบบ ',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
             '',
         'Read more' => 'อ่านเพิ่มเติม',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            'คุณจำเป็นต้องเข้าสู่ระบบID OTOBOเพื่อลงทะเบียนระบบของคุณ',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            'คุณจำเป็นต้องเข้าสู่ระบบID CareOnCloud ESMเพื่อลงทะเบียนระบบของคุณ',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'ID OTOBO ของคุณคือที่อยู่อีเมลที่คุณใช้ในการลงทะเบียนในหน้าเว็บ OTOBO.com',
         'Data Protection' => 'การป้องกันข้อมูล',
@@ -2253,44 +2253,44 @@ sub Data {
         'This is only the beginning!' => 'นี่เป็นเพียงแค่จุดเริ่มต้น!',
         'We will inform you about our new services and offerings soon.' =>
             'เราจะแจ้งให้คุณทราบเกี่ยวกับบริการใหม่ของเราและการให้บริการในเร็ว ๆ นี้',
-        'Can I use OTOBO without being registered?' => 'ฉันสามารถใช้ OTOBO โดยไม่ต้องลงทะเบียนหรือไม่?',
+        'Can I use CareOnCloud ESM without being registered?' => 'ฉันสามารถใช้ CareOnCloud ESM โดยไม่ต้องลงทะเบียนหรือไม่?',
         'System registration is optional.' => 'การลงทะเบียนระบบเป็นแค่ทางเลือกหนึ่ง',
-        'You can download and use OTOBO without being registered.' => 'คุณสามารถดาวน์โหลดและ OTOBO โดยไม่ต้องลงทะเบียน',
+        'You can download and use CareOnCloud ESM without being registered.' => 'คุณสามารถดาวน์โหลดและ CareOnCloud ESM โดยไม่ต้องลงทะเบียน',
         'Is it possible to deregister?' => 'เป็นไปได้หรือไม่ที่จะยกเลิกการลงทะเบียน?',
         'You can deregister at any time.' => 'คุณสามารถยกเลิกการลงทะเบียนได้ตลอดเวลา',
         'Which data is transfered when registering?' => 'ข้อมูลใดจะถูกโอนเมื่อลงทะเบียน?',
-        'A registered system sends the following data to OTOBO Team:' => '',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            'ชื่อโดเมนที่ผ่านการรับรองอย่างเต็มรูปแบบ (FQDN) เวอร์ชั่นของ OTOBO, ฐานข้อมูล, ระบบปฏิบัติการและ เวอร์ชันของ Perl',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => '',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            'ชื่อโดเมนที่ผ่านการรับรองอย่างเต็มรูปแบบ (FQDN) เวอร์ชั่นของ CareOnCloud ESM, ฐานข้อมูล, ระบบปฏิบัติการและ เวอร์ชันของ Perl',
         'Why do I have to provide a description for my system?' => 'ทำไมฉันจะต้องให้คำอธิบายสำหรับระบบของฉัน?',
         'The description of the system is optional.' => 'คำอธิบายของระบบจะเป็นแค่ตัวเลือก',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             'คำอธิบายและชนิดของระบบที่คุณระบุจะช่วยให้คุณระบุและจัดการรายละเอียดของระบบการลงทะเบียนของคุณ',
-        'How often does my OTOBO system send updates?' => 'ระบบOTOBO ของฉันมีการส่งการอัพเดตบ่อยแค่ใหน?',
+        'How often does my CareOnCloud ESM system send updates?' => 'ระบบCareOnCloud ESM ของฉันมีการส่งการอัพเดตบ่อยแค่ใหน?',
         'Your system will send updates to the registration server at regular intervals.' =>
             'ระบบของคุณจะส่งการอัพเดตไปยังเซิร์ฟเวอร์การลงทะเบียนในช่วงปกติ',
         'Typically this would be around once every three days.' => 'ซึ่งโดยปกติแล้วประมาณทุกๆสามวัน',
         'If you deregister your system, you will lose these benefits:' =>
             'ถ้าคุณยกเลิกการลงทะเบียนระบบของคุณ คุณจะสูญเสียผลประโยชน์เหล่านี้:',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            'คุณจำเป็นต้องเข้าสู่ระบบด้วย ID OTOBOเพื่อยกเลิกการลงทะเบียนระบบของคุณ',
-        'OTOBO-ID' => 'ID OTOBO',
-        'You don\'t have an OTOBO-ID yet?' => 'คุณยังไม่มีID OTOBO ใช่หรือไม่?',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            'คุณจำเป็นต้องเข้าสู่ระบบด้วย ID CareOnCloud ESMเพื่อยกเลิกการลงทะเบียนระบบของคุณ',
+        'CareOnCloud ID' => 'ID CareOnCloud ESM',
+        'You don\'t have a CareOnCloud ID yet?' => 'คุณยังไม่มีID CareOnCloud ESM ใช่หรือไม่?',
         'Sign up now' => 'สมัครตอนนี้เลย',
         'Forgot your password?' => 'ลืมรหัสผ่าน?',
         'Retrieve a new one' => 'ดึงข้อมูลขึ้นมาใหม่',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
             '',
         'Attribute' => 'แอตทริบิวต์',
         'FQDN' => 'FQDN',
-        'OTOBO Version' => 'เวอร์ชั่นของ OTOBO',
+        'CareOnCloud ESM Version' => 'เวอร์ชั่นของ CareOnCloud ESM',
         'Operating System' => 'ระบบปฏิบัติการ',
         'Perl Version' => 'เวอร์ชั่นของ Perl',
         'Optional description of this system.' => 'ตัวเลือกคำอธิบายของระบบนี้',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
             '',
         'Register' => 'ลงทะเบียน',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
             '',
         'Deregister' => 'ยกเลิกการลงทะเบียน',
         'You can modify registration settings here.' => 'คุณสามารถแก้ไขการตั้งค่าการลงทะเบียนที่นี่',
@@ -2392,8 +2392,8 @@ sub Data {
         'Add Certificate' => 'เพิ่มใบรับรอง',
         'Add Private Key' => 'เพิ่มคีย์ส่วนตัว',
         'SMIME support is disabled' => 'การสนับสนุน SMIME จะถูกปิดใช้งาน',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            'เพื่อให้สามารถใช้ SMIME ใน OTOBO คุณต้องเปิดการใช้งานก่อน',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            'เพื่อให้สามารถใช้ SMIME ใน CareOnCloud ESM คุณต้องเปิดการใช้งานก่อน',
         'Enable SMIME support' => 'เปิดใช้งานการสนับสนุน SMIME',
         'Faulty SMIME configuration' => 'การกำหนดค่า SMIME ผิดพลาด',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2523,17 +2523,17 @@ sub Data {
         'This state is used in the following config settings:' => '',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => '',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => '',
         'Enable Cloud Services' => 'เปิดใช้บริการคลาวด์',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
             '',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             'คุณสามารถกระตุ้นการสนับสนุนการส่งข้อมูลโดยการกดปุ่มนี้:',
         'Send Update' => 'ส่งการอัพเดต',
         'Currently this data is only shown in this system.' => 'ขณะนี้ข้อมูลนี้จะแสดงเฉพาะในระบบนี้',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
             '',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             'กลุมสนับสนุน(รวมถึงข้อมูลการลงทะเบียนระบบ ข้อมูลสนับสนุน รายการของแพคเกจการติดตั้ง
@@ -2547,10 +2547,10 @@ sub Data {
         'The email address for this user is invalid, this option has been disabled.' =>
             'ที่อยู่อีเมลสำหรับผู้ใช้นี้ไม่ถูกต้องตัวเลือกนี้ถูกปิดใช้งาน',
         'Sending' => 'กำลังส่ง',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
             '',
         'Download File' => 'ดาวน์โหลดไฟล์',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
             '',
         'Error: Support data could not be collected (%s).' => 'ข้อผิดพลาด: ไม่สามารถเก็บรวบรวมข้อมูลสนับสนุน (%s)',
         'Details' => 'รายละเอียด',
@@ -2777,7 +2777,7 @@ sub Data {
         'Translation' => '',
         'Marked for Deletion' => '',
         'Edit Translation' => '',
-        'Overwrites OTOBO translation' => '',
+        'Overwrites CareOnCloud ESM translation' => '',
         'Undo Delete Translation' => '',
         'Delete Translation' => '',
         'Translations' => '',
@@ -2949,18 +2949,18 @@ sub Data {
         'Customer User Information Center' => '',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'OTOBO Daemon เป็นกระบวนการดีมอนที่ดำเนินงานไม่ตรงกันเช่น เพิ่มตั๋ววิกฤติ, การส่งอีเมล์และอื่น ๆ',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            'OTOBO Daemon ที่ใช้งานมีผลบังคับใช้สำหรับการทำงานของระบบที่ถูกต้อง',
-        'Starting the OTOBO Daemon' => 'เริ่มต้น OTOBO Daemon',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            'ตรวจสอบให้แน่ใจว่าไฟล์ \'%s\' มีอยู่ (โดยไม่มีนามสกุล .dist) งาน cron นี้จะตรวจสอบทุกๆ 5 นาทีถ้าOTOBO Daemonกำลังทำงานอยู่และเริ่มต้นมันถ้าจำเป็น',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            'ดำเนิน \'%sการเริ่มต้น\' เพื่อให้แน่ใจว่างาน cron ของผู้ใช้ \'otobo\' มีการใช้งาน',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
-            'หลังจาก 5 นาทีตรวจสอบดูว่า OTOBO Daemonกำลังทำงานในระบบ (\'bin / careoncloud.Daemon.pl status\')',
-        'Running the OTOBO Daemon in a Docker based installation' => '',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'CareOnCloud ESM Daemon เป็นกระบวนการดีมอนที่ดำเนินงานไม่ตรงกันเช่น เพิ่มตั๋ววิกฤติ, การส่งอีเมล์และอื่น ๆ',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            'CareOnCloud ESM Daemon ที่ใช้งานมีผลบังคับใช้สำหรับการทำงานของระบบที่ถูกต้อง',
+        'Starting the CareOnCloud ESM Daemon' => 'เริ่มต้น CareOnCloud ESM Daemon',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            'ตรวจสอบให้แน่ใจว่าไฟล์ \'%s\' มีอยู่ (โดยไม่มีนามสกุล .dist) งาน cron นี้จะตรวจสอบทุกๆ 5 นาทีถ้าCareOnCloud ESM Daemonกำลังทำงานอยู่และเริ่มต้นมันถ้าจำเป็น',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            'ดำเนิน \'%sการเริ่มต้น\' เพื่อให้แน่ใจว่างาน cron ของผู้ใช้ \'careoncloud\' มีการใช้งาน',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'หลังจาก 5 นาทีตรวจสอบดูว่า CareOnCloud ESM Daemonกำลังทำงานในระบบ (\'bin / careoncloud.Daemon.pl status\')',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => '',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             '',
         'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
@@ -3128,7 +3128,7 @@ sub Data {
         'This setting can currently not be saved.' => '',
         'This setting can currently not be saved' => '',
         'Save this setting' => '',
-        'Did you know? You can help translating OTOBO at %s.' => 'คุณรู้หรือไม่ว่าคุณสามารถช่วยแปลOTOBOที่% s ?',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => 'คุณรู้หรือไม่ว่าคุณสามารถช่วยแปลCareOnCloud ESMที่% s ?',
 
         # Template: SettingsList
         'Reset to default' => '',
@@ -3148,7 +3148,7 @@ sub Data {
         # Template: AgentStatisticsAdd
         'Statistics Management' => '',
         'Add Statistics' => '',
-        'Read more about statistics in OTOBO' => '',
+        'Read more about statistics in CareOnCloud ESM' => '',
         'Dynamic Matrix' => 'เมทริกซ์ไดนามิค',
         'Each cell contains a singular data point.' => '',
         'Dynamic List' => 'รายชื่อไดนามิค',
@@ -3739,8 +3739,8 @@ sub Data {
 
         # Template: InstallerDBStart
         'Install Type' => 'การติดตั้งประเภท',
-        'Create a new database for OTOBO' => 'สร้างฐานข้อมูลใหม่สำหรับ OTOBO',
-        'Use an existing database for OTOBO' => 'ใช้ฐานข้อมูลที่มีอยู่แล้วสำหรับ OTOBO',
+        'Create a new database for CareOnCloud ESM' => 'สร้างฐานข้อมูลใหม่สำหรับ CareOnCloud ESM',
+        'Use an existing database for CareOnCloud ESM' => 'ใช้ฐานข้อมูลที่มีอยู่แล้วสำหรับ CareOnCloud ESM',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3751,8 +3751,8 @@ sub Data {
         'Database check successful.' => 'ตรวจสอบฐานข้อมูลประสบความสำเร็จ',
         'Database User' => 'ผู้ใช้ฐานข้อมูล',
         'New' => 'ใหม่',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
-            'ผู้ใช้ฐานข้อมูลใหม่ที่มีการจำกัดสิทธิ์จะถูกสร้างขึ้นสำหรับระบบ OTOBOนี้',
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
+            'ผู้ใช้ฐานข้อมูลใหม่ที่มีการจำกัดสิทธิ์จะถูกสร้างขึ้นสำหรับระบบ CareOnCloud ESMนี้',
         'Generated password' => 'สร้างรหัสผ่าน',
         'Repeat Password' => 'ทำซ้ำรหัสผ่าน',
         'Passwords do not match' => 'รหัสผ่านไม่ตรงกัน',
@@ -3762,7 +3762,7 @@ sub Data {
 
         # Template: InstallerFinish
         'Start page' => 'หน้าแรก',
-        'Your OTOBO Team' => 'ทีมOTOBO ของคุณ',
+        'Your CareOnCloud ESM Team' => 'ทีมCareOnCloud ESM ของคุณ',
 
         # Template: InstallerLicense
         'Don\'t accept license' => 'ไม่รับใบอนุญาต',
@@ -3792,9 +3792,9 @@ sub Data {
             'ที่อยู่อีเมลที่ถูกป้อนด้วยตนเองได้รับการตรวจสอบกับระเบียน MX ที่พบใน DNS อย่าใช้ตัวเลือกนี้ถ้า DNS ของคุณช้าหรือไม่สามารถแก้ไขที่อยู่สาธารณะ',
         'Elasticsearch' => '',
         'Initialize Elasticsearch' => '',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
             '',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
             '',
 
         # Template: LinkObject
@@ -3824,15 +3824,15 @@ sub Data {
         'Clean up and finish' => '',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
             '',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
-            'เพื่อให้สามารถใช้OTOBO คุณจะต้องป้อนบรรทัดต่อไปนี้ในบรรทัดคำสั่งของคุณ (เทอร์มิ / Shell)เป็นหลัก',
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+            'เพื่อให้สามารถใช้CareOnCloud ESM คุณจะต้องป้อนบรรทัดต่อไปนี้ในบรรทัดคำสั่งของคุณ (เทอร์มิ / Shell)เป็นหลัก',
         'Restart your webserver' => 'รีสตาร์ทเว็บเซิร์ฟเวอร์ของคุณ',
-        'After doing so your OTOBO is up and running.' => 'หลังจากทำเช่นนั้น OTOBO ของคุณจะขึ้นและทำงาน',
+        'After doing so your CareOnCloud ESM is up and running.' => 'หลังจากทำเช่นนั้น CareOnCloud ESM ของคุณจะขึ้นและทำงาน',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
             '',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             '',
@@ -3842,7 +3842,7 @@ sub Data {
             '',
         'All entered passwords are cached until the migration is finished.' =>
             '',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
             '',
         'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
             '',
@@ -3852,7 +3852,7 @@ sub Data {
         'An error occurred.' => '',
         'Discard previous progress' => '',
         'Insecure HTTP connection' => '',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
             '',
         'Continue anyways :(' => '',
 
@@ -3876,8 +3876,8 @@ sub Data {
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => '',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            'ขออภัยฟีเจอร์นี้ของOTOBO ไม่สามารถใช้งานกับโทรศัพท์มือถือได้ขณะนี้ หากคุณต้องการที่จะใช้มันคุณสามารถสลับไปยังโหมดเดสก์ทอปหรือเดสก์ทอปของคุณตามปกติ',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            'ขออภัยฟีเจอร์นี้ของCareOnCloud ESM ไม่สามารถใช้งานกับโทรศัพท์มือถือได้ขณะนี้ หากคุณต้องการที่จะใช้มันคุณสามารถสลับไปยังโหมดเดสก์ทอปหรือเดสก์ทอปของคุณตามปกติ',
 
         # Template: Motd
         'Message of the Day' => 'ข้อความประจำวัน',
@@ -3917,8 +3917,8 @@ sub Data {
 
         # Template: PublicDefault
         'Welcome' => 'ยินดีต้อนรับ',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            'นี่คืออินเตอร์เฟซสาธารณะเริ่มต้นของ OTOBO! ไม่มีพารามิเตอร์การกระทำที่กำหนด',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            'นี่คืออินเตอร์เฟซสาธารณะเริ่มต้นของ CareOnCloud ESM! ไม่มีพารามิเตอร์การกระทำที่กำหนด',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             'คุณสามารถติดตั้งโมดูลสาธารณะที่สามารถกำหนดเอง (ผ่านผู้จัดการแพคเกจ) เช่นโมดูลFAQซึ่งมีอินเตอร์เฟซสาธารณะ',
 
@@ -4074,7 +4074,7 @@ sub Data {
         'Delete user\'s value.' => '',
 
         # Template: Test
-        'OTOBO Test Page' => 'หน้าการทดสอบ OTOBO',
+        'CareOnCloud ESM Test Page' => 'หน้าการทดสอบ CareOnCloud ESM',
         'Unlock' => 'ปลดล็อค',
         'Welcome %s %s' => 'ยินดีต้อนรับ %s %s',
         'Counter' => 'ตัวนับ',
@@ -4119,7 +4119,7 @@ sub Data {
 
         # JS Template: PackageResolve
         'Package' => '',
-        'Uninstall from OTOBO' => '',
+        'Uninstall from CareOnCloud ESM' => '',
         'Ignore' => '',
         'Migrate' => '',
 
@@ -4183,8 +4183,8 @@ sub Data {
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             'ข้อมูลACL จากฐานข้อมูลไม่ได้ซิงค์กับการกำหนดค่าระบบกรุณาใช้งาน ACLs ทั้งหมด',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'ACLsไม่สามารถนำเข้าเนื่องจากข้อผิดพลาดที่ไม่ทราบโปรดตรวจสอบการล็อก OTOBO สำหรับข้อมูลเพิ่มเติม',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'ACLsไม่สามารถนำเข้าเนื่องจากข้อผิดพลาดที่ไม่ทราบโปรดตรวจสอบการล็อก CareOnCloud ESM สำหรับข้อมูลเพิ่มเติม',
         'The following ACLs have been added successfully: %s' => 'ACLs ดังต่อไปนี้ได้รับการเพิ่มเรียบร้อยแล้ว: %s',
         'The following ACLs have been updated successfully: %s' => 'ACLs ดังต่อไปนี้ได้รับการปรับปรุงเรียบร้อยแล้ว: %s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
@@ -4242,8 +4242,8 @@ sub Data {
         'Unknown Notification %s!' => 'การแจ้งเตือนที่ไม่ระบุ% s!',
         '%s (copy)' => '',
         'There was an error creating the Notification' => 'มีข้อผิดพลาดในการสร้างการแจ้งเตือน',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'ไม่สามารถนำเข้าการแจ้งเตือนได้เนื่องจากข้อผิดพลาดที่ไม่ทราบโปรดตรวจสอบการล็อก OTOBO สำหรับข้อมูลเพิ่มเติม',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'ไม่สามารถนำเข้าการแจ้งเตือนได้เนื่องจากข้อผิดพลาดที่ไม่ทราบโปรดตรวจสอบการล็อก CareOnCloud ESM สำหรับข้อมูลเพิ่มเติม',
         'The following Notifications have been added successfully: %s' =>
             'การแจ้งเตือนดังต่อไปนี้ได้รับการเพิ่มเรียบร้อยแล้ว: %s',
         'The following Notifications have been updated successfully: %s' =>
@@ -4595,12 +4595,12 @@ sub Data {
         'Could not load %s.' => '',
         'Could not read %s!' => 'ไม่สามารถอ่าน%s!',
         'Need a file to import!' => 'ต้องการไฟล์ที่จะนำเข้า!',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            'ไฟล์ที่นำเข้ามีเนื้อหา YAML ที่ไม่ถูกต้อง! โปรดตรวจสอบบันทึก OTOBO สำหรับรายละเอียด',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            'ไฟล์ที่นำเข้ามีเนื้อหา YAML ที่ไม่ถูกต้อง! โปรดตรวจสอบบันทึก CareOnCloud ESM สำหรับรายละเอียด',
         'Web service "%s" deleted!' => 'ลบ Web service "%s" แล้ว',
-        'OTOBO as provider' => 'OTOBO เป็นผู้ให้บริการ',
+        'CareOnCloud ESM as provider' => 'CareOnCloud ESM เป็นผู้ให้บริการ',
         'Operations' => '',
-        'OTOBO as requester' => 'OTOBO เป็นผู้ร้องขอ',
+        'CareOnCloud ESM as requester' => 'CareOnCloud ESM เป็นผู้ร้องขอ',
         'Invokers' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4694,7 +4694,7 @@ sub Data {
         'Can\'t read %s!' => 'ไม่สามารถอ่าน% s!',
         'File is OK' => '',
         'Package has locally modified files.' => 'แพคเกจมีการปรับเปลี่ยนไฟล์ภายในเครื่อง',
-        'Package not verified by the OTOBO Team!' => '',
+        'Package not verified by the CareOnCloud ESM Team!' => '',
         'Not Started' => '',
         'Updated' => '',
         'Already up-to-date' => '',
@@ -4715,9 +4715,9 @@ sub Data {
             '',
         'Package not verified due a communication issue with verification server!' =>
             'ไม่ได้ตรวจสอบแพคเกจเนื่องจากปัญหาการสื่อสารกับเซิร์ฟเวอร์การตรวจสอบ!',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์คุณสมบัติ OTOBO ที่อยู่ในรายการAdd-on !',
-        'Can\'t get OTOBO Feature Add-on list from server!' => 'ไม่สามารถได้รับคุณสมบัติของเซิร์ฟเวอร์ OTOBO ที่อยู่ในรายการAdd-on !',
-        'Can\'t get OTOBO Feature Add-on from server!' => 'ไม่สามารถได้รับคุณสมบัติ OTOBO Add-on จากเซิร์ฟเวอร์!',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์คุณสมบัติ CareOnCloud ESM ที่อยู่ในรายการAdd-on !',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => 'ไม่สามารถได้รับคุณสมบัติของเซิร์ฟเวอร์ CareOnCloud ESM ที่อยู่ในรายการAdd-on !',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => 'ไม่สามารถได้รับคุณสมบัติ CareOnCloud ESM Add-on จากเซิร์ฟเวอร์!',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => 'ไม่มีตัวกรองดังกล่าว:% s',
@@ -4915,12 +4915,12 @@ sub Data {
         'You currently don\'t have any favourite settings.' => '',
         'The following settings could not be found: %s' => '',
         'Import not allowed!' => 'การนำเข้าไม่ได้รับอนุญาต!',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
             '',
         'Category Search' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
             '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
@@ -5432,7 +5432,7 @@ sub Data {
         'Configure "Home" in Kernel/Config.pm first!' => 'กำหนดค่า "Home" in Kernel/Config.pm ก่อน!',
         'File "%s/Kernel/Config.pm" not found!' => 'ไม่พบไฟล์ ',
         'Directory "%s" not found!' => 'ไม่พบไดเรกเทอรี "%s"!',
-        'Install OTOBO' => 'การติดตั้งOTOBO',
+        'Install CareOnCloud ESM' => 'การติดตั้งCareOnCloud ESM',
         'Intro' => 'แนะนำ',
         'Kernel/Config.pm isn\'t writable!' => 'ไม่สามารถเขียน Kernel/Config.pm ได้!',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -5449,7 +5449,7 @@ sub Data {
         'Unknown database type "%s".' => 'ชนิดของฐานข้อมูลที่ไม่รู้จัก "%s".',
         'Please go back.' => '',
         'Create Database' => 'สร้างฐานข้อมูล',
-        'Install OTOBO - Error' => 'ติดตั้ง OTOBO - ข้อผิดพลาด',
+        'Install CareOnCloud ESM - Error' => 'ติดตั้ง CareOnCloud ESM - ข้อผิดพลาด',
         'File "%s/%s.xml" not found!' => 'ไม่พบไฟล์ "%s/%s.xml" ',
         'Contact your Admin!' => 'ติดต่อผู้ดูแลระบบของคุณ!',
         'Execution of SQL statement failed: ' => '',
@@ -5474,7 +5474,7 @@ sub Data {
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             '',
-        'OTRS to OTOBO migration' => '',
+        'OTRS to CareOnCloud ESM migration' => '',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => '',
@@ -5611,8 +5611,8 @@ sub Data {
         'Shown Tickets' => 'ตั๋วที่แสดง',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => '',
-        'Can\'t get OTOBO News from server!' => '',
+        'Can\'t connect to CareOnCloud ESM News server!' => '',
+        'Can\'t get CareOnCloud ESM News from server!' => '',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => '',
@@ -5698,7 +5698,7 @@ sub Data {
             '',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'OTOBO Daemonไม่ทำงาน',
+        'CareOnCloud ESM Daemon is not running.' => 'CareOnCloud ESM Daemonไม่ทำงาน',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5985,7 +5985,7 @@ sub Data {
         'Migration completed, perfect!' => '',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => '',
+        'CareOnCloud ESM Cache cleanup.' => '',
         'Completed.' => '',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
@@ -6001,15 +6001,15 @@ sub Data {
         'Data transfer completed.' => '',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => '',
-        'Check if OTOBO and OTRS connect is possible.' => '',
+        'Check if CareOnCloud ESM version is correct.' => '',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => '',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
-        'Check if OTOBO and OTRS version is correct.' => '',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => '',
         '%s does not exist!' => '',
-        'No OTOBO system found!' => '',
+        'No CareOnCloud ESM system found!' => '',
         'You are trying to run this script on the wrong framework version %s!' =>
             '',
-        'OTOBO Version is correct: %s.' => '',
+        'CareOnCloud ESM Version is correct: %s.' => '',
         'Check if OTRS version is correct.' => '',
         'OTRS RELEASE file %s does not exist!' => '',
         'Can\'t read OTRS RELEASE file: %s' => '',
@@ -6042,8 +6042,8 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             '',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => '',
-        'Kernel/Config.pm exists in OTOBO home' => '',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => '',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => '',
         'Check if we are able to connect to OTRS home directory.' => '',
         'Can\'t connect to OTRS file directory.' => '',
         'Connect to OTRS file directory is possible.' => '',
@@ -6120,9 +6120,9 @@ sub Data {
         'File is not installed!' => '',
         'File is different!' => '',
         'Can\'t read file!' => '',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
             '',
-        'Package not verified by the OTOBO community!' => '',
+        'Package not verified by the CareOnCloud ESM community!' => '',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '',
         'Verification not possible (e.g. no internet connection)!' => '',
@@ -6320,7 +6320,7 @@ sub Data {
         'Found obsolete cryptographic function.' => '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'แบ่งดิสก์ OTOBO ',
+        'CareOnCloud ESM Disk Partition' => 'แบ่งดิสก์ CareOnCloud ESM ',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => '',
@@ -6355,7 +6355,7 @@ sub Data {
         'There should be no more than 200 MB swap space used.' => 'พื้นที่การแลกเปลี่ยนที่ถูกใช้ควรจะมีมากกว่า 200 MB ',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => '',
         'Indexed Articles' => '',
 
@@ -6416,7 +6416,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
         'File System Writable' => 'ระบบไฟล์สามารถเขียนได้',
-        'The file system on your OTOBO partition is not writable.' => 'ระบบไฟล์ในการแบ่งOTOBO ของคุณไม่สามารถเขียนได้',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'ระบบไฟล์ในการแบ่งCareOnCloud ESM ของคุณไม่สามารถเขียนได้',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => '',
@@ -6431,7 +6431,7 @@ sub Data {
         'Some packages have locally modified files.' => 'แพคเกจบางส่วนมีการปรับเปลี่ยนไฟล์ภายในเครื่อง',
         'Some packages are not correctly installed.' => 'แพคเกจบางแพคเกจไม่ถูกติดตั้งอย่างถูกต้อง',
         'Package Verification Status' => '',
-        'Some packages are not verified by the OTOBO Team.' => '',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => '',
         'Package Framework Version Status' => '',
         'Some packages are not allowed for the current framework version.' =>
             '',
@@ -6444,7 +6444,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
         'Spooled Emails' => '',
-        'There are emails in var/spool that OTOBO could not process.' => '',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
@@ -6484,8 +6484,8 @@ sub Data {
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => '',
         'Server time zone' => 'โซนเวลาเซิร์ฟเวอร์',
-        'OTOBO time zone' => '',
-        'OTOBO time zone is not set.' => '',
+        'CareOnCloud ESM time zone' => '',
+        'CareOnCloud ESM time zone is not set.' => '',
         'User default time zone' => '',
         'User default time zone is not set.' => '',
         'Calendar time zone is not set.' => '',
@@ -6507,8 +6507,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'โมเดล MPM ',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'OTOBO  ต้องการให้ Apache จะทำงานกับโมเดล MPM  \'prefork\' ',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'CareOnCloud ESM  ต้องการให้ Apache จะทำงานกับโมเดล MPM  \'prefork\' ',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'การใช้ตัวช่วยดำเนินการ CGI',
@@ -6538,7 +6538,7 @@ sub Data {
         'Webserver Version' => 'เวอร์ชั่นของ Webserver',
         'Could not determine webserver version.' => 'ไม่สามารถตรวจสอบเวอร์ชั่นของเว็บเซิร์ฟเวอร์',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => '',
         'Concurrent Users' => 'ผู้ใช้งานร่วมกัน',
 
@@ -6565,11 +6565,11 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -6854,7 +6854,7 @@ sub Data {
         'Currently not possible' => '',
         'This is currently disabled because of an ongoing package upgrade.' =>
             '',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
             '',
         'Are you sure you want to update all installed packages?' => '',
         'No response from get package upgrade run status.' => '',
@@ -7001,7 +7001,7 @@ sub Data {
             'กรุณากรอกค่าอย่างน้อยหนึ่งคำค้นหาหรือ* ในการค้นหาอะไรก็ตาม',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => 'ข้อมูลเกี่ยวกับOTOBO Daemon',
+        'Information about the CareOnCloud ESM Daemon' => 'ข้อมูลเกี่ยวกับCareOnCloud ESM Daemon',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => 'กรุณาตรวจสอบฟิลด์ที่ทำเครื่องหมายสีแดงสำหรับปัจจัยการป้อนข้อมูลที่ถูกต้อง',
@@ -7176,10 +7176,10 @@ sub Data {
         'This is %s' => '',
         'Complex %s with %s arguments' => '',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloud ESMLineChart
         'No Data Available.' => '',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloud ESMMultiBarChart
         'Grouped' => 'จัดกลุ่ม',
         'Stacked' => 'ซ้อนกัน',
 
@@ -7280,8 +7280,8 @@ Thanks for your help!
         'Added subscription for user "%s".' => 'การสมัครสมาชิกถูกเพิ่มสำหรับผู้ใช้ "%s".',
         'Added system request (%s).' => '',
         'Added web request from customer.' => '',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
-            'เพิ่มคำต่อท้ายกับปีและเดือนที่เกิดขึ้นจริงไปยังแฟ้มบันทึกของOTOBO  แฟ้มบันทึกสำหรับทุกเดือนจะถูกสร้างขึ้น',
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
+            'เพิ่มคำต่อท้ายกับปีและเดือนที่เกิดขึ้นจริงไปยังแฟ้มบันทึกของCareOnCloud ESM  แฟ้มบันทึกสำหรับทุกเดือนจะถูกสร้างขึ้น',
         'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
             '',
         'Adds customers email addresses to recipients in the ticket compose screen of the agent interface. The customers email address won\'t be added if the article type is email-internal.' =>
@@ -7606,7 +7606,7 @@ Thanks for your help!
         'Configure and manage ACLs.' => 'กำหนดค่าและจัดการ ACLs',
         'Configure any additional readonly mirror databases that you want to use.' =>
             'กำหนดค่าฐานข้อมูลสะท้อนของ อ่านเท่านั้น ที่คุณต้องการใช้',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
             '',
         'Configure the About information.' => '',
         'Configure the privacy policy.' => '',
@@ -7754,8 +7754,8 @@ Thanks for your help!
         'Default value for NameX' => 'ค่าเริ่มต้นสำหรับ NameX',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             '',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของอักขระที่กำหนดไว้ องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพOTOBO จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของอักขระที่กำหนดไว้ องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพCareOnCloud ESM จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             '',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -7795,14 +7795,14 @@ Thanks for your help!
             'กำหนดรายการลูกค้าซึ่งจะสร้างไอคอน google ในตอนท้ายของบล็อกข้อมูลลูกค้า',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             'กำหนดรายการลูกค้าซึ่งจะสร้างไอคอน google maps ในตอนท้ายของบล็อกข้อมูลลูกค้า',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของหมายเลข CVE องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพOTOBO จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของหมายเลข MSBulletin องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพOTOBO จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของอักขระที่กำหนดไว้ องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพOTOBO จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของหมายเลข bugtraq องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพOTOBO จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของหมายเลข CVE องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพCareOnCloud ESM จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของหมายเลข MSBulletin องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพCareOnCloud ESM จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของอักขระที่กำหนดไว้ องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพCareOnCloud ESM จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'กำหนดตัวกรองสำหรับการแสดงผล HTMLเพื่อเพิ่มการเชื่อมโยงที่อยู่เบื้องหลังของหมายเลข bugtraq องค์ประกอบของภาพที่จะช่วยให้สามารถป้อนข้อมูลสองชนิดได้ หนึ่งคือชื่อของภาพ (เช่น faq.png)ในกรณีนี้เส้นทางของภาพCareOnCloud ESM จะถูกนำมาใช้ สองคือการแทรกการเชื่อมโยงไปยังภาพ',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             '',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -7953,7 +7953,7 @@ Thanks for your help!
         'Defines phone communication channel.' => '',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             'กำหนดคิวที่ตั๋วถูกนำมาใช้สำหรับแสดงเป็นกิจกรรมในปฏิทิน',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
             '',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             'กำหนด IP นิพจน์ทั่วไปที่สำหรับการเข้าถึงพื้นที่เก็บข้อมูลท้องถิ่น คุณจำเป็นต้องเปิดใช้งานนี้เพื่อเข้าถึงพื้นที่เก็บข้อมูลท้องถิ่นของคุณและ  package::RepositoryList จำเป็นต้องใช้ในพื้นที่ห่างไกล',
@@ -8262,8 +8262,8 @@ Thanks for your help!
             'กำหนดประเภทลิงค์ \'ParentChild\' ถ้าชื่อแหล่งที่มาและชื่อเป้าหมายมีค่าเดียวกัน ลิงค์คือไม่มีทิศทาง แต่ถ้าหากมีค่าต่างกัน ลิงค์ที่เกิดคือการเชื่อมโยงทิศทาง',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             'กำหนดกลุ่มประเภทการเชื่อมโยง ประเภทของการเชื่อมโยงของกลุ่มเดียวกันจะยกเลิกอีกกลุ่มหนึ่ง ตัวอย่าง: หากตั๋ว A  ถูกเชื่อมโยงต่อหนึ่งการเชื่อมโยงแบบ \'Normal\' ด้วยตั๋ว B  แล้วตั๋วเหล่านี้จะไม่สามารถเป็นการเชื่อมโยงเพิ่มเติม ด้วยการเชื่อมโยงของความสัมพันธ์ \'ParentChild\'',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            'กำหนดรายชื่อที่เก็บออนไลน์ การติดตั้งอื่นๆสามารถใช้เป็นพื้นที่เก็บข้อมูล ตัวอย่างเช่น : Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            'กำหนดรายชื่อที่เก็บออนไลน์ การติดตั้งอื่นๆสามารถใช้เป็นพื้นที่เก็บข้อมูล ตัวอย่างเช่น : Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".',
         'Defines the list of params that can be passed to ticket search function.' =>
             '',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -8273,8 +8273,8 @@ Thanks for your help!
             'กำหนดตำแหน่งที่จะได้รับรายการของพื้นที่เก็บข้อมูลออนไลน์สำหรับแพคเกจเพิ่มเติม ผลลัพท์แรกจะถูกนำมาใช้',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             'กำหนดโมดูลบันทึกสำหรับระบบ  "แฟ้ม" คือเขียนข้อความทั้งหมดใน logfile ที่กำหนด "Syslog" จะใช้ syslog  daemon ของระบบ เช่น syslogd',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            'กำหนดขนาดสูงสุด (ไบต์) สำหรับไฟล์ที่อัปโหลดผ่านทางเบราว์เซอร์ คำเตือน: การตั้งค่าตัวเลือกนี้ไปเป็นค่าซึ่งอยู่ในระดับต่ำเกินไปอาจก่อให้เกิดมาสก์จำนวนมากในตัวอย่างของOTOBO ของคุณเพื่อหยุดการทำงาน (อาจจะเป็นมาสก์ใด ๆที่จะนำข้อมูลจากผู้ใช้)',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            'กำหนดขนาดสูงสุด (ไบต์) สำหรับไฟล์ที่อัปโหลดผ่านทางเบราว์เซอร์ คำเตือน: การตั้งค่าตัวเลือกนี้ไปเป็นค่าซึ่งอยู่ในระดับต่ำเกินไปอาจก่อให้เกิดมาสก์จำนวนมากในตัวอย่างของCareOnCloud ESM ของคุณเพื่อหยุดการทำงาน (อาจจะเป็นมาสก์ใด ๆที่จะนำข้อมูลจากผู้ใช้)',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             'กำหนดเวลาสูงสุดที่ถูกต้อง (เป็นวินาที) สำหรับไอดีเซสชั่น',
         'Defines the maximum number of affected tickets per job.' => 'กำหนดจำนวนสูงสุดของตั๋วที่ได้รับผลกระทบต่อหนึ่งงาน',
@@ -8295,8 +8295,8 @@ Thanks for your help!
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             '',
         'Defines the module to authenticate customers.' => 'กำหนดโมดูลในการตรวจสอบลูกค้า',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            'กำหนดโมดูลเพื่อแสดงการแจ้งเตือนในอินเตอร์เฟซเอเย่นต์ถ้า OTOBO Daemonไม่ได้ทำงานอยู่',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            'กำหนดโมดูลเพื่อแสดงการแจ้งเตือนในอินเตอร์เฟซเอเย่นต์ถ้า CareOnCloud ESM Daemonไม่ได้ทำงานอยู่',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             '',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -8335,8 +8335,8 @@ Thanks for your help!
             'กำหนดชื่อของคอลัมน์ในการเก็บตัวระบุผู้ใช้ในตารางการตั้งค่า',
         'Defines the name of the indicated calendar.' => 'กำหนดชื่อของปฏิทินที่ระบุ',
         'Defines the name of the key for customer sessions.' => 'กำหนดชื่อของคีย์สำหรับเซสชั่นของลูกค้า',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            'กำหนดชื่อของคีย์เซสชั่น เช่น Session, SessionID or OTOBO',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            'กำหนดชื่อของคีย์เซสชั่น เช่น Session, SessionID or CareOnCloud ESM',
         'Defines the name of the table where the user preferences are stored.' =>
             'กำหนดชื่อของตารางที่การตั้งค่าของลูกค้าถูกจัดเก็บไว้',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -8435,7 +8435,7 @@ Thanks for your help!
             'กำหนดตัวคั่นระหว่างชื่อจริงของเอเย่นต์และที่อยู่อีเมลคิวที่กำหนด',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             '',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
             '',
         'Defines the source dynamic field for storing historical data.' =>
             '',
@@ -8461,7 +8461,7 @@ Thanks for your help!
             '',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             'กำหนดที่อยู่อีเมลของผู้ดูแลระบบ มันจะถูกแสดงในหน้าจอข้อผิดพลาดของแอพพลิเคชัน',
-        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO). The SystemID may also be used in HTTP session backends.' =>
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
             '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             'กำหนดแอตทริบิวต์เป้าหมายในการเชื่อมโยงไปยังฐานข้อมูลของลูกค้าภายนอก เช่น. \'AsPopup PopupType_TicketAction\'',
@@ -8480,7 +8480,7 @@ Thanks for your help!
         'Defines the ticket plugin for calendar appointments.' => '',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             'กำหนดโซนเวลาของปฏิทินที่ระบุไว้ซึ่งสามารถกำหนดไปยังคิวตามที่ระบุไว้หลังจากนั้น',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
             '',
         'Defines the two-factor module to authenticate agents.' => 'กำหนดโมดูลสองปัจจัยในการตรวจสอบเอเย่นต์',
         'Defines the two-factor module to authenticate customers.' => 'กำหนดโมดูลสองปัจจัยในการตรวจสอบลูกค้า',
@@ -8493,11 +8493,11 @@ Thanks for your help!
             '',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
             '',
         'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
             'กำหนดสถานะที่ถูกต้องของตั๋วปลดล็อค เพื่อปลดล็อคตั๋วสคริปต์นี้สามารถนำมาใช้ "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout"',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
             '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             '',
@@ -8574,8 +8574,8 @@ Thanks for your help!
         'Dialog to show after marking a ticket as unseen' => '',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             '',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
-            'ปิดการใช้งานส่วนหัวของ HTTP "X-Frame-Options: SAMEORIGIN" เพื่อช่วยให้ OTOBO ถูกรวมเป็น IFrame ในเว็บไซต์อื่น ๆ ปิดการใช้งานส่วนหัวของ HTTP นี้อาจจะเกิดปัญหาด้านความปลอดภัย! ปิดการใช้งานเมื่อคุณรู้ว่าสิ่งที่คุณกำลังทำคืออะไรเท่านั้น!',
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+            'ปิดการใช้งานส่วนหัวของ HTTP "X-Frame-Options: SAMEORIGIN" เพื่อช่วยให้ CareOnCloud ESM ถูกรวมเป็น IFrame ในเว็บไซต์อื่น ๆ ปิดการใช้งานส่วนหัวของ HTTP นี้อาจจะเกิดปัญหาด้านความปลอดภัย! ปิดการใช้งานเมื่อคุณรู้ว่าสิ่งที่คุณกำลังทำคืออะไรเท่านั้น!',
         'Disable autocomplete in the login screen.' => '',
         'Disable cloud services' => '',
         'Disables sending reminder notifications to the responsible agent of a ticket (Ticket::Responsible needs to be enabled).' =>
@@ -8712,8 +8712,8 @@ Thanks for your help!
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             '',
         'Enabled filters.' => 'เปิดใช้งานตัวกรอง',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            'เปิดใช้การสนับสนุน PGP เมื่อการสนับสนุน PGP เปิดใช้งานสำหรับการเซ็นชื่อและการเข้ารหัสอีเมลจึงขอแนะนำว่าเว็บเซิร์ฟเวอร์รันฐานะผู้ใช้ OTOBO มิฉะนั้นจะมีปัญหาเกี่ยวกับสิทธิพิเศษเมื่อมีการเข้าถึงโฟลเดอร์ .gnupg',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            'เปิดใช้การสนับสนุน PGP เมื่อการสนับสนุน PGP เปิดใช้งานสำหรับการเซ็นชื่อและการเข้ารหัสอีเมลจึงขอแนะนำว่าเว็บเซิร์ฟเวอร์รันฐานะผู้ใช้ CareOnCloud ESM มิฉะนั้นจะมีปัญหาเกี่ยวกับสิทธิพิเศษเมื่อมีการเข้าถึงโฟลเดอร์ .gnupg',
         'Enables S/MIME support.' => 'เปิดใช้งานการสนับสนุน S/MIME',
         'Enables customers to create their own accounts.' => 'ช่วยให้ลูกค้าสามารถสร้างบัญชีของตัวเอง',
         'Enables fetch S/MIME from CustomerUser backend support.' => '',
@@ -8738,7 +8738,7 @@ Thanks for your help!
             'ช่วยให้ตั๋วคุณลักษณะความรับผิดชอบที่จะติดตามการตั๋วที่เฉพาะเจาะจง',
         'Enables ticket type feature.' => '',
         'Enables ticket watcher feature only for the listed groups.' => 'เปิดใช้งานคุณลักษณะ Watcher ตั๋วเฉพาะสำหรับกลุ่มที่ระบุไว้',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
             '',
         'English (Canada)' => 'ภาษาอังกฤษ (แคนาดา)',
         'English (United Kingdom)' => 'อังกฤษ (สหราชอาณาจักร)',
@@ -8782,7 +8782,7 @@ Thanks for your help!
             'รันคำสั่งที่กำหนดเองหรือโมดูล หมายเหตุ: หากโมดูลมีการใช้ฟังก์ชั่นเป็นสิ่งจำเป็น',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             'ดำเนินการตรวจการติดตามผลในการตรวจสอบใน In-Reply-To หรือการอ้างอิงข้อมูลส่วนหัวสำหรับอีเมลที่ไม่ได้หมายเลขตั๋วในเนื้อเรื่อง',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-OTOBO-Bounce\'.' =>
             '',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             'ดำเนินการตรวจการติดตามผลในการตรวจสอบในเนื้อหาของสิ่งที่แนบมาสำหรับอีเมลที่ไม่ได้หมายเลขตั๋วในเนื้อเรื่อง',
@@ -8921,7 +8921,7 @@ Thanks for your help!
         'High Contrast' => '',
         'High contrast skin for visually impaired users.' => '',
         'Hindi' => 'ภาษาฮินดี',
-        'How many rotated otobo.log files to keep. Default is 3.' => '',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => '',
         'Hungarian' => 'ภาษาฮังการี',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             'สามารถกำหนดโปรแกรมควบคุมฐานข้อมูล (ปกติจะใช้ตรวจสอบอัตโนมัติ)ได้ ถ้า "DB" ถูกเลือกให้ Customer :: AuthModule',
@@ -8969,8 +8969,8 @@ Thanks for your help!
             'หาก "LDAP" ถูกเลือกให้ Customer::AuthModule คุณสามารถระบุคุณลักษณะการเข้าถึงที่นี่',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             'หาก "LDAP" ถูกเลือกให้ Customer::AuthModule คุณสามารถระบุได้ว่าการใช้งานจะหยุดถ้าการเชื่อมต่อไปยังเซิร์ฟเวอร์ไม่สามารถสร้างเนื่องจากปัญหาเครือข่าย',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            'หาก "LDAP" ถูกเลือกให้ Customer::AuthModule คุณสามารถตรวจสอบว่าผู้ใช้ที่ได้รับอนุญาตในการตรวจสอบเพราะเขาอยู่ใน posixGroup เช่น ผู้ใช้ต้องการที่จะอยู่ในกลุ่ม xyz เพื่อใช้ OTOBO ระบุกลุ่มที่อาจเข้าสู่ระบบ',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            'หาก "LDAP" ถูกเลือกให้ Customer::AuthModule คุณสามารถตรวจสอบว่าผู้ใช้ที่ได้รับอนุญาตในการตรวจสอบเพราะเขาอยู่ใน posixGroup เช่น ผู้ใช้ต้องการที่จะอยู่ในกลุ่ม xyz เพื่อใช้ CareOnCloud ESM ระบุกลุ่มที่อาจเข้าสู่ระบบ',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             'หาก "LDAP" ถูกเลือก คุณสามารถเพิ่มตัวกรองให้แต่ละแบบสอบถาม LDAP เช่น (mail=*), (objectclass=user) หรือ (!objectclass=computer).',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -9017,15 +9017,15 @@ Thanks for your help!
             'หากเปิดใช้งานเดมอนจะเปลี่ยนเส้นทางค่าสตรีมข้อผิดพลาดมาตรฐานไปยังล็อกไฟล์',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'หากเปิดใช้งานเดมอนจะเปลี่ยนเส้นทางค่าสตรีมออกมาตรฐานการล็อกไฟล์',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
             '',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
             '',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             'หากเปิดใช้งาน ตั๋วโทรศัพท์และตั๋วอีเมลจะเปิดในหน้าต่างใหม่',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
             '',
         'If enabled, the cache data be held in memory.' => '',
         'If enabled, the cache data will be stored in cache backend.' => '',
@@ -9036,7 +9036,7 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             '',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '',
@@ -9050,7 +9050,7 @@ Thanks for your help!
             '',
         'If this regex matches, no message will be send by the autoresponder.' =>
             '',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
             '',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             '',
@@ -9096,7 +9096,7 @@ Thanks for your help!
             '',
         'Japanese' => 'ภาษาญี่ปุ่น',
         'JavaScript function for the search frontend.' => '',
-        'Jump to OTOBO!' => '',
+        'Jump to CareOnCloud ESM!' => '',
         'Korean' => '',
         'Languages' => '',
         'Large' => 'ขนาดใหญ่',
@@ -9188,7 +9188,7 @@ Thanks for your help!
         'Makes the application check the syntax of email addresses.' => '',
         'Malay' => 'ภาษามาเล',
         'Manage Customer Dashboard Info Tile Entries' => '',
-        'Manage OTOBO Team cloud services.' => '',
+        'Manage CareOnCloud ESM Team cloud services.' => '',
         'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => '',
         'Manage POP3 or IMAP accounts to fetch email from.' => '',
@@ -9216,7 +9216,7 @@ Thanks for your help!
             '',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             '',
-        'MaxSize in Bytes until otobo.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
             '',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             '',
@@ -9307,7 +9307,7 @@ Thanks for your help!
         'New Year\'s Day' => 'วันขึ้นปีใหม่',
         'New Year\'s Eve' => 'วันส่งท้ายปีเก่า',
         'New process ticket' => 'ตั๋วกระบวนการใหม่',
-        'News about OTOBO.' => '',
+        'News about CareOnCloud ESM.' => '',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             '',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -9340,11 +9340,11 @@ Thanks for your help!
         'OAuth Tokens' => '',
         'OIDC Profile Management' => '',
         'OIDC Profiles' => '',
-        'OTOBO News' => 'ข่าวOTOBO',
-        'OTOBO Team Services' => '',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+        'CareOnCloud ESM News' => 'ข่าวCareOnCloud ESM',
+        'CareOnCloud ESM Team Services' => '',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
             '',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
             '',
         'Object backend module registration for the import/export module.' =>
             '',
@@ -9353,7 +9353,7 @@ Thanks for your help!
         'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
             '',
         'Open an external link!' => '',
-        'Open the OTOBO home page in a new window' => '',
+        'Open the CareOnCloud ESM home page in a new window' => '',
         'Open tickets (customer user)' => 'ตั๋วเปิด (ผู้ใช้ของลูกค้า)',
         'Open tickets (customer)' => 'เปิดตั๋ว (ลูกค้า)',
         'Option' => 'ตัวเลือก',
@@ -9461,9 +9461,9 @@ Thanks for your help!
         'ParentChild' => 'ParentChild',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             '',
-        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
             '',
-        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
             '',
         'Pending time' => '',
         'People' => 'คน',
@@ -9619,7 +9619,7 @@ Thanks for your help!
         'SSL_VERIFY_PEER - verify the mail server host' => '',
         'Salutations' => 'คำขึ้นต้น',
         'Sample command output' => '',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
             '',
         'Schedule a maintenance period.' => '',
         'Screen after new ticket' => 'หน้าจอหลังจากตั๋วใหม่',
@@ -9644,7 +9644,7 @@ Thanks for your help!
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             '',
         'Select your preferred layout for the software.' => '',
-        'Select your preferred theme for OTOBO.' => '',
+        'Select your preferred theme for CareOnCloud ESM.' => '',
         'Selects the cache backend to use.' => '',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             '',
@@ -9893,9 +9893,9 @@ Thanks for your help!
             '',
         'Sets the time units in the ticket note screen of the agent interface.' =>
             '',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
             '',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
             '',
         'Sets the timeout (in seconds) for http/ftp downloads.' => '',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
@@ -10041,7 +10041,7 @@ Thanks for your help!
             '',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             '',
-        'Shows information on how to start OTOBO Daemon' => '',
+        'Shows information on how to start CareOnCloud ESM Daemon' => '',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '',
         'Shows the article head information in the agent zoom view.' => '',
@@ -10129,7 +10129,7 @@ Thanks for your help!
         'Specifies the directory where SSL certificates are stored.' => '',
         'Specifies the directory where private SSL certificates are stored.' =>
             '',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
             '',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             '',
@@ -10137,7 +10137,7 @@ Thanks for your help!
             '',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             '',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
             '',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             '',
@@ -10281,7 +10281,7 @@ Thanks for your help!
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             '',
         'This module is being used to extend the password policy.' => '',
-        'This module is part of the admin area of OTOBO.' => '',
+        'This module is part of the admin area of CareOnCloud ESM.' => '',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             '',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -10296,7 +10296,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',
@@ -10357,7 +10357,7 @@ Thanks for your help!
         'To accept login information, such as an EULA or license.' => '',
         'To download attachments.' => '',
         'To view HTML attachments.' => '',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
             '',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '',
@@ -10381,7 +10381,7 @@ Thanks for your help!
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             '',
         'Tweak the system as you wish.' => '',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
             '',
         'Ukrainian' => '',
         'Unlock tickets that are past their unlock timeout.' => '',
@@ -10408,7 +10408,7 @@ Thanks for your help!
         'Uses richtext for viewing and editing ticket notification.' => '',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             '',
-        'Value map. Define a key and a value map from import file to OTOBO.' =>
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
             '',
         'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
             '',
@@ -10423,11 +10423,11 @@ Thanks for your help!
             '',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             '',
-        'We have changed the default ticket unlock behavior in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and OTOBO version 10.0.' =>
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
             '',
         'Web Service' => '',
         'Web Services' => 'Web Services',
-        'Welcome %s, to your OTOBO.' => '',
+        'Welcome %s, to your CareOnCloud ESM.' => '',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             '',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
@@ -10452,7 +10452,7 @@ Thanks for your help!
             '',
         'XOAUTH2' => '',
         'Yes, but hide archived tickets' => '',
-        'Your Tickets. Your OTOBO.' => '',
+        'Your Tickets. Your CareOnCloud ESM.' => '',
         'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
             '',
         'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
@@ -10651,7 +10651,7 @@ Thanks for your help!
         'Ignore',
         'Import web service',
         'Information',
-        'Information about the OTOBO Daemon',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -10838,7 +10838,7 @@ Thanks for your help!
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -10855,7 +10855,7 @@ Thanks for your help!
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

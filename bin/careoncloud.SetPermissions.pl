@@ -80,7 +80,7 @@ Usage:
  careoncloud.SetPermissions.pl [--careoncloud-user=<CAREONCLOUD_USER>] [--web-group=<GROUP>] [--admin-group=<ADMIN_GROUP>] [--skip-article-dir] [--skip-regex="REGEX"] [--dry-run]
 
 Options:
- [--careoncloud-user=<CAREONCLOUD_USER>]   - OTOBO user, defaults to 'careoncloud'.
+ [--careoncloud-user=<CAREONCLOUD_USER>]   - CareOnCloud ESM user, defaults to 'careoncloud'.
  [--web-group=<GROUP>]         - Web server group, per default the first found group is used.
                                  PSGI:   @{[ join ', ', $DefaultGroupNames->{PSGI}->@* ]}
                                  Apache: @{[ join ', ', $DefaultGroupNames->{Apache}->@* ]}

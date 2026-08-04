@@ -54,7 +54,7 @@
         </Value>
     </Setting>
     <Setting Name="SystemID" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO). The SystemID may also be used in HTTP session backends.</Description>
+        <Description Translatable="1">Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^\d+$">10</Item>
@@ -68,14 +68,14 @@
         </Value>
     </Setting>
     <Setting Name="SupportDataCollector::HTTPHostname" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">Defines the HTTP hostname for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the OTOBO Daemon).</Description>
+        <Description Translatable="1">Defines the HTTP hostname for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the CareOnCloud ESM Daemon).</Description>
         <Navigation>Core::SupportDataCollector</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex=""></Item>
         </Value>
     </Setting>
     <Setting Name="SupportDataCollector::WebUserAgent::Timeout" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the OTOBO Daemon).</Description>
+        <Description Translatable="1">Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the CareOnCloud ESM Daemon).</Description>
         <Navigation>Core::SupportDataCollector</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^[2-9][0-9]{1,}|[1-9][0-9]{2,}$">20</Item>
@@ -522,14 +522,14 @@
         </Value>
     </Setting>
     <Setting Name="Frontend::RichTextArticleStyles" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!</Description>
+        <Description Translatable="1">Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-content.css</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::RichTextEditorStyles" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!</Description>
+        <Description Translatable="1">Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-editor.css</Item>
@@ -543,14 +543,14 @@
         </Value>
     </Setting>
     <Setting Name="CustomerFrontend::RichTextArticleStyles" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!</Description>
+        <Description Translatable="1">Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-content.css</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerFrontend::RichTextEditorStyles" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!</Description>
+        <Description Translatable="1">Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-editor.css</Item>
@@ -858,7 +858,7 @@
         </Value>
     </Setting>
     <Setting Name="DisableIFrameOriginRestricted" Required="0" Valid="1">
-        <Description Translatable="1">Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!</Description>
+        <Description Translatable="1">Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
@@ -1067,21 +1067,21 @@
         </Value>
     </Setting>
     <Setting Name="LogModule::LogFile::Date" Required="1" Valid="1">
-        <Description Translatable="1">Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.</Description>
+        <Description Translatable="1">Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
         </Value>
     </Setting>
     <Setting Name="LogModule::LogFile::MaxSize" Required="0" Valid="1">
-        <Description Translatable="1">MaxSize in Bytes until otobo.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).</Description>
+        <Description Translatable="1">MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^[0-9]*$">524288000</Item>
         </Value>
     </Setting>
     <Setting Name="LogModule::LogFile::MaxKeepRotated" Required="0" Valid="1">
-        <Description Translatable="1">How many rotated otobo.log files to keep. Default is 3.</Description>
+        <Description Translatable="1">How many rotated careoncloud.log files to keep. Default is 3.</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^[0-9]*$">3</Item>
@@ -1401,17 +1401,17 @@
         </Value>
     </Setting>
     <Setting Name="SessionName" Required="1" Valid="1">
-        <Description Translatable="1">Defines the name of the session key. E.g. Session, SessionID or OTOBO.</Description>
+        <Description Translatable="1">Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBOAgentInterface</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloud ESMAgentInterface</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelSessionName" Required="1" Valid="1">
         <Description Translatable="1">Defines the name of the key for customer sessions.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBOCustomerInterface</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloud ESMCustomerInterface</Item>
         </Value>
     </Setting>
     <Setting Name="SessionCheckRemoteIP" Required="1" Valid="1">
@@ -1436,7 +1436,7 @@
         </Value>
     </Setting>
     <Setting Name="SessionSameSite" Required="1" Valid="1">
-        <Description Translatable="1">Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.</Description>
+        <Description Translatable="1">Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="Lax">
@@ -1538,7 +1538,7 @@
         </Value>
     </Setting>
     <Setting Name="TimeZone" Required="0" Valid="0">
-        <Description Translatable="1">This setting is deprecated. Set OTOBOTimeZone instead.</Description>
+        <Description Translatable="1">This setting is deprecated. Set CareOnCloud ESMTimeZone instead.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="+0">
@@ -1570,22 +1570,22 @@
             </Item>
         </Value>
     </Setting>
-    <Setting Name="OTOBOTimeZone" Required="1" Valid="1">
-        <Description Translatable="1">Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.</Description>
+    <Setting Name="CareOnCloud ESMTimeZone" Required="1" Valid="1">
+        <Description Translatable="1">Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="TimeZone">UTC</Item>
         </Value>
     </Setting>
     <Setting Name="UserDefaultTimeZone" Required="1" Valid="1">
-        <Description Translatable="1">Sets the time zone that will be assigned to newly created users and will be used for users that haven't yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user's time zone.</Description>
+        <Description Translatable="1">Sets the time zone that will be assigned to newly created users and will be used for users that haven't yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user's time zone.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="TimeZone">UTC</Item>
         </Value>
     </Setting>
     <Setting Name="ShowUserTimeZoneSelectionNotification" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, users that haven't selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.</Description>
+        <Description Translatable="1">If enabled, users that haven't selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -2975,7 +2975,7 @@
         </Value>
     </Setting>
     <Setting Name="WebMaxFileUpload" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).</Description>
+        <Description Translatable="1">Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^[0-9]{1,11}$">48000000</Item>
@@ -2992,7 +2992,7 @@
         <Description Translatable="1">Specifies the text that should appear in the log file to denote a CGI script entry.</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBO-CGI</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloud ESM-CGI</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::FilterText###AAAURL" Required="0" Valid="1">
@@ -3161,14 +3161,14 @@
         </Value>
     </Setting>
     <Setting Name="Package::ShowFeatureAddons" Required="0" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Toggles display of OTOBO FeatureAddons list in PackageManager.</Description>
+        <Description Translatable="1">Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.</Description>
         <Navigation>Core::Package</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
         </Value>
     </Setting>
     <Setting Name="Package::AllowNotVerifiedPackages" Required="0" Valid="1" ConfigLevel="100">
-        <Description Translatable="1">If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!</Description>
+        <Description Translatable="1">If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!</Description>
         <Navigation>Core::Package</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -3339,7 +3339,7 @@
         </Value>
     </Setting>
     <Setting Name="PGP" Required="1" Valid="1">
-        <Description Translatable="1">Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.</Description>
+        <Description Translatable="1">Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.</Description>
         <Navigation>Core::Crypt::PGP</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
@@ -3471,14 +3471,14 @@
         </Value>
     </Setting>
     <Setting Name="NotificationSenderName" Required="1" Valid="1">
-        <Description Translatable="1">Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).</Description>
+        <Description Translatable="1">Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">CareOnCloud ESM Notifications</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationSenderEmail" Required="1" Valid="1">
-        <Description Translatable="1">Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.</Description>
+        <Description Translatable="1">Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">esm@&lt;OTOBO_CONFIG_FQDN&gt;</Item>
@@ -3798,7 +3798,7 @@ You can log in via the following URL:
                 <Item Key="Module">Kernel::Output::HTML::Preferences::Theme</Item>
                 <Item Key="PreferenceGroup">Miscellaneous</Item>
                 <Item Key="Label" Translatable="1">Theme</Item>
-                <Item Key="Desc" Translatable="1">Select your preferred theme for OTOBO.</Item>
+                <Item Key="Desc" Translatable="1">Select your preferred theme for CareOnCloud ESM.</Item>
                 <Item Key="Key" Translatable="1"></Item>
                 <Item Key="PrefKey">UserTheme</Item>
                 <Item Key="NeedsReload">1</Item>
@@ -4316,10 +4316,10 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Customer::AuthModule::LDAP::GroupDN" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.</Description>
+        <Description Translatable="1">If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.</Description>
         <Navigation>Core::Auth::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">cn=otoboallow,ou=posixGroups,dc=example,dc=com</Item>
+            <Item ValueType="String" ValueRegex="">cn=careoncloudallow,ou=posixGroups,dc=example,dc=com</Item>
         </Value>
     </Setting>
     <Setting Name="Customer::AuthModule::LDAP::AccessAttr" Required="0" Valid="0" ConfigLevel="200">
@@ -4676,8 +4676,8 @@ via the Preferences button after logging in.
                         <Item>thirdparty/fullcalendar-3.10.2/fullcalendar.min.js</Item>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
@@ -5412,9 +5412,9 @@ via the Preferences button after logging in.
                         <Item Key="Order">4000</Item>
                     </Hash>
                 </Item>
-                <Item Key="OTOBOTeamServices">
+                <Item Key="CareOnCloud ESMTeamServices">
                     <Hash>
-                        <Item Key="Title" Translatable="1">OTOBO Team Services</Item>
+                        <Item Key="Title" Translatable="1">CareOnCloud ESM Team Services</Item>
                         <Item Key="Order">5000</Item>
                     </Hash>
                 </Item>
@@ -7019,7 +7019,7 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">System Registration</Item>
-                <Item Key="Block">OTOBOTeamServices</Item>
+                <Item Key="Block">CareOnCloud ESMTeamServices</Item>
                 <Item Key="Description" Translatable="1">Manage system registration.</Item>
                 <Item Key="IconBig">fa-edit</Item>
                 <Item Key="IconSmall"></Item>
@@ -7094,7 +7094,7 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">Support Data Collector</Item>
-                <Item Key="Block">OTOBOTeamServices</Item>
+                <Item Key="Block">CareOnCloud ESMTeamServices</Item>
                 <Item Key="Description" Translatable="1">Manage support data.</Item>
                 <Item Key="IconBig">fa-search</Item>
                 <Item Key="IconSmall"></Item>
@@ -7164,8 +7164,8 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">Cloud Services</Item>
-                <Item Key="Block">OTOBOTeamServices</Item>
-                <Item Key="Description" Translatable="1">Manage OTOBO Team cloud services.</Item>
+                <Item Key="Block">CareOnCloud ESMTeamServices</Item>
+                <Item Key="Description" Translatable="1">Manage CareOnCloud ESM Team cloud services.</Item>
                 <Item Key="IconBig">fa-cloud</Item>
                 <Item Key="IconSmall"></Item>
             </Hash>
@@ -7186,7 +7186,7 @@ via the Preferences button after logging in.
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Communication Log GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -7960,7 +7960,7 @@ via the Preferences button after logging in.
                         </Item>
                         <Item Key="Titles">
                             <Hash>
-                                <Item Key="OTOBO">1</Item>
+                                <Item Key="CareOnCloud ESM">1</Item>
                                 <Item Key="OpenStreetMap">2</Item>
                                 <Item Key="Wikipedia">3</Item>
                             </Hash>
@@ -8287,7 +8287,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="CustomerFrontend::FooterLinks" Required="0" Valid="0">
-        <Description Translatable="1">Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. &lt;OTOBO_CONFIG_HttpType&gt;, &lt;OTOBO_CONFIG_FQDN&gt; and &lt;OTOBO_CONFIG_ScriptAlias&gt; will be substituted.</Description>
+        <Description Translatable="1">Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. &lt;OTOBO_CONFIG_HttpType&gt;, &lt;OTOBO_CONFIG_FQDN&gt; and &lt;OTOBO_CONFIG_ScriptAlias&gt; will be substituted.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
             <Hash>
@@ -8397,8 +8397,8 @@ via the Preferences button after logging in.
                     <Array>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
@@ -8585,7 +8585,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Core::MirrorDB::DSN" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.</Description>
+        <Description Translatable="1">CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.</Description>
         <Navigation>Core::DB::Mirror</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">DBI:MariaDB:database=mirrordb;host=mirrordbhost</Item>
@@ -8722,7 +8722,7 @@ via the Preferences button after logging in.
             <Hash>
                 <Item Key="Module">Kernel::Output::HTML::Dashboard::RSS</Item>
                 <Item Key="Title" Translatable="1">Custom RSS Feed</Item>
-                <Item Key="Description" Translatable="1">OTOBO News</Item>
+                <Item Key="Description" Translatable="1">CareOnCloud ESM News</Item>
                 <Item Key="URL">https://otobo.io/en/feed/</Item>
                 <Item Key="URL_de">https://otobo.io/de/feed/</Item>
                 <Item Key="Block">ContentSmall</Item>
@@ -8832,7 +8832,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###CVE" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <Value>
             <Hash>
@@ -8874,7 +8874,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###Bugtraq" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <!-- Example strings: BugTraq ID: 23862 | BugTraq ID: 8945 | Bugtraq ID 140 | BUGTRAQ:20070425 | BID 20799 -->
         <!-- Example URL: https://www.securityfocus.com/bid/23862/info  -->
@@ -8915,7 +8915,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###MSBulletins" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <!-- Example strings: MS07-021 | MS04-028 | MS-07-002 -->
         <!-- Example URL: https://www.microsoft.com/technet/security/bulletin/MS07-021.mspx  -->
@@ -8951,7 +8951,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###Setting1" Required="0" Valid="0">
-        <Description Translatable="1">Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <Value>
             <Hash>
@@ -8985,7 +8985,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###Setting2" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <Value>
             <Hash>
@@ -9027,21 +9027,21 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Secure::DisableBanner" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.</Description>
+        <Description Translatable="1">If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
         </Value>
     </Setting>
     <Setting Name="Loader::Enabled::CSS" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, OTOBO will deliver all CSS files in minified form.</Description>
+        <Description Translatable="1">If enabled, CareOnCloud ESM will deliver all CSS files in minified form.</Description>
         <Navigation>Frontend::Base::Loader</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
         </Value>
     </Setting>
     <Setting Name="Loader::Enabled::JS" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, OTOBO will deliver all JavaScript files in minified form.</Description>
+        <Description Translatable="1">If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.</Description>
         <Navigation>Frontend::Base::Loader</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -9792,7 +9792,7 @@ via the Preferences button after logging in.
         <Navigation>Core::CommunicationChannel</Navigation>
         <Value>
             <Hash>
-                <Item Key="Name" Translatable="1">OTOBO</Item>
+                <Item Key="Name" Translatable="1">CareOnCloud ESM</Item>
                 <Item Key="Icon">fa-cloud</Item>
                 <Item Key="Description" Translatable="1">Internal communication channel.</Item>
                 <Item Key="Module">Kernel::System::CommunicationChannel::Internal</Item>
@@ -10538,8 +10538,8 @@ via the Preferences button after logging in.
                             <Array>
                             </Array>
                         </Item>
-                        <Item Key="Description" Translatable="1">Open the OTOBO home page in a new window</Item>
-                        <Item Key="Name" Translatable="1">Jump to OTOBO!</Item>
+                        <Item Key="Description" Translatable="1">Open the CareOnCloud ESM home page in a new window</Item>
+                        <Item Key="Name" Translatable="1">Jump to CareOnCloud ESM!</Item>
                         <Item Key="Link">Action=ExternalURLJump;URL=http://otobo.io/</Item>
                         <Item Key="LinkOption">target="_blank"</Item>
                         <Item Key="NavBar">JumptoExternalURL</Item>
@@ -10592,8 +10592,8 @@ via the Preferences button after logging in.
                             <Array>
                             </Array>
                         </Item>
-                        <Item Key="Description" Translatable="1">Open the OTOBO home page in a new window</Item>
-                        <Item Key="Name" Translatable="1">Jump to OTOBO!</Item>
+                        <Item Key="Description" Translatable="1">Open the CareOnCloud ESM home page in a new window</Item>
+                        <Item Key="Name" Translatable="1">Jump to CareOnCloud ESM!</Item>
                         <Item Key="Link">Action=ExternalURLJump;URL=http://otobo.io/</Item>
                         <Item Key="LinkOption">target="_blank"</Item>
                         <Item Key="NavBar">Ticket</Item>
@@ -10645,8 +10645,8 @@ via the Preferences button after logging in.
                     <Array>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
                         <Item>Core.UI.AdvancedChart.js</Item>
                         <Item>Core.Agent.StatisticsReports.js</Item>
@@ -10769,7 +10769,7 @@ via the Preferences button after logging in.
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Translations</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -10877,8 +10877,8 @@ via the Preferences button after logging in.
                         <Item>thirdparty/fullcalendar-3.10.2/fullcalendar.min.js</Item>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>

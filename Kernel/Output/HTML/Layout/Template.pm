@@ -166,7 +166,7 @@ sub Output {
                 COMPILE_EXT  => '.ttc',
             }
         );
-        $Self->{TemplateProviderObject}->OTOBOInit(
+        $Self->{TemplateProviderObject}->CareOnCloud ESMInit(
             LayoutObject => $Self,
         );
 

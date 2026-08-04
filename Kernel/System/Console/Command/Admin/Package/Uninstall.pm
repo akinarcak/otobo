@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Uninstall an OTOBO package.');
+    $Self->Description('Uninstall a CareOnCloud ESM package.');
     $Self->AddOption(
         Name        => 'force',
         Description => 'Force package uninstallation even if validation fails.',

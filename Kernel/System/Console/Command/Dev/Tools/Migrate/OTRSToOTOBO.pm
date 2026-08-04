@@ -41,14 +41,14 @@ sub Configure {
     my ( $Self, %Param ) = @_;
 
     $Self->Description(<<'END_DESC');
-Create clean OTOBO source files from OTRS source code or an OTRS OPM package.
-Migrate XML configuration files from OTRS 6.0.x to OTOBO 10.0.x.
+Create clean CareOnCloud ESM source files from OTRS source code or an OTRS OPM package.
+Migrate XML configuration files from OTRS 6.0.x to CareOnCloud ESM 10.0.x.
 END_DESC
 
     $Self->AddOption(
         Name        => 'cleanpath',
         Description =>
-            "Should we change the path and filename to OTOBO or otobo, if otrs or OTRS exists?",
+            "Should we change the path and filename to CareOnCloud ESM or careoncloud, if otrs or OTRS exists?",
         Required   => 0,
         HasValue   => 0,
         ValueRegex => qr/.*/smx,
@@ -56,7 +56,7 @@ END_DESC
     $Self->AddOption(
         Name        => 'cleancontent',
         Description =>
-            "Should we clean the file content from OTRS to OTOBO style?",
+            "Should we clean the file content from OTRS to CareOnCloud ESM style?",
         Required   => 0,
         HasValue   => 0,
         ValueRegex => qr/.*/smx,
@@ -87,7 +87,7 @@ END_DESC
     );
     $Self->AddOption(
         Name        => 'target',
-        Description => "Specify the directory where the cleaned OTOBO code should be placed.",
+        Description => "Specify the directory where the cleaned CareOnCloud ESM code should be placed.",
         Required    => 1,
         HasValue    => 1,
         ValueRegex  => qr/.*/smx,
@@ -231,7 +231,7 @@ sub Run {
 
             # Clean content of files if $CleanContent option is defined
             if ($CleanContent) {
-                $MigrationBaseObject->CleanOTRSFileToOTOBOStyle(
+                $MigrationBaseObject->CleanOTRSFileToCareOnCloud ESMStyle(
                     File   => $File,
                     UserID => 1,
                 );
@@ -266,7 +266,7 @@ sub Run {
         $Self->PrintError("No valid source or target dir given, exit!\n");
         return $Self->ExitCodeError();
     }
-    $Self->Print("<green>Change file content in OTOBO style: Done.</green>\n");
+    $Self->Print("<green>Change file content in CareOnCloud ESM style: Done.</green>\n");
     return $Self->ExitCodeOk();
 }
 

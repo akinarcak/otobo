@@ -23,7 +23,7 @@ $Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationDispatchEnable
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationBatchSize', Value => 25 );
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationMaxAttempts', Value => 3 );
 $Helper->ConfigSettingChange( Key => 'CheckEmailAddresses', Value => 0 );
-$Helper->ConfigSettingChange( Key => 'OTOBOTimeZone', Value => 'UTC' );
+$Helper->ConfigSettingChange( Key => 'CareOnCloud ESMTimeZone', Value => 'UTC' );
 $Helper->ConfigSettingChange(
     Key => 'TimeWorkingHours',
     Value => { Mon => [ 8 .. 16 ], Tue => [ 8 .. 16 ], Wed => [ 8 .. 16 ], Thu => [ 8 .. 16 ], Fri => [ 8 .. 16 ], Sat => [], Sun => [] },
@@ -354,7 +354,7 @@ my %EmailCall;
         ID => 9000, TenantID => $TenantA,
         Payload => { RequestID => $Integrated->{Data}->{RequestID}, Target => 'service_owner', Trigger => 'warning', ObjectiveKey => 'resolution', DueTime => '2026-07-27 17:00:00' },
     } );
-    ok( $Notification->{Success}, 'role notification adapter queues email through OTOBO transport' );
+    ok( $Notification->{Success}, 'role notification adapter queues email through CareOnCloud ESM transport' );
 }
 like( $EmailCall{To}, qr{\Qcommit-admin-$Suffix\E\@example\.test}, 'role notification resolves recipients only from tenant membership' );
 is( $EmailCall{CustomHeaders}->{'X-D724-Tenant'}, $TenantA, 'notification carries tenant audit header' );

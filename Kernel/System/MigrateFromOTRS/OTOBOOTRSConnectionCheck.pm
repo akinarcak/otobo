@@ -79,7 +79,7 @@ sub Run {
             );
 
             return {
-                Message    => $Self->{LanguageObject}->Translate('Check if OTOBO version is correct.'),
+                Message    => $Self->{LanguageObject}->Translate('Check if CareOnCloud ESM version is correct.'),
                 Comment    => $Self->{LanguageObject}->Translate( 'Need %s!', $Key ),
                 Successful => 0.
             };
@@ -94,7 +94,7 @@ sub Run {
                 Message  => "Need OTRSData->$Key!"
             );
             my %Result;
-            $Result{Message}    = $Self->{LanguageObject}->Translate("Check if OTOBO and OTRS connect is possible.");
+            $Result{Message}    = $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS connect is possible.");
             $Result{Comment}    = $Self->{LanguageObject}->Translate( 'Need %s!', $Key );
             $Result{Successful} = 0;
 
@@ -111,7 +111,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOOTRSConnectionCheck',
+            Task      => 'CareOnCloud ESMOTRSConnectionCheck',
             SubTask   => "Check if a connection via ssh or local is possible.",
             StartTime => $Epoch,
         },
@@ -140,17 +140,17 @@ sub Run {
             Message  => "Can't open Kernel/Config.pm file from OTRS home directory: $Param{OTRSData}->{OTRSHome}!",
         );
         my %Result;
-        $Result{Message}    = $Self->{LanguageObject}->Translate("Check if OTOBO and OTRS connect is possible.");
+        $Result{Message}    = $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS connect is possible.");
         $Result{Comment}    = $Self->{LanguageObject}->Translate( 'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!', $Param{OTRSData}->{OTRSHome} );
         $Result{Successful} = 0;
 
         return \%Result;
     }
 
-    # Check OTOBO version
-    my $ResultOTOBO = $Self->_CheckOTOBOConfigpmExists();
+    # Check CareOnCloud ESM version
+    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloud ESMConfigpmExists();
 
-    return $ResultOTOBO unless $ResultOTOBO->{Successful};
+    return $ResultCareOnCloud ESM unless $ResultCareOnCloud ESM->{Successful};
 
     # Check OTRS version
     my $ResultOTRS = $Self->_CheckOTRSConfigpm(
@@ -161,23 +161,23 @@ sub Run {
 
     # Everything is correct, return that info
     return {
-        Message    => $Self->{LanguageObject}->Translate("Check if OTOBO and OTRS connect is possible."),
-        Comment    => "$ResultOTOBO->{Comment}  $ResultOTRS->{Comment}",
+        Message    => $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS connect is possible."),
+        Comment    => "$ResultCareOnCloud ESM->{Comment}  $ResultOTRS->{Comment}",
         Successful => 1,
     };
 }
 
-sub _CheckOTOBOConfigpmExists {
+sub _CheckCareOnCloud ESMConfigpmExists {
     my ( $Self, %Param ) = @_;
 
-    my $OTOBOHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
-    my $Message   = $Self->{LanguageObject}->Translate("Check if Kernel/Config.pm exists in OTOBO home.");
+    my $CareOnCloud ESMHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
+    my $Message   = $Self->{LanguageObject}->Translate("Check if Kernel/Config.pm exists in CareOnCloud ESM home.");
 
     # load Kernel/Config.pm file
-    if ( !-e "$OTOBOHome/Kernel/Config.pm" ) {
+    if ( !-e "$CareOnCloud ESMHome/Kernel/Config.pm" ) {
         my %Result;
         $Result{Message}    = $Message;
-        $Result{Comment}    = $Self->{LanguageObject}->Translate( '%s does not exist!', "$OTOBOHome/Kernel/Config.pm" );
+        $Result{Comment}    = $Self->{LanguageObject}->Translate( '%s does not exist!', "$CareOnCloud ESMHome/Kernel/Config.pm" );
         $Result{Successful} = 0;
 
         return \%Result;
@@ -186,7 +186,7 @@ sub _CheckOTOBOConfigpmExists {
     # Everything if correct, return 1
     my %Result;
     $Result{Message}    = $Message;
-    $Result{Comment}    = $Self->{LanguageObject}->Translate("Kernel/Config.pm exists in OTOBO home");
+    $Result{Comment}    = $Self->{LanguageObject}->Translate("Kernel/Config.pm exists in CareOnCloud ESM home");
     $Result{Successful} = 1;
 
     return \%Result;

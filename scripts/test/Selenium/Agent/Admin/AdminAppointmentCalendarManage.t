@@ -118,7 +118,7 @@ $Selenium->RunTest(
                 "$Class URL present"
             );
 
-            # URL should not contain OTOBO specific URL delimiter of semicolon (;).
+            # URL should not contain CareOnCloud ESM specific URL delimiter of semicolon (;).
             #   For better compatibility, use standard ampersand (&) instead.
             #   Please see bug#12667 for more information.
             $Self->False(

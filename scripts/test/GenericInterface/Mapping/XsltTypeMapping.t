@@ -29,7 +29,7 @@ use Kernel::GenericInterface::Mapping::XSLT;
 use Kernel::GenericInterface::Debugger;
 
 # Input as would be produced from an XSLT mapping that uses
-# otoboType="..." attributes in the generated XML.
+# careoncloudType="..." attributes in the generated XML.
 
 my $RawInput = {
     'ArticleID' => '2',
@@ -40,59 +40,59 @@ my $RawInput = {
 my $InputWithTypeHints = {
     'ArticleID' => {
         'content'      => '2',
-        'otoboXslType' => 'int'
+        'careoncloudXslType' => 'int'
     },
     'Event' => {
         'content'      => 'ArticleEdit',
-        'otoboXslType' => 'array'
+        'careoncloudXslType' => 'array'
     },
     'Test' => {
         'Item' => {
             'content'      => '3.2',
-            'otoboXslType' => 'float'
+            'careoncloudXslType' => 'float'
         },
         'Array' => [
             {
                 'Item' => {
                     'content'      => '0',
-                    'otoboXslType' => 'bool'
+                    'careoncloudXslType' => 'bool'
                 }
             },
             {
                 'Item' => {
                     'content'      => '1',
-                    'otoboXslType' => 'bool'
+                    'careoncloudXslType' => 'bool'
                 }
             },
             {
                 'Item' => {
                     'content'      => 'false',
-                    'otoboXslType' => 'bool'
+                    'careoncloudXslType' => 'bool'
                 }
             }
         ],
         'Sub' => {
             'content'      => '1',
-            'otoboXslType' => 'array'
+            'careoncloudXslType' => 'array'
         },
         'Thing' => [
             {
                 'content'      => '1',
-                'otoboXslType' => 'array int'
+                'careoncloudXslType' => 'array int'
             },
             {
                 'content'      => '2',
-                'otoboXslType' => 'array int'
+                'careoncloudXslType' => 'array int'
             },
             {
                 'content'      => '3',
-                'otoboXslType' => 'array int'
+                'careoncloudXslType' => 'array int'
             }
         ]
     },
     'TicketID' => {
         'content'      => '1',
-        'otoboXslType' => 'bool'
+        'careoncloudXslType' => 'bool'
     }
 };
 
@@ -143,18 +143,18 @@ my $MappingConfig = {
   <xsl:strip-space elements="*"/>
   <xsl:template match="/">
     <RootElement>
-      <TicketID otoboXslType="bool"><xsl:value-of select="/RootElement/TicketID" /></TicketID>
-      <ArticleID otoboXslType="int"><xsl:value-of select="/RootElement/ArticleID" /></ArticleID>
-      <Event otoboXslType="array"><xsl:value-of select="/RootElement/Event" /></Event>
+      <TicketID careoncloudXslType="bool"><xsl:value-of select="/RootElement/TicketID" /></TicketID>
+      <ArticleID careoncloudXslType="int"><xsl:value-of select="/RootElement/ArticleID" /></ArticleID>
+      <Event careoncloudXslType="array"><xsl:value-of select="/RootElement/Event" /></Event>
       <Test>
-        <Sub otoboXslType="array">1</Sub>
-        <Item otoboXslType="float">3.2</Item>
-        <Thing otoboXslType="array int">1</Thing>
-        <Thing otoboXslType="array int">2</Thing>
-        <Thing otoboXslType="array int">3</Thing>
-        <Array><Item otoboXslType="bool">0</Item></Array>
-        <Array><Item otoboXslType="bool">1</Item></Array>
-        <Array><Item otoboXslType="bool">false</Item></Array>
+        <Sub careoncloudXslType="array">1</Sub>
+        <Item careoncloudXslType="float">3.2</Item>
+        <Thing careoncloudXslType="array int">1</Thing>
+        <Thing careoncloudXslType="array int">2</Thing>
+        <Thing careoncloudXslType="array int">3</Thing>
+        <Array><Item careoncloudXslType="bool">0</Item></Array>
+        <Array><Item careoncloudXslType="bool">1</Item></Array>
+        <Array><Item careoncloudXslType="bool">false</Item></Array>
       </Test>
       <xsl:copy-of select="/RootElement/OldTicketData"/>
     </RootElement>

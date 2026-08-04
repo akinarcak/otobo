@@ -28,14 +28,14 @@ use Kernel::System::VariableCheck qw(:all);
 # get package object
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
-# get OTOBO Version
-my $OTOBOVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloud ESMVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
 
 # leave only major and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloud ESMVersion .= '.x';
 
 my @Tests = (
     {
@@ -77,13 +77,13 @@ for a package file.',
       <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
       <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
       <ModuleRequired Version="1.112">Encode</ModuleRequired>
-      <Framework>' . $OTOBOVersion . '</Framework>
+      <Framework>' . $CareOnCloud ESMVersion . '</Framework>
       <BuildDate>2005-11-10 21:17:16</BuildDate>
       <BuildHost>yourhost.example.com</BuildHost>
       <Filelist>
         <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
         <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
-        <File Location="bin/otobo.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
+        <File Location="bin/careoncloud.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
       </Filelist>
     </careoncloud_package>
 ',

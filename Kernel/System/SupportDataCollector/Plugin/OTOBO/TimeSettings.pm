@@ -34,7 +34,7 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO') . '/' . Translatable('Time Settings');
+    return Translatable('CareOnCloud ESM') . '/' . Translatable('Time Settings');
 }
 
 sub Run {
@@ -51,21 +51,21 @@ sub Run {
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    # OTOBO time zone
-    my $OTOBOTimeZone = $ConfigObject->Get('OTOBOTimeZone');
-    if ( defined $OTOBOTimeZone ) {
+    # CareOnCloud ESM time zone
+    my $CareOnCloud ESMTimeZone = $ConfigObject->Get('CareOnCloud ESMTimeZone');
+    if ( defined $CareOnCloud ESMTimeZone ) {
         $Self->AddResultOk(
-            Identifier => 'OTOBOTimeZone',
-            Label      => Translatable('OTOBO time zone'),
-            Value      => $OTOBOTimeZone,
+            Identifier => 'CareOnCloud ESMTimeZone',
+            Label      => Translatable('CareOnCloud ESM time zone'),
+            Value      => $CareOnCloud ESMTimeZone,
         );
     }
     else {
         $Self->AddResultProblem(
-            Identifier => 'OTOBOTimeZone',
-            Label      => Translatable('OTOBO time zone'),
+            Identifier => 'CareOnCloud ESMTimeZone',
+            Label      => Translatable('CareOnCloud ESM time zone'),
             Value      => '',
-            Message    => Translatable('OTOBO time zone is not set.'),
+            Message    => Translatable('CareOnCloud ESM time zone is not set.'),
         );
     }
 
@@ -100,19 +100,19 @@ sub Run {
 
         if ( defined $CalendarTimeZone ) {
             $Self->AddResultOk(
-                Identifier => "OTOBOTimeZone::Calendar$Counter",
+                Identifier => "CareOnCloud ESMTimeZone::Calendar$Counter",
 
-                # Use of $LanguageObject->Translate() is not possible to avoid translated strings to be sent to OTOBO Team.
-                Label => "OTOBO time zone setting for calendar $Counter",
+                # Use of $LanguageObject->Translate() is not possible to avoid translated strings to be sent to CareOnCloud ESM Team.
+                Label => "CareOnCloud ESM time zone setting for calendar $Counter",
                 Value => $CalendarTimeZone,
             );
         }
         else {
             $Self->AddResultInformation(
-                Identifier => "OTOBOTimeZone::Calendar$Counter",
+                Identifier => "CareOnCloud ESMTimeZone::Calendar$Counter",
 
-                # Use of $LanguageObject->Translate() is not possible to avoid translated strings to be sent to OTOBO Team.
-                Label   => "OTOBO time zone setting for calendar $Counter",
+                # Use of $LanguageObject->Translate() is not possible to avoid translated strings to be sent to CareOnCloud ESM Team.
+                Label   => "CareOnCloud ESM time zone setting for calendar $Counter",
                 Value   => '',
                 Message => Translatable('Calendar time zone is not set.'),
             );

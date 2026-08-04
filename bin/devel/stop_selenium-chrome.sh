@@ -15,7 +15,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-# Stop the OTOBO specific container for Selenium testing.
+# Stop the CareOnCloud ESM specific container for Selenium testing.
 # Usually the container will be autmatically removed after it had been stopped.
 # The image will linger.
 docker stop otobo_selenium-chrome

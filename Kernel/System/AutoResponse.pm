@@ -262,7 +262,7 @@ Return example:
 
     %QueueAddressData(
         #Auto Response Data
-        'Text'            => 'Your OTOBO TeamOTOBO! answered by a human asap.',
+        'Text'            => 'Your CareOnCloud ESM TeamCareOnCloud ESM! answered by a human asap.',
         'Subject'         => 'New ticket has been created! (RE: <OTOBO_CUSTOMER_SUBJECT[24]>)',
         'ContentType'     => 'text/plain',
         'SystemAddressID' => '1',
@@ -270,9 +270,9 @@ Return example:
 
         #System Address Data
         'ID'              => '1',
-        'Name'            => 'otobo@localhost',
-        'Address'         => 'otobo@localhost',  # Compatibility with OTRS 2.1
-        'Realname'        => 'OTOBO System',
+        'Name'            => 'careoncloud@localhost',
+        'Address'         => 'careoncloud@localhost',  # Compatibility with OTRS 2.1
+        'Realname'        => 'CareOnCloud ESM System',
         'Comment'         => 'Standard Address.',
         'ValidID'         => '1',
         'QueueID'         => '1',

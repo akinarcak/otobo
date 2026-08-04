@@ -29,7 +29,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     --LabelFontSize: 16px;
     --LabelLetterSpacing: 0.4px;
     --ErrorTextColor: #ea2400;
-    --BaseBackgroundColor: #ffffff; /* in hopes that one day there will be dark mode otobo */
+    --BaseBackgroundColor: #ffffff; /* in hopes that one day there will be dark mode careoncloud */
 }
 
 /**
@@ -814,7 +814,7 @@ input[readonly] {
 }
 
 .jstree-InputField-Tree .jstree-icon {
-    font-family: 'otobo' !important;
+    font-family: 'careoncloud' !important;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;

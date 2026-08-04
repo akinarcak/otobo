@@ -1,10 +1,10 @@
-# AUD-01b OTOBO Ticket Core Atomic Audit
+# AUD-01b CareOnCloud ESM Ticket Core Atomic Audit
 
 Durum: cekirdek kapsam tamamlandi (`2026-07-24`).
 
 ## Kapsam
 
-`D724TicketAudit 0.7.1`, OTOBO'nun resmi `Ticket::CustomModule` extension mekanizmasini kullanir; upstream `Kernel::System::Ticket` dosyasi degistirilmez. Su yazimlar kapsanir:
+`D724TicketAudit 0.7.1`, CareOnCloud ESM'nun resmi `Ticket::CustomModule` extension mekanizmasini kullanir; upstream `Kernel::System::Ticket` dosyasi degistirilmez. Su yazimlar kapsanir:
 
 - `ticket.created`
 - `ticket.title.updated`
@@ -23,7 +23,7 @@ Article body audit details'e kopyalanmaz. Subject, sender type, customer visibil
 
 Her ticket `d724_ticket_scope` tablosunda degismez tenant kimligi ve monoton mutation version'i alir. Yeni ticket aktif D724 tenant'a eslesen `CustomerID/CustomerNo` olmadan yaratilamaz. Customer user ayni tenant icinde degisebilir; CustomerID'nin baska tenant'a tasinmasi reddedilir.
 
-Ticket/domain yazimi, scope insert/version ve audit head/event append production `AutoCommit` cagrilarinda tek transaction'dir. Audit arizasinda ticket state, title/customer degisimi, article row/storage ve scope version rollback edilir. Rollback sonrasi OTOBO ticket/article cache'leri temizlenir.
+Ticket/domain yazimi, scope insert/version ve audit head/event append production `AutoCommit` cagrilarinda tek transaction'dir. Audit arizasinda ticket state, title/customer degisimi, article row/storage ve scope version rollback edilir. Rollback sonrasi CareOnCloud ESM ticket/article cache'leri temizlenir.
 
 MIME article atomikligi yalniz transaction destekli `ArticleStorageDB` icin etkinlestirilir. Harici filesystem/object storage, DB transaction'i ile atomik olmadigi icin fail-closed davranir; sonraki surumde transactional outbox/compensation adapter'i gerektirir.
 

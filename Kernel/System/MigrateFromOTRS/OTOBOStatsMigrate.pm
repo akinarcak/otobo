@@ -36,7 +36,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::MigrateFromOTRS::OTOBOStatsMigrate - Migrate Notification table to OTOBO.
+Kernel::System::MigrateFromOTRS::OTOBOStatsMigrate - Migrate Notification table to CareOnCloud ESM.
 
 =head1 SYNOPSIS
 
@@ -78,8 +78,8 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOStatsMigrate',
-            SubTask   => "Migrate statistics to OTOBO.",
+            Task      => 'CareOnCloud ESMStatsMigrate',
+            SubTask   => "Migrate statistics to CareOnCloud ESM.",
             StartTime => $Epoch,
         },
     );

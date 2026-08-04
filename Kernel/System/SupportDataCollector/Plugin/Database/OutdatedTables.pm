@@ -39,12 +39,12 @@ sub Run {
 
     my @OutdatedTables;
 
-    # This table was removed with OTOBO 10 (if empty).
+    # This table was removed with CareOnCloud ESM 10 (if empty).
     if ( $ExistingTables{gi_object_lock_state} ) {
         my $SolManConnectorInstalled;
 
         for my $Package ( $Kernel::OM->Get('Kernel::System::Package')->RepositoryList() ) {
-            if ( $Package->{Name}->{Content} eq 'OTOBOGenericInterfaceConnectorSAPSolMan' ) {
+            if ( $Package->{Name}->{Content} eq 'CareOnCloud ESMGenericInterfaceConnectorSAPSolMan' ) {
                 $SolManConnectorInstalled = 1;
             }
         }

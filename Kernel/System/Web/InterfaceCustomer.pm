@@ -417,21 +417,21 @@ sub _Content {
         );
 
         # check if the time zone offset reported by the user's browser differs from that
-        # of the OTOBO user's time zone offset
+        # of the CareOnCloud ESM user's time zone offset
         my $DateTimeObject = $Kernel::OM->Create(
             'Kernel::System::DateTime',
             ObjectParams => {
                 TimeZone => $UserTimeZone,
             },
         );
-        my $OTOBOUserTimeZoneOffset = $DateTimeObject->Format( Format => '%{offset}' ) / 60;
+        my $CareOnCloud ESMUserTimeZoneOffset = $DateTimeObject->Format( Format => '%{offset}' ) / 60;
         my $BrowserTimeZoneOffset   = ( $ParamObject->GetParam( Param => 'TimeZoneOffset' ) || 0 ) * -1;
 
         # TimeZoneOffsetDifference contains the difference of the time zone offset between
-        # the user's OTOBO time zone setting and the one reported by the user's browser.
+        # the user's CareOnCloud ESM time zone setting and the one reported by the user's browser.
         # If there is a difference it can be evaluated later to e. g. show a message
-        # for the user to check his OTOBO time zone setting.
-        my $UserTimeZoneOffsetDifference = abs( $OTOBOUserTimeZoneOffset - $BrowserTimeZoneOffset );
+        # for the user to check his CareOnCloud ESM time zone setting.
+        my $UserTimeZoneOffsetDifference = abs( $CareOnCloud ESMUserTimeZoneOffset - $BrowserTimeZoneOffset );
         $SessionObject->UpdateSessionID(
             SessionID => $NewSessionID,
             Key       => 'UserTimeZoneOffsetDifference',
@@ -528,7 +528,7 @@ sub _Content {
             },
         );
 
-        # delete the OTOBO session cookie
+        # delete the CareOnCloud ESM session cookie
         Kernel::Output::HTML::Layout->SetCookie(
             RegisterInOM => 1,
             Key          => 'SessionIDCookie',
@@ -900,7 +900,7 @@ sub _Content {
         my $Body        = $ConfigObject->Get('CustomerPanelBodyNewAccount')
             || 'No Config Option found!';
         my $Subject = $ConfigObject->Get('CustomerPanelSubjectNewAccount')
-            || 'New OTOBO Account!';
+            || 'New CareOnCloud ESM Account!';
         for ( sort keys %GetParams ) {
             $Body =~ s/<OTOBO_$_>/$GetParams{$_}/gi;
         }
@@ -1028,7 +1028,7 @@ sub _Content {
                 },
             );
 
-            # delete the OTOBO session cookie
+            # delete the CareOnCloud ESM session cookie
             Kernel::Output::HTML::Layout->SetCookie(
                 RegisterInOM => 1,
                 Key          => 'SessionIDCookie',
@@ -1047,7 +1047,7 @@ sub _Content {
                     },
                 );
 
-                # delete the OTOBO session cookie
+                # delete the CareOnCloud ESM session cookie
                 # TODO: the Name is used twice
                 Kernel::Output::HTML::Layout->SetCookie(
                     RegisterInOM => 1,
@@ -1428,7 +1428,7 @@ sub call {
 
     my $Debug = $Self->{Debug};
 
-    # The OTOBO modules which generate the content get their input
+    # The CareOnCloud ESM modules which generate the content get their input
     # from the Kernel::System::Web::Request singleton, that is the ParamObject.
     # Make the PSGI environment available to the constructor of the ParamObject.
     $Kernel::OM->ObjectParamAdd(
@@ -1455,7 +1455,7 @@ sub call {
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     $Content = $LayoutObject->ApplyOutputFilters( Output => $Content );
 
-    # The HTTP headers of the OTOBO web response object already have been set up.
+    # The HTTP headers of the CareOnCloud ESM web response object already have been set up.
     # Enhance it with the HTTP status code and the content.
     return $Kernel::OM->Get('Kernel::System::Web::Response')->Finalize(
         Content => $Content,

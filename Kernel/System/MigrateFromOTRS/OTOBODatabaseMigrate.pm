@@ -127,8 +127,8 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBODatabaseMigrate',
-            SubTask   => "Copy Database from type $Param{DBData}->{DBType} to OTOBO DB.",
+            Task      => 'CareOnCloud ESMDatabaseMigrate',
+            SubTask   => "Copy Database from type $Param{DBData}->{DBType} to CareOnCloud ESM DB.",
             StartTime => $Epoch,
         },
     );

@@ -30,7 +30,7 @@ use Data::Dumper;    ## no critic qw(Modules::ProhibitEvilModules)
 
 # This is the HOST for the web service the format is:
 # <HTTP_TYPE>:://<OTOBO_FQDN>/nph-genericinterface.pl
-my $Host = 'http://localhost/otobo/nph-genericinterface.pl';
+my $Host = 'http://localhost/careoncloud/nph-genericinterface.pl';
 
 my $RestClient = REST::Client->new(
     {

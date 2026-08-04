@@ -25,7 +25,7 @@ use File::Copy qw(copy);
 # CPAN modules
 use Test2::V0;
 
-# OTOBO moduled
+# CareOnCloud ESM moduled
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Self and $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
@@ -125,7 +125,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
                     Value   => $DBType,
                 );
 
-                # Choose to use existing database for OTOBO.
+                # Choose to use existing database for CareOnCloud ESM.
                 if ( $DBType ne 'oracle' ) {
                     $Selenium->find_element( '#DBInstallTypeUseDB', 'css' )->click();
                     $Selenium->WaitFor(
@@ -260,7 +260,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
 
                 my @Tables = $Kernel::OM->Get('Kernel::System::DB')->ListTables();
 
-                # Count number of table elements in OTOBO schema for comparison.
+                # Count number of table elements in CareOnCloud ESM schema for comparison.
                 my $XMLString = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
                     Location => "$Home/scripts/database/careoncloud-schema.xml",
                 );
@@ -268,7 +268,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
                 $Self->Is(
                     scalar @Tables,
                     $TableCount,
-                    'OTOBO tables are found'
+                    'CareOnCloud ESM tables are found'
                 );
 
                 # Try to login in new installed system.

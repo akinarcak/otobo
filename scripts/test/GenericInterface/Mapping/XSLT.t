@@ -148,7 +148,7 @@ my @Tests = (
 <xsl:stylesheet version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
- extension-element-prefixes="otobo">
+ extension-element-prefixes="careoncloud">
 <xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
@@ -179,7 +179,7 @@ my @Tests = (
 <xsl:stylesheet version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
- extension-element-prefixes="otobo">
+ extension-element-prefixes="careoncloud">
 <xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
@@ -291,7 +291,7 @@ my @Tests = (
 <xsl:stylesheet version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
- extension-element-prefixes="otobo">
+ extension-element-prefixes="careoncloud">
 <xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
@@ -305,11 +305,11 @@ my @Tests = (
     <NewStructure>
         <DateFromISO>
             <xsl:variable name="dateiso" select="/RootElement/DateISO" />
-            <xsl:value-of select="otobo:date-iso-to-xsd(\$dateiso)" />
+            <xsl:value-of select="careoncloud:date-iso-to-xsd(\$dateiso)" />
         </DateFromISO>
         <DateToISO>
             <xsl:variable name="datexsd" select="/RootElement/DateXSD" />
-            <xsl:value-of select="otobo:date-xsd-to-iso(\$datexsd)" />
+            <xsl:value-of select="careoncloud:date-xsd-to-iso(\$datexsd)" />
         </DateToISO>
         <NewKey1>
             <xsl:value-of select="/RootElement/Key1" />
@@ -362,7 +362,7 @@ my @Tests = (
 <xsl:stylesheet version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
- extension-element-prefixes="otobo">
+ extension-element-prefixes="careoncloud">
 <xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">
@@ -401,7 +401,7 @@ my @Tests = (
 <xsl:stylesheet version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:otobo="http://otobo.org"
- extension-element-prefixes="otobo">
+ extension-element-prefixes="careoncloud">
 <xsl:import href="$Home/Kernel/GenericInterface/Mapping/OTOBOFunctions.xsl" />
 <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 <xsl:template match="/RootElement">

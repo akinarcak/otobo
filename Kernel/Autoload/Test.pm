@@ -14,7 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-# This file demonstrates how to use the autoload mechanism of OTOBO to change existing functionality.
+# This file demonstrates how to use the autoload mechanism of CareOnCloud ESM to change existing functionality.
 # Please note that all autoload files have to be registered via SysConfig (see AutoloadPerlPackages###1000-Test).
 
 # First, we add a method to Kernel::System::Valid.

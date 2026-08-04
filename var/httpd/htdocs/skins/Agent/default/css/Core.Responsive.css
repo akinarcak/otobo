@@ -13,10 +13,10 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
-/*  All devices capable of OTOBO minimum solution. Used to hide elements for mobile devices. */
+/*  All devices capable of CareOnCloud ESM minimum solution. Used to hide elements for mobile devices. */
 /* This code has been moved to Core.Defaults.css */
 
-/*  All devices with a smaller resolution than the current OTOBO minimum solution */
+/*  All devices with a smaller resolution than the current CareOnCloud ESM minimum solution */
 @media only screen and (min-width: 0px) and (max-width: 1024px) {
 
     body, html {

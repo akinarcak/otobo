@@ -14,7 +14,7 @@ our @ObjectDependencies = ( 'Kernel::Config', 'Kernel::System::DB', 'Kernel::Sys
 
 sub Configure {
     my ($Self) = @_;
-    $Self->Description('Report CareOnCloud OTOBO ticket tenant-binding and audit adapter health.');
+    $Self->Description('Report CareOnCloud CareOnCloud ESM ticket tenant-binding and audit adapter health.');
     $Self->AddOption( Name => 'json', Description => 'Print JSON.', Required => 0, HasValue => 0 );
     return;
 }

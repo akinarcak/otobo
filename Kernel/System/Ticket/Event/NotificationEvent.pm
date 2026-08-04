@@ -766,7 +766,7 @@ sub _RecipientsGet {
                 }
             }
 
-            # Other OTOBO packages might add other kind of recipients that are normally handled by
+            # Other CareOnCloud ESM packages might add other kind of recipients that are normally handled by
             #   other modules then an elsif condition here is useful.
             elsif ( $Recipient eq 'Customer' ) {
 

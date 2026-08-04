@@ -33,7 +33,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Convert OTOBO database XML to SQL.');
+    $Self->Description('Convert CareOnCloud ESM database XML to SQL.');
     $Self->AddOption(
         Name        => 'database-type',
         Description => "Specify the database to generate SQL for (mysql|postgresql|oracle|all).",

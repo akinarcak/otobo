@@ -167,7 +167,7 @@ sub CreateOTRSDBConnection {
 
 =head2 DataTransfer()
 
-transfers information from a OTRS DB to the OTOBO DB.
+transfers information from a OTRS DB to the CareOnCloud ESM DB.
 
     my $Success = $BackendObject->DataTransfer(
         OTRSDBObject   => $OTRSDBObject,   # mandatory, instance of Kernel::System::DB
@@ -204,7 +204,7 @@ sub DataTransfer {
         return;
     }
 
-    # get OTOBO db object
+    # get CareOnCloud ESM db object
     # We need to disable FOREIGN_KEY_CHECKS, because we truncate tables and copy rows.
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         'Kernel::System::DB' => {
@@ -212,15 +212,15 @@ sub DataTransfer {
         },
     );
 
-    my $OTOBODBObject = $Kernel::OM->Get('Kernel::System::DB');
+    my $CareOnCloud ESMDBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     # set the target db specific backend
-    my $OTOBODBBackend = 'CloneDB' . $OTOBODBObject->{'DB::Type'} . 'Object';
+    my $CareOnCloud ESMDBBackend = 'CloneDB' . $CareOnCloud ESMDBObject->{'DB::Type'} . 'Object';
 
-    if ( !$Self->{$OTOBODBBackend} ) {
+    if ( !$Self->{$CareOnCloud ESMDBBackend} ) {
         $LogObject->Log(
             Priority => 'error',
-            Message  => "Backend $OTOBODBObject->{'DB::Type'} is invalid!",
+            Message  => "Backend $CareOnCloud ESMDBObject->{'DB::Type'} is invalid!",
         );
 
         return;
@@ -229,8 +229,8 @@ sub DataTransfer {
     # call DataTransfer on the specific backend
     return $SourceDBBackend->DataTransfer(
         OTRSDBObject   => $Param{OTRSDBObject},
-        OTOBODBObject  => $OTOBODBObject,
-        OTOBODBBackend => $Self->{$OTOBODBBackend},
+        CareOnCloud ESMDBObject  => $CareOnCloud ESMDBObject,
+        CareOnCloud ESMDBBackend => $Self->{$CareOnCloud ESMDBBackend},
         DBInfo         => $Param{OTRSDBSettings},
         Force          => $Param{Force},
     );

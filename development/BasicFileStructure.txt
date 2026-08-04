@@ -157,7 +157,7 @@ Basic file structure
 
 - scripts/database/careoncloud-schema.xml
     * Changed. Include new SysConfig tables
-- scripts/database/update/otobo-upgrade-to-6.xml
+- scripts/database/update/careoncloud-upgrade-to-6.xml
     * Changed. Include new SysConfig tables
 
  - Kernel/Console/Command/Dev/Migrate/XMLStructure.pm

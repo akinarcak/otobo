@@ -155,7 +155,7 @@ Returns:
         ChangeTime               => "2016-05-29 11:04:04",
         ChangeBy                 => 1,
         DefaultValue             => 'Old default value',
-        OverriddenFileName        => '/opt/otobo/Kernel/Config/Files/ZZZ.pm',
+        OverriddenFileName        => '/opt/careoncloud/Kernel/Config/Files/ZZZ.pm',
     );
 
 =cut
@@ -703,7 +703,7 @@ sub SettingUpdate {
     if (
         !$Param{IsValid}
         && !$Param{TargetUserID}
-        && $Self->can('UserSettingValueDelete')    # OTOBO Community Solution
+        && $Self->can('UserSettingValueDelete')    # CareOnCloud ESM Community Solution
         )
     {
         $Self->UserSettingValueDelete(
@@ -2115,7 +2115,7 @@ Returns:
 
     %Result = (
        'ACL::CacheTTL' => {
-            'Category' => 'OTOBO',
+            'Category' => 'CareOnCloud ESM',
             'IsInvisible' => '0',
             'Metadata' => "ACL::CacheTTL--- '3600'
 Cache-Zeit in Sekunden f\x{fc}r Datenbank ACL-Backends.",
@@ -2756,7 +2756,7 @@ Returns navigation tree in the hash format.
         RootNavigation         => 'Parent',     # (optional) If provided only sub groups of the root navigation are returned.
         UserModificationActive => 1,            # (optional) Return settings that can be modified on user level only.
         IsValid                => 1,            # (optional) By default, display all settings.
-        Category               => 'OTOBO'        # (optional)
+        Category               => 'CareOnCloud ESM'        # (optional)
     );
 
 Returns:
@@ -3606,7 +3606,7 @@ sub ConfigurationDeploy {
 
         # If setting is updated on global level, check all user specific settings, maybe it's needed
         #   to remove duplicates.
-        if ( $Self->can('UserConfigurationResetToGlobal') ) {    # OTOBO Community Solution
+        if ( $Self->can('UserConfigurationResetToGlobal') ) {    # CareOnCloud ESM Community Solution
 
             my @DeployedSettings;
             if ( $Param{DirtySettings} ) {
@@ -3792,7 +3792,7 @@ sub ConfigurationDeploySync {
         }
     }
 
-    # Sync also user specific settings, always available in OTOBO
+    # Sync also user specific settings, always available in CareOnCloud ESM
     $Self->UserConfigurationDeploySync();
 
     # then update the file system from S3 if S3 is active
@@ -4161,7 +4161,7 @@ sub ConfigurationDump {
             }
         }
 
-        if ( !$Param{SkipUserSettings} && $Self->can('UserConfigurationDump') ) {    # OTOBO Community Solution
+        if ( !$Param{SkipUserSettings} && $Self->can('UserConfigurationDump') ) {    # CareOnCloud ESM Community Solution
             my %UserSettings = $Self->UserConfigurationDump(
                 SettingList => \@SettingsList,
                 OnlyValues  => $Param{OnlyValues},
@@ -4309,7 +4309,7 @@ sub ConfigurationLoad {
 
         # Only deploy user specific settings;
         next SECTION if !$TargetUserID;
-        next SECTION if !$Self->can('UserConfigurationDeploy');    # OTOBO Community Solution
+        next SECTION if !$Self->can('UserConfigurationDeploy');    # CareOnCloud ESM Community Solution
 
         # Deploy user configuration requires another package to be installed.
         my $Success = $Self->UserConfigurationDeploy(
@@ -4400,7 +4400,7 @@ Returns a list of setting names.
 
     my @Result = $SysConfigObject->ConfigurationSearch(
         Search           => 'The search string', # (optional)
-        Category         => 'OTOBO'               # (optional)
+        Category         => 'CareOnCloud ESM'               # (optional)
         IncludeInvisible => 1,                   # (optional) Default 0.
     );
 
@@ -4493,8 +4493,8 @@ Returns:
             DisplayName => 'All Settings',
             Files => [],
         },
-        OTOBO => {
-            DisplayName => 'OTOBO',
+        CareOnCloud ESM => {
+            DisplayName => 'CareOnCloud ESM',
             Files       => ['Calendar.xml', CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml', 'ProcessManagement.xml', 'Ticket.xml' ],
         },
         # ...
@@ -4524,8 +4524,8 @@ sub ConfigurationCategoriesGet {
             DisplayName => Translatable('All Settings'),
             Files       => [],
         },
-        OTOBO => {
-            DisplayName => 'OTOBO',
+        CareOnCloud ESM => {
+            DisplayName => 'CareOnCloud ESM',
             Files       => [
                 'Calendar.xml',         'CloudServices.xml',     'Daemon.xml', 'Framework.xml',
                 'GenericInterface.xml', 'ProcessManagement.xml', 'Ticket.xml',
@@ -5697,7 +5697,7 @@ sub _EffectiveValues2PerlFile {
 
     # return content of Perl file that contain the SysConfig
     return <<"END_PERL_FILE";
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:2.0
 package $TargetPath;
 use strict;
@@ -6141,7 +6141,7 @@ Returns:
 
     %Result = (
        'ACL::CacheTTL' => {
-            'Category' => 'OTOBO',
+            'Category' => 'CareOnCloud ESM',
             'IsInvisible' => '0',
             'Metadata' => "ACL::CacheTTL--- '3600'
 Cache-Zeit in Sekunden f\x{fc}r Datenbank ACL-Backends.",

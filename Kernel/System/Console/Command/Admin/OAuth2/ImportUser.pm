@@ -120,7 +120,7 @@ sub Configure {
 
     $Self->AddOption(
         Name        => 'uid',
-        Description => "Specify the name of jwt token claim to be mapped to the Otobo UserLogin. Defaults to 'sub'",
+        Description => "Specify the name of jwt token claim to be mapped to the CareOnCloud UserLogin. Defaults to 'sub'",
         Required    => 0,
         HasValue    => 1,
         ValueRegex  => qr/.*/smx,
@@ -213,7 +213,7 @@ sub Run {
 
     $Self->Print( encode_json($TokenData) . "\n" );
 
-    # determine jwt clain to otobo UserLogin mapping
+    # determine jwt clain to careoncloud UserLogin mapping
     my $UserLogin = $TokenData->{$UID};
     if ( !$UserLogin ) {
 
@@ -250,7 +250,7 @@ sub Run {
         delete $UserData{UserID};
         delete $UserData{UserPw};
 
-        $UserData{UserFirstname} = $UserData{UserFirstname} || $TokenData->{azp}                || 'otobo';
+        $UserData{UserFirstname} = $UserData{UserFirstname} || $TokenData->{azp}                || 'careoncloud';
         $UserData{UserLastname}  = $UserData{UserLastname}  || $TokenData->{preferred_username} || 'bot';
         $UserData{UserEmail}     = $TokenData->{email}      || $UserData{UserEmail}             || 'systemuser@otobo.local';
 
@@ -368,10 +368,10 @@ sub _ExtractMap {
             !ref $Param{Data} ? ( $Param{Data} ) : ();
 
         for my $OpenIDAttribute (@Data) {
-            my $OTOBOAttribute = $Param{Map}{$OpenIDAttribute};
+            my $CareOnCloud ESMAttribute = $Param{Map}{$OpenIDAttribute};
 
-            if ($OTOBOAttribute) {
-                $Return{$OTOBOAttribute} = 1;
+            if ($CareOnCloud ESMAttribute) {
+                $Return{$CareOnCloud ESMAttribute} = 1;
             }
         }
     }

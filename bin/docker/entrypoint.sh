@@ -85,7 +85,7 @@ function exec_whatever() {
     exec $@
 }
 
-# Every 2 minutes try to start, or restart, the OTOBO Daemon.
+# Every 2 minutes try to start, or restart, the CareOnCloud ESM Daemon.
 # The Daemon will exit immediately when SecureMode = 0.
 # But this is OK, as Cron will restart it and it will run when SecureMode = 1.
 # Also gracefully handle the case when /opt/careoncloud is not populated yet.
@@ -117,7 +117,7 @@ function start_and_check_daemon() {
     done
 }
 
-# clean up the OTOBO daemon process
+# clean up the CareOnCloud ESM daemon process
 function stop_daemon() {
     if [ -f "bin/careoncloud.Daemon.pl" ]; then
         bin/careoncloud.Daemon.pl stop
@@ -192,14 +192,14 @@ function copy_careoncloud_next() {
     cp --no-clobber $CAREONCLOUD_HOME/Kernel/Config.pm.docker.dist $CAREONCLOUD_HOME/Kernel/Config.pm
 
     # Indicate the time when copy_careoncloud_next() was last called. This is used primarily
-    # for the OTOBO daemon who needs to know that /opt/careoncloud has been copied completely.
+    # for the CareOnCloud ESM daemon who needs to know that /opt/careoncloud has been copied completely.
     touch $CAREONCLOUD_HOME/.copy_careoncloud_next_finished
 }
 
 function do_update_tasks() {
 
     # Reinstall packages, rebuild config, purge the cache and the cached loader files.
-    # Note that this works only if OTOBO has been properly configured,
+    # Note that this works only if CareOnCloud ESM has been properly configured,
     # because some commands need access to the database.
     #
     # Note that Admin::Package::UpgradeAll does a cleanup of the SysConfig when all
@@ -253,7 +253,7 @@ END_HELP
     exit 0
 fi
 
-# Start the OTOBO daemon
+# Start the CareOnCloud ESM daemon
 if [ "$1" = "daemon" ]; then
 
     # When /opt/careoncloud isn't a Docker volume we first check whether the container is started with a new image.

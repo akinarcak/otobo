@@ -18,10 +18,10 @@
 # or see http://www.gnu.org/licenses/agpl.txt.
 # --
 
-# This file will be automatically found and used for the 'otobo' user if you have the
+# This file will be automatically found and used for the 'careoncloud' user if you have the
 #   'bash-completion' package installed. Otherwise you can source it in your ~/.bashrc like this:
 #
-# source /opt/otobo/.bash_completion
+# source /opt/careoncloud/.bash_completion
 
 # Get path to current file, follow symlinks
 THIS_FILE=$BASH_SOURCE
@@ -29,8 +29,8 @@ if [ -L $THIS_FILE ]; then
     THIS_FILE=`readlink $THIS_FILE`;
 fi
 
-# Remove : from wordbreak delimiter because OTOBO uses it in the command names
+# Remove : from wordbreak delimiter because CareOnCloud ESM uses it in the command names
 COMP_WORDBREAKS=${COMP_WORDBREAKS//:/}
 
 # Configure bash completion
-complete -C "$(dirname $THIS_FILE)/bin/otobo.Console.pl" otobo.Console.pl
+complete -C "$(dirname $THIS_FILE)/bin/careoncloud.Console.pl" careoncloud.Console.pl

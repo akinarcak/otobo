@@ -358,7 +358,7 @@ my $ModuleRefreshMiddleware = sub {
             $LastRefreshTime = $Now;
 
             # refresh modules,
-            # igoring non-OTOBO modules, Kernel/Config.pm and the module files in Kernel/Config/Files
+            # igoring non-CareOnCloud ESM modules, Kernel/Config.pm and the module files in Kernel/Config/Files
             MODULE:
             for my $Module ( sort keys %INC ) {
                 next MODULE unless $Module =~ m[^(?:Kernel|var/packagesetup)/];

@@ -147,7 +147,7 @@ switch ($Action) {
         $HttpPort = Get-EnvironmentValue -Name 'D724_HTTP_PORT' -Default '8080'
         Invoke-RestMethod -Uri "http://127.0.0.1:$HttpPort/health" -TimeoutSec 10 | Out-Null
         Invoke-Compose exec -T web bin/careoncloud.Console.pl Maint::Config::Rebuild
-        Write-Host 'HTTP health and OTOBO console smoke checks passed.'
+        Write-Host 'HTTP health and CareOnCloud ESM console smoke checks passed.'
     }
     'Logs' {
         Invoke-Compose logs --follow --tail 200 web daemon

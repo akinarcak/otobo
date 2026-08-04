@@ -58,13 +58,13 @@ sub Configure {
     );
     $Self->AddOption(
         Name        => 'debug',
-        Description => "Print debug info to the OTOBO log.",
+        Description => "Print debug info to the CareOnCloud ESM log.",
         Required    => 0,
         HasValue    => 0,
     );
 
     $Self->AdditionalHelp(
-        "This script only runs file based generic agent jobs, database based jobs are handled by the OTOBO Daemon."
+        "This script only runs file based generic agent jobs, database based jobs are handled by the CareOnCloud ESM Daemon."
     );
 
     return;

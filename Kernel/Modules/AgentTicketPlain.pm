@@ -118,7 +118,7 @@ sub Run {
         =~ s/^((X-Mailer|User-Agent|X-OS):.*(Mozilla|Win?|Outlook|Microsoft|Internet Mail Service).*)/<span class="Error">$1<\/span>/gmi;
     $Plain =~ s/^((Resent-.*):.*)/<span class="Error">$1<\/span>/gmi;
     $Plain =~ s/^(From .*)/<span class="Error">$1<\/span>/gm;
-    $Plain =~ s/^(X-OTOBO.*)/<span class="Error">$1<\/span>/gmi;
+    $Plain =~ s/^(X-CareOnCloud ESM.*)/<span class="Error">$1<\/span>/gmi;
 
     return join '',
         $LayoutObject->Header(

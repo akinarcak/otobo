@@ -39,7 +39,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-scripts::DBUpdateTo11_1::UninstallMergedPackages - Uninstalls code that was merged from packages into OTOBO.
+scripts::DBUpdateTo11_1::UninstallMergedPackages - Uninstalls code that was merged from packages into CareOnCloud ESM.
 
 =cut
 

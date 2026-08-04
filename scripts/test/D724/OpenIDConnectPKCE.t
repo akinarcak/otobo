@@ -21,7 +21,7 @@ my $URL = $OAuth2->GetAuthURL(
     ClientID              => 'careoncloud-client',
     Scope                 => 'openid profile email',
     ResponseType          => ['code'],
-    RedirectURL           => 'https://esm.example.invalid/otobo/index.pl',
+    RedirectURL           => 'https://esm.example.invalid/careoncloud/index.pl',
     State                 => 'state-value',
     CodeChallenge         => $Challenge,
     CodeChallengeMethod   => 'S256',
@@ -37,7 +37,7 @@ ok(
         ClientID              => 'careoncloud-client',
         Scope                 => 'openid',
         ResponseType          => ['code'],
-        RedirectURL           => 'https://esm.example.invalid/otobo/index.pl',
+        RedirectURL           => 'https://esm.example.invalid/careoncloud/index.pl',
         State                 => 'state-value',
         CodeChallenge         => $Challenge,
         CodeChallengeMethod   => 'plain',
@@ -60,7 +60,7 @@ my $CapturedPostData;
         ClientSecret  => 'client-secret',
         GrantType     => 'authorization_code',
         Code          => 'authorization-code',
-        RedirectURL   => 'https://esm.example.invalid/otobo/index.pl',
+        RedirectURL   => 'https://esm.example.invalid/careoncloud/index.pl',
         CodeVerifier  => $Verifier,
     );
     ok( $Token->{Success}, 'authorization code exchange succeeds' );
@@ -81,7 +81,7 @@ my $SendCalled = 0;
         ClientSecret  => 'client-secret',
         GrantType     => 'authorization_code',
         Code          => 'authorization-code',
-        RedirectURL   => 'https://esm.example.invalid/otobo/index.pl',
+        RedirectURL   => 'https://esm.example.invalid/careoncloud/index.pl',
         CodeVerifier  => 'too-short',
     );
     ok( !$Token->{Success}, 'invalid verifier is rejected' );
@@ -104,7 +104,7 @@ my $Forwarded;
         CodeVerifier      => $Verifier,
         ClientSettings    => {
             ClientID => 'careoncloud-client', ClientSecret => 'client-secret',
-            RedirectURI => 'https://esm.example.invalid/otobo/index.pl',
+            RedirectURI => 'https://esm.example.invalid/careoncloud/index.pl',
         },
         ProviderSettings => { OpenIDConfiguration => 'https://login.example.invalid/.well-known/openid-configuration' },
     );

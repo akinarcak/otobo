@@ -76,7 +76,7 @@ sub Run {
         $LayoutObject->ChallengeTokenCheck();
 
         # Lock process with PID to prevent race conditions with console command
-        # Maint::PostMaster::MailAccountFetch executed by the OTOBO daemon or manually.
+        # Maint::PostMaster::MailAccountFetch executed by the CareOnCloud ESM daemon or manually.
         # Please see bug#13235
         my $PIDObject = $Kernel::OM->Get('Kernel::System::PID');
 
@@ -289,7 +289,7 @@ sub Run {
         # if no errors occurred
         if ( !%Errors ) {
 
-            if ( $GetParam{Password} eq 'otobo-dummy-password-placeholder' ) {
+            if ( $GetParam{Password} eq 'careoncloud-dummy-password-placeholder' ) {
                 my %OriginalData = $MailAccount->MailAccountGet(%GetParam);
                 $GetParam{Password} = $OriginalData{Password};
             }

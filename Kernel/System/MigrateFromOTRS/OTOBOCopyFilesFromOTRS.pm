@@ -40,7 +40,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::MigrateFromOTRS::OTOBOCopyFilesFromOTRS - Copy and migrate OTRS files to OTOBO server
+Kernel::System::MigrateFromOTRS::OTOBOCopyFilesFromOTRS - Copy and migrate OTRS files to CareOnCloud ESM server
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ Kernel::System::MigrateFromOTRS::OTOBOCopyFilesFromOTRS - Copy and migrate OTRS 
 =head1 DESCRIPTION
 
 License headers of the copied files are adapted.
-The file F<Kernel/Config.pm> is also adapted for use with OTOBO.
+The file F<Kernel/Config.pm> is also adapted for use with CareOnCloud ESM.
 
 =head1 PUBLIC INTERFACE
 
@@ -77,7 +77,7 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     # For error and progress messages
-    my $Message = 'Copy and migrate files from OTRS to OTOBO';
+    my $Message = 'Copy and migrate files from OTRS to CareOnCloud ESM';
 
     # Set cache object with taskinfo and starttime to show current state in frontend
     {
@@ -88,7 +88,7 @@ sub Run {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'OTOBOCopyFilesFromOTRS',
+                Task      => 'CareOnCloud ESMCopyFilesFromOTRS',
                 SubTask   => $Message,
                 StartTime => $StartTime,
             },
@@ -167,14 +167,14 @@ sub Run {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # Now we copy and clean the files in for{}
-    my $OTOBOHome = $ConfigObject->Get('Home');
+    my $CareOnCloud ESMHome = $ConfigObject->Get('Home');
     FILE:
     for my $File (@FileList) {
 
-        my $OTOBOPathFile = File::Spec->catfile( $OTOBOHome, $File );
+        my $CareOnCloud ESMPathFile = File::Spec->catfile( $CareOnCloud ESMHome, $File );
         my $OTRSPathFile  = File::Spec->catfile( $OTRS6path, $File );
 
-        # First we copy the file from OTRS HOME to OTOBO HOME
+        # First we copy the file from OTRS HOME to CareOnCloud ESM HOME
         next FILE unless -e $OTRSPathFile;
 
         {
@@ -183,24 +183,24 @@ sub Run {
             # We copy only the content, if OTRS exists on localhost, otherwise we move the content from tmp
             if ( -f $OTRSPathFile ) {
                 if ( $Param{OTRSData}->{OTRSLocation} eq 'localhost' ) {
-                    $ExitCode = system("cp $OTRSPathFile $OTOBOPathFile");
+                    $ExitCode = system("cp $OTRSPathFile $CareOnCloud ESMPathFile");
                 }
                 else {
-                    $ExitCode = system("mv $OTRSPathFile $OTOBOPathFile");
+                    $ExitCode = system("mv $OTRSPathFile $CareOnCloud ESMPathFile");
                 }
 
             }
             elsif ( -d $OTRSPathFile ) {
                 if ( $Param{OTRSData}->{OTRSLocation} eq 'localhost' ) {
-                    $ExitCode = system("cp -r $OTRSPathFile/* $OTOBOPathFile");
+                    $ExitCode = system("cp -r $OTRSPathFile/* $CareOnCloud ESMPathFile");
                 }
                 else {
-                    $ExitCode = system("mv $OTRSPathFile/* $OTOBOPathFile");
+                    $ExitCode = system("mv $OTRSPathFile/* $CareOnCloud ESMPathFile");
                 }
             }
 
             if ( $ExitCode && $ExitCode != 0 && $ExitCode != 256 ) {
-                print STDERR "EXIT: $ExitCode \n OTRSPath: $OTRSPathFile\n OTOBO: $OTOBOPathFile\n ";
+                print STDERR "EXIT: $ExitCode \n OTRSPath: $OTRSPathFile\n CareOnCloud ESM: $CareOnCloud ESMPathFile\n ";
 
                 return {
                     Message    => $Self->{LanguageObject}->Translate($Message),
@@ -214,18 +214,18 @@ sub Run {
         next FILE if $DoNotClean{$File};
 
         # We need to clean files inside a directory
-        if ( -d $OTOBOPathFile ) {
+        if ( -d $CareOnCloud ESMPathFile ) {
 
             # Clean license header
             $Self->CleanLicenseHeaderInDir(
-                Path      => $OTOBOPathFile,
+                Path      => $CareOnCloud ESMPathFile,
                 Filter    => '*',
                 Recursive => 1,
                 UserID    => 1,
             );
 
-            $Self->CleanOTRSFilesToOTOBOStyleInDir(
-                Path      => $OTOBOPathFile,
+            $Self->CleanOTRSFilesToCareOnCloud ESMStyleInDir(
+                Path      => $CareOnCloud ESMPathFile,
                 Filter    => '*',
                 Recursive => 1,
                 UserID    => 1,
@@ -233,39 +233,39 @@ sub Run {
         }
 
         # We need to copy only a single file
-        elsif ( -f $OTOBOPathFile ) {
+        elsif ( -f $CareOnCloud ESMPathFile ) {
 
             $Self->CleanLicenseHeader(
-                File   => $OTOBOPathFile,
+                File   => $CareOnCloud ESMPathFile,
                 UserID => 1,
             );
 
-            $Self->CleanOTRSFileToOTOBOStyle(
-                File   => $OTOBOPathFile,
+            $Self->CleanOTRSFileToCareOnCloud ESMStyle(
+                File   => $CareOnCloud ESMPathFile,
                 UserID => 1,
             );
         }
 
         # At last we need to reconfigure basic settings in Kernel/Config.pm.
-        # Some of the setting of the OTOBO Kernel/Config.pm should reinjected in the file copied from OTRS.
+        # Some of the setting of the CareOnCloud ESM Kernel/Config.pm should reinjected in the file copied from OTRS.
         # Note that the original setup with variables won't be preserved. E.g.
         #     $Self->{'DatabaseDSN'} = "DBI:Pg:dbname=$Self->{Database};host=$Self->{DatabaseHost}";
-        # in the original OTOBO Kernel/Config.pm will end up as
-        #     $Self->{'DatabaseDSN'} = "DBI:MariaDB:database=otobo;host=127.0.0.1;"; # from original OTOBO config
+        # in the original CareOnCloud ESM Kernel/Config.pm will end up as
+        #     $Self->{'DatabaseDSN'} = "DBI:MariaDB:database=careoncloud;host=127.0.0.1;"; # from original CareOnCloud ESM config
         # after the migration.
-        if ( $OTOBOPathFile =~ m/Config\.pm/ ) {
+        if ( $CareOnCloud ESMPathFile =~ m/Config\.pm/ ) {
 
             # remember the current basic settings, Database and installation dir
-            my %OTOBOParams = map { $_ => $ConfigObject->Get($_) } qw(DatabaseHost Database DatabaseUser DatabasePw DatabaseDSN Home);
+            my %CareOnCloud ESMParams = map { $_ => $ConfigObject->Get($_) } qw(DatabaseHost Database DatabaseUser DatabasePw DatabaseDSN Home);
 
             # inject extra settings in the Docker case, see also Kernel/Config.pm.dist.docker
             my $DockerSpecificSettings = $ENV{OTOBO_RUNS_UNDER_DOCKER} ? <<'END_SETTINGS' : undef;
 
     # ---------------------------------------------------- #
-    # setting for running OTOBO under Docker, injected by OTOBOCopyFilesFromOTRS
+    # setting for running CareOnCloud ESM under Docker, injected by CareOnCloud ESMCopyFilesFromOTRS
     # ---------------------------------------------------- #
     $Self->{'LogModule'}                   = 'Kernel::System::Log::File';
-    $Self->{'LogModule::LogFile'}          = '/opt/otobo/var/log/otobo.log';
+    $Self->{'LogModule::LogFile'}          = '/opt/careoncloud/var/log/careoncloud.log';
     $Self->{'Cache::Module'}               = 'Kernel::System::Cache::Redis';
     $Self->{'Cache::Redis'}->{'RedisFast'} = 1;
     $Self->{'Cache::Redis'}->{'Server'}    = 'redis:6379';
@@ -284,7 +284,7 @@ sub Run {
 END_SETTINGS
 
             $Self->ReConfigure(
-                %OTOBOParams,
+                %CareOnCloud ESMParams,
                 ExtraSettings => $DockerSpecificSettings
             );
         }
@@ -351,9 +351,9 @@ sub ReConfigure {
                 $OTRSHomeFromConfigFile = $1;
             }
 
-            # Replace OTRS path with OTOBO path, usually /opt/otrs with /opt/otobo.
+            # Replace OTRS path with CareOnCloud ESM path, usually /opt/otrs with /opt/careoncloud.
             # This can be useful when e.g.  LogModule::LogFile is set to '/opt/otrs/var/log/otrs.log'
-            # Remember that CleanOTRSFileToOTOBOStyle() has an excemption for Config.pm, so that /opt/otrs is still in the file.
+            # Remember that CleanOTRSFileToCareOnCloud ESMStyle() has an excemption for Config.pm, so that /opt/otrs is still in the file.
             # Attention: this assumes that custom settings come after the standard settings
             # Attention: this is an heuristic that won't give useful results for all installations.
             if ($OTRSHomeFromConfigFile) {
@@ -363,7 +363,7 @@ sub ReConfigure {
             # Need to comment out SecureMode, as it should be configured in the SysConfig
             if ( $ChangedLine =~ m/SecureMode/ ) {
                 chomp $ChangedLine;
-                $Config .= "# $ChangedLine  commented out by OTOBOCopyFilesFromOTRS\n";
+                $Config .= "# $ChangedLine  commented out by CareOnCloud ESMCopyFilesFromOTRS\n";
 
                 next LINE;
             }
@@ -376,14 +376,14 @@ sub ReConfigure {
                 #   same goes for database hosts which can be like 'myserver\instance name' for MS SQL.
                 if ( $Key eq 'DatabasePw' || $Key eq 'DatabaseHost' ) {
                     $ChangedLine =~
-                        s/(\$Self->\{\s*("|'|)$Key("|'|)\s*}\s+=.+?('|"));/\$Self->{'$Key'} = '$Param{$Key}'; # from original OTOBO config /g;
+                        s/(\$Self->\{\s*("|'|)$Key("|'|)\s*}\s+=.+?('|"));/\$Self->{'$Key'} = '$Param{$Key}'; # from original CareOnCloud ESM config /g;
 
                     next CONFIGKEY;
                 }
 
                 # other setting double quoted
                 $ChangedLine =~
-                    s/(\$Self->\{\s*("|'|)$Key("|'|)\s*}\s+=.+?('|"));/\$Self->{'$Key'} = "$Param{$Key}"; # from original OTOBO config /g;
+                    s/(\$Self->\{\s*("|'|)$Key("|'|)\s*}\s+=.+?('|"));/\$Self->{'$Key'} = "$Param{$Key}"; # from original CareOnCloud ESM config /g;
             }
             $Config .= $ChangedLine;
 

@@ -1,4 +1,4 @@
-# This is the build file for the OTOBO selenium-chrome Docker image.
+# This is the build file for the CareOnCloud ESM selenium-chrome Docker image.
 
 # See bin/docker/build_docker_images.sh for how to build locally.
 # See also https://doc.otobo.org/manual/installation/10.1/en/content/installation-docker.html

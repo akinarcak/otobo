@@ -85,7 +85,7 @@ sub _ShowOverview {
 
         if ( !$CloudServiceList{$CloudService}->{Name} || !$CloudServiceList{$CloudService}->{ConfigDialog} ) {
 
-            # write an error message to the OTOBO log
+            # write an error message to the CareOnCloud ESM log
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  => "Configuration of CloudService $CloudService is invalid!",

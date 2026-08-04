@@ -36,12 +36,12 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::AsynchronousExecutor - base class to delegate tasks to the OTOBO Scheduler Daemon
+Kernel::System::AsynchronousExecutor - base class to delegate tasks to the CareOnCloud ESM Scheduler Daemon
 
 =head1 DESCRIPTION
 
 ObjectManager controlled modules can add this base class to execute some time consuming tasks in the
-background using the separate process OTOBO Scheduler Daemon.
+background using the separate process CareOnCloud ESM Scheduler Daemon.
 
 =head1 PUBLIC INTERFACE
 

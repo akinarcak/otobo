@@ -50,15 +50,15 @@ my $BaseURL = join '',
     '://',
     $Helper->GetTestHTTPHostname;
 
-diag('otobo/index.pl and otobo/customer.pl are not redirected');
+diag('careoncloud/index.pl and careoncloud/customer.pl are not redirected');
 http_request(
-    [ GET("$BaseURL/otobo/index.pl") ],
+    [ GET("$BaseURL/careoncloud/index.pl") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/customer.pl") ],
+    [ GET("$BaseURL/careoncloud/customer.pl") ],
     http_response {
         http_is_success();
     },
@@ -66,13 +66,13 @@ http_request(
 
 diag('trailing slash is accepted too');
 http_request(
-    [ GET("$BaseURL/otobo/index.pl/") ],
+    [ GET("$BaseURL/careoncloud/index.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/customer.pl/") ],
+    [ GET("$BaseURL/careoncloud/customer.pl/") ],
     http_response {
         http_is_success();
     },
@@ -80,37 +80,37 @@ http_request(
 
 diag('double slash is fine');
 http_request(
-    [ GET("$BaseURL/otobo//index.pl/") ],
+    [ GET("$BaseURL/careoncloud//index.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo//customer.pl/") ],
+    [ GET("$BaseURL/careoncloud//customer.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL//otobo/index.pl/") ],
+    [ GET("$BaseURL//careoncloud/index.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL//otobo/customer.pl/") ],
+    [ GET("$BaseURL//careoncloud/customer.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/index.pl//") ],
+    [ GET("$BaseURL/careoncloud/index.pl//") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/customer.pl//") ],
+    [ GET("$BaseURL/careoncloud/customer.pl//") ],
     http_response {
         http_is_success();
     },
@@ -118,13 +118,13 @@ http_request(
 
 diag('many slashes are squashed too');
 http_request(
-    [ GET("$BaseURL////otobo//////////index.pl////////////") ],
+    [ GET("$BaseURL////careoncloud//////////index.pl////////////") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL////otobo//////////customer.pl////////////") ],
+    [ GET("$BaseURL////careoncloud//////////customer.pl////////////") ],
     http_response {
         http_is_success();
     },
@@ -132,7 +132,7 @@ http_request(
 
 # a counter example
 http_request(
-    [ GET("$BaseURL/otobo/ /customer.pl") ],
+    [ GET("$BaseURL/careoncloud/ /customer.pl") ],
     http_response {
         http_isnt_success();
         http_is_redirect();

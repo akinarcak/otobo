@@ -883,13 +883,13 @@ gets a complete ACL information dump from the DB
 
     my $ACLDump = $ACLObject->ACLDump(
         ResultType  => 'FILE'                                      # default is 'FILE', only 'FILE' is supported
-        Location    => '/opt/otobo/Kernel/Config/Files/ZZZACL.pm', # mandatory for ResultType = 'FILE'
+        Location    => '/opt/careoncloud/Kernel/Config/Files/ZZZACL.pm', # mandatory for ResultType = 'FILE'
         UserID      => 1,                                          # checked, but not really used
     );
 
 Returns:
 
-    $ACLDump = '/opt/otobo/Kernel/Config/Files/ZZZACL.pm';         # or undef if can't write the file
+    $ACLDump = '/opt/careoncloud/Kernel/Config/Files/ZZZACL.pm';         # or undef if can't write the file
 
 or in case of S3 support
 
@@ -924,7 +924,7 @@ sub ACLDump {
     }
 
     my $PMFileOutput = <<~'END_PM_FILE';    ## nofilter(TidyAll::Plugin::OTOBO::Perl::SyntaxCheck)
-    # OTOBO config file (automatically generated)
+    # CareOnCloud ESM config file (automatically generated)
     # VERSION:1.1
     package Kernel::Config::Files::ZZZACL;
     use strict;
@@ -1023,7 +1023,7 @@ END_PM_FILE
 
     if ( $Self->{S3Active} ) {
 
-        # remove the leading /opt/otobo as the home prefix is added automatically in the S3 storage object
+        # remove the leading /opt/careoncloud as the home prefix is added automatically in the S3 storage object
         my $Home        = $Kernel::OM->Get('Kernel::Config')->Get('Home');
         my $ZZZFilePath = $Param{Location};
         $ZZZFilePath =~ s{^$Home/*}{};

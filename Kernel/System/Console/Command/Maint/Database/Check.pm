@@ -30,7 +30,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Check OTOBO database connectivity.');
+    $Self->Description('Check CareOnCloud ESM database connectivity.');
     $Self->AddOption(
         Name        => 'repair',
         Description => 'Repairs invalid database schema (like deleting invalid default values for datetime fields).',
@@ -94,7 +94,7 @@ sub _CheckMySQLDefaultStorageEngine {
     return 1 if $DBObject->{'DB::Type'} ne 'mysql';
 
     # Check for common MySQL issue where default storage engine is different
-    #   from initial OTOBO table; this can happen when MySQL is upgraded from
+    #   from initial CareOnCloud ESM table; this can happen when MySQL is upgraded from
     #   5.1 > 5.5.
     # Default storage engine variable has changed its name in MySQL 5.5.3, we need to support both of them for now.
     #   <= 5.5.2 storage_engine

@@ -1,4 +1,4 @@
-nv.models.OTOBOstackedAreaChart = function() {
+nv.models.CareOnCloud ESMstackedAreaChart = function() {
     "use strict";
 
     //============================================================
@@ -23,7 +23,7 @@ nv.models.OTOBOstackedAreaChart = function() {
         , showYAxis = true
         , rightAlignYAxis = false
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
         , reduceXTicks = true
         , staggerLabels = false
@@ -33,7 +33,7 @@ nv.models.OTOBOstackedAreaChart = function() {
         , tooltip = function(key, x, y, e, graph) {
             return '<h3>' + key + '</h3>' +
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                '<p>' +  y + ' on ' + x + '</p>'
                 '<p>' +  y + ' - ' + x + '</p>'
@@ -45,7 +45,7 @@ nv.models.OTOBOstackedAreaChart = function() {
         , state = nv.utils.state()
         , defaultState = null
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //        , noData = 'No Data Available.'
         , noData = Core.Language.Translate('No Data Available.')
@@ -53,7 +53,7 @@ nv.models.OTOBOstackedAreaChart = function() {
         , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState','renderEnd')
         , controlWidth = 250
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //        , cData = ['Stacked','Stream','Expanded']
         , cData = [ Core.Language.Translate('Stacked'), Core.Language.Translate('Stream'), Core.Language.Translate('Expanded') ]
@@ -64,7 +64,7 @@ nv.models.OTOBOstackedAreaChart = function() {
 
     state.style = stacked.style();
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //    xAxis.orient('bottom').tickPadding(7);
     xAxis.orient('bottom').tickPadding(7).showMaxMin(false);
@@ -126,7 +126,7 @@ nv.models.OTOBOstackedAreaChart = function() {
                 availableHeight = (height || parseInt(container.style('height')) || 400)
                     - margin.top - margin.bottom;
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
             // Create exception when switching from mobile to desktop view to have appropriate width. See bug#14419.
             if ( container.style('width') === '100%' ) {
@@ -215,7 +215,7 @@ nv.models.OTOBOstackedAreaChart = function() {
                 var controlsData = [
                     {
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                        key: controlLabels.stacked || 'Stacked',
 //                        metaKey: 'Stacked',
@@ -227,7 +227,7 @@ nv.models.OTOBOstackedAreaChart = function() {
                     },
                     {
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                        key: controlLabels.stream || 'Stream',
 //                        metaKey: 'Stream',
@@ -239,7 +239,7 @@ nv.models.OTOBOstackedAreaChart = function() {
                     },
                     {
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                        key: controlLabels.expanded || 'Expanded',
 //                        metaKey: 'Expanded',
@@ -320,7 +320,7 @@ nv.models.OTOBOstackedAreaChart = function() {
                     .transition().duration(0)
                     .call(xAxis);
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
                 var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
 
@@ -569,7 +569,7 @@ nv.models.OTOBOstackedAreaChart = function() {
         showControls:    {get: function(){return showControls;}, set: function(_){showControls=_;}},
         controlLabels:    {get: function(){return controlLabels;}, set: function(_){controlLabels=_;}},
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
         reduceXTicks:    {get: function(){return reduceXTicks;}, set: function(_){reduceXTicks=_;}},
         staggerLabels:    {get: function(){return staggerLabels;}, set: function(_){staggerLabels=_;}},

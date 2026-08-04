@@ -118,7 +118,7 @@
                         <div class="Field">
                             <input type="text" readonly class="W50pc" id="OperationTypeDisplay" value="[% Data.OperationType | html %]" />
                             <p class="FieldExplanation">
-                                [% Translate("This OTOBO operation backend module will be called internally to process the request, generating data for the response.") | html %]
+                                [% Translate("This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.") | html %]
                             </p>
                         </div>
                         <div class="Clear"></div>
@@ -131,7 +131,7 @@
                             <button type="button" class="HideOnChange CallForAction Inline" id="MappingInboundConfigureButton" value="[% Translate("Configure") | html %]"><span>[% Translate("Configure") | html %]</span></button>
 [% RenderBlockEnd("MappingInboundConfigureButton") %]
                             <p class="FieldExplanation">
-                                [% Translate("The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.") | html %]
+                                [% Translate("The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.") | html %]
                             </p>
                         </div>
                         <div class="Clear"></div>

@@ -169,7 +169,7 @@ sub new {
     $Self->{SessionID}   = $Param{SessionID}   || '';
     $Self->{SessionName} = $Param{SessionName} || 'SessionID';
 
-    # Baselink is a local link like /otobo/index.pl?
+    # Baselink is a local link like /careoncloud/index.pl?
     $Self->{CGIHandle} = $ParamObject->ScriptName || 'No-$ENV{"SCRIPT_NAME"}';
     $Self->{Baselink}  = $Self->{CGIHandle} . '?';
 
@@ -984,7 +984,7 @@ sub FatalError {
     # uses core::length() for determining the content length.
     $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Output );
 
-    # The OTOBO response object already has the HTPP headers.
+    # The CareOnCloud ESM response object already has the HTPP headers.
     # Enhance it with the HTTP status code and the content.
     my $ErrorResponse = Plack::Response->new(
         200,
@@ -3375,8 +3375,8 @@ sub NavigationBar {
         Data         => \%Param,
     );
 
-    # Run nav bar output modules. Nav bar output are not used in OTOBO core,
-    # but can be used by OTOBO packages. The output of a nav bar output module
+    # Run nav bar output modules. Nav bar output are not used in CareOnCloud ESM core,
+    # but can be used by CareOnCloud ESM packages. The output of a nav bar output module
     # is spliced in between the main menu and the notification.
     my $NavBarOutputModuleConfig = $ConfigObject->Get('Frontend::NavBarOutputModule');
     if ( ref $NavBarOutputModuleConfig eq 'HASH' ) {
@@ -3457,7 +3457,7 @@ sub TransformDateSelection {
     my $Prefix = $Param{Prefix} || '';
 
     # time zone translation if needed
-    # from user time zone to OTOBO time zone
+    # from user time zone to CareOnCloud ESM time zone
     if ( $Self->{UserTimeZone} ) {
         my $DateTimeObject = $Kernel::OM->Create(
             'Kernel::System::DateTime',
@@ -3473,7 +3473,7 @@ sub TransformDateSelection {
         );
 
         if ($DateTimeObject) {
-            $DateTimeObject->ToOTOBOTimeZone();
+            $DateTimeObject->ToCareOnCloud ESMTimeZone();
             my $DateTimeValues = $DateTimeObject->Get();
 
             $Param{ $Prefix . 'Year' }   = $DateTimeValues->{Year};
@@ -4218,7 +4218,7 @@ sub CustomerLogin {
     );
 
     my $BGConfig = $ConfigObject->Get('CustomerLogin::Settings');
-    $Param{LoginText}  = $BGConfig->{LoginText} // 'Your Tickets. Your OTOBO.';
+    $Param{LoginText}  = $BGConfig->{LoginText} // 'Your Tickets. Your CareOnCloud ESM.';
     $Param{Background} = $BGConfig->{Background} || '';
     $Param{Background} =~ s{<OTOBO_CONFIG_(.+?)>}{$ConfigObject->Get($1)}egx;
 
@@ -4566,7 +4566,7 @@ sub CustomerFatalError {
     # uses core::length() for determining the content length.
     $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Output );
 
-    # The OTOBO response object already has the HTPP headers.
+    # The CareOnCloud ESM response object already has the HTPP headers.
     # Enhance it with the HTTP status code and the content.
     my $PlackResponse = Plack::Response->new(
         200,
@@ -4818,7 +4818,7 @@ sub CustomerNavigationBar {
             }
         }
 
-        # use the round OTOBO O as the default icon
+        # use the round CareOnCloud ESM O as the default icon
         if ( !$SVGString ) {
             $SVGString =
 
@@ -5075,7 +5075,7 @@ sub PublicFatalError {
     # uses core::length() for determining the content length.
     $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Output );
 
-    # The OTOBO response object already has the HTPP headers.
+    # The CareOnCloud ESM response object already has the HTPP headers.
     # Enhance it with the HTTP status code and the content.
     my $PlackResponse = Plack::Response->new(
         200,
@@ -6718,7 +6718,7 @@ Declare a cookie that should be sent out via the Set-Cookie HTTP header.
         Name         => 'Name',      # optional, name of the cookie, the default is the value of 'Key'
         Value        => 123456,      # value
         Expires      => '+3660s',    # expires
-        Path         => '/otobo/',   # path optional, only allow cookie for given path
+        Path         => '/careoncloud/',   # path optional, only allow cookie for given path
         Secure       => 1,           # 0|1, optional, set secure attribute to disable cookie on HTTP (HTTPS only)
         SameSite     => 'lax',       # none|lax|strict, optional, sets samesite attribute of cookie
         HTTPOnly     => 1,           # 1|'', optional, the default is 1, sets httponly attribute of cookie to prevent access via JavaScript
@@ -6739,7 +6739,7 @@ This method may be called via the package name when C<RegisterInOM> is active.
 
    Kernel::Output::HTML::Layout->SetCookie(
        RegisterInOM => 1,
-       Key          => 'CookieForOTOBOSessionID',
+       Key          => 'CookieForCareOnCloud ESMSessionID',
        Name         => $Param{SessionName},
        Value        => $NewSessionID,
        Expires      => $Expires,

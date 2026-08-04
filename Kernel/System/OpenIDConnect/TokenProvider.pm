@@ -538,7 +538,7 @@ Build the URL to request an authorization code.
 Example:
     my $AuthURL = $TokenProviderObject->GetAuthURL(
         AccountName => '<FunctionalAccountName>',
-        RedirectURI => 'https://your.otobo.url/otobo/index.pl?Action=AdminOAuthTokenStore&Subaction=OAuth',
+        RedirectURI => 'https://your.careoncloud.url/careoncloud/index.pl?Action=AdminOAuthTokenStore&Subaction=OAuth',
         Nonce => $Nonce, # optional
         State => $State, # optional, uses this state instead of random string (for testing)
     );

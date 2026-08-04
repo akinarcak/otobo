@@ -14,7 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-#SYS_HOME=/opt/otobo/
+#SYS_HOME=/opt/careoncloud/
 SYS_HOME=$HOME
 
 SHELL=/bin/sh
@@ -26,7 +26,7 @@ VERBOSE=on
 COMSAT=no
 
 
-# Remove all X-OTOBO Header (allow this only for trusted email)
+# Remove all X-CareOnCloud ESM Header (allow this only for trusted email)
 # e. g. from *@example.com
 
 :0 fhw :
@@ -77,7 +77,7 @@ COMSAT=no
 # Pipe all email into the PostMaster process.
 
 :0 w
-| $SYS_HOME/bin/otobo.Console.pl Maint::PostMaster::Read
+| $SYS_HOME/bin/careoncloud.Console.pl Maint::PostMaster::Read
 
 
 # Spool all the rest (which the console command 'Maint::PostMaster::Read' can't process!)

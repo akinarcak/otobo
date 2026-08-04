@@ -138,7 +138,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###001-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -152,7 +152,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###002-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -166,7 +166,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###003-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -179,7 +179,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###004-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -192,7 +192,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###005-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -205,7 +205,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###006-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -218,7 +218,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###007-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -231,7 +231,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###008-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -244,7 +244,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###009-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -257,7 +257,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###010-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -270,7 +270,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###011-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -283,7 +283,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###012-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -296,7 +296,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###013-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -309,7 +309,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###014-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -322,7 +322,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###015-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -335,7 +335,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###016-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -348,7 +348,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###017-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -361,7 +361,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###018-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -374,7 +374,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###019-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -387,7 +387,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###020-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -400,7 +400,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###021-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -413,7 +413,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###022-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -426,7 +426,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###023-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -439,7 +439,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###024-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>
@@ -452,7 +452,7 @@
         </Value>
     </Setting>
     <Setting Name="ImportExport::Ticket::ImportValueMap###025-Custom" Required="0" Valid="0">
-        <Description Translatable="1">Value map. Define a key and a value map from import file to OTOBO.</Description>
+        <Description Translatable="1">Value map. Define a key and a value map from import file to CareOnCloud ESM.</Description>
         <Navigation>Core::ImportExport::ObjectBackend::Ticket::ImportValueMaps</Navigation>
         <Value>
             <Hash>

@@ -156,7 +156,7 @@ ul.Tablelike li.Header + li {
      *   auto, content long enough to trigger the horizontal scroll and a hover style set
      *   on elements inside the container.
      *   The container mysteriously increases in size.
-     *   (e.g. if you have installed OTOBODashboardOverviewFilters and many dynamic fields are
+     *   (e.g. if you have installed CareOnCloud ESMDashboardOverviewFilters and many dynamic fields are
      *   shown in the dashboard.)
      */
     min-height: 0%;

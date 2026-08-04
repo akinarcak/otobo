@@ -39,7 +39,7 @@ my $RetCode;
     # the events are handled before global destruction, which is a good thing.
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         'Kernel::System::Log' => {
-            LogPrefix => 'OTOBO-careoncloud.Console.pl',
+            LogPrefix => 'CareOnCloud ESM-careoncloud.Console.pl',
         },
     );
 

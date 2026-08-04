@@ -43,7 +43,7 @@ $Helper->ConfigSettingChange(
 );
 
 $Kernel::OM->Get('Kernel::Config')->Set(
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloud ESMTimeZone',
     Value => 'UTC',
 );
 

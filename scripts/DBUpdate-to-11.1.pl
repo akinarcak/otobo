@@ -36,7 +36,7 @@ use scripts::DBUpdateTo11_1       ();
 
 $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-DBUpdate-to-11.1.pl',
+        LogPrefix => 'CareOnCloud ESM-DBUpdate-to-11.1.pl',
     },
 );
 

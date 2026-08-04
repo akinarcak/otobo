@@ -1,4 +1,4 @@
-# This is the build file for the OTOBO nginx Docker image.
+# This is the build file for the CareOnCloud ESM nginx Docker image.
 # This Dockerfile provide the build targets careoncloud-nginx and careoncloud-nginx-kerberos.
 
 # See bin/docker/build_docker_images.sh for how to create local builds.

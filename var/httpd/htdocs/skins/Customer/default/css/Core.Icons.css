@@ -14,7 +14,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 @font-face {
-  font-family: 'otobo';
+  font-family: 'careoncloud';
   src:  url('../../../../common/fonts/careoncloud.eot?8f3wlj');
   src:  url('../../../../common/fonts/careoncloud.eot?8f3wlj#iefix') format('embedded-opentype'),
     url('../../../../common/fonts/careoncloud.ttf?8f3wlj') format('truetype'),
@@ -27,7 +27,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 .ooofo {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'otobo' !important;
+  font-family: 'careoncloud' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;

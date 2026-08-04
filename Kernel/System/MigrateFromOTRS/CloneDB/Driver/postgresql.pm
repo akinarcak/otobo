@@ -149,7 +149,7 @@ sub ResetAutoIncrementField {
         }
     }
 
-    # The OTOBO naming convention uses 'id' for the primary keys.
+    # The CareOnCloud ESM naming convention uses 'id' for the primary keys.
     # Special handling for a table with no 'id' column but with a 'object_id' column.
     my $TableName       = $Param{Table};
     my $SerialAttribute = $TableName eq 'dynamic_field_obj_id_name' ? 'object_id' : 'id';

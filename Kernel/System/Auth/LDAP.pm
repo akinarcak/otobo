@@ -76,7 +76,7 @@ sub new {
         return;
     }
 
-    # the UID, indicating the attribute containing the OTOBO user id, is required
+    # the UID, indicating the attribute containing the CareOnCloud ESM user id, is required
     if ( $ConfigObject->Get( 'AuthModule::LDAP::UID' . $Param{Count} ) ) {
         $Self->{UID} = $ConfigObject->Get( 'AuthModule::LDAP::UID' . $Param{Count} );
     }

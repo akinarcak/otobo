@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<database Name="otobo">
+<database Name="careoncloud">
 <!-- ElasticSearch -->
     <Insert Table="gi_webservice_config">
         <Data Key="id" Type="AutoIncrement">1</Data>

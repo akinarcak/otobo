@@ -519,7 +519,7 @@ Return an empty list when there is no, or an incorrect, setting in the SysConfig
 sub ObjectList {
     my ($Self) = @_;
 
-    # get the backend registrations which have been added by other OTOBO packages
+    # get the backend registrations which have been added by other CareOnCloud ESM packages
     my $ModuleList = $Kernel::OM->Get('Kernel::Config')->Get('ImportExport::ObjectBackendRegistration');
 
     return unless $ModuleList;

@@ -87,7 +87,7 @@ jobs:
           # perl:5.40-slim-trixie is used since rel-11_1_1. Override needed as perl:5.40-bookworm is the default.
           -
             target:     'otobo-web'
-            dockerfile: 'otobo.web.dockerfile'
+            dockerfile: 'careoncloud.web.dockerfile'
             context:    '.'
             repository: 'rotheross/otobo'
             base_image: 'perl:5.40-bookworm'
@@ -100,7 +100,7 @@ jobs:
           # nginx:mainline is used in rel-10_1 up to 10.1.16 and then switched to nginx:mainline-trixie
           -
             target:     'otobo-nginx-webproxy'
-            dockerfile: 'otobo.nginx.dockerfile'
+            dockerfile: 'careoncloud.nginx.dockerfile'
             context:    'scripts/nginx'
             repository: 'rotheross/otobo-nginx-webproxy'
             base_image: 'nginx:mainline-trixie'
@@ -113,21 +113,21 @@ jobs:
           # The base image nginx:mainline-trixie is used since 10.1.16
           -
             target:     'otobo-nginx-kerberos-webproxy'
-            dockerfile: 'otobo.nginx.dockerfile'
+            dockerfile: 'careoncloud.nginx.dockerfile'
             context:    'scripts/nginx'
             repository: 'rotheross/otobo-nginx-kerberos-webproxy'
             base_image: 'nginx:mainline-trixie'
           -
             target:     'otobo-nginx-kerberos-webproxy'
             docker_tag: 'latest-10_1-autobuild'
-            dockerfile: 'otobo.nginx-kerberos.dockerfile'
+            dockerfile: 'careoncloud.nginx-kerberos.dockerfile'
 
           # otobo-selenium-crome uses different base images in different releases.
           # selenium/standalone-chrome:141.0-chromedriver-141.0-20251101 is used since rel-11_0_14.
           # Declare that base image as the default and add overrides for the exceptions.
           -
             target:     'otobo-selenium-chrome'
-            dockerfile: 'otobo.selenium-chrome.dockerfile'
+            dockerfile: 'careoncloud.selenium-chrome.dockerfile'
             context:    'scripts/test/sample'
             repository: 'rotheross/otobo-selenium-chrome'
             base_image: 'selenium/standalone-chrome:141.0-chromedriver-141.0-20251101'
@@ -136,11 +136,11 @@ jobs:
             docker_tag: 'latest-10_1-autobuild'
             base_image: 'selenium/standalone-chrome-debug:3.141.59-20210422'
 
-          # The autobuild image for elastic has been reenabled for OTOBO 10.1.17 and 11.0.16
+          # The autobuild image for elastic has been reenabled for CareOnCloud ESM 10.1.17 and 11.0.16
           # as the base image is now also retrieved from Docker Hub.
           -
             target:     'otobo-elasticsearch'
-            dockerfile: 'otobo.elasticsearch.dockerfile'
+            dockerfile: 'careoncloud.elasticsearch.dockerfile'
             context:    'scripts/elasticsearch'
             repository: 'rotheross/otobo-elasticsearch'
             base_image: 'elasticsearch:8.19.3'
@@ -202,7 +202,7 @@ jobs:
         if: ${{ steps.check.outputs.needs-updating == 'true' }}
         id: get-dockerfile
         run: |
-          echo "dockerfile=${{ (matrix.target == 'otobo-nginx-kerberos-webproxy' && startsWith(matrix.docker_tag, 'latest-10')) && 'otobo.nginx-kerberos.dockerfile' || matrix.dockerfile  }}" >> $GITHUB_OUTPUT
+          echo "dockerfile=${{ (matrix.target == 'otobo-nginx-kerberos-webproxy' && startsWith(matrix.docker_tag, 'latest-10')) && 'careoncloud.nginx-kerberos.dockerfile' || matrix.dockerfile  }}" >> $GITHUB_OUTPUT
 
       -
         # Use a local composite action.
@@ -285,7 +285,7 @@ jobs:
 
             Note that the GitLab pipeline tests do not cover the service nginx. Please do manual sanity testing.
             First pull current images with 'docker compose pull'. Then start an installation with the autobuild images
-            and see whether OTOBO can be accessed via HTTPS.
+            and see whether CareOnCloud ESM can be accessed via HTTPS.
 
             Rebuild the released Docker images when things look fine. The rebuild can be done
             via the Github action DockerImageUpdateAll.

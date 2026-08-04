@@ -110,10 +110,10 @@ Run `30824056768`, `workflow_dispatch` ile `codex/esm-foundation` uzerinde, work
 Artefaktlar:
 
 - **Image digest:** `sha256:e6075fb47fc43e085c703822745a9356f402499ea6dd99571a0df058a8239255`
-- **Push hedefi:** `ghcr.io/akinarcak/otobo/careoncloud:v0.0.0-probe.e82d348c1`
+- **Push hedefi:** `ghcr.io/akinarcak/careoncloud/careoncloud:v0.0.0-probe.e82d348c1`
 - **SBOM artifact:** `careoncloud-sbom-v0.0.0-probe.e82d348c1`, 1.287.359 bayt, `expired=false`
 - **Cosign:** v2.5.0 keyless OIDC, `tlog entry created with index: 2335222741`,
-  `Pushing signature to: ghcr.io/akinarcak/otobo/careoncloud`
+  `Pushing signature to: ghcr.io/akinarcak/careoncloud/careoncloud`
 
 Rekor transparency log kaydi (`2335222741`) imzanin bagimsiz dogrulanabilir kanitidir.
 
@@ -261,7 +261,7 @@ Bunlar bu calismada **tamamlanmis sayilmadi** ve oyle raporlanmamalidir:
 - Canli Cloudflare cutover'i ve rollback provasi
 - Uretim kabulu
 - `/careoncloud/` canonical yolunun canli origin'de dogrulanmasi (aday portta gecti,
-  canlida `/otobo/` hala 200 donuyordu)
+  canlida `/careoncloud/` hala 200 donuyordu)
 
 Kanitlanan sey **release mekanizmasidir**, bir release degil.
 
@@ -301,7 +301,7 @@ canli veri ve container degistirilmedi.
 Canli ortam (`esm.arcak.net`) guncel kaynagin karsiligi degildir. Rebrand oncesi
 eski dagitimdir:
 
-- `/careoncloud/index.pl` -> 404, `/otobo/index.pl` -> 200, `/careoncloud-web/` -> 404
+- `/careoncloud/index.pl` -> 404, `/careoncloud/index.pl` -> 200, `/careoncloud-web/` -> 404
 - Oysa `Kernel/Config/Defaults.pm:112` ve `:360` kaynakta zaten dogru
 
 Bu ayrimi yapmadan bulgu onceliklendirilmemelidir. Talimatin §5 hipotezlerinin bir
@@ -310,7 +310,7 @@ kismi dagitim gecikmesidir (cutover cozer), bir kismi guncel kaynakta durur
 
 ### 10.3 Cutover'in cozmedigi, kaynakta duran P0'lar
 
-- `Kernel/Output/HTML/Layout.pm:4221` — hardcoded `'Your Tickets. Your OTOBO.'`
+- `Kernel/Output/HTML/Layout.pm:4221` — hardcoded `'Your Tickets. Your CareOnCloud ESM.'`
   musteri giris ekraninin basligi olarak basiliyor
 - `Kernel/Config/Files/XML/Framework.xml:8726,8727,8763,9267` — otobo.io RSS,
   otobo.io CDN gorseli ve `HomePage www.otobo.io`
@@ -366,7 +366,7 @@ tekrarlanmali ve rapor guncellenmelidir.
 
 Raporun J bolumunde iki sprintlik atomik is kartlari hazir. Sprint 1'in en yuksek
 oncelikli karti kozmetik degildir: `J6b` canli demo verisinin sentetiklestirilmesi,
-`J1` musteri giris ekranindaki OTOBO markasinin kaldirilmasi, `J2` bunu koruyacak
+`J1` musteri giris ekranindaki CareOnCloud ESM markasinin kaldirilmasi, `J2` bunu koruyacak
 test taramasinin eklenmesi. `K` bolumunde urun sahibinin karar vermesi gereken 9
 madde var; `K-1` (Request/Ticket iliskisi) agent kabuğunu, `K-2` (katalog
 terminolojisi) musteri portalini bloklar.

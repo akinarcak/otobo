@@ -5,7 +5,7 @@ adapter'i tamamlanana kadar aciktir.
 
 ## Guvenlik kontrati
 
-`D724TenantGuard 0.5.1` ile eklenen ve `0.6.0` icinde korunan `D724::TenantCache`, D724 domain kodunun OTOBO
+`D724TenantGuard 0.5.1` ile eklenen ve `0.6.0` icinde korunan `D724::TenantCache`, D724 domain kodunun CareOnCloud ESM
 cache'ine dogrudan tenant-belirsiz key yazmasini engelleyen ortak adapter'dir.
 Her `Set`, `Get`, `Delete` ve tenant-geneli `CleanUp` islemi:
 
@@ -26,9 +26,9 @@ kullansa bile Type'lari ayridir; bu sayede tenant-geneli invalidation diger tena
 verisini silemez.
 
 Adapter yalniz persistent backend'i kullanir (`CacheInMemory=0`) ve TTL'yi varsayilan
-86400 saniyelik ust sinirla kontrol eder. Test kurulumunda OTOBO'nun etkin persistent
+86400 saniyelik ust sinirla kontrol eder. Test kurulumunda CareOnCloud ESM'nun etkin persistent
 backend'i `Kernel::System::Cache::FileStorable`'dir. Compose Redis servisi sagliklidir,
-ancak bu kilometre tasinda OTOBO cache backend'i Redis olarak yapilandirilmamistir.
+ancak bu kilometre tasinda CareOnCloud ESM cache backend'i Redis olarak yapilandirilmamistir.
 
 ## Ilk uretim tuketicisi
 
@@ -46,7 +46,7 @@ raporlar.
 `TenantCache.t` iki tenant icin ayni logical key ayrimini, cross-tenant reddini, TTL
 ust sinirini, control-character/path enjeksiyonunu, tek-key ve tenant-geneli izole
 invalidation'i, inactive tenant ile disabled adapter fail-closed davranisini test eder.
-`Accept-TenantCache.pl` ayni matrisi calisan MariaDB ve persistent OTOBO backend'i
+`Accept-TenantCache.pl` ayni matrisi calisan MariaDB ve persistent CareOnCloud ESM backend'i
 uzerinde gecici tenant fixture'lariyla calistirip temizler.
 
 Hedefli regresyon 6 dosya / 172 test, guncel tam D724 regresyonu 42 dosya / 859 test ile

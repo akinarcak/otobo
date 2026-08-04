@@ -16,7 +16,7 @@
 
 #
 # This file contains inline CSS styles, because it is loaded inside of the
-#   article iframe, and the standard CSS of OTOBO is not available there.
+#   article iframe, and the standard CSS of CareOnCloud ESM is not available there.
 #
 
 <div style="margin: 5px 0; padding: 0px; border: 1px solid #bfc0ce; border-radius: 2px;">

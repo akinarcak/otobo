@@ -26,13 +26,34 @@ Dosya başlıklarındaki ürün tanımı satırı ve modül yorumu değiştirild
 Sonuç: 3069 dosyada 4227 değişiklik. Diff tam simetrik (4227 ekleme / 4227 silme,
 satır sonu kayması yok), tüm değişen dosyalar geçerli UTF-8, marka sözleşmesi testi yeşil.
 
-## Faz 2 — Serbest metin, yorum ve dokümantasyon
+## Faz 2 — Serbest metin, yorum ve dokümantasyon (tamamlandı)
 
-`Kernel/`, `scripts/`, `docs/`, dotfile ve dockerfile içindeki düz anlatım. Teknik anahtar
-biçimleri (aşağıdaki koruma listesi) regex ile dışarıda bırakılmalıdır.
+`Kernel/`, `scripts/`, `i18n/`, `docs/`, dotfile ve dockerfile içindeki düz anlatım.
+Teknik anahtarlar dönüştürmeden önce maskelenip sonra geri konur.
 
-Koruma listesi: `OTOBO_[A-Za-z]`, `X-OTOBO-`, `::OTOBO`, `/OTOBO/`, `OTOBO.` (JS ad alanı),
-`urn:otobo-com:`, `TidyAll::Plugin::OTOBO`, `Znuny4OTOBO`, `OTOBOCommunity`, `OTRSToOTOBO`.
+Koruma listesi: `OTOBO_`, `otobo_`, `X-OTOBO-`, `::OTOBO`, `OTOBO::`, `Plugin/OTOBO`,
+`MigrateFromOTRS/OTOBO`, `urn:otobo-com`, `Znuny4OTOBO`, `OTOBOCommunity`, `OTRSToOTOBO`,
+`otobo-web|nginx|app|update|daemon`, `otobo.CodePolicy.pl`.
+
+Sonuç: 784 dosyada 28025 satır. Düz metin kalıntısı 25.5k → 311.
+
+### Bu fazda öğrenilen tuzaklar
+
+Aşağıdakiler otomatik dönüştürmenin **dışında** tutulmalıdır; hepsi bu fazda gerçek
+kırılmaya yol açtı ve geri alındı:
+
+| Dosya | Neden |
+|---|---|
+| `development/d724/Test-CareOnCloudBrand.ps1` | Yasaklı dize listesi kasıtlı olarak eski adları taşır; dönüştürülürse test tersini iddia eder |
+| `development/d724/migrate-careoncloud-brand.sh` | `OldDatabase='otobo'` varsayılanı; dönüştürülürse yanlış veritabanından göç eder |
+| `docs/esm/branding/**` | Göç sürecini eski adlarla anlatır |
+| `codepolicy/bin/otobo.CodePolicy.pl` | Dış `RotherOSS/codepolicy` deposunda, adı gerçekten böyle |
+| Çevirmen e-postaları, `translate.otobo.org` | Gerçek kişi ve proje atfı |
+| `https://github.com/akinarcak/otobo` | GPL köken atfı; depo gerçekten yeniden adlandırılmadıkça değişmez |
+| `otobo_infotile` ve diğer `otobo_*` anahtarları | SysConfig anahtarı, veritabanında saklanır → Faz 4 |
+
+Ayrıca: upstream projeden söz eden cümlelerde (“upstream OTOBO lisans denetleyicisi”)
+`OTOBO` doğru kelimedir ve korunur.
 
 ## Faz 3 — Perl ad alanları ve dosya adları
 

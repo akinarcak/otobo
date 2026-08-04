@@ -54,7 +54,7 @@ subtest 'command search' => sub {
     };
     is( $ExitCode, 0, "Exit code searching for commands" );
     unlike( $Result, qr/careoncloud.Console.pl Help command/, "Help for 'Help' command not found" );
-    like( $Result, qr/List all installed OTOBO packages/, 'Found Admin::Package::List command entry' );
+    like( $Result, qr/List all installed CareOnCloud ESM packages/, 'Found Admin::Package::List command entry' );
     is( $Error, '', 'no error' );
 };
 

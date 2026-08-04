@@ -304,7 +304,7 @@ sub Run {
         # set headers
         my %SetHeader = ();
         for my $HeaderKey ( sort keys %Header ) {
-            if ( $HeaderKey =~ /^x-otobo/i ) {
+            if ( $HeaderKey =~ /^x-careoncloud/i ) {
                 $SetHeader{$HeaderKey} = $HeaderKey;
             }
         }
@@ -441,10 +441,10 @@ sub _MaskUpdate {
     $Header{''}   = '-';
     $Header{Body} = 'Body';
 
-    # otobo header
+    # careoncloud header
     my %SetHeader = ();
     for my $HeaderKey ( sort keys %Header ) {
-        if ( $HeaderKey =~ /^x-otobo/i ) {
+        if ( $HeaderKey =~ /^x-careoncloud/i ) {
             $SetHeader{$HeaderKey} = $HeaderKey;
         }
     }

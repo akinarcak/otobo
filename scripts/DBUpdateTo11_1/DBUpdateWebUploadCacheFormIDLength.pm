@@ -33,7 +33,7 @@ scripts::DBUpdateTo11_1::DBUpdateWebUploadCacheFormIDLength - enlarge the length
 
 =head1 DESCRIPTION
 
-In OTOBO 11.0.x the length was 100 characters. In OTOBO 11.1.x the length had been increased to 191 characters.
+In CareOnCloud ESM 11.0.x the length was 100 characters. In CareOnCloud ESM 11.1.x the length had been increased to 191 characters.
 
 =cut
 

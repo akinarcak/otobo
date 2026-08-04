@@ -1,6 +1,6 @@
-# This is the build file for the OTOBO Elasticsearch docker image.
+# This is the build file for the CareOnCloud ESM Elasticsearch docker image.
 
-# The only reason for having a custom Elasticsearch image in OTOBO
+# The only reason for having a custom Elasticsearch image in CareOnCloud ESM
 # is that additional plugins are installed.
 
 # See also bin/docker/build_docker_images.sh

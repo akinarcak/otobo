@@ -32,12 +32,12 @@ our $ObjectManagerDisabled = 1;
 
 =head1 NAME
 
-Kernel::System::ModuleRefresh - refresh OTOBO Perl modules in long running processes
+Kernel::System::ModuleRefresh - refresh CareOnCloud ESM Perl modules in long running processes
 
 =head1 DESCRIPTION
 
 This module is used for reloading modules. Use cases are changed modules in F<Kernel/Config/Files> and modules
-changed by OTOBO package installation. Only modules in the namespace C<Kernel> and C<var::packagesetup> are meant to be refreshed.
+changed by CareOnCloud ESM package installation. Only modules in the namespace C<Kernel> and C<var::packagesetup> are meant to be refreshed.
 
 This module inherits from L<Module::Refresh> and thus provides the same interface. One difference is the
 method C<mtime> which provides the keys for the cache C<Module::Refresh::CACHE>. The overridden method only
@@ -94,7 +94,7 @@ sub mtime {
 =head2 unload_subs()
 
 This method is called internally when a module is actually reloaded.
-The OTOBO specific implementation is that nothing is done. This means
+The CareOnCloud ESM specific implementation is that nothing is done. This means
 that already loaded subs are not invalidated.
 
 =cut

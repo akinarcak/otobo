@@ -82,7 +82,7 @@ Core.UI.RichTextEditor = (function (TargetNS) {
             PluginList = Core.Config.Get('RichText.Plugins'),
             CustomerInterface = (Core.Config.Get('SessionName') === Core.Config.Get('CustomerPanelSessionName'));
 
-        // The format for the language is different between OTOBO and CKEditor (see bug#8024)
+        // The format for the language is different between CareOnCloud ESM and CKEditor (see bug#8024)
         // To correct this, we replace "_" with "-" in the language (e.g. zh_CN becomes zh-cn)
         UserLanguage = Core.Config.Get('UserLanguage').replace(/_/, '-').toLowerCase();
 

@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 // --
 
-/*eslint-disable otobo/no-window*/
+/*eslint-disable careoncloud/no-window*/
 
 "use strict";
 
@@ -1851,4 +1851,4 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
     return TargetNS;
 }(Core.Agent.Admin.ProcessManagement || {}));
 
-/*eslint-enable otobo/no-window*/
+/*eslint-enable careoncloud/no-window*/

@@ -122,14 +122,14 @@ sub SettingEffectiveValueCheck {
         UserID => $Param{UserID},
     );
 
-    my $OTOBOTimeZone = $Kernel::OM->Get('Kernel::Config')->Get("OTOBOTimeZone");
+    my $CareOnCloud ESMTimeZone = $Kernel::OM->Get('Kernel::Config')->Get("CareOnCloud ESMTimeZone");
     my $DateTimeObject;
 
-    if ( !$Preferences{UserTimeZone} || $Preferences{UserTimeZone} eq $OTOBOTimeZone ) {
+    if ( !$Preferences{UserTimeZone} || $Preferences{UserTimeZone} eq $CareOnCloud ESMTimeZone ) {
         $DateTimeObject = $Kernel::OM->Create(
             'Kernel::System::DateTime',
             ObjectParams => {
-                TimeZone => $OTOBOTimeZone,
+                TimeZone => $CareOnCloud ESMTimeZone,
             },
         );
 
@@ -162,7 +162,7 @@ sub SettingEffectiveValueCheck {
         }
 
         my $Success = $DateTimeObject->ToTimeZone(
-            TimeZone => $OTOBOTimeZone,
+            TimeZone => $CareOnCloud ESMTimeZone,
         );
 
         if ($Success) {
@@ -170,12 +170,12 @@ sub SettingEffectiveValueCheck {
         }
         else {
             $Result{Error} = $Kernel::OM->Get('Kernel::Language')->Translate(
-                "System was not able to calculate user Date in OTOBOTimeZone!"
+                "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
             );
 
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "System was not able to calculate user Date in OTOBOTimeZone!"
+                Message  => "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
             );
         }
     }
@@ -279,7 +279,7 @@ sub SettingRender {
         );
     }
 
-    my $TimeZone = $Kernel::OM->Get('Kernel::Config')->Get("OTOBOTimeZone");
+    my $TimeZone = $Kernel::OM->Get('Kernel::Config')->Get("CareOnCloud ESMTimeZone");
 
     my $DateTimeObject = $Kernel::OM->Create(
         'Kernel::System::DateTime',
@@ -422,7 +422,7 @@ sub AddItem {
     my $Name = $Param{Name} . $IDSuffix;
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $TimeZone     = $Kernel::OM->Get('Kernel::Config')->Get("OTOBOTimeZone");
+    my $TimeZone     = $Kernel::OM->Get('Kernel::Config')->Get("CareOnCloud ESMTimeZone");
 
     my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
         UserID => $Param{UserID},

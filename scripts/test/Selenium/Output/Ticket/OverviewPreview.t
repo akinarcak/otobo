@@ -171,7 +171,7 @@ $Selenium->RunTest(
                 IsVisibleForCustomer => 1,
                 ContentType          => 'text/plain',
                 From                 => "Some Customer A <customer-a$RandomNumber\@example.com>",
-                To                   => "Some otobo system <email$RandomNumber\@example.com>",
+                To                   => "Some careoncloud system <email$RandomNumber\@example.com>",
                 Subject              => "First article of the ticket # $Index",
                 Body                 => 'the message text',
                 HistoryComment       => 'Some free text!',
@@ -181,7 +181,7 @@ $Selenium->RunTest(
                 OrigHeader           => {
                     'Subject' => "First article of the ticket # $Index",
                     'Body'    => 'the message text',
-                    'To'      => "Some otobo system <email$RandomNumber\@example.com>",
+                    'To'      => "Some careoncloud system <email$RandomNumber\@example.com>",
                     'From'    => "Some Customer A <customer-a$RandomNumber\@example.com>",
                 },
             );
@@ -198,7 +198,7 @@ $Selenium->RunTest(
                     SenderType           => 'agent',
                     IsVisibleForCustomer => 1,
                     ContentType          => 'text/plain',
-                    From                 => "Some otobo system <email$RandomNumber\@example.com>",
+                    From                 => "Some careoncloud system <email$RandomNumber\@example.com>",
                     To                   => "Some Customer A <customer-a$RandomNumber\@example.com>",
                     Subject              => "Second article of the ticket # $Index",
                     Body                 => 'agent reply',

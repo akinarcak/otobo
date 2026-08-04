@@ -35,7 +35,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::MigrateFromOTRS - Perform system migration from OTRS 6 to OTOBO 10.
+Kernel::System::MigrateFromOTRS - Perform system migration from OTRS 6 to CareOnCloud ESM 10.
 
 =head1 PUBLIC INTERFACE
 

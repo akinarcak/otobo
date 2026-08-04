@@ -29,7 +29,7 @@ use List::AllUtils qw(max min true first);
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # Sanity check whether ImportExport is available.
-# This should succeed since ImportExport has been integrated into OTOBO core
+# This should succeed since ImportExport has been integrated into CareOnCloud ESM core
 {
     # get ImportExport module directory
     my $ImportExportModule = $Kernel::OM->Get('Kernel::Config')->Get('Home') . '/Kernel/System/ImportExport.pm';

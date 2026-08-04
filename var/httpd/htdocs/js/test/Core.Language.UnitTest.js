@@ -41,7 +41,7 @@ Core.Language = (function (Namespace) {
             Core.Language.Load(LanguageMetaData, TranslationData);
             Assert.equal(Core.Language.Translate('yes'), 'ja');
             Assert.equal(Core.Language.Translate('no'), 'nein');
-            Assert.equal(Core.Language.Translate('This is %s', 'OTOBO'), 'Das ist OTOBO');
+            Assert.equal(Core.Language.Translate('This is %s', 'CareOnCloud ESM'), 'Das ist CareOnCloud ESM');
             Assert.equal(Core.Language.Translate('This is %s', 'yes'), 'Das ist yes');
             Assert.equal(Core.Language.Translate('Complex %s with %s arguments', 'Text', 'vielen'), 'Komplexer Text mit vielen Argumenten');
         });

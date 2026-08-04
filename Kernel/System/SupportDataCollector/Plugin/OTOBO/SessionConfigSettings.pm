@@ -28,7 +28,7 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO') . '/' . Translatable('Session Config Settings');
+    return Translatable('CareOnCloud ESM') . '/' . Translatable('Session Config Settings');
 }
 
 sub Run {

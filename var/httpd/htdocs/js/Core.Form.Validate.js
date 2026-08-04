@@ -294,7 +294,7 @@ Core.Form.Validate = (function (TargetNS) {
         var Text,
             $Element = $(Element);
 
-        // special treatment of <select> elements in OTOBO
+        // special treatment of <select> elements in CareOnCloud ESM
         if (Element.nodeName.toLowerCase() === 'select') {
             Text = $(Element).find('option:selected').text();
             return (Text.length && Text !== '-');
@@ -338,13 +338,13 @@ Core.Form.Validate = (function (TargetNS) {
     }
 
     /*
-     * Definitions of all OTOBO specific rules and rule methods
+     * Definitions of all CareOnCloud ESM specific rules and rule methods
      */
     $.validator.addMethod("Validate_Required", ValidatorMethodRequired, "");
     $.validator.addMethod("Validate_Number", $.validator.methods.digits, "");
     $.validator.addMethod("Validate_DnDUpload", ValidatorMethodDnDUpload, "");
 
-    // There is a configuration option in OTOBO that controls if email addresses
+    // There is a configuration option in CareOnCloud ESM that controls if email addresses
     // should be validated or not.
     // If email address should be validated, this function is overwritten in Init method
     $.validator.addMethod("Validate_Email", ValidatorMethodRequired, "");
@@ -849,7 +849,7 @@ Core.Form.Validate = (function (TargetNS) {
             FormSelector = 'form';
         }
 
-        // There is a configuration option in OTOBO that controls if email addresses
+        // There is a configuration option in CareOnCloud ESM that controls if email addresses
         //  should be validated or not.
         if (parseInt(Core.Config.Get('CheckEmailAddresses'), 10)) {
             $.validator.addMethod("Validate_Email", $.validator.methods.email, "");
@@ -994,7 +994,7 @@ Core.Form.Validate = (function (TargetNS) {
      * @memberof Core.Form.Validate
      * @function
      * @param {String} Name - The name of the rule.
-     * @param {Object} MethodHash - This JS object defines, which methods should be included in this rule, e.g. { OTOBO_Validate_Required: true, OTOBO-Validate_MinLength: 2 }.
+     * @param {Object} MethodHash - This JS object defines, which methods should be included in this rule, e.g. { OTOBO_Validate_Required: true, CareOnCloud ESM-Validate_MinLength: 2 }.
      * @description
      *      This function is used to add special validation rules. The name is also the class name you can use in the HTML.
      */

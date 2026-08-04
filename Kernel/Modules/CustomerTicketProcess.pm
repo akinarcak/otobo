@@ -133,7 +133,7 @@ sub Run {
         return;
     }
 
-    # we need a subaction as of OTOBO 10.1
+    # we need a subaction as of CareOnCloud ESM 10.1
     if ( !$Self->{Subaction} ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',

@@ -76,7 +76,7 @@ my $QueueID2 = $QueueObject->QueueAdd(
 
 # add SystemAddress
 my $SystemAddressEmail    = $Helper->GetRandomID() . '@example.com';
-my $SystemAddressRealname = 'OTOBO-Team';
+my $SystemAddressRealname = 'CareOnCloud ESM-Team';
 
 my %SystemAddressData = (
     Name     => $SystemAddressEmail,
@@ -109,7 +109,7 @@ is(
 
 # add SystemAddress
 my $SystemAddressEmail2    = $Helper->GetRandomID() . '@example.com';
-my $SystemAddressRealname2 = "OTOBO-Team2";
+my $SystemAddressRealname2 = "CareOnCloud ESM-Team2";
 my $SystemAddressID2       = $SystemAddressObject->SystemAddressAdd(
     Name     => $SystemAddressEmail2,
     Realname => $SystemAddressRealname2,

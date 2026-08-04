@@ -51,10 +51,10 @@ $Helper->ConfigSettingChange(
     Value => 'en',
 );
 
-# Set OTOBOTimeZone to UTC.
+# Set CareOnCloud ESMTimeZone to UTC.
 $Helper->ConfigSettingChange(
     Valid => 1,
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloud ESMTimeZone',
     Value => 'UTC',
 );
 
@@ -149,7 +149,7 @@ subtest 'create sample articles' => sub {
             %{$Config},
             TicketID             => $TicketID,
             IsVisibleForCustomer => 0,
-            From                 => 'Some Agent <otobo@example.com>',
+            From                 => 'Some Agent <careoncloud@example.com>',
             To                   => 'Supplier<supplier@example.com>',
             Charset              => 'utf8',
             MimeType             => 'text/plain',

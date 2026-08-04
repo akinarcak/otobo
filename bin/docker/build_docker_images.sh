@@ -15,7 +15,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-# Just a small helper for building the OTOBO Docker images locally.
+# Just a small helper for building the CareOnCloud ESM Docker images locally.
 # For productive use please use the images that are available from Docker Hub.
 
 # Formerly the building was compatible with automated builds on Docker Hub.
@@ -52,10 +52,10 @@ GIT_COMMIT=$(git rev-parse HEAD)          # also works in detached HEAD
 careoncloud_version=$(perl -lne 'print $1 if /VERSION\s*=\s*(\S+)/' < RELEASE)
 DOCKER_TAG="local-${careoncloud_version}"
 
-# build otobo for the services web and daemon
+# build careoncloud for the services web and daemon
 build "careoncloud.web.dockerfile" "careoncloud-web" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "." "careoncloud:$DOCKER_TAG"
 
-# build otobo with Kerberos support
+# build careoncloud with Kerberos support
 build "careoncloud.web.dockerfile" "careoncloud-web-kerberos" $DOCKER_TAG $GIT_COMMIT $GIT_BRANCH "." "careoncloud-kerberos:$DOCKER_TAG"
 
 # Building the web container entails installing Perl distributions from CPAN.

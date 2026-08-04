@@ -16,17 +16,17 @@
 
 "use strict";
 
-var OTOBO = OTOBO || {};
-OTOBO.Agent = OTOBO.Agent || {};
-OTOBO.Agent.App = OTOBO.Agent.App || {};
+var CareOnCloud ESM = CareOnCloud ESM || {};
+CareOnCloud ESM.Agent = CareOnCloud ESM.Agent || {};
+CareOnCloud ESM.Agent.App = CareOnCloud ESM.Agent.App || {};
 
 /**
  * @namespace
- * @exports TargetNS as OTOBO.App.Agent.Login
+ * @exports TargetNS as CareOnCloud ESM.App.Agent.Login
  * @description
  *      This namespace contains the special module functions for TicketZoom.
  */
-OTOBO.Agent.App.Login = (function (TargetNS) {
+CareOnCloud ESM.Agent.App.Login = (function (TargetNS) {
     /**
      * @function
      * @return nothing
@@ -41,7 +41,7 @@ OTOBO.Agent.App.Login = (function (TargetNS) {
         }
 
         // enable login form
-        OTOBO.Form.EnableForm($('#LoginBox form, #PasswordBox form'));
+        CareOnCloud ESM.Form.EnableForm($('#LoginBox form, #PasswordBox form'));
 
         // set focus
         if ($('#User').val() && $('#User').val().length) {
@@ -57,10 +57,10 @@ OTOBO.Agent.App.Login = (function (TargetNS) {
             return false;
         });
 
-        // save TimeOffset data for OTOBO
+        // save TimeOffset data for CareOnCloud ESM
         Now = new Date();
         $('#TimeOffset').val(Now.getTimezoneOffset());
     }
 
     return TargetNS;
-}(OTOBO.Agent.App.Login || {}));
+}(CareOnCloud ESM.Agent.App.Login || {}));

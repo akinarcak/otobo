@@ -1028,7 +1028,7 @@ sub ValidateCharset {
 checks the validity of the content type.
 
 Valid values for the MIME header I<Content-Type> are specified in L<RFC 2045|https://www.rfc-editor.org/rfc/rfc2045#section-5.1>.
-This spec allows e.g. bare carriage return and backslash quoted line feed characters in the value. But in OTOBO we
+This spec allows e.g. bare carriage return and backslash quoted line feed characters in the value. But in CareOnCloud ESM we
 can be more strict. This is because usually we are only interested in the media type and in the charset.
 Thus the following, somewhat arbitrary, conditions are imposed:
 

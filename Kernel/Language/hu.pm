@@ -323,25 +323,25 @@ sub Data {
         'Support data collector' => 'Támogatási adatgyűjtő',
         'Hint' => 'Tipp',
         'Currently support data is only shown in this system.' => 'Jelenleg a támogatási adatok csak ezen a rendszeren jelennek meg.',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
-            'Javasolt néha az adatok elküldése az OTOBO csapatnak annak érdekében, hogy jobb támogatást kapjon.',
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
+            'Javasolt néha az adatok elküldése az CareOnCloud ESM csapatnak annak érdekében, hogy jobb támogatást kapjon.',
         'Configuration' => 'Beállítás',
         'Send support data' => 'Támogatási adatok küldése',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
-            'Ez lehetővé fogja tenni a rendszer számára további támogatási adatok információinak küldését az OTOBO csapatnak.',
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
+            'Ez lehetővé fogja tenni a rendszer számára további támogatási adatok információinak küldését az CareOnCloud ESM csapatnak.',
         'Update' => 'Frissítés',
         'System Registration' => 'Rendszer regisztráció',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            'Az adatküldés engedélyezéséhez regisztrálja a rendszerét az OTOBO csapattal, vagy frissítse a rendszer regisztrációjának információit (győződjön meg arról, hogy aktiválta a „Támogatási adatok küldése” lehetőséget).',
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            'Az adatküldés engedélyezéséhez regisztrálja a rendszerét az CareOnCloud ESM csapattal, vagy frissítse a rendszer regisztrációjának információit (győződjön meg arról, hogy aktiválta a „Támogatási adatok küldése” lehetőséget).',
         'Register this System' => 'A rendszer regisztrálása',
         'System Registration is disabled for your system. Please check your configuration.' =>
             'A rendszer regisztráció le van tiltva a rendszerénél. Ellenőrizze a beállításokat.',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
-            'A rendszer regisztráció az OTOBO csapat szolgáltatása, amely számos előnyt biztosít!',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            'Ne feledje, hogy az OTOBO felhőszolgáltatások használatához a rendszer regisztrációja szükséges.',
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
+            'A rendszer regisztráció az CareOnCloud ESM csapat szolgáltatása, amely számos előnyt biztosít!',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            'Ne feledje, hogy az CareOnCloud ESM felhőszolgáltatások használatához a rendszer regisztrációja szükséges.',
         'Register this system' => 'A rendszer regisztrálása',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             'Itt tudja beállítani azokat az elérhető felhőszolgáltatásokat, amelyek biztonságosan kommunikálnak a következővel: %s.',
@@ -1035,8 +1035,8 @@ sub Data {
             'A név használható a különböző hibakezelési beállítások megkülönböztetéséhez.',
         'Please provide a unique name for this web service.' => 'Adjon meg egy egyedi nevet ehhez a webszolgáltatáshoz.',
         'Error handling module backend' => 'Hibakezelési modul háttérprogram',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
-            'Ez az OTOBO hibakezelési háttérprogram modul kerül meghívásra belsőleg a hibakezelési mechanizmus feldolgozásához.',
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
+            'Ez az CareOnCloud ESM hibakezelési háttérprogram modul kerül meghívásra belsőleg a hibakezelési mechanizmus feldolgozásához.',
         'Processing options' => 'Feldolgozási beállítások',
         'Configure filters to control error handling module execution.' =>
             'Szűrők beállítása a hibakezelési modul végrehajtásának vezérléséhez.',
@@ -1127,15 +1127,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             'A név tipikusan egy távoli webszolgáltatás műveletének meghívásához használható.',
         'Invoker backend' => 'Meghívó háttérprogram',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            'Ez az OTOBO meghívó háttérprogram modul lesz meghívva a távoli rendszerre küldendő adatok előkészítéséhez, és a válasz adatainak feldolgozásához.',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            'Ez az CareOnCloud ESM meghívó háttérprogram modul lesz meghívva a távoli rendszerre küldendő adatok előkészítéséhez, és a válasz adatainak feldolgozásához.',
         'Mapping for outgoing request data' => 'Leképezés a kimenő kérés adataihoz',
         'Configure' => 'Beállítás',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            'Ez a leképezés fogja feldolgozni az OTOBO meghívójából származó adatokat olyan formára alakítva át azokat, ahogy a távoli rendszer várja.',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            'Ez a leképezés fogja feldolgozni az CareOnCloud ESM meghívójából származó adatokat olyan formára alakítva át azokat, ahogy a távoli rendszer várja.',
         'Mapping for incoming response data' => 'Leképezés a bejövő válasz adataihoz',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            'Ez a leképezés fogja a válasz adatait feldolgozni olyan formára alakítva át azokat, ahogy az OTOBO meghívója várja.',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            'Ez a leképezés fogja a válasz adatait feldolgozni olyan formára alakítva át azokat, ahogy az CareOnCloud ESM meghívója várja.',
         'Asynchronous' => 'Aszinkron',
         'Condition' => 'Feltétel',
         'Edit this event' => 'Esemény szerkesztése',
@@ -1143,8 +1143,8 @@ sub Data {
         'Add Event' => 'Esemény hozzáadása',
         'To add a new event select the event object and event name and click on the "+" button' =>
             'Egy új esemény hozzáadásához válassza ki az eseményobjektumot és az eseménynevet, majd kattintson a „+” gombra',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            'Az aszinkron eseményaktiválókat az OTOBO ütemeződémon kezeli a háttérben (javasolt).',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            'Az aszinkron eseményaktiválókat az CareOnCloud ESM ütemeződémon kezeli a háttérben (javasolt).',
         'Synchronous event triggers would be processed directly during the web request.' =>
             'A szinkron eseményaktiválók közvetlenül lehetnek feldolgozva a webkérések közben.',
 
@@ -1281,8 +1281,8 @@ sub Data {
         'Enable Extended XSLT Mapping' => 'Kiterjesztett XSLT-leképezés engedélyezése',
         'Extended XSLT Mapping' => 'Kiterjesztett XSLT-leképezés',
         'Enable' => 'Engedélyezés',
-        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'otoboXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
-            'A kiterjesztett XSLT-leképezés lehetővé teszi az XSLT-leképezés még részletesebb beállítását. Ha engedélyezve van, akkor az eredményül kapott JSON-típus kényszeríthető egy „otoboXslType” XML-attribútum megadásával. A lehetséges értékek ehhez az attribútumhoz: „int” (egész szám), „bool” (logikai), „float” (lebegőpontos) és „array” (tömb).',
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+            'A kiterjesztett XSLT-leképezés lehetővé teszi az XSLT-leképezés még részletesebb beállítását. Ha engedélyezve van, akkor az eredményül kapott JSON-típus kényszeríthető egy „careoncloudXslType” XML-attribútum megadásával. A lehetséges értékek ehhez az attribútumhoz: „int” (egész szám), „bool” (logikai), „float” (lebegőpontos) és „array” (tömb).',
 
         # Template: AdminGenericInterfaceOperationDefault
         'Add Operation' => 'Művelet hozzáadása',
@@ -1292,11 +1292,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             'A név tipikusan ennek a webszolgáltatás műveletnek a meghívásához használható egy távoli rendszerből.',
         'Operation backend' => 'Műveleti háttérprogram',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            'Ez az OTOBO műveleti háttérprogram modul lesz belsőleg meghívva a kérés feldolgozásához, és az adat előállításához a válasz számára.',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            'Ez az CareOnCloud ESM műveleti háttérprogram modul lesz belsőleg meghívva a kérés feldolgozásához, és az adat előállításához a válasz számára.',
         'Mapping for incoming request data' => 'Leképezés a bejövő kérés adataihoz',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            'Ez a leképezés fogja a kérés adatait feldolgozni olyan formára alakítva át azokat, ahogy az OTOBO várja.',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            'Ez a leképezés fogja a kérés adatait feldolgozni olyan formára alakítva át azokat, ahogy az CareOnCloud ESM várja.',
         'Mapping for outgoing response data' => 'Leképezés a kimenő válasz adataihoz',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             'Ez a leképezés fogja a válasz adatait feldolgozni olyan formára alakítva át azokat, ahogy a távoli rendszer várja.',
@@ -1314,8 +1314,8 @@ sub Data {
             'Ezen művelet korlátozása a megadott kérési módszerekre. Ha nincs módszer kiválasztva, akkor minden kérés el lesz fogadva.',
         'Maximum message length' => 'Legnagyobb üzenethossz',
         'This field should be an integer number.' => 'Ez a mező csak egész szám lehet.',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            'Itt adhatja meg a REST üzenetek legnagyobb méretét (bájtban), amelyeket az OTOBO fel fog dolgozni.',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            'Itt adhatja meg a REST üzenetek legnagyobb méretét (bájtban), amelyeket az CareOnCloud ESM fel fog dolgozni.',
         'Send Keep-Alive' => 'Életben tartás küldése',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             'Ez a beállítás azt határozza meg, hogy a bejövő kapcsolatok le legyenek-e zárva vagy maradjanak életben.',
@@ -1358,22 +1358,22 @@ sub Data {
         'Client Certificate' => 'Kliens tanúsítvány',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             'Az SSL-kliens tanúsítványfájljának teljes elérési útja és neve (PEM, DER vagy PKCS#12 formátumban kell lennie).',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => 'például /opt/otobo/var/certificates/SOAP/certificate.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => 'például /opt/careoncloud/var/certificates/SOAP/certificate.pem',
         'Client Certificate Key' => 'Kliens tanúsítvány kulcsa',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             'Az SSL-kliens tanúsítvány kulcsfájljának teljes elérési útja és neve (ha még nem tartalmazza a tanúsítványfájl).',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => 'például /opt/otobo/var/certificates/SOAP/key.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => 'például /opt/careoncloud/var/certificates/SOAP/key.pem',
         'Client Certificate Key Password' => 'Kliens tanúsítvány kulcsának jelszava',
         'The password to open the SSL certificate if the key is encrypted.' =>
             'A jelszó az SSL-tanúsítvány megnyitásához, ha a kulcs titkosított.',
         'Certification Authority (CA) Certificate' => 'Hitelesítés-szolgáltató (CA) tanúsítvány',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             'A hitelesítés-szolgáltató tanúsítványfájljának teljes elérési útja és neve, amely hitelesíti az SSL tanúsítványt.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => 'például /opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => 'például /opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => 'Hitelesítés-szolgáltató (CA) könyvtár',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             'A hitelesítés-szolgáltató könyvtárának teljes elérési útja, ahol a CA tanúsítványok tárolva vannak a fájlrendszeren.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => 'például /opt/otobo/var/certificates/SOAP/CA',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => 'például /opt/careoncloud/var/certificates/SOAP/CA',
         'SSL hostname verification' => 'SSL-gépnév ellenőrzése',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             'A kérés megszakítása, ha a gépnév nem ellenőrizhető. Óvatosan tiltsa le! Az ellenőrzés kihagyása biztonsági kockázatot jelent! Főleg tesztelési célokra van önaláírt SSL-tanúsítványok esetén, vagy ha tudja, hogy mit csinál.',
@@ -1442,8 +1442,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             'Válassza ki, hogy a SOAP-válasz függvénycsomagolót hogyan kell felépíteni.',
         'Response name free text' => 'Kérés nevének szabad szövege',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            'Itt adhatja meg a SOAP üzenetek legnagyobb méretét (bájtban), amelyeket az OTOBO fel fog dolgozni.',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            'Itt adhatja meg a SOAP üzenetek legnagyobb méretét (bájtban), amelyeket az CareOnCloud ESM fel fog dolgozni.',
         'Encoding' => 'Kódolás',
         'The character encoding for the SOAP message contents.' => 'A SOAP üzenettartalmak karakterkódolása.',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => 'például utf-8, latin1, iso-8859-1, cp1250, stb.',
@@ -1483,10 +1483,10 @@ sub Data {
         'Provider transport' => 'Szolgáltató átvitel',
         'Requester transport' => 'Kérő átvitel',
         'Debug threshold' => 'Hibakeresési küszöbszint',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            'Szolgáltató módban az OTOBO olyan webszolgáltatásokat javasol, amelyeket a távoli rendszerek használnak.',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            'Kérő módban az OTOBO a távoli rendszerek webszolgáltatásait használja.',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            'Szolgáltató módban az CareOnCloud ESM olyan webszolgáltatásokat javasol, amelyeket a távoli rendszerek használnak.',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            'Kérő módban az CareOnCloud ESM a távoli rendszerek webszolgáltatásait használja.',
         'Network transport' => 'Hálózati átvitel',
         'Error Handling Modules' => 'Hibakezelési modulok',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1597,8 +1597,8 @@ sub Data {
         'Filter for mail accounts' => 'Szűrő a levelezőfiókokhoz',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             'Az összes fiókkal rendelkező bejövő e-mail a kiválasztott várólistába lesz kézbesítve.',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
-            'Ha a fiókja megbízhatóként van megjelölve, akkor az érkezési időben már meglévő X-OTOBO fejlécek (a prioritáshoz, stb.) meg lesznek tartva és használva lesznek, például a levelezési szűrőkben.',
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+            'Ha a fiókja megbízhatóként van megjelölve, akkor az érkezési időben már meglévő X-CareOnCloud ESM fejlécek (a prioritáshoz, stb.) meg lesznek tartva és használva lesznek, például a levelezési szűrőkben.',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             'A kimenő e-mail a Sendmail* beállításokon keresztül állítható be itt: %s.',
         'System Configuration' => 'Rendszerbeállítások',
@@ -1670,8 +1670,8 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => 'Használjon vesszőt vagy pontosvesszőt az e-mail-címek elválasztásához.',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
-            'Használhatja az OTOBO címkéket (mint például <OTOBO_TICKET_DynamicField_...>) értékek beszúrásához a jelenlegi jegyből.',
+        'You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            'Használhatja az CareOnCloud ESM címkéket (mint például <OTOBO_TICKET_DynamicField_...>) értékek beszúrásához a jelenlegi jegyből.',
 
         # Template: AdminOAuthTokenStore
         'OAuth2 Token Management (OIDC)' => 'OAuth2-token kezelése (OIDC)',
@@ -1787,8 +1787,8 @@ sub Data {
         'PGP Management' => 'PGP kezelés',
         'Add PGP Key' => 'PGP kulcs hozzáadása',
         'PGP support is disabled' => 'A PGP támogatás le van tiltva',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            'Hogy képes legyen PGP-t használni az OTOBO-ban, ahhoz először engedélyeznie kell azt.',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            'Hogy képes legyen PGP-t használni az CareOnCloud ESM-ban, ahhoz először engedélyeznie kell azt.',
         'Enable PGP support' => 'PGP támogatás engedélyezése',
         'Faulty PGP configuration' => 'Hibás PGP beállítás',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1813,22 +1813,22 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             'Valóban újra szeretné telepíteni ezt a csomagot? Minden kézi változtatás el fog veszni.',
         'Go to updating instructions' => 'Ugrás a frissítési utasításokhoz',
-        'Go to the OTOBO customer portal' => 'Ugrás az OTOBO ügyfélportáljára',
+        'Go to the CareOnCloud ESM customer portal' => 'Ugrás az CareOnCloud ESM ügyfélportáljára',
         'package information' => 'csomaginformációk',
-        'Package installation requires a patch level update of OTOBO.' =>
-            'A csomagtelepítés az OTOBO hibajavító szintű frissítését igényli.',
-        'Package update requires a patch level update of OTOBO.' => 'A csomagfrissítés az OTOBO hibajavító szintű frissítését igényli.',
-        'Please note that your installed OTOBO version is %s.' => 'Ne feledje, hogy a telepített OTOBO verziója %s.',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
-            'A csomag telepítéséhez frissítenie kell az OTOBO-t %s vagy újabb verzióra.',
-        'This package can only be installed on OTOBO version %s or older.' =>
-            'Ez a csomag csak az OTOBO %s vagy régebbi verziójára telepíthető.',
-        'This package can only be installed on OTOBO version %s or newer.' =>
-            'Ez a csomag csak az OTOBO %s vagy újabb verziójára telepíthető.',
-        'Why should I keep OTOBO up to date?' => 'Miért kell naprakészen tartanom az OTOBO-t?',
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
+            'A csomagtelepítés az CareOnCloud ESM hibajavító szintű frissítését igényli.',
+        'Package update requires a patch level update of CareOnCloud ESM.' => 'A csomagfrissítés az CareOnCloud ESM hibajavító szintű frissítését igényli.',
+        'Please note that your installed CareOnCloud ESM version is %s.' => 'Ne feledje, hogy a telepített CareOnCloud ESM verziója %s.',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
+            'A csomag telepítéséhez frissítenie kell az CareOnCloud ESM-t %s vagy újabb verzióra.',
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
+            'Ez a csomag csak az CareOnCloud ESM %s vagy régebbi verziójára telepíthető.',
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
+            'Ez a csomag csak az CareOnCloud ESM %s vagy újabb verziójára telepíthető.',
+        'Why should I keep CareOnCloud ESM up to date?' => 'Miért kell naprakészen tartanom az CareOnCloud ESM-t?',
         'You will receive updates about relevant security issues.' => 'Frissítéseket fog kapni a fontos biztonsági problémákról.',
-        'You will receive updates for all other relevant OTOBO issues.' =>
-            'Frissítéseket fog kapni minden egyéb fontos OTOBO problémáról.',
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
+            'Frissítéseket fog kapni minden egyéb fontos CareOnCloud ESM problémáról.',
         'How can I do a patch level update if I don’t have a contract?' =>
             'Hogyan végezhetek hibajavító szintű frissítést, ha nincs szerződésem?',
         'Please find all relevant information within the updating instructions at %s.' =>
@@ -1844,7 +1844,7 @@ sub Data {
         'Install' => 'Telepítés',
         'Update repository information' => 'Tároló-információk frissítése',
         'Cloud services are currently disabled.' => 'A felhőszolgáltatások jelenleg le vannak tiltva.',
-        'OTOBO Verify can not continue!' => 'Az OTOBO-ellenőrzés nem folytatható!',
+        'CareOnCloud ESM Verify can not continue!' => 'Az CareOnCloud ESM-ellenőrzés nem folytatható!',
         'Enable cloud services' => 'Felhőszolgáltatások engedélyezése',
         'Update all installed packages' => 'Az összes telepített csomag frissítése',
         'Online Repository' => 'Interneten lévő tároló',
@@ -1852,7 +1852,7 @@ sub Data {
         'Action' => 'Művelet',
         'Module documentation' => 'Modul-dokumentáció',
         'Local Repository' => 'Helyi tároló',
-        'This package is verified by OTOBOverify (tm)' => 'Ezt a csomagot az OTOBOverify (tm) ellenőrizte',
+        'This package is verified by CareOnCloud ESMverify (tm)' => 'Ezt a csomagot az CareOnCloud ESMverify (tm) ellenőrizte',
         'Uninstall' => 'Eltávolítás',
         'Package not correctly deployed! Please reinstall the package.' =>
             'A csomag nincs megfelelően üzembe állítva! Telepítse újra a csomagot.',
@@ -2225,27 +2225,27 @@ sub Data {
         'Edit System Registration' => 'Rendszer regisztráció szerkesztése',
         'System Registration Overview' => 'Rendszer regisztráció áttekintője',
         'Register System' => 'Rendszer regisztrálása',
-        'Validate OTOBO-ID' => 'OTOBO-azonosító ellenőrzése',
+        'Validate CareOnCloud ID' => 'CareOnCloud ESM-azonosító ellenőrzése',
         'Deregister System' => 'Rendszer regisztrációjának törlése',
         'Edit details' => 'Részletek szerkesztése',
         'Show transmitted data' => 'Átvitt adatok megtekintése',
         'Deregister system' => 'Rendszer regisztrációjának törlése',
         'Overview of registered systems' => 'Regisztrált rendszerek áttekintője',
-        'This system is registered with OTOBO Team.' => 'Ez a rendszer regisztrálva van az OTOBO csapattal.',
+        'This system is registered with CareOnCloud ESM Team.' => 'Ez a rendszer regisztrálva van az CareOnCloud ESM csapattal.',
         'System type' => 'Rendszertípus',
         'Unique ID' => 'Egyedi azonosító',
         'Last communication with registration server' => 'Utolsó kommunikáció a regisztrációs kiszolgálóval',
         'System Registration not Possible' => 'A rendszer regisztrációja nem lehetséges',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            'Ne feledje, hogy nem tudja regisztrálni a rendszerét, ha az OTOBO démon nem fut helyesen!',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            'Ne feledje, hogy nem tudja regisztrálni a rendszerét, ha az CareOnCloud ESM démon nem fut helyesen!',
         'Instructions' => 'Utasítások',
         'System Deregistration not Possible' => 'A rendszer regisztrációjának megszüntetése nem lehetséges',
-        'OTOBO-ID Login' => 'OTOBO-azonosító bejelentkezés',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
-            'A rendszer regisztráció az OTOBO csapat szolgáltatása, amely számos előnyt biztosít!',
+        'CareOnCloud ID Login' => 'CareOnCloud ESM-azonosító bejelentkezés',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
+            'A rendszer regisztráció az CareOnCloud ESM csapat szolgáltatása, amely számos előnyt biztosít!',
         'Read more' => 'Olvassa tovább',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            'Be kell jelentkeznie az OTOBO-azonosítójával a rendszer regisztrálásához.',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            'Be kell jelentkeznie az CareOnCloud ESM-azonosítójával a rendszer regisztrálásához.',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'Az OTOBO-azonosítója az OTOBO.com weboldalon a regisztrációhoz használt e-mail-címe.',
         'Data Protection' => 'Adatvédelem',
@@ -2256,45 +2256,45 @@ sub Data {
         'This is only the beginning!' => 'És ez még csak a kezdet!',
         'We will inform you about our new services and offerings soon.' =>
             'Hamarosan értesíteni fogjuk az új szolgáltatásainkról és ajánlatainkról.',
-        'Can I use OTOBO without being registered?' => 'Használható az OTOBO regisztráció nélkül?',
+        'Can I use CareOnCloud ESM without being registered?' => 'Használható az CareOnCloud ESM regisztráció nélkül?',
         'System registration is optional.' => 'A rendszer regisztrációja opcionális.',
-        'You can download and use OTOBO without being registered.' => 'Letöltheti és használhatja az OTOBO-t anélkül, hogy regisztrálva lenne.',
+        'You can download and use CareOnCloud ESM without being registered.' => 'Letöltheti és használhatja az CareOnCloud ESM-t anélkül, hogy regisztrálva lenne.',
         'Is it possible to deregister?' => 'Lehetséges a regisztráció törlése?',
         'You can deregister at any time.' => 'Bármikor törölheti a regisztrációt.',
         'Which data is transfered when registering?' => 'Milyen adatok kerülnek átvitelre a regisztrációkor?',
-        'A registered system sends the following data to OTOBO Team:' => 'Egy regisztrált rendszer a következő adatokat küldi az OTOBO csapatnak:',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            'Teljes képzésű tartománynév (FQDN), OTOBO verzió, adatbázis, operációs rendszer és Perl verzió.',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => 'Egy regisztrált rendszer a következő adatokat küldi az CareOnCloud ESM csapatnak:',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            'Teljes képzésű tartománynév (FQDN), CareOnCloud ESM verzió, adatbázis, operációs rendszer és Perl verzió.',
         'Why do I have to provide a description for my system?' => 'Miért kell leírást megadnom a rendszeremhez?',
         'The description of the system is optional.' => 'A rendszer leírása opcionális.',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             'A megadott leírás és a rendszer típusa segít az azonosításban, és a regisztrált rendszer részleteinek kezelésében.',
-        'How often does my OTOBO system send updates?' => 'Milyen gyakran küld az OTOBO rendszerem frissítéseket?',
+        'How often does my CareOnCloud ESM system send updates?' => 'Milyen gyakran küld az CareOnCloud ESM rendszerem frissítéseket?',
         'Your system will send updates to the registration server at regular intervals.' =>
             'A rendszer szabályos időközönként fog frissítéseket küldeni a regisztrációs kiszolgálónak.',
         'Typically this would be around once every three days.' => 'Ez tipikusan nagyjából három naponta történik.',
         'If you deregister your system, you will lose these benefits:' =>
             'Ha megszünteti a rendszer regisztrációját, a következő előnyöket fogja elveszíteni:',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            'Be kell jelentkeznie az OTOBO-azonosítójával a rendszere regisztrációjának törléséhez.',
-        'OTOBO-ID' => 'OTOBO-azonosító',
-        'You don\'t have an OTOBO-ID yet?' => 'Még nincs OTOBO-azonosítója?',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            'Be kell jelentkeznie az CareOnCloud ESM-azonosítójával a rendszere regisztrációjának törléséhez.',
+        'CareOnCloud ID' => 'CareOnCloud ESM-azonosító',
+        'You don\'t have a CareOnCloud ID yet?' => 'Még nincs CareOnCloud ESM-azonosítója?',
         'Sign up now' => 'Regisztráljon most',
         'Forgot your password?' => 'Elfelejtette a jelszavát?',
         'Retrieve a new one' => 'Kérjen egy újat',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
-            'Ezek az adatok rendszeresen el lesznek küldve az OTOBO csapatnak, ha regisztrálja a rendszerét.',
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
+            'Ezek az adatok rendszeresen el lesznek küldve az CareOnCloud ESM csapatnak, ha regisztrálja a rendszerét.',
         'Attribute' => 'Attribútum',
         'FQDN' => 'FQDN',
-        'OTOBO Version' => 'OTOBO verzió',
+        'CareOnCloud ESM Version' => 'CareOnCloud ESM verzió',
         'Operating System' => 'Operációs rendszer',
         'Perl Version' => 'Perl verzió',
         'Optional description of this system.' => 'A rendszer opcionális leírása.',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
-            'Ez lehetővé fogja tenni a rendszer számára további támogatási adatok információinak küldését az OTOBO csapatnak.',
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
+            'Ez lehetővé fogja tenni a rendszer számára további támogatási adatok információinak küldését az CareOnCloud ESM csapatnak.',
         'Register' => 'Regisztráció',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
-            'Ha folytatja, ezzel a lépéssel törölni fogja a rendszer regisztrációját az OTOBO csapatnál.',
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
+            'Ha folytatja, ezzel a lépéssel törölni fogja a rendszer regisztrációját az CareOnCloud ESM csapatnál.',
         'Deregister' => 'Regisztráció törlése',
         'You can modify registration settings here.' => 'Itt módosíthatja a regisztrációs beállításokat.',
         'Overview of Transmitted Data' => 'Átvitt adatok áttekintője',
@@ -2395,8 +2395,8 @@ sub Data {
         'Add Certificate' => 'Tanúsítvány hozzáadása',
         'Add Private Key' => 'Személyes kulcs hozzáadása',
         'SMIME support is disabled' => 'Az S/MIME támogatás le van tiltva',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            'Hogy képes legyen S/MIME-t használni az OTOBO-ban, ahhoz először engedélyeznie kell azt.',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            'Hogy képes legyen S/MIME-t használni az CareOnCloud ESM-ban, ahhoz először engedélyeznie kell azt.',
         'Enable SMIME support' => 'S/MIME támogatás engedélyezése',
         'Faulty SMIME configuration' => 'Hibás S/MIME beállítás',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2526,18 +2526,18 @@ sub Data {
         'This state is used in the following config settings:' => 'Ez az állapot a következő konfigurációs beállításokban van használva:',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => 'Nem lehetséges támogatási adatokat küldeni az OTOBO csapatnak!',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => 'Nem lehetséges támogatási adatokat küldeni az CareOnCloud ESM csapatnak!',
         'Enable Cloud Services' => 'Felhőszolgáltatások engedélyezése',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
-            'Ezeket az adatokat küldik el az OTOBO csapatnak rendszeresen. Az adatok küldésének leállításához frissítse a rendszer regisztrációját.',
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
+            'Ezeket az adatokat küldik el az CareOnCloud ESM csapatnak rendszeresen. Az adatok küldésének leállításához frissítse a rendszer regisztrációját.',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             'Kézzel is aktiválhatja a támogatási adatok küldését a gomb megnyomásával:',
         'Send Update' => 'Frissítés küldése',
         'Currently this data is only shown in this system.' => 'Jelenleg ezek az adatok csak ezen a rendszeren jelennek meg.',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
-            'Erősen javasolt az adatok elküldése az OTOBO csapatnak annak érdekében, hogy jobb támogatást kapjon.',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            'Az adatküldés engedélyezéséhez regisztrálja a rendszerét az OTOBO csapattal, vagy frissítse a rendszer regisztrációjának információit (győződjön meg arról, hogy aktiválta a „Támogatási adatok küldése” lehetőséget).',
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
+            'Erősen javasolt az adatok elküldése az CareOnCloud ESM csapatnak annak érdekében, hogy jobb támogatást kapjon.',
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            'Az adatküldés engedélyezéséhez regisztrálja a rendszerét az CareOnCloud ESM csapattal, vagy frissítse a rendszer regisztrációjának információit (győződjön meg arról, hogy aktiválta a „Támogatási adatok küldése” lehetőséget).',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             'A támogatási csomag (tartalmazza: rendszer regisztrációs információk, támogatási adatok, telepített csomagok listája és minden helyileg módosított forráskód fájl) előállítható a gomb megnyomásával:',
         'Generate Support Bundle' => 'Támogatási csomag előállítása',
@@ -2549,11 +2549,11 @@ sub Data {
         'The email address for this user is invalid, this option has been disabled.' =>
             'Ennek a felhasználónak az e-mail-címe érvénytelen, ez a lehetőség le lett tiltva.',
         'Sending' => 'Küldés',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
-            'A támogatási csomag automatikusan el lesz küldve e-mailben az OTOBO csapatnak.',
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
+            'A támogatási csomag automatikusan el lesz küldve e-mailben az CareOnCloud ESM csapatnak.',
         'Download File' => 'Fájl letöltése',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
-            'A támogatási csomagot tartalmazó fájl le lesz töltve a helyi rendszerre. Mentse el a fájlt, és küldje el az OTOBO csapatnak egy alternatív módszer használatával.',
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
+            'A támogatási csomagot tartalmazó fájl le lesz töltve a helyi rendszerre. Mentse el a fájlt, és küldje el az CareOnCloud ESM csapatnak egy alternatív módszer használatával.',
         'Error: Support data could not be collected (%s).' => 'Hiba: A támogatási adatokat nem sikerült összegyűjteni (%s).',
         'Details' => 'Részletek',
 
@@ -2779,7 +2779,7 @@ sub Data {
         'Translation' => 'Fordítás',
         'Marked for Deletion' => 'Megjelölve törlésre',
         'Edit Translation' => 'Fordítás szerkesztése',
-        'Overwrites OTOBO translation' => 'Felülírja az OTOBO fordítását',
+        'Overwrites CareOnCloud ESM translation' => 'Felülírja az CareOnCloud ESM fordítását',
         'Undo Delete Translation' => 'Fordítás törlésének visszavonása',
         'Delete Translation' => 'Fordítás törlése',
         'Translations' => 'Fordítások',
@@ -2951,18 +2951,18 @@ sub Data {
         'Customer User Information Center' => 'Ügyfél-felhasználó információs-központ',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'Az OTOBO démon egy démonfolyamat, amely olyan aszinkron feladatokat hajt végre, mint például jegyeszkaláció aktiválás, e-mail küldés, stb.',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            'Egy futó OTOBO démon feltétlenül szükséges a helyes rendszerműködéshez.',
-        'Starting the OTOBO Daemon' => 'Az OTOBO démon indítása',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            'Győződjön meg arról, hogy a(z) „%s” fájl létezik-e (.dist kiterjesztés nélkül). Ez a cron-feladat 5 percenként fogja ellenőrizni, hogy az OTOBO démon fut-e, és szükség szerint elindítja azt.',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            'Hajtsa végre a(z) „%s start” parancsot, hogy megbizonyosodjon arról, hogy az „otobo” felhasználó cron-feladatai aktívak-e.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
-            'Ellenőrizze 5 perc után, hogy az OTOBO démon fut-e a rendszeren („bin/careoncloud.Daemon.pl status”).',
-        'Running the OTOBO Daemon in a Docker based installation' => 'Az OTOBO démon futtatása Docker-alapú telepítésben',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'Az CareOnCloud ESM démon egy démonfolyamat, amely olyan aszinkron feladatokat hajt végre, mint például jegyeszkaláció aktiválás, e-mail küldés, stb.',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            'Egy futó CareOnCloud ESM démon feltétlenül szükséges a helyes rendszerműködéshez.',
+        'Starting the CareOnCloud ESM Daemon' => 'Az CareOnCloud ESM démon indítása',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            'Győződjön meg arról, hogy a(z) „%s” fájl létezik-e (.dist kiterjesztés nélkül). Ez a cron-feladat 5 percenként fogja ellenőrizni, hogy az CareOnCloud ESM démon fut-e, és szükség szerint elindítja azt.',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            'Hajtsa végre a(z) „%s start” parancsot, hogy megbizonyosodjon arról, hogy az „careoncloud” felhasználó cron-feladatai aktívak-e.',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'Ellenőrizze 5 perc után, hogy az CareOnCloud ESM démon fut-e a rendszeren („bin/careoncloud.Daemon.pl status”).',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => 'Az CareOnCloud ESM démon futtatása Docker-alapú telepítésben',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             'Ellenőrizze a „docker compose ps” paranccsal, hogy fut-e „daemon” nevű szolgáltatás.',
         'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
@@ -3130,7 +3130,7 @@ sub Data {
         'This setting can currently not be saved.' => 'Ezt a beállítás jelenleg nem lehet elmenteni.',
         'This setting can currently not be saved' => 'Ezt a beállítás jelenleg nem lehet elmenteni',
         'Save this setting' => 'Beállítás mentése',
-        'Did you know? You can help translating OTOBO at %s.' => 'Tudta? Segíthet az OTOBO fordításában a következő címen: %s.',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => 'Tudta? Segíthet az CareOnCloud ESM fordításában a következő címen: %s.',
 
         # Template: SettingsList
         'Reset to default' => 'Visszaállítás az alapértelmezettre',
@@ -3150,7 +3150,7 @@ sub Data {
         # Template: AgentStatisticsAdd
         'Statistics Management' => 'Statisztikakezelés',
         'Add Statistics' => 'Statisztika hozzáadása',
-        'Read more about statistics in OTOBO' => 'Tudjon meg többet az OTOBO-ban lévő statisztikákról',
+        'Read more about statistics in CareOnCloud ESM' => 'Tudjon meg többet az CareOnCloud ESM-ban lévő statisztikákról',
         'Dynamic Matrix' => 'Dinamikus mátrix',
         'Each cell contains a singular data point.' => 'Minden egyes cella egyetlen adatpontot tartalmaz.',
         'Dynamic List' => 'Dinamikus lista',
@@ -3741,8 +3741,8 @@ sub Data {
 
         # Template: InstallerDBStart
         'Install Type' => 'Telepítés típusa',
-        'Create a new database for OTOBO' => 'Új adatbázis létrehozása az OTOBO-hoz',
-        'Use an existing database for OTOBO' => 'Meglévő adatbázis használata az OTOBO-hoz',
+        'Create a new database for CareOnCloud ESM' => 'Új adatbázis létrehozása az CareOnCloud ESM-hoz',
+        'Use an existing database for CareOnCloud ESM' => 'Meglévő adatbázis használata az CareOnCloud ESM-hoz',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3753,8 +3753,8 @@ sub Data {
         'Database check successful.' => 'Az adatbázis-ellenőrzés sikeres.',
         'Database User' => 'Adatbázis felhasználó',
         'New' => 'Új',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
-            'Egy új, korlátozott jogosultságokkal rendelkező adatbázis felhasználó lesz létrehozva ehhez az OTOBO rendszerhez.',
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
+            'Egy új, korlátozott jogosultságokkal rendelkező adatbázis felhasználó lesz létrehozva ehhez az CareOnCloud ESM rendszerhez.',
         'Generated password' => 'Előállított jelszó',
         'Repeat Password' => 'Jelszó ismétlése',
         'Passwords do not match' => 'A jelszavak nem egyeznek',
@@ -3764,7 +3764,7 @@ sub Data {
 
         # Template: InstallerFinish
         'Start page' => 'Kezdőoldal',
-        'Your OTOBO Team' => 'Az Ön OTOBO csapata',
+        'Your CareOnCloud ESM Team' => 'Az Ön CareOnCloud ESM csapata',
 
         # Template: InstallerLicense
         'Don\'t accept license' => 'Licenc elutasítása',
@@ -3794,10 +3794,10 @@ sub Data {
             'A kézzel megadott e-mail-címek ellenőrzése a DNS-ben található MX rekordokkal. Ne használja ezt a lehetőséget, ha a DNS lassú, vagy nem oldja fel a nyilvános címeket.',
         'Elasticsearch' => 'Elasticsearch',
         'Initialize Elasticsearch' => 'Elasticsearch előkészítése',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
-            'Elasticsearch-kiszolgáló található, és automatikusan aktiválásra került az OTOBO-hoz.',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
-            'Úgy tűnik, hogy vagy nem fut tiszta Elasticsearch-kiszolgáló, vagy az nem a szabványos beállításokat használja. Az Elasticsearch kézi aktiválásához szükség szerint szerkessze a webszolgáltatást az adminisztrátori felületen, aktiválja az „Elasticsearch::Active” és a „Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext” beállítást a rendszerbeállításokban, majd futtassa a „Maint::Elasticsearch::Migration” otobo.Console parancsot.',
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
+            'Elasticsearch-kiszolgáló található, és automatikusan aktiválásra került az CareOnCloud ESM-hoz.',
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
+            'Úgy tűnik, hogy vagy nem fut tiszta Elasticsearch-kiszolgáló, vagy az nem a szabványos beállításokat használja. Az Elasticsearch kézi aktiválásához szükség szerint szerkessze a webszolgáltatást az adminisztrátori felületen, aktiválja az „Elasticsearch::Active” és a „Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext” beállítást a rendszerbeállításokban, majd futtassa a „Maint::Elasticsearch::Migration” careoncloud.Console parancsot.',
 
         # Template: LinkObject
         'Delete link' => 'Kapcsolat törlése',
@@ -3826,16 +3826,16 @@ sub Data {
         'Clean up and finish' => 'Tisztítás és befejezés',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
-            'A költöztetés befejeződött, köszönjük, hogy kipróbálja az OTOBO-t – reméljük, hogy tetszeni fog.',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
-            'Ahhoz, hogy az OTOBO-t használni tudja, a következő parancsot kell begépelnie a parancssorba (terminálba vagy parancsértelmezőbe) rendszergazdaként.',
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
+            'A költöztetés befejeződött, köszönjük, hogy kipróbálja az CareOnCloud ESM-t – reméljük, hogy tetszeni fog.',
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+            'Ahhoz, hogy az CareOnCloud ESM-t használni tudja, a következő parancsot kell begépelnie a parancssorba (terminálba vagy parancsértelmezőbe) rendszergazdaként.',
         'Restart your webserver' => 'Indítsa újra a webkiszolgálót',
-        'After doing so your OTOBO is up and running.' => 'Miután ezt megtette, az OTOBO készen áll és fut.',
+        'After doing so your CareOnCloud ESM is up and running.' => 'Miután ezt megtette, az CareOnCloud ESM készen áll és fut.',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
-            'Ez a költöztető parancsfájl lépésről lépésre végigvezeti Önt a jegykezelő rendszer OTRS vagy ((OTRS)) Community Edition 6-os verzióról OTOBO 10-re történő költöztetésének folyamatán.',
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
+            'Ez a költöztető parancsfájl lépésről lépésre végigvezeti Önt a jegykezelő rendszer OTRS vagy ((OTRS)) Community Edition 6-os verzióról CareOnCloud ESM 10-re történő költöztetésének folyamatán.',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             'Nincs semmiféle veszély az eredeti rendszerre nézve: ott semmi sem változik.',
         'Instructions and details on migration prerequisites can be found in the migration manual. We strongly recommend reading it before starting migration.' =>
@@ -3844,8 +3844,8 @@ sub Data {
             'Abban az esetben, ha fel kell függesztenie a költöztetést, bármikor folytathatja azt ugyanarról a pontról, amíg a gyorsítótár nem lett törölve.',
         'All entered passwords are cached until the migration is finished.' =>
             'Az összes megadott jelszó a gyorsítótárban marad, amíg a költöztetés be nem fejeződik.',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
-            ' Bárki képes lesz elolvasni ezeket, akinek hozzáférése van ehhez az oldalhoz, vagy olvasási jogosultsága van az OTOBO saját könyvtárához. Ha megszakítja a költöztetést, akkor lehetőséget kap a gyorsítótár törlésére ennek az oldalnak az újbóli meglátogatásával.',
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+            ' Bárki képes lesz elolvasni ezeket, akinek hozzáférése van ehhez az oldalhoz, vagy olvasási jogosultsága van az CareOnCloud ESM saját könyvtárához. Ha megszakítja a költöztetést, akkor lehetőséget kap a gyorsítótár törlésére ennek az oldalnak az újbóli meglátogatásával.',
         'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
             'Ha támogatásra van szüksége, akkor kérje meg a szakértőinket – akár az %sOTOBO fórumon%s, vagy közvetlenül e-mailben a %ssales@otobo.io%s címen.',
         'Cached data found' => 'Gyorsítótárazott adatok találhatók',
@@ -3854,8 +3854,8 @@ sub Data {
         'An error occurred.' => 'Hiba történt.',
         'Discard previous progress' => 'Előző folyamat elvetése',
         'Insecure HTTP connection' => 'Nem biztonságos HTTP-kapcsolat',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
-            'A költöztető parancsfájlt HTTP-n keresztül használja. Ez nagyon nem biztonságos, mivel különféle jelszavakra van szükség a folyamat során, és ezek titkosítatlanul lesznek továbbítva. Bárki képes lesz elolvasni azokat, aki Ön és az OTOBO kiszolgálója között van! Fontolja meg inkább a HTTPS beállítását.',
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
+            'A költöztető parancsfájlt HTTP-n keresztül használja. Ez nagyon nem biztonságos, mivel különféle jelszavakra van szükség a folyamat során, és ezek titkosítatlanul lesznek továbbítva. Bárki képes lesz elolvasni azokat, aki Ön és az CareOnCloud ESM kiszolgálója között van! Fontolja meg inkább a HTTPS beállítását.',
         'Continue anyways :(' => 'Folytatás mindenképp :(',
 
         # Template: OTRSDBSettings
@@ -3878,8 +3878,8 @@ sub Data {
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => 'A szolgáltatás nem érhető el',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            'Sajnáljuk, de az OTOBO ezen szolgáltatása jelenleg nem érhető el mobil készülékekről. Ha használni szeretné, akkor vagy váltson asztali módra, vagy használja a megszokott asztali eszközét.',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            'Sajnáljuk, de az CareOnCloud ESM ezen szolgáltatása jelenleg nem érhető el mobil készülékekről. Ha használni szeretné, akkor vagy váltson asztali módra, vagy használja a megszokott asztali eszközét.',
 
         # Template: Motd
         'Message of the Day' => 'A nap üzenete',
@@ -3919,8 +3919,8 @@ sub Data {
 
         # Template: PublicDefault
         'Welcome' => 'Üdvözöljük',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            'Ez az OTOBO alapértelmezett nyilvános felülete! Nem került megadásra műveleti paraméter.',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            'Ez az CareOnCloud ESM alapértelmezett nyilvános felülete! Nem került megadásra műveleti paraméter.',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             'Telepíthetne egy olyan egyéni nyilvános modult (a csomagkezelőn keresztül), amelynek van nyilvános felülete, mint például a GyIK modulnak.',
 
@@ -4076,7 +4076,7 @@ sub Data {
         'Delete user\'s value.' => 'Felhasználó értékének törlése.',
 
         # Template: Test
-        'OTOBO Test Page' => 'OTOBO tesztoldal',
+        'CareOnCloud ESM Test Page' => 'CareOnCloud ESM tesztoldal',
         'Unlock' => 'Feloldás',
         'Welcome %s %s' => 'Üdvözli a(z) %s %s',
         'Counter' => 'Számláló',
@@ -4121,7 +4121,7 @@ sub Data {
 
         # JS Template: PackageResolve
         'Package' => 'Csomag',
-        'Uninstall from OTOBO' => 'Eltávolítás az OTOBO-ból',
+        'Uninstall from CareOnCloud ESM' => 'Eltávolítás az CareOnCloud ESM-ból',
         'Ignore' => 'Mellőzés',
         'Migrate' => 'Költöztetés',
 
@@ -4185,8 +4185,8 @@ sub Data {
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             'Az adatbázis ACL információi nincsenek szinkronizálva a rendszer beállításaival, állítson üzembe minden ACL-t.',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'Az ACL-eket nem sikerült importálni egy ismeretlen hiba miatt, további információkért nézze meg az OTOBO naplókat',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'Az ACL-eket nem sikerült importálni egy ismeretlen hiba miatt, további információkért nézze meg az CareOnCloud ESM naplókat',
         'The following ACLs have been added successfully: %s' => 'A következő ACL-ek sikeresen hozzá lettek adva: %s',
         'The following ACLs have been updated successfully: %s' => 'A következő ACL-ek sikeresen frissítve lettek: %s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
@@ -4244,8 +4244,8 @@ sub Data {
         'Unknown Notification %s!' => 'Ismeretlen értesítés: %s!',
         '%s (copy)' => '%s (másolat)',
         'There was an error creating the Notification' => 'Hiba történt az értesítés létrehozásakor',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'Az értesítéseket nem sikerült importálni egy ismeretlen hiba miatt, további információkért nézze meg az OTOBO naplókat',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'Az értesítéseket nem sikerült importálni egy ismeretlen hiba miatt, további információkért nézze meg az CareOnCloud ESM naplókat',
         'The following Notifications have been added successfully: %s' =>
             'A következő értesítések sikeresen hozzá lettek adva: %s',
         'The following Notifications have been updated successfully: %s' =>
@@ -4597,12 +4597,12 @@ sub Data {
         'Could not load %s.' => 'Nem sikerült betölteni: %s.',
         'Could not read %s!' => 'Nem sikerült olvasni: %s!',
         'Need a file to import!' => 'Egy fájl szükséges az importáláshoz!',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            'Az importált fájl nem rendelkezik érvényes YAML tartalommal! A részletekért nézze meg az OTOBO naplóját.',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            'Az importált fájl nem rendelkezik érvényes YAML tartalommal! A részletekért nézze meg az CareOnCloud ESM naplóját.',
         'Web service "%s" deleted!' => 'A(z) „%s” webszolgáltatás törölve!',
-        'OTOBO as provider' => 'OTOBO mint szolgáltató',
+        'CareOnCloud ESM as provider' => 'CareOnCloud ESM mint szolgáltató',
         'Operations' => 'Műveletek',
-        'OTOBO as requester' => 'OTOBO mint kérelmező',
+        'CareOnCloud ESM as requester' => 'CareOnCloud ESM mint kérelmező',
         'Invokers' => 'Meghívók',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4696,7 +4696,7 @@ sub Data {
         'Can\'t read %s!' => 'Nem olvasható: %s!',
         'File is OK' => 'A fájl rendben van',
         'Package has locally modified files.' => 'A csomag helyileg módosított fájlokkal rendelkezik.',
-        'Package not verified by the OTOBO Team!' => 'A csomagot nem ellenőrizte az OTOBO csapat!',
+        'Package not verified by the CareOnCloud ESM Team!' => 'A csomagot nem ellenőrizte az CareOnCloud ESM csapat!',
         'Not Started' => 'Nincs elindítva',
         'Updated' => 'Frissítve',
         'Already up-to-date' => 'Már naprakész',
@@ -4717,9 +4717,9 @@ sub Data {
             'Nem találhatók csomagok a kijelölt tárolóban. További információkért nézze meg a naplót!',
         'Package not verified due a communication issue with verification server!' =>
             'A csomag nincs ellenőrizve az ellenőrző-kiszolgálóval történő kommunikációs hiba miatt!',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => 'Nem lehet kapcsolódni az OTOBO funkciókiegészítő-lista kiszolgálójához!',
-        'Can\'t get OTOBO Feature Add-on list from server!' => 'Nem lehet lekérni az OTOBO funkciókiegészítő-listáját a kiszolgálóról!',
-        'Can\'t get OTOBO Feature Add-on from server!' => 'Nem lehet lekérni az OTOBO funkciókiegészítőt a kiszolgálóról!',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => 'Nem lehet kapcsolódni az CareOnCloud ESM funkciókiegészítő-lista kiszolgálójához!',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => 'Nem lehet lekérni az CareOnCloud ESM funkciókiegészítő-listáját a kiszolgálóról!',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => 'Nem lehet lekérni az CareOnCloud ESM funkciókiegészítőt a kiszolgálóról!',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => 'Nincs ilyen szűrő: %s',
@@ -4917,13 +4917,13 @@ sub Data {
         'You currently don\'t have any favourite settings.' => 'Jelenleg nincs egyetlen kedvenc beállítása sem.',
         'The following settings could not be found: %s' => 'A következő beállítások nem találhatók: %s',
         'Import not allowed!' => 'Az importálás nem engedélyezett!',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
-            'A rendszerbeállításokat nem sikerült importálni egy ismeretlen hiba miatt, további információkért nézze meg az OTOBO naplókat.',
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
+            'A rendszerbeállításokat nem sikerült importálni egy ismeretlen hiba miatt, további információkért nézze meg az CareOnCloud ESM naplókat.',
         'Category Search' => 'Kategóriakeresés',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
-            'Néhány importált beállítás nincs jelen a konfiguráció jelenlegi állapotában, vagy nem volt lehetséges frissíteni azokat. További információkért nézze meg az OTOBO naplóját.',
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
+            'Néhány importált beállítás nincs jelen a konfiguráció jelenlegi állapotában, vagy nem volt lehetséges frissíteni azokat. További információkért nézze meg az CareOnCloud ESM naplóját.',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
         'This deployment does not contain changes in the setting values!' =>
@@ -5434,7 +5434,7 @@ sub Data {
         'Configure "Home" in Kernel/Config.pm first!' => 'Először állítsa be a „Home” értékét a Kernel/Config.pm fájlban!',
         'File "%s/Kernel/Config.pm" not found!' => 'A(z) „%s/Kernel/Config.pm” fájl nem található!',
         'Directory "%s" not found!' => 'A(z) „%s” könyvtár nem található!',
-        'Install OTOBO' => 'Az OTOBO telepítése',
+        'Install CareOnCloud ESM' => 'Az CareOnCloud ESM telepítése',
         'Intro' => 'Bevezetés',
         'Kernel/Config.pm isn\'t writable!' => 'A Kernel/Config.pm nem írható!',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -5451,7 +5451,7 @@ sub Data {
         'Unknown database type "%s".' => 'Ismeretlen adatbázistípus: „%s”.',
         'Please go back.' => 'Lépjen vissza.',
         'Create Database' => 'Adatbázis létrehozása',
-        'Install OTOBO - Error' => 'Az OTOBO telepítése – hiba',
+        'Install CareOnCloud ESM - Error' => 'Az CareOnCloud ESM telepítése – hiba',
         'File "%s/%s.xml" not found!' => 'A(z) „%s/%s.xml” fájl nem található!',
         'Contact your Admin!' => 'Vegye fel a kapcsolatot a rendszergazdával!',
         'Execution of SQL statement failed: ' => 'Az SQL-utasítás végrehajtása nem sikerült: ',
@@ -5476,7 +5476,7 @@ sub Data {
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             'Ha újra szeretné futtatni az OTRS-ről költöztető eszközt, akkor tiltsa le a biztonságos módot a rendszerbeállításokban.',
-        'OTRS to OTOBO migration' => 'OTRS-ről OTOBO-ra költöztetés',
+        'OTRS to CareOnCloud ESM migration' => 'OTRS-ről CareOnCloud ESM-ra költöztetés',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => 'Nincs %s!',
@@ -5613,8 +5613,8 @@ sub Data {
         'Shown Tickets' => 'Megjelenített jegyek',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => 'Nem lehet kapcsolódni az OTOBO hírek kiszolgálójához!',
-        'Can\'t get OTOBO News from server!' => 'Nem lehet lekérni az OTOBO híreket a kiszolgálóról!',
+        'Can\'t connect to CareOnCloud ESM News server!' => 'Nem lehet kapcsolódni az CareOnCloud ESM hírek kiszolgálójához!',
+        'Can\'t get CareOnCloud ESM News from server!' => 'Nem lehet lekérni az CareOnCloud ESM híreket a kiszolgálóról!',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => 'Nem lehet kapcsolódni a termékhírek kiszolgálójához!',
@@ -5700,7 +5700,7 @@ sub Data {
             'Egy rendszerkarbantartás időszak fog kezdődni ekkor: %s, és várható befejezése: %s',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'Az OTOBO démon nem fut.',
+        'CareOnCloud ESM Daemon is not running.' => 'Az CareOnCloud ESM démon nem fut.',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5987,7 +5987,7 @@ sub Data {
         'Migration completed, perfect!' => 'A költöztetés befejeződött, tökéletes!',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => 'Az OTOBO gyorsítótárának törlése.',
+        'CareOnCloud ESM Cache cleanup.' => 'Az CareOnCloud ESM gyorsítótárának törlése.',
         'Completed.' => 'Befejezve.',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
@@ -6003,15 +6003,15 @@ sub Data {
         'Data transfer completed.' => 'Az adatátvitel befejeződött.',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => 'Annak ellenőrzése, hogy az OTOBO verziója helyes-e.',
-        'Check if OTOBO and OTRS connect is possible.' => 'Annak ellenőrzése, hogy az OTOBO és az OTRS összekapcsolása lehetséges-e.',
+        'Check if CareOnCloud ESM version is correct.' => 'Annak ellenőrzése, hogy az CareOnCloud ESM verziója helyes-e.',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => 'Annak ellenőrzése, hogy az CareOnCloud ESM és az OTRS összekapcsolása lehetséges-e.',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => 'Nem lehet megnyitni a RELEASE fájlt az OTRS saját könyvtárából: %s!',
-        'Check if OTOBO and OTRS version is correct.' => 'Annak ellenőrzése, hogy az OTOBO és az OTRS verziója helyes-e.',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => 'Annak ellenőrzése, hogy az CareOnCloud ESM és az OTRS verziója helyes-e.',
         '%s does not exist!' => 'A(z) %s nem létezik!',
-        'No OTOBO system found!' => 'Nem található OTOBO rendszer!',
+        'No CareOnCloud ESM system found!' => 'Nem található CareOnCloud ESM rendszer!',
         'You are trying to run this script on the wrong framework version %s!' =>
             'Ezt a parancsfájlt rossz keretrendszer-verzión (%s) próbálja futtatni!',
-        'OTOBO Version is correct: %s.' => 'Az OTOBO verziója helyes: %s.',
+        'CareOnCloud ESM Version is correct: %s.' => 'Az CareOnCloud ESM verziója helyes: %s.',
         'Check if OTRS version is correct.' => 'Annak ellenőrzése, hogy az OTRS verziója helyes-e.',
         'OTRS RELEASE file %s does not exist!' => 'A(z) %s OTRS RELEASE fájl nem létezik!',
         'Can\'t read OTRS RELEASE file: %s' => 'Nem lehet olvasni az OTRS RELEASE fájlt: %s',
@@ -6044,8 +6044,8 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             'Nem lehet megnyitni a „Kernel/Config.pm” fájlt az OTRS saját könyvtárából: %s!',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => 'Annak ellenőrzése, hogy a „Kernel/Config.pm” létezik-e az OTOBO saját könyvtárában.',
-        'Kernel/Config.pm exists in OTOBO home' => 'A „Kernel/Config.pm” létezik az OTOBO saját könyvtárában',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => 'Annak ellenőrzése, hogy a „Kernel/Config.pm” létezik-e az CareOnCloud ESM saját könyvtárában.',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => 'A „Kernel/Config.pm” létezik az CareOnCloud ESM saját könyvtárában',
         'Check if we are able to connect to OTRS home directory.' => 'Annak ellenőrzése, hogy képesek vagyunk-e kapcsolódni az OTRS saját könyvtárához.',
         'Can\'t connect to OTRS file directory.' => 'Nem lehet kapcsolódni az OTRS fájlkönyvtárához.',
         'Connect to OTRS file directory is possible.' => 'Az OTRS fájlkönyvtárához való kapcsolódás lehetséges.',
@@ -6122,9 +6122,9 @@ sub Data {
         'File is not installed!' => 'A fájl nincs telepítve!',
         'File is different!' => 'A fájl eltérő!',
         'Can\'t read file!' => 'Nem olvasható a fájl!',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
-            '<p>A további csomagok számos hasznos funkcióval bővíthetik az OTOBO-t. Azonban győződjön meg arról, hogy a csomag eredete megbízható-e, mivel az bármilyen módon módosíthatja az OTOBO-t.</p>',
-        'Package not verified by the OTOBO community!' => 'A csomagot nem ellenőrizte az OTOBO közössége!',
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
+            '<p>A további csomagok számos hasznos funkcióval bővíthetik az CareOnCloud ESM-t. Azonban győződjön meg arról, hogy a csomag eredete megbízható-e, mivel az bármilyen módon módosíthatja az CareOnCloud ESM-t.</p>',
+        'Package not verified by the CareOnCloud ESM community!' => 'A csomagot nem ellenőrizte az CareOnCloud ESM közössége!',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '<p>A nem ellenőrzött csomagok telepítése le van tiltva. A nem ellenőrzött csomagok telepítést a „Package::AllowNotVerifiedPackages” rendszerbeállításon keresztül aktiválhatja.</p>',
         'Verification not possible (e.g. no internet connection)!' => 'Az ellenőrzés nem lehetséges (például nincs internetkapcsolat)!',
@@ -6322,7 +6322,7 @@ sub Data {
         'Found obsolete cryptographic function.' => 'Elavult kriptográfiai függvény található.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'OTOBO lemezpartíció',
+        'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM lemezpartíció',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => 'Lemezpartíciók használata',
@@ -6357,7 +6357,7 @@ sub Data {
         'There should be no more than 200 MB swap space used.' => '200 MB-nál nem kellene több lapozófájlt használni.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => 'Bejegyzés keresési index állapot',
         'Indexed Articles' => 'Indexelt bejegyzések',
 
@@ -6418,7 +6418,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
         'File System Writable' => 'Fájlrendszer írhatóság',
-        'The file system on your OTOBO partition is not writable.' => 'Az OTOBO partíció fájlrendszere nem írható.',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'Az CareOnCloud ESM partíció fájlrendszere nem írható.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => 'Örökölt konfigurációs biztonsági mentések',
@@ -6433,7 +6433,7 @@ sub Data {
         'Some packages have locally modified files.' => 'Néhány csomag helyileg módosított fájlokkal rendelkezik.',
         'Some packages are not correctly installed.' => 'Néhány csomag nincs megfelelően telepítve.',
         'Package Verification Status' => 'Csomagellenőrzési állapot',
-        'Some packages are not verified by the OTOBO Team.' => 'Néhány csomagot nem ellenőrzött az OTOBO csapat.',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => 'Néhány csomagot nem ellenőrzött az CareOnCloud ESM csapat.',
         'Package Framework Version Status' => 'Csomag keretrendszer verziójának állapota',
         'Some packages are not allowed for the current framework version.' =>
             'Néhány csomag nem engedélyezett a jelenlegi keretrendszer verzióhoz.',
@@ -6446,7 +6446,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
         'Spooled Emails' => 'Várakozási sorba helyezett levelek',
-        'There are emails in var/spool that OTOBO could not process.' => 'Olyan levelek találhatók a var/spool mappában, amelyeket az OTOBO nem tudott feldolgozni.',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => 'Olyan levelek találhatók a var/spool mappában, amelyeket az CareOnCloud ESM nem tudott feldolgozni.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
@@ -6486,8 +6486,8 @@ sub Data {
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => 'Időbeállítások',
         'Server time zone' => 'Kiszolgáló időzónája',
-        'OTOBO time zone' => 'OTOBO időzóna',
-        'OTOBO time zone is not set.' => 'Az OTOBO időzónája nincs beállítva.',
+        'CareOnCloud ESM time zone' => 'CareOnCloud ESM időzóna',
+        'CareOnCloud ESM time zone is not set.' => 'Az CareOnCloud ESM időzónája nincs beállítva.',
         'User default time zone' => 'Felhasználó alapértelmezett időzónája',
         'User default time zone is not set.' => 'A felhasználó alapértelmezett időzónája nincs beállítva.',
         'Calendar time zone is not set.' => 'A naptár időzónája nincs beállítva.',
@@ -6509,8 +6509,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'MPM modell',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'Az OTOBO az apache „prefork” MPM modellel való futtatását igényli.',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'Az CareOnCloud ESM az apache „prefork” MPM modellel való futtatását igényli.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'CGI gyorsító használat',
@@ -6540,7 +6540,7 @@ sub Data {
         'Webserver Version' => 'Webkiszolgáló verzió',
         'Could not determine webserver version.' => 'Nem sikerült meghatározni a webkiszolgáló verzióját.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => 'Egyidejű felhasználók részletei',
         'Concurrent Users' => 'Egyidejű felhasználók',
 
@@ -6567,12 +6567,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'Az érték nem teljesíti a reguláris kifejezést (%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
-            'A rendszer nem volt képes kiszámítani a felhasználó dátumát az OTOBO időzónájában!',
+        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+            'A rendszer nem volt képes kiszámítani a felhasználó dátumát az CareOnCloud ESM időzónájában!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
-            'A rendszer nem volt képes kiszámítani a felhasználó dátumát és idejét az OTOBO időzónájában!',
+        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+            'A rendszer nem volt képes kiszámítani a felhasználó dátumát és idejét az CareOnCloud ESM időzónájában!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -6856,8 +6856,8 @@ sub Data {
         'Currently not possible' => 'Jelenleg nem lehetséges',
         'This is currently disabled because of an ongoing package upgrade.' =>
             'Ez jelenleg le van tiltva egy folyamatban lévő csomagfrissítés miatt.',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
-            'Ez a beállítás jelenleg le van tiltva, mert az OTOBO démon nem fut.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
+            'Ez a beállítás jelenleg le van tiltva, mert az CareOnCloud ESM démon nem fut.',
         'Are you sure you want to update all installed packages?' => 'Biztosan frissíteni szeretné az összes telepített csomagot?',
         'No response from get package upgrade run status.' => 'Nincs válasz a csomaglekérés frissítések futási állapotáról.',
 
@@ -7003,7 +7003,7 @@ sub Data {
             'Adjon meg legalább egy keresési értéket, vagy * karaktert, ha bármire rá szeretne keresni.',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => 'Információk az OTOBO démonról',
+        'Information about the CareOnCloud ESM Daemon' => 'Információk az CareOnCloud ESM démonról',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => 'Ellenőrizze a pirosan megjelölt mezőket a helyes bevitelekért.',
@@ -7178,10 +7178,10 @@ sub Data {
         'This is %s' => 'Ez egy %s',
         'Complex %s with %s arguments' => 'Összetett %s %s argumentummal',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloud ESMLineChart
         'No Data Available.' => 'Nem érhető el adat.',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloud ESMMultiBarChart
         'Grouped' => 'Csoportosított',
         'Stacked' => 'Halmozott',
 
@@ -7282,8 +7282,8 @@ Az Ön ügyfélszolgálati csapata
         'Added subscription for user "%s".' => 'Feliratkozás hozzáadva a következő felhasználóhoz: „%s”.',
         'Added system request (%s).' => 'Rendszerkérés hozzáadva (%s).',
         'Added web request from customer.' => 'Ügyféltől érkezett webkérés hozzáadva.',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
-            'Az aktuális évet és hónapot tartalmazó előtagot ad az OTOBO naplófájlhoz. Minden hónapban új naplófájl lesz létrehozva.',
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
+            'Az aktuális évet és hónapot tartalmazó előtagot ad az CareOnCloud ESM naplófájlhoz. Minden hónapban új naplófájl lesz létrehozva.',
         'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
             '',
         'Adds customers email addresses to recipients in the ticket compose screen of the agent interface. The customers email address won\'t be added if the article type is email-internal.' =>
@@ -7608,8 +7608,8 @@ Az Ön ügyfélszolgálati csapata
         'Configure and manage ACLs.' => 'ACL-ek beállítása és kezelése.',
         'Configure any additional readonly mirror databases that you want to use.' =>
             'Bármely további csak olvasható tükör adatbázis beállítása, amelyet használni szeretne.',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
-            'Az OTOBO csapatnak történő támogatási adatok küldésének beállítása a javított támogatásért.',
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
+            'Az CareOnCloud ESM csapatnak történő támogatási adatok küldésének beállítása a javított támogatásért.',
         'Configure the About information.' => 'A névjegy-információk beállítása.',
         'Configure the privacy policy.' => 'Az adatvédelmi irányelvek beállítása.',
         'Configure which screen should be shown after a new ticket has been created.' =>
@@ -7756,8 +7756,8 @@ Az Ön ügyfélszolgálati csapata
         'Default value for NameX' => 'A NévX alapértelmezett értéke',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             'Műveletek meghatározása, ahol egy beállítások gomb érhető el a kapcsolt objektumok felületi elemen (LinkObject::ViewMode = „összetett”). Ne feledje, hogy ezeknek a műveleteknek rendelkezniük kell a következő JS és CSS fájlok regisztrálásával: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon egy meghatározott szöveg mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az OTOBO képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon egy meghatározott szöveg mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az CareOnCloud ESM képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             'Leképezés meghatározása az ügyfél-felhasználó adatainak változói (kulcsok) és egy jegy dinamikus mezői (értékek) között. A cél az ügyfél-felhasználó adatainak tárolása a jegy dinamikus mezőiben. A dinamikus mezőknek jelen kell lennie a rendszeren, és engedélyezve kell lenniük az AgentTicketFreeText számára azért, hogy az ügyintéző kézzel beállíthassa vagy frissíthesse azokat. Nem szabad engedélyezve lenniük az AgentTicketPhone, az AgentTicketEmail és az AgentTicketCustomer számára. Ha engedélyezve voltak, akkor elsőbbséget élveznek az automatikusan beállított értékekkel szemben. A leképezés használatához a Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser beállítást is aktiválnia kell.',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -7797,14 +7797,14 @@ Az Ön ügyfélszolgálati csapata
             'Egy ügyfélelemet határoz meg, amely egy Google ikont állít elő az ügyfél információs blokk végén.',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             'Egy ügyfélelemet határoz meg, amely egy Google Térkép ikont állít elő az ügyfél-információs blokk végén.',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon a CVE számok mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az OTOBO képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon az MSBulletin számok mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az OTOBO képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon egy meghatározott szöveg mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az OTOBO képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon a bugtraq számok mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az OTOBO képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon a CVE számok mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az CareOnCloud ESM képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon az MSBulletin számok mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az CareOnCloud ESM képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon egy meghatározott szöveg mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az CareOnCloud ESM képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Szűrő meghatározása a HTML kimenethez, hogy hivatkozást adjon a bugtraq számok mögé. Ez a képelem kétfajta bevitelt tesz lehetővé. Elsőként egy kép nevét (például faq.png). Ez esetben az CareOnCloud ESM képútvonal lesz felhasználva. A másik lehetőség a hivatkozás beszúrása a képhez.',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             'Egy szűrőt határoz meg CVE számok begyűjtéséhez a bejegyzés szövegeiből az ügyintézői jegynagyításban. Az eredmények egy metadobozban lesznek megjelenítve a bejegyzés mellett. Töltse ki az URLPreview mezőt, ha egy előnézetet szeretne látni, amikor az egérkurzort a linkelem fölé viszi. Ez lehet ugyanaz az URL mint az URL mezőben van, de lehet egy másik is. Ne feledje, hogy néhány weboldal (például Google) nem hagyja, hogy egy belső kereten belül jelenítsék meg, és emiatt az nem fog működni előnézeti módban.',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -7954,8 +7954,8 @@ Az Ön ügyfélszolgálati csapata
         'Defines phone communication channel.' => 'Telefonos kommunikációs csatornát határoz meg.',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             'Várólistákat határoz meg, amely jegyei naptárban lévő eseményekként való megjelenítéshez vannak felhasználva.',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            'Meghatározza a HTTP gépnevet a támogatási adatok gyűjtéséhez a nyilvános „PublicSupportDataCollector” modullal (például az OTOBO démonból használva).',
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            'Meghatározza a HTTP gépnevet a támogatási adatok gyűjtéséhez a nyilvános „PublicSupportDataCollector” modullal (például az CareOnCloud ESM démonból használva).',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             'Az IP reguláris kifejezést határozza meg a helyi tárolóhoz való hozzáféréshez. Engedélyeznie kell ezt a helyi tárolóhoz való hozzáféréshez, továbbá a Package::RepositoryList szükséges a távoli kiszolgálón.',
         'Defines the PostMaster header to be used on the filter for keeping the current state of the ticket.' =>
@@ -8261,8 +8261,8 @@ Az Ön ügyfélszolgálati csapata
             'Meghatározza a „Szülő-gyermek” típusú hivatkozást. Ha a forrás neve és a cél neve ugyanazt az értéket tartalmazza, az eredményül kapott hivatkozás nem irányított. Egyébként az eredmény egy irányított hivatkozás.',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             'Meghatározza a hivatkozástípus csoportokat. Ugyanazon csoport hivatkozás típusai kioltják egymást. Példa: ha az A jegy „Normál” hivatkozásként kapcsolódik a B jegyhez, akkor ezeket a jegyeket nem lehet emellett „Szülő-gyermek” kapcsolat hivatkozásaként összekötni.',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            'Meghatározza az interneten lévő tárolók listáját. Egy másik telepítés is használható tárolóként, például: Kulcs=„http://example.com/otobo/public.pl?Action=PublicRepository;File=” és Tartalom=„Valamilyen név”.',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            'Meghatározza az interneten lévő tárolók listáját. Egy másik telepítés is használható tárolóként, például: Kulcs=„http://example.com/careoncloud/public.pl?Action=PublicRepository;File=” és Tartalom=„Valamilyen név”.',
         'Defines the list of params that can be passed to ticket search function.' =>
             'Meghatározza azoknak a paramétereknek a listáját, amelyek átadhatók a jegykeresés funkciónak.',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -8272,8 +8272,8 @@ Az Ön ügyfélszolgálati csapata
             'Meghatározza a helyet további csomagok interneten lévő tárolólistájának lekéréséhez. Az első elérhető találat lesz felhasználva.',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             'Meghatározza a napló modult a rendszerhez. A „File” minden üzenetet a megadott naplófájlba ír, a „SysLog” a rendszer syslog démonját használja, mint például a syslogd.',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            'Meghatározza a böngészőn keresztüli fájlfeltöltések legnagyobb méretét (bájtban). Figyelem: a beállítás túl alacsony értékre állítása azt okozhatja, hogy az OTOBO példány számos maszkja nem fog működni (valószínűleg az összes maszk, amely bemenetet vár a felhasználótól).',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            'Meghatározza a böngészőn keresztüli fájlfeltöltések legnagyobb méretét (bájtban). Figyelem: a beállítás túl alacsony értékre állítása azt okozhatja, hogy az CareOnCloud ESM példány számos maszkja nem fog működni (valószínűleg az összes maszk, amely bemenetet vár a felhasználótól).',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             'Meghatározza egy munkamenet azonosító legnagyobb érvényes értékét (másodpercben).',
         'Defines the maximum number of affected tickets per job.' => 'Meghatározza a feladatonként érintett jegyek legnagyobb számát.',
@@ -8294,8 +8294,8 @@ Az Ön ügyfélszolgálati csapata
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             'Meghatározza azt a modult, amely megjeleníti az aktuálisan bejelentkezett ügyfeleket az ügyfélfelületen.',
         'Defines the module to authenticate customers.' => 'Meghatározza azt a modult, amely hitelesíti az ügyfeleket.',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            'Meghatározza azt a modult, amely egy értesítést jelenít meg az ügyintézői felületen, ha az OTOBO démon nem fut.',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            'Meghatározza azt a modult, amely egy értesítést jelenít meg az ügyintézői felületen, ha az CareOnCloud ESM démon nem fut.',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             'Meghatározza azt a modult, amely egy értesítést jelenít meg az ügyintézői felületen, ha a rendszerbeállítás nincs szinkronban.',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -8334,8 +8334,8 @@ Az Ön ügyfélszolgálati csapata
             'Meghatározza annak az oszlopnak a nevét, amely a felhasználói azonosítót tárolja a beállítások táblában.',
         'Defines the name of the indicated calendar.' => 'Meghatározza a jelzett naptár nevét.',
         'Defines the name of the key for customer sessions.' => 'Meghatározza a kulcs nevét az ügyfél munkamenetekhez.',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            'Meghatározza a munkamenetkulcs nevét. Például munkamenet, munkamenet-azonosító vagy OTOBO.',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            'Meghatározza a munkamenetkulcs nevét. Például munkamenet, munkamenet-azonosító vagy CareOnCloud ESM.',
         'Defines the name of the table where the user preferences are stored.' =>
             'Meghatározza annak a táblának a nevét, ahol a felhasználói beállítások vannak tárolva.',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -8434,8 +8434,8 @@ Az Ön ügyfélszolgálati csapata
             'Egy elválasztót határoz meg az ügyintézők valódi neve és a megadott várólista e-mail-címek között.',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             'Meghatározza a megjelenített oszlopokat és a pozíciót az ügyintézői ügyfél-felhasználó címjegyzék eredményei képernyőn.',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
-            'Meghatározza ennek az OTOBO rendszernek az ügyfélfelülete láblécterületén megjelenített hivatkozásokat. A „Key” kulcsban lévő érték a külső URL, a „Content” tartalomban lévő érték a megjelenített címke. Az <OTOBO_CONFIG_HttpType>, az <OTOBO_CONFIG_FQDN> és az <OTOBO_CONFIG_ScriptAlias> helyettesítésre kerül.',
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+            'Meghatározza ennek az CareOnCloud ESM rendszernek az ügyfélfelülete láblécterületén megjelenített hivatkozásokat. A „Key” kulcsban lévő érték a külső URL, a „Content” tartalomban lévő érték a megjelenített címke. Az <OTOBO_CONFIG_HttpType>, az <OTOBO_CONFIG_FQDN> és az <OTOBO_CONFIG_ScriptAlias> helyettesítésre kerül.',
         'Defines the source dynamic field for storing historical data.' =>
             'Meghatározza a forrás dinamikus mezőt a történelmi adatok tárolásához.',
         'Defines the standard permissions available for customers within the application. If more permissions are needed, you can enter them here. Permissions must be hard coded to be effective. Please ensure, when adding any of the afore mentioned permissions, that the "rw" permission remains the last entry.' =>
@@ -8460,7 +8460,7 @@ Az Ön ügyfélszolgálati csapata
             'Meghatározza a tárgyat a gyors lezárás művelethez, amelyet a jegy előzményeinél szoktak használni az ügyintézői felületen.',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             'Meghatározza a rendszer adminisztrátorának e-mail-címét. Ez az alkalmazás hibaképernyőin lesz megjelenítve.',
-        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO). The SystemID may also be used in HTTP session backends.' =>
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
             '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             'Meghatározza a cél attribútumot egy külső ügyféladatbázisra mutató hivatkozásban. Például „AsPopup PopupType_TicketAction”.',
@@ -8479,8 +8479,8 @@ Az Ön ügyfélszolgálati csapata
         'Defines the ticket plugin for calendar appointments.' => 'Meghatározza a jegybővítményt a naptáridőpontokhoz.',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             'Meghatározza a jelzett naptár időzónáját, amely később hozzárendelhető egy megadott várólistához.',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            'Meghatározza az időkorlátot (másodpercben, a minimum 20 másodperc) a támogatási adatok gyűjtéséhez a nyilvános „PublicSupportDataCollector” modullal (például az OTOBO démonból használva).',
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            'Meghatározza az időkorlátot (másodpercben, a minimum 20 másodperc) a támogatási adatok gyűjtéséhez a nyilvános „PublicSupportDataCollector” modullal (például az CareOnCloud ESM démonból használva).',
         'Defines the two-factor module to authenticate agents.' => 'Meghatározza azt a kétlépcsős modult, amely hitelesíti az ügyintézőket.',
         'Defines the two-factor module to authenticate customers.' => 'Meghatározza azt a kétlépcsős modult, amely hitelesíti az ügyfeleket.',
         'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
@@ -8492,12 +8492,12 @@ Az Ön ügyfélszolgálati csapata
             'Meghatározza a felhasználók profilképét. Ne feledje: az „Active” 0-ra állításával csak az ügyintézőknek akadályozza meg ezen csoport beállításainak szerkesztését a személyes beállításaikban, de az adminisztrátoroknak továbbra is lehetővé teszi a beállítások szerkesztését egy másik felhasználó nevében. Használja a „PreferenceGroup” kulcsot annak szabályozásához, hogy ezeknek a beállításoknak mely területen kell megjelenniük a felhasználói felületen.',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             'Meghatározza egy jegy érvényes állapottípusait. Ha a jegy olyan állapotban van, amelynek van valamilyen állapottípusa ebből a beállításból, akkor a jegy nyitottként lesz figyelembe véve, egyébként lezártként.',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
-            'Meghatározza egy jegy érvényes állapottípusait. Ha egy jegy olyan állapotban van, amely bármilyen állapottípussal rendelkezik ebből a beállításból, akkor ez a jegy nyitottnak lesz tekintve, ellenkező esetben lezártnak. Ez a beállítás például azt szabályozza, hogy egy állapottípus látható-e az ügyintéző jegyállapot nézetében lévő nyitott jegyek vagy a lezárt jegyek szakaszában. Szükséges lehet a rendszer gyorsítótárának törlése annak érdekében, hogy az összes változtatást láthassa (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).',
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+            'Meghatározza egy jegy érvényes állapottípusait. Ha egy jegy olyan állapotban van, amely bármilyen állapottípussal rendelkezik ebből a beállításból, akkor ez a jegy nyitottnak lesz tekintve, ellenkező esetben lezártnak. Ez a beállítás például azt szabályozza, hogy egy állapottípus látható-e az ügyintéző jegyállapot nézetében lévő nyitott jegyek vagy a lezárt jegyek szakaszában. Szükséges lehet a rendszer gyorsítótárának törlése annak érdekében, hogy az összes változtatást láthassa (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).',
         'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
             'Meghatározza a feloldott jegyek érvényes állapotait. A jegyek feloldásához a „bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout” parancsfájl használható.',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
-            'Meghatározza az OTOBO munkamenet-sütijei „SameSite” attribútumának értékét. Az careoncloud.psgi fájlban van használva.',
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
+            'Meghatározza az CareOnCloud ESM munkamenet-sütijei „SameSite” attribútumának értékét. Az careoncloud.psgi fájlban van használva.',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             'Meghatározza egy jegy látható zárait. MEGJEGYZÉS: ha megváltoztatja ezt a beállítást, akkor győződjön meg arról, hogy törölte-e a gyorsítótárat annak érdekében, hogy használhassa az új értéket. Alapértelmezett: unlock, tmp_lock.',
         'Defines the width for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
@@ -8573,8 +8573,8 @@ Az Ön ügyfélszolgálati csapata
         'Dialog to show after marking a ticket as unseen' => 'Egy jegy olvasatlanként való megjelölése utáni párbeszédablak',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             'A „Content-Security-Policy” HTTP-fejléc letiltása a külső parancsfájltartalmak betöltésének engedélyezéséhez. Ezen HTTP-fejléc letiltása biztonsági probléma lehet! Csak akkor tiltsa le, ha tudja, hogy mit csinál!',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
-            'Az „X-Frame-Options: SAMEORIGIN” HTTP-fejléc letiltása, hogy lehetővé tegye az OTOBO beágyazását IFrame-ként más weboldalakba. Ennek a HTTP-fejlécnek a letiltása biztonsági probléma lehet! Csak akkor tiltsa le, ha tudja, hogy mit csinál!',
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+            'Az „X-Frame-Options: SAMEORIGIN” HTTP-fejléc letiltása, hogy lehetővé tegye az CareOnCloud ESM beágyazását IFrame-ként más weboldalakba. Ennek a HTTP-fejlécnek a letiltása biztonsági probléma lehet! Csak akkor tiltsa le, ha tudja, hogy mit csinál!',
         'Disable autocomplete in the login screen.' => 'Automatikus kiegészítés letiltása a bejelentkező képernyőn.',
         'Disable cloud services' => 'Felhőszolgáltatások letiltása',
         'Disables sending reminder notifications to the responsible agent of a ticket (Ticket::Responsible needs to be enabled).' =>
@@ -8711,8 +8711,8 @@ Az Ön ügyfélszolgálati csapata
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             'Akkor engedélyezze ezt, ha megbízik minden nyilvános és személyes PGP kulcsban még akkor is, ha azok nincsenek egy megbízható aláírással tanúsítva.',
         'Enabled filters.' => 'Engedélyezett szűrők.',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            'Engedélyezi a PGP támogatást. Amikor a PGP támogatás engedélyezve van levelek aláírásához és titkosításához, akkor ERŐSEN javasolt, hogy a webkiszolgáló az OTOBO felhasználóként fusson. Egyébként problémák lesznek a jogosultságokkal, amikor hozzáfér a .gnupg mappához.',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            'Engedélyezi a PGP támogatást. Amikor a PGP támogatás engedélyezve van levelek aláírásához és titkosításához, akkor ERŐSEN javasolt, hogy a webkiszolgáló az CareOnCloud ESM felhasználóként fusson. Egyébként problémák lesznek a jogosultságokkal, amikor hozzáfér a .gnupg mappához.',
         'Enables S/MIME support.' => 'Engedélyezi az S/MIME támogatást.',
         'Enables customers to create their own accounts.' => 'Engedélyezi az ügyfeleknek, hogy létrehozzák a saját fiókjaikat.',
         'Enables fetch S/MIME from CustomerUser backend support.' => 'Engedélyezi az S/MIME lekérését az ügyfél-felhasználó háttérprogram támogatásából.',
@@ -8737,8 +8737,8 @@ Az Ön ügyfélszolgálati csapata
             'Engedélyezi a jegyfelelős szolgáltatást egy megadott jegy nyomon követéséhez.',
         'Enables ticket type feature.' => 'Engedélyezi a jegytípus szolgáltatást.',
         'Enables ticket watcher feature only for the listed groups.' => 'Csak a felsorolt csoportoknak engedélyezi a jegymegfigyelés szolgáltatást.',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
-            'A biztonságos mód engedélyezése letiltja a webes telepítőt (http://yourhost.example.com/otobo/installer.pl) és a költöztetéseket. Ez azért van így, hogy megakadályozza a rendszer eltérítését. Ha a biztonságos mód nincs engedélyezve, akkor a rendszer újratelepíthető. Ebben az esetben a jelenlegi alapbeállítások lesznek felhasználva a telepítő parancsfájlon belüli kérdések előre kitöltéséhez. A biztonságos mód engedélyezése az általános ügyintézőt, a csomagkezelőt és az SQL dobozt is engedélyezi.',
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+            'A biztonságos mód engedélyezése letiltja a webes telepítőt (http://yourhost.example.com/careoncloud/installer.pl) és a költöztetéseket. Ez azért van így, hogy megakadályozza a rendszer eltérítését. Ha a biztonságos mód nincs engedélyezve, akkor a rendszer újratelepíthető. Ebben az esetben a jelenlegi alapbeállítások lesznek felhasználva a telepítő parancsfájlon belüli kérdések előre kitöltéséhez. A biztonságos mód engedélyezése az általános ügyintézőt, a csomagkezelőt és az SQL dobozt is engedélyezi.',
         'English (Canada)' => 'Angol (Kanada)',
         'English (United Kingdom)' => 'Angol (Egyesült Királyság)',
         'English (United States)' => 'Angol (Egyesült Államok)',
@@ -8781,8 +8781,8 @@ Az Ön ügyfélszolgálati csapata
             'Egy egyéni parancsot vagy modult hajt végre. Megjegyzés: ha modult használ, akkor függvény szükséges.',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             'Követő ellenőrzéseket hajt végre az In-Reply-To vagy a References fejléceken azoknál a leveleknél, amelyek nem rendelkeznek jegyszámmal a tárgyában.',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
-            'Követő ellenőrzéseket hajt végre az „X-OTOBO-Bounce” OTOBO fejlécen.',
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-OTOBO-Bounce\'.' =>
+            'Követő ellenőrzéseket hajt végre az „X-OTOBO-Bounce” CareOnCloud ESM fejlécen.',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             'Követő ellenőrzéseket hajt végre a melléklet tartalmakon azoknál a leveleknél, amelyek nem rendelkeznek jegyszámmal a tárgyában.',
         'Executes follow-up checks on email body for mails that don\'t have a ticket number in the subject.' =>
@@ -8920,7 +8920,7 @@ Az Ön ügyfélszolgálati csapata
         'High Contrast' => 'Nagy kontraszt',
         'High contrast skin for visually impaired users.' => 'Nagy kontrasztú felszín a látássérült felhasználóknak.',
         'Hindi' => 'Hindi',
-        'How many rotated otobo.log files to keep. Default is 3.' => 'Hány forgatott otobo.log fájlt kell megtartani. Alapértelmezetten 3-at.',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => 'Hány forgatott careoncloud.log fájlt kell megtartani. Alapértelmezetten 3-at.',
         'Hungarian' => 'Magyar',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             'Ha „DB” lett kiválasztva a Customer::AuthModule modulnál, akkor megadható egy adatbázis-meghajtó (normális esetben automatikus felismerést használva).',
@@ -8968,8 +8968,8 @@ Az Ön ügyfélszolgálati csapata
             'Ha „LDAP” lett kiválasztva a Customer::AuthModule modulnál, akkor itt adhatja meg a hozzáférés attribútumait.',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             'Ha „LDAP” lett kiválasztva a Customer::AuthModule modulnál, akkor megadhatja, hogy az alkalmazás leálljon, ha például hálózati problémák miatt nem lehet kapcsolatot létesíteni a kiszolgálóval.',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            'Ha „LDAP” lett kiválasztva a Customer::AuthModule modulnál, akkor ellenőrizheti, hogy a felhasználónak engedélyezett-e a hitelesítés, mert egy posixGroup része. Például a felhasználónak az xyz csoportban kell lennie az OTOBO használatához. Adja meg azt a csoportot, amely hozzáférhet a rendszerhez.',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            'Ha „LDAP” lett kiválasztva a Customer::AuthModule modulnál, akkor ellenőrizheti, hogy a felhasználónak engedélyezett-e a hitelesítés, mert egy posixGroup része. Például a felhasználónak az xyz csoportban kell lennie az CareOnCloud ESM használatához. Adja meg azt a csoportot, amely hozzáférhet a rendszerhez.',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             'Ha „LDAP” lett kiválasztva, akkor egy szűrőt adhat minden LDAP lekérdezéshez, például (mail=*), (objectclass=user) vagy (!objectclass=computer).',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -9016,16 +9016,16 @@ Az Ön ügyfélszolgálati csapata
             'Ha engedélyezve van, akkor a démon át fogja irányítani a szabványos hibafolyamot egy naplófájlba.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Ha engedélyezve van, akkor a démon át fogja irányítani a szabványos kimenetfolyamot egy naplófájlba.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
-            'Ha engedélyezve van, akkor a démon ezt a könyvtárat fogja használni a PID-fájljai létrehozásához. Megjegyzés: állítsa le a démont, mielőtt bármit megváltoztatna, és csak akkor használja ezt a beállítást, ha az <$OTOBOHome>/var/run/ nem használható.',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
-            'Ha engedélyezve van, akkor az OTOBO minden CSS fájlt minimalizált formában fog szállítani.',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
-            'Ha engedélyezve van, akkor az OTOBO minden JavaScript fájlt minimalizált formában fog szállítani.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+            'Ha engedélyezve van, akkor a démon ezt a könyvtárat fogja használni a PID-fájljai létrehozásához. Megjegyzés: állítsa le a démont, mielőtt bármit megváltoztatna, és csak akkor használja ezt a beállítást, ha az <$CareOnCloud ESMHome>/var/run/ nem használható.',
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
+            'Ha engedélyezve van, akkor az CareOnCloud ESM minden CSS fájlt minimalizált formában fog szállítani.',
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
+            'Ha engedélyezve van, akkor az CareOnCloud ESM minden JavaScript fájlt minimalizált formában fog szállítani.',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             'Ha engedélyezve van, akkor a telefonos jegy és az e-mail jegy új ablakokban fog megnyílni.',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
-            'Ha engedélyezve van, akkor az OTOBO verziócímke el lesz távolítva a webes felületről, a HTTP fejlécekből és a kimenő levelek X-Headers bejegyzéseiből. Megjegyzés: ha megváltoztatja ezt a beállítást, akkor gondoskodjon a gyorsítótár törléséről is.',
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+            'Ha engedélyezve van, akkor az CareOnCloud ESM verziócímke el lesz távolítva a webes felületről, a HTTP fejlécekből és a kimenő levelek X-Headers bejegyzéseiből. Megjegyzés: ha megváltoztatja ezt a beállítást, akkor gondoskodjon a gyorsítótár törléséről is.',
         'If enabled, the cache data be held in memory.' => 'Ha engedélyezve van, akkor a gyorsítótár adatai a memóriában lesznek tartva.',
         'If enabled, the cache data will be stored in cache backend.' => 'Ha engedélyezve van, akkor a gyorsítótár adatai a gyorsítótár háttérprogramban lesznek tárolva.',
         'If enabled, the customer can search for tickets in all services (regardless what services are assigned to the customer).' =>
@@ -9035,8 +9035,8 @@ Az Ön ügyfélszolgálati csapata
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Ha engedélyezve van, akkor a főmenü első szintje megnyílik az egérrel való rámutatáskor (a csak kattintás helyet).',
         'If enabled, the quick close action will create an article.' => 'Ha engedélyezve van, akkor a gyors lezárás művelet bejegyzést fog létrehozni.',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            'Ha engedélyezve van, akkor azok a felhasználók, akik még nem választottak időzónát, értesítve lesznek, hogy válasszanak. Megjegyzés: az értesítés nem lesz megjelenítve, ha (1) a felhasználó még nem választott időzónát és (2) az OTOBO időzónája, valamint a felhasználó alapértelmezett időzónája megegyezik és (3) nincsenek UTC-re állítva.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            'Ha engedélyezve van, akkor azok a felhasználók, akik még nem választottak időzónát, értesítve lesznek, hogy válasszanak. Megjegyzés: az értesítés nem lesz megjelenítve, ha (1) a felhasználó még nem választott időzónát és (2) az CareOnCloud ESM időzónája, valamint a felhasználó alapértelmezett időzónája megegyezik és (3) nincsenek UTC-re állítva.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'Ha nincs SendmailNotificationEnvelopeFrom megadva, akkor ez a beállítás lehetővé teszi az e-mailek feladó címének használatát egy üres boríték küldő helyett (bizonyos levelezőkiszolgálók beállításainál szükséges).',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -9049,8 +9049,8 @@ Az Ön ügyfélszolgálati csapata
             'Ha ez a beállítás engedélyezve van, akkor a webes felületen keresztül, az ügyfelek vagy az ügyintézők által létrehozott jegyek egy automatikus választ fognak kapni, ha be van állítva. Ha ez a beállítás nincs engedélyezve, akkor nem lesznek automatikus válaszok elküldve.',
         'If this regex matches, no message will be send by the autoresponder.' =>
             'Ha ez a reguláris kifejezés illeszkedik, akkor az automatikus válaszadó nem fog üzenetet küldeni.',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
-            'Ha ez a beállítás engedélyezve van, akkor lehetséges olyan csomagok telepítése, amelyeket nem ellenőrzött az OTOBO csapat. Ezek a csomagok veszélyt jelenthetnek a teljes rendszerre!',
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
+            'Ha ez a beállítás engedélyezve van, akkor lehetséges olyan csomagok telepítése, amelyeket nem ellenőrzött az CareOnCloud ESM csapat. Ezek a csomagok veszélyt jelenthetnek a teljes rendszerre!',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             'Ha ez a beállítás engedélyezve van, akkor a helyi módosítások nem lesznek hibaként kiemelve a csomagkezelőben és támogatási adatgyűjtőben.',
         'If you\'re going to be out of office, you may wish to let other users know by setting the exact dates of your absence.' =>
@@ -9095,7 +9095,7 @@ Az Ön ügyfélszolgálati csapata
             'Olasz kiszűrendő szavak a szabad-szavas indexnél. Ezek a szavak el lesznek távolítva a keresési indexből.',
         'Japanese' => 'Japán',
         'JavaScript function for the search frontend.' => 'JavaScript függvény a keresési előtétprogramhoz.',
-        'Jump to OTOBO!' => 'Ugrás az OTOBO-hoz!',
+        'Jump to CareOnCloud ESM!' => 'Ugrás az CareOnCloud ESM-hoz!',
         'Korean' => 'Koreai',
         'Languages' => 'Nyelvek',
         'Large' => 'Nagy',
@@ -9187,7 +9187,7 @@ Az Ön ügyfélszolgálati csapata
         'Makes the application check the syntax of email addresses.' => 'Ellenőrizteti az alkalmazással az e-mail-címek szintaxisát.',
         'Malay' => 'Maláj',
         'Manage Customer Dashboard Info Tile Entries' => 'Vezérlőpulton lévő információs csempe bejegyzéseinek kezelése',
-        'Manage OTOBO Team cloud services.' => 'Az OTOBO csapat felhőszolgáltatásainak kezelése.',
+        'Manage CareOnCloud ESM Team cloud services.' => 'Az CareOnCloud ESM csapat felhőszolgáltatásainak kezelése.',
         'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => 'PGP kulcsok kezelése e-mail titkosításhoz.',
         'Manage POP3 or IMAP accounts to fetch email from.' => 'POP3 vagy IMAP fiókok kezelése e-mailek letöltéséhez.',
@@ -9215,8 +9215,8 @@ Az Ön ügyfélszolgálati csapata
             'A résztvevő ügyintézők doboz legnagyobb mérete (sorokban) az ügyintézői felületen.',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             'A tárgyak legnagyobb mérete egy e-mail válasznál és néhány áttekintő képernyőnél.',
-        'MaxSize in Bytes until otobo.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
-            'Legnagyobb méret bájtban, amíg az otobo.log forgatásra nem kerül. Alapértelmezetten 524288000 (500 MiB = 500 × 1024 × 1024).',
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+            'Legnagyobb méret bájtban, amíg az careoncloud.log forgatásra nem kerül. Alapértelmezetten 524288000 (500 MiB = 500 × 1024 × 1024).',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             'Automatikus válaszok maximalizálása a saját e-mail-címre naponta (hurok védelem).',
         'Maximal auto email responses to own email-address a day, configurable by email address (Loop-Protection).' =>
@@ -9306,7 +9306,7 @@ Az Ön ügyfélszolgálati csapata
         'New Year\'s Day' => 'Újév',
         'New Year\'s Eve' => 'Szilveszter',
         'New process ticket' => 'Új folyamatjegy',
-        'News about OTOBO.' => 'Az OTOBO-val kapcsolatos hírek.',
+        'News about CareOnCloud ESM.' => 'Az CareOnCloud ESM-val kapcsolatos hírek.',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             'A következő lehetséges jegyállapotok egy új telefonos jegyzet hozzáadása után az ügyintézői felület bejövő telefonhívás képernyőjén.',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -9339,12 +9339,12 @@ Az Ön ügyfélszolgálati csapata
         'OAuth Tokens' => '',
         'OIDC Profile Management' => '',
         'OIDC Profiles' => 'OIDC-profilok',
-        'OTOBO News' => 'OTOBO hírek',
-        'OTOBO Team Services' => 'OTOBO csapatszolgáltatások',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
-            'Az OTOBO képes egy vagy több csak olvasható tükör adatbázist használni az olyan költséges műveleteknél, mint például a szabad-szavas keresés vagy a statisztikák előállítása. Itt adhatja meg a DNS-t az első tükör adatbázishoz.',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
-            'Az OTOBO nem támogatja a befejezési dátum vagy az ismétlések száma nélküli ismétlődő időpontokat. Az importálási folyamat során előfordulhat, hogy az ICS-fájl ilyen időpontokat tartalmaz. Ehelyett a rendszer az összes időpontot a múltban hozza létre, valamint a következő N hónapban (120 hónap/10 év alapértelmezetten).',
+        'CareOnCloud ESM News' => 'CareOnCloud ESM hírek',
+        'CareOnCloud ESM Team Services' => 'CareOnCloud ESM csapatszolgáltatások',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+            'Az CareOnCloud ESM képes egy vagy több csak olvasható tükör adatbázist használni az olyan költséges műveleteknél, mint például a szabad-szavas keresés vagy a statisztikák előállítása. Itt adhatja meg a DNS-t az első tükör adatbázishoz.',
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+            'Az CareOnCloud ESM nem támogatja a befejezési dátum vagy az ismétlések száma nélküli ismétlődő időpontokat. Az importálási folyamat során előfordulhat, hogy az ICS-fájl ilyen időpontokat tartalmaz. Ehelyett a rendszer az összes időpontot a múltban hozza létre, valamint a következő N hónapban (120 hónap/10 év alapértelmezetten).',
         'Object backend module registration for the import/export module.' =>
             'Objektum háttérprogram modul regisztráció az importálás/exportálás modulhoz.',
         'Objects to search for, how many entries and which attributes to show.' =>
@@ -9352,7 +9352,7 @@ Az Ön ügyfélszolgálati csapata
         'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
             'Keresendő objektumok, hány bejegyzés és mely attribútumok jelenjenek meg. A jegyattribútumokat, kivéve a várólistát, egyértelműen el kell tárolni az Elasticsearch-kiszolgálón keresztül.',
         'Open an external link!' => 'Nyisson meg egy külső hivatkozást!',
-        'Open the OTOBO home page in a new window' => 'Az OTOBO honlapjának megnyitása új ablakban',
+        'Open the CareOnCloud ESM home page in a new window' => 'Az CareOnCloud ESM honlapjának megnyitása új ablakban',
         'Open tickets (customer user)' => 'Nyitott jegyek (ügyfél-felhasználó)',
         'Open tickets (customer)' => 'Nyitott jegyek (ügyfél)',
         'Option' => 'Választás',
@@ -9460,10 +9460,10 @@ Az Ön ügyfélszolgálati csapata
         'ParentChild' => 'Szülő-gyermek',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             'A naplófájl útvonala (csak akkor alkalmazza, ha „FS” lett kiválasztva a LoopProtectionModule modulnál, és nem kötelező).',
-        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
-            'A CKEditor-tartalom CSS-fájljának útvonala. Ezen beállítás változtatásai csak azután lesznek következetesen alkalmazva, miután az OTOBO gyorsítótára törlésre került a Maint::Cache::Delete paranccsal!',
-        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
-            'A CKEditor-szerkesztő CSS-fájljának útvonala. Ezen beállítás változtatásai csak azután lesznek következetesen alkalmazva, miután az OTOBO gyorsítótára törlésre került a Maint::Cache::Delete paranccsal!',
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            'A CKEditor-tartalom CSS-fájljának útvonala. Ezen beállítás változtatásai csak azután lesznek következetesen alkalmazva, miután az CareOnCloud ESM gyorsítótára törlésre került a Maint::Cache::Delete paranccsal!',
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            'A CKEditor-szerkesztő CSS-fájljának útvonala. Ezen beállítás változtatásai csak azután lesznek következetesen alkalmazva, miután az CareOnCloud ESM gyorsítótára törlésre került a Maint::Cache::Delete paranccsal!',
         'Pending time' => 'Várakozási idő',
         'People' => 'Emberek',
         'Performs the configured action for each event (as an Invoker) for each configured web service.' =>
@@ -9618,8 +9618,8 @@ Az Ön ügyfélszolgálati csapata
         'SSL_VERIFY_PEER - verify the mail server host' => 'SSL_VERIFY_PEER – a levelezőkiszolgáló gépének ellenőrzése',
         'Salutations' => 'Megszólítások',
         'Sample command output' => 'Minta parancskimenet',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
-            'Elmenti a bejegyzések mellékleteit. A „DB” minden adatot az adatbázisban tárol (nem ajánlott nagy mellékletek tárolásához). Az „FS” a fájlrendszeren tárolja az adatokat. Ez gyorsabb, de a webkiszolgálót az OTOBO felhasználó alatt kell futtatni. Adatvesztés nélkül válthat át a modulok között még egy olyan rendszeren is, amely produktív használatban van. Megjegyzés: a mellékletnevek keresése nem támogatott „FS” használata esetén. Az „S3” kísérleti.',
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+            'Elmenti a bejegyzések mellékleteit. A „DB” minden adatot az adatbázisban tárol (nem ajánlott nagy mellékletek tárolásához). Az „FS” a fájlrendszeren tárolja az adatokat. Ez gyorsabb, de a webkiszolgálót az CareOnCloud ESM felhasználó alatt kell futtatni. Adatvesztés nélkül válthat át a modulok között még egy olyan rendszeren is, amely produktív használatban van. Megjegyzés: a mellékletnevek keresése nem támogatott „FS” használata esetén. Az „S3” kísérleti.',
         'Schedule a maintenance period.' => 'Egy karbantartási időszakot ütemez.',
         'Screen after new ticket' => 'Új jegy utáni képernyő',
         'Script (Template Toolkit)' => 'Parancsfájl (Template Toolkit)',
@@ -9643,7 +9643,7 @@ Az Ön ügyfélszolgálati csapata
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             'Személyes időzóna kiválasztása. Az összes idő ettől az időzónától relatívan lesz megjelenítve.',
         'Select your preferred layout for the software.' => 'Az előnyben részesített elrendezés kiválasztása a szoftverhez.',
-        'Select your preferred theme for OTOBO.' => 'Az előnyben részesített téma kiválasztása az OTOBO-hoz.',
+        'Select your preferred theme for CareOnCloud ESM.' => 'Az előnyben részesített téma kiválasztása az CareOnCloud ESM-hoz.',
         'Selects the cache backend to use.' => 'Kiválasztja a használandó gyorsítótár háttérprogramot.',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             'Kiválasztja a modult a webes felületen keresztüli feltöltések kezeléséhez. A „DB” minden feltöltést adatbázisban tárol, az „FS” a fájlrendszert használja.',
@@ -9892,10 +9892,10 @@ Az Ön ügyfélszolgálati csapata
             'Beállítja a jegy típusát az ügyintézői felület jegyfelelős képernyőjén (a Ticket::Type modulnak engedélyezve kell lennie).',
         'Sets the time units in the ticket note screen of the agent interface.' =>
             '',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
-            'Beállítja az OTOBO által belsőleg használt időzónát, hogy például dátumokat és időket tároljon az adatbázisban. FIGYELEM: ezt a beállítást nem szabad megváltoztatni, miután beállították, és jegyek vagy bármilyen dátumot és időt tartalmazó egyéb adatok létrejöttek.',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
-            'Beállítja az időzónát, amely hozzá lesz rendelve az újonnan létrehozott felhasználókhoz, valamint olyan felhasználóknál lesz használva, akiknek még nincs beállított időzónájuk. Ez az alapértelmezetten használt időzóna az OTOBO időzónája és a felhasználó időzónája közötti dátum és idő átalakításához.',
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+            'Beállítja az CareOnCloud ESM által belsőleg használt időzónát, hogy például dátumokat és időket tároljon az adatbázisban. FIGYELEM: ezt a beállítást nem szabad megváltoztatni, miután beállították, és jegyek vagy bármilyen dátumot és időt tartalmazó egyéb adatok létrejöttek.',
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
+            'Beállítja az időzónát, amely hozzá lesz rendelve az újonnan létrehozott felhasználókhoz, valamint olyan felhasználóknál lesz használva, akiknek még nincs beállított időzónájuk. Ez az alapértelmezetten használt időzóna az CareOnCloud ESM időzónája és a felhasználó időzónája közötti dátum és idő átalakításához.',
         'Sets the timeout (in seconds) for http/ftp downloads.' => 'Beállítja az időkorlátot (másodpercben) a HTTP/FTP letöltésekhez.',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
             'Beállítja az időkorlátot (másodpercben) a csomagletöltésekhez. Felülírja a „WebUserAgent::Timeout” beállítást.',
@@ -10040,7 +10040,7 @@ Az Ön ügyfélszolgálati csapata
             'Vagy a legutolsó ügyfél bejegyzés tárgyát, vagy a jegy címét jeleníti meg a kis formátumú áttekintőben.',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             'Megjeleníti a meglévő szülő vagy gyermek várólisták listáit a rendszeren fa vagy lista formában.',
-        'Shows information on how to start OTOBO Daemon' => 'Információkat jelenít meg arról, hogy hogyan indítsa az OTOBO démont',
+        'Shows information on how to start CareOnCloud ESM Daemon' => 'Információkat jelenít meg arról, hogy hogyan indítsa az CareOnCloud ESM démont',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'Külső oldalra mutató hivatkozást jelenít meg az ügyintézői felület jegynagyítás nézetében. A hivatkozás megjelenítéséhez vagy elrejtéséhez további hozzáférés vezérlő készíthető a „Group” kulcs és az „rw:csoport1;move_into:csoport2” értékhez hasonló tartalom használatával.',
         'Shows the article head information in the agent zoom view.' => 'Megjeleníti a bejegyzésfejléc információit a ügyintézői nagyítás nézeten.',
@@ -10128,16 +10128,16 @@ Az Ön ügyfélszolgálati csapata
         'Specifies the directory where SSL certificates are stored.' => 'Azt a könyvtárat adja meg, ahol az SSL tanúsítványok vannak tárolva.',
         'Specifies the directory where private SSL certificates are stored.' =>
             'Azt a könyvtárat adja meg, ahol a személyes SSL tanúsítványok vannak tárolva.',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            'Azt az e-mail-címet adja meg, amelyet az alkalmazás az értesítések elküldésekor használjon. Az e-mail-cím a teljes megjelenítési név összeállításához lesz használva az értesítési mesternél (azaz „OTOBO értesítések” otobo@your.example.com). Használhatja az OTOBO_CONFIG_FQDN változót, ahogy a konfigurációban be van állítva, vagy válasszon egy másik e-mail-címet.',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            'Azt az e-mail-címet adja meg, amelyet az alkalmazás az értesítések elküldésekor használjon. Az e-mail-cím a teljes megjelenítési név összeállításához lesz használva az értesítési mesternél (azaz „CareOnCloud ESM értesítések” careoncloud@your.example.com). Használhatja az OTOBO_CONFIG_FQDN változót, ahogy a konfigurációban be van állítva, vagy válasszon egy másik e-mail-címet.',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             'Megadja az e-mail-címet az ütemező feladataiból érkező értesítési üzenetek fogadásához.',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
             'Azt a csoportot adja meg, ahol a felhasználónak írási, olvasási jogosultságra van szüksége, így hozzáférhet a „SwitchToCustomer” funkcióhoz.',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             'Azt a csoportot adja meg, ahol a felhasználónak írási, olvasási jogosultságra van szüksége ahhoz, hogy szerkeszthesse más felhasználók beállításait.',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
-            'Azt a nevet adja meg, amelyet az alkalmazás az értesítések elküldésekor használjon. A küldő neve a teljes megjelenítési név összeállításához lesz használva az értesítési mesternél (azaz „OTOBO értesítésiek” otobo@your.example.com).',
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
+            'Azt a nevet adja meg, amelyet az alkalmazás az értesítések elküldésekor használjon. A küldő neve a teljes megjelenítési név összeállításához lesz használva az értesítési mesternél (azaz „CareOnCloud ESM értesítésiek” careoncloud@your.example.com).',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             'Azt a sorrendet adja meg, amelyben az ügyintéző keresztneve és vezetékneve megjelenítve legyen.',
         'Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).' =>
@@ -10280,7 +10280,7 @@ Az Ön ügyfélszolgálati csapata
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             'Ez a modul és annak PreRun() függvénye lesz végrehajtva minden kérésnél, ha meg van határozva. Ez a modul néhány felhasználói beállítás ellenőrzéséhez vagy az új alkalmazásokkal kapcsolatos hírek megjelenítéséhez hasznos.',
         'This module is being used to extend the password policy.' => 'Ez a modul a jelszóházirend kiterjesztéséhez van használva.',
-        'This module is part of the admin area of OTOBO.' => 'Ez a modul az OTOBO adminisztrációs területének a része.',
+        'This module is part of the admin area of CareOnCloud ESM.' => 'Ez a modul az CareOnCloud ESM adminisztrációs területének a része.',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             'Ez a beállítás határozza meg azt a dinamikus mezőt, amelyben a folyamatkezelő tevékenység-entitás azonosítója tárolva van.',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -10295,7 +10295,7 @@ Az Ön ügyfélszolgálati csapata
             'Ez a beállítás meg fogja tagadni azon ügyfél-vállalati jegyekhez való hozzáférést, amelyeket nem az ügyfél-felhasználó hozott létre. Kapcsolja ki a „CustomerFrontend::Navigation###CustomerTicketOverview###002-Ticket” beállítást is, hogy a gomb többé ne legyen látható.',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Ez a beállítás lehetővé teszi a beépített országlista felülbírálását a saját országlistájával. Ez különösen hasznos, ha az országoknak csak egy kiválasztott kis csoportját szeretné használni.',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => 'Ez a beállítás elavult. Állítsa be az OTOBOTimeZone beállítást helyette.',
+        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => 'Ez a beállítás elavult. Állítsa be az CareOnCloud ESMTimeZone beállítást helyette.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             'Ez a beállítás megjeleníti a rendezési attribútumokat az összes képernyőn, nem csak a várólista nézeten.',
         'Ticket Close' => 'Jegylezárás',
@@ -10356,8 +10356,8 @@ Az Ön ügyfélszolgálati csapata
         'To accept login information, such as an EULA or license.' => 'Bejelentkezési információk elfogadásához, mint például EULA vagy licenc.',
         'To download attachments.' => 'Mellékletek letöltéséhez.',
         'To view HTML attachments.' => 'HTML mellékletek megtekintéséhez.',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
-            'Ki- és bekapcsolja az OTOBO szolgáltatás-bővítmény listájának megjelenítését a csomagkezelőben.',
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
+            'Ki- és bekapcsolja az CareOnCloud ESM szolgáltatás-bővítmény listájának megjelenítését a csomagkezelőben.',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'Eszköztárelem egy gyorshivatkozáshoz. A hivatkozás megjelenítéséhez vagy elrejtéséhez további hozzáférés vezérlő készíthető a „Group” kulcs és az „rw:csoport1;move_into:csoport2” értékhez hasonló tartalom használatával.',
         'Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.' =>
@@ -10380,8 +10380,8 @@ Az Ön ügyfélszolgálati csapata
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             'Bekapcsolja a távoli IP-cím ellenőrzését. Nem szabad engedélyezni, ha az alkalmazást például egy proxy-farmon vagy betárcsázós kapcsolaton keresztül használják, mert a távoli IP-cím többnyire eltérő az egyes kéréseknél.',
         'Tweak the system as you wish.' => 'A rendszer finomhangolása, ahogy szeretné.',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
-            'A használandó démon naplóforgatásának típusa: válassza az „OTOBO” lehetőséget, ha az OTOBO rendszerre szeretné bízni a fájlforgatás kezelését, vagy válassza a „Külső” lehetőséget egy harmadik féltől származó forgatási mechanizmus (azaz logrotate) használatához. Megjegyzés: a külső forgatási mechanizmus a saját és független beállítását igényli.',
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+            'A használandó démon naplóforgatásának típusa: válassza az „CareOnCloud ESM” lehetőséget, ha az CareOnCloud ESM rendszerre szeretné bízni a fájlforgatás kezelését, vagy válassza a „Külső” lehetőséget egy harmadik féltől származó forgatási mechanizmus (azaz logrotate) használatához. Megjegyzés: a külső forgatási mechanizmus a saját és független beállítását igényli.',
         'Ukrainian' => 'Ukrán',
         'Unlock tickets that are past their unlock timeout.' => 'Jegyek feloldása, amelyek átlépték a feloldási időkorlátjukat.',
         'Unlock tickets whenever a note is added and the owner is out of office.' =>
@@ -10407,7 +10407,7 @@ Az Ön ügyfélszolgálati csapata
         'Uses richtext for viewing and editing ticket notification.' => 'RichText szöveget használ a jegyértesítések megtekintésénél és szerkesztésénél.',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             'RichText szöveget használ a megtekintésnél és szerkesztésnél: bejegyzések, megszólítások, aláírások, szabványos sablonok, automatikus válaszok és értesítések.',
-        'Value map. Define a key and a value map from import file to OTOBO.' =>
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
             '',
         'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
             'A levelezőkiszolgáló ellenőrzése, ha biztonságosan kéri le a leveleket a POP3S/POP3TLS/IMAPS/IMAPTLS levelezőfiókokból.',
@@ -10422,11 +10422,11 @@ Az Ön ügyfélszolgálati csapata
             'Ütemezett karbantartást végzünk. A bejelentkezés átmenetileg nem érhető el.',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             'Ütemezett karbantartást végzünk. Rövidesen ismét elérhetőnek kell lennünk.',
-        'We have changed the default ticket unlock behavior in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and OTOBO version 10.0.' =>
-            'Az OTOBO 10.1-es verziójában megváltoztattuk az alapértelmezett jegyfeloldási viselkedést. Mostantól a jegy nem csak feloldódik, hanem újra átadásra kerül a rendszer felhasználójának. Így a viselkedés egyértelműbb, de többé nem lehet kiolvasni, hogy ki szerkesztette utoljára a jegyet. Kapcsolja ki ezt a beállítást az OTRS 2-től 6-ig terjedő verziói és az OTOBO 10.0-s verziója viselkedésének helyreállításához.',
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
+            'Az CareOnCloud ESM 10.1-es verziójában megváltoztattuk az alapértelmezett jegyfeloldási viselkedést. Mostantól a jegy nem csak feloldódik, hanem újra átadásra kerül a rendszer felhasználójának. Így a viselkedés egyértelműbb, de többé nem lehet kiolvasni, hogy ki szerkesztette utoljára a jegyet. Kapcsolja ki ezt a beállítást az OTRS 2-től 6-ig terjedő verziói és az CareOnCloud ESM 10.0-s verziója viselkedésének helyreállításához.',
         'Web Service' => 'Webszolgáltatás',
         'Web Services' => 'Webszolgáltatások',
-        'Welcome %s, to your OTOBO.' => 'Üdvözöljük %s, az Ön OTOBO-jában!',
+        'Welcome %s, to your CareOnCloud ESM.' => 'Üdvözöljük %s, az Ön CareOnCloud ESM-jában!',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             'Üdvözlő szöveg a vezérlőpult fejlécéhez. A „Name” értéke beszúrásra kerül a „WelcomeText” szövegében lévő %s helyére. Ezek az értékek lesznek helyettesítve: „UserTitle”, „UserFirstname”, „UserLastname”, „UserEmail” és „UserLogin”.',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
@@ -10451,7 +10451,7 @@ Az Ön ügyfélszolgálati csapata
             '',
         'XOAUTH2' => 'XOAUTH2',
         'Yes, but hide archived tickets' => 'Igen, de az archivált jegyek elrejtése',
-        'Your Tickets. Your OTOBO.' => 'Az Ön jegyei. Az Ön OTOBO-ja.',
+        'Your Tickets. Your CareOnCloud ESM.' => 'Az Ön jegyei. Az Ön CareOnCloud ESM-ja.',
         'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
             'Az Ön „<OTOBO_TICKET>” számú jegyhez rendelt e-mailje átirányításra került a következő címre: „<OTOBO_BOUNCE_TO>”. További információkért vegye fel ezzel a címmel a kapcsolatot.',
         'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
@@ -10650,7 +10650,7 @@ Az Ön ügyfélszolgálati csapata
         'Ignore',
         'Import web service',
         'Information',
-        'Information about the OTOBO Daemon',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -10837,7 +10837,7 @@ Az Ön ügyfélszolgálati csapata
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -10854,7 +10854,7 @@ Az Ön ügyfélszolgálati csapata
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

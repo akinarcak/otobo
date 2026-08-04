@@ -77,7 +77,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOCacheCleanup',
+            Task      => 'CareOnCloud ESMCacheCleanup',
             SubTask   => "Cleanup the system cache.",
             StartTime => $Epoch,
         },
@@ -86,7 +86,7 @@ sub Run {
     $Self->CacheCleanup();
 
     my %Result;
-    $Result{Message}    = $Self->{LanguageObject}->Translate("OTOBO Cache cleanup.");
+    $Result{Message}    = $Self->{LanguageObject}->Translate("CareOnCloud ESM Cache cleanup.");
     $Result{Comment}    = $Self->{LanguageObject}->Translate("Completed.");
     $Result{Successful} = 1;
 

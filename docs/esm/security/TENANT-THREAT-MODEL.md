@@ -1,10 +1,10 @@
 # SEC-01 Tenant Threat Modeli
 
-Durum: policy cekirdegi ve OTOBO ticket write-scope cekirdegi uygulandi; API ve kalan read/query entegrasyon kapilari acik.
+Durum: policy cekirdegi ve CareOnCloud ESM ticket write-scope cekirdegi uygulandi; API ve kalan read/query entegrasyon kapilari acik.
 
 ## Guvenlik siniri
 
-Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozlesmeleri, bilgi makalelerini, otomasyonlari ve audit olaylarini kapsayan en ust veri siniridir. OTOBO `CustomerID`, kuyruk ve grup yetkileri operasyonel erisim mekanizmalaridir; tek baslarina D724 tenant siniri sayilmazlar. D724 kodu bir kaynagi okumadan veya degistirmeden once merkezi `D724TenantGuard` kararini almak zorundadir.
+Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozlesmeleri, bilgi makalelerini, otomasyonlari ve audit olaylarini kapsayan en ust veri siniridir. CareOnCloud ESM `CustomerID`, kuyruk ve grup yetkileri operasyonel erisim mekanizmalaridir; tek baslarina D724 tenant siniri sayilmazlar. D724 kodu bir kaynagi okumadan veya degistirmeden once merkezi `D724TenantGuard` kararini almak zorundadir.
 
 ## Degismezler
 
@@ -26,7 +26,7 @@ Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozle
 | IDOR | `/case/42` ile baska tenant kaydi | Resource TenantID + merkezi karar | cross-tenant matris testleri |
 | Eksik filtre | rapor sorgusunda tenant kosulu unutulmasi | `ScopeGet` bos/invalid kapsamda basarisiz | scope testleri; repository entegrasyon testi sonraki kapida |
 | Yetki yukseltme | kullanicinin role parametresi gondermesi | roller yalnizca guvenilir server context'inden | API adapter threat testi sonraki kapida |
-| Kuyruk yan gecisi | ortak agent grubunun iki musteri kaydini gormesi | OTOBO grup izninden sonra TenantGuard | ticket permission adapter sonraki kapida |
+| Kuyruk yan gecisi | ortak agent grubunun iki musteri kaydini gormesi | CareOnCloud ESM grup izninden sonra TenantGuard | ticket permission adapter sonraki kapida |
 | Arka plan sizintisi | daemon job'unun tenantsiz calismasi | aktif TenantID + tenant-bound `automation:<job>` subject + merkezi `automation.execute` | commitment sweep/webhook scan/dispatcher negatif entegrasyon testleri (`SEC-01b-daemon`) |
 | Cache karismasi | tenant anahtari olmayan cache key | aktif tenant + policy kontrolu, hash'li tenant Type ve izole invalidation | `TenantCache.t`, `TenantCacheStatus.t`, `Accept-TenantCache.pl` |
 | Arama sizintisi | global Elasticsearch sonucu | trusted context + `search.read` + final invoker'da zorunlu tenant filter; unsafe index deny | `SearchPolicy.t`, `Accept-SearchPolicy.pl`, `Accept-ElasticsearchRuntime.pl` |

@@ -36,7 +36,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::MigrateFromOTRS::OTOBOSignaturesMigrate - Migrate signature table to OTOBO.
+Kernel::System::MigrateFromOTRS::OTOBOSignaturesMigrate - Migrate signature table to CareOnCloud ESM.
 
 =head1 SYNOPSIS
 
@@ -78,8 +78,8 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOSignaturesMigrate',
-            SubTask   => "Migrate signature templates to OTOBO.",
+            Task      => 'CareOnCloud ESMSignaturesMigrate',
+            SubTask   => "Migrate signature templates to CareOnCloud ESM.",
             StartTime => $Epoch,
         },
     );
@@ -89,7 +89,7 @@ sub Run {
 
         # ATTENTION, don't use opening or closing tags here (< or >)
         # because old signature templates can contain quoted tags (&lt; or &gt;)
-        'OTRS' => 'OTOBO',
+        'OTRS' => 'CareOnCloud ESM',
     );
 
     # get needed objects

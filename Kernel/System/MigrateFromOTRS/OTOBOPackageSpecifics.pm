@@ -113,7 +113,7 @@ sub Run {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'OTOBOPackageSpecifics',
+                Task      => 'CareOnCloud ESMPackageSpecifics',
                 SubTask   => $SubTask->{Description},
                 StartTime => $Epoch,
             },
@@ -163,7 +163,7 @@ sub _FAQ_InlineImg {
     my ( $Self, %Param ) = @_;
 
     my %Substitutions = (
-        qr/src="\/otrs\/index\.pl/ => 'src="/otobo/index.pl',
+        qr/src="\/otrs\/index\.pl/ => 'src="/careoncloud/index.pl',
     );
 
     my $FAQObject = $Kernel::OM->Get('Kernel::System::FAQ');

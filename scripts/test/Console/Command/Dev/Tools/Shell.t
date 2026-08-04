@@ -44,14 +44,14 @@ else {
             ExitCode => 0,
         },
         {
-            Name     => 'OTOBO Version string',
+            Name     => 'CareOnCloud ESM Version string',
             Code     => '$Kernel::OM->Get("Kernel::Config")->Get("Version");',
             Result   => '"' . $ConfigObject->Get('Version') . '"',
             ExitCode => 0,
         },
         {
-            Name     => 'OTOBO Version variable',
-            Code     => 'my $OTOBOVersion = $Kernel::OM->Get("Kernel::Config")->Get("Version");',
+            Name     => 'CareOnCloud ESM Version variable',
+            Code     => 'my $CareOnCloud ESMVersion = $Kernel::OM->Get("Kernel::Config")->Get("Version");',
             Result   => '"' . $ConfigObject->Get('Version') . '"',
             ExitCode => 0,
         },

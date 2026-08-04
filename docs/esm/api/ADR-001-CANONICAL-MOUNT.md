@@ -1,4 +1,4 @@
-# ADR-001 - Canonical API mount in the OTOBO fork
+# ADR-001 - Canonical API mount in the CareOnCloud ESM fork
 
 - Status: accepted
 - Date: 2026-07-24
@@ -6,7 +6,7 @@
 
 ## Context
 
-OTOBO exposes package-friendly Public frontend modules, but it does not provide
+CareOnCloud ESM exposes package-friendly Public frontend modules, but it does not provide
 a package registration point for a new top-level PSGI mount. Publishing only a
 `public.pl?Action=...` URL would expose implementation details and prevent a
 stable resource-oriented `/api/v1` contract.
@@ -34,7 +34,7 @@ upgrade from being reported healthy when the fork routing adapter is absent.
 ## Consequences
 
 - Product deployments must build the web image from this fork; installing the
-  package into an arbitrary upstream OTOBO image is insufficient.
+  package into an arbitrary upstream CareOnCloud ESM image is insufficient.
 - Upstream rebases must review this single mount block explicitly.
 - The compatibility `public.pl` route remains available for rollback, but it is
   not the advertised integration contract.

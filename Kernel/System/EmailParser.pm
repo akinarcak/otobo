@@ -39,11 +39,11 @@ our $ObjectManagerDisabled = 1;
 
 =head1 NAME
 
-Kernel::System::EmailParser - parse an email and provide methods implementing OTOBO specific logic
+Kernel::System::EmailParser - parse an email and provide methods implementing CareOnCloud ESM specific logic
 
 =head1 DESCRIPTION
 
-Parses an email using modules from CPAN. Provide methods that mangle the message and give the content that OTOBO needs.
+Parses an email using modules from CPAN. Provide methods that mangle the message and give the content that CareOnCloud ESM needs.
 
 The module is also used without parsing mails. In this case the instance provides some helper methods.
 
@@ -77,7 +77,7 @@ or
     );
 
 Another option is to pass an instance of C<MIME::Entity> in the parameter C<Entity>. This is useful
-when an email has been already parsed or a C<MIME::Entity> object has been constructed by OTOBO.
+when an email has been already parsed or a C<MIME::Entity> object has been constructed by CareOnCloud ESM.
 
     my $ParserObject = Kernel::System::EmailParser->new(
         Email        => $EmailString,
@@ -585,7 +585,7 @@ Returns an array of the email attachments.
         print $Attachment->{ContentMixed};
     }
 
-Note that there is an OTOBO specific logic for the list of attachments.
+Note that there is a CareOnCloud ESM specific logic for the list of attachments.
 That logic is implemented in the method C<PartsAttachments()>.
 
 =cut
@@ -611,7 +611,7 @@ sub GetAttachments {
 
 =head2 PartsAttachments()
 
-This method is intended only for internal use. It implements the OTOBO specific logic for the potentially nested
+This method is intended only for internal use. It implements the CareOnCloud ESM specific logic for the potentially nested
 parts of the MIME message.
 
 =over 4
@@ -842,7 +842,7 @@ sub PartsAttachments {
 
     # For multipart/mixed emails, we check for all text/plain or text/html MIME parts which are
     #   body elements, and concatenate them into the first relevant attachment, to stay in line
-    #   with OTOBO file-1 and file-2 attachment handling.
+    #   with CareOnCloud ESM file-1 and file-2 attachment handling.
     #
     # HTML parts will just be concatenated, so that the attachment has two complete HTML documents
     #   inside. Browsers tolerate this.

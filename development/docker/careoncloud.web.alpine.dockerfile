@@ -1,7 +1,7 @@
 # WARNING: this Dockerfile is untested
 
-# This is the build file for the OTOBO web docker image.
-# The services OTOBO web and OTOBO daemon use the same image.
+# This is the build file for the CareOnCloud ESM web docker image.
+# The services CareOnCloud ESM web and CareOnCloud ESM daemon use the same image.
 # There is also an extra build target careoncloud-web-kerberos that adds support for Kerberos.
 
 # See also bin/docker/build_docker_images.sh
@@ -9,7 +9,7 @@
 # See also https://doc.otobo.org/manual/installation/10.1/en/content/installation-docker.html
 
 # As alpine as the base image in order to have a small image size.
-# OTOBO will use the system Perl.
+# CareOnCloud ESM will use the system Perl.
 # Use a fixed version in order to avoid surprising updates.
 FROM alpine:3.20
 
@@ -28,16 +28,16 @@ USER root
 # Create /opt/careoncloud_install already here, in order to reduce the number of build layers.
 # hadolint ignore=DL3008
 #
-# create the otobo user
-#   --user-group            create group 'otobo' and add the user to the created group
+# create the careoncloud user
+#   --user-group            create group 'careoncloud' and add the user to the created group
 #   --home-dir /opt/careoncloud   set $HOME of the user
 #   --create-home           create /opt/careoncloud
-#   --shell /bin/bash       set the login shell, not used here because otobo is system user
+#   --shell /bin/bash       set the login shell, not used here because careoncloud is system user
 #   --comment 'CareOnCloud ESM user'  complete name of the user
 #
 # Also create /opt/careoncloud_install and /opt/careoncloud
-ENV CAREONCLOUD_USER  otobo
-ENV CAREONCLOUD_GROUP otobo
+ENV CAREONCLOUD_USER  careoncloud
+ENV CAREONCLOUD_GROUP careoncloud
 ENV CAREONCLOUD_HOME  /opt/careoncloud
 RUN apk add --no-cache\
  bash \
@@ -77,7 +77,7 @@ RUN apk add --no-cache\
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
-# Install CPAN distributions that are required by OTOBO into the local lib /opt/careoncloud_install/local.
+# Install CPAN distributions that are required by CareOnCloud ESM into the local lib /opt/careoncloud_install/local.
 # The Perl module installer 'cpanm' is already available via the base image.
 #
 # Note that the modules in /opt/careoncloud/Kernel/cpan-lib are not considered by cpanm.
@@ -121,7 +121,7 @@ FROM base AS careoncloud-web
 # First there is some initial setup that needs to be done by root.
 USER root
 
-# Copy the OTOBO installation to /opt/careoncloud_install/careoncloud_next and use it as the working dir.
+# Copy the CareOnCloud ESM installation to /opt/careoncloud_install/careoncloud_next and use it as the working dir.
 # The files that are set up in .dockerignore. This means that a potentially existing Kernel/Config.pm
 # won't be copied. Instead Kernel/Config.pm.docker.dist will be copied to Kernel/Config.pm in entrypoint.sh.
 COPY --chown=$CAREONCLOUD_USER:$CAREONCLOUD_GROUP . /opt/careoncloud_install/careoncloud_next
@@ -153,10 +153,10 @@ RUN install --owner $CAREONCLOUD_USER --group $CAREONCLOUD_GROUP -D bin/docker/e
  && install --owner $CAREONCLOUD_USER --group $CAREONCLOUD_GROUP /dev/null docker_firsttime\
  && perl bin/careoncloud.SetPermissions.pl --runs-under-docker
 
-# perform build steps that can be done as the user otobo.
+# perform build steps that can be done as the user careoncloud.
 USER $CAREONCLOUD_USER
 
-# More setup that can be done by the user otobo
+# More setup that can be done by the user careoncloud
 
 # Under Docker the Elasticsearch Daemon is running on the host 'elastic' instead of '127.0.0.1'.
 # The webservice configuration is in a YAML file and it is not obvious how
@@ -189,7 +189,7 @@ RUN install -d var/stats var/packages var/article var/tmp \
 # Up to now we have prepared /opt/careoncloud_install/careoncloud_next.
 # Merging /opt/careoncloud_install/careoncloud_next and /opt/careoncloud is left to /opt/careoncloud_install/entrypoint.sh.
 # Note that for supporting the command 'cron' we need to start as root.
-# For all other commands entrypoint.sh switches to the user otobo.
+# For all other commands entrypoint.sh switches to the user careoncloud.
 WORKDIR $CAREONCLOUD_HOME
 
 # Titel is specific for the build target
@@ -226,7 +226,7 @@ RUN cpanm --local-lib local Authen::Krb5::Simple\
  && cpanm --local-lib local LWP::Authen::Negotiate\
  && rm -rf "/root/.cpanm"
 
-# perform build steps that can be done as the user otobo.
+# perform build steps that can be done as the user careoncloud.
 USER $CAREONCLOUD_USER
 
 # skipping /opt/careoncloud_install/local

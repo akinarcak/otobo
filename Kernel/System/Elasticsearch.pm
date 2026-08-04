@@ -55,7 +55,7 @@ Kernel::System::Elasticsearch - Elasticsearch Backend
 
 =head1 DESCRIPTION
 
-This module processes search calls for various otobo classes to call the generic Elasticsearch search invoker
+This module processes search calls for various careoncloud classes to call the generic Elasticsearch search invoker
 
 =head2 new()
 

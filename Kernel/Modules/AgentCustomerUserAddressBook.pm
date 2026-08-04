@@ -424,8 +424,8 @@ sub Run {
                 Type => 'Small',
             );
 
-            # As of OTOBO 10.0.x the headers were printed early.
-            # This has changed in OTOBO 10.1.1.
+            # As of CareOnCloud ESM 10.0.x the headers were printed early.
+            # This has changed in CareOnCloud ESM 10.1.1.
             #$LayoutObject->Print( Output => \$Output );
             #$Output = '';
 

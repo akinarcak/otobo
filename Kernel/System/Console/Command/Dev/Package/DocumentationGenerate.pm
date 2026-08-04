@@ -34,7 +34,7 @@ sub Configure {
     $Self->AddOption(
         Name        => 'module-directory',
         Description =>
-            "Specify the directory containing the module sources (otherwise the OTOBO home directory will be used).",
+            "Specify the directory containing the module sources (otherwise the CareOnCloud ESM home directory will be used).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,
@@ -47,7 +47,7 @@ sub Configure {
     );
     $Self->AddArgument(
         Name        => 'source-path',
-        Description => "Specify the path to an OTOBO package source (sopm) file that should be built.",
+        Description => "Specify the path to a CareOnCloud ESM package source (sopm) file that should be built.",
         Required    => 1,
         ValueRegex  => qr/.*/smx,
     );
@@ -217,7 +217,7 @@ System requirements
 
 Framework
 ---------
-OTOBO $Param{Structure}{Framework}[0]{Content}
+CareOnCloud ESM $Param{Structure}{Framework}[0]{Content}
 
 Packages
 --------

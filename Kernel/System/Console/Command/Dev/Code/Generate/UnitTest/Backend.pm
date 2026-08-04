@@ -44,7 +44,7 @@ sub Configure {
     $Self->AddOption(
         Name        => 'module-directory',
         Description =>
-            "Specify the directory containing the module where the new test should be created (otherwise the OTOBO home directory will be used).",
+            "Specify the directory containing the module where the new test should be created (otherwise the CareOnCloud ESM home directory will be used).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,

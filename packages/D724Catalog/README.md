@@ -8,12 +8,12 @@ query includes `tenant_id`; cross-tenant parent relationships are rejected; and
 authorization is delegated to `D724TenantGuard` before data access.
 
 Version 0.2 adds validated, versioned dynamic form schemas and an authenticated
-customer portal. The portal derives tenant context from the OTOBO customer session,
+customer portal. The portal derives tenant context from the CareOnCloud ESM customer session,
 lists only fully active catalog hierarchies, and HTML-escapes rendered content.
 
 Version 0.3 adds an agent management screen backed by `D724TenantDirectory`.
 Manageable tenants come only from persistent role bindings; writes require
-`catalog.manage`, an OTOBO CSRF challenge token, and optimistic versions.
+`catalog.manage`, a CareOnCloud ESM CSRF challenge token, and optimistic versions.
 
 Run `bin/careoncloud.Console.pl Admin::D724::CatalogStatus --json` after installation
 to verify configuration and schema health.

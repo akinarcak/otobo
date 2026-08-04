@@ -30,7 +30,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Install an OTOBO package.');
+    $Self->Description('Install a CareOnCloud ESM package.');
     $Self->AddOption(
         Name        => 'force',
         Description => 'Force package installation even if validation fails.',

@@ -3066,7 +3066,7 @@ sub TicketEscalationSuspendCalculate {
 
         # some time left? calculate reminder as usual
 
-        # DateTimeObject using OTOBO time zone per default
+        # DateTimeObject using CareOnCloud ESM time zone per default
         my $DestinationDateTimeObject = $Kernel::OM->Create(
             'Kernel::System::DateTime',
             ObjectParams => {

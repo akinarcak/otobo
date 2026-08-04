@@ -42,7 +42,7 @@ Core.UI.oooWidget = (function (TargetNS) {
      * @memberof Core.UI.oooWidget.Init
      * @function
      * @description
-     *      Initializes otobo widgets.
+     *      Initializes careoncloud widgets.
      */
     TargetNS.Init = function(){
         // close on click

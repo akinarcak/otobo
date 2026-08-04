@@ -28,7 +28,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Print the OTOBO log.');
+    $Self->Description('Print the CareOnCloud ESM log.');
 
     return;
 }

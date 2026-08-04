@@ -57,7 +57,7 @@ my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 my $GroupObject  = $Kernel::OM->Get('Kernel::System::Group');
 my $UserObject   = $Kernel::OM->Get('Kernel::System::User');
 
-my $AdminDn       = 'cn=openldap_admin,dc=otobotesting';
+my $AdminDn       = 'cn=openldap_admin,dc=careoncloudtesting';
 my $AdminPassword = 'openldap_admin';
 my $RandomID      = $Helper->GetRandomID;
 
@@ -81,7 +81,7 @@ my $RandomID      = $Helper->GetRandomID;
         [ 'AuthModule7'                     => 'Kernel::System::Auth::LDAP' ],
         [ 'AuthModule::UseSyncBackend7'     => 0 ],
         [ 'AuthModule::LDAP::Host7'         => 'testing-openldap' ],
-        [ 'AuthModule::LDAP::BaseDN7'       => 'dc=otobotesting' ],
+        [ 'AuthModule::LDAP::BaseDN7'       => 'dc=careoncloudtesting' ],
         [ 'AuthModule::LDAP::UID7'          => 'uid' ],
         [ 'AuthModule::LDAP::SearchUserDN7' => $AdminDn ],
         [ 'AuthModule::LDAP::SearchUserPw7' => $AdminPassword ],
@@ -111,27 +111,27 @@ my %GroupName2ID;
     my @Tests = (
         {
             Name         => 'wrong password',
-            UserLogin    => 'otobotestuser1',
-            UserPassword => 'otobotestuser1AAAA',
+            UserLogin    => 'careoncloudtestuser1',
+            UserPassword => 'careoncloudtestuser1AAAA',
             AuthResult   => undef,
         },
         {
             Name         => 'wrong user',
-            UserLogin    => 'otobotestuser1BBBB',
-            UserPassword => 'otobotestuser1',
+            UserLogin    => 'careoncloudtestuser1BBBB',
+            UserPassword => 'careoncloudtestuser1',
             AuthResult   => undef,
         },
         {
-            Name         => 'correct user and password otobotestuser1',
-            UserLogin    => 'otobotestuser1',
-            UserPassword => 'otobotestuser1',
-            AuthResult   => 'otobotestuser1',
+            Name         => 'correct user and password careoncloudtestuser1',
+            UserLogin    => 'careoncloudtestuser1',
+            UserPassword => 'careoncloudtestuser1',
+            AuthResult   => 'careoncloudtestuser1',
         },
         {
-            Name         => 'correct user and password otobotestuser2',
-            UserLogin    => 'otobotestuser2',
-            UserPassword => 'otobotestuser2',
-            AuthResult   => 'otobotestuser2',
+            Name         => 'correct user and password careoncloudtestuser2',
+            UserLogin    => 'careoncloudtestuser2',
+            UserPassword => 'careoncloudtestuser2',
+            AuthResult   => 'careoncloudtestuser2',
         },
     );
 
@@ -155,10 +155,10 @@ my %GroupName2ID;
 # read the fixtures from a ldif file, LDAP Data Interchange Format
 # Inject a random ID into the distinct name, in order to allow successive runs.
 {
-    # for the tests that follow we want to stay in a subtree of 'dc=otobotesting'
+    # for the tests that follow we want to stay in a subtree of 'dc=careoncloudtesting'
     $ConfigObject->Set(
         Key   => 'AuthModule::LDAP::BaseDN7',
-        Value => "dc=wirtshaus_$RandomID,dc=otobotesting",
+        Value => "dc=wirtshaus_$RandomID,dc=careoncloudtesting",
     );
 
     my $Home     = $ConfigObject->Get('Home');
@@ -274,7 +274,7 @@ my %GroupName2ID;
 
     push @Tests,
         sub {
-            note 'test switching the UID setting, that is the attribute holding the OTOBO user name';
+            note 'test switching the UID setting, that is the attribute holding the CareOnCloud ESM user name';
         },
         {
             Name         => 'not finding waiter_karl as UID is still set to uid',
@@ -368,11 +368,11 @@ my %GroupName2ID;
             AuthResult   => 'bogdan',
         },
         {
-            Name     => 'boris is denied as he is not in otoboallow',
+            Name     => 'boris is denied as he is not in careoncloudallow',
             Settings => [
                 [ 'AuthModule::LDAP::AccessAttr7' => 'member' ],
                 [ 'AuthModule::LDAP::UserAttr7'   => 'DN' ],
-                [ 'AuthModule::LDAP::GroupDN7'    => qq{ cn=otoboallow , ou=café sans souci , dc=wirtshaus_$RandomID , dc=otobotesting } ],
+                [ 'AuthModule::LDAP::GroupDN7'    => qq{ cn=careoncloudallow , ou=café sans souci , dc=wirtshaus_$RandomID , dc=careoncloudtesting } ],
             ],
             DoRollBackSettings => 0,
             UserLogin          => 'boris',
@@ -380,7 +380,7 @@ my %GroupName2ID;
             AuthResult         => undef,
         },
         {
-            Name         => 'bogdan is granted as he is in otoboallow',
+            Name         => 'bogdan is granted as he is in careoncloudallow',
             UserLogin    => 'bogdan',
             UserPassword => 'bogdan',
             AuthResult   => 'bogdan',
@@ -395,7 +395,7 @@ my %GroupName2ID;
                 [ 'AuthModule::UseSyncBackend7'         => 'AuthSyncBackend7' ],
                 [ 'AuthSyncModule7'                     => 'Kernel::System::Auth::Sync::LDAP' ],
                 [ 'AuthSyncModule::LDAP::Host7'         => 'testing-openldap' ],
-                [ 'AuthSyncModule::LDAP::BaseDN7'       => "dc=wirtshaus_$RandomID,dc=otobotesting" ],
+                [ 'AuthSyncModule::LDAP::BaseDN7'       => "dc=wirtshaus_$RandomID,dc=careoncloudtesting" ],
                 [ 'AuthSyncModule::LDAP::UID7'          => 'uid' ],
                 [ 'AuthSyncModule::LDAP::SearchUserDN7' => $AdminDn ],
                 [ 'AuthSyncModule::LDAP::SearchUserPw7' => $AdminPassword ],
@@ -429,7 +429,7 @@ my %GroupName2ID;
                     UserFirstname => 'Robert',
                     UserLastname  => 'Ober',
                     UserFullname  => 'Robert Ober',
-                    UserEmail     => 'robert@dining_hall.wirtshaus.otobotesting.food',
+                    UserEmail     => 'robert@dining_hall.wirtshaus.careoncloudtesting.food',
                     UserTitle     => 'Mr/Mrs',
                     UserType      => 'User',
                     ValidID       => 1,
@@ -501,7 +501,7 @@ my %GroupName2ID;
         };
 
     # For samuel UserSyncGroupsDefinition has no effect as he isnt in the test_sync_group_2 LDAP group.
-    # For serge the privilege 'move_into' should be added for the OTOBO group test_sync_group_2.
+    # For serge the privilege 'move_into' should be added for the CareOnCloud ESM group test_sync_group_2.
     push @Tests,
         sub {
             note 'Testing UserSyncGroupsDefinition';
@@ -547,9 +547,9 @@ my %GroupName2ID;
                 [ 'AuthSyncModule::LDAP::UserAttr7'   => 'DN' ],
                 [
                     'AuthSyncModule::LDAP::UserSyncGroupsDefinition7' => {
-                        "cn=test_sync_group_2,ou=dining hall,dc=wirtshaus_$RandomID,dc=otobotesting" => {
+                        "cn=test_sync_group_2,ou=dining hall,dc=wirtshaus_$RandomID,dc=careoncloudtesting" => {
 
-                            # otobo group
+                            # careoncloud group
                             'test_sync_group_2' => {
 
                                 # permission
@@ -599,7 +599,7 @@ my %GroupName2ID;
     # franz is a direct member test_sync_group_3D. The group test_sync_group_3A is linked via
     # the uniqueMember attribute to test_sync_group_3B.
     # Thus franz is indirectly in test_sync_group_3A and the privilege 'priority' should be added
-    # for the OTOBO group test_sync_group_3A.
+    # for the CareOnCloud ESM group test_sync_group_3A.
     #
     # TODO: a test case for dynamic groups using the object class groupOfUniqueURLs and the attributes memberURL.
     # This is missing because OpenLDAP doesn't provide the dynlist overlay per default, making the setup non-trivial.
@@ -649,9 +649,9 @@ my %GroupName2ID;
                 [ 'AuthSyncModule::LDAP::UserAttr7'          => 'DN' ],
                 [
                     'AuthSyncModule::LDAP::UserSyncGroupsDefinition7' => {
-                        "cn=test_sync_group_3A,ou=dining hall,dc=wirtshaus_$RandomID,dc=otobotesting" => {
+                        "cn=test_sync_group_3A,ou=dining hall,dc=wirtshaus_$RandomID,dc=careoncloudtesting" => {
 
-                            # otobo group
+                            # careoncloud group
                             'test_sync_group_3A' => {
 
                                 # permission

@@ -42,7 +42,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Rebuild the system configuration of OTOBO.');
+    $Self->Description('Rebuild the system configuration of CareOnCloud ESM.');
 
     $Self->AddOption(
         Name        => 'cleanup',

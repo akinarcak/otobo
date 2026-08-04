@@ -33,7 +33,7 @@ scripts::DBUpdateTo11_1::DBUpdateTranslationLength - enlarge the length of conte
 
 =head1 DESCRIPTION
 
-In OTOBO 11.0.x the length was 600 characters. In OTOBO 11.1.x the length had been increased to 3800 characters.
+In CareOnCloud ESM 11.0.x the length was 600 characters. In CareOnCloud ESM 11.1.x the length had been increased to 3800 characters.
 
 =cut
 

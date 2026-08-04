@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO') . '/' . Translatable('Email Sending Queue');
+    return Translatable('CareOnCloud ESM') . '/' . Translatable('Email Sending Queue');
 }
 
 sub Run {

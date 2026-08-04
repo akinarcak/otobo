@@ -25,7 +25,7 @@ time_stamp=$(date +'%F-%H%M%S')
 git_branch=$(cat git-branch.txt 2>/dev/null)
 log_file="prove_${otobo_version}_${time_stamp}_${git_branch:-unknown_branch}.out"
 
-# print out the relevant information about this OTOBO installation
+# print out the relevant information about this CareOnCloud ESM installation
 # Never mind when any of these files are missing
 more RELEASE git-*.txt >$log_file 2>/dev/null
 

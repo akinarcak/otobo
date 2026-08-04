@@ -119,7 +119,7 @@ Core.App = (function (TargetNS) {
      * @returns {Boolean} True if the used browser is *not* on the black list.
      * @param {String} Interface - The interface we are in (Agent or Customer)
      * @description
-     *      Checks if the used browser is not on the OTOBO browser blacklist
+     *      Checks if the used browser is not on the CareOnCloud ESM browser blacklist
      *      of the agent interface.
      */
     TargetNS.BrowserCheck = function (Interface) {

@@ -31,7 +31,7 @@ use Kernel::System::OpenIDConnect::OAuth2MailExtensions;
 no warnings('once');    ## no critic qw(TestingAndDebugging::ProhibitNoWarnings)
 
 # monkey patch support for XOAUTH2/OAUTHBEARER into Net::Cmd
-*Net::Cmd::Otobo_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::NetCmdOAuth2;
+*Net::Cmd::CareOnCloud_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::NetCmdOAuth2;
 
 use warnings('once');
 
@@ -219,7 +219,7 @@ sub Check {
             );
         }
 
-        if ( !$SMTPWrapper->( 'Otobo_OAuth2', $Self->{Auth}, $Self->{User}, $Token->{Token}, $Self->{MailHost}, $Self->{SMTPPort} ) ) {
+        if ( !$SMTPWrapper->( 'CareOnCloud_OAuth2', $Self->{Auth}, $Self->{User}, $Token->{Token}, $Self->{MailHost}, $Self->{SMTPPort} ) ) {
 
             my $Code  = $SMTPWrapper->( 'code', );
             my $Error = $Code . ', ' . $SMTPWrapper->( 'message', );

@@ -1,4 +1,4 @@
-nv.models.OTOBOmultiBarChart = function() {
+nv.models.CareOnCloud ESMmultiBarChart = function() {
     "use strict";
 
     //============================================================
@@ -29,7 +29,7 @@ nv.models.OTOBOmultiBarChart = function() {
         , tooltip = function(key, x, y, e, graph) {
             return '<h3>' + key + '</h3>' +
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                '<p>' +  y + ' on ' + x + '</p>'
                 '<p>' +  y + ' - ' + x + '</p>'
@@ -40,14 +40,14 @@ nv.models.OTOBOmultiBarChart = function() {
         , state = nv.utils.state()
         , defaultState = null
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //        , noData = 'No Data Available.'
         , noData = Core.Language.Translate('No Data Available.')
 // ---
         , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'stateChange', 'changeState', 'renderEnd')
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //        , controlWidth = function() { return showControls ? 180 : 0 }
         , controlWidth = function() { return showControls ? 220 : 0 }
@@ -88,7 +88,7 @@ nv.models.OTOBOmultiBarChart = function() {
             content = tooltip(e.series.key, x, y, e, chart);
 
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
       // because it could happen that x headings occurr multiple
       // times (such as Thu 18 for two different months), we
@@ -137,7 +137,7 @@ nv.models.OTOBOmultiBarChart = function() {
                 availableHeight = (height || parseInt(container.style('height')) || 400)
                     - margin.top - margin.bottom;
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
             // Create exception when switching from mobile to desktop view to have appropriate width. See bug#14419.
             if ( container.style('width') === '100%' ) {
@@ -234,7 +234,7 @@ nv.models.OTOBOmultiBarChart = function() {
             if (showControls) {
                 var controlsData = [
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                    { key: controlLabels.grouped || 'Grouped', disabled: multibar.stacked() },
 //                    { key: controlLabels.stacked || 'Stacked', disabled: !multibar.stacked() }
@@ -358,7 +358,7 @@ nv.models.OTOBOmultiBarChart = function() {
 
                 switch (d.key) {
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                    case 'Grouped':
                     case Core.Language.Translate('Grouped'):
@@ -366,7 +366,7 @@ nv.models.OTOBOmultiBarChart = function() {
                         multibar.stacked(false);
                         break;
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                    case 'Stacked':
                     case Core.Language.Translate('Stacked'):
@@ -405,7 +405,7 @@ nv.models.OTOBOmultiBarChart = function() {
                 chart.update();
             });
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
             // because it could happen that x axis headings occur multiple
             // times (such as Thu 18 for two different months), we

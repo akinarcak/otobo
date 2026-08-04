@@ -96,7 +96,7 @@ Core.Agent.TicketProcess = (function (TargetNS) {
 
                     if (!Response) {
 
-                        // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefor we handle the error manually.
+                        // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefor we handle the error manually.
                         Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No content received.", 'CommunicationError'));
                         $('#AJAXLoader').addClass('Hidden');
                     }
@@ -189,7 +189,7 @@ Core.Agent.TicketProcess = (function (TargetNS) {
                     }
                     else {
 
-                        // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefor we handle the error manually.
+                        // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefor we handle the error manually.
                         Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No such element id: " + $ElementToUpdate.attr('id') + " in page!", 'CommunicationError'));
                         $('#AJAXLoader').addClass('Hidden');
                     }

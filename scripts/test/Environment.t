@@ -82,11 +82,11 @@ for my $Key (qw(Database Host Type User Version)) {
     ok( $DBInfo{$Key} =~ m/\w\w/, "DBInfoGet - returned value for $Key" );
 }
 
-# OTOBOInfo
-my %OTOBOInfo = $EnvironmentObject->OTOBOInfoGet();
+# CareOnCloud ESMInfo
+my %CareOnCloud ESMInfo = $EnvironmentObject->CareOnCloud ESMInfoGet();
 for my $Key (qw(Version Home Host Product SystemID DefaultLanguage)) {
-    diag "OTOBOInfo: got '$OTOBOInfo{$Key}' for $Key";
-    ok( $OTOBOInfo{$Key}, "OTOBOInfoGet - returned value for $Key" );
+    diag "CareOnCloud ESMInfo: got '$CareOnCloud ESMInfo{$Key}' for $Key";
+    ok( $CareOnCloud ESMInfo{$Key}, "CareOnCloud ESMInfoGet - returned value for $Key" );
 }
 
 done_testing;

@@ -181,7 +181,7 @@ jobs:
           # perl:5.40-slim-trixie is used since rel-11_1_1. Override needed as perl:5.40-bookworm is the default.
           -
             target:     'otobo-web'
-            dockerfile: 'otobo.web.dockerfile'
+            dockerfile: 'careoncloud.web.dockerfile'
             context:    '.'
             repository: 'rotheross/otobo'
             base_image: 'perl:5.40-bookworm'
@@ -202,7 +202,7 @@ jobs:
           # nginx:mainline is used in rel-10_1 up to 10.1.16 and then switched to nginx:mainline-trixie
           -
             target:     'otobo-nginx-webproxy'
-            dockerfile: 'otobo.nginx.dockerfile'
+            dockerfile: 'careoncloud.nginx.dockerfile'
             context:    'scripts/nginx'
             repository: 'rotheross/otobo-nginx-webproxy'
             base_image: 'nginx:mainline-trixie'
@@ -220,7 +220,7 @@ jobs:
           # The base image nginx:mainline-trixie is used since 10.1.16
           -
             target:     'otobo-nginx-kerberos-webproxy'
-            dockerfile: 'otobo.nginx.dockerfile'
+            dockerfile: 'careoncloud.nginx.dockerfile'
             context:    'scripts/nginx'
             repository: 'rotheross/otobo-nginx-kerberos-webproxy'
             base_image: 'nginx:mainline-trixie'
@@ -228,31 +228,31 @@ jobs:
           #-
           #  target:     'otobo-nginx-kerberos-webproxy'
           #  docker_tag: 'rel-10_1_15'
-          #  dockerfile: 'otobo.nginx-kerberos.dockerfile'
+          #  dockerfile: 'careoncloud.nginx-kerberos.dockerfile'
           #  base_image: 'nginx:mainline'
           -
             target:     'otobo-nginx-kerberos-webproxy'
             docker_tag: 'rel-10_1_16'
-            dockerfile: 'otobo.nginx-kerberos.dockerfile'
+            dockerfile: 'careoncloud.nginx-kerberos.dockerfile'
           -
             target:     'otobo-nginx-kerberos-webproxy'
             docker_tag: 'rel-10_1_17'
-            dockerfile: 'otobo.nginx-kerberos.dockerfile'
+            dockerfile: 'careoncloud.nginx-kerberos.dockerfile'
           -
             target:     'otobo-nginx-kerberos-webproxy'
             docker_tag: 'latest-10_1'
-            dockerfile: 'otobo.nginx-kerberos.dockerfile'
+            dockerfile: 'careoncloud.nginx-kerberos.dockerfile'
           -
             target:     'otobo-nginx-kerberos-webproxy'
             docker_tag: 'devel-rel-10_1'
-            dockerfile: 'otobo.nginx-kerberos.dockerfile'
+            dockerfile: 'careoncloud.nginx-kerberos.dockerfile'
 
           # otobo-selenium-crome uses different base images in different releases.
           # selenium/standalone-chrome:141.0-chromedriver-141.0-20251101 is used since rel-11_0_14.
           # Declare that base image as the default and add overrides for the exceptions.
           -
             target:     'otobo-selenium-chrome'
-            dockerfile: 'otobo.selenium-chrome.dockerfile'
+            dockerfile: 'careoncloud.selenium-chrome.dockerfile'
             context:    'scripts/test/sample'
             repository: 'rotheross/otobo-selenium-chrome'
             base_image: 'selenium/standalone-chrome:141.0-chromedriver-141.0-20251101'
@@ -280,7 +280,7 @@ jobs:
           # Support for Elasticsearch was added with rel-10_1_17 and rel-11_0_16
           -
             target:     'otobo-elasticsearch'
-            dockerfile: 'otobo.elasticsearch.dockerfile'
+            dockerfile: 'careoncloud.elasticsearch.dockerfile'
             context:    'scripts/elasticsearch'
             repository: 'rotheross/otobo-elasticsearch'
             base_image: 'elasticsearch:8.19.3'
@@ -375,7 +375,7 @@ jobs:
         if: ${{ steps.check.outputs.needs-updating == 'true' }}
         id: get-dockerfile
         run: |
-          echo "dockerfile=${{ (matrix.target == 'otobo-nginx-kerberos-webproxy' && (startsWith(matrix.docker_tag, 'rel-10') || startsWith(matrix.docker_tag, 'latest-10'))) && 'otobo.nginx-kerberos.dockerfile' || matrix.dockerfile  }}" >> $GITHUB_OUTPUT
+          echo "dockerfile=${{ (matrix.target == 'otobo-nginx-kerberos-webproxy' && (startsWith(matrix.docker_tag, 'rel-10') || startsWith(matrix.docker_tag, 'latest-10'))) && 'careoncloud.nginx-kerberos.dockerfile' || matrix.dockerfile  }}" >> $GITHUB_OUTPUT
 
       -
         # Use a local composite action.

@@ -326,25 +326,25 @@ sub Data {
         'Support data collector' => 'Support data collector',
         'Hint' => 'Hint',
         'Currently support data is only shown in this system.' => 'For øyeblikket vises støttedata kun i dette systemet.',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
-            'Noen ganger anbefales det å sende disse dataene til OTOBO-teamet for å få bedre støtte.',
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
+            'Noen ganger anbefales det å sende disse dataene til CareOnCloud ESM-teamet for å få bedre støtte.',
         'Configuration' => 'Backups;Eldre',
         'Send support data' => 'Send support data',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
-            'Dette vil tillate systemet å sende ytterligere støttedatainformasjon til OTOBO-teamet.',
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
+            'Dette vil tillate systemet å sende ytterligere støttedatainformasjon til CareOnCloud ESM-teamet.',
         'Update' => 'Oppdater',
         'System Registration' => 'Registrering av systemet',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            'For å aktivere datasending, vennligst registrer systemet ditt hos OTOBO-teamet eller oppdater systemregistreringsinformasjonen din (sørg for å aktivere alternativet \'send støttedata\'.)',
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            'For å aktivere datasending, vennligst registrer systemet ditt hos CareOnCloud ESM-teamet eller oppdater systemregistreringsinformasjonen din (sørg for å aktivere alternativet \'send støttedata\'.)',
         'Register this System' => 'Registrer dette systemet',
         'System Registration is disabled for your system. Please check your configuration.' =>
             'Registrering av systemet er deaktivert for ditt system. Vennligst undersøk din konfigurasjon.',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
-            'Systemregistrering er en tjeneste fra OTOBO-teamet, som gir mange fordeler!',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            'Vennligst husk på at bruken av OTOBO sine skytjenester krever at systemet er registrert.',
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
+            'Systemregistrering er en tjeneste fra CareOnCloud ESM-teamet, som gir mange fordeler!',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            'Vennligst husk på at bruken av CareOnCloud ESM sine skytjenester krever at systemet er registrert.',
         'Register this system' => 'Registrer dette systemet',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             'Her kan du finne konfigurere tilgjengelige skytjenester som kommuniserer sikkert med %s.',
@@ -1038,8 +1038,8 @@ sub Data {
             'Navnet kan brukes til å skille forskjellige feilhåndteringskonfigurasjoner.',
         'Please provide a unique name for this web service.' => 'Vennligst velg et unikt navn for denne webtjenesten.',
         'Error handling module backend' => 'Backend for feilhåndteringsmodul',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
-            'Denne OTOBO-feilhåndteringsmodulen vil bli kalt internt for å behandle feilhåndteringsmekanismen.',
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
+            'Denne CareOnCloud ESM-feilhåndteringsmodulen vil bli kalt internt for å behandle feilhåndteringsmekanismen.',
         'Processing options' => 'Behandlingsalternativer',
         'Configure filters to control error handling module execution.' =>
             'Konfigurer filtre for å kontrollere utførelse av feilhåndteringsmoduler.',
@@ -1130,15 +1130,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             'Navnet er typisk brukt for å kalle opp en handling på en fjernstyrt web tjeneste.',
         'Invoker backend' => 'Utløser-backend',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            'Denne OTOBO utløserbackend-modulen vil bli kalt for å forberede dataene som skal sendes til det eksterne systemet, og for å behandle responsdataene.',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            'Denne CareOnCloud ESM utløserbackend-modulen vil bli kalt for å forberede dataene som skal sendes til det eksterne systemet, og for å behandle responsdataene.',
         'Mapping for outgoing request data' => 'Kartlegging for utgående forespørselsdata',
         'Configure' => 'Konfigurer',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            'Dataene fra utløseren til OTOBO vil bli behandlet av denne kartleggingen, for å transformere den til den typen data det eksterne systemet forventer.',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            'Dataene fra utløseren til CareOnCloud ESM vil bli behandlet av denne kartleggingen, for å transformere den til den typen data det eksterne systemet forventer.',
         'Mapping for incoming response data' => 'Kartlegging for innkommende svardata',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            'Svardataene vil bli behandlet av denne kartleggingen, for å transformere den til den typen data som brukeren av OTOBO forventer.',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            'Svardataene vil bli behandlet av denne kartleggingen, for å transformere den til den typen data som brukeren av CareOnCloud ESM forventer.',
         'Asynchronous' => 'Asynkron',
         'Condition' => 'Tilstand',
         'Edit this event' => 'Rediger denne hendelsen',
@@ -1146,8 +1146,8 @@ sub Data {
         'Add Event' => 'Legg til hendelse',
         'To add a new event select the event object and event name and click on the "+" button' =>
             'For å legge til en ny hendelse velg hendelsesobjektet og hendelsesnavnet og klikk på "+"-knappen',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            'Asynkrone hendelsestriggere håndteres av OTOBO Scheduler Daemon i bakgrunnen (anbefalt).',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            'Asynkrone hendelsestriggere håndteres av CareOnCloud ESM Scheduler Daemon i bakgrunnen (anbefalt).',
         'Synchronous event triggers would be processed directly during the web request.' =>
             'Synkrone hendelsestriggere vil bli behandlet direkte under nettforespørselen.',
 
@@ -1284,7 +1284,7 @@ sub Data {
         'Enable Extended XSLT Mapping' => '',
         'Extended XSLT Mapping' => '',
         'Enable' => 'Muliggjøre',
-        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'otoboXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
             '',
 
         # Template: AdminGenericInterfaceOperationDefault
@@ -1295,11 +1295,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             'Navnet brukes vanligvis til å kalle opp denne webtjenesteoperasjonen fra et eksternt system.',
         'Operation backend' => 'Operasjon backend',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            'Denne OTOBO-operasjonsbackend-modulen vil bli kalt internt for å behandle forespørselen, og generere data for svaret.',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            'Denne CareOnCloud ESM-operasjonsbackend-modulen vil bli kalt internt for å behandle forespørselen, og generere data for svaret.',
         'Mapping for incoming request data' => 'Kartlegging for innkommende forespørselsdata',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            'Forespørselsdataene vil bli behandlet av denne kartleggingen, for å transformere den til den typen data OTOBO forventer.',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            'Forespørselsdataene vil bli behandlet av denne kartleggingen, for å transformere den til den typen data CareOnCloud ESM forventer.',
         'Mapping for outgoing response data' => 'Kartlegging for utgående svardata',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             'Responsdataene vil bli behandlet av denne kartleggingen, for å transformere den til den typen data det eksterne systemet forventer.',
@@ -1317,8 +1317,8 @@ sub Data {
             'Begrens denne operasjonen til spesifikke forespørselsmetoder. Hvis ingen metode er valgt, vil alle forespørsler bli akseptert.',
         'Maximum message length' => 'Maksimal lengde på melding',
         'This field should be an integer number.' => 'Dette feltet inneholde et heltall.',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            'Her kan du spesifisere maksimal størrelse (i byte) på REST-meldinger som OTOBO skal behandle.',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            'Her kan du spesifisere maksimal størrelse (i byte) på REST-meldinger som CareOnCloud ESM skal behandle.',
         'Send Keep-Alive' => 'Send Keep-Alive',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             'Denne konfigurasjonen definerer om innkommende tilkoblinger skal stenges eller holdes i live.',
@@ -1361,22 +1361,22 @@ sub Data {
         'Client Certificate' => 'Klientsertifikat',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             'Den fullstendige banen og navnet til SSL-klientsertifikatfilen (må være i PEM-, DER- eller PKCS#12-format).',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => 'f.eks. /opt/otobo/var/certificates/SOAP/certificate.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => 'f.eks. /opt/careoncloud/var/certificates/SOAP/certificate.pem',
         'Client Certificate Key' => 'Klientsertifikatnøkkel',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             'Den fullstendige banen og navnet til SSL-klientsertifikatnøkkelfilen (hvis den ikke allerede er inkludert i sertifikatfilen).',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => 'f.eks. /opt/otobo/var/certificates/SOAP/key.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => 'f.eks. /opt/careoncloud/var/certificates/SOAP/key.pem',
         'Client Certificate Key Password' => 'Passord for klientsertifikatnøkkel',
         'The password to open the SSL certificate if the key is encrypted.' =>
             'Passordet for å åpne SSL-sertifikatet hvis nøkkelen er kryptert.',
         'Certification Authority (CA) Certificate' => 'Sertifiseringsinstans (CA)-sertifikat',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             'Den fullstendige banen og navnet på sertifiseringsinstansens sertifikatfil som validerer SSL-sertifikatet.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => 'f.eks. /opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => 'f.eks. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => 'Certification Authority (CA) Directory',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             'Den fullstendige banen til sertifiseringsinstanskatalogen der CA-sertifikatene er lagret i filsystemet.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => 'f.eks. /opt/otobo/var/certificates/SOAP/CA',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => 'f.eks. /opt/careoncloud/var/certificates/SOAP/CA',
         'SSL hostname verification' => 'SSL-vertsnavnbekreftelse',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             'Avbryt forespørselen hvis vertsnavnet ikke kan bekreftes. Deaktiver med forsiktighet! Å hoppe over verifisering er en sikkerhetsrisiko! Hovedsakelig for testformål i tilfelle av selvsignerte SSL-sertifikater, eller hvis du vet hva du gjør.',
@@ -1445,8 +1445,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             'Velg hvordan SOAP-responsfunksjonsinnpakningen skal konstrueres.',
         'Response name free text' => 'Svarnavn fritekst',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            'Her kan du spesifisere maksimal størrelse (i byte) på SOAP-meldinger som OTOBO skal behandle.',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            'Her kan du spesifisere maksimal størrelse (i byte) på SOAP-meldinger som CareOnCloud ESM skal behandle.',
         'Encoding' => 'Kodifisering',
         'The character encoding for the SOAP message contents.' => 'Tegnkodingen for SOAP-meldingens innhold.',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => 'f.eks. utf-8, latin1, iso-8859-1, cp1250, etc.',
@@ -1486,10 +1486,10 @@ sub Data {
         'Provider transport' => 'Leverandørtransport',
         'Requester transport' => 'Søkertransport',
         'Debug threshold' => 'Feilsøkergrense',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            'I leverandørmodus tilbyr OTOBO webtjenester som brukes av eksterne systemer.',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            'I forespørselsmodus bruker OTOBO webtjenester til eksterne systemer.',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            'I leverandørmodus tilbyr CareOnCloud ESM webtjenester som brukes av eksterne systemer.',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            'I forespørselsmodus bruker CareOnCloud ESM webtjenester til eksterne systemer.',
         'Network transport' => 'Nettverkstransport',
         'Error Handling Modules' => 'Feilhåndteringsmoduler',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1600,7 +1600,7 @@ sub Data {
         'Filter for mail accounts' => 'Filter for e-postkontoer',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             'Alle innkommende e-poster med én konto vil bli sendt i den valgte køen.',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
             'Hvis kontoen din er merket som klarert, vil X-OTOBO-overskriftene som allerede eksisterer ved ankomsttid (for prioritet osv.) beholdes og brukes, for eksempel i PostMaster-filtre.',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             'Utgående e-post kan konfigureres via Sendmail*-innstillingene i %s.',
@@ -1673,8 +1673,8 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => 'Bruk komma eller semikolon for å skille e-postadresser.',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
-            'Du kan bruke OTOBO-tagger som <OTOBO_TICKET_DynamicField_...> for å sette inn verdier fra gjeldende sak.',
+        'You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            'Du kan bruke CareOnCloud ESM-tagger som <OTOBO_TICKET_DynamicField_...> for å sette inn verdier fra gjeldende sak.',
 
         # Template: AdminOAuthTokenStore
         'OAuth2 Token Management (OIDC)' => '',
@@ -1790,8 +1790,8 @@ sub Data {
         'PGP Management' => 'Administrasjon: PGP',
         'Add PGP Key' => 'Legg Til PGP-nøkkel',
         'PGP support is disabled' => 'PGP støtte er deaktivert',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            'For å kunne bruke PGP funksjonen i OTOBO må du først aktivere den.',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            'For å kunne bruke PGP funksjonen i CareOnCloud ESM må du først aktivere den.',
         'Enable PGP support' => 'Aktiver PGP støtte',
         'Faulty PGP configuration' => 'Feil i PGP konfigurasjonen',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1816,22 +1816,22 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             'Vil du virkelig re-installere pakken? Alle manuelle endringer vil bli borte.',
         'Go to updating instructions' => 'Gå til oppdateringsinstruksjoner',
-        'Go to the OTOBO customer portal' => 'Gå til OTOBO-kundeportalen',
+        'Go to the CareOnCloud ESM customer portal' => 'Gå til CareOnCloud ESM-kundeportalen',
         'package information' => 'pakkeinformasjon',
-        'Package installation requires a patch level update of OTOBO.' =>
-            'Pakkeinstallasjon krever en patch-nivåoppdatering av OTOBO.',
-        'Package update requires a patch level update of OTOBO.' => 'Pakkeoppdatering krever en patch-nivåoppdatering av OTOBO.',
-        'Please note that your installed OTOBO version is %s.' => 'Vær oppmerksom på at din installerte OTOBO-versjon er %s.',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
-            'For å installere denne pakken må du oppdatere OTOBO til versjon %s eller nyere.',
-        'This package can only be installed on OTOBO version %s or older.' =>
-            'Denne pakken kan bare installeres på OTOBO versjon %s eller eldre.',
-        'This package can only be installed on OTOBO version %s or newer.' =>
-            'Denne pakken kan bare installeres på OTOBO versjon %s eller nyere.',
-        'Why should I keep OTOBO up to date?' => 'Hvorfor bør jeg holde OTOBO oppdatert?',
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
+            'Pakkeinstallasjon krever en patch-nivåoppdatering av CareOnCloud ESM.',
+        'Package update requires a patch level update of CareOnCloud ESM.' => 'Pakkeoppdatering krever en patch-nivåoppdatering av CareOnCloud ESM.',
+        'Please note that your installed CareOnCloud ESM version is %s.' => 'Vær oppmerksom på at din installerte CareOnCloud ESM-versjon er %s.',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
+            'For å installere denne pakken må du oppdatere CareOnCloud ESM til versjon %s eller nyere.',
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
+            'Denne pakken kan bare installeres på CareOnCloud ESM versjon %s eller eldre.',
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
+            'Denne pakken kan bare installeres på CareOnCloud ESM versjon %s eller nyere.',
+        'Why should I keep CareOnCloud ESM up to date?' => 'Hvorfor bør jeg holde CareOnCloud ESM oppdatert?',
         'You will receive updates about relevant security issues.' => 'Du vil motta oppdateringer om relevante sikkerhetsproblemer.',
-        'You will receive updates for all other relevant OTOBO issues.' =>
-            'Du vil motta oppdateringer for alle andre relevante OTOBO-problemer.',
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
+            'Du vil motta oppdateringer for alle andre relevante CareOnCloud ESM-problemer.',
         'How can I do a patch level update if I don’t have a contract?' =>
             'Hvordan kan jeg gjøre en oppdatering hvis jeg ikke har en kontrakt?',
         'Please find all relevant information within the updating instructions at %s.' =>
@@ -1847,7 +1847,7 @@ sub Data {
         'Install' => 'Installer',
         'Update repository information' => 'Oppdater pakkelager-informasjon',
         'Cloud services are currently disabled.' => 'Skytjenester er for øyeblikket deaktivert.',
-        'OTOBO Verify can not continue!' => 'OTOBO Verify kan ikke fortsette!',
+        'CareOnCloud ESM Verify can not continue!' => 'CareOnCloud ESM Verify kan ikke fortsette!',
         'Enable cloud services' => 'Aktiver skytjenester',
         'Update all installed packages' => 'Oppdater alle installerte pakker',
         'Online Repository' => 'Pakkelager på nettet',
@@ -1855,7 +1855,7 @@ sub Data {
         'Action' => 'Handling',
         'Module documentation' => 'Modul-dokumentasjon',
         'Local Repository' => 'Lokalt pakkelager',
-        'This package is verified by OTOBOverify (tm)' => 'Denne pakken er verifisert av OTOBOverify (tm)',
+        'This package is verified by CareOnCloud ESMverify (tm)' => 'Denne pakken er verifisert av CareOnCloud ESMverify (tm)',
         'Uninstall' => 'Avinstaller',
         'Package not correctly deployed! Please reinstall the package.' =>
             'Pakken er ikke riktig installert! Vennligst installer pakken på nytt.',
@@ -2228,27 +2228,27 @@ sub Data {
         'Edit System Registration' => 'Endre systemregistrering',
         'System Registration Overview' => 'Systemregistreringsoversikt',
         'Register System' => 'Registrer System',
-        'Validate OTOBO-ID' => 'Valider OTOBO-ID',
+        'Validate CareOnCloud ID' => 'Valider CareOnCloud ID',
         'Deregister System' => 'Avregistrere system',
         'Edit details' => 'Endre detaljer',
         'Show transmitted data' => 'Vis overført data',
         'Deregister system' => 'Avregistrere system',
         'Overview of registered systems' => 'Oversikt over registrerte systemet',
-        'This system is registered with OTOBO Team.' => 'Dette systemet er registrert hos OTOBO Team.',
+        'This system is registered with CareOnCloud ESM Team.' => 'Dette systemet er registrert hos CareOnCloud ESM Team.',
         'System type' => 'Systemtype',
         'Unique ID' => 'Unik ID',
         'Last communication with registration server' => 'Sist kommunikasjon med registreringstjeneren',
         'System Registration not Possible' => 'Systemregistrering er ikke mulig',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            'Vennligst legg merket til at du ikke kan registrere systemet, dersom OTOBO tjenesten ikke kjører riktig!',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            'Vennligst legg merket til at du ikke kan registrere systemet, dersom CareOnCloud ESM tjenesten ikke kjører riktig!',
         'Instructions' => 'Instruksjoner',
         'System Deregistration not Possible' => 'Systemavregistrering ikke mulig',
-        'OTOBO-ID Login' => 'OTOBO-ID',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
-            'Systemregistrering er en tjeneste fra OTOBO Team, som gir mange fordeler!',
+        'CareOnCloud ID Login' => 'CareOnCloud ID',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
+            'Systemregistrering er en tjeneste fra CareOnCloud ESM Team, som gir mange fordeler!',
         'Read more' => 'Les mer',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            'Du må logge inn med din OTOBO-ID for å registrere systemet ditt.',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            'Du må logge inn med din CareOnCloud ID for å registrere systemet ditt.',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'Din OTOBO-ID er e-postadressen du brukte til å registrere deg på OTOBO.com-nettsiden.',
         'Data Protection' => 'Databeskyttelse',
@@ -2259,45 +2259,45 @@ sub Data {
         'This is only the beginning!' => 'Dette er bare begynnelsen!',
         'We will inform you about our new services and offerings soon.' =>
             'Vi vil informere deg om våre nye tjenester og tilbud snart.',
-        'Can I use OTOBO without being registered?' => 'Kan jeg bruke OTOBO uten å være registrert?',
+        'Can I use CareOnCloud ESM without being registered?' => 'Kan jeg bruke CareOnCloud ESM uten å være registrert?',
         'System registration is optional.' => 'Registrering er valgfritt.',
-        'You can download and use OTOBO without being registered.' => 'Du kan laste ned og bruke OTOBO uten å være registrert.',
+        'You can download and use CareOnCloud ESM without being registered.' => 'Du kan laste ned og bruke CareOnCloud ESM uten å være registrert.',
         'Is it possible to deregister?' => 'Er det mulig å avregistrere seg?',
         'You can deregister at any time.' => 'Du kan avregistrere deg når som helst.',
         'Which data is transfered when registering?' => 'Hvilke data blir overført ved registrering?',
-        'A registered system sends the following data to OTOBO Team:' => 'Et registrert system sender følgende data til OTOBO Team:',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            'Fully Qualified Domain Name (FQDN), OTOBO versjon, Database-, Operativsystem- og Perl versjon.',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => 'Et registrert system sender følgende data til CareOnCloud ESM Team:',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            'Fully Qualified Domain Name (FQDN), CareOnCloud ESM versjon, Database-, Operativsystem- og Perl versjon.',
         'Why do I have to provide a description for my system?' => 'Hvorfor må jeg gi en beskrivelse for mitt system?',
         'The description of the system is optional.' => 'Beskrivelsen er valgfri.',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             'Beskrivelsen og systemtypen du angir hjelper deg med å identifisere og administrere detaljene til de registrerte systemene dine.',
-        'How often does my OTOBO system send updates?' => 'Hvor ofte sender mitt OTOBO system oppdateringer?',
+        'How often does my CareOnCloud ESM system send updates?' => 'Hvor ofte sender mitt CareOnCloud ESM system oppdateringer?',
         'Your system will send updates to the registration server at regular intervals.' =>
             'Ditt system vil sende oppdateringer til registreringstjeneren med jevne mellomrom.',
         'Typically this would be around once every three days.' => 'Typisk så vil dette være en gang vær tredje dag.',
         'If you deregister your system, you will lose these benefits:' =>
             'Hvis du avregistrerer systemet ditt, vil du miste disse fordelene:',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            'Du må logge på med din OTOBO-ID for å avregistrere systemet ditt.',
-        'OTOBO-ID' => 'OTOBO-ID',
-        'You don\'t have an OTOBO-ID yet?' => 'Har du ikke en OTOBO-ID enda?',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            'Du må logge på med din CareOnCloud ID for å avregistrere systemet ditt.',
+        'CareOnCloud ID' => 'CareOnCloud ID',
+        'You don\'t have a CareOnCloud ID yet?' => 'Har du ikke en CareOnCloud ID enda?',
         'Sign up now' => 'Registrer deg her',
         'Forgot your password?' => 'Glemt ditt passord?',
         'Retrieve a new one' => 'Hent en ny en',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
-            'Disse dataene vil ofte bli overført til OTOBO Team når du registrerer dette systemet.',
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
+            'Disse dataene vil ofte bli overført til CareOnCloud ESM Team når du registrerer dette systemet.',
         'Attribute' => 'Attributt',
         'FQDN' => 'FQDN',
-        'OTOBO Version' => 'OTOBO versjon',
+        'CareOnCloud ESM Version' => 'CareOnCloud ESM versjon',
         'Operating System' => 'Operativsystem',
         'Perl Version' => 'Perl versjon',
         'Optional description of this system.' => 'Valgfri beskrivelse av dette systemet.',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
-            'Dette vil tillate systemet å sende ytterligere støttedatainformasjon til OTOBO Team.',
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
+            'Dette vil tillate systemet å sende ytterligere støttedatainformasjon til CareOnCloud ESM Team.',
         'Register' => 'Registrer',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
-            'Hvis du fortsetter med dette trinnet, avregistreres systemet fra OTOBO Team.',
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
+            'Hvis du fortsetter med dette trinnet, avregistreres systemet fra CareOnCloud ESM Team.',
         'Deregister' => 'Avregistrere',
         'You can modify registration settings here.' => 'Du kan endre registreringsinnstillingene her.',
         'Overview of Transmitted Data' => 'Oversikt over overførte data',
@@ -2398,8 +2398,8 @@ sub Data {
         'Add Certificate' => 'Legg til sertifikat',
         'Add Private Key' => 'Legg til privat nøkkel',
         'SMIME support is disabled' => 'SMIME-støtte er deaktivert',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            'For å kunne bruke SMIME i OTOBO, må du først aktivere det.',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            'For å kunne bruke SMIME i CareOnCloud ESM, må du først aktivere det.',
         'Enable SMIME support' => 'Aktiver SMIME-støtte',
         'Faulty SMIME configuration' => 'Feil SMIME-konfigurasjon',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2457,7 +2457,7 @@ sub Data {
         'Here you can enter SQL to send it directly to the application database. It is not possible to change the content of the tables, only select queries are allowed.' =>
             'Her kan du skrive inn SQL for å sende den direkte til applikasjonsdatabasen. Det er ikke mulig å endre innholdet i tabellene, kun utvalgte spørringer er tillatt.',
         'Here you can enter SQL to send it directly to the application database.' =>
-            'Her kan du skrive SQL for å sende kommandoer rett til OTOBO sin database.',
+            'Her kan du skrive SQL for å sende kommandoer rett til CareOnCloud ESM sin database.',
         'Options' => 'Reference;Referanse',
         'Only select queries are allowed.' => 'Kun select spørringer er mulig.',
         'The syntax of your SQL query has a mistake. Please check it.' =>
@@ -2529,18 +2529,18 @@ sub Data {
         'This state is used in the following config settings:' => 'Denne tilstanden brukes i følgende konfigurasjonsinnstillinger:',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => 'Det er ikke mulig å sende støttedata til OTOBO Team!',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => 'Det er ikke mulig å sende støttedata til CareOnCloud ESM Team!',
         'Enable Cloud Services' => 'Aktiver skytjenester',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
-            'Disse dataene sendes til OTOBO Team med jevne mellomrom. For å slutte å sende disse dataene må du oppdatere systemregistreringen din.',
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
+            'Disse dataene sendes til CareOnCloud ESM Team med jevne mellomrom. For å slutte å sende disse dataene må du oppdatere systemregistreringen din.',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             'Du kan manuelt utløse sending av støttedata ved å trykke på denne knappen:',
         'Send Update' => 'Send oppdatering',
         'Currently this data is only shown in this system.' => 'Foreløpig vises disse dataene kun i dette systemet.',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
-            'Det anbefales sterkt å sende disse dataene til OTOBO Team for å få bedre støtte.',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            'For å aktivere datasending, vennligst registrer systemet ditt hos OTOBO Team eller oppdater systemregistreringsinformasjonen din (sørg for å aktivere alternativet \'send støttedata\'.)',
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
+            'Det anbefales sterkt å sende disse dataene til CareOnCloud ESM Team for å få bedre støtte.',
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            'For å aktivere datasending, vennligst registrer systemet ditt hos CareOnCloud ESM Team eller oppdater systemregistreringsinformasjonen din (sørg for å aktivere alternativet \'send støttedata\'.)',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             'En støttepakke (inkludert: systemregistreringsinformasjon, støttedata, en liste over installerte pakker og alle lokalt modifiserte kildekodefiler) kan genereres ved å trykke på denne knappen:',
         'Generate Support Bundle' => 'Generer støttepakke',
@@ -2552,11 +2552,11 @@ sub Data {
         'The email address for this user is invalid, this option has been disabled.' =>
             'E-postadressen til denne brukeren er ugyldig, dette alternativet er deaktivert.',
         'Sending' => 'Queue;Sendingskø',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
-            'Støttepakken sendes automatisk til OTOBO Team via e-post.',
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
+            'Støttepakken sendes automatisk til CareOnCloud ESM Team via e-post.',
         'Download File' => 'Last ned fil',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
-            'En fil som inneholder støttepakken vil bli lastet ned til det lokale systemet. Vennligst lagre filen og send den til OTOBO-teamet ved å bruke en alternativ metode.',
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
+            'En fil som inneholder støttepakken vil bli lastet ned til det lokale systemet. Vennligst lagre filen og send den til CareOnCloud ESM-teamet ved å bruke en alternativ metode.',
         'Error: Support data could not be collected (%s).' => 'Feil: Støttedata kunne ikke samles inn (%s).',
         'Details' => 'for',
 
@@ -2782,7 +2782,7 @@ sub Data {
         'Translation' => '',
         'Marked for Deletion' => '',
         'Edit Translation' => '',
-        'Overwrites OTOBO translation' => '',
+        'Overwrites CareOnCloud ESM translation' => '',
         'Undo Delete Translation' => '',
         'Delete Translation' => '',
         'Translations' => '',
@@ -2954,18 +2954,18 @@ sub Data {
         'Customer User Information Center' => 'Kundebrukerinformasjonssenter',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'OTOBO Daemon er en bakgrunnsprosess som utfører asynkrone oppgaver, f.eks. utløsning av sak-eskalering, e-postsending osv.',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            'En kjørende OTOBO agent er påkrevd for at systemet skal kjøre riktig.',
-        'Starting the OTOBO Daemon' => 'Innstillinger for OTOBO Agenten',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            'Kontroller at filen \'%s\' eksisterer (uten .dist-utvidelse). Denne cron-jobben vil sjekke hvert 5. minutt om OTOBO Daemon kjører og starte den om nødvendig.',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            'Kjør \'%s start\' for å sikre at cron-jobbene til \'otobo\'-brukeren er aktive.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
-            'Etter 5 minutter, sjekk at OTOBO Daemon kjører i systemet (\'bin/careoncloud.Daemon.pl status\').',
-        'Running the OTOBO Daemon in a Docker based installation' => '',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'CareOnCloud ESM Daemon er en bakgrunnsprosess som utfører asynkrone oppgaver, f.eks. utløsning av sak-eskalering, e-postsending osv.',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            'En kjørende CareOnCloud ESM agent er påkrevd for at systemet skal kjøre riktig.',
+        'Starting the CareOnCloud ESM Daemon' => 'Innstillinger for CareOnCloud ESM Agenten',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            'Kontroller at filen \'%s\' eksisterer (uten .dist-utvidelse). Denne cron-jobben vil sjekke hvert 5. minutt om CareOnCloud ESM Daemon kjører og starte den om nødvendig.',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            'Kjør \'%s start\' for å sikre at cron-jobbene til \'careoncloud\'-brukeren er aktive.',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'Etter 5 minutter, sjekk at CareOnCloud ESM Daemon kjører i systemet (\'bin/careoncloud.Daemon.pl status\').',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => '',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             '',
         'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
@@ -3133,7 +3133,7 @@ sub Data {
         'This setting can currently not be saved.' => 'Denne innstillingen kan for øyeblikket ikke lagres.',
         'This setting can currently not be saved' => 'Denne innstillingen kan for øyeblikket ikke lagres',
         'Save this setting' => 'Lagre denne innstillingen',
-        'Did you know? You can help translating OTOBO at %s.' => 'Visste du? Du kan hjelpe til med å oversette OTOBO på %s.',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => 'Visste du? Du kan hjelpe til med å oversette CareOnCloud ESM på %s.',
 
         # Template: SettingsList
         'Reset to default' => 'Tilbakestill til standard',
@@ -3153,7 +3153,7 @@ sub Data {
         # Template: AgentStatisticsAdd
         'Statistics Management' => 'Statistikkstyring',
         'Add Statistics' => 'Legg til statistikk',
-        'Read more about statistics in OTOBO' => 'Les mer om statistikk i OTOBO',
+        'Read more about statistics in CareOnCloud ESM' => 'Les mer om statistikk i CareOnCloud ESM',
         'Dynamic Matrix' => 'Dynamisk matrise',
         'Each cell contains a singular data point.' => 'Hver celle inneholder et enkelt datapunkt.',
         'Dynamic List' => 'Dynamisk liste',
@@ -3237,7 +3237,7 @@ sub Data {
         'Sum rows' => 'Summer rader',
         'Sum columns' => 'Summer kolonner',
         'Show as dashboard widget' => 'Vis som dashbord-widget',
-        'Cache' => 'cleanup.;OTOBO',
+        'Cache' => 'cleanup.;CareOnCloud ESM',
         'This statistic contains configuration errors and can currently not be used.' =>
             'Denne statistikken inneholder konfigurasjonsfeil og kan for øyeblikket ikke brukes.',
 
@@ -3744,8 +3744,8 @@ sub Data {
 
         # Template: InstallerDBStart
         'Install Type' => 'Installasjonstype',
-        'Create a new database for OTOBO' => 'Opprett en ny database for OTOBO',
-        'Use an existing database for OTOBO' => 'Bruk en eksisterende database for OTOBO',
+        'Create a new database for CareOnCloud ESM' => 'Opprett en ny database for CareOnCloud ESM',
+        'Use an existing database for CareOnCloud ESM' => 'Bruk en eksisterende database for CareOnCloud ESM',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3756,8 +3756,8 @@ sub Data {
         'Database check successful.' => 'Databasesjekk fullført.',
         'Database User' => 'Databasebruker',
         'New' => 'Statistics',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
-            'En ny databasebruker med begrensede rettigheter vil bli opprettet for denne OTOBO-installasjonen.',
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
+            'En ny databasebruker med begrensede rettigheter vil bli opprettet for denne CareOnCloud ESM-installasjonen.',
         'Generated password' => 'Opprett hvilkårlig passord',
         'Repeat Password' => 'Gjenta passord',
         'Passwords do not match' => 'Passordet stemmer ikke',
@@ -3767,7 +3767,7 @@ sub Data {
 
         # Template: InstallerFinish
         'Start page' => 'Startside',
-        'Your OTOBO Team' => 'OTOBO-Teamet',
+        'Your CareOnCloud ESM Team' => 'CareOnCloud ESM-Teamet',
 
         # Template: InstallerLicense
         'Don\'t accept license' => 'Ikke aksepter lisens',
@@ -3797,10 +3797,10 @@ sub Data {
             'E-postadresser som angis manuelt, sjekkes mot MX-oppføringer i DNS. Ikke bruk dette valget dersom din DNS er treg eller ikke gjør oppslag for offentlige adresser.',
         'Elasticsearch' => 'Elasticsearch',
         'Initialize Elasticsearch' => 'Initialiser Elasticsearch',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
-            'Elasticsearch-serveren ble funnet, og den har blitt aktivert automatisk for OTOBO.',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
-            'Tilsynelatende kjører enten ingen ren Elasticsearch-server, eller så bruker den ikke standardkonfigurasjonen. For å aktivere Elasticsearch manuelt, vennligst rediger nettjenesten i administrasjonsgrensesnittet om nødvendig, aktiver \'Elasticsearch::Active\' og \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' i SysConfig og kjør kommandoen otobo.Console \'Maint::Elasticsearch::Migration\'.',
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
+            'Elasticsearch-serveren ble funnet, og den har blitt aktivert automatisk for CareOnCloud ESM.',
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
+            'Tilsynelatende kjører enten ingen ren Elasticsearch-server, eller så bruker den ikke standardkonfigurasjonen. For å aktivere Elasticsearch manuelt, vennligst rediger nettjenesten i administrasjonsgrensesnittet om nødvendig, aktiver \'Elasticsearch::Active\' og \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' i SysConfig og kjør kommandoen careoncloud.Console \'Maint::Elasticsearch::Migration\'.',
 
         # Template: LinkObject
         'Delete link' => 'Slett lenke',
@@ -3829,16 +3829,16 @@ sub Data {
         'Clean up and finish' => 'Rydd opp og fullfør',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
-            'Migreringen er fullført, takk for at du prøvde OTOBO - vi håper du vil like den.',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
-            'For å kunne bruke OTOBO, må følgende linje utføres på kommandolinjen som root.',
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
+            'Migreringen er fullført, takk for at du prøvde CareOnCloud ESM - vi håper du vil like den.',
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+            'For å kunne bruke CareOnCloud ESM, må følgende linje utføres på kommandolinjen som root.',
         'Restart your webserver' => 'Restart webserveren din',
-        'After doing so your OTOBO is up and running.' => 'Etter dette vil OTOBO være oppe og kjøre.',
+        'After doing so your CareOnCloud ESM is up and running.' => 'Etter dette vil CareOnCloud ESM være oppe og kjøre.',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
-            'Dette migreringsskriptet vil lede deg trinn for trinn gjennom prosessen med å migrere sakssystemet ditt fra OTRS eller ((OTRS)) Community Edition versjon 6 til OTOBO 10.',
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
+            'Dette migreringsskriptet vil lede deg trinn for trinn gjennom prosessen med å migrere sakssystemet ditt fra OTRS eller ((OTRS)) Community Edition versjon 6 til CareOnCloud ESM 10.',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             'Det er ingen fare for det opprinnelige systemet ditt: ingenting er endret der.',
         'Instructions and details on migration prerequisites can be found in the migration manual. We strongly recommend reading it before starting migration.' =>
@@ -3847,8 +3847,8 @@ sub Data {
             'I tilfelle du må stanse migreringen, kan du gjenoppta den når som helst på samme tidspunkt så lenge hurtigbufferen ikke er slettet.',
         'All entered passwords are cached until the migration is finished.' =>
             'Alle angitte passord bufres til migreringen er fullført.',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
-            ' Alle med tilgang til denne siden, eller lesetillatelse for OTOBO Home Directory vil kunne lese dem. Hvis du avbryter migreringen, får du muligheten til å tømme hurtigbufferen ved å besøke denne siden igjen.',
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+            ' Alle med tilgang til denne siden, eller lesetillatelse for CareOnCloud ESM Home Directory vil kunne lese dem. Hvis du avbryter migreringen, får du muligheten til å tømme hurtigbufferen ved å besøke denne siden igjen.',
         'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
             '',
         'Cached data found' => 'Bufret data funnet',
@@ -3857,8 +3857,8 @@ sub Data {
         'An error occurred.' => 'En feil oppstod.',
         'Discard previous progress' => 'Forkast tidligere fremgang',
         'Insecure HTTP connection' => 'Usikker HTTP-tilkobling',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
-            'Du bruker migreringsskriptet via http. Dette er svært usikkert da ulike passord kreves under prosessen, og vil bli overført ukryptert. Alle mellom deg og OTOBO-serveren vil kunne lese dem! Vurder å sette opp https i stedet.',
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
+            'Du bruker migreringsskriptet via http. Dette er svært usikkert da ulike passord kreves under prosessen, og vil bli overført ukryptert. Alle mellom deg og CareOnCloud ESM-serveren vil kunne lese dem! Vurder å sette opp https i stedet.',
         'Continue anyways :(' => 'Fortsett uansett :(',
 
         # Template: OTRSDBSettings
@@ -3881,8 +3881,8 @@ sub Data {
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => 'Funksjonen er ikke tilgjengelig',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            'Beklager, men denne funksjonen til OTOBO er for øyeblikket ikke tilgjengelig for mobile enheter. Hvis du vil bruke den, kan du enten bytte til skrivebordsmodus eller bruke den vanlige skrivebordsenheten.',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            'Beklager, men denne funksjonen til CareOnCloud ESM er for øyeblikket ikke tilgjengelig for mobile enheter. Hvis du vil bruke den, kan du enten bytte til skrivebordsmodus eller bruke den vanlige skrivebordsenheten.',
 
         # Template: Motd
         'Message of the Day' => 'Dagens melding',
@@ -3922,8 +3922,8 @@ sub Data {
 
         # Template: PublicDefault
         'Welcome' => 'Velkommen',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            'Dette er det offentlige standardgrensesnittet til OTOBO! Det ble ikke gitt noen handlingsparameter.',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            'Dette er det offentlige standardgrensesnittet til CareOnCloud ESM! Det ble ikke gitt noen handlingsparameter.',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             'Du kan installere en tilpasset offentlig modul (via pakkebehandlingen), for eksempel FAQ-modulen, som har et offentlig grensesnitt.',
 
@@ -4079,7 +4079,7 @@ sub Data {
         'Delete user\'s value.' => 'Slett brukerens verdi.',
 
         # Template: Test
-        'OTOBO Test Page' => 'OTOBO Test-side',
+        'CareOnCloud ESM Test Page' => 'CareOnCloud ESM Test-side',
         'Unlock' => 'Frigi sak',
         'Welcome %s %s' => 'Velkommen %s %s',
         'Counter' => 'Teller',
@@ -4124,7 +4124,7 @@ sub Data {
 
         # JS Template: PackageResolve
         'Package' => 'Pakke',
-        'Uninstall from OTOBO' => 'Avinstaller fra OTOBO',
+        'Uninstall from CareOnCloud ESM' => 'Avinstaller fra CareOnCloud ESM',
         'Ignore' => 'Overse',
         'Migrate' => 'Migrer',
 
@@ -4188,8 +4188,8 @@ sub Data {
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             'ACL informasjonen fra databasen er ikke i synk med systemkonfigurasjonen, vennligst distributer alle ACLer.',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'ACL-er kunne ikke importeres på grunn av en ukjent feil, vennligst sjekk OTOBO-loggene for mer informasjon',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'ACL-er kunne ikke importeres på grunn av en ukjent feil, vennligst sjekk CareOnCloud ESM-loggene for mer informasjon',
         'The following ACLs have been added successfully: %s' => 'Følgende tilgangskontrollister er lagt til: %s',
         'The following ACLs have been updated successfully: %s' => 'Følgende tilgangskontrollister har blitt oppdatert: %s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
@@ -4247,8 +4247,8 @@ sub Data {
         'Unknown Notification %s!' => 'Ukjent varsel %s!',
         '%s (copy)' => '%s (kopi)\'',
         'There was an error creating the Notification' => 'Det oppsto en feil da varselet skulle opprettes',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'Varsler kunne ikke importeres på grunn av en ukjent feil, vennligst sjekk OTOBO-loggene for mer informasjon',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'Varsler kunne ikke importeres på grunn av en ukjent feil, vennligst sjekk CareOnCloud ESM-loggene for mer informasjon',
         'The following Notifications have been added successfully: %s' =>
             'Følgende varsler er lagt til: %s',
         'The following Notifications have been updated successfully: %s' =>
@@ -4600,12 +4600,12 @@ sub Data {
         'Could not load %s.' => 'Kunne ikke laste %s.',
         'Could not read %s!' => 'Kunne ikke lese %s!',
         'Need a file to import!' => 'Trenger en fil for å importere!',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            'Den importerte filen har ikke gyldig YAML-innhold! Vennligst sjekk OTOBO-loggen for detaljer',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            'Den importerte filen har ikke gyldig YAML-innhold! Vennligst sjekk CareOnCloud ESM-loggen for detaljer',
         'Web service "%s" deleted!' => 'Webtjeneste "%s" er slettet!',
-        'OTOBO as provider' => 'OTOBO som en leverandør',
+        'CareOnCloud ESM as provider' => 'CareOnCloud ESM som en leverandør',
         'Operations' => 'Handlinger',
-        'OTOBO as requester' => 'OTOBO som en etterspørrer',
+        'CareOnCloud ESM as requester' => 'CareOnCloud ESM som en etterspørrer',
         'Invokers' => 'Påkallere',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4699,7 +4699,7 @@ sub Data {
         'Can\'t read %s!' => 'Kan ikke lese %s!',
         'File is OK' => 'Filen er OK',
         'Package has locally modified files.' => 'Pakken har lokalt modifiserte filer.',
-        'Package not verified by the OTOBO Team!' => 'Pakken er ikke bekreftet av OTOBO-teamet!',
+        'Package not verified by the CareOnCloud ESM Team!' => 'Pakken er ikke bekreftet av CareOnCloud ESM-teamet!',
         'Not Started' => 'Ikke begynt',
         'Updated' => 'Oppdatert',
         'Already up-to-date' => 'Allerede oppdatert',
@@ -4720,9 +4720,9 @@ sub Data {
             'Ingen pakker funnet i det valgte depotet. Vennligst sjekk loggen for mer informasjon!',
         'Package not verified due a communication issue with verification server!' =>
             'Pakken er ikke bekreftet på grunn av et kommunikasjonsproblem med verifiseringsserveren!',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => 'Kan ikke koble til OTOBO Feature Add-on List server!',
-        'Can\'t get OTOBO Feature Add-on list from server!' => 'Kan ikke hente OTOBO Feature Add-on liste fra serveren!',
-        'Can\'t get OTOBO Feature Add-on from server!' => 'Kan ikke hente OTOBO Feature Add-on fra serveren!',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => 'Kan ikke koble til CareOnCloud ESM Feature Add-on List server!',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => 'Kan ikke hente CareOnCloud ESM Feature Add-on liste fra serveren!',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => 'Kan ikke hente CareOnCloud ESM Feature Add-on fra serveren!',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => 'Ikke noe slikt filter: %s',
@@ -4920,13 +4920,13 @@ sub Data {
         'You currently don\'t have any favourite settings.' => 'Du har for øyeblikket ingen favorittinnstillinger.',
         'The following settings could not be found: %s' => 'Følgende innstillinger ble ikke funnet: %s',
         'Import not allowed!' => 'Import ikke tillatt!',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
-            'Systemkonfigurasjonen kunne ikke importeres på grunn av en ukjent feil, vennligst sjekk OTOBO-loggene for mer informasjon.',
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
+            'Systemkonfigurasjonen kunne ikke importeres på grunn av en ukjent feil, vennligst sjekk CareOnCloud ESM-loggene for mer informasjon.',
         'Category Search' => 'Kategorisøk',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
-            'Noen importerte innstillinger er ikke til stede i den nåværende tilstanden til konfigurasjonen, eller det var ikke mulig å oppdatere dem. Vennligst sjekk OTOBO-loggen for mer informasjon.',
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
+            'Noen importerte innstillinger er ikke til stede i den nåværende tilstanden til konfigurasjonen, eller det var ikke mulig å oppdatere dem. Vennligst sjekk CareOnCloud ESM-loggen for mer informasjon.',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
         'This deployment does not contain changes in the setting values!' =>
@@ -5437,7 +5437,7 @@ sub Data {
         'Configure "Home" in Kernel/Config.pm first!' => 'Konfigurer "Hjem" i Kernel/Config.pm først!',
         'File "%s/Kernel/Config.pm" not found!' => 'Filen "%s/Kernel/Config.pm" ble ikke funnet!',
         'Directory "%s" not found!' => 'Katalog "%s" ikke funnet!',
-        'Install OTOBO' => 'Installer OTOBO',
+        'Install CareOnCloud ESM' => 'Installer CareOnCloud ESM',
         'Intro' => 'Introduksjon',
         'Kernel/Config.pm isn\'t writable!' => 'Kernel/Config.pm er ikke skrivbar!',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -5454,7 +5454,7 @@ sub Data {
         'Unknown database type "%s".' => 'Ukjent databasetype "%s".',
         'Please go back.' => 'Vennligst gå tilbake.',
         'Create Database' => 'Opprett database',
-        'Install OTOBO - Error' => 'Installer OTOBO - Feil',
+        'Install CareOnCloud ESM - Error' => 'Installer CareOnCloud ESM - Feil',
         'File "%s/%s.xml" not found!' => 'Filen "%s/%s.xml" ble ikke funnet!',
         'Contact your Admin!' => 'Kontakt din administrator!',
         'Execution of SQL statement failed: ' => 'Utførelse av SQL-setning mislyktes: ',
@@ -5479,7 +5479,7 @@ sub Data {
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             'Hvis du vil kjøre MigrateFromOTRS-verktøyet på nytt, deaktiverer du SecureMode i SysConfig.',
-        'OTRS to OTOBO migration' => 'OTRS til OTOBO migrering',
+        'OTRS to CareOnCloud ESM migration' => 'OTRS til CareOnCloud ESM migrering',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => 'Ingen %s!',
@@ -5616,8 +5616,8 @@ sub Data {
         'Shown Tickets' => 'Viste saker',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => 'Kan ikke koble til OTOBO News server!',
-        'Can\'t get OTOBO News from server!' => 'Kan ikke hente OTOBO News fra serveren!',
+        'Can\'t connect to CareOnCloud ESM News server!' => 'Kan ikke koble til CareOnCloud ESM News server!',
+        'Can\'t get CareOnCloud ESM News from server!' => 'Kan ikke hente CareOnCloud ESM News fra serveren!',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => 'Kan ikke koble til produktnyhetsserveren!',
@@ -5703,7 +5703,7 @@ sub Data {
             'En systemvedlikeholdsperiode starter på: %s og forventes å stoppe på: %s',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'OTOBO tjenesten kjører ikke.',
+        'CareOnCloud ESM Daemon is not running.' => 'CareOnCloud ESM tjenesten kjører ikke.',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5990,7 +5990,7 @@ sub Data {
         'Migration completed, perfect!' => 'Migrering fullført, perfekt!',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => 'OTOBO Cache-opprydding.',
+        'CareOnCloud ESM Cache cleanup.' => 'CareOnCloud ESM Cache-opprydding.',
         'Completed.' => 'Fullført.',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
@@ -6006,15 +6006,15 @@ sub Data {
         'Data transfer completed.' => 'Dataoverføring fullført.',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => 'Sjekk om OTOBO-versjonen er riktig.',
-        'Check if OTOBO and OTRS connect is possible.' => 'Sjekk om OTOBO og OTRS-tilkobling er mulig.',
+        'Check if CareOnCloud ESM version is correct.' => 'Sjekk om CareOnCloud ESM-versjonen er riktig.',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => 'Sjekk om CareOnCloud ESM og OTRS-tilkobling er mulig.',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
-        'Check if OTOBO and OTRS version is correct.' => 'Sjekk om OTOBO- og OTRS-versjonen er riktig.',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => 'Sjekk om CareOnCloud ESM- og OTRS-versjonen er riktig.',
         '%s does not exist!' => '%s eksisterer ikke!',
-        'No OTOBO system found!' => 'Ingen OTOBO-system funnet!',
+        'No CareOnCloud ESM system found!' => 'Ingen CareOnCloud ESM-system funnet!',
         'You are trying to run this script on the wrong framework version %s!' =>
             'Du prøver å kjøre dette skriptet på feil rammeversjon %s!',
-        'OTOBO Version is correct: %s.' => 'OTOBO-versjonen er riktig: %s.',
+        'CareOnCloud ESM Version is correct: %s.' => 'CareOnCloud ESM-versjonen er riktig: %s.',
         'Check if OTRS version is correct.' => 'Sjekk om OTRS-versjonen er riktig.',
         'OTRS RELEASE file %s does not exist!' => 'OTRS RELEASE-filen %s eksisterer ikke!',
         'Can\'t read OTRS RELEASE file: %s' => 'Kan ikke lese OTRS RELEASE-fil: %s',
@@ -6047,8 +6047,8 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             '',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => 'Sjekk om Kernel/Config.pm finnes i OTOBO home.',
-        'Kernel/Config.pm exists in OTOBO home' => 'Kernel/Config.pm finnes i OTOBO-hjemmet',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => 'Sjekk om Kernel/Config.pm finnes i CareOnCloud ESM home.',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => 'Kernel/Config.pm finnes i CareOnCloud ESM-hjemmet',
         'Check if we are able to connect to OTRS home directory.' => '',
         'Can\'t connect to OTRS file directory.' => 'Kan ikke koble til OTRS-filkatalogen.',
         'Connect to OTRS file directory is possible.' => 'Koble til OTRS filkatalog er mulig.',
@@ -6125,9 +6125,9 @@ sub Data {
         'File is not installed!' => 'Filen er ikke installert!',
         'File is different!' => 'Filen er annerledes!',
         'Can\'t read file!' => 'Kan ikke lese filen!',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
-            '<p>Ytterligere pakker kan forbedre OTOBO med mange nyttige funksjoner. Sørg imidlertid for at opprinnelsen til denne pakken er pålitelig, siden den kan endre OTOBO på alle mulige måter.</p>',
-        'Package not verified by the OTOBO community!' => 'Pakken er ikke bekreftet av OTOBO-fellesskapet!',
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
+            '<p>Ytterligere pakker kan forbedre CareOnCloud ESM med mange nyttige funksjoner. Sørg imidlertid for at opprinnelsen til denne pakken er pålitelig, siden den kan endre CareOnCloud ESM på alle mulige måter.</p>',
+        'Package not verified by the CareOnCloud ESM community!' => 'Pakken er ikke bekreftet av CareOnCloud ESM-fellesskapet!',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '<p>Installasjonen av pakker som ikke er bekreftet er deaktivert. Du kan aktivere installasjonen av ikke-verifiserte pakker via systemkonfigurasjonsinnstillingen "Package::AllowNotVerifiedPackages".</p>',
         'Verification not possible (e.g. no internet connection)!' => 'Verifisering ikke mulig (f.eks. ingen internettforbindelse)!',
@@ -6325,7 +6325,7 @@ sub Data {
         'Found obsolete cryptographic function.' => 'Fant foreldet kryptografisk funksjon.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'OTOBO diskpartisjon',
+        'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM diskpartisjon',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => 'Bruk av diskpartisjoner',
@@ -6360,7 +6360,7 @@ sub Data {
         'There should be no more than 200 MB swap space used.' => 'Det bær vær ikke være mer enn 200 MB brukt diskplass til swap.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => 'Artikkelsøkeindeksstatus',
         'Indexed Articles' => 'Indekserte artikler',
 
@@ -6421,7 +6421,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
         'File System Writable' => 'Filsystem Skrivbar',
-        'The file system on your OTOBO partition is not writable.' => 'Filsystemet for din OTOBO partisjon er ikke mulig å skrive til.',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'Filsystemet for din CareOnCloud ESM partisjon er ikke mulig å skrive til.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => 'Eldre konfigurasjonssikkerhetskopier',
@@ -6436,7 +6436,7 @@ sub Data {
         'Some packages have locally modified files.' => 'Noen pakker har lokalt modifiserte filer.',
         'Some packages are not correctly installed.' => 'Noen pakker er ikke riktig installert.',
         'Package Verification Status' => 'Pakkebekreftelsesstatus',
-        'Some packages are not verified by the OTOBO Team.' => 'Noen pakker er ikke verifisert av OTOBO-teamet.',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => 'Noen pakker er ikke verifisert av CareOnCloud ESM-teamet.',
         'Package Framework Version Status' => 'Pakkerammeversjonsstatus',
         'Some packages are not allowed for the current framework version.' =>
             'Noen pakker er ikke tillatt for gjeldende rammeversjon.',
@@ -6449,7 +6449,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
         'Spooled Emails' => 'Spoolte e-poster',
-        'There are emails in var/spool that OTOBO could not process.' => 'Det er e-poster i var/spool som OTOBO ikke kunne behandle.',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => 'Det er e-poster i var/spool som CareOnCloud ESM ikke kunne behandle.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
@@ -6489,8 +6489,8 @@ sub Data {
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => 'Tidsinnstillinger',
         'Server time zone' => 'Tjener tidssone',
-        'OTOBO time zone' => 'OTOBO-tidssone',
-        'OTOBO time zone is not set.' => 'OTOBO-tidssone er ikke innstilt.',
+        'CareOnCloud ESM time zone' => 'CareOnCloud ESM-tidssone',
+        'CareOnCloud ESM time zone is not set.' => 'CareOnCloud ESM-tidssone er ikke innstilt.',
         'User default time zone' => 'Bruker standard tidssone',
         'User default time zone is not set.' => 'Brukerens standard tidssone er ikke angitt.',
         'Calendar time zone is not set.' => 'Kalenderens tidssone er ikke angitt.',
@@ -6512,8 +6512,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'MPM modell',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'OTOBO krever Apache for å kunne kjøre \'prefork\' MPM modellen.',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'CareOnCloud ESM krever Apache for å kunne kjøre \'prefork\' MPM modellen.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'CGI Accelerator status',
@@ -6543,7 +6543,7 @@ sub Data {
         'Webserver Version' => 'Webtjener versjon',
         'Could not determine webserver version.' => 'Kunne ikke bestemme webtjenerversjon.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => 'Detaljer om samtidige brukere',
         'Concurrent Users' => 'Samtidige brukere',
 
@@ -6570,12 +6570,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'Verdien tilfredsstiller ikke regulært uttrykk (%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
-            'Systemet var ikke i stand til å beregne brukerdato i OTOBOTimeZone!',
+        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+            'Systemet var ikke i stand til å beregne brukerdato i CareOnCloud ESMTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
-            'Systemet var ikke i stand til å beregne brukerens DateTime i OTOBOTimeZone!',
+        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+            'Systemet var ikke i stand til å beregne brukerens DateTime i CareOnCloud ESMTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -6859,8 +6859,8 @@ sub Data {
         'Currently not possible' => 'Foreløpig ikke mulig',
         'This is currently disabled because of an ongoing package upgrade.' =>
             'Dette er for øyeblikket deaktivert på grunn av en pågående pakkeoppgradering.',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
-            'Dette alternativet er for øyeblikket deaktivert fordi OTOBO Daemon ikke kjører.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
+            'Dette alternativet er for øyeblikket deaktivert fordi CareOnCloud ESM Daemon ikke kjører.',
         'Are you sure you want to update all installed packages?' => 'Er du sikker på at du vil oppdatere alle installerte pakker?',
         'No response from get package upgrade run status.' => 'Ingen svar fra kjøringsstatus for get-pakkeoppgradering.',
 
@@ -7006,7 +7006,7 @@ sub Data {
             'Vennligst oppgi minst en søkeverdi eller * for å finne noe.',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => 'Informasjon om OTOBO Agenten',
+        'Information about the CareOnCloud ESM Daemon' => 'Informasjon om CareOnCloud ESM Agenten',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => 'Vennligst sjekk feltene merket som røde for gyldige inndata.',
@@ -7181,10 +7181,10 @@ sub Data {
         'This is %s' => 'Dette er %s',
         'Complex %s with %s arguments' => 'Kompleks %s med %s argumenter',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloud ESMLineChart
         'No Data Available.' => 'Ingen data tilgjengelig.',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloud ESMMultiBarChart
         'Grouped' => 'Gruppert',
         'Stacked' => 'Stablet',
 
@@ -7285,7 +7285,7 @@ Ditt Helpdesk-team
         'Added subscription for user "%s".' => 'La til abonnement for brukeren «%s».',
         'Added system request (%s).' => 'Lagt til systemforespørsel (%s).',
         'Added web request from customer.' => 'Lagt til nettforespørsel fra kunde.',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
             'Legger til år og måned på loggfilens navn. Dette gjør at man får én logg-fil per måned.',
         'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
             '',
@@ -7611,8 +7611,8 @@ Ditt Helpdesk-team
         'Configure and manage ACLs.' => 'Konfigurer og administrere ACLer.',
         'Configure any additional readonly mirror databases that you want to use.' =>
             'Konfigurer eventuelle ekstra skrivebeskyttede speildatabaser du vil bruke.',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
-            'Konfigurer sending av støttedata til OTOBO Team for forbedret støtte.',
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
+            'Konfigurer sending av støttedata til CareOnCloud ESM Team for forbedret støtte.',
         'Configure the About information.' => 'Konfigurer Om-informasjonen.',
         'Configure the privacy policy.' => 'Konfigurer personvernreglene.',
         'Configure which screen should be shown after a new ticket has been created.' =>
@@ -7759,8 +7759,8 @@ Ditt Helpdesk-team
         'Default value for NameX' => 'Standardverdi for NavnX',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             'Definer handlinger der en innstillingsknapp er tilgjengelig i widgeten for koblede objekter (LinkObject::ViewMode = "complex"). Vær oppmerksom på at disse handlingene må ha registrert følgende JS- og CSS-filer: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Sett et filter for HTML-visning som legger til lenker bak en gitt tekst. Bildeelementet tillater to typer inn-data. For det første navnet på et bilde (f.eks. bilde01.png). I det tilfellet vil OTOBO sin bilde-sti brukes. Den andre muligheten er å skrive inn URL til bildet.',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Sett et filter for HTML-visning som legger til lenker bak en gitt tekst. Bildeelementet tillater to typer inn-data. For det første navnet på et bilde (f.eks. bilde01.png). I det tilfellet vil CareOnCloud ESM sin bilde-sti brukes. Den andre muligheten er å skrive inn URL til bildet.',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             'Definer en tilordning mellom variabler av kundens brukerdata (nøkler) og dynamiske felt for en sak (verdier). Formålet er å lagre kundebrukerdata i saksdynamiske felt. De dynamiske feltene må være tilstede i systemet og bør være aktivert for AgentTicketFreeText, slik at de kan settes/oppdateres manuelt av agenten. De må ikke være aktivert for AgentTicketPhone, AgentTicketEmail og AgentTicketCustomer. Hvis de var det, ville de ha forrang over de automatisk innstilte verdiene. For å bruke denne tilordningen må du også aktivere Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser-innstillingen.',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -7800,14 +7800,14 @@ Ditt Helpdesk-team
             'Definerer et kundeelement som lager et Google-symbol på slutten av kundeinfo-blokken.',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             'Definferer et kundeelement som lager et Google Maps-symbol på slutten av kunde-info-blokken.',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Definerer et filter for HTML-visning for å legge til lenker bak CVE-nummer. Bilde-elementet tillater to typer inn-data. Enten navnet på en bilde-fil (f.eks. bilde01.png), der OTOBO vil gå utfra at bildet ligger i OTOBO sin bildemappe. Eller man kan oppgi URL til et bilde.',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Definerer et filter i HTML-visningen for å legge til lenker bak MSBulletin-nummer. Bildeelementet tillater to typer inn-data. Enten navnet på en bilde-fil (f.eks. bilde01.png), der OTOBO vil gå utfra at bildet ligger i OTOBO sin bildemappe. Eller man kan oppgi URL til et bilde.',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Definerer et filter for HTML-visning som legger til lenker bak en definert tekst. Bilde-elementet tillater to typer inn-data. Enten navnet på en bilde-fil (f.eks. bilde01.png), der OTOBO vil gå utfra at bildet ligger i OTOBO sin bildemappe. Eller man kan oppgi URL til et bilde.',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Definerer et filter for HTML-visning som legger til lenker bak BugTraq-numre. Bilde-elementet tillater to typer inn-data. Enten navnet på en bildefil (f.eks. bilde01.png), der OTOBO vil gå utfra at bildet ligger i OTOBO sin bildemappe. Eller man kan oppgi URL til et bilde.',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Definerer et filter for HTML-visning for å legge til lenker bak CVE-nummer. Bilde-elementet tillater to typer inn-data. Enten navnet på en bilde-fil (f.eks. bilde01.png), der CareOnCloud ESM vil gå utfra at bildet ligger i CareOnCloud ESM sin bildemappe. Eller man kan oppgi URL til et bilde.',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Definerer et filter i HTML-visningen for å legge til lenker bak MSBulletin-nummer. Bildeelementet tillater to typer inn-data. Enten navnet på en bilde-fil (f.eks. bilde01.png), der CareOnCloud ESM vil gå utfra at bildet ligger i CareOnCloud ESM sin bildemappe. Eller man kan oppgi URL til et bilde.',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Definerer et filter for HTML-visning som legger til lenker bak en definert tekst. Bilde-elementet tillater to typer inn-data. Enten navnet på en bilde-fil (f.eks. bilde01.png), der CareOnCloud ESM vil gå utfra at bildet ligger i CareOnCloud ESM sin bildemappe. Eller man kan oppgi URL til et bilde.',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Definerer et filter for HTML-visning som legger til lenker bak BugTraq-numre. Bilde-elementet tillater to typer inn-data. Enten navnet på en bildefil (f.eks. bilde01.png), der CareOnCloud ESM vil gå utfra at bildet ligger i CareOnCloud ESM sin bildemappe. Eller man kan oppgi URL til et bilde.',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             'Definerer et filter for å samle inn CVE-nummer fra artikkeltekster i AgentTicketZoom. Resultatene vil vises i en metaboks ved siden av artikkelen. Fyll inn URLPreview hvis du vil se en forhåndsvisning når du flytter musepekeren over lenkeelementet. Dette kan være samme URL som i URL, men også en alternativ. Vær oppmerksom på at enkelte nettsteder nekter å bli vist innenfor en iframe (f.eks. Google) og vil derfor ikke fungere med forhåndsvisningsmodus.',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -7957,8 +7957,8 @@ Ditt Helpdesk-team
         'Defines phone communication channel.' => 'Definerer telefonkommunikasjonskanal.',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             'Definerer køer som saker brukes for visning som kalenderhendelser.',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            'Definerer HTTP-vertsnavnet for støttedatainnsamlingen med den offentlige modulen \'PublicSupportDataCollector\' (f.eks. brukt fra OTOBO-demonen).',
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            'Definerer HTTP-vertsnavnet for støttedatainnsamlingen med den offentlige modulen \'PublicSupportDataCollector\' (f.eks. brukt fra CareOnCloud ESM-demonen).',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             'Spesifiserer Regulær-uttrykk for IPen til lokalt pakkelager. Du må slå dette på for å ha tilgang til ditt lokale pakkelager. I tillegg er package::RepositoryList påkrevd på andre tjenere.',
         'Defines the PostMaster header to be used on the filter for keeping the current state of the ticket.' =>
@@ -8264,8 +8264,8 @@ Ditt Helpdesk-team
             'Definerer koblingstypen \'Foreldrebarn\'. Hvis kildenavnet og målnavnet inneholder samme verdi, er den resulterende koblingen en ikke-retningsbestemt en; ellers er resultatet en retningskobling.',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             'Definerer koblingstypegruppene. Koblingstypene i samme gruppe kansellerer hverandre. Eksempel: Hvis sak A er knyttet til en \'Normal\'-kobling med sak B, kan ikke disse sakene i tillegg knyttes til en kobling til et \'Foreldrebarn\'-forhold.',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            'Definerer listen over online repositories. En annen installasjon kan brukes som arkiv, for eksempel: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" og Content="Some Name".',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            'Definerer listen over online repositories. En annen installasjon kan brukes som arkiv, for eksempel: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" og Content="Some Name".',
         'Defines the list of params that can be passed to ticket search function.' =>
             'Definerer listen over parametere som kan sendes til sakssøkefunksjonen.',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -8275,8 +8275,8 @@ Ditt Helpdesk-team
             'Definerer plasseringen for å få online depotliste for tilleggspakker. Det første tilgjengelige resultatet vil bli brukt.',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             'Definerer loggmodulen for systemet. "Fil" skriver alle meldinger i en gitt loggfil, "SysLog" bruker syslog-daemonen til systemet, f.eks. syslogd.',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            'Definerer maksimal størrelse (i byte) for filopplasting via nettleseren. Advarsel: Hvis du setter dette alternativet til en verdi som er for lav, kan det føre til at mange masker i OTOBO-forekomsten din slutter å fungere (sannsynligvis en hvilken som helst maske som mottar input fra brukeren).',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            'Definerer maksimal størrelse (i byte) for filopplasting via nettleseren. Advarsel: Hvis du setter dette alternativet til en verdi som er for lav, kan det føre til at mange masker i CareOnCloud ESM-forekomsten din slutter å fungere (sannsynligvis en hvilken som helst maske som mottar input fra brukeren).',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             'Definerer maksimal gyldig tid (i sekunder) for en sesjons-ID.',
         'Defines the maximum number of affected tickets per job.' => 'Definerer maksimalt antall berørte saker per jobb.',
@@ -8297,8 +8297,8 @@ Ditt Helpdesk-team
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             'Definerer modulen som viser gjeldende innloggede kunder i kundegrensesnittet.',
         'Defines the module to authenticate customers.' => 'Definerer modulen for å autentisere kunder.',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            'Definerer modulen for å vise et varsel i agentgrensesnittet hvis OTOBO Daemon ikke kjører.',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            'Definerer modulen for å vise et varsel i agentgrensesnittet hvis CareOnCloud ESM Daemon ikke kjører.',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             'Definerer modulen for å vise et varsel i agentgrensesnittet hvis systemkonfigurasjonen er usynkronisert.',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -8337,8 +8337,8 @@ Ditt Helpdesk-team
             'Definerer navnet på kolonnen for å lagre brukeridentifikatoren i preferansetabellen.',
         'Defines the name of the indicated calendar.' => 'Definerer navnet på den angitte kalenderen.',
         'Defines the name of the key for customer sessions.' => 'Definerer navnet på nøkkelen for kundeøkter.',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            'Definerer navnet på øktnøkkelen. f.eks. Session, SessionID eller OTOBO.',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            'Definerer navnet på øktnøkkelen. f.eks. Session, SessionID eller CareOnCloud ESM.',
         'Defines the name of the table where the user preferences are stored.' =>
             'Definerer navnet på tabellen der brukerpreferansene er lagret.',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -8437,8 +8437,8 @@ Ditt Helpdesk-team
             'Definerer skillet mellom agentens virkelige navn og den oppgitte kø-e-postadressen.',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             'Definerer de viste kolonnene og plasseringen i resultatskjermbildet AgentCustomerUserAddressBook.',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
-            'Definerer de viste koblingene i bunntekstområdet i kundegrensesnittet til dette OTOBO-systemet. Verdien i "Nøkkel" er den eksterne URL-en, verdien i "Innhold" er den viste etiketten. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> og <OTOBO_CONFIG_ScriptAlias> vil bli erstattet.',
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+            'Definerer de viste koblingene i bunntekstområdet i kundegrensesnittet til dette CareOnCloud ESM-systemet. Verdien i "Nøkkel" er den eksterne URL-en, verdien i "Innhold" er den viste etiketten. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> og <OTOBO_CONFIG_ScriptAlias> vil bli erstattet.',
         'Defines the source dynamic field for storing historical data.' =>
             'Definerer kildedynamikkfeltet for lagring av historiske data.',
         'Defines the standard permissions available for customers within the application. If more permissions are needed, you can enter them here. Permissions must be hard coded to be effective. Please ensure, when adding any of the afore mentioned permissions, that the "rw" permission remains the last entry.' =>
@@ -8463,7 +8463,7 @@ Ditt Helpdesk-team
             'Definerer emnet for den raske lukkehandlingen, som blir brukt til sakshistorikk i agentgrensesnittet.',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             'Definerer systemadministratorens e-postadresse. Det vil vises på feilskjermbildene til applikasjonen.',
-        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO). The SystemID may also be used in HTTP session backends.' =>
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
             '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             'Definerer målattributtet i lenken til ekstern kundedatabase. f.eks. \'AsPopup PopupType_TicketAction\'.',
@@ -8482,8 +8482,8 @@ Ditt Helpdesk-team
         'Defines the ticket plugin for calendar appointments.' => 'Definerer saksplugin for kalenderavtaler.',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             'Definerer tidssonen til den angitte kalenderen, som senere kan tilordnes en bestemt kø.',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            'Definerer tidsavbruddet (i sekunder, minimum er 20 sekunder) for innsamling av støttedata med den offentlige modulen \'PublicSupportDataCollector\' (f.eks. brukt fra OTOBO Daemon).',
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            'Definerer tidsavbruddet (i sekunder, minimum er 20 sekunder) for innsamling av støttedata med den offentlige modulen \'PublicSupportDataCollector\' (f.eks. brukt fra CareOnCloud ESM Daemon).',
         'Defines the two-factor module to authenticate agents.' => 'Definerer tofaktormodulen for å autentisere agenter.',
         'Defines the two-factor module to authenticate customers.' => 'Definerer tofaktormodulen for å autentisere kunder.',
         'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
@@ -8495,11 +8495,11 @@ Ditt Helpdesk-team
             'Definerer brukerens avatar. Vennligst merk: å sette \'Aktiv\' til 0 vil bare forhindre agenter fra å redigere innstillingene for denne gruppen i sine personlige preferanser, men vil fortsatt tillate administratorer å redigere innstillingene til en annen brukers vegne. Bruk \'PreferenceGroup\' for å kontrollere i hvilket område disse innstillingene skal vises i brukergrensesnittet.',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             'Definerer gyldige tilstandstyper for en sak. Hvis en sak er i en tilstand som har en hvilken som helst tilstandstype fra denne innstillingen, vil denne saken anses som åpen, ellers som lukket.',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
             '',
         'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
             'Definerer gyldige tilstander for ulåste saker. For å låse opp saker kan skriptet "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" brukes.',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
             '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             'Definerer de synlige låsene til en sak. MERK: Når du endrer denne innstillingen, sørg for å slette hurtigbufferen for å bruke den nye verdien. Standard: unlock, tmp_lock.',
@@ -8576,8 +8576,8 @@ Ditt Helpdesk-team
         'Dialog to show after marking a ticket as unseen' => '',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             'Deaktiver HTTP-header "Content-Security-Policy" for å tillate lasting av eksternt skriptinnhold. Deaktivering av denne HTTP-headeren kan være et sikkerhetsproblem! Deaktiver den bare hvis du vet hva du gjør!',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
-            'Deaktiver HTTP-header "X-Frame-Options: SAMEORIGIN" for å tillate OTOBO å bli inkludert som en IFrame på andre nettsteder. Deaktivering av denne HTTP-headeren kan være et sikkerhetsproblem! Deaktiver den bare hvis du vet hva du gjør!',
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+            'Deaktiver HTTP-header "X-Frame-Options: SAMEORIGIN" for å tillate CareOnCloud ESM å bli inkludert som en IFrame på andre nettsteder. Deaktivering av denne HTTP-headeren kan være et sikkerhetsproblem! Deaktiver den bare hvis du vet hva du gjør!',
         'Disable autocomplete in the login screen.' => 'Deaktiver autofullføring på påloggingsskjermen.',
         'Disable cloud services' => 'Deaktiver skytjenester',
         'Disables sending reminder notifications to the responsible agent of a ticket (Ticket::Responsible needs to be enabled).' =>
@@ -8714,8 +8714,8 @@ Ditt Helpdesk-team
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             'Aktiver dette hvis du stoler på alle dine offentlige og private pgp-nøkler, selv om de ikke er sertifisert med en klarert signatur.',
         'Enabled filters.' => 'Aktiver filtre.',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            'Aktiverer PGP-støtte. Når PGP-støtte er aktivert for signering og kryptering av e-post, anbefales det STERKT at webserveren kjører som OTOBO-bruker. Ellers vil det være problemer med privilegiene ved tilgang til .gnupg-mappen.',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            'Aktiverer PGP-støtte. Når PGP-støtte er aktivert for signering og kryptering av e-post, anbefales det STERKT at webserveren kjører som CareOnCloud ESM-bruker. Ellers vil det være problemer med privilegiene ved tilgang til .gnupg-mappen.',
         'Enables S/MIME support.' => 'Aktiverer støtte for S/MIME.',
         'Enables customers to create their own accounts.' => 'Lar kunder opprette sine egne kontoer.',
         'Enables fetch S/MIME from CustomerUser backend support.' => 'Gjør det mulig å hente S/MIME fra CustomerUser-støttestøtte.',
@@ -8740,8 +8740,8 @@ Ditt Helpdesk-team
             'Aktiverer saksansvarlig funksjon for å holde styr på en spesifikk sak.',
         'Enables ticket type feature.' => 'Aktiverer sakstypefunksjonen.',
         'Enables ticket watcher feature only for the listed groups.' => 'Aktiverer saksovervåkingsfunksjonen bare for de oppførte gruppene.',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
-            'Aktivering av SecureMode deaktiverer nettinstallasjonsprogrammet (http://yourhost.example.com/otobo/installer.pl) og migreringene. Dette gjøres for å forhindre at systemet blir kapret. Når SecureMode ikke er aktivert, kan systemet installeres på nytt. I dette tilfellet vil gjeldende grunnleggende konfigurasjon bli brukt til å forhåndsutfylle spørsmålene i installasjonsskriptet. Aktivering av SecureMode aktiverer også GenericAgent, PackageManager og SQL Box.',
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+            'Aktivering av SecureMode deaktiverer nettinstallasjonsprogrammet (http://yourhost.example.com/careoncloud/installer.pl) og migreringene. Dette gjøres for å forhindre at systemet blir kapret. Når SecureMode ikke er aktivert, kan systemet installeres på nytt. I dette tilfellet vil gjeldende grunnleggende konfigurasjon bli brukt til å forhåndsutfylle spørsmålene i installasjonsskriptet. Aktivering av SecureMode aktiverer også GenericAgent, PackageManager og SQL Box.',
         'English (Canada)' => 'Engelsk (Canada)',
         'English (United Kingdom)' => 'Engelsk (Storbritannia)',
         'English (United States)' => 'Engelsk (Amerika)',
@@ -8784,8 +8784,8 @@ Ditt Helpdesk-team
             'Utfører en egendefinert kommando eller modul. Merk: hvis modul brukes, er funksjon nødvendig.',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             'Utfører oppfølgingskontroller på In-Reply-To eller References-hoder for e-poster som ikke har et saksnummer i emnet.',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
-            'Utfører oppfølgingskontroller på OTOBO Header \'X-OTOBO-Bounce\'.',
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-OTOBO-Bounce\'.' =>
+            'Utfører oppfølgingskontroller på CareOnCloud ESM Header \'X-OTOBO-Bounce\'.',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             'Utfører oppfølgingskontroller av vedleggsinnhold for e-poster som ikke har saksnummer i emnet.',
         'Executes follow-up checks on email body for mails that don\'t have a ticket number in the subject.' =>
@@ -8923,7 +8923,7 @@ Ditt Helpdesk-team
         'High Contrast' => 'Høy kontrast',
         'High contrast skin for visually impaired users.' => 'Høy kontrast-tema for synshemmede brukere.',
         'Hindi' => 'Hindi',
-        'How many rotated otobo.log files to keep. Default is 3.' => '',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => '',
         'Hungarian' => 'Ungarsk',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             'Hvis "DB" er valgt som Customer::AuthModule kan man velge databasedriver (normalt brukes et automatisk oppsett).',
@@ -8971,8 +8971,8 @@ Ditt Helpdesk-team
             'Hvis "LDAP" er valgt som Customer::AuthModule kan du spesifisere tilgangsoppsett her.',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             'Hvis "LDAP" er valgt som Customer::AuthModule kan du velge at systemet vil stoppe opp hvis f.eks. tilkoplingen til en tjener ikke kan gjøres pga. nettverksproblemer.',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            'Hvis "LDAP" ble valgt for Customer::Authmodule, kan du sjekke om brukeren har lov til å autentisere fordi han er i en posixGroup, f.eks. brukeren må være i en gruppe xyz for å bruke OTOBO. Spesifiser gruppen som kan få tilgang til systemet.',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            'Hvis "LDAP" ble valgt for Customer::Authmodule, kan du sjekke om brukeren har lov til å autentisere fordi han er i en posixGroup, f.eks. brukeren må være i en gruppe xyz for å bruke CareOnCloud ESM. Spesifiser gruppen som kan få tilgang til systemet.',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             'Hvis "LDAP" er valgt som Customer::AuthModule kan du sette et filter for alle LDAP-søk. F.eks. (mail=*), (objectclass=user) eller (!objectclass=computer).',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -9019,16 +9019,16 @@ Ditt Helpdesk-team
             'Hvis den er aktivert, vil daemonen omdirigere standard feilstrømmen til en loggfil.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Hvis den er aktivert, vil daemonen omdirigere standard utdatastrømmen til en loggfil.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
-            'Hvis den er aktivert, vil daemonen bruke denne katalogen til å lage sine PID-filer. Merk: Stopp daemonen før noen endring og bruk denne innstillingen kun hvis <$OTOBOHome>/var/run/ ikke kan brukes.',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
-            'Hvis aktivert, vil OTOBO levere alle CSS-filer i forminsket form.',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
-            'Hvis slått på vil OTOBO levere alle JavaScript-filer i minimert form.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+            'Hvis den er aktivert, vil daemonen bruke denne katalogen til å lage sine PID-filer. Merk: Stopp daemonen før noen endring og bruk denne innstillingen kun hvis <$CareOnCloud ESMHome>/var/run/ ikke kan brukes.',
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
+            'Hvis aktivert, vil CareOnCloud ESM levere alle CSS-filer i forminsket form.',
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
+            'Hvis slått på vil CareOnCloud ESM levere alle JavaScript-filer i minimert form.',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             'Hvis slått på vil telefonsak og e-postsak bli åpnet i nye vinduer.',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
-            'Hvis den er aktivert, vil OTOBO-versjonskoden fjernes fra webgrensesnittet, HTTP-hodene og X-hodene til utgående e-post. MERK: Hvis du endrer dette alternativet, må du sørge for å slette hurtigbufferen.',
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+            'Hvis den er aktivert, vil CareOnCloud ESM-versjonskoden fjernes fra webgrensesnittet, HTTP-hodene og X-hodene til utgående e-post. MERK: Hvis du endrer dette alternativet, må du sørge for å slette hurtigbufferen.',
         'If enabled, the cache data be held in memory.' => 'Hvis aktivert, lagres hurtigbufferdataene i minnet.',
         'If enabled, the cache data will be stored in cache backend.' => 'Hvis aktivert, vil cache-dataene bli lagret i cache-backend.',
         'If enabled, the customer can search for tickets in all services (regardless what services are assigned to the customer).' =>
@@ -9038,8 +9038,8 @@ Ditt Helpdesk-team
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Hvis aktivert, åpnes det første nivået av hovedmenyen ved musepeking (i stedet for bare klikk).',
         'If enabled, the quick close action will create an article.' => 'Hvis den er aktivert, vil hurtiglukkingen opprette en artikkel.',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            'Hvis aktivert, vil brukere som ikke har valgt en tidssone ennå bli varslet om å gjøre det. Merk: Varsling vil ikke vises hvis (1) bruker ennå ikke har valgt en tidssone og (2) OTOBOTimeZone og UserDefaultTimeZone stemmer overens og (3) ikke er satt til UTC.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            'Hvis aktivert, vil brukere som ikke har valgt en tidssone ennå bli varslet om å gjøre det. Merk: Varsling vil ikke vises hvis (1) bruker ennå ikke har valgt en tidssone og (2) CareOnCloud ESMTimeZone og UserDefaultTimeZone stemmer overens og (3) ikke er satt til UTC.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'Hvis ingen SendmailNotificationEnvelopeFrom er spesifisert, gjør denne innstillingen det mulig å bruke e-postens fra-adresse i stedet for en tom konvoluttavsender (påkrevd i visse e-postserverkonfigurasjoner).',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -9052,8 +9052,8 @@ Ditt Helpdesk-team
             'Hvis dette alternativet er aktivert, vil saker opprettet via nettgrensesnittet, via kunder eller agenter, motta et autosvar hvis de er konfigurert. Hvis dette alternativet ikke er aktivert, sendes ingen autosvar.',
         'If this regex matches, no message will be send by the autoresponder.' =>
             'Hvis denne Regulær-uttrykk-setningen slår til vil ikke autosvar bli sendt.',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
-            'Hvis denne innstillingen er aktivert, er det mulig å installere pakker som ikke er verifisert av OTOBO Team. Disse pakkene kan true hele systemet ditt!',
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
+            'Hvis denne innstillingen er aktivert, er det mulig å installere pakker som ikke er verifisert av CareOnCloud ESM Team. Disse pakkene kan true hele systemet ditt!',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             'Hvis denne innstillingen er aktivert, vil lokale modifikasjoner ikke bli uthevet som feil i pakkebehandlingen og støttedatainnsamleren.',
         'If you\'re going to be out of office, you may wish to let other users know by setting the exact dates of your absence.' =>
@@ -9098,7 +9098,7 @@ Ditt Helpdesk-team
             'Italienske stoppord for fulltekstindeks. Disse ordene vil bli fjernet fra søkeindeksen.',
         'Japanese' => 'Japansk',
         'JavaScript function for the search frontend.' => 'JavaScript-funksjon for søkegrensesnittet.',
-        'Jump to OTOBO!' => 'Hopp til OTOBO!',
+        'Jump to CareOnCloud ESM!' => 'Hopp til CareOnCloud ESM!',
         'Korean' => 'koreansk',
         'Languages' => '',
         'Large' => 'Stor',
@@ -9190,7 +9190,7 @@ Ditt Helpdesk-team
         'Makes the application check the syntax of email addresses.' => 'Gjør at systemet sjekker at en e-postadresse er skrevet på riktig måte.',
         'Malay' => 'malaysisk',
         'Manage Customer Dashboard Info Tile Entries' => '',
-        'Manage OTOBO Team cloud services.' => 'Administrer OTOBO Team-skytjenester.',
+        'Manage CareOnCloud ESM Team cloud services.' => 'Administrer CareOnCloud ESM Team-skytjenester.',
         'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => 'Adminstrasjon av PGP-nøkler for kryptering og signering av e-poster.',
         'Manage POP3 or IMAP accounts to fetch email from.' => 'Administrasjon av POP3- og IMAP-kontoer for innkommende e-post.',
@@ -9218,7 +9218,7 @@ Ditt Helpdesk-team
             'Maksimal størrelse (i rader) for den involverte agentboksen i agentgrensesnittet.',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             'Maks størrelse på emnene i et e-postsvar og i noen oversiktsskjermer.',
-        'MaxSize in Bytes until otobo.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
             '',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             'Maksimum antall autosvar til egne e-postadresser per dag (beskyttelse mot e-post-looping).',
@@ -9309,7 +9309,7 @@ Ditt Helpdesk-team
         'New Year\'s Day' => 'Nyttårsdagen',
         'New Year\'s Eve' => 'Nyttårsaften',
         'New process ticket' => 'Ny prosess sak',
-        'News about OTOBO.' => 'Nyheter om OTOBO.',
+        'News about CareOnCloud ESM.' => 'Nyheter om CareOnCloud ESM.',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             'Neste mulige sakstilstander etter å ha lagt til et telefonnotat i sakstelefonens inngående skjerm i agentgrensesnittet.',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -9342,12 +9342,12 @@ Ditt Helpdesk-team
         'OAuth Tokens' => '',
         'OIDC Profile Management' => '',
         'OIDC Profiles' => '',
-        'OTOBO News' => 'OTOBO-nyheter',
-        'OTOBO Team Services' => 'OTOBO Team-tjenester',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
-            'OTOBO kan bruke en eller flere skrivebeskyttede speildatabaser for dyre operasjoner som fulltekstsøk eller statistikkgenerering. Her kan du spesifisere DSN for den første speildatabasen.',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
-            'OTOBO støtter ikke gjentakende avtaler uten sluttdato eller antall iterasjoner. Under importprosessen kan det hende at ICS-filen inneholder slike avtaler. I stedet oppretter systemet alle tidligere avtaler, pluss avtaler for de neste N månedene (120 måneder/10 år som standard).',
+        'CareOnCloud ESM News' => 'CareOnCloud ESM-nyheter',
+        'CareOnCloud ESM Team Services' => 'CareOnCloud ESM Team-tjenester',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+            'CareOnCloud ESM kan bruke en eller flere skrivebeskyttede speildatabaser for dyre operasjoner som fulltekstsøk eller statistikkgenerering. Her kan du spesifisere DSN for den første speildatabasen.',
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+            'CareOnCloud ESM støtter ikke gjentakende avtaler uten sluttdato eller antall iterasjoner. Under importprosessen kan det hende at ICS-filen inneholder slike avtaler. I stedet oppretter systemet alle tidligere avtaler, pluss avtaler for de neste N månedene (120 måneder/10 år som standard).',
         'Object backend module registration for the import/export module.' =>
             '',
         'Objects to search for, how many entries and which attributes to show.' =>
@@ -9355,7 +9355,7 @@ Ditt Helpdesk-team
         'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
             '',
         'Open an external link!' => 'Åpne en ekstern lenke!',
-        'Open the OTOBO home page in a new window' => 'Åpne OTOBO-hjemmesiden i et nytt vindu',
+        'Open the CareOnCloud ESM home page in a new window' => 'Åpne CareOnCloud ESM-hjemmesiden i et nytt vindu',
         'Open tickets (customer user)' => 'Åpne saker (kunde-bruker)',
         'Open tickets (customer)' => 'Åpne saker (kunder)',
         'Option' => 'Alternativ',
@@ -9463,9 +9463,9 @@ Ditt Helpdesk-team
         'ParentChild' => 'Foreldrebarn',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             'Bane for loggfilen (den gjelder kun hvis "FS" ble valgt for LoopProtectionModule og det er obligatorisk).',
-        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
             '',
-        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
             '',
         'Pending time' => 'Ventetidspunkt',
         'People' => 'Personer',
@@ -9621,8 +9621,8 @@ Ditt Helpdesk-team
         'SSL_VERIFY_PEER - verify the mail server host' => '',
         'Salutations' => 'Hilsninger',
         'Sample command output' => 'Eksempel på kommandoresultat',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
-            'Lagrer vedlegg til artikler. "DB" lagrer alle data i databasen (anbefales ikke for lagring av store vedlegg). "FS" lagrer dataene på filsystemet; dette er raskere, men webserveren skal kjøre under OTOBO-brukeren. Du kan bytte mellom modulene selv på et system som allerede er i produksjon uten tap av data. Merk: Søking etter vedleggsnavn støttes ikke når "FS" brukes. "S3" er eksperimentell.',
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+            'Lagrer vedlegg til artikler. "DB" lagrer alle data i databasen (anbefales ikke for lagring av store vedlegg). "FS" lagrer dataene på filsystemet; dette er raskere, men webserveren skal kjøre under CareOnCloud ESM-brukeren. Du kan bytte mellom modulene selv på et system som allerede er i produksjon uten tap av data. Merk: Søking etter vedleggsnavn støttes ikke når "FS" brukes. "S3" er eksperimentell.',
         'Schedule a maintenance period.' => 'Planlegg en vedlikeholdsperiode.',
         'Screen after new ticket' => 'Skjermbilde etter innlegging av ny sak',
         'Script (Template Toolkit)' => '',
@@ -9646,7 +9646,7 @@ Ditt Helpdesk-team
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             'Velg din personlige tidssone. Alle tider vil vises i forhold til denne tidssonen.',
         'Select your preferred layout for the software.' => 'Velg ønsket layout for programvaren.',
-        'Select your preferred theme for OTOBO.' => 'Velg ønsket tema for OTOBO.',
+        'Select your preferred theme for CareOnCloud ESM.' => 'Velg ønsket tema for CareOnCloud ESM.',
         'Selects the cache backend to use.' => 'Velger bufferens backend som skal brukes.',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             'Velger modulen for å håndtere opplastinger via nettgrensesnittet. "DB" lagrer alle opplastinger i databasen, "FS" bruker filsystemet.',
@@ -9895,10 +9895,10 @@ Ditt Helpdesk-team
             'Angir billetttypen i billettansvarlig skjerm i agentgrensesnittet (Ticket::Type må være aktivert).',
         'Sets the time units in the ticket note screen of the agent interface.' =>
             '',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
-            'Setter tidssonen som brukes internt av OTOBO til e. g. lagre datoer og klokkeslett i databasen. ADVARSEL: Denne innstillingen må ikke endres når den er satt og billetter eller andre data som inneholder dato/klokkeslett er opprettet.',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
-            'Angir tidssonen som skal tildeles nyopprettede brukere og som skal brukes for brukere som ennå ikke har angitt en tidssone. Dette er tidssonen som brukes som standard for å konvertere dato og klokkeslett mellom OTOBO-tidssonen og brukerens tidssone.',
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+            'Setter tidssonen som brukes internt av CareOnCloud ESM til e. g. lagre datoer og klokkeslett i databasen. ADVARSEL: Denne innstillingen må ikke endres når den er satt og billetter eller andre data som inneholder dato/klokkeslett er opprettet.',
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
+            'Angir tidssonen som skal tildeles nyopprettede brukere og som skal brukes for brukere som ennå ikke har angitt en tidssone. Dette er tidssonen som brukes som standard for å konvertere dato og klokkeslett mellom CareOnCloud ESM-tidssonen og brukerens tidssone.',
         'Sets the timeout (in seconds) for http/ftp downloads.' => 'Angir tidsavbrudd (i sekunder) for http/ftp-nedlastinger.',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
             'Angir tidsavbrudd (i sekunder) for pakkenedlastinger. Overskriver "WebUserAgent::Timeout".',
@@ -10043,7 +10043,7 @@ Ditt Helpdesk-team
             'Viser enten emnet til siste kundeartikkel eller sakens emne i "liten" oversikt.',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             'Viser eksisterende foredldre/barn kølister i systemet i form av et tre eller en liste.',
-        'Shows information on how to start OTOBO Daemon' => 'Vis informasjon om hvordan starte OTOBO Agenten',
+        'Shows information on how to start CareOnCloud ESM Daemon' => 'Vis informasjon om hvordan starte CareOnCloud ESM Agenten',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'Viser lenke til ekstern side i sakszoomvisningen til agentgrensesnittet. Ytterligere tilgangskontroll for å vise eller ikke vise denne koblingen kan gjøres ved å bruke nøkkelen "Gruppe" og innhold som "rw:gruppe1;move_into:group2".',
         'Shows the article head information in the agent zoom view.' => 'Viser artikkelhodeinformasjonen i agentzoomvisningen.',
@@ -10131,16 +10131,16 @@ Ditt Helpdesk-team
         'Specifies the directory where SSL certificates are stored.' => 'Spesifiserer mappen der SSL-sertifikatene lagres.',
         'Specifies the directory where private SSL certificates are stored.' =>
             'Spesifiserer mappen der private SSL-sertifikater lagres.',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            'Angir e-postadressen som skal brukes av programmet når du sender varsler. E-postadressen brukes til å bygge det fullstendige visningsnavnet for varslingsmasteren (dvs. "OTOBO Notifications" otobo@your.example.com). Du kan bruke OTOBO_CONFIG_FQDN-variabelen som angitt i konfigurasjonen, eller velge en annen e-postadresse.',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            'Angir e-postadressen som skal brukes av programmet når du sender varsler. E-postadressen brukes til å bygge det fullstendige visningsnavnet for varslingsmasteren (dvs. "CareOnCloud ESM Notifications" careoncloud@your.example.com). Du kan bruke OTOBO_CONFIG_FQDN-variabelen som angitt i konfigurasjonen, eller velge en annen e-postadresse.',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             'Spesifiserer e-postadressene for å motta varslingsmeldinger fra planleggeroppgaver.',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
             'Spesifiserer gruppen der brukeren trenger rw-tillatelser slik at han kan få tilgang til "SwitchToCustomer"-funksjonen.',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             'Angir gruppen der brukeren trenger rw-tillatelser slik at de kan redigere andre brukers preferanser.',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
-            'Angir navnet som skal brukes av applikasjonen når du sender varsler. Avsendernavnet brukes til å bygge det fullstendige visningsnavnet for varslingsmasteren (dvs. "OTOBO Notifications" otobo@your.example.com).',
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
+            'Angir navnet som skal brukes av applikasjonen når du sender varsler. Avsendernavnet brukes til å bygge det fullstendige visningsnavnet for varslingsmasteren (dvs. "CareOnCloud ESM Notifications" careoncloud@your.example.com).',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             'Angir rekkefølgen fornavnet og etternavnet til agenter skal vises i.',
         'Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).' =>
@@ -10283,7 +10283,7 @@ Ditt Helpdesk-team
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             'Denne modulen og dens PreRun()-funksjon vil, hvis satt, bli kjørt ved hver forespørsel. Denne modulen er nyttig for å sjekke brukerinnstillinger eller for å vise nyheter om nye programmer el.l.',
         'This module is being used to extend the password policy.' => 'Denne modulen brukes til å utvide passordpolicyen.',
-        'This module is part of the admin area of OTOBO.' => 'Denne modulen er en del av administrasjonsområdet til OTOBO.',
+        'This module is part of the admin area of CareOnCloud ESM.' => 'Denne modulen er en del av administrasjonsområdet til CareOnCloud ESM.',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             'Dette alternativet definerer det dynamiske feltet der en enhets-ID for prosessadministrasjonsaktivitet er lagret.',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -10298,7 +10298,7 @@ Ditt Helpdesk-team
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Denne innstillingen lar deg overstyre den innebygde landlisten med din egen liste over land. Dette er spesielt nyttig hvis du bare vil bruke en liten utvalgt gruppe land.',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => 'Denne innstillingen er utdatert. Sett OTOBOTimeZone i stedet.',
+        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => 'Denne innstillingen er utdatert. Sett CareOnCloud ESMTimeZone i stedet.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             'Denne innstillingen viser sorteringsattributtene i alle oversiktsskjermer, ikke bare i køvisning.',
         'Ticket Close' => 'Lukk sak',
@@ -10359,8 +10359,8 @@ Ditt Helpdesk-team
         'To accept login information, such as an EULA or license.' => 'For å godta påloggingsinformasjon, for eksempel en EULA eller lisens.',
         'To download attachments.' => 'For å laste ned vedlegg.',
         'To view HTML attachments.' => 'For å se HTML-vedlegg.',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
-            'Bytter visning av OTOBO FeatureAddons-liste i PackageManager.',
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
+            'Bytter visning av CareOnCloud ESM FeatureAddons-liste i PackageManager.',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'Verktøylinjeelement for en snarvei. Ytterligere tilgangskontroll for å vise eller ikke vise denne koblingen kan gjøres ved å bruke nøkkelen "Gruppe" og innhold som "rw:gruppe1;move_into:group2".',
         'Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.' =>
@@ -10383,8 +10383,8 @@ Ditt Helpdesk-team
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             'Slår på den eksterne ip-adressekontrollen. Den bør ikke aktiveres hvis applikasjonen brukes, for eksempel via en proxy-farm eller en oppringt tilkobling, fordi den eksterne ip-adressen stort sett er forskjellig for forespørslene.',
         'Tweak the system as you wish.' => 'Juster systemet som du ønsker.',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
-            'Type daemonloggrotasjon som skal brukes: Velg "OTOBO" for å la OTOBO-systemet håndtere filrotasjonen, eller velg "Ekstern" for å bruke en tredjeparts rotasjonsmekanisme (dvs. logrotere). Merk: Ekstern rotasjonsmekanisme krever sin egen og uavhengige konfigurasjon.',
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+            'Type daemonloggrotasjon som skal brukes: Velg "CareOnCloud ESM" for å la CareOnCloud ESM-systemet håndtere filrotasjonen, eller velg "Ekstern" for å bruke en tredjeparts rotasjonsmekanisme (dvs. logrotere). Merk: Ekstern rotasjonsmekanisme krever sin egen og uavhengige konfigurasjon.',
         'Ukrainian' => 'Ukrainsk',
         'Unlock tickets that are past their unlock timeout.' => 'Lås opp saker som har passert opplåsingstiden.',
         'Unlock tickets whenever a note is added and the owner is out of office.' =>
@@ -10410,7 +10410,7 @@ Ditt Helpdesk-team
         'Uses richtext for viewing and editing ticket notification.' => 'Bruker rik tekst for å vise og redigere saksvarsel.',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             'Bruker rik tekst for visning og redigering: artikler, hilsener, signaturer, standardmaler, automatiske svar og varsler.',
-        'Value map. Define a key and a value map from import file to OTOBO.' =>
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
             '',
         'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
             '',
@@ -10425,11 +10425,11 @@ Ditt Helpdesk-team
             'Vi utfører et planlagt vedlikehold. Innlogging er for øyeblikket ikke tilgjengelig.',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             'Vi utfører et planlagt vedlikehold. Sidene vil være tilgjengelig om ikke så lat for lenge.',
-        'We have changed the default ticket unlock behavior in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and OTOBO version 10.0.' =>
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
             '',
         'Web Service' => 'Nettjeneste',
         'Web Services' => 'Webtjenester',
-        'Welcome %s, to your OTOBO.' => '',
+        'Welcome %s, to your CareOnCloud ESM.' => '',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             'Velkomsttekst for dashbordoverskriften. Navn vil bli satt inn i %s av velkomstteksten. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" og "UserLogin" vil bli erstattet.',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
@@ -10454,7 +10454,7 @@ Ditt Helpdesk-team
             '',
         'XOAUTH2' => '',
         'Yes, but hide archived tickets' => 'Ja, men skjul de arkiverte sakene',
-        'Your Tickets. Your OTOBO.' => '',
+        'Your Tickets. Your CareOnCloud ESM.' => '',
         'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
             'Din e-post med saksnummeret «<OTOBO_TICKET>» blir returnert til «<OTOBO_BOUNCE_TO>». Kontakt denne adressen for mer informasjon.',
         'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
@@ -10653,7 +10653,7 @@ Ditt Helpdesk-team
         'Ignore',
         'Import web service',
         'Information',
-        'Information about the OTOBO Daemon',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -10840,7 +10840,7 @@ Ditt Helpdesk-team
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -10857,7 +10857,7 @@ Ditt Helpdesk-team
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

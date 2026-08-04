@@ -37,7 +37,7 @@ my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
 # Set some config options for the testing.
 $ConfigObject->Set(
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloud ESMTimeZone',
     Value => 'UTC',
 );
 

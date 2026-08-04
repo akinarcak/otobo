@@ -33,7 +33,7 @@ our @ObjectDependencies = (
 
 sub GetDisplayPath {
     return
-        'OTOBO@Table:TimeStamp,UserSessionUnique|Unique agents,UserSession|Agent sessions,CustomerSessionUnique|Unique customers,CustomerSession|Customer sessions';
+        'CareOnCloud ESM@Table:TimeStamp,UserSessionUnique|Unique agents,UserSession|Agent sessions,CustomerSessionUnique|Unique customers,CustomerSession|Customer sessions';
 }
 
 sub Run {
@@ -81,7 +81,7 @@ sub Run {
         }
 
         $Self->AddResultInformation(
-            DisplayPath => Translatable('OTOBO') . '/' . Translatable('Concurrent Users'),
+            DisplayPath => Translatable('CareOnCloud ESM') . '/' . Translatable('Concurrent Users'),
             Identifier  => $Identifier,
             Label       => "Max. $Label",
             Value       => $MaxValue,

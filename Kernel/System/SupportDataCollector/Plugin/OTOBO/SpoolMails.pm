@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO');
+    return Translatable('CareOnCloud ESM');
 }
 
 sub Run {
@@ -47,7 +47,7 @@ sub Run {
         $Self->AddResultProblem(
             Label   => Translatable('Spooled Emails'),
             Value   => scalar @SpoolMails,
-            Message => Translatable('There are emails in var/spool that OTOBO could not process.'),
+            Message => Translatable('There are emails in var/spool that CareOnCloud ESM could not process.'),
         );
     }
     else {

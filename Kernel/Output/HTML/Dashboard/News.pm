@@ -101,7 +101,7 @@ sub Run {
     # as this is the only operation an unsuccessful request means that the operation was also
     # unsuccessful
     if ( !IsHashRefWithData($RequestResult) ) {
-        return $LayoutObject->{LanguageObject}->Translate('Can\'t connect to OTOBO News server!');
+        return $LayoutObject->{LanguageObject}->Translate('Can\'t connect to CareOnCloud ESM News server!');
     }
 
     my $OperationResult = $CloudServiceObject->OperationResultGet(
@@ -111,11 +111,11 @@ sub Run {
     );
 
     if ( !IsHashRefWithData($OperationResult) ) {
-        return $LayoutObject->{LanguageObject}->Translate('Can\'t get OTOBO News from server!');
+        return $LayoutObject->{LanguageObject}->Translate('Can\'t get CareOnCloud ESM News from server!');
     }
     elsif ( !$OperationResult->{Success} ) {
         return $OperationResult->{ErrorMessage} ||
-            $LayoutObject->{LanguageObject}->Translate('Can\'t get OTOBO News from server!');
+            $LayoutObject->{LanguageObject}->Translate('Can\'t get CareOnCloud ESM News from server!');
     }
 
     my $NewsFeed = $OperationResult->{Data}->{News};

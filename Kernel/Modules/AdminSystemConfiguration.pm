@@ -235,7 +235,7 @@ sub Run {
         my $SettingName = $ParamObject->GetParam( Param => 'Name' ) || '';
 
         my %UsersList;
-        if ( $SysConfigObject->can('UserSettingModifiedValueList') ) {    # OTOBO Community Solution
+        if ( $SysConfigObject->can('UserSettingModifiedValueList') ) {    # CareOnCloud ESM Community Solution
             %UsersList = $SysConfigObject->UserSettingModifiedValueList(
                 Name => $SettingName,
             );
@@ -590,7 +590,7 @@ sub Run {
             return $LayoutObject->ErrorScreen(
                 Message =>
                     Translatable(
-                        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.'
+                        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.'
                     ),
             );
         }

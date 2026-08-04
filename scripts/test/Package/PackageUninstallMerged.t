@@ -27,14 +27,14 @@ our $Self;
 my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
-# get OTOBO Version
-my $OTOBOVersion = $ConfigObject->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloud ESMVersion = $ConfigObject->Get('Version');
 
 # leave only major and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloud ESMVersion .= '.x';
 
 # find out if it is an developer installation with files
 # from the version control system.
@@ -64,7 +64,7 @@ if ( !$DeveloperSystem ) {
       <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
       <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
       <ModuleRequired Version="1.112">Encode</ModuleRequired>
-      <Framework>' . $OTOBOVersion . '</Framework>
+      <Framework>' . $CareOnCloud ESMVersion . '</Framework>
       <BuildDate>2005-11-10 21:17:16</BuildDate>
       <BuildHost>yourhost.example.com</BuildHost>
       <Filelist>
@@ -104,7 +104,7 @@ if ( !$DeveloperSystem ) {
       <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
       <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
       <ModuleRequired Version="1.112">Encode</ModuleRequired>
-      <Framework>' . $OTOBOVersion . '</Framework>
+      <Framework>' . $CareOnCloud ESMVersion . '</Framework>
       <BuildDate>2005-11-10 21:17:16</BuildDate>
       <BuildHost>yourhost.example.com</BuildHost>
       <Filelist>

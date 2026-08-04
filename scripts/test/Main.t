@@ -459,7 +459,7 @@ $Self->True(
     like(
         $ReleaseInfoByFilename,
         {
-            Product => 'OTOBO',
+            Product => 'CareOnCloud ESM',
             Version => qr/^11\./,
         },
         'release info via file name'
@@ -471,7 +471,7 @@ $Self->True(
     like(
         $ReleaseInfoByLocation,
         {
-            Product => 'OTOBO',
+            Product => 'CareOnCloud ESM',
             Version => qr/^11\./,
         },
         'release info via location'

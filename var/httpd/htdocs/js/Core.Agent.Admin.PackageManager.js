@@ -172,7 +172,7 @@ Core.Agent.Admin = Core.Agent.Admin || {};
             if (Core.Config.Get('DaemonCheckNotRunning')) {
                 Core.UI.Dialog.ShowAlert(
                     Core.Language.Translate('Currently not possible'),
-                    Core.Language.Translate('This option is currently disabled because the OTOBO Daemon is not running.')
+                    Core.Language.Translate('This option is currently disabled because the CareOnCloud ESM Daemon is not running.')
                 );
                 return false;
             }

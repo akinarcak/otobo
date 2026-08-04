@@ -19,7 +19,7 @@
         <Value>
             <Hash>
                 <Item Key="Name" Translatable="1">Support data collector</Item>
-                <Item Key="Description" Translatable="1">Configure sending of support data to OTOBO Team for improved support.</Item>
+                <Item Key="Description" Translatable="1">Configure sending of support data to CareOnCloud ESM Team for improved support.</Item>
                 <Item Key="ConfigDialog">AdminCloudServiceSupportDataCollector</Item>
                 <Item Key="Icon">fa fa-compass</Item>
             </Hash>

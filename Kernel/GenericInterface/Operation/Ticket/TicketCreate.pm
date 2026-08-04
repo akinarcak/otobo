@@ -187,9 +187,9 @@ perform TicketCreate Operation. This will return the created ticket number.
         Success         => 1,                       # 0 or 1
         ErrorMessage    => '',                      # in case of error
         Data            => {                        # result data payload after Operation
-            TicketID    => 123,                     # Ticket  ID number in OTOBO (help desk system)
-            TicketNumber => 2324454323322           # Ticket Number in OTOBO (Help desk system)
-            ArticleID   => 43,                      # Article ID number in OTOBO (help desk system)
+            TicketID    => 123,                     # Ticket  ID number in CareOnCloud ESM (help desk system)
+            TicketNumber => 2324454323322           # Ticket Number in CareOnCloud ESM (Help desk system)
+            ArticleID   => 43,                      # Article ID number in CareOnCloud ESM (help desk system)
             Error => {                              # should not return errors
                     ErrorCode    => 'Ticket.Create.ErrorCode'
                     ErrorMessage => 'Error Description'
@@ -934,7 +934,7 @@ sub _CheckArticle {
     if ( $Article->{ContentType} ) {
 
         # The MIME header field Content-Type is only in some parts case insensitive,
-        # but lowercasing the whole string simplifies the handling in OTOBO.
+        # but lowercasing the whole string simplifies the handling in CareOnCloud ESM.
         $Article->{ContentType} = lc $Article->{ContentType};
 
         if ( !$Self->ValidateContentType( ContentType => $Article->{ContentType} ) ) {
@@ -1149,7 +1149,7 @@ sub _CheckAttachment {
     if ( $Attachment->{ContentType} ) {
 
         # The MIME header field Content-Type is only in some parts case insensitive,
-        # but lowercasing the whole string simplifies the handling in OTOBO.
+        # but lowercasing the whole string simplifies the handling in CareOnCloud ESM.
         $Attachment->{ContentType} = lc $Attachment->{ContentType};
 
         if ( !$Self->ValidateContentType( ContentType => $Attachment->{ContentType} ) ) {

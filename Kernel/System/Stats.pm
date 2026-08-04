@@ -55,21 +55,21 @@ All statistics functions.
 =head2 Explanation for the time zone parameter
 
 The time zone parameter is available, if the statistic is a dynamic statistic. The selected periods in the frontend are time zone neutral and for the
-search parameters, the selection will be converted to the OTOBO time zone, because the times
+search parameters, the selection will be converted to the CareOnCloud ESM time zone, because the times
 are stored within this time zone in the database.
 
 This means e.g. if an absolute period of time from 2015-08-01 00:00:00 to 2015-09-10 23:59:59 and a time zone with an offset of +6 hours has been selected,
-the period will be converted from the +6 time zone to the OTOBO time zone for the search parameter,
-so that the right time will be used for searching the database. Given that the OTOBO time zone is set to UTC, this
+the period will be converted from the +6 time zone to the CareOnCloud ESM time zone for the search parameter,
+so that the right time will be used for searching the database. Given that the CareOnCloud ESM time zone is set to UTC, this
 would result in a period of 2015-07-31 18:00:00 to 2015-09-10 17:59:59 UTC.
 
 For a relative time period, e. g. the last 10 full days, and a time zone with an offset of +10 hours, a DateTime object with the +10 time zone will be created
 for the current time. For the period end date, this date will be taken and extended to the end of the day. Then, 10 full days will be subtracted from this.
-This is the start of the period, which will be extended to 00:00:00. Start and end date will be converted to the time zone of OTOBO to search the database.
+This is the start of the period, which will be extended to 00:00:00. Start and end date will be converted to the time zone of CareOnCloud ESM to search the database.
 
-Example for relative time period 'last 10 full days' with selected time zone offset +10 hours, current date/time within this time zone 2015-09-10 16:00:00, OTOBO time zone is UTC:
-End date: 2015-09-10 16:00:00 -> extended to 2015-09-10 23:59:59 -> 2015-09-10 13:59:59 OTOBO time zone (UTC)
-Start date: 2015-09-10 16:00:00 - 10 days -> 2015-08-31 16:00:00 -> extended to 00:00:00: 2015-09-01 00:00:00 -> 2015-08-31 14:00:00 OTOBO time zone (UTC)
+Example for relative time period 'last 10 full days' with selected time zone offset +10 hours, current date/time within this time zone 2015-09-10 16:00:00, CareOnCloud ESM time zone is UTC:
+End date: 2015-09-10 16:00:00 -> extended to 2015-09-10 23:59:59 -> 2015-09-10 13:59:59 CareOnCloud ESM time zone (UTC)
+Start date: 2015-09-10 16:00:00 - 10 days -> 2015-08-31 16:00:00 -> extended to 00:00:00: 2015-09-01 00:00:00 -> 2015-08-31 14:00:00 CareOnCloud ESM time zone (UTC)
 
 =head1 PUBLIC INTERFACE
 
@@ -260,7 +260,7 @@ sub StatsGet {
             $Stat{TimeZone} = $StatsXML->{TimeZone}->[1]->{Content};
         }
         else {
-            $Stat{TimeZone} = Kernel::System::DateTime->OTOBOTimeZoneGet();
+            $Stat{TimeZone} = Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet();
         }
     }
 
@@ -1565,7 +1565,7 @@ sub GetParams {
     my $Stat = $Self->StatsGet( StatID => $Param{StatID} );
 
     # static
-    # don't remove this if clause, because is required for otobo.GenerateStats.pl
+    # don't remove this if clause, because is required for careoncloud.GenerateStats.pl
     my @Params;
     if ( $Stat->{StatType} eq 'static' ) {
 
@@ -2482,7 +2482,7 @@ sub _GenerateDynamicStats {
                 $TitleTimeStop  = $Element->{TimeStop};
             }
 
-            # Select All function needed from otobo.GenerateStats.pl and fixed values of the frontend
+            # Select All function needed from careoncloud.GenerateStats.pl and fixed values of the frontend
             elsif ( !$Element->{SelectedValues}[0] ) {
                 my @Values = keys( %{ $Element->{Values} } );
                 $Element->{SelectedValues} = \@Values;
@@ -2506,13 +2506,13 @@ sub _GenerateDynamicStats {
         }
         elsif ( $RestrictionPart->{Block} eq 'Time' ) {
 
-            # convert start and stop time to OTOBO time zone
-            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStart} } = $Self->_ToOTOBOTimeZone(
+            # convert start and stop time to CareOnCloud ESM time zone
+            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStart} } = $Self->_ToCareOnCloud ESMTimeZone(
                 String   => $RestrictionPart->{TimeStart},
                 TimeZone => $Param{TimeZone},
             );
 
-            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStop} } = $Self->_ToOTOBOTimeZone(
+            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStop} } = $Self->_ToCareOnCloud ESMTimeZone(
                 String   => $RestrictionPart->{TimeStop},
                 TimeZone => $Param{TimeZone},
             );
@@ -2821,14 +2821,14 @@ sub _GenerateDynamicStats {
             push(
                 @{ $Xvalue->{SelectedValues} },
                 {
-                    # convert to OTOBO time zone for correct database search parameter
+                    # convert to CareOnCloud ESM time zone for correct database search parameter
 
-                    TimeStart => $Self->_ToOTOBOTimeZone(
+                    TimeStart => $Self->_ToCareOnCloud ESMTimeZone(
                         String   => $TimeStart,
                         TimeZone => $Param{TimeZone},
                     ),
 
-                    TimeStop => $Self->_ToOTOBOTimeZone(
+                    TimeStop => $Self->_ToCareOnCloud ESMTimeZone(
                         String   => $TimeStop,
                         TimeZone => $Param{TimeZone},
                     ),
@@ -3473,8 +3473,8 @@ sub _GenerateDynamicStats {
         return @StatArray;
     }
 
-    # convert to OTOBO time zone to get the correct time for the check
-    my $CheckTimeStop = $Self->_ToOTOBOTimeZone(
+    # convert to CareOnCloud ESM time zone to get the correct time for the check
+    my $CheckTimeStop = $Self->_ToCareOnCloud ESMTimeZone(
         String   => $TitleTimeStop,
         TimeZone => $Param{TimeZone},
     );
@@ -3944,22 +3944,22 @@ sub _AutomaticSampleImport {
     return 1;
 }
 
-=head2 _FromOTOBOTimeZone()
+=head2 _FromCareOnCloud ESMTimeZone()
 
-Converts the given date/time string from OTOBO time zone to the given time zone.
+Converts the given date/time string from CareOnCloud ESM time zone to the given time zone.
 
-    my $TimeStamp = $StatsObject->_FromOTOBOTimeZone(
+    my $TimeStamp = $StatsObject->_FromCareOnCloud ESMTimeZone(
         String   => '2016-02-20 20:00:00',
         TimeZone => 'Europe/Berlin',
     );
 
-Returns (example for OTOBO time zone being set to UTC):
+Returns (example for CareOnCloud ESM time zone being set to UTC):
 
     $TimeStamp = '2016-02-20 21:00:00',
 
 =cut
 
-sub _FromOTOBOTimeZone {
+sub _FromCareOnCloud ESMTimeZone {
     my ( $Self, %Param ) = @_;
 
     # check needed params
@@ -3993,22 +3993,22 @@ sub _FromOTOBOTimeZone {
     return $DateTimeObject->ToString();
 }
 
-=head2 _ToOTOBOTimeZone()
+=head2 _ToCareOnCloud ESMTimeZone()
 
-Converts the given date/time string from the given time zone to OTOBO time zone.
+Converts the given date/time string from the given time zone to CareOnCloud ESM time zone.
 
-    my $TimeStamp = $StatsObject->_ToOTOBOTimeZone(
+    my $TimeStamp = $StatsObject->_ToCareOnCloud ESMTimeZone(
         String    => '2016-02-20 18:00:00',
         TimeZone  => 'Europe/Berlin',
     );
 
-Returns (example for OTOBO time zone being set to UTC):
+Returns (example for CareOnCloud ESM time zone being set to UTC):
 
     $TimeStamp = '2016-02-20 17:00:00',
 
 =cut
 
-sub _ToOTOBOTimeZone {
+sub _ToCareOnCloud ESMTimeZone {
     my ( $Self, %Param ) = @_;
 
     # check needed params
@@ -4036,7 +4036,7 @@ sub _ToOTOBOTimeZone {
         return;
     }
 
-    $DateTimeObject->ToOTOBOTimeZone();
+    $DateTimeObject->ToCareOnCloud ESMTimeZone();
 
     return $DateTimeObject->ToString();
 }

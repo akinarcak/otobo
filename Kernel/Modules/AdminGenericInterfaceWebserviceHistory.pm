@@ -211,7 +211,7 @@ sub _GetWebserviceHistoryDetails {
         $LogData->{Config}->{Requester}->{Transport}->{Config}->{SSL}->{SSLPassword} = $PasswordMask;
     }
 
-    # For compatibility (web services changed before OTOBO 10).
+    # For compatibility (web services changed before CareOnCloud ESM 10).
     if (
         IsStringWithData( $LogData->{Config}->{Requester}->{Transport}->{Config}->{Authentication}->{Password} )
         )

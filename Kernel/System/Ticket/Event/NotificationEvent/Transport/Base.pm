@@ -150,7 +150,7 @@ sub GetTransportEventData {
 
 =head2 _ReplaceTicketAttributes()
 
-returns the specified field with replaced OTOBO-tags
+returns the specified field with replaced CareOnCloud ESM-tags
 
     $RecipientEmail = $Self->_ReplaceTicketAttributes(
         Ticket => $Param{Ticket},
@@ -176,7 +176,7 @@ sub _ReplaceTicketAttributes {
 
     # replace ticket attributes such as <OTOBO_Ticket_DynamicField_Name1> or
     # <OTOBO_TICKET_DynamicField_Name1>
-    # <OTOBO_Ticket_*> is deprecated and should be removed in further versions of OTOBO
+    # <OTOBO_Ticket_*> is deprecated and should be removed in further versions of CareOnCloud ESM
     my $Count = 0;
     REPLACEMENT:
     while (

@@ -30,12 +30,12 @@ use Test2::V0;    # please use this for assertions
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::System::UnitTest::Selenium;      # Set up $Selenium
 
-# OTOBO specific test helpers
+# CareOnCloud ESM specific test helpers
 # $Selenium provides all the functions of Test::Selenium::Remote::Driver
-# as well as OTOBO specific helper functions ie. for logging in or drag-and-drop
+# as well as CareOnCloud ESM specific helper functions ie. for logging in or drag-and-drop
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
-# OTOBO specific helper functions, ie. user creation / changing sysconfig settings
+# CareOnCloud ESM specific helper functions, ie. user creation / changing sysconfig settings
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 # writing the test as an anonymous function handed to RunTest() we make sure that it is only

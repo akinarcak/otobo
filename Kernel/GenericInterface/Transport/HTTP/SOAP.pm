@@ -471,7 +471,7 @@ sub ProviderGenerateResponse {
         );
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
     # Gather additional headers.
     my %ResponseHeaders = $Self->_HeadersGet(
         Type      => 'Operation',
@@ -481,7 +481,7 @@ sub ProviderGenerateResponse {
     # Mirror some HTTP headers when the request comes from a test script
     # that has temporarily set GenericInterface::Transport::UnitTestHeaders.
     # This feature allows to check outgoing HTTP headers of the generic interface.
-    # It was introduced by OTOBOTicketInvoker.
+    # It was introduced by CareOnCloud ESMTicketInvoker.
     if ( $Kernel::OM->Get('Kernel::Config')->Get('GenericInterface::Transport::MirrorUnitTestHTTPHeaders') ) {
 
         # The HTTP::REST support works with a request object.
@@ -529,7 +529,7 @@ sub ProviderGenerateResponse {
     $Self->_ThrowWebException(
         HTTPCode => $HTTPCode,
         Content  => $Serialized,
-        Headers  => \%ResponseHeaders,    # added by OTOBOTicketInvoker
+        Headers  => \%ResponseHeaders,    # added by CareOnCloud ESMTicketInvoker
     );
 
     return;                               # actually not reached
@@ -830,7 +830,7 @@ sub RequesterPerformRequest {
         }
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
 
     # Gather additional headers.
     my %Headers = (
@@ -973,7 +973,7 @@ sub RequesterPerformRequest {
         };
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
 
     # Export mirrored headers (only used for UnitTests)
     my %UnitTestHeaders;
@@ -993,7 +993,7 @@ sub RequesterPerformRequest {
     return {
         Success         => 1,
         Data            => $Body->{$OperationResponse} || undef,
-        UnitTestHeaders => \%UnitTestHeaders,                      # added for OTOBOTicketInvoker
+        UnitTestHeaders => \%UnitTestHeaders,                      # added for CareOnCloud ESMTicketInvoker
     };
 }
 
@@ -1121,7 +1121,7 @@ sub _ThrowWebException {
         }
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
     # Set additional headers.
     if ( $Param{Headers} ) {
         for my $Header ( sort keys %{ $Param{Headers} } ) {
@@ -1549,7 +1549,7 @@ sub _SOAPOutputTypesGet {
     };
 }
 
-# introduced for OTOBOTicketInvoker
+# introduced for CareOnCloud ESMTicketInvoker
 sub _HeadersGet {
     my ( $Self, %Param ) = @_;
 

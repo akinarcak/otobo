@@ -136,7 +136,7 @@ $Selenium->RunTest(
         my %Check = (
             Type          => 'IMAP',
             LoginEdit     => $RandomID,
-            PasswordEdit  => 'otobo-dummy-password-placeholder',    # real password is not sent to user
+            PasswordEdit  => 'careoncloud-dummy-password-placeholder',    # real password is not sent to user
             HostEdit      => 'pop3.example.com',
             Trusted       => 0,
             DispatchingBy => 'Queue',

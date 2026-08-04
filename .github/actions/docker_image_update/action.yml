@@ -55,7 +55,7 @@ runs:
         uses: docker/setup-buildx-action@v4
 
       -
-        name: 'check out the relevant OTOBO branch'
+        name: 'check out the relevant CareOnCloud ESM branch'
         uses: actions/checkout@v6
         with:
           ref: ${{ env.otobo_branch }}
@@ -92,7 +92,7 @@ runs:
 
       -
         # Show some files in the image just to check sanity.
-        # otobo_first_time hasn't run yet, so /opt/otobo is still empty
+        # otobo_first_time hasn't run yet, so /opt/careoncloud is still empty
         name: Info
         if: inputs.target == 'otobo-web'
         shell: bash

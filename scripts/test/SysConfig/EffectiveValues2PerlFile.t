@@ -278,7 +278,7 @@ my $AssembleExpectedValue = sub {
     my %Param = @_;
 
     my $File = <<"EOF";
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:2.0
 package $Param{Package}
 use strict;

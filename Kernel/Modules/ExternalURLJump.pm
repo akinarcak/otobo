@@ -45,7 +45,7 @@ sub Run {
 
     my $ExtURL = $ParamObject->GetParam( Param => 'URL' );
 
-    # check whether the URL is defined in the Config - prevents using OTOBO for phishing attacks
+    # check whether the URL is defined in the Config - prevents using CareOnCloud ESM for phishing attacks
     my $NavAgent    = $ConfigObject->Get('Frontend::Navigation');
     my $NavCustomer = $ConfigObject->Get('CustomerFrontend::Navigation');
 

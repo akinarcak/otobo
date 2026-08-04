@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Create an OTOBO package (opm) file from an OTOBO package source (sopm) file.');
+    $Self->Description('Create a CareOnCloud ESM package (opm) file from a CareOnCloud ESM package source (sopm) file.');
     $Self->AddOption(
         Name        => 'version',
         Description => "Specify the version to be used (overrides version from sopm file).",
@@ -40,14 +40,14 @@ sub Configure {
     $Self->AddOption(
         Name        => 'module-directory',
         Description =>
-            "Specify the directory containing the module sources (otherwise the OTOBO home directory will be used).",
+            "Specify the directory containing the module sources (otherwise the CareOnCloud ESM home directory will be used).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,
     );
     $Self->AddArgument(
         Name        => 'source-path',
-        Description => "Specify the path to an OTOBO package source (sopm) file that should be built.",
+        Description => "Specify the path to a CareOnCloud ESM package source (sopm) file that should be built.",
         Required    => 1,
         ValueRegex  => qr/.*/smx,
     );
@@ -119,7 +119,7 @@ sub Run {
         $Structure{Version}->{Content} = $Self->GetOption('version');
     }
 
-    # build from given package directory, if any (otherwise default to OTOBO home)
+    # build from given package directory, if any (otherwise default to CareOnCloud ESM home)
     if ( $Self->GetOption('module-directory') ) {
         $Structure{Home} = $Self->GetOption('module-directory');
     }

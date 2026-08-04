@@ -196,7 +196,7 @@ sub _AddAction {
                 Check => 'MappingType',
             },
 
-            # added for OTOBOTicketInvoker
+            # added for CareOnCloud ESMTicketInvoker
             {
                 Name    => 'CountLastArticle',
                 Type    => 'String',
@@ -261,7 +261,7 @@ sub _AddAction {
         $Errors{InvokerServerError} = 'ServerError';
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
 
     # Field for remote ticket id must not be used for writing incoming dynamic field data.
     if ( grep { $_ eq $GetParam->{TicketIdToDynamicField} } @{ $GetParam->{DynamicFieldList} } ) {
@@ -272,7 +272,7 @@ sub _AddAction {
         Description => $GetParam->{Description},
         Type        => $GetParam->{InvokerType},
 
-        # added for OTOBOTicketInvoker
+        # added for CareOnCloud ESMTicketInvoker
         CountLastArticle            => $GetParam->{CountLastArticle},
         TicketIdToDynamicField      => $GetParam->{TicketIdToDynamicField},
         CommunicationChannel        => $GetParam->{CommunicationChannel},
@@ -418,7 +418,7 @@ sub _ChangeAction {
                 Default => 'Ticket',
             },
 
-            # added for OTOBOTicketInvoker
+            # added for CareOnCloud ESMTicketInvoker
             {
                 Name    => 'CountLastArticle',
                 Type    => 'String',
@@ -494,7 +494,7 @@ sub _ChangeAction {
         $Errors{InvokerServerError} = 'ServerError';
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
 
     # Field for remote ticket id must not be used for writing incoming dynamic field data.
     if ( grep { $_ eq $GetParam->{TicketIdToDynamicField} } @{ $GetParam->{DynamicFieldList} } ) {
@@ -503,7 +503,7 @@ sub _ChangeAction {
 
     $InvokerConfig->{Description} = $GetParam->{Description};
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
     $InvokerConfig->{CountLastArticle}            = $GetParam->{CountLastArticle};
     $InvokerConfig->{TicketIdToDynamicField}      = $GetParam->{TicketIdToDynamicField};
     $InvokerConfig->{CommunicationChannel}        = $GetParam->{CommunicationChannel};
@@ -574,7 +574,7 @@ sub _ChangeAction {
         $WebserviceData->{Config}->{Requester}->{ErrorHandling} = $ErrorHandlingConfig;
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
 
     # Take care of invoker dependent configuration if invoker was renamed.
     if ( $GetParam->{OldInvoker} ne $GetParam->{Invoker} ) {
@@ -866,7 +866,7 @@ sub _ShowScreen {
         Invoker     => $Param{Invoker},
         NewInvoker  => $Param{NewInvoker} // $Param{Invoker},
 
-        # added for OTOBOTicketInvoker
+        # added for CareOnCloud ESMTicketInvoker
         CountLastArticle => $Param{InvokerConfig}->{CountLastArticle},
     );
 
@@ -901,7 +901,7 @@ sub _ShowScreen {
         );
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloud ESMTicketInvoker
 
     my $DynamicFieldTicketList = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldList(
         ObjectType => 'Ticket',
@@ -1180,7 +1180,7 @@ sub _ParamsGet {
             return \%GetParam;
         }
 
-        # added for OTOBOTicketInvoker
+        # added for CareOnCloud ESMTicketInvoker
 
         if ( $Definition->{Type} eq 'Array' ) {
             $GetParam{$Name} = [ $ParamObject->GetArray( Param => $Name ) ];

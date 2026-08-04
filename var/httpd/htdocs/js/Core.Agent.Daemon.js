@@ -84,7 +84,7 @@ Core.Agent.Daemon = (function (TargetNS) {
                 }
 
                 // show main dialog
-                Core.UI.Dialog.ShowContentDialog(HTML, Core.Language.Translate('Information about the OTOBO Daemon'), '240px', 'Center', true);
+                Core.UI.Dialog.ShowContentDialog(HTML, Core.Language.Translate('Information about the CareOnCloud ESM Daemon'), '240px', 'Center', true);
 
                 // set cancel button action
                 $('#DaemonFormCancel').on('click', function() {

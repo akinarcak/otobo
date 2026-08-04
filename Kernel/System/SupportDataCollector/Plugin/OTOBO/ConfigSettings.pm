@@ -28,7 +28,7 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO') . '/' . Translatable('Config Settings');
+    return Translatable('CareOnCloud ESM') . '/' . Translatable('Config Settings');
 }
 
 sub Run {
@@ -43,7 +43,7 @@ sub Run {
         'Version',
         'ProductName',
         'Organization',
-        'OTOBOTimeZone',
+        'CareOnCloud ESMTimeZone',
         'Ticket::IndexModule',
         'Ticket::SearchIndexModule',
         'Ticket::Article::Backend::MIMEBase::ArticleStorage',

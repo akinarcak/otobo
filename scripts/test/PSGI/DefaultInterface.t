@@ -46,7 +46,7 @@ plan( 2 * 12 );
 # This test script checks whether the redirect to the default interface works
 
 # Skip the test when Selenium is not activated.
-# Actually, Selenium is not used in this test but we assume that we have a running OTOBO web server
+# Actually, Selenium is not used in this test but we assume that we have a running CareOnCloud ESM web server
 # when Selenium testing is activated.
 SKIP:
 {
@@ -58,52 +58,52 @@ SKIP:
     # get needed singletons
     my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
-    my $OtoboURL = join '',
+    my $CareOnCloudURL = join '',
         $ConfigObject->Get('HttpType'),
         '://',
         $Helper->GetTestHTTPHostname(),
-        '/otobo';
+        '/careoncloud';
 
-    RunTests($OtoboURL);
+    RunTests($CareOnCloudURL);
 }
 
-# This should work without a running OTOBO web server running
+# This should work without a running CareOnCloud ESM web server running
 {
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
     psgi_app_add Plack::Util::load_psgi("$Home/bin/psgi-bin/careoncloud.psgi");
 
-    my $OtoboURL = '/otobo';
+    my $CareOnCloudURL = '/careoncloud';
 
-    RunTests($OtoboURL);
+    RunTests($CareOnCloudURL);
 }
 
 # execute the tests either agains a running web server or against a mocked server
 sub RunTests {
-    my ($OtoboURL) = @_;
+    my ($CareOnCloudURL) = @_;
 
     http_request(
-        [ GET($OtoboURL) ],
+        [ GET($CareOnCloudURL) ],
         http_response {
             http_isnt_success();
             http_is_redirect();
-            http_header( 'Location', 'otobo/index.pl' );
+            http_header( 'Location', 'careoncloud/index.pl' );
         },
-        "testing $OtoboURL",
+        "testing $CareOnCloudURL",
     );
 
-    my $BrokenOtoboURL = $OtoboURL . '_cruft_added';
+    my $BrokenCareOnCloudURL = $CareOnCloudURL . '_cruft_added';
     http_request(
-        [ GET($BrokenOtoboURL) ],
+        [ GET($BrokenCareOnCloudURL) ],
         http_response {
             http_code(404);
             http_is_error();
             http_content( match(qr/URL was not found/) );
         },
-        "testing $BrokenOtoboURL",
+        "testing $BrokenCareOnCloudURL",
     );
 
-    my $WithSlashURL = $OtoboURL . '/';
+    my $WithSlashURL = $CareOnCloudURL . '/';
     http_request(
         [ GET($WithSlashURL) ],
         http_response {
@@ -114,7 +114,7 @@ sub RunTests {
         "testing $WithSlashURL",
     );
 
-    my $WithThreeSlashesURL = $OtoboURL . '///';
+    my $WithThreeSlashesURL = $CareOnCloudURL . '///';
     http_request(
         [ GET($WithThreeSlashesURL) ],
         http_response {
@@ -125,7 +125,7 @@ sub RunTests {
         "testing $WithThreeSlashesURL",
     );
 
-    my $IndexPlURL = join '/', $OtoboURL, 'index.pl';
+    my $IndexPlURL = join '/', $CareOnCloudURL, 'index.pl';
     http_request(
         [ GET($IndexPlURL) ],
         http_response {
@@ -135,7 +135,7 @@ sub RunTests {
         "testing $IndexPlURL",
     );
 
-    my $IndexPhpURL = join '/', $OtoboURL, 'index.php';
+    my $IndexPhpURL = join '/', $CareOnCloudURL, 'index.php';
     http_request(
         [ GET($IndexPhpURL) ],
         http_response {
@@ -146,7 +146,7 @@ sub RunTests {
         "testing $IndexPhpURL",
     );
 
-    my $FourDeepURL = join '/', $OtoboURL, 'level_1', 'level_2', 'level_3', 'level_4', 'sample.html';
+    my $FourDeepURL = join '/', $CareOnCloudURL, 'level_1', 'level_2', 'level_3', 'level_4', 'sample.html';
     http_request(
         [ GET($FourDeepURL) ],
         http_response {
@@ -168,11 +168,11 @@ sub RunTests {
         );
 
         http_request(
-            [ GET($OtoboURL) ],
+            [ GET($CareOnCloudURL) ],
             http_response {
                 http_isnt_success();
                 http_is_redirect();
-                http_header( 'Location', "otobo/$Interface" );
+                http_header( 'Location', "careoncloud/$Interface" );
             },
             "testing redirect to default interface $Interface",
         );
@@ -186,11 +186,11 @@ sub RunTests {
             );
 
             http_request(
-                [ GET($OtoboURL) ],
+                [ GET($CareOnCloudURL) ],
                 http_response {
                     http_isnt_success();
                     http_is_redirect();
-                    http_header( 'Location', "otobo/index.pl" );
+                    http_header( 'Location', "careoncloud/index.pl" );
                 },
                 "testing redirect to deactivated default interface $Interface",
             );
@@ -204,11 +204,11 @@ sub RunTests {
             );
 
             http_request(
-                [ GET($OtoboURL) ],
+                [ GET($CareOnCloudURL) ],
                 http_response {
                     http_isnt_success();
                     http_is_redirect();
-                    http_header( 'Location', "otobo/index.pl" );
+                    http_header( 'Location', "careoncloud/index.pl" );
                 },
                 "testing redirect to deactivated default interface $Interface",
             );

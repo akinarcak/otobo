@@ -27,7 +27,7 @@
 [% FOREACH Ticket IN Data %]
 [% FOREACH TicketID IN Ticket.keys %]
                         <p class="Value" title="[% Ticket.$TicketID.ArticlesExternal.0.Body | html %]">
-                            <a target="_blank" href="/otobo/index.pl?Action=AgentTicketZoom;TicketID=[% TicketID | url %]">[% Ticket.$TicketID.Title | html %]</a>
+                            <a target="_blank" href="/careoncloud/index.pl?Action=AgentTicketZoom;TicketID=[% TicketID | url %]">[% Ticket.$TicketID.Title | html %]</a>
                         </p>
                         <div class="Clear"></div>
 [% END %]

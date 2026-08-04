@@ -1560,12 +1560,12 @@ Returns:
 
     $PlainMessage = '
         From: OTOBO Feedback <marketing@otobo.io>
-        To: Your OTOBO System <otobo@localhost>
-        Subject: Welcome to OTOBO!
+        To: Your CareOnCloud ESM System <careoncloud@localhost>
+        Subject: Welcome to CareOnCloud ESM!
         Content-Type: text/plain; charset=utf-8
         Content-Transfer-Encoding: 8bit
 
-        Welcome to OTOBO!
+        Welcome to CareOnCloud ESM!
         ...
     ';
 

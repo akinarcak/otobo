@@ -44,8 +44,8 @@ my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
 my $Home = $ConfigObject->Get('Home');
 
 subtest 'MinifyCSS' => sub {
-    my $SampleCSSFile         = "$Home/scripts/test/sample/Loader/OTOBO.Reset.css";
-    my $SampleMinifiedCSSFile = "$Home/scripts/test/sample/Loader/OTOBO.Reset.min.css";
+    my $SampleCSSFile         = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Reset.css";
+    my $SampleMinifiedCSSFile = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Reset.min.css";
 
     my $CSS = $MainObject->FileRead(
         Location => $SampleCSSFile,
@@ -86,8 +86,8 @@ subtest 'MinifyCSS' => sub {
 };
 
 subtest 'MinifyJavaScript' => sub {
-    my $SampleJSFile         = "$Home/scripts/test/sample/Loader/OTOBO.Agent.App.Login.js";
-    my $SampleMinifiedJSFile = "$Home/scripts/test/sample/Loader/OTOBO.Agent.App.Login.min.js";
+    my $SampleJSFile         = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Agent.App.Login.js";
+    my $SampleMinifiedJSFile = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Agent.App.Login.min.js";
     my $JavaScript           = $MainObject->FileRead(
         Location => $SampleJSFile,
     )->$*;
@@ -134,7 +134,7 @@ subtest 'MinifyJavaScript' => sub {
 };
 
 subtest 'MinifyFiles' => sub {
-    my @List               = map {"$Home/scripts/test/sample/Loader/OTOBO.Agent.App.$_.js"} qw(Login Dashboard);
+    my @List               = map {"$Home/scripts/test/sample/Loader/CareOnCloud ESM.Agent.App.$_.js"} qw(Login Dashboard);
     my $MinifiedJSFilename = $LoaderObject->MinifyFiles(
         List            => \@List,
         Type            => 'JavaScript',

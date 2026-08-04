@@ -64,7 +64,7 @@ sub new {
         );
 
     # set URL for calling cloud services
-    $Self->{CloudServiceURL} = 'https://portal.rother-oss.com/otobo/public.pl';
+    $Self->{CloudServiceURL} = 'https://portal.rother-oss.com/careoncloud/public.pl';
 
     return $Self;
 }
@@ -74,8 +74,8 @@ sub new {
 perform a cloud service communication and return result data
 
     my $RequestResult = $CloudServiceObject->Request(
-        OTOBOIDAuth => { #  will be send encoded as JSON
-            OTOBOID => '',
+        CareOnCloud ESMIDAuth => { #  will be send encoded as JSON
+            CareOnCloud ESMID => '',
             Password => '',
         },
         UniqueIDAuth => { #  will send encoded as JSON
@@ -301,13 +301,13 @@ sub Request {
         }
     }
 
-    # get OTOBOIDAuth structure if needed
-    my $OTOBOIDAuth = '';
-    if ( $Param{OTOBOID} && $Param{Password} ) {
+    # get CareOnCloud ESMIDAuth structure if needed
+    my $CareOnCloud ESMIDAuth = '';
+    if ( $Param{CareOnCloud ESMID} && $Param{Password} ) {
 
-        $OTOBOIDAuth = $JSONObject->Encode(
+        $CareOnCloud ESMIDAuth = $JSONObject->Encode(
             Data => {
-                OTOBOID  => $Param{OTOBOID},
+                CareOnCloud ESMID  => $Param{CareOnCloud ESMID},
                 Password => $Param{Password},
             },
         );
@@ -346,7 +346,7 @@ sub Request {
                 Action       => 'PublicCloudService',
                 RequestData  => $RequestData,
                 UniqueIDAuth => $UniqueIDAuth,
-                OTOBOIDAuth  => $OTOBOIDAuth,
+                CareOnCloud ESMIDAuth  => $CareOnCloud ESMIDAuth,
             },
         );
 

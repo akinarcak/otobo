@@ -253,7 +253,7 @@ Core.Customer.TicketZoom = (function (TargetNS) {
             ActivityCount = $('#oooArticleListExpanded > .Activity').length;
 
 
-        // otobo
+        // careoncloud
         BuildArticles();
         $('#ReplyButton').on('click', function(Event){
             Event.preventDefault();
@@ -389,7 +389,7 @@ Core.Customer.TicketZoom = (function (TargetNS) {
             }
         });
 
-        // eo otobo
+        // eo careoncloud
 
         /*        $('#Messages > li > .MessageHeader').on('click', function(Event){
             ToggleMessage($(this).parent());

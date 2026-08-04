@@ -371,8 +371,8 @@ sub Map {
         );
     }
 
-    # typify tree structure if 'otoboType' attrs have been used in XSLT
-    if ( $EnableExtendedXSLTMappingAttributes && $XMLPost =~ /otoboXslType=/ ) {
+    # typify tree structure if 'careoncloudType' attrs have been used in XSLT
+    if ( $EnableExtendedXSLTMappingAttributes && $XMLPost =~ /careoncloudXslType=/ ) {
 
         $Self->{DebuggerObject}->Debug(
             Summary => 'XML after mapping',
@@ -434,22 +434,22 @@ sub _ReduceTypedTreeData {
 
     my $Result;
 
-    # hashes could contain a type discriminator ('otoboXslType')
+    # hashes could contain a type discriminator ('careoncloudXslType')
     if ( ref $Data eq 'HASH' ) {
 
-        # if hash contains a type discriminator ('otoboXslType')
-        if ( exists $Data->{otoboXslType} ) {
+        # if hash contains a type discriminator ('careoncloudXslType')
+        if ( exists $Data->{careoncloudXslType} ) {
 
-            my $OtoboType = $Data->{otoboXslType};
+            my $CareOnCloudType = $Data->{careoncloudXslType};
             my $Content   = $Data->{content};
 
-            if ( $OtoboType =~ 'array' && ref $Content ne 'ARRAY' ) {
+            if ( $CareOnCloudType =~ 'array' && ref $Content ne 'ARRAY' ) {
 
                 # wrap content in an array as requested
                 $Result = [
                     $Self->_ReduceTypedTreeData(
                         Data     => $Content,
-                        TypeHint => $OtoboType
+                        TypeHint => $CareOnCloudType
                     )
                 ];
             }
@@ -459,7 +459,7 @@ sub _ReduceTypedTreeData {
                 # so just reduce
                 $Result = $Self->_ReduceTypedTreeData(
                     Data     => $Content,
-                    TypeHint => $OtoboType
+                    TypeHint => $CareOnCloudType
                 );
             }
         }
@@ -482,12 +482,12 @@ sub _ReduceTypedTreeData {
         my @Array;
         for my $Item ( $Data->@* ) {
 
-            # if array item is a hash with otoboType discriminator
-            if ( ref $Item eq 'HASH' && exists $Item->{otoboXslType} ) {
+            # if array item is a hash with careoncloudType discriminator
+            if ( ref $Item eq 'HASH' && exists $Item->{careoncloudXslType} ) {
 
                 push @Array, $Self->_ReduceTypedTreeData(
                     Data     => $Item->{content},
-                    TypeHint => $Item->{otoboXslType}
+                    TypeHint => $Item->{careoncloudXslType}
                 );
             }
 

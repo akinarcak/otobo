@@ -81,7 +81,7 @@ sub Run {
             );
 
             return {
-                Message    => $Self->{LanguageObject}->Translate("Check if OTOBO version is correct."),
+                Message    => $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM version is correct."),
                 Comment    => $Self->{LanguageObject}->Translate( 'Need %s!', $Key ),
                 Successful => 0,
             };
@@ -98,7 +98,7 @@ sub Run {
             );
 
             return {
-                Message    => $Self->{LanguageObject}->Translate("Check if OTOBO and OTRS connect is possible."),
+                Message    => $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS connect is possible."),
                 Comment    => $Self->{LanguageObject}->Translate( 'Need %s!', $Key ),
                 Successful => 0,
             };
@@ -114,8 +114,8 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOFrameworkVersionCheck',
-            SubTask   => "Check required OTOBO and OTRS framework version.",
+            Task      => 'CareOnCloud ESMFrameworkVersionCheck',
+            SubTask   => "Check required CareOnCloud ESM and OTRS framework version.",
             StartTime => $Epoch,
         },
     );
@@ -144,16 +144,16 @@ sub Run {
         );
 
         return {
-            Message    => $Self->{LanguageObject}->Translate("Check if OTOBO and OTRS connect is possible."),
+            Message    => $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS connect is possible."),
             Comment    => $Self->{LanguageObject}->Translate( 'Can\'t open RELEASE file from OTRS home directory: %s!', $Param{OTRSData}->{OTRSHome} ),
             Successful => 0,
         };
     }
 
-    # Check OTOBO version
-    my $ResultOTOBO = $Self->_CheckOTOBOVersion();
+    # Check CareOnCloud ESM version
+    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloud ESMVersion();
 
-    return $ResultOTOBO unless $ResultOTOBO->{Successful};
+    return $ResultCareOnCloud ESM unless $ResultCareOnCloud ESM->{Successful};
 
     # Check OTRS version
     my $ResultOTRS = $Self->_CheckOTRSRelease(
@@ -164,18 +164,18 @@ sub Run {
 
     # Everything if correct, return success
     return {
-        Message    => $Self->{LanguageObject}->Translate("Check if OTOBO and OTRS version is correct."),
-        Comment    => join( ' ', $ResultOTOBO->{Comment}, $ResultOTRS->{Comment} ),
+        Message    => $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS version is correct."),
+        Comment    => join( ' ', $ResultCareOnCloud ESM->{Comment}, $ResultOTRS->{Comment} ),
         Successful => 1,
     };
 }
 
-sub _CheckOTOBOVersion {
+sub _CheckCareOnCloud ESMVersion {
     my ( $Self, %Param ) = @_;
 
-    my $OTOBOHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
-    my $Message   = $Self->{LanguageObject}->Translate("Check if OTOBO version is correct.");
-    my $Location  = "$OTOBOHome/RELEASE";
+    my $CareOnCloud ESMHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
+    my $Message   = $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM version is correct.");
+    my $Location  = "$CareOnCloud ESMHome/RELEASE";
 
     # check existence of the RELEASE file
     if ( !-e $Location ) {
@@ -197,15 +197,15 @@ sub _CheckOTOBOVersion {
 
         return {
             Message    => $Message,
-            Comment    => $Self->{LanguageObject}->Translate( q{Can't find %s in OTOBO RELEASE file: %s}, $Key, $Location ),
+            Comment    => $Self->{LanguageObject}->Translate( q{Can't find %s in CareOnCloud ESM RELEASE file: %s}, $Key, $Location ),
             Successful => 0,
         };
     }
 
-    if ( $ReleaseInfo->{Product} ne 'OTOBO' ) {
+    if ( $ReleaseInfo->{Product} ne 'CareOnCloud ESM' ) {
         return {
             Message    => $Message,
-            Comment    => $Self->{LanguageObject}->Translate("No OTOBO system found!"),
+            Comment    => $Self->{LanguageObject}->Translate("No CareOnCloud ESM system found!"),
             Successful => 0,
         };
     }
@@ -222,7 +222,7 @@ sub _CheckOTOBOVersion {
     # Everything if correct, return 1
     return {
         Message    => $Message,
-        Comment    => $Self->{LanguageObject}->Translate( 'OTOBO Version is correct: %s.', $ReleaseInfo->{Version} ),
+        Comment    => $Self->{LanguageObject}->Translate( 'CareOnCloud ESM Version is correct: %s.', $ReleaseInfo->{Version} ),
         Successful => 1,
     };
 }

@@ -224,7 +224,7 @@ $Self->IsNot(
 my $Success = $BackendObject->ValueSet(
     DynamicFieldConfig => $DynamicFieldConfigs{Text},
     ObjectID           => $TicketID,
-    Value              => 'otobo',
+    Value              => 'careoncloud',
     UserID             => 1,
 );
 $Self->True(
@@ -307,21 +307,21 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO customer subject',    # <OTOBO_CUSTOMER_SUBJECT>
+        Name => 'CareOnCloud ESM customer subject',    # <OTOBO_CUSTOMER_SUBJECT>
         Data => {
             From    => 'test@home.com',
-            Subject => 'otobo',
+            Subject => 'careoncloud',
         },
         RichText => 0,
         Template => 'Test <OTOBO_CUSTOMER_SUBJECT>',
-        Result   => 'Test otobo',
+        Result   => 'Test careoncloud',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO customer subject 3 letters',    # <OTOBO_CUSTOMER_SUBJECT[20]>
+        Name => 'CareOnCloud ESM customer subject 3 letters',    # <OTOBO_CUSTOMER_SUBJECT[20]>
         Data => {
             From    => 'test@home.com',
-            Subject => 'otobo',
+            Subject => 'careoncloud',
         },
         RichText => 0,
         Template => 'Test <OTOBO_CUSTOMER_SUBJECT[3]>',
@@ -329,18 +329,18 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO customer subject 20 letters + garbarge',    # <OTOBO_CUSTOMER_SUBJECT[20]>
+        Name => 'CareOnCloud ESM customer subject 20 letters + garbarge',    # <OTOBO_CUSTOMER_SUBJECT[20]>
         Data => {
             From    => 'test@home.com',
-            Subject => 'RE: otobo',
+            Subject => 'RE: careoncloud',
         },
         RichText => 0,
         Template => 'Test <OTOBO_CUSTOMER_SUBJECT[20]>',
-        Result   => 'Test otobo',
+        Result   => 'Test careoncloud',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO responsible firstname',                     # <OTOBO_RESPONSIBLE_UserFirstname>
+        Name => 'CareOnCloud ESM responsible firstname',                     # <OTOBO_RESPONSIBLE_UserFirstname>
         Data => {
             From => 'test@home.com',
         },
@@ -360,7 +360,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO responsible password (masked)',
+        Name => 'CareOnCloud ESM responsible password (masked)',
         Data => {
             From => 'test@home.com',
         },
@@ -370,7 +370,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO responsible secrets (masked)',
+        Name => 'CareOnCloud ESM responsible secrets (masked)',
         Data => {
             From => 'test@home.com',
         },
@@ -380,7 +380,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO owner firstname',    # <OTOBO_OWNER_*>
+        Name => 'CareOnCloud ESM owner firstname',    # <OTOBO_OWNER_*>
         Data => {
             From => 'test@home.com',
         },
@@ -400,7 +400,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO owner password (masked)',
+        Name => 'CareOnCloud ESM owner password (masked)',
         Data => {
             From => 'test@home.com',
         },
@@ -410,7 +410,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO owner secrets (masked)',
+        Name => 'CareOnCloud ESM owner secrets (masked)',
         Data => {
             From => 'test@home.com',
         },
@@ -420,7 +420,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO current firstname',    # <OTOBO_CURRENT_*>
+        Name => 'CareOnCloud ESM current firstname',    # <OTOBO_CURRENT_*>
         Data => {
             From => 'test@home.com',
         },
@@ -430,7 +430,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO current password (masked)',
+        Name => 'CareOnCloud ESM current password (masked)',
         Data => {
             From => 'test@home.com',
         },
@@ -440,7 +440,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO current secrets (masked)',
+        Name => 'CareOnCloud ESM current secrets (masked)',
         Data => {
             From => 'test@home.com',
         },
@@ -450,7 +450,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO ticket ticketid',    # <OTOBO_TICKET_*>
+        Name => 'CareOnCloud ESM ticket ticketid',    # <OTOBO_TICKET_*>
         Data => {
             From => 'test@home.com',
         },
@@ -460,27 +460,27 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO dynamic field (text)',    # <OTOBO_TICKET_DynamicField_*>
+        Name => 'CareOnCloud ESM dynamic field (text)',    # <OTOBO_TICKET_DynamicField_*>
         Data => {
             From => 'test@home.com',
         },
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_DynamicField_Replace1password' . $RandomID . '>',
-        Result   => 'Test otobo',
+        Result   => 'Test careoncloud',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO dynamic field value (text)',    # <OTOBO_TICKET_DynamicField_*_Value>
+        Name => 'CareOnCloud ESM dynamic field value (text)',    # <OTOBO_TICKET_DynamicField_*_Value>
         Data => {
             From => 'test@home.com',
         },
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_DynamicField_Replace1password' . $RandomID . '_Value>',
-        Result   => 'Test otobo',
+        Result   => 'Test careoncloud',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO dynamic field (Dropdown)',      # <OTOBO_TICKET_DynamicField_*>
+        Name => 'CareOnCloud ESM dynamic field (Dropdown)',      # <OTOBO_TICKET_DynamicField_*>
         Data => {
             From => 'test@home.com',
         },
@@ -490,7 +490,7 @@ my @Tests = (
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO dynamic field value (Dropdown)',    # <OTOBO_TICKET_DynamicField_*_Value>
+        Name => 'CareOnCloud ESM dynamic field value (Dropdown)',    # <OTOBO_TICKET_DynamicField_*_Value>
         Data => {
             From => 'test@home.com',
         },
@@ -500,7 +500,7 @@ my @Tests = (
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO config value',                  # <OTOBO_CONFIG_*>
+        Name     => 'CareOnCloud ESM config value',                  # <OTOBO_CONFIG_*>
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_CONFIG_DefaultTheme>',
@@ -508,7 +508,7 @@ my @Tests = (
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO secret config values, must be masked (even unknown settings)',
+        Name     => 'CareOnCloud ESM secret config values, must be masked (even unknown settings)',
         Data     => {},
         RichText => 0,
         Template =>
@@ -517,7 +517,7 @@ my @Tests = (
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO secret config value and normal config value',
+        Name     => 'CareOnCloud ESM secret config value and normal config value',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_CONFIG_DatabasePw> and <OTOBO_CONFIG_DefaultTheme>',
@@ -525,7 +525,7 @@ my @Tests = (
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO secret config values with numbers',
+        Name     => 'CareOnCloud ESM secret config values with numbers',
         Data     => {},
         RichText => 0,
         Template =>
@@ -570,7 +570,7 @@ mailto-Link <a href="mailto:skywalker@otobo.org?body=From%3A%20test%40home.com">
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO AGENT + CUSTOMER FROM',    # <OTOBO_TICKET_DynamicField_*_Value>
+        Name => 'CareOnCloud ESM AGENT + CUSTOMER FROM',    # <OTOBO_TICKET_DynamicField_*_Value>
         Data => {
             From => 'testcustomer@home.com',
         },
@@ -584,7 +584,7 @@ mailto-Link <a href="mailto:skywalker@otobo.org?body=From%3A%20test%40home.com">
     {
         Line => __LINE__,
         Name =>
-            'OTOBO AGENT + CUSTOMER BODY',    # this is an special case, it sets the Body as it is since is the Data param
+            'CareOnCloud ESM AGENT + CUSTOMER BODY',    # this is an special case, it sets the Body as it is since is the Data param
         Data => {
             Body => "Line1\nLine2\nLine3",
         },
@@ -598,7 +598,7 @@ mailto-Link <a href="mailto:skywalker@otobo.org?body=From%3A%20test%40home.com">
     {
         # this is an special case, it sets the Body as it is since is the Data param
         Line => __LINE__,
-        Name => 'OTOBO AGENT + CUSTOMER BODY With RichText enabled',
+        Name => 'CareOnCloud ESM AGENT + CUSTOMER BODY With RichText enabled',
         Data => {
             Body => "Line1\nLine2\nLine3",
         },
@@ -615,7 +615,7 @@ Line3",
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO AGENT + CUSTOMER BODY[2]',
+        Name => 'CareOnCloud ESM AGENT + CUSTOMER BODY[2]',
         Data => {
             Body => "Line1\nLine2\nLine3",
         },
@@ -628,7 +628,7 @@ Line3",
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO AGENT + CUSTOMER BODY[7] with RichText enabled',
+        Name => 'CareOnCloud ESM AGENT + CUSTOMER BODY[7] with RichText enabled',
         Data => {
             Body => qq{CustomerLine1\nLine2\nLine3\nLine4\nLine5\nLine6\nLine7\nLine8\nLine9},
         },
@@ -654,7 +654,7 @@ Line7</blockquote>',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO AGENT + CUSTOMER EMAIL',    # EMAIL without [ ] does not exists
+        Name => 'CareOnCloud ESM AGENT + CUSTOMER EMAIL',    # EMAIL without [ ] does not exists
         Data => {
             Body => "Line1\nLine2\nLine3",
         },
@@ -667,7 +667,7 @@ Line7</blockquote>',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO AGENT + CUSTOMER EMAIL[2]',
+        Name => 'CareOnCloud ESM AGENT + CUSTOMER EMAIL[2]',
         Data => {
             Body => "Line1\nLine2\nLine3",
         },
@@ -680,7 +680,7 @@ Line7</blockquote>',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO COMMENT',
+        Name => 'CareOnCloud ESM COMMENT',
         Data => {
             Body => "Line1\nLine2\nLine3",
         },
@@ -691,7 +691,7 @@ Line7</blockquote>',
 
     {
         Line => __LINE__,
-        Name => 'OTOBO COMMENT[2]',
+        Name => 'CareOnCloud ESM COMMENT[2]',
         Data => {
             Body => "Line1\nLine2\nLine3",
         },
@@ -701,7 +701,7 @@ Line7</blockquote>',
     },
     {
         Line => __LINE__,
-        Name => 'OTOBO AGENT + CUSTOMER SUBJECT[2]',
+        Name => 'CareOnCloud ESM AGENT + CUSTOMER SUBJECT[2]',
         Data => {
             Subject => '0123456789'
         },
@@ -714,7 +714,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO CUSTOMER REALNAME',
+        Name     => 'CareOnCloud ESM CUSTOMER REALNAME',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_CUSTOMER_REALNAME>',
@@ -722,7 +722,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO CUSTOMER DATA UserFirstname',
+        Name     => 'CareOnCloud ESM CUSTOMER DATA UserFirstname',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_CUSTOMER_DATA_UserFirstname>',
@@ -730,7 +730,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO CUSTOMER DATA UserPassword (masked)',
+        Name     => 'CareOnCloud ESM CUSTOMER DATA UserPassword (masked)',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_CUSTOMER_DATA_UserPassword>',
@@ -738,7 +738,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO CUSTOMER DATA secret (masked)',
+        Name     => 'CareOnCloud ESM CUSTOMER DATA secret (masked)',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_CUSTOMER_DATA_UserGoogleAuthenticatorSecretKey> <OTOBO_CUSTOMER_DATA_UserToken>',
@@ -746,7 +746,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_NOTIFICATION_RECIPIENT_UserFullname>',
+        Name     => 'CareOnCloud ESM <OTOBO_NOTIFICATION_RECIPIENT_UserFullname>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_NOTIFICATION_RECIPIENT_UserFullname> <OTOBO_NOTIFICATION_RECIPIENT_nonexisting>',
@@ -754,7 +754,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_EscalationResponseTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_EscalationResponseTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_EscalationResponseTime>',
@@ -762,7 +762,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_EscalationUpdateTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_EscalationUpdateTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_EscalationUpdateTime>',
@@ -770,7 +770,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_EscalationSolutionTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_EscalationSolutionTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_EscalationSolutionTime>',
@@ -778,7 +778,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_EscalationTimeWorkingTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_EscalationTimeWorkingTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_EscalationTimeWorkingTime>',
@@ -786,7 +786,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_EscalationTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_EscalationTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_EscalationTime>',
@@ -794,7 +794,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_FirstResponseTimeWorkingTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_FirstResponseTimeWorkingTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_FirstResponseTimeWorkingTime>',
@@ -802,7 +802,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_FirstResponseTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_FirstResponseTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_FirstResponseTime>',
@@ -810,7 +810,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_UpdateTimeWorkingTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_UpdateTimeWorkingTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_UpdateTimeWorkingTime>',
@@ -818,7 +818,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_UpdateTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_UpdateTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_UpdateTime>',
@@ -826,7 +826,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_SolutionTimeWorkingTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_SolutionTimeWorkingTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_SolutionTimeWorkingTime>',
@@ -834,7 +834,7 @@ Line7</blockquote>',
     },
     {
         Line     => __LINE__,
-        Name     => 'OTOBO <OTOBO_TICKET_SolutionTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_SolutionTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_SolutionTime>',
@@ -889,14 +889,14 @@ $Self->True(
 # Check 'UntilTime' and 'RealTillTimeNotUsed' tags (see bug#8301).
 @Tests = (
     {
-        Name     => 'OTOBO <OTOBO_TICKET_UntilTime>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_UntilTime>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_UntilTime>',
         Result   => "Test 22 h 55 m",
     },
     {
-        Name     => 'OTOBO <OTOBO_TICKET_RealTillTimeNotUsed>',
+        Name     => 'CareOnCloud ESM <OTOBO_TICKET_RealTillTimeNotUsed>',
         Data     => {},
         RichText => 0,
         Template => 'Test <OTOBO_TICKET_RealTillTimeNotUsed>',

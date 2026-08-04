@@ -138,7 +138,7 @@ $Self->False(
 $Self->True(
     (
         $Result
-            =~ m{Following settings were not fixed:.*UnitTest::DummyModule::$RandomID.*Please use console command \(bin/otobo\.Console\.pl Admin::Config::Update --help\) or GUI to fix them\.}ms
+            =~ m{Following settings were not fixed:.*UnitTest::DummyModule::$RandomID.*Please use console command \(bin/careoncloud\.Console\.pl Admin::Config::Update --help\) or GUI to fix them\.}ms
     ) // 0,
     'Check expected command output'
 );

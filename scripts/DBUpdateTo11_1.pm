@@ -34,7 +34,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-scripts::DBUpdateTo11_1 - Perform system upgrade from OTOBO 11.0 to 11.1
+scripts::DBUpdateTo11_1 - Perform system upgrade from CareOnCloud ESM 11.0 to 11.1
 
 =head1 PUBLIC INTERFACE
 

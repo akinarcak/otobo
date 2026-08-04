@@ -28,7 +28,7 @@
 
 #--------------------------------------------------------#
 # The openssl command has to be installed and accessible
-# for the otobo user.
-# If the otobo user cannot find openssl, try:
+# for the careoncloud user.
+# If the careoncloud user cannot find openssl, try:
 #  plugin "/path/to/openssl s_client -connect %h:%p"
 #--------------------------------------------------------#

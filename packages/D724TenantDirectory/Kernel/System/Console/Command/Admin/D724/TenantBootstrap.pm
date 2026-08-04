@@ -18,7 +18,7 @@ sub Configure {
     $Self->Description('Create the first CareOnCloud tenant and its initial tenant administrator.');
     $Self->AddOption( Name => 'tenant-id', Description => 'Stable tenant identifier.', Required => 1, HasValue => 1, ValueRegex => qr{[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}}smx );
     $Self->AddOption( Name => 'name', Description => 'Tenant display name.', Required => 1, HasValue => 1, ValueRegex => qr{.+}smx );
-    $Self->AddOption( Name => 'admin-user-id', Description => 'Existing OTOBO agent user ID.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
+    $Self->AddOption( Name => 'admin-user-id', Description => 'Existing CareOnCloud ESM agent user ID.', Required => 1, HasValue => 1, ValueRegex => qr{[1-9][0-9]*}smx );
     $Self->AddOption( Name => 'confirm-bootstrap', Description => 'Explicitly confirm the one-time bootstrap.', Required => 1, HasValue => 0 );
     return;
 }

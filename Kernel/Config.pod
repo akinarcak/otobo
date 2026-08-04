@@ -74,6 +74,6 @@ The file names and the file modification timestamps constitute the input for the
 
 Whenever a file is changed, added or removed, this checksum will change.
 
-NOTE: This method is currently not used in core OTOBO.
+NOTE: This method is currently not used in core CareOnCloud ESM.
 
 =cut

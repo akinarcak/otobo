@@ -41,7 +41,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Upgrade all OTOBO packages to the latest versions from the on-line repositories.');
+    $Self->Description('Upgrade all CareOnCloud ESM packages to the latest versions from the on-line repositories.');
     $Self->AddOption(
         Name        => 'force',
         Description => 'Force package upgrade/installation even if validation fails.',

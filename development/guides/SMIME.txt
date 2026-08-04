@@ -29,7 +29,7 @@ The pass phrases are all the string 'secret'. That phrase is stored in file like
 are needed later in the test scripts. Note that the test scripts do not chomp the read in password files. Therefore the
 passphrase must be stored without a trailing newline.
 
-    > cd /opt/otobo/scripts/test/sample/SMIME
+    > cd /opt/careoncloud/scripts/test/sample/SMIME
     > echo -n "secret" > SMIMECAPrivateKeyPass-Johanneum.crt
 
 ## Root Certificate Authority SMIMECACertificate-Johanneum
@@ -40,7 +40,7 @@ We create the certificate and the private key in a single step. The password for
 We use 3653 days for 10 years, including the 3 leap days. By specifying -keyout we request that a private key
 is generated. CA=TRUE is set automatically.
 
-    > cd /opt/otobo/scripts/test/sample/SMIME
+    > cd /opt/careoncloud/scripts/test/sample/SMIME
     > openssl req -x509 -sha512  -days 3650 -out SMIMECACertificate-Johanneum.crt -keyout SMIMECAPrivateKey-Johanneum.pem
 
 The fingerprint is included in scripts/test/SMIME.t:
@@ -129,7 +129,7 @@ manually.
 
 
 
-# Documentation based on the old version as imported in OTOBO 10.0.1
+# Documentation based on the old version as imported in CareOnCloud ESM 10.0.1
 
 NOTE: This uses a different approach as laid out above. But let's keep it for reference.
 

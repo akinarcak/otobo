@@ -1,6 +1,6 @@
 # D724 ESM Development Runtime
 
-This profile builds the current checkout as an OTOBO `otobo-web` image and starts MariaDB, Redis, Elasticsearch, the web process and the daemon. It binds HTTP only to localhost by default. A test server may set `D724_BIND_ADDRESS` to its private Tailscale address; never use `0.0.0.0` without TLS and an explicit firewall policy.
+This profile builds the current checkout as a CareOnCloud ESM `otobo-web` image and starts MariaDB, Redis, Elasticsearch, the web process and the daemon. It binds HTTP only to localhost by default. A test server may set `D724_BIND_ADDRESS` to its private Tailscale address; never use `0.0.0.0` without TLS and an explicit firewall policy.
 
 ## Requirements
 
@@ -20,7 +20,7 @@ Copy-Item .env.example .env
 ./Invoke-D724Dev.ps1 Smoke
 ```
 
-Open `http://127.0.0.1:8080/`. `Setup` uses OTOBO's development-only `quick_setup.pl`; it must never be used as a production provisioning mechanism.
+Open `http://127.0.0.1:8080/`. `Setup` uses CareOnCloud ESM's development-only `quick_setup.pl`; it must never be used as a production provisioning mechanism.
 The helper immediately rotates both development default agent passwords and writes the generated admin login to `.runtime/admin-credentials.env`. This file is ignored by Git and must remain private.
 
 Elasticsearch is optional because its image and memory footprint are substantial. Enable it consistently for `Up`, `Setup`, and later commands when full-text search is required:
@@ -33,7 +33,7 @@ Elasticsearch is optional because its image and memory footprint are substantial
 Search runtime kurulumu sonrasinda `elasticsearch-webservice.yml` dosyasini ve
 `Configure-Elasticsearch.pl` scriptini web container'ina kopyalayin. Konfigurator,
 yalniz `http://elastic:9200` private servis adresini kabul eder ve var olan invalid
-OTOBO kaydini idempotent bicimde etkinlestirir. Ardindan su resmi kapilari calistirin:
+CareOnCloud ESM kaydini idempotent bicimde etkinlestirir. Ardindan su resmi kapilari calistirin:
 
 ```text
 bin/careoncloud.Console.pl Admin::Config::Update --setting-name Elasticsearch::Active --value 1 --valid 1
@@ -64,11 +64,11 @@ standart Bearer auth kullanir. Kurulum ve kabul ayrintilari
 ## Tenant-safe demo catalog
 
 After installing `D724Catalog`, `D724Request`, and `D724Commitment`, copy `Seed-D724Demo.pl` into the web container and
-run it as the `otobo` user with `D724_DEMO_CUSTOMER_PASSWORD` supplied only through
+run it as the `careoncloud` user with `D724_DEMO_CUSTOMER_PASSWORD` supplied only through
 the process environment. The script is idempotent and creates customer login
 `demo.customer`, tenant `d724-demo`, a sample laptop approval/fulfillment form, and
 an eight-business-hour resolution policy with a 75% warning threshold. Never commit
-or print the supplied password. The Perl invocation must include OTOBO's bundled
+or print the supplied password. The Perl invocation must include CareOnCloud ESM's bundled
 libraries: `perl -I. -IKernel/cpan-lib -ICustom /tmp/Seed-D724Demo.pl`.
 
 `Down` preserves database and application volumes. Destructive cleanup is explicit:

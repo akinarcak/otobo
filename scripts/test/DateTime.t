@@ -26,7 +26,7 @@ use utf8;
 use DateTime ();
 use Test2::V0;
 
-# OTOBO modueles
+# CareOnCloud ESM modueles
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::System::DateTime ();
 
@@ -43,7 +43,7 @@ my $Values = $DateTimeObject->Get;
 
 is(
     $Values->{TimeZone},
-    $DateTimeObject->OTOBOTimeZoneGet(),
+    $DateTimeObject->CareOnCloud ESMTimeZoneGet(),
     'Time zone of DateTime object must match the one configured for data storage.'
 );
 
@@ -78,7 +78,7 @@ is(
     'Time zone of DateTime object must match the one configured for data storage.'
 );
 
-# Test for ToOTOBODateTimeZone
+# Test for ToCareOnCloud ESMDateTimeZone
 $DateTimeObject = $Kernel::OM->Create(
     'Kernel::System::DateTime',
     ObjectParams => {
@@ -92,17 +92,17 @@ $DateTimeObject = $Kernel::OM->Create(
     },
 );
 
-my $OriginalOTOBOTimeZone = $DateTimeObject->OTOBOTimeZoneGet();
+my $OriginalCareOnCloud ESMTimeZone = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
 
 # set specific time zone for data storage
 $ConfigObject->Set(
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloud ESMTimeZone',
     Value => 'UTC',
 );
 
-my $OTOBOTimeZone = $DateTimeObject->OTOBOTimeZoneGet();
+my $CareOnCloud ESMTimeZone = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
 
-$DateTimeObject->ToOTOBOTimeZone();
+$DateTimeObject->ToCareOnCloud ESMTimeZone();
 my $DateTimeValues         = $DateTimeObject->Get();
 my $ExpectedDateTimeValues = {
     Year      => 2016,
@@ -120,7 +120,7 @@ my $ExpectedDateTimeValues = {
 is(
     $DateTimeValues,
     $ExpectedDateTimeValues,
-    'Date and time after call to ToOTOBOTimeZone must match expected values.'
+    'Date and time after call to ToCareOnCloud ESMTimeZone must match expected values.'
 );
 
 #
@@ -337,7 +337,7 @@ for my $TestConfig (@DateTimeTestConfigs) {
 
             my $ExpectedValue = $TestConfig->{Params}->{$ValueName} || 0;
             if ( !$ExpectedValue && $ValueName eq 'TimeZone' ) {
-                $ExpectedValue = $DateTimeObject->OTOBOTimeZoneGet();
+                $ExpectedValue = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
             }
 
             if ( !defined $Values->{$ValueName} || $Values->{$ValueName} ne $ExpectedValue ) {
@@ -367,7 +367,7 @@ my @StringTestConfigs = (
             Hour      => 14,
             Minute    => 59,
             Second    => 0,
-            TimeZone  => $OTOBOTimeZone,
+            TimeZone  => $CareOnCloud ESMTimeZone,
         },
     },
     {
@@ -384,7 +384,7 @@ my @StringTestConfigs = (
             Hour      => 0,
             Minute    => 7,
             Second    => 45,
-            TimeZone  => $OTOBOTimeZone,
+            TimeZone  => $CareOnCloud ESMTimeZone,
         },
     },
     {

@@ -59,7 +59,7 @@ Functions for handling form drafts.
 
 =head2 new()
 
-create param object. Do not use it directly, instead use it via the OTOBO object manager.
+create param object. Do not use it directly, instead use it via the CareOnCloud ESM object manager.
 
 The regular usage in the web interface modules, e.g. in L<Kernel::System::Web::InterfaceAgent>.
 
@@ -221,7 +221,7 @@ The parameters B<POSTDATA>, B<PUTDATA>, and B<PATCHDATA> are a special case.
 If the parameter corresponds to the request method, then the body of the request
 is returned.
 
-Note: the behavior for B<POSTDATA>, B<PUTDATA>, and B<PATCHDATA> diverges from OTOBO 10.1.x.
+Note: the behavior for B<POSTDATA>, B<PUTDATA>, and B<PATCHDATA> diverges from CareOnCloud ESM 10.1.x.
 in previous versions these special parameters were only set when the body parameters were
 not parsed.
 
@@ -329,7 +329,7 @@ Called URL: index.pl?Action=AdminSystemConfiguration;Subaction=Save;Name=Config:
     print join ' :: ', @ParamNames;
     #prints Action :: Subaction :: Name
 
-Attention: In OTOBO 10.1.x URL and body params were not merged.
+Attention: In CareOnCloud ESM 10.1.x URL and body params were not merged.
 
 =cut
 
@@ -974,7 +974,7 @@ sub SaveFormDraft {
     return unless $MetaParams{Action};
 
     # Determine session name param for exclusion.
-    # In previous version of OTOBO this was relevant
+    # In previous version of CareOnCloud ESM this was relevant
     # when passing the session ID in the URL, SessionUseCookie = 0, was still supported.
     my $SessionName = $Kernel::OM->Get('Kernel::Config')->Get('SessionName') || 'SessionID';
 

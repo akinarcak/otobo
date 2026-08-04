@@ -68,7 +68,7 @@ for my $SQL (@SQL) {
 }
 
 my @SpecialCharacters = qw( - _ . : ; ' " \ [ ] { } ( ) < > ? ! $ % & / + * = ' ^ | ö ス);
-push @SpecialCharacters, ( ',', '#', 'otobo test', 'otobo_test' );
+push @SpecialCharacters, ( ',', '#', 'careoncloud test', 'otobo_test' );
 my $Counter = 0;
 
 for my $Character (@SpecialCharacters) {
@@ -177,7 +177,7 @@ for my $Character (@SpecialCharacters) {
 {
 
     # select like value (with space)
-    my $Character     = 'otobo test';
+    my $Character     = 'careoncloud test';
     my $CharacterLike = $DBObject->Quote( $Character, 'Like' );
     my $SQL           = "SELECT COUNT(name_b) FROM test_d WHERE name_b LIKE ?";
 

@@ -28,11 +28,11 @@ our $ObjectManagerDisabled = 1;
 
 =head1 NAME
 
-Kernel::MinimalPerlVersion - declare the minimal version of Perl for OTOBO
+Kernel::MinimalPerlVersion - declare the minimal version of Perl for CareOnCloud ESM
 
 =head1 DESCRIPTION
 
-This module only requires a minimal version of Perl for OTOBO.
+This module only requires a minimal version of Perl for CareOnCloud ESM.
 
 =cut
 

@@ -157,8 +157,8 @@ sub CustomerUserAddressBookListShow {
     }
 
     # build html content
-    # As of OTOBO 10.0.x some content was printed early.
-    # This has changed in OTOBO 10.1.1.
+    # As of CareOnCloud ESM 10.0.x some content was printed early.
+    # This has changed in CareOnCloud ESM 10.1.1.
     my $Output = $Self->Output(
         TemplateFile => 'AgentCustomerUserAddressBookOverviewNavBar',
         Data         => {%Param},

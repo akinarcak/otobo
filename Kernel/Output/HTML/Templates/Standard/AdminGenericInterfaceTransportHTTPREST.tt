@@ -101,7 +101,7 @@
                                 <div id="MaxLengthError" class="TooltipErrorMessage"><p>[% Translate("This field should be an integer number.") | html %]</p></div>
                                 <div id="MaxLengthServerError" class="TooltipErrorMessage"><p>[% Translate(Data.MaxLengthServerErrorMessage) | html %]</p></div>
                                 <p class="FieldExplanation">
-                                    [% Translate("Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.") | html %]
+                                    [% Translate("Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.") | html %]
                                 </p>
                             </div>
                             <div class="Clear"></div>
@@ -334,7 +334,7 @@
                                         <p class="FieldExplanation">
                                             [% Translate("The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).") | html %]
                                             <br/>
-                                            [% Translate("e.g. /opt/otobo/var/certificates/SOAP/certificate.pem") | html %]
+                                            [% Translate("e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem") | html %]
                                         </p>
                                     </div>
                                     <div class="Clear"></div>
@@ -346,7 +346,7 @@
                                         <p class="FieldExplanation">
                                             [% Translate("The full path and name of the SSL client certificate key file (if not already included in certificate file).") | html %]
                                             <br/>
-                                            [% Translate("e.g. /opt/otobo/var/certificates/SOAP/key.pem") | html %]
+                                            [% Translate("e.g. /opt/careoncloud/var/certificates/SOAP/key.pem") | html %]
                                         </p>
                                     </div>
                                     <div class="Clear"></div>
@@ -367,7 +367,7 @@
                                         <p class="FieldExplanation">
                                             [% Translate("The full path and name of the certification authority certificate file that validates SSL certificate.") | html %]
                                             <br/>
-                                            [% Translate("e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem") | html %]
+                                            [% Translate("e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem") | html %]
                                         </p>
                                     </div>
                                     <div class="Clear"></div>
@@ -379,7 +379,7 @@
                                         <p class="FieldExplanation">
                                             [% Translate("The full path of the certification authority directory where the CA certificates are stored in the file system.") | html %]
                                             <br/>
-                                            [% Translate("e.g. /opt/otobo/var/certificates/SOAP/CA") | html %]
+                                            [% Translate("e.g. /opt/careoncloud/var/certificates/SOAP/CA") | html %]
                                         </p>
                                     </div>
                                     <div class="Clear"></div>
@@ -449,7 +449,7 @@
 
 [% RenderBlockEnd("MultipartBlock") %]
 
-# added for OTOBOTicketInvoker
+# added for CareOnCloud ESMTicketInvoker
 
 [% IF Data.CommunicationType == 'Requester' %]
 [% USE HeadersTitleCommon    = String(Translate("Additional request headers (all invokers)")) %]

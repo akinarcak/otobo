@@ -14,7 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-#SYS_HOME=/opt/otobo
+#SYS_HOME=/opt/careoncloud
 SYS_HOME=$HOME
 
 import DEFAULT
@@ -24,7 +24,7 @@ MONTHFOLDER=`date +%Y-%m`
 YEARFOLDER=`date +%Y`
 
 
-# Remove all X-OTOBO Header (allow this only for trusted email)
+# Remove all X-CareOnCloud ESM Header (allow this only for trusted email)
 # e. g. from *@example.com
 
 if (/^To:.*@example.com/)
@@ -70,7 +70,7 @@ cc ${SYS_HOME}/var/INBOX.Backup.${MONTHFOLDER}
 
 # Pipe all email into the PostMaster process.
 
-xfilter "${SYS_HOME}/bin/otobo.Console.pl Maint::PostMaster::Read"
+xfilter "${SYS_HOME}/bin/careoncloud.Console.pl Maint::PostMaster::Read"
 
 
 # spool all the rest (which the console command Maint::PostMaster::Read can't process!)

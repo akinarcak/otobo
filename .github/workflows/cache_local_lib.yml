@@ -55,7 +55,7 @@ jobs:
                 path: local
                 key: ${{ runner.os }}-${{steps.get-sha.outputs.result}}-local_lib-20260716a
 
-            - name: 'check out the relevant OTOBO branch'
+            - name: 'check out the relevant CareOnCloud ESM branch'
               if: steps.cache_local_lib.outputs.cache-hit != 'true'
               uses: actions/checkout@v6
 

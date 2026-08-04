@@ -21,9 +21,9 @@ Aşağıdaki kurallar zorunludur:
 7. Parola, token, private key, `.env`, müşteri verisi veya başka secret'ları dokümana ve Git'e yazma.
 8. Her önemli değişiklikten önce mevcut Git durumunu, aktif dalı, HEAD commit'ini ve çalışma ağacını kaydet.
 9. Mevcut ürün kapsamını büyütmeden önce güvenlik, test, release ve operasyon eksiklerini kapat.
-10. OTOBO'nun kaynak kökeni GitHub, README, NOTICE, telif ve GPL alanlarında korunmalıdır; fakat son kullanıcı ürünü ve marka deneyiminde OTOBO görünmemelidir.
+10. CareOnCloud ESM'nun kaynak kökeni GitHub, README, NOTICE, telif ve GPL alanlarında korunmalıdır; fakat son kullanıcı ürünü ve marka deneyiminde CareOnCloud ESM görünmemelidir.
 11. GPL-3.0 lisansının korunması bir sorun değildir ve ürünün açık kaynak kalması hedeflenmektedir.
-12. CareOnCloud'un uzun vadeli hedefi OTOBO markasından ve runtime bağımlılığından aşamalı olarak ayrılmaktır; bu ayrışma adapter ve domain sınırlarıyla yapılmalıdır.
+12. CareOnCloud'un uzun vadeli hedefi CareOnCloud ESM markasından ve runtime bağımlılığından aşamalı olarak ayrılmaktır; bu ayrışma adapter ve domain sınırlarıyla yapılmalıdır.
 13. Kullanıcı tarafından açıkça istenmedikçe canlı sunucuda yıkıcı işlem yapma.
 14. Belirsizlik varsa tahmin yürütmek yerine eksik kanıtı açıkça belirt.
 15. Her çalışma sonunda `STATUS.md` veya eşdeğer durum kaydını güncelle; yapılan iş, test sonucu, açık risk ve geri dönüş adımını yaz.
@@ -59,23 +59,23 @@ Türkçe karşılığı:
 
 > CareOnCloud ESM, başlangıçta Rother OSS GmbH tarafından geliştirilen GPL-3.0 lisanslı OTOBO projesinden fork edilmiştir. CareOnCloud ESM bağımsız olarak geliştirilmektedir ve Rother OSS GmbH ile resmi bir bağlantısı veya onayı bulunmamaktadır.
 
-OTOBO'nun telif bildirimleri, geçmiş katkıcıları ve GPL şartları silinmemelidir.
+CareOnCloud ESM'nun telif bildirimleri, geçmiş katkıcıları ve GPL şartları silinmemelidir.
 
 ## 1.3 Marka hedefi
 
-Nihai ürünün kullanıcıya görünen yüzünde aşağıdaki OTOBO unsurları bulunmamalıdır:
+Nihai ürünün kullanıcıya görünen yüzünde aşağıdaki CareOnCloud ESM unsurları bulunmamalıdır:
 
-- OTOBO adı ve logosu
-- OTOBO favicon ve görselleri
-- OTOBO markalı giriş, müşteri, agent ve admin ekranları
-- OTOBO footer ve yardım bağlantıları
-- OTOBO markalı e-posta şablonları
-- Kullanıcıya görünen `/otobo/` yolları
-- OTOBO dokümantasyon bağlantıları
-- OTOBO'ya özel ürün terminolojisi
-- OTOBO adlı DB, container, volume, cookie, header ve runtime path'leri
+- CareOnCloud ESM adı ve logosu
+- CareOnCloud ESM favicon ve görselleri
+- CareOnCloud ESM markalı giriş, müşteri, agent ve admin ekranları
+- CareOnCloud ESM footer ve yardım bağlantıları
+- CareOnCloud ESM markalı e-posta şablonları
+- Kullanıcıya görünen `/careoncloud/` yolları
+- CareOnCloud ESM dokümantasyon bağlantıları
+- CareOnCloud ESM'ya özel ürün terminolojisi
+- CareOnCloud ESM adlı DB, container, volume, cookie, header ve runtime path'leri
 
-OTOBO kökeni yalnızca aşağıdaki alanlarda kalabilir:
+CareOnCloud ESM kökeni yalnızca aşağıdaki alanlarda kalabilir:
 
 - GitHub repository geçmişi
 - README
@@ -289,7 +289,7 @@ Müşteri Portalı / Agent UI / Admin UI
                   |
           Sürümlü API ve Web Katmanı
                   |
-       OTOBO tabanlı çekirdek + D724 paketleri
+       CareOnCloud ESM tabanlı çekirdek + D724 paketleri
           |           |             |
        MariaDB     Redis Cache    Event/Outbox
           |                         |
@@ -316,7 +316,7 @@ Kanonik CareOnCloud hedef adları:
 
 ## 4.2 Uzun vadeli mimari hedef
 
-OTOBO kalıcı ürün markası veya nihai runtime hedefi değildir. Başlangıç ve geçiş çekirdeğidir.
+CareOnCloud ESM kalıcı ürün markası veya nihai runtime hedefi değildir. Başlangıç ve geçiş çekirdeğidir.
 
 Hedef yapı:
 
@@ -329,19 +329,19 @@ CareOnCloud Portal / Agent UI / Admin UI
                       |
         ┌─────────────┴─────────────┐
         |                           |
-   OTOBO Adapter              Native Adapter
+   CareOnCloud ESM Adapter              Native Adapter
         |                           |
- Geçici OTOBO Core          CareOnCloud Native Core
+ Geçici CareOnCloud ESM Core          CareOnCloud Native Core
 ```
 
 Yeni özellik geliştirme kuralı:
 
 1. Önce CareOnCloud domain sözleşmesi tanımlanır.
-2. OTOBO erişimi adapter içinde yapılır.
+2. CareOnCloud ESM erişimi adapter içinde yapılır.
 3. Ürün modülü yalnızca CareOnCloud sözleşmesine bağımlı olur.
-4. OTOBO tablosuna veya iç API'sine doğrudan erişim istisnadır.
+4. CareOnCloud ESM tablosuna veya iç API'sine doğrudan erişim istisnadır.
 5. Her doğrudan bağımlılık için ADR ve kaldırma planı hazırlanır.
-6. Zamanla `OtoboAdapter`, `NativeAdapter` ile değiştirilir.
+6. Zamanla `CareOnCloudAdapter`, `NativeAdapter` ile değiştirilir.
 
 Ayrışma sırası:
 
@@ -355,9 +355,9 @@ Ayrışma sırası:
 8. Search ve knowledge
 9. Ticket/case
 10. E-posta işleme
-11. OTOBO DB ve runtime bağımlılığının kaldırılması
+11. CareOnCloud ESM DB ve runtime bağımlılığının kaldırılması
 
-Ticket ve e-posta en sona bırakılmalıdır; OTOBO'nun en olgun ve karmaşık alanlarıdır.
+Ticket ve e-posta en sona bırakılmalıdır; CareOnCloud ESM'nun en olgun ve karmaşık alanlarıdır.
 
 ---
 
@@ -431,7 +431,7 @@ Bunlar yine de “production ready” değildir.
 - Kurulum/upgrade sihirbazı
 - OpenTelemetry tam dağıtımı
 - Native CareOnCloud ticket core
-- OTOBO runtime bağımsızlığı
+- CareOnCloud ESM runtime bağımsızlığı
 
 ---
 
@@ -503,7 +503,7 @@ Rollback de yalnızca `$OwnTransaction` doğruysa yapılmalıdır.
 
 ## 7.2 Shared-schema tenant izolasyonu — P0
 
-TenantGuard iyi bir başlangıçtır; fakat inherited OTOBO çekirdeğinin bütün yollarını otomatik olarak güvenli yapmaz.
+TenantGuard iyi bir başlangıçtır; fakat inherited CareOnCloud ESM çekirdeğinin bütün yollarını otomatik olarak güvenli yapmaz.
 
 Özellikle envanterlenmesi ve negatif test edilmesi gereken yollar:
 
@@ -576,7 +576,7 @@ Eksik olduğu bilinen veya yeniden doğrulanması gereken alanlar:
 
 ## 7.5 Yanlış SECURITY.md — P0
 
-Root `SECURITY.md` upstream OTOBO politikasından kalmış olabilir ve fork'ları kapsam dışı bırakabilir.
+Root `SECURITY.md` upstream CareOnCloud ESM politikasından kalmış olabilir ve fork'ları kapsam dışı bırakabilir.
 
 CareOnCloud için ayrı politika gereklidir:
 
@@ -614,11 +614,11 @@ Zorunlu kapılar:
 - SBOM
 - İmzalı release
 
-Upstream OTOBO image, repository veya Dockerfile adlarına bağlı eski workflow'lar temizlenmelidir.
+Upstream CareOnCloud ESM image, repository veya Dockerfile adlarına bağlı eski workflow'lar temizlenmelidir.
 
 ## 7.7 Marka kalıntıları — P0
 
-Kaynak kod içinde yasal OTOBO referanslarının kalması normaldir.
+Kaynak kod içinde yasal CareOnCloud ESM referanslarının kalması normaldir.
 
 Ancak kullanıcıya görünen alanlar ayrıca taranmalıdır:
 
@@ -649,7 +649,7 @@ Allow-list yaklaşımı kullanılmalıdır:
 - LICENSE
 - Kaynak telifleri
 
-dışındaki kullanıcı görünür OTOBO referansları hata sayılmalıdır.
+dışındaki kullanıcı görünür CareOnCloud ESM referansları hata sayılmalıdır.
 
 ## 7.8 Lisans metadata tutarlılığı — P0
 
@@ -785,13 +785,13 @@ bir GPL-3.0 release haline getir.
 - Secret'ları repository veya dokümana ekleme.
 - Kanıtsız “done” durumu üretme.
 
-### OTOBO politikası
+### CareOnCloud ESM politikası
 
 - Köken README, NOTICE, telif ve GitHub'da kalır.
-- Son kullanıcı arayüzünde OTOBO görünmez.
-- OTOBO geçiş çekirdeğidir.
+- Son kullanıcı arayüzünde CareOnCloud ESM görünmez.
+- CareOnCloud ESM geçiş çekirdeğidir.
 - Yeni kod CareOnCloud domain/interface üzerinden yazılır.
-- Doğrudan OTOBO bağımlılığı ADR ve kaldırma sürümü taşır.
+- Doğrudan CareOnCloud ESM bağımlılığı ADR ve kaldırma sürümü taşır.
 - GPL-3.0 korunur.
 
 ### Öncelik sırası
@@ -907,7 +907,7 @@ Yapılacaklar:
 
 ## P0.5 — Marka, dil ve GPL
 
-- Runtime OTOBO allow-list taraması
+- Runtime CareOnCloud ESM allow-list taraması
 - TR/EN portal kabulü
 - TR/EN agent kabulü
 - UTF-8/mojibake taraması
@@ -944,7 +944,7 @@ Yalnızca P0 kapıları geçerse:
 - OpenTelemetry
 - Upgrade sihirbazı
 
-## P3 — OTOBO teknik ayrışması
+## P3 — CareOnCloud ESM teknik ayrışması
 
 - Yeni UI
 - Native CareOnCloud domain
@@ -952,7 +952,7 @@ Yalnızca P0 kapıları geçerse:
 - Native workflow/SLA
 - Native ticket/case
 - Native e-posta
-- OTOBO runtime kaldırılması
+- CareOnCloud ESM runtime kaldırılması
 
 GPL ve köken atfı devam eder.
 
@@ -977,7 +977,7 @@ Bir özellik ancak aşağıdaki şartların tümü karşılanırsa tamamlanmış
 13. CI'da yeniden üretilebilir.
 14. Kullanıcı dokümantasyonu vardır.
 15. Operasyon dokümantasyonu vardır.
-16. İlgili OTOBO bağımlılığı kaydedilmiştir.
+16. İlgili CareOnCloud ESM bağımlılığı kaydedilmiştir.
 17. Güvenlik ve veri sızıntısı testi geçmiştir.
 18. Test sonucu artifact olarak saklanmıştır.
 
@@ -1064,9 +1064,9 @@ Her maddeyi şu statülerden biriyle raporla:
 - Toplu reset
 - Secret yazmak
 - Canlı DB'de doğrudan deneme
-- OTOBO telifini silmek
-- OTOBO kökenini gizlemek
-- Kullanıcı görünür OTOBO markasını bırakmak
+- CareOnCloud ESM telifini silmek
+- CareOnCloud ESM kökenini gizlemek
+- Kullanıcı görünür CareOnCloud ESM markasını bırakmak
 - Yeni özellik ekleyerek P0 riskleri ertelemek
 - Gerçek şirketleri izinsiz demo müşterisi gibi göstermek
 
@@ -1101,7 +1101,7 @@ Ana referans belgeler:
 - `NOTICE`
 - `SECURITY.md`
 - `UPSTREAM.md`
-- `OTOBO-DEPENDENCY-REGISTER.md`
+- `CareOnCloud ESM-DEPENDENCY-REGISTER.md`
 
 ---
 

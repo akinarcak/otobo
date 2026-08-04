@@ -19,7 +19,7 @@ foreach ($Pattern in $Required) {
         throw "CareOnCloud proxy contract is missing: $Pattern"
     }
 }
-if ($Configuration -match '(?m)^\s*(Alias|ProxyPass|ProxyPassReverse)\s+"?/otobo/') {
-    throw 'CareOnCloud proxy contract must not expose the legacy /otobo/ route.'
+if ($Configuration -match '(?m)^\s*(Alias|ProxyPass|ProxyPassReverse)\s+"?/careoncloud/') {
+    throw 'CareOnCloud proxy contract must not expose the legacy /careoncloud/ route.'
 }
 Write-Output 'CareOnCloud canonical proxy contract passed.'

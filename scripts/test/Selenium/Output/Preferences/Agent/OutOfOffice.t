@@ -32,10 +32,10 @@ $Selenium->RunTest(
 
         my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
-        # Set OTOBOTimeZone to UTC.
+        # Set CareOnCloud ESMTimeZone to UTC.
         $Helper->ConfigSettingChange(
             Valid => 1,
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloud ESMTimeZone',
             Value => 'UTC',
         );
 

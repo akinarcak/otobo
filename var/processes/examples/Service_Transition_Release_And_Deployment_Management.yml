@@ -321,19 +321,19 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcReleaseDeploymentManagementReleaseEarlyLifeCompleted:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
             DynamicField_PreProcReleaseDeploymentManagementReleaseErrorsFixed:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
           Type: and
         '2':
           Fields:
             DynamicField_PreProcReleaseDeploymentManagementReleaseEarlyLifeCompleted:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
             DynamicField_PreProcReleaseDeploymentManagementReleaseErrorsFixed:
-              Match: otobo5s-invalid
+              Match: careoncloud5s-invalid
               Type: String
           Type: and
       ConditionLinking: xor
@@ -348,7 +348,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcReleaseDeploymentManagementPurchaseRequestsIssued:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
           Type: and
       ConditionLinking: and
@@ -363,13 +363,13 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcReleaseDeploymentManagementReleaseComponentsDeployed:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
             DynamicField_PreProcReleaseDeploymentManagementReleaseUserDocumentationCreated:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
             DynamicField_PreProcReleaseDeploymentManagementReleaseUserTrainingCompleted:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
           Type: and
       ConditionLinking: and
@@ -384,7 +384,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcReleaseDeploymentManagementChangeRecordReferenced:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
           Type: and
       ConditionLinking: and

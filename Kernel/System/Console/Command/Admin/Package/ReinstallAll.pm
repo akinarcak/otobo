@@ -30,7 +30,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Reinstall all OTOBO packages that are not correctly deployed.');
+    $Self->Description('Reinstall all CareOnCloud ESM packages that are not correctly deployed.');
     $Self->AddOption(
         Name        => 'force',
         Description => 'Force package reinstallation even if validation fails.',
@@ -53,7 +53,7 @@ sub Run {
 
     my $HideDeploymentInfoOption = $Self->GetOption('hide-deployment-info') || 0;
 
-    $Self->Print("<yellow>Reinstalling all OTOBO packages that are not correctly deployed...</yellow>\n");
+    $Self->Print("<yellow>Reinstalling all CareOnCloud ESM packages that are not correctly deployed...</yellow>\n");
 
     my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
 

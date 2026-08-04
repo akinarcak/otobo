@@ -37,7 +37,7 @@ sub Run {
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
     # get test page header
-    my $Output = $LayoutObject->Header( Title => 'OTOBO Test Page' );
+    my $Output = $LayoutObject->Header( Title => 'CareOnCloud ESM Test Page' );
 
     # example blocks
     $LayoutObject->Block(

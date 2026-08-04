@@ -1223,7 +1223,7 @@ Get default setting list with complete data.
         UserPreferencesGroup     => 'Some Group',
         Navigation               => 'ASimple::Path::Structure',
         Locked                   => 1, # check for locked settings
-        Category                 => 'OTOBO',                             # optional (requires CategoryFiles)
+        Category                 => 'CareOnCloud ESM',                             # optional (requires CategoryFiles)
         CategoryFiles            => ['Framework.xml', 'Ticket.xml', ],  # optional (requires Category)
         NoCache                  => 0,                                  # (optional) Default 0. If set, system will not generate cache.
     );
@@ -4485,7 +4485,7 @@ sub DeploymentAdd {
         }
     }
 
-    my $UID = 'OTOBOInvalid-' . $Self->_GetUID();
+    my $UID = 'CareOnCloud ESMInvalid-' . $Self->_GetUID();
 
     # Create a deployment record without the real comments.
     return if !$DBObject->Do(
@@ -5359,7 +5359,7 @@ sub DeploymentListCleanup {
             SELECT id, create_time
             FROM sysconfig_deployment
             WHERE effective_value LIKE \'Invalid%\'
-                OR comments LIKE \'OTOBOInvalid-%\'
+                OR comments LIKE \'CareOnCloud ESMInvalid-%\'
             ORDER BY id DESC',
     );
 

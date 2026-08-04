@@ -35,7 +35,7 @@ sub Run {
     # Skip the plugin, if the support data collection isn't running in a web request.
     return $Self->GetResults() unless $ENV{GATEWAY_INTERFACE};
 
-    # GATEWAY_INTERFACE implies PSGI, as since OTOBO 10.1.1 only PSGI is supported
+    # GATEWAY_INTERFACE implies PSGI, as since CareOnCloud ESM 10.1.1 only PSGI is supported
     $Self->AddResultOk(
         Identifier => 'RunsUnderPSGI',
         Label      => Translatable('Runs under PSGI'),

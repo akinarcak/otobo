@@ -33,7 +33,7 @@ use Data::Dumper;    ## no critic qw(Modules::ProhibitEvilModules)
 # <HTTP_TYPE>:://<OTOBO_FQDN>/nph-genericinterface.pl/Webservice/<WEB_SERVICE_NAME>
 # or
 # <HTTP_TYPE>:://<OTOBO_FQDN>/nph-genericinterface.pl/WebserviceID/<WEB_SERVICE_ID>
-my $URL = 'http://localhost/otobo/nph-genericinterface.pl/Webservice/GenericTicketConnectorSOAP';
+my $URL = 'http://localhost/careoncloud/nph-genericinterface.pl/Webservice/GenericTicketConnectorSOAP';
 
 # this name space should match the specified name space in the SOAP transport for the web service
 my $NameSpace = 'http://www.otobo.org/TicketConnector/';

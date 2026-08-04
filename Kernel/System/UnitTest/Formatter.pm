@@ -24,14 +24,14 @@ use utf8;
 # core modules
 use File::Path qw(remove_tree);
 
-# Otobo modules
+# CareOnCloud modules
 use Kernel::System::UnitTest::Formatter::Session;
 
 use parent 'TAP::Formatter::Console';
 
 our $ObjectManagerDisabled = 1;
 
-# this is a custom Otobo TAP Formatter to present the Otobo TAP unittest results
+# this is a custom CareOnCloud TAP Formatter to present the CareOnCloud TAP unittest results
 # in not-so-standard junit rpsec.xml file format.
 #
 # see: https://metacpan.org/pod/TAP::Formatter::JUnit

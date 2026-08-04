@@ -4,7 +4,7 @@ Durum: request-boundary ve aktif runtime kapilari tamamlandi (`2026-07-25`).
 
 ## Tehdit ve kontrat
 
-OTOBO'nun ticket Elasticsearch yolu `Kernel::System::Elasticsearch::TicketSearch`
+CareOnCloud ESM'nun ticket Elasticsearch yolu `Kernel::System::Elasticsearch::TicketSearch`
 ile baslar ve tum index sorgulari ortak
 `Kernel::GenericInterface::Invoker::Elasticsearch::Search::PrepareRequest`
 sinirindan gecer. `D724TicketAudit 0.7.1`, upstream cekirdek dosyayi kopyalamadan
@@ -40,7 +40,7 @@ bir index eklemek kod seviyesindeki supported-index kapisini asamaz.
 Search servisi `rotheross/otobo-elasticsearch:latest-11_1` image'inin
 `sha256:96966a51f3c9a5811473a1b9ec6d262e0857e92d4c6475be9b432af5945c753f`
 digest'ine sabitlenmistir. Elasticsearch 8.19.3 yalniz Compose ic aginda 9200/9300
-portlarini acar; host portu yayinlamaz. Cluster `green` ve OTOBO resmi
+portlarini acar; host portu yayinlamaz. Cluster `green` ve CareOnCloud ESM resmi
 `Maint::Elasticsearch::TestConnection` kontrolu basarilidir.
 
 `elasticsearch-webservice.yml`, requester host'unu `http://elastic:9200` olarak
@@ -55,9 +55,9 @@ olmustur.
 `SearchPolicy.t`, benzersiz bir agent ve iki tenant ile trusted scope, merkezi action,
 exact final filter, direct bypass reddi, unsafe index reddi ve disabled-policy
 fail-closed davranisini test eder. `Accept-SearchPolicy.pl`, gercek demo agent UserID
-`47` icin OTOBO invoker'inin serialize ettigi body'de yalniz `d724-demo` filtresini
+`47` icin CareOnCloud ESM invoker'inin serialize ettigi body'de yalniz `d724-demo` filtresini
 dogrulamistir. `Accept-ElasticsearchRuntime.pl`, aktif index'e ayni full-text degeri
-tasiyan iki gecici tenant dokumani yazmis; OTOBO TicketSearch uzerinden yalniz own
+tasiyan iki gecici tenant dokumani yazmis; CareOnCloud ESM TicketSearch uzerinden yalniz own
 tenant hit'ini almis, explicit cross-tenant istegi reddetmis ve iki fixture'i silmistir.
 
 Hedefli guvenlik regresyonu 5 dosya / 204 test; Elasticsearch aktifken tam D724

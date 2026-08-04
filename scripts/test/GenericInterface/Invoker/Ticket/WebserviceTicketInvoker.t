@@ -54,9 +54,9 @@ my $DFBackendObject      = $Kernel::OM->Get('Kernel::System::DynamicField::Backe
 
 my $WebserviceObject = $Kernel::OM->Get('Kernel::System::GenericInterface::Webservice');
 my $WebserviceID     = $WebserviceObject->WebserviceAdd(
-    Name   => 'OTOBOGenericInterfaceInvokerTicket-' . $RandomID,
+    Name   => 'CareOnCloud ESMGenericInterfaceInvokerTicket-' . $RandomID,
     Config => {
-        Name        => 'OTOBOGenericInterfaceInvokerTicket-' . $RandomID,
+        Name        => 'CareOnCloud ESMGenericInterfaceInvokerTicket-' . $RandomID,
         Description => '',
         Debugger    => {
             DebugThreshold => 'debug',
@@ -213,7 +213,7 @@ my ( $AttachmentDynamicFieldID, $FormID, $AttachmentDynamicFieldConfig );
 
 if ( $ConfigObject->Get('DynamicFields::Driver')->{Attachment} ) {
 
-    # OTOBODynamicFieldAttachment is installed, add new dynamic field.
+    # CareOnCloud ESMDynamicFieldAttachment is installed, add new dynamic field.
     $AttachmentDynamicFieldID = $DynamicFieldObject->DynamicFieldAdd(
         Name   => 'DynamicFieldAttachment' . $RandomID,
         Config => {
@@ -953,7 +953,7 @@ my @Tests = (
             TicketCreate => {},
             TicketUpdate => {},
         },
-        TestOTOBODynamicField => 1,
+        TestCareOnCloud ESMDynamicField => 1,
         TicketCreate          => {
             ExpectedInvokerPrepareRequestResult => {
                 'Article' => [
@@ -1059,7 +1059,7 @@ my @Tests = (
 # run the test cases
 TEST:
 for my $Test (@Tests) {
-    if ( $Test->{TestOTOBODynamicField} && !$AttachmentDynamicFieldID ) {
+    if ( $Test->{TestCareOnCloud ESMDynamicField} && !$AttachmentDynamicFieldID ) {
         diag "Skipping '$Test->{Name}' as there is not attachment dynamic field";
 
         next TEST;
@@ -1089,7 +1089,7 @@ for my $Test (@Tests) {
             "Dynamic field 'DynamicField$RandomID' is set.",
         );
 
-        if ( $Test->{TestOTOBODynamicField} ) {
+        if ( $Test->{TestCareOnCloud ESMDynamicField} ) {
             my $UploadCacheObject = $Kernel::OM->Get('Kernel::System::Web::UploadCache');
 
             $FormID = $UploadCacheObject->FormIDCreate();

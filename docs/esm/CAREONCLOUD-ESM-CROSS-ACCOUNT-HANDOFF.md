@@ -17,7 +17,7 @@ Ana kurallar: aktif test/üretim servislerini değiştirme; aday ortamı ayrı t
 - Master context: `D:\Projects\D724 ESM\docs\esm\CAREONCLOUD-ESM-AI-MASTER-CONTEXT.md`
 - Test sunucusu: `test@100.86.171.110:22`
 - Test sunucusundaki aday kaynak checkout: `/home/test/careoncloud-candidate-shallow-55fd8f3ca`
-- GitHub: `akinarcak/otobo`; repo adı ileride değişebilir.
+- GitHub: `akinarcak/careoncloud`; repo adı ileride değişebilir.
 - Windows SSH anahtarı: `C:\Users\Akın Arcak\.ssh\id_ed25519_vps` (private key’i bu dosyaya kopyalamayın).
 - Kullanılan PuTTY araçları: `C:\Program Files\PuTTY\plink.exe`, `C:\Program Files\PuTTY\pscp.exe`.
 

@@ -36,7 +36,7 @@ my $SignatureObject = $Kernel::OM->Get('Kernel::System::Signature');
 
 # add signature
 my $SignatureName = $Helper->GetRandomID();
-my $SignatureText = "Your OTOBO-Team
+my $SignatureText = "Your CareOnCloud ESM-Team
 
 <OTOBO_CURRENT_UserFirstname> <OTOBO_CURRENT_UserLastname>
 

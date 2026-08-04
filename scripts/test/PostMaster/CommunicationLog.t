@@ -146,7 +146,7 @@ package FakeIMAPClient {    ## no critic qw(Modules::ProhibitMultiplePackages)
     }
 }
 
-# Overwrite the OTOBO MailAccount::IMAP connect method to use our fake imap client,
+# Overwrite the CareOnCloud ESM MailAccount::IMAP connect method to use our fake imap client,
 # but make this change local to the unit test scope.
 # It also makes use of %FakeClientEnv.
 my $MockIMAP = mock 'Kernel::System::MailAccount::IMAP' => (
@@ -185,7 +185,7 @@ package FakePOPClient {    ## no critic qw(Modules::ProhibitMultiplePackages)
     }
 }
 
-# Overwrite the OTOBO MailAccount::POP3 connect method to use our fake pop3 client,
+# Overwrite the CareOnCloud ESM MailAccount::POP3 connect method to use our fake pop3 client,
 # but make this change local to the unit test scope.
 # It also makes use of %FakeClientEnv.
 my $MockPOP3 = mock 'Kernel::System::MailAccount::POP3' => (

@@ -200,7 +200,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcReservationDecision:
-              Match: otobo5s-approved
+              Match: careoncloud5s-approved
               Type: String
           Type: and
       ConditionLinking: and
@@ -215,7 +215,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcReservationDecision:
-              Match: otobo5s-rejected
+              Match: careoncloud5s-rejected
               Type: String
           Type: and
       ConditionLinking: and

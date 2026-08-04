@@ -444,7 +444,7 @@ sets a dynamic field value. The values are usually not validated.
         UserID             => 123,
         Set                => (1|0),                    # (optional) whether the value is included in a DynamicField Set
         ExternalSource     => (1|0),                    # (optional) only for specific backends
-                                                        # attempt to map value from external sources to OTOBO IDs
+                                                        # attempt to map value from external sources to CareOnCloud ESM IDs
     );
 
 =cut
@@ -617,7 +617,7 @@ depending on each field.
         Value1             => $Value1,                  # Dynamic Field Value (New/External Source value if ExternalSource is set)
         Value2             => $Value2,                  # Dynamic Field Value
         ExternalSource     => (1|0),                    # (optional) only for specific backends
-                                                        # attempt to map Value1 from external sources to OTOBO IDs
+                                                        # attempt to map Value1 from external sources to CareOnCloud ESM IDs
         Set                => (1|0),                    # (optional) specify if the values stem from a Set dynamic field
     );
 

@@ -451,7 +451,7 @@ $ExportContent->{Content} =~ s/^<\?xml.*?>.*?<otobo_stats/<otobo_stats/ms;
 $Self->Is(
     $ImportContent,
     $ExportContent->{Content},
-    "Export-Importcheck - check if import file content equal export file content.\n Be careful, if it gives errors if you run OTOBO with default charset utf-8,\n because the examplefile is iso-8859-1, but at my test there a no problems to compare a utf-8 string with an iso string?!\n",
+    "Export-Importcheck - check if import file content equal export file content.\n Be careful, if it gives errors if you run CareOnCloud ESM with default charset utf-8,\n because the examplefile is iso-8859-1, but at my test there a no problems to compare a utf-8 string with an iso string?!\n",
 );
 
 # Import a static statistic with not exsting object module
@@ -609,27 +609,27 @@ $Self->True(
     'StatsCleanUp() - clean up stats',
 );
 
-# Check _ToOTOBOTimeZone for invalid date (Daylight Saving Time).
+# Check _ToCareOnCloud ESMTimeZone for invalid date (Daylight Saving Time).
 # See bug#14511 for more information.
-my $String = $StatsObject->_ToOTOBOTimeZone(
+my $String = $StatsObject->_ToCareOnCloud ESMTimeZone(
     String   => '2019-03-31 02:30:00',
     TimeZone => 'Europe/Berlin',
 );
 
 $Self->False(
     $String,
-    '_ToOTOBOTimeZone() - invalid date',
+    '_ToCareOnCloud ESMTimeZone() - invalid date',
 );
 
-# Check _ToOTOBOTimeZone for valid date.
-$String = $StatsObject->_ToOTOBOTimeZone(
+# Check _ToCareOnCloud ESMTimeZone for valid date.
+$String = $StatsObject->_ToCareOnCloud ESMTimeZone(
     String   => '2019-03-31 12:30:00',
     TimeZone => 'Europe/Berlin',
 );
 
 $Self->True(
     $String,
-    '_ToOTOBOTimeZone() - valid date',
+    '_ToCareOnCloud ESMTimeZone() - valid date',
 );
 
 # cleanup is done by RestoreDatabase

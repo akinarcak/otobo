@@ -16,7 +16,7 @@
 # --
 
 # This mod_perl startup file should be configured as
-#     PerlPostConfigRequire /opt/otobo/scripts/apache2-perl-preload_careoncloud_psgi.pl
+#     PerlPostConfigRequire /opt/careoncloud/scripts/apache2-perl-preload_careoncloud_psgi.pl
 # when Plack::Handler::Apache2 is used.
 # See https://metacpan.org/pod/Plack::Handler::Apache2#STARTUP-FILE.
 
@@ -37,7 +37,7 @@ use Plack::Handler::Apache2 ();
 BEGIN {
     return unless Apache2::ServerUtil::restart_count() > 1;
 
-    Plack::Handler::Apache2->preload('/opt/otobo/bin/psgi-bin/careoncloud.psgi');
+    Plack::Handler::Apache2->preload('/opt/careoncloud/bin/psgi-bin/careoncloud.psgi');
 }
 
 1;

@@ -66,7 +66,7 @@ sub Run {
     my $PreviousWord = $Self->GetArgument('previous-word');
 
     # We are looking for the command name
-    if ( $PreviousWord =~ m/otobo\.Console\.pl/xms ) {
+    if ( $PreviousWord =~ m/careoncloud\.Console\.pl/xms ) {
 
         # Get all matching commands
         my @CommandList = map {s/^Kernel::System::Console::Command:://xmsr} $Self->ListAllCommands();
@@ -80,10 +80,10 @@ sub Run {
     else {
         # We need to extract the command name from the command line if present.
         my $CompLine = $ENV{COMP_LINE};
-        if ( !$CompLine || $CompLine !~ m/otobo\.Console\.pl/ ) {
+        if ( !$CompLine || $CompLine !~ m/careoncloud\.Console\.pl/ ) {
             $Self->ExitCodeError();
         }
-        $CompLine =~ s/.*otobo\.Console\.pl\s*//xms;
+        $CompLine =~ s/.*careoncloud\.Console\.pl\s*//xms;
 
         # Try to create the command object to get its options
         my ($CommandName) = split /\s+/, $CompLine;

@@ -202,20 +202,20 @@ my @Tests = (
         Name => 'Multiple valid RecipientEmail',
         Data => {
             Events           => ['CalendarUpdate'],
-            RecipientEmail   => ['zz1test@otoboexample.com, zz2test@otoboexample.com; zz3test@otoboexample.com'],
+            RecipientEmail   => ['zz1test@careoncloudexample.com, zz2test@careoncloudexample.com; zz3test@careoncloudexample.com'],
             NotificationType => ['Appointment'],
         },
         ExpectedResults => [
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz3test@otoboexample.com'],
+                ToArray => ['zz3test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
         ],
@@ -224,20 +224,20 @@ my @Tests = (
         Name => 'Multiple valid RecipientEmail not separated by space with additional commas and semmi-colons',
         Data => {
             Events           => ['CalendarUpdate'],
-            RecipientEmail   => ['zz1test@otoboexample.com,;,zz2test@otoboexample.com;;zz3test@otoboexample.com'],
+            RecipientEmail   => ['zz1test@careoncloudexample.com,;,zz2test@careoncloudexample.com;;zz3test@careoncloudexample.com'],
             NotificationType => ['Appointment'],
         },
         ExpectedResults => [
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz3test@otoboexample.com'],
+                ToArray => ['zz3test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
         ],
@@ -246,16 +246,16 @@ my @Tests = (
         Name => 'Multiple valid and invalid RecipientEmail',
         Data => {
             Events           => ['CalendarUpdate'],
-            RecipientEmail   => ['aaatest@otoboexample.com, asdfqwe; zzztest@otoboexample.com; e212355qwe.com'],
+            RecipientEmail   => ['aaatest@careoncloudexample.com, asdfqwe; zzztest@careoncloudexample.com; e212355qwe.com'],
             NotificationType => ['Appointment'],
         },
         ExpectedResults => [
             {
-                ToArray => ['aaatest@otoboexample.com'],
+                ToArray => ['aaatest@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zzztest@otoboexample.com'],
+                ToArray => ['zzztest@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
         ],

@@ -1,6 +1,6 @@
 # Tenant Directory and Role Bindings
 
-`D724TenantDirectory` is the authoritative mapping between OTOBO agent IDs and D724 tenants. It replaces configuration-based or request-provided tenant selection with persistent, audited memberships.
+`D724TenantDirectory` is the authoritative mapping between CareOnCloud ESM agent IDs and D724 tenants. It replaces configuration-based or request-provided tenant selection with persistent, audited memberships.
 
 ## Authorization model
 
@@ -18,7 +18,7 @@
 
 ## Bootstrap
 
-`Admin::D724::TenantBootstrap` works only while the directory contains zero tenants and requires `--confirm-bootstrap`. It creates the first tenant and one `tenant_admin` membership for an existing OTOBO agent. Later grants use `Admin::D724::TenantMembershipGrant`, which derives and checks the actor context before writing.
+`Admin::D724::TenantBootstrap` works only while the directory contains zero tenants and requires `--confirm-bootstrap`. It creates the first tenant and one `tenant_admin` membership for an existing CareOnCloud ESM agent. Later grants use `Admin::D724::TenantMembershipGrant`, which derives and checks the actor context before writing.
 
 ## Transaction and audit evidence
 

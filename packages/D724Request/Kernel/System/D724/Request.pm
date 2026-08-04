@@ -534,7 +534,7 @@ sub _TransactionRun {
     my $Handle = $DB->Connect();
     return $Self->_Error('TRANSACTION_CONNECTION_FAILED') if !$Handle;
 
-    # OTOBO unit tests and callers may already own the surrounding transaction.
+    # CareOnCloud ESM unit tests and callers may already own the surrounding transaction.
     # In that case this operation joins it; the outer owner remains responsible
     # for commit/rollback. Normal web and console requests enter with AutoCommit.
     return $Param{Code}->() if !$Handle->{AutoCommit};

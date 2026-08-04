@@ -36,7 +36,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::MigrateFromOTRS::OTOBOSalutationsMigrate - Migrate salutations table to OTOBO.
+Kernel::System::MigrateFromOTRS::OTOBOSalutationsMigrate - Migrate salutations table to CareOnCloud ESM.
 
 =head1 SYNOPSIS
 
@@ -78,8 +78,8 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOSalutationsMigrate',
-            SubTask   => "Migrate salutation templates to OTOBO.",
+            Task      => 'CareOnCloud ESMSalutationsMigrate',
+            SubTask   => "Migrate salutation templates to CareOnCloud ESM.",
             StartTime => $Epoch,
         },
     );
@@ -89,7 +89,7 @@ sub Run {
 
         # ATTENTION, don't use opening or closing tags here (< or >)
         # because old salutations can contain quoted tags (&lt; or &gt;)
-        'OTRS' => 'OTOBO',
+        'OTRS' => 'CareOnCloud ESM',
     );
 
     # get needed objects

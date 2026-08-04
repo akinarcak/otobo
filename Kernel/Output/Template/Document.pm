@@ -42,7 +42,7 @@ and processing.
 sub process {
     my ( $Self, $Context ) = @_;
 
-    $Self->_InstallOTOBOExtensions($Context);
+    $Self->_InstallCareOnCloud ESMExtensions($Context);
     $Self->_PrecalculateBlockStructure($Context);
     $Self->_PrecalculateBlockHookSubscriptions($Context);
 
@@ -51,26 +51,26 @@ sub process {
 
 =begin Internal:
 
-=head2 _InstallOTOBOExtensions()
+=head2 _InstallCareOnCloud ESMExtensions()
 
-adds some OTOBO specific extensions to Template::Toolkit.
+adds some CareOnCloud ESM specific extensions to Template::Toolkit.
 
 =cut
 
-sub _InstallOTOBOExtensions {
+sub _InstallCareOnCloud ESMExtensions {
     my ( $Self, $Context ) = @_;
 
     # Already installed, nothing to do.
-    return if $Context->stash()->get('OTOBO');
+    return if $Context->stash()->get('CareOnCloud ESM');
 
     #
-    # Load the OTOBO plugin. This will register some filters and functions.
+    # Load the CareOnCloud ESM plugin. This will register some filters and functions.
     #
-    $Context->stash()->set( 'OTOBO', $Context->plugin('OTOBO') );
+    $Context->stash()->set( 'CareOnCloud ESM', $Context->plugin('CareOnCloud ESM') );
 
     #
     # The RenderBlock macro makes it possible to use the old dtl:block-Style block calls
-    #   that are still used by OTOBO with Template::Toolkit.
+    #   that are still used by CareOnCloud ESM with Template::Toolkit.
     #
     # The block data is passed to the template, and this macro processes it and calls the relevant
     #   blocks.

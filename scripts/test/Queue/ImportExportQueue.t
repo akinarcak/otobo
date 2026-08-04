@@ -80,7 +80,7 @@ my %QueueData = (
 );
 my %QueueExpectedData = (
     Name                => 'TestQueue1' . $RandomID,
-    RealName            => 'OTOBO System',
+    RealName            => 'CareOnCloud ESM System',
     Group               => 'users',
     Calendar            => '',
     FirstResponseTime   => 0,
@@ -95,9 +95,9 @@ my %QueueExpectedData = (
     DefaultSignKey      => 0,
     SystemAddress       => {
         Comment  => "Standard Address.",
-        Name     => "otobo\@localhost",
+        Name     => "careoncloud\@localhost",
         Queue    => "Postmaster",
-        Realname => "OTOBO System",
+        Realname => "CareOnCloud ESM System",
         Valid    => "valid",
     },
     Salutation => {
@@ -178,8 +178,8 @@ is(
     \%ImportedQueue,
     hash {
         field 'Name'                => 'TestQueue2' . $RandomID;
-        field 'RealName'            => 'OTOBO System';
-        field 'Email'               => 'otobo@localhost';
+        field 'RealName'            => 'CareOnCloud ESM System';
+        field 'Email'               => 'careoncloud@localhost';
         field 'GroupID'             => $GroupID;
         field 'Calendar'            => '';
         field 'FirstResponseTime'   => 0;

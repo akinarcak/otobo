@@ -76,7 +76,7 @@ $Selenium->RunTest(
 
         # Add a User setting file.
         my $UserFileContent = <<"EOF";
-# OTOBO config file (testing, remove it)
+# CareOnCloud ESM config file (testing, remove it)
 # VERSION:2.0
 package Kernel::Config::Files::User::$TestUserID1;
 use strict;
@@ -124,7 +124,7 @@ EOF
         # Link to ivory skin file should be present.
         my $PageSource = $Selenium->get_page_source();
         {
-            my $ToDo = todo('skin ivory does not exist in OTOBO, issue #678');
+            my $ToDo = todo('skin ivory does not exist in CareOnCloud ESM, issue #678');
 
             like( $PageSource, $ExpectedLinkedFile, 'Ivory skin should be selected' );
         }

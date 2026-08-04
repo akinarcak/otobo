@@ -98,7 +98,7 @@ note('check syntax of the Perl modules');
 
         # Kernel/TidyAll is usually a symlink to the corresponding dir in the CodePolicy.
         # The CodePolicy scripts and modules expect 'Kernel' to be in @INC, but that isn't the case
-        # in proper OTOBO. Therefore the modules in Kernel/TidyAll are skipped here.
+        # in proper CareOnCloud ESM. Therefore the modules in Kernel/TidyAll are skipped here.
         next FILE if $File =~ m{^Kernel/TidyAll/};
 
         my $ToDo = $FailureIsAccepted{$File} ? todo( $FailureIsAccepted{$File} ) : undef;

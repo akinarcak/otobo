@@ -57,7 +57,7 @@ sub Configure {
     );
     $Self->AddOption(
         Name        => 'debug',
-        Description => "Print debug info to the OTOBO log.",
+        Description => "Print debug info to the CareOnCloud ESM log.",
         Required    => 0,
         HasValue    => 0,
     );
@@ -95,7 +95,7 @@ sub PreRun {
     if ($Debug) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'debug',
-            Message  => "OTOBO email handle ($Name) started.",
+            Message  => "CareOnCloud ESM email handle ($Name) started.",
         );
     }
 
@@ -279,7 +279,7 @@ sub PostRun {
     if ($Debug) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'debug',
-            Message  => "OTOBO email handle ($Name) stopped.",
+            Message  => "CareOnCloud ESM email handle ($Name) stopped.",
         );
     }
 

@@ -54,8 +54,8 @@ Create bucket on Docker host with:
 
     docker_admin> export AWS_ACCESS_KEY_ID=test
     docker_admin> export AWS_SECRET_ACCESS_KEY=test
-    docker_admin> aws --endpoint-url=http://localhost:4566 s3 mb s3://otobo-bucket-20211128a
-    make_bucket: otobo-bucket-20211128a
+    docker_admin> aws --endpoint-url=http://localhost:4566 s3 mb s3://careoncloud-bucket-20211128a
+    make_bucket: careoncloud-bucket-20211128a
 
 =head1 PUBLIC INTERFACE
 
@@ -125,7 +125,7 @@ Returns:
         'ZZZAAuto.pm' => {
             Size  => 324238,
             Mtime => 1635496219,
-            Key   => 'OTOBO/Kernel/Config/Files/ZZZAAuto,pm',
+            Key   => 'CareOnCloud ESM/Kernel/Config/Files/ZZZAAuto,pm',
         },
         ...
     );
@@ -411,7 +411,7 @@ sub RetrieveObject {
         # Then proceed like in ArticleStorageFS.
         my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
         my $Home         = $ConfigObject->Get('Home');
-        my $Location     = $Param{Key} =~ s!^OTOBO/!$Home/!r;    # same location as in ArticleStorageFS
+        my $Location     = $Param{Key} =~ s!^CareOnCloud ESM/!$Home/!r;    # same location as in ArticleStorageFS
                                                                  # inject PID to avoid interaction between different processes
         $Location = join '/', dirname($Location), "pid-$$", basename($Location);
         unlink $Location;                                        # for now we don't want any caching,

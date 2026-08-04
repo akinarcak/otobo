@@ -6,7 +6,7 @@ Durum: `AUD-01a`, `AUD-01b-request`, `AUD-01b-catalog`, `AUD-01b-directory` ve `
 
 `D724Audit`, her tenant icin ayri ve monoton bir audit olayi zinciri tutar. Okuma, dogrulama ve export islemleri `D724TenantGuard` uzerinden `audit.read` karari almadan calismaz. Tenant kimligi export filtresinden veya tarayici girdisinden guvenilir kabul edilmez.
 
-Bu katman kaydedilmis olaylarin sonradan sessizce degistirilmesini algilar. Request lifecycle, D724 katalog, tenant-directory ve kapsanan OTOBO ticket/MIME article adapter'lari uygulama mutasyonu ile audit append'ini ayni transaction'a alir. Diger domain adapter'lari ve DB-disinda immutable saklama henuz bu garantiyi tasimaz.
+Bu katman kaydedilmis olaylarin sonradan sessizce degistirilmesini algilar. Request lifecycle, D724 katalog, tenant-directory ve kapsanan CareOnCloud ESM ticket/MIME article adapter'lari uygulama mutasyonu ile audit append'ini ayni transaction'a alir. Diger domain adapter'lari ve DB-disinda immutable saklama henuz bu garantiyi tasimaz.
 
 ## Normalize olay kontrati
 
@@ -58,7 +58,7 @@ Customer submit, approval, first-response ve task update girisleri production `A
 
 ## AUD-01b-core acik kapsam
 
-- Kalan OTOBO ticket delete/merge/type/service/SLA/pending, Chat article, Generic Interface, commitment scheduler/escalation ve konfigurasyon mutasyonlarinda transaction veya transactional outbox completeness garantisi.
+- Kalan CareOnCloud ESM ticket delete/merge/type/service/SLA/pending, Chat article, Generic Interface, commitment scheduler/escalation ve konfigurasyon mutasyonlarinda transaction veya transactional outbox completeness garantisi.
 - Retention politikasi, legal hold, erasure istisnalari ve yetkili export UI/API.
 - DB-disinda WORM/immutable sink, signing key rotation ve periyodik anchor.
 - Audit delivery/completeness metrikleri, alarm ve reconciliation.

@@ -306,7 +306,7 @@ Core.Agent.TicketZoom = (function (TargetNS) {
      * @param {String} ArticleID - The article number of the loaded article
      * @param {Object} WindowObject
      * @description
-     *      Used in OTOBO Community Edition (TM). Loads an article in the Zoom from another window context (e.g. popup).
+     *      Used in CareOnCloud ESM Community Edition (TM). Loads an article in the Zoom from another window context (e.g. popup).
      */
     TargetNS.LoadArticleFromExternal = function (ArticleID, WindowObject) {
         var $Element = $('#ArticleTable td.No input.ArticleID[value=' + ArticleID + ']'),
@@ -893,7 +893,7 @@ Core.Agent.TicketZoom = (function (TargetNS) {
 
                 if ( $('#ArticleVersion').val() != "" ) {
                     var URL = Core.Config.Get('CGIHandle') + '?Action=AgentTicketArticleVersionView;TicketID='+$("input[name='TicketID']").val() + ';VersionID=' + VersionID +
-                                ';ArticleID='+$('#ArticleVersion').val()+';SourceArticleID='+$("input[name='ArticleID']").val()+';VersionView=1;OTOBOAgentInterface='+$("input[name='OTOBOAgentInterface']").val();
+                                ';ArticleID='+$('#ArticleVersion').val()+';SourceArticleID='+$("input[name='ArticleID']").val()+';VersionView=1;CareOnCloud ESMAgentInterface='+$("input[name='CareOnCloud ESMAgentInterface']").val();
 
                     Core.UI.Popup.OpenPopup(URL, PopupType);
                     $('#ArticleVersion').val('');

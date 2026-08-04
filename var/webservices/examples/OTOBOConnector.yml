@@ -52,7 +52,7 @@ Requester:
   Transport:
     Config:
       DefaultCommand: POST
-      Host: http://<YOUR_FQDN>/otobo/nph-genericinterface.pl/Webservice/<NAME_OF_YOUR_WEBSERVICE>
+      Host: http://<YOUR_FQDN>/careoncloud/nph-genericinterface.pl/Webservice/<NAME_OF_YOUR_WEBSERVICE>
       InvokerControllerMapping:
         TicketCreate:
           Command: POST

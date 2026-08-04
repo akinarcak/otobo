@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # --
-# D724 ESM is an enterprise service management platform based on OTOBO.
+# D724 ESM is an enterprise service management platform based on CareOnCloud ESM.
 # Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
 # SPDX-License-Identifier: GPL-3.0-only
 # --

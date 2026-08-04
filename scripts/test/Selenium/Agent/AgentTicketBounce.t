@@ -99,7 +99,7 @@ $Selenium->RunTest(
         my $Success = $ArticleBackendObject->ArticleWritePlain(
             ArticleID => $ArticleID,
             Email     => <<'EMAIL'
-From: otobo@localhost
+From: careoncloud@localhost
 Content-Type: text/plain
 Mime-Version: 1.0
 Subject: Test

@@ -46,7 +46,7 @@ sub Configure {
 
     $Self->Description(
         "Delete DynamicFields. \n" .
-            "Deletes dynamic fields and all associated values from the OTOBO system. \n" .
+            "Deletes dynamic fields and all associated values from the CareOnCloud ESM system. \n" .
             "To execute the deletion automatically, please use --force. \n" .
             "Otherwise, the fields for deletion are displayed first and only deleted after confirmation."
     );

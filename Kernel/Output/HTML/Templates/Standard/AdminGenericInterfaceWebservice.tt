@@ -341,12 +341,12 @@
                 <div class="Content">
 [% RenderBlockStart("DetailsCommunicationTypeExplanationProvider") %]
                     <p class="FieldExplanation">
-                                [% Translate("In provider mode, OTOBO offers web services which are used by remote systems.") | html %]
+                                [% Translate("In provider mode, CareOnCloud ESM offers web services which are used by remote systems.") | html %]
                     </p>
 [% RenderBlockEnd("DetailsCommunicationTypeExplanationProvider") %]
 [% RenderBlockStart("DetailsCommunicationTypeExplanationRequester") %]
                     <p class="FieldExplanation">
-                                [% Translate("In requester mode, OTOBO uses web services of remote systems.") | html %]
+                                [% Translate("In requester mode, CareOnCloud ESM uses web services of remote systems.") | html %]
                     </p>
 [% RenderBlockEnd("DetailsCommunicationTypeExplanationRequester") %]
                     <h4 class="SpacingTop SpacingBottom">[% Translate("Settings") | html %]</h4>

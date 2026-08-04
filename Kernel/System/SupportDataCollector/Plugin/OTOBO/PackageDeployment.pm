@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO');
+    return Translatable('CareOnCloud ESM');
 }
 
 sub Run {
@@ -111,7 +111,7 @@ sub Run {
             Identifier => 'Verification',
             Label      => Translatable('Package Verification Status'),
             Value      => join( ', ', @NotVerifiedPackages ),
-            Message    => Translatable('Some packages are not verified by the OTOBO Team.'),
+            Message    => Translatable('Some packages are not verified by the CareOnCloud ESM Team.'),
         );
     }
     else {

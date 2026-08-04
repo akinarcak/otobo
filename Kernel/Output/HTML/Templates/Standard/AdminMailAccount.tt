@@ -90,7 +90,7 @@
                     [% Translate("All incoming emails with one account will be dispatched in the selected queue.") | html %]
                 </p>
                 <p class="FieldExplanation">
-                    [% Translate("If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.") | html %]
+                    [% Translate("If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.") | html %]
                 </p>
                 <p class="FieldExplanation">
                     [% Translate("Outgoing email can be configured via the Sendmail* settings in %s.",
@@ -367,7 +367,7 @@
                         <div class="Clear"></div>
                         <label class="Mandatory MailPassword" for="PasswordEdit"><span class="Marker">*</span> [% Translate("Password") | html %]:</label>
                         <div class="Field MailPassword">
-                            <input type="password" class="W50pc MailPassword Validate_Required [% Data.PasswordEditInvalid | html %]" name="Password" id="PasswordEdit" value="[% IF Data.Password %]otobo-dummy-password-placeholder[% END %]" maxlength="200" autocomplete="off" />
+                            <input type="password" class="W50pc MailPassword Validate_Required [% Data.PasswordEditInvalid | html %]" name="Password" id="PasswordEdit" value="[% IF Data.Password %]careoncloud-dummy-password-placeholder[% END %]" maxlength="200" autocomplete="off" />
                             <div id="PasswordEditError" class="TooltipErrorMessage">
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>

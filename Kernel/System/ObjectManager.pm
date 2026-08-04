@@ -71,7 +71,7 @@ Kernel::System::ObjectManager - Central singleton manager and object instance ge
 
 =head1 DESCRIPTION
 
-The ObjectManager is the central place to create and access singleton OTOBO objects (via C<L</Get()>>)
+The ObjectManager is the central place to create and access singleton CareOnCloud ESM objects (via C<L</Get()>>)
 as well as create regular (unmanaged) object instances (via C<L</Create()>>).
 
 =head2 How does singleton management work?
@@ -81,13 +81,13 @@ are destroyed in the correct order, based on their dependencies (see below).
 
 =head2 How to use it?
 
-The ObjectManager must always be provided to OTOBO by the top level script like this:
+The ObjectManager must always be provided to CareOnCloud ESM by the top level script like this:
 
     use Kernel::System::ObjectManager;
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         # possible options for module constructors here
         LogObject {
-            LogPrefix => 'OTOBO-MyTestScript',
+            LogPrefix => 'CareOnCloud ESM-MyTestScript',
         },
     );
 
@@ -154,7 +154,7 @@ flag (this will not work with C<L</Get()>>).
 
 Creates a new instance of Kernel::System::ObjectManager.
 
-This is typically B<only> needed in top level (C<bin/>) scripts! All parts of the OTOBO API assume
+This is typically B<only> needed in top level (C<bin/>) scripts! All parts of the CareOnCloud ESM API assume
 the ObjectManager to be present in C<$Kernel::OM> and use it.
 
 Sometimes objects need parameters to be sent to their constructors,
@@ -163,7 +163,7 @@ The hash reference will be flattened and passed to the constructor of the object
 
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         Kernel::System::Log => {
-            LogPrefix => 'OTOBO-MyTestScript',
+            LogPrefix => 'CareOnCloud ESM-MyTestScript',
         },
     );
 
@@ -532,7 +532,7 @@ sub ObjectsDiscard {
         push @AllObjects, $Object;
     }
 
-    # During an OTOBO package upgrade the packagesetup code module has just
+    # During a CareOnCloud ESM package upgrade the packagesetup code module has just
     # recently been copied to its location in the file system.
     # In a persistent Perl environment an old version of the module might still be loaded,
     # as watchdogs like Kernel::System::ModuleRefresh haven't had a chance to reload it.

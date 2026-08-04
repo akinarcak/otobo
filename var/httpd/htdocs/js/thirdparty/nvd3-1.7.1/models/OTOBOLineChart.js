@@ -1,4 +1,4 @@
-nv.models.OTOBOlineChart = function() {
+nv.models.CareOnCloud ESMlineChart = function() {
     "use strict";
 
     //============================================================
@@ -21,7 +21,7 @@ nv.models.OTOBOlineChart = function() {
         , showYAxis = true
         , rightAlignYAxis = false
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
         , reduceXTicks = true
         , staggerLabels = false
@@ -31,7 +31,7 @@ nv.models.OTOBOlineChart = function() {
         , tooltip = function(key, x, y, e, graph) {
             return '<h3>' + key + '</h3>' +
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //                '<p>' +  y + ' at ' + x + '</p>'
                 '<p>' +  y + ' - ' + x + '</p>'
@@ -42,7 +42,7 @@ nv.models.OTOBOlineChart = function() {
         , state = nv.utils.state()
         , defaultState = null
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //        , noData = 'No Data Available.'
         , noData = Core.Language.Translate('No Data Available.')
@@ -52,7 +52,7 @@ nv.models.OTOBOlineChart = function() {
         ;
 
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
 //    xAxis.orient('bottom').tickPadding(7);
     xAxis.orient('bottom').tickPadding(7).showMaxMin(false);
@@ -110,7 +110,7 @@ nv.models.OTOBOlineChart = function() {
                 availableHeight = (height || parseInt(container.style('height')) || 400)
                     - margin.top - margin.bottom;
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
             // Create exception when switching from mobile to desktop view to have appropriate width. See bug#14419.
             if ( container.style('width') === '100%' ) {
@@ -246,7 +246,7 @@ nv.models.OTOBOlineChart = function() {
                     .call(xAxis);
 
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
                 var xTicks = g.select('.nv-x.nv-axis > g').selectAll('g');
 
@@ -452,7 +452,7 @@ nv.models.OTOBOlineChart = function() {
         noData:    {get: function(){return noData;}, set: function(_){noData=_;}},
 
 // ---
-// OTOBO
+// CareOnCloud ESM
 // ---
         reduceXTicks:    {get: function(){return reduceXTicks;}, set: function(_){reduceXTicks=_;}},
         staggerLabels:    {get: function(){return staggerLabels;}, set: function(_){staggerLabels=_;}},

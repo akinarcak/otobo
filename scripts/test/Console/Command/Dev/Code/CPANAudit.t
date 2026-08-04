@@ -100,7 +100,7 @@ for my $DistName ( keys $ThawedAuditReport->{dists}->%* ) {
             ||
             ( $_->{otobo_evaluation}->{has_been_evaluated} // -1) == 0
             ||
-            $_->{otobo_evaluation}->{is_relevant_for_otobo}
+            $_->{otobo_evaluation}->{is_relevant_for_careoncloud}
         } $Dist->{advisories}->@*
     ];
 

@@ -76,7 +76,7 @@ my $ObjectID = $Kernel::OM->Get('Kernel::System::DynamicField')->ObjectMappingCr
     ObjectType => 'CustomerCompany',
 );
 my $WrongObjectID = $Kernel::OM->Get('Kernel::System::DynamicField')->ObjectMappingCreate(
-    ObjectName => 'OTOBOwrongid',
+    ObjectName => 'CareOnCloud ESMwrongid',
     ObjectType => 'CustomerCompany',
 );
 
@@ -125,7 +125,7 @@ my @Tests = (
             DynamicFieldConfig => $DynamicFieldConfig,
             UserID             => 1,
         },
-        Request       => "Action=someaction;Subaction=somesubaction;ID=OTOBOwrongid",
+        Request       => "Action=someaction;Subaction=somesubaction;ID=CareOnCloud ESMwrongid",
         Success       => 1,
         ExectedResult => {
             ObjectID => $WrongObjectID,

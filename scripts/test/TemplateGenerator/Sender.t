@@ -59,7 +59,7 @@ my $UserObject = $Kernel::OM->Get('Kernel::System::User');
 
 # add SystemAddress
 my $SystemAddressEmail    = $Helper->GetRandomID() . '@example.com';
-my $SystemAddressRealname = "OTOBO-Team";
+my $SystemAddressRealname = "CareOnCloud ESM-Team";
 
 my $SystemAddressObject = $Kernel::OM->Get('Kernel::System::SystemAddress');
 

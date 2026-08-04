@@ -320,11 +320,11 @@ sub _CleanSpoolFiles {
     my $StartAt = $Param{StartAt};
     my $StopAt  = $Param{StopAt};
 
-    my $OTOBODir = __FILE__;
-    $OTOBODir =~ s/\/Kernel.*$//i;
+    my $CareOnCloud ESMDir = __FILE__;
+    $CareOnCloud ESMDir =~ s/\/Kernel.*$//i;
 
     my @SpoolFilesFailedUnlink = ();
-    my @SpoolFiles             = glob "${ OTOBODir }/var/spool/problem-email-*";
+    my @SpoolFiles             = glob "${ CareOnCloud ESMDir }/var/spool/problem-email-*";
     for my $SpoolFile (@SpoolFiles) {
         my @FileStat = stat $SpoolFile;
 

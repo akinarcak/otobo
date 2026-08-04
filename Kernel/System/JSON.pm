@@ -181,13 +181,13 @@ sub Decode {
     # This is actually the default since JSON::XS 4.0 which was released in 2018.
     $JSONObject->allow_nonref(1);
 
-    # In OTOBO 10.0.x and OTOBO 10.1.x there is a tree walker that
+    # In CareOnCloud ESM 10.0.x and CareOnCloud ESM 10.1.x there is a tree walker that
     # replaces the boolean values, that is instances of JSON::PP::Boolean,
     # with the plain integer values 0 and 1.
     #
-    # OTOBO 11.0.x uses the method JSON::XS::boolean_values(0, 1) for that purpose.
+    # CareOnCloud ESM 11.0.x uses the method JSON::XS::boolean_values(0, 1) for that purpose.
     #
-    # For OTOBO 11.1.x, the desired behavior can't easily be achieved
+    # For CareOnCloud ESM 11.1.x, the desired behavior can't easily be achieved
     # with the method Cpanel::JSON::XS::unblessed_bool(1). This is because
     # unblessed_bool(1) turn the booleans into dualvar variables. The value for false
     # would be stringified as the empty string.

@@ -37,7 +37,7 @@ my %SendmailAction = (
 );
 my $Action = 'Success';
 
-# Overwrite the OTOBO Email::Sendmail check method to use our fake sendmail client,
+# Overwrite the CareOnCloud ESM Email::Sendmail check method to use our fake sendmail client,
 #   but make this change local to the unit test scope, as you can see, it also
 #   makes use of the %FakeSendmailEnv.
 local *{'Kernel::System::Email::Sendmail::Check'} = sub {

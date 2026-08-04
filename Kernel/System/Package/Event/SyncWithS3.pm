@@ -72,7 +72,7 @@ sub Run {
     );
 
     # extra copy in the file system with the same timestamp as in S3
-    my $TargetLocation = "/opt/otobo/Kernel/Config/Files/$EventFileName";
+    my $TargetLocation = "/opt/careoncloud/Kernel/Config/Files/$EventFileName";
 
     return $StorageS3Object->SaveObjectToFile(
         Key      => $EventFilePath,

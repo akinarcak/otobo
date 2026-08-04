@@ -17,7 +17,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     strategy:
 
-      # set up a loop over OTOBO branches, for now only a single branch
+      # set up a loop over CareOnCloud ESM branches, for now only a single branch
       matrix:
         major_minor: [ '11_0_8', ]
         include:
@@ -46,7 +46,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       -
-        name: 'check out the relevant OTOBO branch'
+        name: 'check out the relevant CareOnCloud ESM branch'
         uses: actions/checkout@v6
         with:
           ref: ${{ env.otobo_branch }}
@@ -66,7 +66,7 @@ jobs:
         with:
           load: true
           context: .
-          file: otobo.web.dockerfile
+          file: careoncloud.web.dockerfile
           pull: true
           build-args: |
             BUILD_DATE=${{ env.otobo_build_date }}
@@ -80,7 +80,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       -
-        # otobo_first_time hasn't run yet, so /opt/otobo is still empty
+        # otobo_first_time hasn't run yet, so /opt/careoncloud is still empty
         name: Info
         run: |
           docker run --rm -w /opt/otobo_install/otobo_next --entrypoint /bin/bash $otobo_ref -c "more git-repo.txt git-branch.txt git-commit.txt RELEASE | cat"
@@ -101,7 +101,7 @@ jobs:
         with:
           push: true
           context: .
-          file: otobo.web.dockerfile
+          file: careoncloud.web.dockerfile
           pull: true
           build-args: |
             BUILD_DATE=${{ env.otobo_build_date }}

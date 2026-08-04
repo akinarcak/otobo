@@ -515,7 +515,7 @@ JAVASCRIPT
         # check edited values
         my $UserSkin = $Selenium->find_element( '#UserSkin', 'css' )->get_value();
         {
-            my $ToDo = todo('skin ivory does not exist in OTOBO, issue #678');
+            my $ToDo = todo('skin ivory does not exist in CareOnCloud ESM, issue #678');
 
             is( $UserSkin, "ivory", "#UserSkin updated value" );
         }

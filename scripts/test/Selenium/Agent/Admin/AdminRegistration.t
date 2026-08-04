@@ -100,11 +100,11 @@ $Selenium->RunTest(
                 SystemRegistration => [
                     {
                         Success      => '0',
-                        ErrorMessage => 'Wrong OTOBOID or Password',
+                        ErrorMessage => 'Wrong CareOnCloud ESMID or Password',
                         Operation    => 'TokenGet',
                         Data         => {
                             Auth   => 'invalid',
-                            Reason => 'Wrong OTOBOID or Password',
+                            Reason => 'Wrong CareOnCloud ESMID or Password',
                         }
                     },
                 ],
@@ -162,29 +162,29 @@ EOS
 
         for my $Test (@Tests) {
 
-            $Selenium->find_element( "#OTOBOID",  'css' )->clear();
-            $Selenium->find_element( "#OTOBOID",  'css' )->send_keys( $Test->{Value} );
+            $Selenium->find_element( "#CareOnCloud ESMID",  'css' )->clear();
+            $Selenium->find_element( "#CareOnCloud ESMID",  'css' )->send_keys( $Test->{Value} );
             $Selenium->find_element( "#Password", 'css' )->clear();
             $Selenium->find_element( "#Password", 'css' )->send_keys( $Test->{Value} );
             $Selenium->find_element( "#Submit",   'css' )->click();
 
             if ( $Test->{Name} ne 'Wrong email address' ) {
                 $Selenium->WaitFor(
-                    JavaScript => 'return typeof($) === "function" && $("#OTOBOID.Error").length',
+                    JavaScript => 'return typeof($) === "function" && $("#CareOnCloud ESMID.Error").length',
                 );
                 $Self->True(
-                    $Selenium->execute_script("return \$('#OTOBOID.Error').length"),
+                    $Selenium->execute_script("return \$('#CareOnCloud ESMID.Error').length"),
                     "$Test->{Name} - class Error found",
                 );
             }
             else {
                 $Selenium->WaitFor(
                     JavaScript =>
-                        'return typeof($) === "function" && $("div.MessageBox.Error p:contains(\'Wrong OTOBOID or Password\')").length',
+                        'return typeof($) === "function" && $("div.MessageBox.Error p:contains(\'Wrong CareOnCloud ESMID or Password\')").length',
                 );
                 $Self->True(
                     $Selenium->execute_script(
-                        'return $("div.MessageBox.Error p:contains(\'Wrong OTOBOID or Password\')").length',
+                        'return $("div.MessageBox.Error p:contains(\'Wrong CareOnCloud ESMID or Password\')").length',
                     ),
                     "$Test->{Name} - error message is correct",
                 );

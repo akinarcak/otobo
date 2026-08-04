@@ -95,9 +95,9 @@ sub NextEventGet {
     # would not exist in the given time zone (e. g. on/around daylight saving time switch).
     # CPAN DateTime fails if trying to create a object of a non-existing
     # time in the given time zone. Converting it to UTC and back has the desired effect.
-    my $OTOBOTimeZone = $StartDateTime->OTOBOTimeZoneGet();
+    my $CareOnCloud ESMTimeZone = $StartDateTime->CareOnCloud ESMTimeZoneGet();
     my $TimeZoneChanged;
-    if ( $OTOBOTimeZone ne 'UTC' ) {
+    if ( $CareOnCloud ESMTimeZone ne 'UTC' ) {
         $StartDateTime->ToTimeZone(
             TimeZone => 'UTC'
         );
@@ -129,7 +129,7 @@ sub NextEventGet {
 
     if ($TimeZoneChanged) {
         $EventDateTime->ToTimeZone(
-            TimeZone => $OTOBOTimeZone
+            TimeZone => $CareOnCloud ESMTimeZone
         );
     }
 
@@ -186,9 +186,9 @@ sub NextEventList {
     # would not exist in the given time zone (e. g. on/around daylight saving time switch).
     # CPAN DateTime fails if trying to create a object of a non-existing
     # time in the given time zone. Converting it to UTC and back has the desired effect.
-    my $OTOBOTimeZone = $StartDateTime->OTOBOTimeZoneGet();
+    my $CareOnCloud ESMTimeZone = $StartDateTime->CareOnCloud ESMTimeZoneGet();
     my $TimeZoneChanged;
-    if ( $OTOBOTimeZone ne 'UTC' ) {
+    if ( $CareOnCloud ESMTimeZone ne 'UTC' ) {
         $StartDateTime->ToTimeZone(
             TimeZone => 'UTC'
         );
@@ -231,7 +231,7 @@ sub NextEventList {
 
         if ($TimeZoneChanged) {
             $EventDateTime->ToTimeZone(
-                TimeZone => $OTOBOTimeZone
+                TimeZone => $CareOnCloud ESMTimeZone
             );
         }
 
@@ -279,9 +279,9 @@ sub PreviousEventGet {
     # would not exist in the given time zone (e. g. on/around daylight saving time switch).
     # CPAN DateTime fails if trying to create a object of a non-existing
     # time in the given time zone. Converting it to UTC and back has the desired effect.
-    my $OTOBOTimeZone = $StartDateTime->OTOBOTimeZoneGet();
+    my $CareOnCloud ESMTimeZone = $StartDateTime->CareOnCloud ESMTimeZoneGet();
     my $TimeZoneChanged;
-    if ( $OTOBOTimeZone ne 'UTC' ) {
+    if ( $CareOnCloud ESMTimeZone ne 'UTC' ) {
         $StartDateTime->ToTimeZone(
             TimeZone => 'UTC'
         );
@@ -313,7 +313,7 @@ sub PreviousEventGet {
 
     if ($TimeZoneChanged) {
         $EventDateTime->ToTimeZone(
-            TimeZone => $OTOBOTimeZone
+            TimeZone => $CareOnCloud ESMTimeZone
         );
     }
 

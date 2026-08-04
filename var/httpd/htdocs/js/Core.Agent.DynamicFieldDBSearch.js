@@ -394,7 +394,7 @@ Core.Agent.DynamicFieldDBSearch = (function(TargetNS) {
                         Data = [];
 
                         if (!Response) {
-                            // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefor we handle the error manually.
+                            // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefor we handle the error manually.
                             Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No content from: " + URL, 'CommunicationError'));
                         }
                         else {
@@ -647,7 +647,7 @@ Core.Agent.DynamicFieldDBSearch = (function(TargetNS) {
         Core.AJAX.FunctionCall(URL, Data, function (Response) {
 
             if (!Response) {
-                // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefor we handle the error manually.
+                // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefor we handle the error manually.
                 Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No content from: " + URL, 'CommunicationError'));
             }
             else {

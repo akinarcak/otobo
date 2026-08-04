@@ -166,7 +166,7 @@ sub Run {
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     # Print intro form.
-    my $Title = $LayoutObject->{LanguageObject}->Translate('Install OTOBO');
+    my $Title = $LayoutObject->{LanguageObject}->Translate('Install CareOnCloud ESM');
     if ( $Self->{Subaction} eq 'Intro' ) {
 
         # activate the Intro block
@@ -271,7 +271,7 @@ sub Run {
         if ( $CheckMode eq 'DB' ) {
             my %DBCredentials;
             for my $Param (
-                qw(DBUser DBPassword DBHost DBType DBPort DBSID DBName InstallType OTOBODBUser OTOBODBPassword)
+                qw(DBUser DBPassword DBHost DBType DBPort DBSID DBName InstallType CareOnCloud ESMDBUser CareOnCloud ESMDBPassword)
                 )
             {
                 $DBCredentials{$Param} = $ParamObject->GetParam( Param => $Param ) || '';
@@ -312,7 +312,7 @@ sub Run {
         my $DBType        = $ParamObject->GetParam( Param => 'DBType' );
         my $DBInstallType = $ParamObject->GetParam( Param => 'DBInstallType' );
 
-        # generate a random password for OTOBODBUser
+        # generate a random password for CareOnCloud ESMDBUser
         my $GeneratedPassword = $MainObject->GenerateRandomString;
 
         if ( $DBType eq 'mysql' ) {
@@ -327,7 +327,7 @@ sub Run {
                     Item                => Translatable('Configure MySQL'),
                     Step                => $StepCounter,
                     InstallType         => $DBInstallType,
-                    DefaultDBUser       => $DBInstallType eq 'CreateDB' ? 'root' : 'otobo',
+                    DefaultDBUser       => $DBInstallType eq 'CreateDB' ? 'root' : 'careoncloud',
                     PasswordExplanation => $PasswordExplanation,
                 },
             );
@@ -383,7 +383,7 @@ sub Run {
                     Item          => Translatable('Database'),
                     Step          => $StepCounter,
                     InstallType   => $DBInstallType,
-                    DefaultDBUser => $DBInstallType eq 'CreateDB' ? 'postgres' : 'otobo',
+                    DefaultDBUser => $DBInstallType eq 'CreateDB' ? 'postgres' : 'careoncloud',
                 },
             );
             if ( $DBInstallType eq 'CreateDB' ) {
@@ -450,7 +450,7 @@ sub Run {
 
         my %DBCredentials;
         for my $Param (
-            qw(DBUser DBPassword DBHost DBType DBName DBSID DBPort InstallType OTOBODBUser OTOBODBPassword)
+            qw(DBUser DBPassword DBHost DBType DBName DBSID DBPort InstallType CareOnCloud ESMDBUser CareOnCloud ESMDBPassword)
             )
         {
             $DBCredentials{$Param} = $ParamObject->GetParam( Param => $Param ) || '';
@@ -483,7 +483,7 @@ sub Run {
             },
         );
 
-        # SQL statements for creating the otobo database and the otobo user
+        # SQL statements for creating the careoncloud database and the careoncloud user
         my @Statements;
 
         # Create database, add user.
@@ -522,7 +522,7 @@ sub Run {
                     $Host =~ s{:\d*\z}{}xms;
                 }
 
-                # SQL for creating the OTOBO user.
+                # SQL for creating the CareOnCloud ESM user.
                 #
                 # An explicit statement for user creation is needed because MySQL 8 no longer
                 # supports implicit user creation via the 'GRANT PRIVILEGES' statement.
@@ -531,15 +531,15 @@ sub Run {
                 # The syntax for CREATE USER is mostly the same between MySQL and MariaDB.
                 #
                 # Different authentication plugins are supported for different database systems.
-                my $OTOBODBUser     = $ParamObject->GetParam( Param => 'OTOBODBUser' );
-                my $OTOBODBPassword = $ParamObject->GetParam( Param => 'OTOBODBPassword' );
+                my $CareOnCloud ESMDBUser     = $ParamObject->GetParam( Param => 'CareOnCloud ESMDBUser' );
+                my $CareOnCloud ESMDBPassword = $ParamObject->GetParam( Param => 'CareOnCloud ESMDBPassword' );
                 my $AuthPlugin      = $ParamObject->GetParam( Param => 'AuthPlugin' );
                 my @CreateUserSQLs;
                 if ( !$AuthPlugin || $AuthPlugin eq 'default' ) {
 
                     # Use the default authentication plugin, works for MariaDB and MySQL
                     push @CreateUserSQLs,
-                        "CREATE USER `$OTOBODBUser`\@`$Host` IDENTIFIED BY '$OTOBODBPassword'";
+                        "CREATE USER `$CareOnCloud ESMDBUser`\@`$Host` IDENTIFIED BY '$CareOnCloud ESMDBPassword'";
                 }
                 else {
 
@@ -558,21 +558,21 @@ sub Run {
                         # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-ed25519
                         # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-parsec
                         push @CreateUserSQLs,
-                            "CREATE USER `$OTOBODBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin USING PASSWORD('$OTOBODBPassword')";
+                            "CREATE USER `$CareOnCloud ESMDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin USING PASSWORD('$CareOnCloud ESMDBPassword')";
                     }
                     else {
 
                         # The MySQL case.
                         # "USING PASSWORD('...')" is not supported
                         push @CreateUserSQLs,
-                            "CREATE USER `$OTOBODBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin BY '$OTOBODBPassword'";
+                            "CREATE USER `$CareOnCloud ESMDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin BY '$CareOnCloud ESMDBPassword'";
                     }
                 }
 
                 @Statements = (
                     "CREATE DATABASE `$DB{DBName}` charset utf8mb4 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci",
                     @CreateUserSQLs,
-                    "GRANT ALL PRIVILEGES ON `$DB{DBName}`.* TO `$DB{OTOBODBUser}`\@`$Host` WITH GRANT OPTION",
+                    "GRANT ALL PRIVILEGES ON `$DB{DBName}`.* TO `$DB{CareOnCloud ESMDBUser}`\@`$Host` WITH GRANT OPTION",
                 );
             }
 
@@ -584,8 +584,8 @@ sub Run {
 
             if ( $DB{InstallType} eq 'CreateDB' ) {
                 @Statements = (
-                    "CREATE ROLE \"$DB{OTOBODBUser}\" WITH LOGIN PASSWORD '$DB{OTOBODBPassword}'",
-                    "CREATE DATABASE \"$DB{DBName}\" OWNER=\"$DB{OTOBODBUser}\" ENCODING 'utf-8'",
+                    "CREATE ROLE \"$DB{CareOnCloud ESMDBUser}\" WITH LOGIN PASSWORD '$DB{CareOnCloud ESMDBPassword}'",
+                    "CREATE DATABASE \"$DB{DBName}\" OWNER=\"$DB{CareOnCloud ESMDBUser}\" ENCODING 'utf-8'",
                 );
             }
 
@@ -661,8 +661,8 @@ sub Run {
                 DatabaseDSN  => $DB{ConfigDSN},
                 DatabaseHost => $DB{DBHost},
                 Database     => $DB{DBSID},
-                DatabaseUser => $DB{OTOBODBUser},
-                DatabasePw   => $DB{OTOBODBPassword},
+                DatabaseUser => $DB{CareOnCloud ESMDBUser},
+                DatabasePw   => $DB{CareOnCloud ESMDBPassword},
             );
         }
         else {
@@ -670,8 +670,8 @@ sub Run {
                 DatabaseDSN  => $DB{ConfigDSN},
                 DatabaseHost => $DB{DBHost},
                 Database     => $DB{DBName},
-                DatabaseUser => $DB{OTOBODBUser},
-                DatabasePw   => $DB{OTOBODBPassword},
+                DatabaseUser => $DB{CareOnCloud ESMDBUser},
+                DatabasePw   => $DB{CareOnCloud ESMDBPassword},
             );
         }
 
@@ -681,7 +681,7 @@ sub Run {
             # when the config file can't be written.
             return join '',
                 $LayoutObject->Header(
-                    Title => Translatable('Install OTOBO - Error')
+                    Title => Translatable('Install CareOnCloud ESM - Error')
                 ),
                 $LayoutObject->Warning(
                     Message => Translatable('Kernel/Config.pm isn\'t writable!'),
@@ -692,7 +692,7 @@ sub Run {
                 $LayoutObject->Footer;
         }
 
-        # We need a database connection as the user 'otobo' for handling the XML files.
+        # We need a database connection as the user 'careoncloud' for handling the XML files.
         # Not relying on Kernel/Config.pm as that file was recently changed.
         $Kernel::OM->ObjectsDiscard(
             Objects => ['Kernel::System::DB']
@@ -700,8 +700,8 @@ sub Run {
         $Kernel::OM->ObjectParamAdd(
             'Kernel::System::DB' => {
                 DatabaseDSN  => $DB{DSN},
-                DatabaseUser => $DB{OTOBODBUser},
-                DatabasePw   => $DB{OTOBODBPassword},
+                DatabaseUser => $DB{CareOnCloud ESMDBUser},
+                DatabasePw   => $DB{CareOnCloud ESMDBPassword},
                 Type         => $DB{DBType},
             },
         );
@@ -709,7 +709,7 @@ sub Run {
 
         # Create database tables and insert initial values.
         my @SQLPost;
-        for my $SchemaFile (qw(otobo-schema otobo-initial_insert)) {
+        for my $SchemaFile (qw(careoncloud-schema careoncloud-initial_insert)) {
 
             if ( !-f "$DirOfSQLFiles/$SchemaFile.xml" ) {
                 $LayoutObject->FatalError(
@@ -736,7 +736,7 @@ sub Run {
             );
 
             # If we parsed the schema, catch post instructions.
-            @SQLPost = $DBObject->SQLProcessorPost if $SchemaFile eq 'otobo-schema';
+            @SQLPost = $DBObject->SQLProcessorPost if $SchemaFile eq 'careoncloud-schema';
 
             SQL:
             for my $SQL (@SQL) {
@@ -1081,8 +1081,8 @@ sub Run {
 
         # webserver restart is never necessary
 
-        my $OTOBOHandle = $ParamObject->ScriptName;
-        $OTOBOHandle =~ s/\/(.*)\/installer\.pl/$1/;
+        my $CareOnCloud ESMHandle = $ParamObject->ScriptName;
+        $CareOnCloud ESMHandle =~ s/\/(.*)\/installer\.pl/$1/;
 
         # Under Docker the scheme is correctly recognised as there are only two relevant cases:
         #   a) HTTP should actually be used
@@ -1106,7 +1106,7 @@ sub Run {
                 Step        => $StepCounter,
                 Host        => $Host,
                 Scheme      => $Scheme,
-                OTOBOHandle => $OTOBOHandle,
+                CareOnCloud ESMHandle => $CareOnCloud ESMHandle,
                 Password    => $Password,
             },
         );
@@ -1191,7 +1191,7 @@ sub ConnectToDB {
     my @NeededKeys = qw(DBType DBHost DBUser DBPassword);
 
     if ( $Param{InstallType} eq 'CreateDB' ) {
-        push @NeededKeys, qw(OTOBODBUser OTOBODBPassword);
+        push @NeededKeys, qw(CareOnCloud ESMDBUser CareOnCloud ESMDBPassword);
     }
 
     # For Oracle we require DBSID and DBPort.
@@ -1215,10 +1215,10 @@ sub ConnectToDB {
         }
     }
 
-    # If we do not need to create a database for OTOBO OTOBODBuser equals DBUser.
+    # If we do not need to create a database for CareOnCloud ESM CareOnCloud ESMDBuser equals DBUser.
     if ( $Param{InstallType} ne 'CreateDB' ) {
-        $Param{OTOBODBUser}     = $Param{DBUser};
-        $Param{OTOBODBPassword} = $Param{DBPassword};
+        $Param{CareOnCloud ESMDBUser}     = $Param{DBUser};
+        $Param{CareOnCloud ESMDBPassword} = $Param{DBPassword};
     }
 
     # Create DSN string for backend.

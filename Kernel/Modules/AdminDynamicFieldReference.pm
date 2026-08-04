@@ -1253,7 +1253,7 @@ sub _GetParamReferenceFilterList {
             #     # cut last part of regex error
             #     # 'Invalid regular expression (Unmatched [ in regex; marked by
             #     # <-- HERE in m/aaa[ <-- HERE / at
-            #     # /opt/otobo/bin/cgi-bin/../../Kernel/Modules/AdminDynamicFieldText.pm line 452..
+            #     # /opt/careoncloud/bin/cgi-bin/../../Kernel/Modules/AdminDynamicFieldText.pm line 452..
             #     my $ServerErrorMessage = $@;
             #     $ServerErrorMessage =~ s{ (in \s regex); .*$ }{ $1 }xms;
             #     $Errors->{ 'ReferenceFilter_' . $CurrentReferenceFilterEntryID . 'ServerErrorMessage' } = $ServerErrorMessage;

@@ -87,7 +87,7 @@ sub new {
 
 Generates a support bundle C<.tar> or C<.tar.gz> with the following contents: Registration Information,
 Support Data, Installed Packages, and another C<.tar> or C<.tar.gz> with all changed or new files in the
-OTOBO installation directory.
+CareOnCloud ESM installation directory.
 
     my $Result = $SupportBundleGeneratorObject->Generate();
 
@@ -475,7 +475,7 @@ sub GeneratePackageList {
 
 =head2 GenerateRegistrationInfo()
 
-Generates a C<.json> file with the otobo system registration information
+Generates a C<.json> file with the careoncloud system registration information
 
     my ( $Content, $Filename ) = $SupportBundleGeneratorObject->GenerateRegistrationInfo();
 
@@ -525,7 +525,7 @@ sub GenerateRegistrationInfo {
 
 =head2 GenerateConfigurationDump()
 
-Generates a C<.yml> file with the otobo system registration information
+Generates a C<.yml> file with the careoncloud system registration information
 
     my ( $Content, $Filename ) = $SupportBundleGeneratorObject->GenerateConfigurationDump();
 

@@ -385,7 +385,7 @@ $Selenium->RunTest(
             UserID      => 1
         );
 
-        # Set auto response to default otobo address.
+        # Set auto response to default careoncloud address.
         my $Success = $AutoResponseObject->AutoResponseUpdate(
             %AutoResponseToDefaultAddress,
         );
@@ -445,7 +445,7 @@ $Selenium->RunTest(
 
         $Selenium->find_element( "#Submit", 'css' )->click();
 
-        # Set auto response to default otobo address.
+        # Set auto response to default careoncloud address.
         $Success = $AutoResponseObject->AutoResponseUpdate(
             %AutoResponseToDefaultAddress,
         );

@@ -18,7 +18,7 @@ Talep, onay ve fulfillment kayitlari OTOBO icinde GPL-3.0 `D724Request` paketi o
 - Form cevaplari katalog semasina gore sunucu tarafinda tip, zorunluluk, uzunluk ve secenek allow-list kontrollerinden gecer.
 - Musteri, requester ve tenant kapsamli idempotency anahtari kullanir. Ayni payload replay edilir; farkli payload `IDEMPOTENCY_CONFLICT` alir.
 - Onay ve gorev yazmalari beklenen version ile optimistic locking uygular; terminal durumlar yeniden acilamaz.
-- OTOBO framework CSRF token'i tum portal ve agent POST formlarinda zorunludur.
+- CareOnCloud ESM framework CSRF token'i tum portal ve agent POST formlarinda zorunludur.
 
 ## Dogrulama
 

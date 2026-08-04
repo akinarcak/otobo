@@ -167,7 +167,7 @@ for my $BaseURL ( sort keys %Frontends ) {
 
             ok(
                 !scalar $Response->header('X-CareOnCloud-Login'),
-                "no OTOBO login screen ($URL)",
+                "no CareOnCloud ESM login screen ($URL)",
             );
 
             # check response contents

@@ -275,7 +275,7 @@ my %LockingSettings = (
 $ExclusiveLockGUID = $PrepareLockTests->( Test => \%LockingSettings );
 
 my $EffectiveValueStrgFile = <<"EOF";
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::ZZZAAuto;
 use strict;

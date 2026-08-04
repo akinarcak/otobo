@@ -163,7 +163,7 @@ sub CLDRCountryList {
 
     my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
 
-    # Locale::CLDR is not required for OTOBO
+    # Locale::CLDR is not required for CareOnCloud ESM
     if ( $MainObject->Require('Locale::CLDR') ) {
 
         my $LanguageID = lc substr $Param{Language}, 0, 2;    # for now ignore the region

@@ -43,7 +43,7 @@ scripts::DBUpdateTo11_1::SysConfigDeactivateAutoloadModules - deactivate autoloa
 =head1 DESCRIPTION
 
 Packages may use autoload modules for enhancing and modifying the core modules.
-When a package is integrated into OTOBO core then the autoloads are usually no longer needed.
+When a package is integrated into CareOnCloud ESM core then the autoloads are usually no longer needed.
 This is the case with the package C<ImportExportStandardObjects>.
 
 The SysConfig settings for the autoload modules must be deactivated because otherwise
@@ -78,7 +78,7 @@ sub Run {
     my $ConfigObject          = $Kernel::OM->Get('Kernel::Config');
     my %AutoloadConfiguration = ( $ConfigObject->Get('AutoloadPerlPackages') // {} )->%*;
 
-    # Settings for the autoload Perl modules that are no longer needed in OTOBO 11.1.x.
+    # Settings for the autoload Perl modules that are no longer needed in CareOnCloud ESM 11.1.x.
     my @Keys = (
 
         # autoloads from the integrated package ImportExportStandardObjects

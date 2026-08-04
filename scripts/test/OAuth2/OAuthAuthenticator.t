@@ -139,11 +139,11 @@ eval {
     #
 
     PrepareTestSysConfig(
-        Audience => 'otobo',
+        Audience => 'careoncloud',
     );
 
     $Token = encode_jwt(
-        payload       => OAuthProviderMock::Payload( Audience => [ 'otobo', 'mammamia' ] ),
+        payload       => OAuthProviderMock::Payload( Audience => [ 'careoncloud', 'mammamia' ] ),
         alg           => 'RS256',
         key           => $OAuthProviderMock::PrivateKey,
         extra_headers => { kid => $OAuthProviderMock::KidID },
@@ -163,7 +163,7 @@ eval {
     #
 
     PrepareTestSysConfig(
-        AuthorizedParty => 'otobo',
+        AuthorizedParty => 'careoncloud',
     );
 
     $Token = encode_jwt(

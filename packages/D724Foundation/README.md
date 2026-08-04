@@ -4,7 +4,7 @@
 
 ## Build
 
-From an OTOBO runtime containing this source directory:
+From a CareOnCloud ESM runtime containing this source directory:
 
 ```bash
 mkdir -p /tmp/d724-package-out

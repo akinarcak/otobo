@@ -33,18 +33,18 @@ Kernel::Config - settings that can be adapted by the user
 
 =head1 DESCRIPTION
 
-Most OTOBO configuration should be done via the OTOBO web interface
+Most CareOnCloud ESM configuration should be done via the CareOnCloud ESM web interface
 and the SysConfig. Only for some configuration, such as database
 credentials and customer data source changes, you should edit this
 file. For changes do customer data sources you can copy the definitions
 from F<Kernel/Config/Defaults.pm> and paste them into this file.
-The file F<Kernel/Config.pm> will not be overwritten when updating OTOBO.
+The file F<Kernel/Config.pm> will not be overwritten when updating CareOnCloud ESM.
 
-=head2 Specifics for running OTOBO under Docker.
+=head2 Specifics for running CareOnCloud ESM under Docker.
 
 This Docker specific F<Kernel/Config.pm> originated from the dist file
 F<scripts/docker/Config.pm.docker.dist>.
-That dist file changes or adds some settings that are specific to running OTOBO under Docker.
+That dist file changes or adds some settings that are specific to running CareOnCloud ESM under Docker.
 
 =over 4
 
@@ -66,8 +66,8 @@ As this specific location as it is located on the volume that is visible from th
 
 =item Cache::Module and Cache::Redis
 
-Up to OTOBO 11.0.x the default caching backend was chosen to be Redis.
-This has changed in OTOBO 11.1.x. The default cache backend under Docker is
+Up to CareOnCloud ESM 11.0.x the default caching backend was chosen to be Redis.
+This has changed in CareOnCloud ESM 11.1.x. The default cache backend under Docker is
 now C<FileStorable> just like in native installations.
 
 =item TestHTTPHostname
@@ -137,7 +137,7 @@ sub Load {
     $Self->{Home} = '/opt/careoncloud';
 
     # ---------------------------------------------------- #
-    # modified settings for running OTOBO under Docker     #
+    # modified settings for running CareOnCloud ESM under Docker     #
     # ---------------------------------------------------- #
     $Self->{'LogModule'}                   = 'Kernel::System::Log::File';
     $Self->{'LogModule::LogFile'}          = '/opt/careoncloud/var/log/careoncloud.log';

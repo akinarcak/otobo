@@ -232,7 +232,7 @@ sub CreateSessionID {
     #
     # The SystemID is included in the session ID because
     # the session ID is part of data file name in the session dir. The
-    # The session dir might be shared between different OTOBO installations,
+    # The session dir might be shared between different CareOnCloud ESM installations,
     my $SessionID = $Self->{SystemID} . $MainObject->GenerateRandomString(
         Length => 32,
     );

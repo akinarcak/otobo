@@ -31,7 +31,7 @@ use Digest::MD5 qw(md5_hex);
 # CPAN modules
 
 # CareOnCloud ESM modules
-use Kernel::System::DateTime qw(OTOBOTimeZoneGet);
+use Kernel::System::DateTime qw(CareOnCloud ESMTimeZoneGet);
 
 our @EXPORT_OK = qw(Translatable);    ## no critic qw(OTOBO::RequireCamelCase)
 
@@ -92,7 +92,7 @@ sub new {
     }
 
     # take time zone
-    $Self->{TimeZone} = $Param{UserTimeZone} || $Param{TimeZone} || OTOBOTimeZoneGet();
+    $Self->{TimeZone} = $Param{UserTimeZone} || $Param{TimeZone} || CareOnCloud ESMTimeZoneGet();
 
     # fetch localization setting
     $Self->{TimeShowLocalization} = $ConfigObject->Get('TimeShowLocalization') || 0;
@@ -370,12 +370,12 @@ sub FormatTimeString {
         $ReturnString
             =~ s{(\%B)}{$Self->Translate($MonthAbbr);}egx;
 
-        # output time zone only if it differs from OTOBO' time zone
+        # output time zone only if it differs from CareOnCloud ESM' time zone
         if (
             $Self->{'TimeShowLocalization'}
             && $Config ne 'DateFormatShort'
             && $Self->{TimeZone}
-            && $Self->{TimeZone} ne OTOBOTimeZoneGet()
+            && $Self->{TimeZone} ne CareOnCloud ESMTimeZoneGet()
             )
         {
             return $ReturnString . " ($Self->{TimeZone})";

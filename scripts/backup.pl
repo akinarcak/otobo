@@ -143,7 +143,7 @@ my ( $DBOnlyBackup, $FullBackup, $MigrateFromOTRSBackup ) = ( 0, 0, 0 );
 # create common objects
 local $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-backup.pl',
+        LogPrefix => 'CareOnCloud ESM-backup.pl',
     },
 );
 
@@ -242,10 +242,10 @@ $BackupDir = abs_path($BackupDir);
 # create new backup directory
 my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-# make sure backup dir is not under OTOBO_HOME (usually /opt/otobo)
+# make sure backup dir is not under OTOBO_HOME (usually /opt/careoncloud)
 if ( dir($Home)->contains($BackupDir) ) {
 
-    say STDERR ("Backup directory '$BackupDir' is under '$Home', please chose a different backup directory not below the OTOBO home directory with the -d option!");
+    say STDERR ("Backup directory '$BackupDir' is under '$Home', please chose a different backup directory not below the CareOnCloud ESM home directory with the -d option!");
     exit 1;
 }
 
@@ -502,7 +502,7 @@ if ( defined $RemoveDays ) {
     }
 }
 
-# A special MySQL dump for migrating from OTRS 6 to OTOBO 10
+# A special MySQL dump for migrating from OTRS 6 to CareOnCloud ESM 10
 # - skip tables that don't have to be migrated
 # - change the character set to utf8mb4
 # - remove COLLATE
@@ -532,7 +532,7 @@ sub MySQLBackupForMigrateFromOTRS {
     # output files
     my $PreprocessFile        = qq{$Directory/${DatabaseName}_pre.sql};
     my $SchemaDumpFile        = qq{$Directory/${DatabaseName}_schema.sql};
-    my $AdaptedSchemaDumpFile = qq{$Directory/${DatabaseName}_schema_for_otobo.sql};
+    my $AdaptedSchemaDumpFile = qq{$Directory/${DatabaseName}_schema_for_careoncloud.sql};
     my $DataDumpFile          = qq{$Directory/${DatabaseName}_data.sql};
     my $PostprocessFile       = qq{$Directory/${DatabaseName}_post.sql};
 
@@ -745,7 +745,7 @@ END_SQL
     return;
 }
 
-# a special MySQL dump for migrating from OTRS 6 to OTOBO 10
+# a special MySQL dump for migrating from OTRS 6 to CareOnCloud ESM 10
 sub OracleBackupForMigrateFromOTRS {
     my %Param = @_;
 
@@ -765,18 +765,18 @@ sub OracleBackupForMigrateFromOTRS {
     say <<"END_MESSAGE";
 These instruction are preliminary.
 
-Clear the user 'otobo':
-  - DROP USER otobo CASCADE
+Clear the user 'careoncloud':
+  - DROP USER careoncloud CASCADE
 
-Clone the schema 'otrs' into the schema 'otobo'. This can be done with DBA tools. Alternatively do:
+Clone the schema 'otrs' into the schema 'careoncloud'. This can be done with DBA tools. Alternatively do:
   - mkdir /tmp/otrs_dump_dir     # on the database server
   - CREATE DIRECTORY OTRS_DUMP_DIR AS '/tmp/orts_dump_dir';   # sys as sysdba
   - GRANT READ, WRITE ON DIRECTORY OTRS_DUMP_DIR TO sys;      # sys as sysdba
   - expdp \"sys/SYS_PASSWORD@//127.0.0.1/SID as sysdba\"  schemas=otrs directory=OTRS_DUMP_DIR dumpfile=otrs.dmp logfile=expdp_otrs.log
-  - impdp \"sys/SYS_PASSWORD@//127.0.0.1/SID as sysdba\" directory=OTRS_DUMP_DIR dumpfile=otrs.dmp logfile=impdpotobo.log  remap_schema=otrs:otobo
-  - ALTER USER otobo IDENTIFIED BY [OTOBO_PASSWORD];
+  - impdp \"sys/SYS_PASSWORD@//127.0.0.1/SID as sysdba\" directory=OTRS_DUMP_DIR dumpfile=otrs.dmp logfile=impdpcareoncloud.log  remap_schema=otrs:careoncloud
+  - ALTER USER careoncloud IDENTIFIED BY [OTOBO_PASSWORD];
 
-Adapt the schema otobo as the user otobo.
+Adapt the schema careoncloud as the user careoncloud.
     - run $PostprocessFile
 END_MESSAGE
 
@@ -948,26 +948,26 @@ sub HandleDBPasswordOption {
 
 sub PrintHelpAndExit {
     print <<'END_HELP';
-Back up an OTOBO system.
+Back up a CareOnCloud ESM system.
 
 Usage:
 
     # print this help message
-    otobo> cd /opt/otobo
-    otobo> scripts/backup.pl --help
+    careoncloud> cd /opt/careoncloud
+    careoncloud> scripts/backup.pl --help
 
     # for regular backups, can also be used in a cron job
-    otobo> cd /opt/otobo
-    otobo> scripts/backup.pl -d /data_backup_dir [-c gzip|bzip2|zstd] [-r DAYS] [-t fullbackup|nofullbackup|dbonly]
-    otobo> scripts/backup.pl --backup-dir /data_backup_dir [--compress gzip|bzip2|zstd] [--remove-old-backups DAYS] [--backup-type fullbackup|nofullbackup|dbonly|migratefromotrs]
+    careoncloud> cd /opt/careoncloud
+    careoncloud> scripts/backup.pl -d /data_backup_dir [-c gzip|bzip2|zstd] [-r DAYS] [-t fullbackup|nofullbackup|dbonly]
+    careoncloud> scripts/backup.pl --backup-dir /data_backup_dir [--compress gzip|bzip2|zstd] [--remove-old-backups DAYS] [--backup-type fullbackup|nofullbackup|dbonly|migratefromotrs]
 
-    # backups for creating a dump for migrating an OTRS database OTOBO
-    otobo> cd /opt/otobo
-    otobo> scripts/backup.pl -t migratefromotrs --db-name otrs --db-host 127.0.0.1 --db-user otrs --db-password "secret_otrs_password"
+    # backups for creating a dump for migrating an OTRS database CareOnCloud ESM
+    careoncloud> cd /opt/careoncloud
+    careoncloud> scripts/backup.pl -t migratefromotrs --db-name otrs --db-host 127.0.0.1 --db-user otrs --db-password "secret_otrs_password"
 
     # In special cases extra options can be passed to the dump command.
     # Multiple options are separated by a space. Note the required quotes.
-    otobo> scripts/backup.pl --max-allowed-packet 128M --extra-dump-options "-P 3307 --column-statistics=0"
+    careoncloud> scripts/backup.pl --max-allowed-packet 128M --extra-dump-options "-P 3307 --column-statistics=0"
 
 Short options:
  [-h]                   - Display help for this command.
@@ -984,15 +984,15 @@ Long options:
  [--backup-type]              - same as -t
  [--dry-run]                  - only print out the database dump command, implies '--backup-type dbonly'
  [--max-allowed-packet SIZE]  - add the option "--max-allowed-packet=SIZE" to mysqldump. The default setting is 64M.
- [--db-host]                  - default is the setting 'DatabaseHost' in the OTOBO config
- [--db-name]                  - default is the setting 'Database' in the OTOBO config
- [--db-user]                  - default is the setting 'DatabaseUser' in the OTOBO config
- [--db-password]              - default is the setting 'DatabasePw' in the OTOBO config
- [--db-type]                  - default is extracted from the setting 'DatabaseDSN' in the OTOBO config
+ [--db-host]                  - default is the setting 'DatabaseHost' in the CareOnCloud ESM config
+ [--db-name]                  - default is the setting 'Database' in the CareOnCloud ESM config
+ [--db-user]                  - default is the setting 'DatabaseUser' in the CareOnCloud ESM config
+ [--db-password]              - default is the setting 'DatabasePw' in the CareOnCloud ESM config
+ [--db-type]                  - default is extracted from the setting 'DatabaseDSN' in the CareOnCloud ESM config
  [--extra-dump-options]       - extra options that are passed to the dump command
 
 Help:
-Using -t fullbackup saves the database and the whole OTOBO home directory (except /var/tmp and cache directories).
+Using -t fullbackup saves the database and the whole CareOnCloud ESM home directory (except /var/tmp and cache directories).
 Using -t nofullbackup saves only the database, /Kernel/Config* and /var directories.
 With -t dbonly only the database will be saved.
 With -t migratefromotrs only the OTRS database will be saved and prepared for migration.

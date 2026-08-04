@@ -12,7 +12,7 @@
 # Florian Edlhuber <florian.edlhuber@otrs.com>, 2018
 # Florian Liebe, 2018
 # Carlos Rodríguez <carlos.rodriguez@otrs.com>, 2018
-# jb_otobo <jens.bothe@otrs.com>, 2018
+# jb_careoncloud <jens.bothe@otrs.com>, 2018
 # Philip Heinrich <philip.heinrich@it-verbund-uelzen.de>, 2018
 # Lukas, 2018
 # Ralf Hildebrandt (hildeb) <ralf.hildebrandt@gmail.com>, 2018
@@ -25,13 +25,13 @@
 # Tobias Krumholz <krumholt@fh-trier.de>, 2018
 # Rudy R <rudy.rohde@googlemail.com>, 2018
 # Daniel Schliemann <daniel.schliemann@googlemail.com>, 2018
-# Felix Schäfer <web.otobo@yorfeix.de>, 2018
+# Felix Schäfer <web.careoncloud@yorfeix.de>, 2018
 # Sebastian Hellwig <sebastian@furufuru.cc>, 2018
-# sb_otobo <stefan.bedorf@otrs.com>, 2018
+# sb_careoncloud <stefan.bedorf@otrs.com>, 2018
 # Stefan Hagl <stefan.hagl@gmx.at>, 2018
 # Ettore Atalan <atalanttore@googlemail.com>, 2018
 # bce0ba3cf0737f4654586bd1fe5e7d63, 2018
-# ru_otobo <robert.ullrich@otrs.com>, 2018
+# ru_careoncloud <robert.ullrich@otrs.com>, 2018
 # Marco Buchholz <mabu@debian-admin.de>, 2018
 # nilsleideck <nils.leideck@leidex.net>, 2018
 # Christoph Keßler, 2019
@@ -1105,10 +1105,10 @@ msgstr "Supportdaten werden derzeit nur auf diesem System angezeigt."
 
 #. Template: AdminCloudServiceSupportDataCollector
 msgid ""
-"It is sometimes recommended to send this data to the OTOBO team in order to "
+"It is sometimes recommended to send this data to the CareOnCloud ESM team in order to "
 "get better support."
 msgstr ""
-"In manchen Fällen ist es empfehlenswert, diese Daten an das OTOBO Team zu "
+"In manchen Fällen ist es empfehlenswert, diese Daten an das CareOnCloud ESM Team zu "
 "senden, um bessere Unterstützung zu erhalten."
 
 #. Template: AdminCloudServiceSupportDataCollector
@@ -1122,10 +1122,10 @@ msgstr "Supportdaten senden"
 #. Template: AdminCloudServiceSupportDataCollector
 msgid ""
 "This will allow the system to send additional support data information to "
-"the OTOBO team."
+"the CareOnCloud ESM team."
 msgstr ""
 "Diese Einstellung aktiviert das Senden zusätzlicher Support-Informationen an "
-"das OTOBO-Team."
+"das CareOnCloud ESM-Team."
 
 #. Template: AdminCloudServiceSupportDataCollector
 msgid "Update"
@@ -1137,12 +1137,12 @@ msgstr "Systemregistrierung"
 
 #. Template: AdminCloudServiceSupportDataCollector
 msgid ""
-"To enable data sending, please register your system with the OTOBO team or "
+"To enable data sending, please register your system with the CareOnCloud ESM team or "
 "update your system registration information (make sure to activate the 'send "
 "support data' option.)"
 msgstr ""
 "Um das Senden der Daten zu aktivieren, registrieren Sie bitte Ihr System "
-"beim OTOBO-Team oder aktualisieren Sie Ihre Systemregistrierung (aktivieren "
+"beim CareOnCloud ESM-Team oder aktualisieren Sie Ihre Systemregistrierung (aktivieren "
 "Sie die Option 'Supportdaten senden'.)"
 
 #. Template: AdminCloudServiceSupportDataCollector
@@ -1159,18 +1159,18 @@ msgstr ""
 
 #. Template: AdminCloudServices
 msgid ""
-"System registration is a service of OTOBO team, which provides a lot of "
+"System registration is a service of CareOnCloud ESM team, which provides a lot of "
 "advantages!"
 msgstr ""
-"Die Systemregistrierung ist ein Service von Team OTOBO, der Ihnen viele "
+"Die Systemregistrierung ist ein Service von Team CareOnCloud ESM, der Ihnen viele "
 "Vorteile sichert!"
 
 #. Template: AdminCloudServices
 msgid ""
-"Please note that the use of OTOBO cloud services requires the system to be "
+"Please note that the use of CareOnCloud ESM cloud services requires the system to be "
 "registered."
 msgstr ""
-"Bitte beachten Sie, dass die Verwendung von OTOBO Cloud-Services ein "
+"Bitte beachten Sie, dass die Verwendung von CareOnCloud ESM Cloud-Services ein "
 "registriertes System voraussetzt."
 
 #. Template: AdminCloudServices
@@ -3614,10 +3614,10 @@ msgstr "Fehlerbehandlungs-Backend"
 
 #. Template: AdminGenericInterfaceErrorHandlingDefault
 msgid ""
-"This OTOBO error handling backend module will be called internally to "
+"This CareOnCloud ESM error handling backend module will be called internally to "
 "process the error handling mechanism."
 msgstr ""
-"Das OTOBO Fehlerbehandlungs-Backend wird intern aufgerufen, um die "
+"Das CareOnCloud ESM Fehlerbehandlungs-Backend wird intern aufgerufen, um die "
 "Fehlerbehandlung auszuführen."
 
 #. Template: AdminGenericInterfaceErrorHandlingDefault
@@ -3994,7 +3994,7 @@ msgstr "Invoker-Backend"
 
 #. Template: AdminGenericInterfaceInvokerDefault
 msgid ""
-"This OTOBO invoker backend module will be called to prepare the data to be "
+"This CareOnCloud ESM invoker backend module will be called to prepare the data to be "
 "sent to the remote system, and to process its response data."
 msgstr ""
 "Dieses Invoker-Backend-Modul wird aufgerufen, um die Daten zum Versand an "
@@ -4010,10 +4010,10 @@ msgstr "Konfigurieren"
 
 #. Template: AdminGenericInterfaceInvokerDefault
 msgid ""
-"The data from the invoker of OTOBO will be processed by this mapping, to "
+"The data from the invoker of CareOnCloud ESM will be processed by this mapping, to "
 "transform it to the kind of data the remote system expects."
 msgstr ""
-"Die Daten des OTOBO-Invokers werden von diesem Mapping verarbeitet, um sie "
+"Die Daten des CareOnCloud ESM-Invokers werden von diesem Mapping verarbeitet, um sie "
 "so umzuformen, wie das entfernte System die Daten benötigt."
 
 #. Template: AdminGenericInterfaceInvokerDefault
@@ -4023,10 +4023,10 @@ msgstr "Mapping für eingehende Antwortdaten"
 #. Template: AdminGenericInterfaceInvokerDefault
 msgid ""
 "The response data will be processed by this mapping, to transform it to the "
-"kind of data the invoker of OTOBO expects."
+"kind of data the invoker of CareOnCloud ESM expects."
 msgstr ""
 "Die Antwort-Daten des entfernten Systems werden von diesem Mapping "
-"verarbeitet, um sie so umzuformen, wie der Invoker von OTOBO sie benötigt."
+"verarbeitet, um sie so umzuformen, wie der Invoker von CareOnCloud ESM sie benötigt."
 
 #. Template: AdminGenericInterfaceInvokerDefault
 msgid "Asynchronous"
@@ -4058,10 +4058,10 @@ msgstr ""
 
 #. Template: AdminGenericInterfaceInvokerDefault
 msgid ""
-"Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in "
+"Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in "
 "background (recommended)."
 msgstr ""
-"Asynchrone Ereignisauslöser werden vom OTOBO Scheduler Daemon im Hintergrund "
+"Asynchrone Ereignisauslöser werden vom CareOnCloud ESM Scheduler Daemon im Hintergrund "
 "verarbeitet (empfohlen)."
 
 #. Template: AdminGenericInterfaceInvokerDefault
@@ -4568,17 +4568,17 @@ msgstr "Aktivieren"
 #| msgid ""
 #| "Extended XSLT Mapping allows for more fine-grained configuration of XSLT "
 #| "mapping. When enabled, the resulting JSON type can be forced by spcifying "
-#| "an 'otoboXslType' XML attribue. Possible Values for that attribute are "
+#| "an 'careoncloudXslType' XML attribue. Possible Values for that attribute are "
 #| "'int', 'bool', 'float', and 'array'."
 msgid ""
 "Extended XSLT mapping allows for more fine-grained configuration of XSLT "
 "mapping. When enabled, the resulting JSON type can be forced by specifying "
-"an 'otoboXslType' XML attribute. Possible values for that attribute are "
+"an 'careoncloudXslType' XML attribute. Possible values for that attribute are "
 "'int', 'bool', 'float', and 'array'."
 msgstr ""
 "Das erweiterte XSLT-Mapping erlaubt eine feingranularere Konfiguration des "
 "XSLT-Mappings. Sobald es aktiviert ist, kann der resultierende JSON-Typ "
-"durch das Spezifizieren eines XML-Attributs 'otoboXslType' erzwungen werden. "
+"durch das Spezifizieren eines XML-Attributs 'careoncloudXslType' erzwungen werden. "
 "Erlaubte Werte für dieses Attribut sind 'int', 'bool', 'float', und 'array'."
 
 #. Template: AdminGenericInterfaceOperationDefault
@@ -4611,10 +4611,10 @@ msgstr "Operation-Backend"
 
 #. Template: AdminGenericInterfaceOperationDefault
 msgid ""
-"This OTOBO operation backend module will be called internally to process the "
+"This CareOnCloud ESM operation backend module will be called internally to process the "
 "request, generating data for the response."
 msgstr ""
-"Dieses OTOBO-Operation-Backend-Modul wird intern aufgerufen, um die "
+"Dieses CareOnCloud ESM-Operation-Backend-Modul wird intern aufgerufen, um die "
 "Anforderung zu bearbeiten und Daten für die Antwort zu generieren."
 
 #. Template: AdminGenericInterfaceOperationDefault
@@ -4624,10 +4624,10 @@ msgstr "Mapping für eingehende Anfragedaten"
 #. Template: AdminGenericInterfaceOperationDefault
 msgid ""
 "The request data will be processed by this mapping, to transform it to the "
-"kind of data OTOBO expects."
+"kind of data CareOnCloud ESM expects."
 msgstr ""
 "Die Daten der eingehenden Anfrage werden von diesem Mapping verarbeitet, um "
-"sie so umzuformen, wie die OTOBO-Operation sie benötigt."
+"sie so umzuformen, wie die CareOnCloud ESM-Operation sie benötigt."
 
 #. Template: AdminGenericInterfaceOperationDefault
 msgid "Mapping for outgoing response data"
@@ -4694,10 +4694,10 @@ msgstr "Dieses Feld sollte eine Ganzzahl beinhalten."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid ""
-"Here you can specify the maximum size (in bytes) of REST messages that OTOBO "
+"Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM "
 "will process."
 msgstr ""
-"Bestimmen Sie die maximale Größe (in Bytes) für REST-Nachrichten, die OTOBO "
+"Bestimmen Sie die maximale Größe (in Bytes) für REST-Nachrichten, die CareOnCloud ESM "
 "akzeptieren soll."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
@@ -4865,8 +4865,8 @@ msgstr ""
 "DER oder PKCS#12-Format vorliegen)."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. /opt/otobo/var/certificates/SOAP/certificate.pem"
-msgstr "z.B. /opt/otobo/var/certificates/SOAP/certificate.pem"
+msgid "e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem"
+msgstr "z.B. /opt/careoncloud/var/certificates/SOAP/certificate.pem"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Client Certificate Key"
@@ -4881,8 +4881,8 @@ msgstr ""
 "(sofern nicht bereits in der Client-Zertifikats-Datei enthalten)."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. /opt/otobo/var/certificates/SOAP/key.pem"
-msgstr "z.B. /opt/otobo/var/certificates/SOAP/key.pem"
+msgid "e.g. /opt/careoncloud/var/certificates/SOAP/key.pem"
+msgstr "z.B. /opt/careoncloud/var/certificates/SOAP/key.pem"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Client Certificate Key Password"
@@ -4907,8 +4907,8 @@ msgstr ""
 "das Zertifikat signiert hat."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem"
-msgstr "z. B. /opt/otobo/var/certificates/SOAP/CA/ca.pem"
+msgid "e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem"
+msgstr "z. B. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Certification Authority (CA) Directory"
@@ -4923,8 +4923,8 @@ msgstr ""
 "gespeichert sind."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. /opt/otobo/var/certificates/SOAP/CA"
-msgstr "z. B. /opt/otobo/var/certificates/SOAP/CA"
+msgid "e.g. /opt/careoncloud/var/certificates/SOAP/CA"
+msgstr "z. B. /opt/careoncloud/var/certificates/SOAP/CA"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "SSL hostname verification"
@@ -5188,11 +5188,11 @@ msgstr "Freitext für den Antwortnamen"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO "
+"Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM "
 "will process."
 msgstr ""
 "Hier können Sie eine Maximalgröße für SOAP-Nachrichten (in Bytes) angeben, "
-"die OTOBO verarbeitet."
+"die CareOnCloud ESM verarbeitet."
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid "Encoding"
@@ -5340,15 +5340,15 @@ msgstr "Debug-Level"
 
 #. Template: AdminGenericInterfaceWebservice
 msgid ""
-"In provider mode, OTOBO offers web services which are used by remote systems."
+"In provider mode, CareOnCloud ESM offers web services which are used by remote systems."
 msgstr ""
-"Im Modus \"Provider\" bietet OTOBO Webdervices an, die von externen Systemen "
+"Im Modus \"Provider\" bietet CareOnCloud ESM Webdervices an, die von externen Systemen "
 "genutzt werden."
 
 #. Template: AdminGenericInterfaceWebservice
-msgid "In requester mode, OTOBO uses web services of remote systems."
+msgid "In requester mode, CareOnCloud ESM uses web services of remote systems."
 msgstr ""
-"Im Modus \"Requester\" nutzt OTOBO selbst Webservices von externen Systemen."
+"Im Modus \"Requester\" nutzt CareOnCloud ESM selbst Webservices von externen Systemen."
 
 #. Template: AdminGenericInterfaceWebservice
 msgid "Network transport"
@@ -5752,7 +5752,7 @@ msgstr ""
 
 #. Template: AdminMailAccount
 msgid ""
-"If your account is marked as trusted, the X-OTOBO headers already existing "
+"If your account is marked as trusted, the X-CareOnCloud ESM headers already existing "
 "at arrival time (for priority etc.) will be kept and used, for example in "
 "PostMaster filters."
 msgstr ""
@@ -6010,10 +6010,10 @@ msgstr "Verwenden Sie Komma oder Semikolon, um E-Mail-Adressen zu trennen."
 
 #. Template: AdminNotificationEventTransportEmailSettings
 msgid ""
-"You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values "
+"You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values "
 "from the current ticket."
 msgstr ""
-"Sie können OTOBO-Tags wie <OTOBO_TICKET_DynamicField_...> nutzen, um Werte "
+"Sie können CareOnCloud ESM-Tags wie <OTOBO_TICKET_DynamicField_...> nutzen, um Werte "
 "des aktuellen Tickets einzufügen."
 
 #. Template: AdminOAuthTokenStore
@@ -6513,8 +6513,8 @@ msgid "PGP support is disabled"
 msgstr "Unterstützung für PGP ist deaktiviert"
 
 #. Template: AdminPGP
-msgid "To be able to use PGP in OTOBO, you have to enable it first."
-msgstr "Um PGP in OTOBO verwenden zu können, müssen Sie es zuerst aktivieren."
+msgid "To be able to use PGP in CareOnCloud ESM, you have to enable it first."
+msgstr "Um PGP in CareOnCloud ESM verwenden zu können, müssen Sie es zuerst aktivieren."
 
 #. Template: AdminPGP
 msgid "Enable PGP support"
@@ -6604,55 +6604,55 @@ msgid "Go to updating instructions"
 msgstr "Gehe zur Update-Anweisung"
 
 #. Template: AdminPackageManager
-msgid "Go to the OTOBO customer portal"
-msgstr "Gehen Sie zum OTOBO-Kundenportal"
+msgid "Go to the CareOnCloud ESM customer portal"
+msgstr "Gehen Sie zum CareOnCloud ESM-Kundenportal"
 
 #. Template: AdminPackageManager
 msgid "package information"
 msgstr "Paketinformation"
 
 #. Template: AdminPackageManager
-msgid "Package installation requires a patch level update of OTOBO."
-msgstr "Paketinstallation benötigt ein Patchlevel-Update von OTOBO."
+msgid "Package installation requires a patch level update of CareOnCloud ESM."
+msgstr "Paketinstallation benötigt ein Patchlevel-Update von CareOnCloud ESM."
 
 #. Template: AdminPackageManager
-msgid "Package update requires a patch level update of OTOBO."
-msgstr "Paket-Update benötigt ein Patchlevel-Update von OTOBO."
+msgid "Package update requires a patch level update of CareOnCloud ESM."
+msgstr "Paket-Update benötigt ein Patchlevel-Update von CareOnCloud ESM."
 
 #. Template: AdminPackageManager
-msgid "Please note that your installed OTOBO version is %s."
-msgstr "Bitte beachten Sie, dass Ihre installierte OTOBO-Version %s ist."
+msgid "Please note that your installed CareOnCloud ESM version is %s."
+msgstr "Bitte beachten Sie, dass Ihre installierte CareOnCloud ESM-Version %s ist."
 
 #. Template: AdminPackageManager
 msgid ""
-"To install this package, you need to update OTOBO to version %s or newer."
+"To install this package, you need to update CareOnCloud ESM to version %s or newer."
 msgstr ""
-"Um dieses Paket zu installieren, müssen Sie zunächst OTOBO auf Version %s "
+"Um dieses Paket zu installieren, müssen Sie zunächst CareOnCloud ESM auf Version %s "
 "oder neuer aktualisieren."
 
 #. Template: AdminPackageManager
-msgid "This package can only be installed on OTOBO version %s or older."
+msgid "This package can only be installed on CareOnCloud ESM version %s or older."
 msgstr ""
-"Dieses Paket kann nur mit OTOBO-Version %s oder älter verwendet werden."
+"Dieses Paket kann nur mit CareOnCloud ESM-Version %s oder älter verwendet werden."
 
 #. Template: AdminPackageManager
-msgid "This package can only be installed on OTOBO version %s or newer."
+msgid "This package can only be installed on CareOnCloud ESM version %s or newer."
 msgstr ""
-"Dieses Paket kann nur mit OTOBO-Version %s oder neuer verwendet werden."
+"Dieses Paket kann nur mit CareOnCloud ESM-Version %s oder neuer verwendet werden."
 
 #. Template: AdminPackageManager
-msgid "Why should I keep OTOBO up to date?"
-msgstr "Warum sollte ich OTOBO aktuell halten?"
+msgid "Why should I keep CareOnCloud ESM up to date?"
+msgstr "Warum sollte ich CareOnCloud ESM aktuell halten?"
 
 #. Template: AdminPackageManager
 msgid "You will receive updates about relevant security issues."
 msgstr "Sie erhalten Updates über relevante Sicherheitsprobleme."
 
 #. Template: AdminPackageManager
-msgid "You will receive updates for all other relevant OTOBO issues."
+msgid "You will receive updates for all other relevant CareOnCloud ESM issues."
 msgstr ""
 "Sie erhalten Updates für alle anderen relevanten Probleme im Zusammenhang "
-"mit OTOBO."
+"mit CareOnCloud ESM."
 
 #. Template: AdminPackageManager
 msgid "How can I do a patch level update if I don’t have a contract?"
@@ -6712,8 +6712,8 @@ msgid "Cloud services are currently disabled."
 msgstr "Cloud-Services sind derzeit deaktiviert."
 
 #. Template: AdminPackageManager
-msgid "OTOBO Verify can not continue!"
-msgstr "OTOBO Verify kann nicht fortgesetzt werden!"
+msgid "CareOnCloud ESM Verify can not continue!"
+msgstr "CareOnCloud ESM Verify kann nicht fortgesetzt werden!"
 
 #. Template: AdminPackageManager
 msgid "Enable cloud services"
@@ -6744,8 +6744,8 @@ msgid "Local Repository"
 msgstr "Lokales Verzeichnis"
 
 #. Template: AdminPackageManager
-msgid "This package is verified by OTOBOverify (tm)"
-msgstr "Dieses Paket wurde von OTOBOVerify (tm) geprüft"
+msgid "This package is verified by CareOnCloud ESMverify (tm)"
+msgstr "Dieses Paket wurde von CareOnCloud ESMVerify (tm) geprüft"
 
 #. Template: AdminPackageManager
 msgid "Uninstall"
@@ -8165,8 +8165,8 @@ msgid "Register System"
 msgstr "System registrieren"
 
 #. Template: AdminRegistration
-msgid "Validate OTOBO-ID"
-msgstr "OTOBO-ID validieren"
+msgid "Validate CareOnCloud ID"
+msgstr "CareOnCloud ID validieren"
 
 #. Template: AdminRegistration
 msgid "Deregister System"
@@ -8189,8 +8189,8 @@ msgid "Overview of registered systems"
 msgstr "Übersicht der registrieren Systeme"
 
 #. Template: AdminRegistration
-msgid "This system is registered with OTOBO Team."
-msgstr "Dieses System ist bei der OTOBO Gruppe registriert."
+msgid "This system is registered with CareOnCloud ESM Team."
+msgstr "Dieses System ist bei der CareOnCloud ESM Gruppe registriert."
 
 #. Template: AdminRegistration
 msgid "System type"
@@ -8210,11 +8210,11 @@ msgstr "Systemregistrierung nicht möglich"
 
 #. Template: AdminRegistration
 msgid ""
-"Please note that you can't register your system if OTOBO Daemon is not "
+"Please note that you can't register your system if CareOnCloud ESM Daemon is not "
 "running correctly!"
 msgstr ""
 "Bitte beachten Sie, dass Sie ihr System nicht registrieren können, wenn der "
-"OTOBO Daemon nicht läuft!"
+"CareOnCloud ESM Daemon nicht läuft!"
 
 #. Template: AdminRegistration
 msgid "Instructions"
@@ -8225,15 +8225,15 @@ msgid "System Deregistration not Possible"
 msgstr "Deregistrierung des Systems nicht möglich"
 
 #. Template: AdminRegistration
-msgid "OTOBO-ID Login"
-msgstr "OTOBO-ID Login"
+msgid "CareOnCloud ID Login"
+msgstr "CareOnCloud ID Login"
 
 #. Template: AdminRegistration
 msgid ""
-"System registration is a service of OTOBO Team, which provides a lot of "
+"System registration is a service of CareOnCloud ESM Team, which provides a lot of "
 "advantages!"
 msgstr ""
-"Die Systemregistrierung ist ein Service der OTOBO Gruppe, der Ihnen viele "
+"Die Systemregistrierung ist ein Service der CareOnCloud ESM Gruppe, der Ihnen viele "
 "Vorteile sichert!"
 
 #. Template: AdminRegistration
@@ -8241,16 +8241,16 @@ msgid "Read more"
 msgstr "Mehr erfahren"
 
 #. Template: AdminRegistration
-msgid "You need to log in with your OTOBO-ID to register your system."
+msgid "You need to log in with your CareOnCloud ID to register your system."
 msgstr ""
-"Um Ihr System zu registrieren, loggen Sie sich bitte mit Ihrer OTOBO-ID ein."
+"Um Ihr System zu registrieren, loggen Sie sich bitte mit Ihrer CareOnCloud ID ein."
 
 #. Template: AdminRegistration
 msgid ""
 "Your OTOBO-ID is the email address you used to sign up on the OTOBO.com "
 "webpage."
 msgstr ""
-"Verwenden Sie dazu die E-Mail-Adresse, mit der Sie sich auf der OTOBO "
+"Verwenden Sie dazu die E-Mail-Adresse, mit der Sie sich auf der CareOnCloud ESM "
 "Webseite angemeldet haben."
 
 #. Template: AdminRegistration
@@ -8270,7 +8270,7 @@ msgid ""
 "With your system registration we can improve our services for you, because "
 "we have all relevant information available."
 msgstr ""
-"Die Registrierung Ihres Systems ermöglicht es der OTOBO Gruppe, Sie "
+"Die Registrierung Ihres Systems ermöglicht es der CareOnCloud ESM Gruppe, Sie "
 "schneller und effizienter zu betreuen, weil uns wichtige Informationen über "
 "Ihr System bereits vorliegen, die ein mehrmaliges Nachfragen unnötig machen."
 
@@ -8285,17 +8285,17 @@ msgstr ""
 "werden."
 
 #. Template: AdminRegistration
-msgid "Can I use OTOBO without being registered?"
-msgstr "Kann ich OTOBO auch ohne Registrierung nutzen?"
+msgid "Can I use CareOnCloud ESM without being registered?"
+msgstr "Kann ich CareOnCloud ESM auch ohne Registrierung nutzen?"
 
 #. Template: AdminRegistration
 msgid "System registration is optional."
 msgstr "Die Systemregistrierung ist optional."
 
 #. Template: AdminRegistration
-msgid "You can download and use OTOBO without being registered."
+msgid "You can download and use CareOnCloud ESM without being registered."
 msgstr ""
-"Sie können OTOBO auch ohne Registrierung im vollen Umfang downloaden und "
+"Sie können CareOnCloud ESM auch ohne Registrierung im vollen Umfang downloaden und "
 "nutzen."
 
 #. Template: AdminRegistration
@@ -8311,15 +8311,15 @@ msgid "Which data is transfered when registering?"
 msgstr "Welche Daten werden bei der Registrierung übertragen?"
 
 #. Template: AdminRegistration
-msgid "A registered system sends the following data to OTOBO Team:"
-msgstr "Ein registriertes System überträgt folgende Daten an die OTOBO Gruppe:"
+msgid "A registered system sends the following data to CareOnCloud ESM Team:"
+msgstr "Ein registriertes System überträgt folgende Daten an die CareOnCloud ESM Gruppe:"
 
 #. Template: AdminRegistration
 msgid ""
-"Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating "
+"Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating "
 "System and Perl version."
 msgstr ""
-"Fully Qualified Domain Name (FQDN), OTOBO Version, Datenbank, Betriebssystem "
+"Fully Qualified Domain Name (FQDN), CareOnCloud ESM Version, Datenbank, Betriebssystem "
 "und Perl Version."
 
 #. Template: AdminRegistration
@@ -8339,8 +8339,8 @@ msgstr ""
 "identifizieren und die Systemregistrierung zu verwalten."
 
 #. Template: AdminRegistration
-msgid "How often does my OTOBO system send updates?"
-msgstr "Wie oft sendet mein OTOBO Updates?"
+msgid "How often does my CareOnCloud ESM system send updates?"
+msgstr "Wie oft sendet mein CareOnCloud ESM Updates?"
 
 #. Template: AdminRegistration
 msgid ""
@@ -8359,18 +8359,18 @@ msgid "If you deregister your system, you will lose these benefits:"
 msgstr "Wenn Sie Ihr System deregistrieren, verlieren Sie folgende Vorteile:"
 
 #. Template: AdminRegistration
-msgid "You need to log in with your OTOBO-ID to deregister your system."
+msgid "You need to log in with your CareOnCloud ID to deregister your system."
 msgstr ""
-"Um Ihr System zu deregistrieren, loggen Sie sich bitte mit Ihrer OTOBO-ID "
+"Um Ihr System zu deregistrieren, loggen Sie sich bitte mit Ihrer CareOnCloud ID "
 "ein."
 
 #. Template: AdminRegistration
-msgid "OTOBO-ID"
-msgstr "OTOBO-ID"
+msgid "CareOnCloud ID"
+msgstr "CareOnCloud ID"
 
 #. Template: AdminRegistration
-msgid "You don't have an OTOBO-ID yet?"
-msgstr "Sie haben noch keine OTOBO-ID?"
+msgid "You don't have a CareOnCloud ID yet?"
+msgstr "Sie haben noch keine CareOnCloud ID?"
 
 #. Template: AdminRegistration
 msgid "Sign up now"
@@ -8386,11 +8386,11 @@ msgstr "Neues anfordern"
 
 #. Template: AdminRegistration
 msgid ""
-"This data will be frequently transferred to OTOBO Team when you register "
+"This data will be frequently transferred to CareOnCloud ESM Team when you register "
 "this system."
 msgstr ""
 "Wenn Sie dieses System registrieren, werden folgende Daten in regelmäßigen "
-"Abständen an die OTOBO Gruppe übertragen."
+"Abständen an die CareOnCloud ESM Gruppe übertragen."
 
 #. Template: AdminRegistration
 msgid "Attribute"
@@ -8401,8 +8401,8 @@ msgid "FQDN"
 msgstr "FQDN"
 
 #. Template: AdminRegistration
-msgid "OTOBO Version"
-msgstr "OTOBO-Version"
+msgid "CareOnCloud ESM Version"
+msgstr "CareOnCloud ESM-Version"
 
 #. Template: AdminRegistration
 msgid "Operating System"
@@ -8419,19 +8419,19 @@ msgstr "Optionale Beschreibung für dieses System."
 #. Template: AdminRegistration
 msgid ""
 "This will allow the system to send additional support data information to "
-"OTOBO Team."
+"CareOnCloud ESM Team."
 msgstr ""
 "Diese Einstellung aktiviert das Senden zusätzlicher Support-Informationen an "
-"die OTOBO Gruppe."
+"die CareOnCloud ESM Gruppe."
 
 #. Template: AdminRegistration
 msgid "Register"
 msgstr "Registrieren"
 
 #. Template: AdminRegistration
-msgid "Continuing with this step will deregister the system from OTOBO Team."
+msgid "Continuing with this step will deregister the system from CareOnCloud ESM Team."
 msgstr ""
-"Wenn Sie fortfahren, wird dieses System bei der OTOBO Gruppe deregistriert."
+"Wenn Sie fortfahren, wird dieses System bei der CareOnCloud ESM Gruppe deregistriert."
 
 #. Template: AdminRegistration
 msgid "Deregister"
@@ -8779,8 +8779,8 @@ msgid "SMIME support is disabled"
 msgstr "S/MIME-Unterstützung ist deaktiviert"
 
 #. Template: AdminSMIME
-msgid "To be able to use SMIME in OTOBO, you have to enable it first."
-msgstr "Um S/MIME in OTOBO zu verwenden, müssen Sie es zunächst aktivieren."
+msgid "To be able to use SMIME in CareOnCloud ESM, you have to enable it first."
+msgstr "Um S/MIME in CareOnCloud ESM zu verwenden, müssen Sie es zunächst aktivieren."
 
 #. Template: AdminSMIME
 msgid "Enable SMIME support"
@@ -9216,8 +9216,8 @@ msgid "This state is used in the following config settings:"
 msgstr "Dieser Status wird in folgenden SysConfig-Einstellungen verwendet:"
 
 #. Template: AdminSupportDataCollector
-msgid "Sending support data to OTOBO Team is not possible!"
-msgstr "Das Senden von Support-Daten an die OTOBO-Gruppe ist nicht möglich!"
+msgid "Sending support data to CareOnCloud ESM Team is not possible!"
+msgstr "Das Senden von Support-Daten an die CareOnCloud ESM-Gruppe ist nicht möglich!"
 
 #. Template: AdminSupportDataCollector
 msgid "Enable Cloud Services"
@@ -9225,10 +9225,10 @@ msgstr "Cloud-Services aktivieren"
 
 #. Template: AdminSupportDataCollector
 msgid ""
-"This data is sent to OTOBO Team on a regular basis. To stop sending this "
+"This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this "
 "data please update your system registration."
 msgstr ""
-"Diese Daten werden regelmäßig an die OTOBO Gruppe gesendet. Falls Sie das "
+"Diese Daten werden regelmäßig an die CareOnCloud ESM Gruppe gesendet. Falls Sie das "
 "Senden der Daten beenden möchten, aktualisieren Sie bitte ihre "
 "Systemregistrierung."
 
@@ -9249,20 +9249,20 @@ msgstr "Diese Daten werden derzeit nur in Ihrem System angezeigt."
 
 #. Template: AdminSupportDataCollector
 msgid ""
-"It is highly recommended to send this data to OTOBO Team in order to get "
+"It is highly recommended to send this data to CareOnCloud ESM Team in order to get "
 "better support."
 msgstr ""
-"Es wird empfohlen, diese Daten an die OTOBO Gruppe zu senden, um bessere "
+"Es wird empfohlen, diese Daten an die CareOnCloud ESM Gruppe zu senden, um bessere "
 "Unterstützung zu erhalten."
 
 #. Template: AdminSupportDataCollector
 msgid ""
-"To enable data sending, please register your system with OTOBO Team or "
+"To enable data sending, please register your system with CareOnCloud ESM Team or "
 "update your system registration information (make sure to activate the 'send "
 "support data' option.)"
 msgstr ""
 "Um das Senden der Daten zu aktivieren, registrieren Sie bitte Ihr System bei "
-"der OTOBO Gruppe oder aktualisieren Sie Ihre Systemregistrierung (aktivieren "
+"der CareOnCloud ESM Gruppe oder aktualisieren Sie Ihre Systemregistrierung (aktivieren "
 "Sie die Option 'Supportdaten senden'.)"
 
 #. Template: AdminSupportDataCollector
@@ -9311,9 +9311,9 @@ msgid "Sending"
 msgstr "Wird gesendet"
 
 #. Template: AdminSupportDataCollector
-msgid "The support bundle will be sent to OTOBO Team via email automatically."
+msgid "The support bundle will be sent to CareOnCloud ESM Team via email automatically."
 msgstr ""
-"Das Support-Paket wird automatisch per E-Mail zur OTOBO Gruppe gesendet."
+"Das Support-Paket wird automatisch per E-Mail zur CareOnCloud ESM Gruppe gesendet."
 
 #. Template: AdminSupportDataCollector
 msgid "Download File"
@@ -9322,12 +9322,12 @@ msgstr "Datei herunterladen"
 #. Template: AdminSupportDataCollector
 msgid ""
 "A file containing the support bundle will be downloaded to the local system. "
-"Please save the file and send it to the OTOBO Team, using an alternate "
+"Please save the file and send it to the CareOnCloud ESM Team, using an alternate "
 "method."
 msgstr ""
 "Das Support-Paket wird als Datei ins lokale Dateisystem heruntergeladen. "
 "Bitte speichern Sie die Datei und senden Sie diese auf anderen Wegen an die "
-"OTOBO Gruppe."
+"CareOnCloud ESM Gruppe."
 
 #. Template: AdminSupportDataCollector
 msgid "Error: Support data could not be collected (%s)."
@@ -10074,8 +10074,8 @@ msgid "Edit Translation"
 msgstr "Übersetzung bearbeiten"
 
 #. Template: AdminTranslations
-msgid "Overwrites OTOBO translation"
-msgstr "Überschreibt die OTOBO-Übersetzung"
+msgid "Overwrites CareOnCloud ESM translation"
+msgstr "Überschreibt die CareOnCloud ESM-Übersetzung"
 
 #. Template: AdminTranslations
 msgid "Undo Delete Translation"
@@ -10644,51 +10644,51 @@ msgstr "Kundenbenutzer-Informationszentrum"
 
 #. Template: AgentDaemonInfo
 msgid ""
-"The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. "
+"The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. "
 "ticket escalation triggering, email sending, etc."
 msgstr ""
-"Der OTOBO Daemon ist ein Daemon-Prozess, welcher asynchrone Aufgaben "
+"Der CareOnCloud ESM Daemon ist ein Daemon-Prozess, welcher asynchrone Aufgaben "
 "übernimmt, z.B. das Auslösen von Ticket-Eskalationen oder das Versenden von "
 "E-Mails."
 
 #. Template: AgentDaemonInfo
-msgid "A running OTOBO Daemon is mandatory for correct system operation."
+msgid "A running CareOnCloud ESM Daemon is mandatory for correct system operation."
 msgstr ""
-"Ein laufender OTOBO Daemon ist für die korrekte Funktion des Systems "
+"Ein laufender CareOnCloud ESM Daemon ist für die korrekte Funktion des Systems "
 "erforderlich."
 
 #. Template: AgentDaemonInfo
-msgid "Starting the OTOBO Daemon"
-msgstr "Den OTOBO Daemon starten"
+msgid "Starting the CareOnCloud ESM Daemon"
+msgstr "Den CareOnCloud ESM Daemon starten"
 
 #. Template: AgentDaemonInfo
 msgid ""
 "Make sure that the file '%s' exists (without .dist extension). This cron job "
-"will check every 5 minutes if the OTOBO Daemon is running and start it if "
+"will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if "
 "needed."
 msgstr ""
 "Stellen Sie sicher, dass die Datei '%s' existiert (ohne die Endung .dist). "
-"Dieser Cronjob wird alle 5 Minuten prüfen, ob der OTOBO Daemon läuft, und "
+"Dieser Cronjob wird alle 5 Minuten prüfen, ob der CareOnCloud ESM Daemon läuft, und "
 "ihn ggf. starten."
 
 #. Template: AgentDaemonInfo
 msgid ""
-"Execute '%s start' to make sure the cron jobs of the 'otobo' user are active."
+"Execute '%s start' to make sure the cron jobs of the 'careoncloud' user are active."
 msgstr ""
-"Führen Sie '%s start' aus um sicherzustellen, dass die Cronjobs des 'otobo'-"
+"Führen Sie '%s start' aus um sicherzustellen, dass die Cronjobs des 'careoncloud'-"
 "Nutzers aktiv sind."
 
 #. Template: AgentDaemonInfo
 msgid ""
-"After 5 minutes, check that the OTOBO Daemon is running in the system ('bin/"
+"After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system ('bin/"
 "careoncloud.Daemon.pl status')."
 msgstr ""
-"Prüfen Sie nach 5 Minuten, ob der OTOBO Daemon läuft ('bin/careoncloud.Daemon.pl "
+"Prüfen Sie nach 5 Minuten, ob der CareOnCloud ESM Daemon läuft ('bin/careoncloud.Daemon.pl "
 "status')."
 
 #. Template: AgentDaemonInfo
-msgid "Running the OTOBO Daemon in a Docker based installation"
-msgstr "Den OTOBO Daemon in einer Docker-basierten Installation laufen lassen"
+msgid "Running the CareOnCloud ESM Daemon in a Docker based installation"
+msgstr "Den CareOnCloud ESM Daemon in einer Docker-basierten Installation laufen lassen"
 
 #. Template: AgentDaemonInfo
 msgid ""
@@ -11156,9 +11156,9 @@ msgid "Save this setting"
 msgstr "Einstellung speichern"
 
 #. Template: AgentPreferences
-msgid "Did you know? You can help translating OTOBO at %s."
+msgid "Did you know? You can help translating CareOnCloud ESM at %s."
 msgstr ""
-"Schon gewusst? Unter %s können Sie zur Übersetzung von OTOBO beitragen."
+"Schon gewusst? Unter %s können Sie zur Übersetzung von CareOnCloud ESM beitragen."
 
 #. Template: SettingsList
 msgid "Reset to default"
@@ -11204,8 +11204,8 @@ msgid "Add Statistics"
 msgstr "Statistik hinzufügen"
 
 #. Template: AgentStatisticsAdd
-msgid "Read more about statistics in OTOBO"
-msgstr "Erfahren Sie mehr über Statistiken in OTOBO"
+msgid "Read more about statistics in CareOnCloud ESM"
+msgstr "Erfahren Sie mehr über Statistiken in CareOnCloud ESM"
 
 #. Template: AgentStatisticsAdd
 msgid "Dynamic Matrix"
@@ -12501,7 +12501,7 @@ msgid ""
 "Internet Explorer is functional, but not all features are fully supported. "
 "Please consider updating to a modern browser."
 msgstr ""
-"Der Internetexplorer wird von OTOBO nur in Hinblick auf grundlegende "
+"Der Internetexplorer wird von CareOnCloud ESM nur in Hinblick auf grundlegende "
 "Funktionalität unterstützt. Bitte ziehen Sie in Betracht, zu einem modernen "
 "Web-Browser zu wechseln."
 
@@ -12966,12 +12966,12 @@ msgid "Install Type"
 msgstr "Installationstyp"
 
 #. Template: InstallerDBStart
-msgid "Create a new database for OTOBO"
-msgstr "Neue Datenbank für OTOBO erstellen"
+msgid "Create a new database for CareOnCloud ESM"
+msgstr "Neue Datenbank für CareOnCloud ESM erstellen"
 
 #. Template: InstallerDBStart
-msgid "Use an existing database for OTOBO"
-msgstr "Bestehende Datenbank für OTOBO nutzen"
+msgid "Use an existing database for CareOnCloud ESM"
+msgstr "Bestehende Datenbank für CareOnCloud ESM nutzen"
 
 #. Template: InstallerDBmssql
 msgid ""
@@ -13007,10 +13007,10 @@ msgstr "Neu"
 
 #. Template: InstallerDBmssql
 msgid ""
-"A new database user with limited permissions will be created for this OTOBO "
+"A new database user with limited permissions will be created for this CareOnCloud ESM "
 "system."
 msgstr ""
-"Ein neuer Datenbank-Benutzer mit beschränkten Rechten wird für dieses OTOBO-"
+"Ein neuer Datenbank-Benutzer mit beschränkten Rechten wird für dieses CareOnCloud ESM-"
 "System erstellt."
 
 #. Template: InstallerDBmssql
@@ -13036,8 +13036,8 @@ msgid "Start page"
 msgstr "Startseite"
 
 #. Template: InstallerFinish
-msgid "Your OTOBO Team"
-msgstr "Ihr OTOBO-Team"
+msgid "Your CareOnCloud ESM Team"
+msgstr "Ihr CareOnCloud ESM-Team"
 
 #. Template: InstallerLicense
 msgid "Don't accept license"
@@ -13144,8 +13144,8 @@ msgstr "Initialisiert Elasticsearch"
 #. Template: InstallerSystem
 msgid ""
 "Elasticsearch server was found, and it has been activated automatically for "
-"OTOBO."
-msgstr "Elasticsearch-Server gefunden und automatisch für OTOBO aktiviert."
+"CareOnCloud ESM."
+msgstr "Elasticsearch-Server gefunden und automatisch für CareOnCloud ESM aktiviert."
 
 #. Template: InstallerSystem
 msgid ""
@@ -13153,7 +13153,7 @@ msgid ""
 "using the standard configuration. To activate Elasticsearch manually, please "
 "edit the web service in the admin interface if necessary, activate "
 "'Elasticsearch::Active' and 'Frontend::ToolBarModule###250-"
-"Ticket::ElasticsearchFulltext' in the SysConfig and run the otobo.Console "
+"Ticket::ElasticsearchFulltext' in the SysConfig and run the careoncloud.Console "
 "command 'Maint::Elasticsearch::Migration'."
 msgstr ""
 "Scheinbar läuft entweder kein sauberer Elasticsearch-Server oder es wird "
@@ -13161,7 +13161,7 @@ msgstr ""
 "aktivieren, bearbeiten Sie bitte ggf. den Webserver im Admin-Bereich. "
 "Aktivieren Sie 'Elasticsearch::Active' und 'Frontend::ToolBarModule###250-"
 "Ticket::ElasticsearchFulltext' in der Systemkonfiguration und führen Sie den "
-"otobo.Console-Befehl 'Maint::Elasticsearch::Migration' aus."
+"careoncloud.Console-Befehl 'Maint::Elasticsearch::Migration' aus."
 
 #. Template: LinkObject
 msgid "Delete link"
@@ -13238,18 +13238,18 @@ msgstr "Bereinigen und Abschließen"
 
 #. Template: Finish
 msgid ""
-"The migration is complete, thank you for trying out OTOBO - we hope you will "
+"The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will "
 "like it."
 msgstr ""
-"Die Migration ist abgeschlossen. Danke, dass Sie OTOBO verwenden - wir "
+"Die Migration ist abgeschlossen. Danke, dass Sie CareOnCloud ESM verwenden - wir "
 "hoffen, Sie mögen es."
 
 #. Template: Finish
 msgid ""
-"To be able to use OTOBO you have to enter the following line in your command "
+"To be able to use CareOnCloud ESM you have to enter the following line in your command "
 "line (Terminal/Shell) as root."
 msgstr ""
-"Um OTOBO nutzen zu können, müssen Sie die folgenden Zeilen als root in die "
+"Um CareOnCloud ESM nutzen zu können, müssen Sie die folgenden Zeilen als root in die "
 "Befehlszeile (Terminal/Shell) eingeben."
 
 #. Template: Finish
@@ -13257,18 +13257,18 @@ msgid "Restart your webserver"
 msgstr "Starten Sie ihren Webserver neu"
 
 #. Template: Finish
-msgid "After doing so your OTOBO is up and running."
-msgstr "Danach ist OTOBO startklar."
+msgid "After doing so your CareOnCloud ESM is up and running."
+msgstr "Danach ist CareOnCloud ESM startklar."
 
 #. Template: Intro
 msgid ""
 "This migration script will lead you step by step through the process of "
 "migrating your ticket system from OTRS or ((OTRS)) Community Edition version "
-"6 to OTOBO 10."
+"6 to CareOnCloud ESM 10."
 msgstr ""
 "Dieses Migrationstool führt Sie Schritt für Schritt durch die Migration "
 "Ihres Ticketsystems von OTRS oder der ((OTRS)) Community Edition Version 6 "
-"zu OTOBO 10."
+"zu CareOnCloud ESM 10."
 
 #. Template: Intro
 msgid ""
@@ -13303,18 +13303,18 @@ msgstr ""
 
 #. Template: Intro
 msgid ""
-" Anyone with access to this page, or read permission for the OTOBO Home "
+" Anyone with access to this page, or read permission for the CareOnCloud ESM Home "
 "Directory will be able to read them. If you abort the migration, you are "
 "given the option to clear the cache by visiting this page again."
 msgstr ""
 " Sie können von jeder Person mit Zugang zu dieser Seite oder "
-"Leseberechtigung im OTOBO Home-Verzeichnis gelesen werden. Wenn Sie deshalb "
+"Leseberechtigung im CareOnCloud ESM Home-Verzeichnis gelesen werden. Wenn Sie deshalb "
 "den Cache nach Abbrechen der Migration löschen möchten, rufen Sie einfach "
 "diese Seite erneut auf."
 
 #. Template: Intro
 msgid ""
-"If you need support, just ask our experts – either at %sOTOBO forum%s or "
+"If you need support, just ask our experts – either at %sCareOnCloud ESM forum%s or "
 "directly via mail to %ssales@otobo.io%s."
 msgstr ""
 "Wenn Sie Unterstützung benötigen, fragen Sie einfach unsere Experten – "
@@ -13349,13 +13349,13 @@ msgstr "Unsichere HTTP-Verbindung"
 msgid ""
 "You are using the migration script via http. This is highly insecure as "
 "various passwords are required during the process, and will be transferred "
-"unencrypted. Anyone between you and the OTOBO server will be able to read "
+"unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read "
 "them! Please consider setting up https instead."
 msgstr ""
 "Sie führen das Migrations-Tool über http aus. Das ist ausgesprochen "
 "unsicher! Während der Migration geben Sie verschiedene Passwörter ein, die "
 "dann unverschlüsselt übertragen werden. Jede Person, die sich zwischen Sie "
-"und den OTOBO Server schaltet, kann diese Passwörter abfangen. Bitte erwägen "
+"und den CareOnCloud ESM Server schaltet, kann diese Passwörter abfangen. Bitte erwägen "
 "Sie, stattdessen https zu nutzen."
 
 #. Template: Intro
@@ -13415,11 +13415,11 @@ msgstr "Funktion nicht verfügbar"
 
 #. Template: MobileNotAvailableWidget
 msgid ""
-"Sorry, but this feature of OTOBO is currently not available for mobile "
+"Sorry, but this feature of CareOnCloud ESM is currently not available for mobile "
 "devices. If you'd like to use it, you can either switch to desktop mode or "
 "use your regular desktop device."
 msgstr ""
-"Entschuldigung, aber dieses Feature von OTOBO ist derzeit nicht für "
+"Entschuldigung, aber dieses Feature von CareOnCloud ESM ist derzeit nicht für "
 "Mobilgeräte verfügbar. Bitte wechseln sie in die Desktop-Ansicht oder nutzen "
 "sie ein normales Desktop-Gerät, wenn Sie diese Funktion verwenden möchten."
 
@@ -13507,10 +13507,10 @@ msgstr "Willkommen"
 
 #. Template: PublicDefault
 msgid ""
-"This is the default public interface of OTOBO! There was no action parameter "
+"This is the default public interface of CareOnCloud ESM! There was no action parameter "
 "given."
 msgstr ""
-"Dies ist die öffentliche Standard-Benutzerschnittstelle von OTOBO. Es wurde "
+"Dies ist die öffentliche Standard-Benutzerschnittstelle von CareOnCloud ESM. Es wurde "
 "kein Action-Parameter übergeben."
 
 #. Template: PublicDefault
@@ -13519,7 +13519,7 @@ msgid ""
 "example the FAQ module, which has a public interface."
 msgstr ""
 "Sie könnten (mithilfe des Paketmanagers) ein eigenes Modul für den "
-"öffentlichen Bereich von OTOBO installieren, beispielsweise das FAQ-Modul."
+"öffentlichen Bereich von CareOnCloud ESM installieren, beispielsweise das FAQ-Modul."
 
 #. Template: GeneralSpecificationsWidget
 msgid "Permissions"
@@ -13973,8 +13973,8 @@ msgid "Delete user's value."
 msgstr "Benutzeränderung verwerfen."
 
 #. Template: Test
-msgid "OTOBO Test Page"
-msgstr "OTOBO Testseite"
+msgid "CareOnCloud ESM Test Page"
+msgstr "CareOnCloud ESM Testseite"
 
 #. Template: Test
 msgid "Unlock"
@@ -14065,7 +14065,7 @@ msgid "Package"
 msgstr "Paket"
 
 #. JS Template: PackageResolve
-msgid "Uninstall from OTOBO"
+msgid "Uninstall from CareOnCloud ESM"
 msgstr "Deinstallieren"
 
 #. JS Template: PackageResolve
@@ -14241,11 +14241,11 @@ msgstr ""
 
 #. Perl Module: Kernel/Modules/AdminACL.pm
 msgid ""
-"ACLs could not be Imported due to a unknown error, please check OTOBO logs "
+"ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs "
 "for more information"
 msgstr ""
 "Die ACLs konnten wegen eines unbekannten Fehlers nicht importiert werden. "
-"Weitere Informationen finden Sie in den OTOBO Logdateien"
+"Weitere Informationen finden Sie in den CareOnCloud ESM Logdateien"
 
 #. Perl Module: Kernel/Modules/AdminACL.pm
 msgid "The following ACLs have been added successfully: %s"
@@ -14445,10 +14445,10 @@ msgstr "Beim Erstellen der Benachrichtigung ist ein Fehler aufgetreten"
 #. Perl Module: Kernel/Modules/AdminAppointmentNotificationEvent.pm
 msgid ""
 "Notifications could not be Imported due to a unknown error, please check "
-"OTOBO logs for more information"
+"CareOnCloud ESM logs for more information"
 msgstr ""
 "Benachrichtigungen konnten wegen eines unbekannten Fehlers nicht importiert "
-"werden. Weitere Informationen in den OTOBO Logdateien"
+"werden. Weitere Informationen in den CareOnCloud ESM Logdateien"
 
 #. Perl Module: Kernel/Modules/AdminAppointmentNotificationEvent.pm
 msgid "The following Notifications have been added successfully: %s"
@@ -15529,7 +15529,7 @@ msgstr "Benötige eine zu importierende Datei!"
 
 #. Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
 msgid ""
-"The imported file has not valid YAML content! Please check OTOBO log for "
+"The imported file has not valid YAML content! Please check CareOnCloud ESM log for "
 "details"
 msgstr ""
 "Die importierte Datei enthält ungültigen YAML-Inhalt. Bitte prüfen Sie das "
@@ -15540,16 +15540,16 @@ msgid "Web service \"%s\" deleted!"
 msgstr "Webservice \"%s\" gelöscht!"
 
 #. Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
-msgid "OTOBO as provider"
-msgstr "OTOBO als Provider"
+msgid "CareOnCloud ESM as provider"
+msgstr "CareOnCloud ESM als Provider"
 
 #. Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
 msgid "Operations"
 msgstr "Operationen"
 
 #. Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
-msgid "OTOBO as requester"
-msgstr "OTOBO als Requester"
+msgid "CareOnCloud ESM as requester"
+msgstr "CareOnCloud ESM als Requester"
 
 #. Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
 msgid "Invokers"
@@ -15854,8 +15854,8 @@ msgid "Package has locally modified files."
 msgstr "Das Paket enthält lokal angepasste Dateien."
 
 #. Perl Module: Kernel/Modules/AdminPackageManager.pm
-msgid "Package not verified by the OTOBO Team!"
-msgstr "Paket wurde nicht vom OTOBO Team verifiziert!"
+msgid "Package not verified by the CareOnCloud ESM Team!"
+msgstr "Paket wurde nicht vom CareOnCloud ESM Team verifiziert!"
 
 #. Perl Module: Kernel/Modules/AdminPackageManager.pm
 msgid "Not Started"
@@ -15936,16 +15936,16 @@ msgstr ""
 "Verifikationsserver!"
 
 #. Perl Module: Kernel/Modules/AdminPackageManager.pm
-msgid "Can't connect to OTOBO Feature Add-on list server!"
-msgstr "Kann nicht zum OTOBO Feature-Add-on-Listenserver verbinden!"
+msgid "Can't connect to CareOnCloud ESM Feature Add-on list server!"
+msgstr "Kann nicht zum CareOnCloud ESM Feature-Add-on-Listenserver verbinden!"
 
 #. Perl Module: Kernel/Modules/AdminPackageManager.pm
-msgid "Can't get OTOBO Feature Add-on list from server!"
-msgstr "Kann OTOBO Feature-Add-on-Listen nicht vom Server laden!"
+msgid "Can't get CareOnCloud ESM Feature Add-on list from server!"
+msgstr "Kann CareOnCloud ESM Feature-Add-on-Listen nicht vom Server laden!"
 
 #. Perl Module: Kernel/Modules/AdminPackageManager.pm
-msgid "Can't get OTOBO Feature Add-on from server!"
-msgstr "Kann OTOBO Feature-Add-on nicht vom Server laden!"
+msgid "Can't get CareOnCloud ESM Feature Add-on from server!"
+msgstr "Kann CareOnCloud ESM Feature-Add-on nicht vom Server laden!"
 
 #. Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
 msgid "No such filter: %s"
@@ -16554,10 +16554,10 @@ msgstr "Import nicht erlaubt!"
 #. Perl Module: Kernel/Modules/AdminSystemConfiguration.pm
 msgid ""
 "System Configuration could not be imported due to an unknown error, please "
-"check OTOBO logs for more information."
+"check CareOnCloud ESM logs for more information."
 msgstr ""
 "Systemkonfiguration konnte wegen eines unbekannten Fehlers nicht importiert "
-"werden. Weitere Informationen finden Sie in den OTOBO Log-Dateien."
+"werden. Weitere Informationen finden Sie in den CareOnCloud ESM Log-Dateien."
 
 #. Perl Module: Kernel/Modules/AdminSystemConfiguration.pm
 msgid "Category Search"
@@ -16566,7 +16566,7 @@ msgstr "Kategoriesuche"
 #. Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
 msgid ""
 "Some imported settings are not present in the current state of the "
-"configuration or it was not possible to update them. Please check the OTOBO "
+"configuration or it was not possible to update them. Please check the CareOnCloud ESM "
 "log for more information."
 msgstr ""
 "Einige importierte Einstellungen sind im derzeitigen Stand der Konfiguration "
@@ -18083,8 +18083,8 @@ msgid "Directory \"%s\" not found!"
 msgstr "Verzeichnis \"%s\" nicht gefunden!"
 
 #. Perl Module: Kernel/Modules/Installer.pm
-msgid "Install OTOBO"
-msgstr "OTOBO installieren"
+msgid "Install CareOnCloud ESM"
+msgstr "CareOnCloud ESM installieren"
 
 #. Perl Module: Kernel/Modules/Installer.pm
 msgid "Intro"
@@ -18152,8 +18152,8 @@ msgid "Create Database"
 msgstr "Datenbank erstellen"
 
 #. Perl Module: Kernel/Modules/Installer.pm
-msgid "Install OTOBO - Error"
-msgstr "OTOBO-Installation – Fehler"
+msgid "Install CareOnCloud ESM - Error"
+msgstr "CareOnCloud ESM-Installation – Fehler"
 
 #. Perl Module: Kernel/Modules/Installer.pm
 msgid "File \"%s/%s.xml\" not found!"
@@ -18246,8 +18246,8 @@ msgstr ""
 "deaktivieren Sie \"SecureMode\" in der SysConfig."
 
 #. Perl Module: Kernel/Modules/MigrateFromOTRS.pm
-msgid "OTRS to OTOBO migration"
-msgstr "Migration von OTRS zu OTOBO"
+msgid "OTRS to CareOnCloud ESM migration"
+msgstr "Migration von OTRS zu CareOnCloud ESM"
 
 #. Perl Module: Kernel/Modules/PublicCalendar.pm
 msgid "No %s!"
@@ -18547,12 +18547,12 @@ msgid "Shown Tickets"
 msgstr "Gezeigte Tickets"
 
 #. Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-msgid "Can't connect to OTOBO News server!"
-msgstr "Kein Verbindungsaufbau zum Server mit den OTOBO Neuigkeiten möglich!"
+msgid "Can't connect to CareOnCloud ESM News server!"
+msgstr "Kein Verbindungsaufbau zum Server mit den CareOnCloud ESM Neuigkeiten möglich!"
 
 #. Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-msgid "Can't get OTOBO News from server!"
-msgstr "OTOBO Neuigkeiten können nicht vom Server abgerufen werden!"
+msgid "Can't get CareOnCloud ESM News from server!"
+msgstr "CareOnCloud ESM Neuigkeiten können nicht vom Server abgerufen werden!"
 
 #. Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
 msgid "Can't connect to Product News server!"
@@ -18751,8 +18751,8 @@ msgid ""
 msgstr "Eine Systemwartung beginnt um: %s und endet voraussichtlich um: %s"
 
 #. Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-msgid "OTOBO Daemon is not running."
-msgstr "Der OTOBO Daemon läuft nicht."
+msgid "CareOnCloud ESM Daemon is not running."
+msgstr "Der CareOnCloud ESM Daemon läuft nicht."
 
 #. Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
 msgid "You have Out of Office enabled, would you like to disable it?"
@@ -19519,8 +19519,8 @@ msgid "Migration completed, perfect!"
 msgstr "Migration abgeschlossen. Glückwunsch!"
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-msgid "OTOBO Cache cleanup."
-msgstr "OTOBO Cache leeren."
+msgid "CareOnCloud ESM Cache cleanup."
+msgstr "CareOnCloud ESM Cache leeren."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
 msgid "Completed."
@@ -19559,13 +19559,13 @@ msgid "Data transfer completed."
 msgstr "Datentransfer abgeschlossen."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-msgid "Check if OTOBO version is correct."
-msgstr "Überprüft, ob die OTOBO Version korrekt ist."
+msgid "Check if CareOnCloud ESM version is correct."
+msgstr "Überprüft, ob die CareOnCloud ESM Version korrekt ist."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-msgid "Check if OTOBO and OTRS connect is possible."
+msgid "Check if CareOnCloud ESM and OTRS connect is possible."
 msgstr ""
-"Überprüft, ob eine Verbindung zwischen OTRS und OTOBO hergestellt werden "
+"Überprüft, ob eine Verbindung zwischen OTRS und CareOnCloud ESM hergestellt werden "
 "kann."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
@@ -19573,16 +19573,16 @@ msgid "Can't open RELEASE file from OTRS home directory: %s!"
 msgstr "Kann die RELEASE-Datei im OTRS-Home-Verzeichnis: %s nicht öffnen!"
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-msgid "Check if OTOBO and OTRS version is correct."
-msgstr "Überprüft, ob die verwendeten OTOBO- und OTRS-Versionen korrekt sind."
+msgid "Check if CareOnCloud ESM and OTRS version is correct."
+msgstr "Überprüft, ob die verwendeten CareOnCloud ESM- und OTRS-Versionen korrekt sind."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
 msgid "%s does not exist!"
 msgstr "%s nicht vorhanden!"
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-msgid "No OTOBO system found!"
-msgstr "Kein OTOBO-System gefunden!"
+msgid "No CareOnCloud ESM system found!"
+msgstr "Kein CareOnCloud ESM-System gefunden!"
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
 msgid "You are trying to run this script on the wrong framework version %s!"
@@ -19590,8 +19590,8 @@ msgstr ""
 "Sie versuchen das Skript in der falschen Framework-Version %s auszuführen!"
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-msgid "OTOBO Version is correct: %s."
-msgstr "OTOBO-Version ist korrekt: %s."
+msgid "CareOnCloud ESM Version is correct: %s."
+msgstr "CareOnCloud ESM-Version ist korrekt: %s."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
 msgid "Check if OTRS version is correct."
@@ -19677,13 +19677,13 @@ msgstr ""
 "öffnen!"
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
-msgid "Check if Kernel/Config.pm exists in OTOBO home."
+msgid "Check if Kernel/Config.pm exists in CareOnCloud ESM home."
 msgstr ""
-"Überprüfen Sie, ob in OTOBO Home eine Datei Kernel/Config.pm vorhanden ist."
+"Überprüfen Sie, ob in CareOnCloud ESM Home eine Datei Kernel/Config.pm vorhanden ist."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
-msgid "Kernel/Config.pm exists in OTOBO home"
-msgstr "Kernel/Config.pm ist in OTOBO verfügbar"
+msgid "Kernel/Config.pm exists in CareOnCloud ESM home"
+msgstr "Kernel/Config.pm ist in CareOnCloud ESM verfügbar"
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
 msgid "Check if we are able to connect to OTRS home directory."
@@ -19726,11 +19726,11 @@ msgstr "Folgende Pakete sind nur in OTRS installiert:"
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
 msgid ""
 "Please install (or uninstall) the packages before migration. If a package "
-"doesn't exist for OTOBO so far, please contact the OTOBO Team at bugs\\"
+"doesn't exist for CareOnCloud ESM so far, please contact the CareOnCloud ESM Team at bugs\\"
 "\\@otobo.org. We will find a solution."
 msgstr ""
 "Bitte installieren (oder deinstallieren) Sie die Pakete vor der Migration. "
-"Ist ein Paket bisher nicht für OTOBO verfügbar, wenden Sie sich bitte via "
+"Ist ein Paket bisher nicht für CareOnCloud ESM verfügbar, wenden Sie sich bitte via "
 "bugs\\\\@otobo.org an das OTOBO Team. Wir finden eine Lösung."
 
 #. Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
@@ -19890,17 +19890,17 @@ msgstr "Datei kann nicht gelesen werden!"
 
 #. Perl Module: Kernel/System/Package.pm
 msgid ""
-"<p>Additional packages can enhance OTOBO with plenty of useful features. "
+"<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. "
 "Ensure, however, that the origin of this package is trustworthy, as it can "
-"modify OTOBO in any possible way.</p>"
+"modify CareOnCloud ESM in any possible way.</p>"
 msgstr ""
-"<p>Zusatzpakete können OTOBO um viele nützliche Features erweitern. Stellen "
+"<p>Zusatzpakete können CareOnCloud ESM um viele nützliche Features erweitern. Stellen "
 "Sie jedoch unbedingt sicher, dass dieses Paket aus einer vertrauenswürdigen "
-"Quelle stammt, da es OTOBO uneingeschränkt modifizieren kann.</p>"
+"Quelle stammt, da es CareOnCloud ESM uneingeschränkt modifizieren kann.</p>"
 
 #. Perl Module: Kernel/System/Package.pm
-msgid "Package not verified by the OTOBO community!"
-msgstr "Paket wurde nicht von der OTOBO Community verifiziert!"
+msgid "Package not verified by the CareOnCloud ESM community!"
+msgstr "Paket wurde nicht von der CareOnCloud ESM Community verifiziert!"
 
 #. Perl Module: Kernel/System/Package.pm
 msgid ""
@@ -20434,8 +20434,8 @@ msgid "Found obsolete cryptographic function."
 msgstr "Veraltete kryptographische Funktion gefunden."
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-msgid "OTOBO Disk Partition"
-msgstr "OTOBO-Festplattenpartition"
+msgid "CareOnCloud ESM Disk Partition"
+msgstr "CareOnCloud ESM-Festplattenpartition"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
 msgid "Disk Partitions Usage"
@@ -20511,8 +20511,8 @@ msgstr ""
 "Es sollten nicht mehr als 200 MB Auslagerungsspeicher verwendet werden."
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-msgid "OTOBO"
-msgstr "OTOBO"
+msgid "CareOnCloud ESM"
+msgstr "CareOnCloud ESM"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
 msgid "Article Search Index Status"
@@ -20675,8 +20675,8 @@ msgid "File System Writable"
 msgstr "Dateisystem-Schreibbarkeit"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
-msgid "The file system on your OTOBO partition is not writable."
-msgstr "Das Dateisystem auf Ihrer OTOBO-Partition ist nicht schreibbar."
+msgid "The file system on your CareOnCloud ESM partition is not writable."
+msgstr "Das Dateisystem auf Ihrer CareOnCloud ESM-Partition ist nicht schreibbar."
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
 msgid "Legacy Configuration Backups"
@@ -20720,8 +20720,8 @@ msgid "Package Verification Status"
 msgstr "Paketverifizierung-Status"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
-msgid "Some packages are not verified by the OTOBO Team."
-msgstr "Einige Pakete wurden nicht von Team OTOBO verifiziert."
+msgid "Some packages are not verified by the CareOnCloud ESM Team."
+msgstr "Einige Pakete wurden nicht von Team CareOnCloud ESM verifiziert."
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
 msgid "Package Framework Version Status"
@@ -20744,8 +20744,8 @@ msgid "Spooled Emails"
 msgstr "Zum Senden anstehende E-Mails"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
-msgid "There are emails in var/spool that OTOBO could not process."
-msgstr "In var/spool befinden sich Emails, die OTOBO nicht verarbeiten konnte."
+msgid "There are emails in var/spool that CareOnCloud ESM could not process."
+msgstr "In var/spool befinden sich Emails, die CareOnCloud ESM nicht verarbeiten konnte."
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
 msgid "Your SystemID setting is invalid, it should only contain digits."
@@ -20842,12 +20842,12 @@ msgid "Server time zone"
 msgstr "Server-Zeitzone"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
-msgid "OTOBO time zone"
-msgstr "OTOBO-Zeitzone"
+msgid "CareOnCloud ESM time zone"
+msgstr "CareOnCloud ESM-Zeitzone"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
-msgid "OTOBO time zone is not set."
-msgstr "OTOBO-Zeitzone ist nicht gesetzt."
+msgid "CareOnCloud ESM time zone is not set."
+msgstr "CareOnCloud ESM-Zeitzone ist nicht gesetzt."
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
 msgid "User default time zone"
@@ -20894,8 +20894,8 @@ msgid "MPM model"
 msgstr "MPM-Modell"
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
-msgid "OTOBO requires apache to be run with the 'prefork' MPM model."
-msgstr "OTOBO benötigt das Apache 'prefork' MPM Modul."
+msgid "CareOnCloud ESM requires apache to be run with the 'prefork' MPM model."
+msgstr "CareOnCloud ESM benötigt das Apache 'prefork' MPM Modul."
 
 #. Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
 msgid "CGI Accelerator Usage"
@@ -20961,11 +20961,11 @@ msgstr "Webserver-Version"
 msgid "Could not determine webserver version."
 msgstr "Konnte Webserver-Version nicht ermitteln."
 
-#. Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+#. Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
 msgid "Concurrent Users Details"
 msgstr "Details der gleichzeitigen Benutzer"
 
-#. Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+#. Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
 msgid "Concurrent Users"
 msgstr "Gleichzeitige Benutzer"
 
@@ -21034,14 +21034,14 @@ msgid "Value doesn't satisfy regex (%s)."
 msgstr "Wert entspricht nicht dem regulären Ausdruck (%s)."
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-msgid "System was not able to calculate user Date in OTOBOTimeZone!"
+msgid "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
 msgstr ""
-"Das Datum des Benutzers konnte in der OTOBO-Zeitzone nicht berechnet werden!"
+"Das Datum des Benutzers konnte in der CareOnCloud ESM-Zeitzone nicht berechnet werden!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-msgid "System was not able to calculate user DateTime in OTOBOTimeZone!"
+msgid "System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!"
 msgstr ""
-"Das Datum und die Uhrzeit des Benutzers konnte in der OTOBO-Zeitzone nicht "
+"Das Datum und die Uhrzeit des Benutzers konnte in der CareOnCloud ESM-Zeitzone nicht "
 "berechnet werden!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -21907,9 +21907,9 @@ msgstr "Dies ist derzeit nicht möglich, da eine Paketaktualisierung läuft."
 
 #. JS File: Core.Agent.Admin.PackageManager
 msgid ""
-"This option is currently disabled because the OTOBO Daemon is not running."
+"This option is currently disabled because the CareOnCloud ESM Daemon is not running."
 msgstr ""
-"Diese Option ist derzeit deaktiviert, weil der OTOBO Daemon nicht läuft."
+"Diese Option ist derzeit deaktiviert, weil der CareOnCloud ESM Daemon nicht läuft."
 
 #. JS File: Core.Agent.Admin.PackageManager
 msgid "Are you sure you want to update all installed packages?"
@@ -22346,8 +22346,8 @@ msgstr ""
 "suchen."
 
 #. JS File: Core.Agent.Daemon
-msgid "Information about the OTOBO Daemon"
-msgstr "Informationen über den OTOBO Daemon"
+msgid "Information about the CareOnCloud ESM Daemon"
+msgstr "Informationen über den CareOnCloud ESM Daemon"
 
 #. JS File: Core.Agent.Dashboard
 msgid "Please check the fields marked as red for valid inputs."
@@ -22760,15 +22760,15 @@ msgstr "Dies ist %s"
 msgid "Complex %s with %s arguments"
 msgstr "Komplex %s mit %s Argumenten"
 
-#. JS File: OTOBOLineChart
+#. JS File: CareOnCloud ESMLineChart
 msgid "No Data Available."
 msgstr "Keine Daten verfügbar."
 
-#. JS File: OTOBOMultiBarChart
+#. JS File: CareOnCloud ESMMultiBarChart
 msgid "Grouped"
 msgstr "Gruppiert"
 
-#. JS File: OTOBOMultiBarChart
+#. JS File: CareOnCloud ESMMultiBarChart
 msgid "Stacked"
 msgstr "Gestapelt"
 
@@ -23078,10 +23078,10 @@ msgstr "Anfrage des Kunden über Webinterface hinzugefügt."
 
 #. SysConfig
 msgid ""
-"Adds a suffix with the actual year and month to the OTOBO log file. A "
+"Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A "
 "logfile for every month will be created."
 msgstr ""
-"Fügt einen Suffix mit dem aktuellen Jahr und Monat in die OTOBO-"
+"Fügt einen Suffix mit dem aktuellen Jahr und Monat in die CareOnCloud ESM-"
 "Protokolldatei hinzu. Für jeden Monat wird eine eigene Log-Datei erstellt."
 
 #. SysConfig
@@ -24452,9 +24452,9 @@ msgstr ""
 "verwenden möchten."
 
 #. SysConfig
-msgid "Configure sending of support data to OTOBO Team for improved support."
+msgid "Configure sending of support data to CareOnCloud ESM Team for improved support."
 msgstr ""
-"Konfigurieren Sie das Senden von Supportdaten an das OTOBO-Team für besseren "
+"Konfigurieren Sie das Senden von Supportdaten an das CareOnCloud ESM-Team für besseren "
 "Support."
 
 #. SysConfig
@@ -25024,7 +25024,7 @@ msgstr "Standard \"Loop Protection\"-Modul."
 #. SysConfig
 msgid "Default queue ID used by the system in the agent interface."
 msgstr ""
-"Standard-Queue-ID welche von OTOBO in der Agentenoberfläche verwendet wird."
+"Standard-Queue-ID welche von CareOnCloud ESM in der Agentenoberfläche verwendet wird."
 
 #. SysConfig
 msgid "Default skin for the agent interface."
@@ -25037,12 +25037,12 @@ msgstr "Standard-Skin für das Kunden Interface."
 #. SysConfig
 msgid "Default ticket ID used by the system in the agent interface."
 msgstr ""
-"Standard-Ticket-ID welche von OTOBO in der Agentenoberfläche verwendet wird."
+"Standard-Ticket-ID welche von CareOnCloud ESM in der Agentenoberfläche verwendet wird."
 
 #. SysConfig
 msgid "Default ticket ID used by the system in the customer interface."
 msgstr ""
-"Standard-Ticket-ID welche von OTOBO in der Kundenoberfläche verwendet wird."
+"Standard-Ticket-ID welche von CareOnCloud ESM in der Kundenoberfläche verwendet wird."
 
 #. SysConfig
 msgid "Default value for NameX"
@@ -25066,13 +25066,13 @@ msgstr ""
 msgid ""
 "Define a filter for html output to add links behind a defined string. The "
 "element Image allows two input kinds. At once the name of an image (e.g. "
-"faq.png). In this case the OTOBO image path will be used. The second "
+"faq.png). In this case the CareOnCloud ESM image path will be used. The second "
 "possiblity is to insert the link to the image."
 msgstr ""
 "Definiert einen Filter für die HTML-Ausgabe um Links hinter einer bestimmten "
 "Zeichenfolge hinzufügen. Dieses Element erlaubt zwei Eingabearten. Zum einem "
 "den Namen eines Bildes (Beispielsweise faq.png). In diesem Fall wird der "
-"OTOBO-Bildpfad verwendet. Die zweite Möglichkeit ist, den Link zu dem Bild "
+"CareOnCloud ESM-Bildpfad verwendet. Die zweite Möglichkeit ist, den Link zu dem Bild "
 "einzufügen."
 
 #. SysConfig
@@ -25282,12 +25282,12 @@ msgstr ""
 msgid ""
 "Defines a filter for html output to add links behind CVE numbers. The "
 "element Image allows two input kinds. At once the name of an image (e.g. "
-"faq.png). In this case the OTOBO image path will be used. The second "
+"faq.png). In this case the CareOnCloud ESM image path will be used. The second "
 "possiblity is to insert the link to the image."
 msgstr ""
 "Definiert einen Filter für die HTML-Ausgabe um Links hinter CVE-Nummern "
 "hinzufügen. Das Element Bild erlaubt zwei Eingabearten. Zum einem den Namen "
-"eines Bildes (Beispielsweise faq.png). In diesem Fall wird der OTOBO-"
+"eines Bildes (Beispielsweise faq.png). In diesem Fall wird der CareOnCloud ESM-"
 "Bildpfad verwendet. Die zweite Möglichkeit ist, den Link zu dem Bild "
 "einzufügen."
 
@@ -25295,12 +25295,12 @@ msgstr ""
 msgid ""
 "Defines a filter for html output to add links behind MSBulletin numbers. The "
 "element Image allows two input kinds. At once the name of an image (e.g. "
-"faq.png). In this case the OTOBO image path will be used. The second "
+"faq.png). In this case the CareOnCloud ESM image path will be used. The second "
 "possiblity is to insert the link to the image."
 msgstr ""
 "Definiert einen Filter für die HTML-Ausgabe um Links hinter einer MSBulletin-"
 "Nummer hinzufügen. Das Element Bild erlaubt zwei Eingabearten. Zum einem den "
-"Namen eines Bildes (Beispielsweise faq.png). In diesem Fall wird der OTOBO-"
+"Namen eines Bildes (Beispielsweise faq.png). In diesem Fall wird der CareOnCloud ESM-"
 "Bildpfad verwendet. Die zweite Möglichkeit ist, den Link zu dem Bild "
 "einzufügen."
 
@@ -25308,25 +25308,25 @@ msgstr ""
 msgid ""
 "Defines a filter for html output to add links behind a defined string. The "
 "element Image allows two input kinds. At once the name of an image (e.g. "
-"faq.png). In this case the OTOBO image path will be used. The second "
+"faq.png). In this case the CareOnCloud ESM image path will be used. The second "
 "possiblity is to insert the link to the image."
 msgstr ""
 "Definiert einen Filter für die HTML-Ausgabe um Links hinter einer bestimmten "
 "Zeichenfolge hinzufügen. Das Element Bild erlaubt zwei Eingabearten. Zum "
 "einem den Namen eines Bildes (Beispielsweise faq.png). In diesem Fall wird "
-"der OTOBO-Bildpfad verwendet. Die zweite Möglichkeit ist, den Link zu dem "
+"der CareOnCloud ESM-Bildpfad verwendet. Die zweite Möglichkeit ist, den Link zu dem "
 "Bild einzufügen."
 
 #. SysConfig
 msgid ""
 "Defines a filter for html output to add links behind bugtraq numbers. The "
 "element Image allows two input kinds. At once the name of an image (e.g. "
-"faq.png). In this case the OTOBO image path will be used. The second "
+"faq.png). In this case the CareOnCloud ESM image path will be used. The second "
 "possiblity is to insert the link to the image."
 msgstr ""
 "Definiert einen Filter für die HTML-Ausgabe um Links hinter Bugtraq-Nummern "
 "hinzufügen. Das Element Bild erlaubt zwei Eingabearten. Zum einem den Namen "
-"eines Bildes (Beispielsweise faq.png). In diesem Fall wird der OTOBO-"
+"eines Bildes (Beispielsweise faq.png). In diesem Fall wird der CareOnCloud ESM-"
 "Bildpfad verwendet. Die zweite Möglichkeit ist, den Link zu dem Bild "
 "einzufügen."
 
@@ -26001,10 +26001,10 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Defines the HTTP hostname for the support data collection with the public "
-"module 'PublicSupportDataCollector' (e.g. used from the OTOBO Daemon)."
+"module 'PublicSupportDataCollector' (e.g. used from the CareOnCloud ESM Daemon)."
 msgstr ""
 "Legt den HTTP-Hostnamen fest, der für die Sammlung von Supportdaten über das "
-"freie Modul 'PublicSupportDataCollector' genutzt wird (z. B. durch den OTOBO-"
+"freie Modul 'PublicSupportDataCollector' genutzt wird (z. B. durch den CareOnCloud ESM-"
 "Daemon)."
 
 #. SysConfig
@@ -26997,9 +26997,9 @@ msgid ""
 "as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging "
 "used by the application, to build links to the tickets within your system."
 msgstr ""
-"Definiert den Full Qualified Domain Name des OTOBO Systems. Diese "
+"Definiert den Full Qualified Domain Name des CareOnCloud ESM Systems. Diese "
 "Einstellung wird als Variable OTOBO_CONFIG_FQDN genutzt, welche in allen "
-"Nachrichten-Formularen zu finden ist oder um Links zu Tickets in Ihrem OTOBO "
+"Nachrichten-Formularen zu finden ist oder um Links zu Tickets in Ihrem CareOnCloud ESM "
 "System zu generieren."
 
 #. SysConfig
@@ -27318,11 +27318,11 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Defines the list of online repositories. Another installations can be used "
-"as repository, for example: Key=\"http://example.com/otobo/public.pl?"
+"as repository, for example: Key=\"http://example.com/careoncloud/public.pl?"
 "Action=PublicRepository;File=\" and Content=\"Some Name\"."
 msgstr ""
 "Definiert eine Liste von Online-Quellen. Andere Installationen können als "
-"Quelle genutzt werden z.B. Key=\"http://example.com/otobo/public.pl?"
+"Quelle genutzt werden z.B. Key=\"http://example.com/careoncloud/public.pl?"
 "Action=PublicRepository;File=\" and Content=\"Irgendein Name\"."
 
 #. SysConfig
@@ -27365,12 +27365,12 @@ msgstr ""
 msgid ""
 "Defines the maximal size (in bytes) for file uploads via the browser. "
 "Warning: Setting this option to a value which is too low could cause many "
-"masks in your OTOBO instance to stop working (probably any mask which takes "
+"masks in your CareOnCloud ESM instance to stop working (probably any mask which takes "
 "input from the user)."
 msgstr ""
 "Definiert die maximale Größe (in Bytes) für das Hochladen von Dateien mit "
 "dem Browser. Achtung: Wenn man die Größe zu klein wählt können viele "
-"Eingabemasken in ihrer OTOBO-Instanz nicht mehr funktionieren (vermutlich "
+"Eingabemasken in ihrer CareOnCloud ESM-Instanz nicht mehr funktionieren (vermutlich "
 "jede Maske die Benutzereingaben erwartet)."
 
 #. SysConfig
@@ -27447,10 +27447,10 @@ msgstr "Definiert das Modul um Kunden zu authentifizieren."
 #. SysConfig
 msgid ""
 "Defines the module to display a notification in the agent interface if the "
-"OTOBO Daemon is not running."
+"CareOnCloud ESM Daemon is not running."
 msgstr ""
 "Definiert das Modul, dass eine Benachrichtigung im Agentenbereich anzeigt, "
-"wenn der OTOBO Daemon nicht läuft."
+"wenn der CareOnCloud ESM Daemon nicht läuft."
 
 #. SysConfig
 msgid ""
@@ -27613,10 +27613,10 @@ msgid "Defines the name of the key for customer sessions."
 msgstr "Definiert den Namen des Schlüssels für die Kunden-Sessions."
 
 #. SysConfig
-msgid "Defines the name of the session key. E.g. Session, SessionID or OTOBO."
+msgid "Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM."
 msgstr ""
 "Definiert den Namen des Session-Schlüssels. Zum Beispiel: Session, SessionID "
-"oder OTOBO."
+"oder CareOnCloud ESM."
 
 #. SysConfig
 msgid "Defines the name of the table where the user preferences are stored."
@@ -28046,11 +28046,11 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Defines the shown links in the footer area of the customer interface of this "
-"OTOBO system. The value in \"Key\" is the external URL, the value in "
+"CareOnCloud ESM system. The value in \"Key\" is the external URL, the value in "
 "\"Content\" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> "
 "and <OTOBO_CONFIG_ScriptAlias> will be substituted."
 msgstr ""
-"Definiert die im Footer-Bereich des OTOBO Kundenportals angezeigten Links. "
+"Definiert die im Footer-Bereich des CareOnCloud ESM Kundenportals angezeigten Links. "
 "Im Feld \"Schlüssel\" ist die externe URL, als \"Inhalt\" der anzuzeigende "
 "Linktext einzugeben. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> und "
 "<OTOBO_CONFIG_ScriptAlias> werden ersetzt."
@@ -28158,13 +28158,13 @@ msgstr ""
 msgid ""
 "Defines the system identifier. Every ticket number contains this ID. This "
 "ensures that only tickets which belong to your system will be processed as "
-"follow-ups (useful when communicating between two instances of OTOBO). The "
+"follow-ups (useful when communicating between two instances of CareOnCloud ESM). The "
 "SystemID may also be used in HTTP session backends."
 msgstr ""
 "Definiert die System ID. Jede Ticketnummer enthält diese ID. Das stellt "
 "sicher, dass nur Tickets in das Ticketsystem aufgenommen werden, welche zum "
 "eigenen Ticketsystem gehören (nützlich, wenn zwischen zwei Instanzen von "
-"OTOBO kommuniziert wird). Die System-ID kann auch in HTTP-Sitzungs-Backends "
+"CareOnCloud ESM kommuniziert wird). Die System-ID kann auch in HTTP-Sitzungs-Backends "
 "verwendet werden."
 
 #. SysConfig
@@ -28230,10 +28230,10 @@ msgstr ""
 msgid ""
 "Defines the timeout (in seconds, minimum is 20 seconds) for the support data "
 "collection with the public module 'PublicSupportDataCollector' (e.g. used "
-"from the OTOBO Daemon)."
+"from the CareOnCloud ESM Daemon)."
 msgstr ""
 "Legt den Timeout in Sekunden für die Sammlung von Supportdaten des "
-"öffentlichen Moduls 'PublicSupportDataCollector' fest, das z. B. vom OTOBO "
+"öffentlichen Moduls 'PublicSupportDataCollector' fest, das z. B. vom CareOnCloud ESM "
 "Daemon genutzt wird (min. 20 Sekunden)."
 
 #. SysConfig
@@ -28317,7 +28317,7 @@ msgid ""
 "open, otherwise as closed. This setting e.g. controls if a state type is "
 "visible in AgentTicketStatusView in the Open Tickets or Closed Tickets "
 "section. It might be necessary to delete your system's cache in order to see "
-"any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete)."
+"any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete)."
 msgstr ""
 "Definiert die gültigen Statustypen für ein Ticket. Befindet sich ein Ticket "
 "in einem Status, der einen der hier festgelegten Statustypen hat, wird "
@@ -28325,7 +28325,7 @@ msgstr ""
 "Einstellung steuert z. B., ob ein Statustyp in der AgentTicketStatusView im "
 "Bereich Offene Tickets oder Geschlossene Tickets sichtbar ist. Es kann "
 "erforderlich sein, den Cache deines Systems zu löschen, um Änderungen zu "
-"sehen (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete)."
+"sehen (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete)."
 
 #. SysConfig
 msgid ""
@@ -28338,10 +28338,10 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"Defines the value of the SameSite attribute of the OTOBO session cookies. "
+"Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. "
 "Used in careoncloud.psgi."
 msgstr ""
-"Definiert den Wert des SameSite Attributs des OTOBO Session Cookies. Wird in "
+"Definiert den Wert des SameSite Attributs des CareOnCloud ESM Session Cookies. Wird in "
 "careoncloud.psgi verwendet."
 
 #. SysConfig
@@ -28649,12 +28649,12 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"Disable HTTP header \"X-Frame-Options: SAMEORIGIN\" to allow OTOBO to be "
+"Disable HTTP header \"X-Frame-Options: SAMEORIGIN\" to allow CareOnCloud ESM to be "
 "included as an IFrame in other websites. Disabling this HTTP header can be a "
 "security issue! Only disable it, if you know what you are doing!"
 msgstr ""
 "Wenn der HTTP-Header \"X-Frame-Options: SAMEORIGIN\" ausgeschaltet ist, kann "
-"OTOBO als IFrame in andere Websites integriert werden. Dies stellt eine "
+"CareOnCloud ESM als IFrame in andere Websites integriert werden. Dies stellt eine "
 "Sicherheitslücke dar! Daher sollte diese Einstellung nur deaktivieren "
 "werden, wenn Sie sich über die Konsequenzen im Klaren sind!"
 
@@ -29185,13 +29185,13 @@ msgstr "Filter aktiviert."
 #. SysConfig
 msgid ""
 "Enables PGP support. When PGP support is enabled for signing and encrypting "
-"mail, it is HIGHLY recommended that the web server runs as the OTOBO user. "
+"mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. "
 "Otherwise, there will be problems with the privileges when accessing .gnupg "
 "folder."
 msgstr ""
 "Aktiviert PGP-Support. Wenn PGP-Support für das signieren und verschlüsseln "
 "von Mails eingeschaltet ist, wird dringend empfohlen, den Webserver unter "
-"dem OTOBO-Benutzer zu betreiben. Andernfalls werden Probleme mit den "
+"dem CareOnCloud ESM-Benutzer zu betreiben. Andernfalls werden Probleme mit den "
 "Berechtigungen auftreten, wenn auf das .gnupg-Verzeichnis zugegriffen wird."
 
 #. SysConfig
@@ -29296,14 +29296,14 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Enabling SecureMode disables the web installer (http://yourhost.example.com/"
-"otobo/installer.pl) and the migrations. This is done in order to prevent the "
+"careoncloud/installer.pl) and the migrations. This is done in order to prevent the "
 "system from being hijacked. When SecureMode is not enabled the system can be "
 "reinstalled. In this case the current basic configuration will be used to "
 "pre-populate the questions within the installer script. Enabling SecureMode "
 "also enables GenericAgent, PackageManager and SQL Box."
 msgstr ""
 "Aktivieren des SecureMode deaktiviert den Web-Installer (http://"
-"yourhost.example.com/otobo/installer.pl) und die Migration. Dies geschieht, "
+"yourhost.example.com/careoncloud/installer.pl) und die Migration. Dies geschieht, "
 "um zu verhindern, dass das System gehijackt werden kann. Ist der SecureMode "
 "nicht aktiviert, kann das System jederzeit neu aufgesetzt werden. In diesem "
 "Fall wird die aktuelle Grundkonfiguration verwendet, um das Installer-Skript "
@@ -29472,8 +29472,8 @@ msgstr ""
 "aus, deren Betreff keine Ticketnummer enthält."
 
 #. SysConfig
-msgid "Executes follow-up checks on OTOBO Header 'X-OTOBO-Bounce'."
-msgstr "Führt Follow-Up-Checks auf dem OTOBO-Header 'X-OTOBO-Bounce' aus."
+msgid "Executes follow-up checks on CareOnCloud ESM Header 'X-OTOBO-Bounce'."
+msgstr "Führt Follow-Up-Checks auf dem CareOnCloud ESM-Header 'X-OTOBO-Bounce' aus."
 
 #. SysConfig
 msgid ""
@@ -30033,9 +30033,9 @@ msgid "Hindi"
 msgstr "Hindi"
 
 #. SysConfig
-msgid "How many rotated otobo.log files to keep. Default is 3."
+msgid "How many rotated careoncloud.log files to keep. Default is 3."
 msgstr ""
-"Wie viele rotierte otobo.log Dateien aufbewahrt werden. Standardwert ist 3."
+"Wie viele rotierte careoncloud.log Dateien aufbewahrt werden. Standardwert ist 3."
 
 #. SysConfig
 msgid "Hungarian"
@@ -30263,12 +30263,12 @@ msgstr ""
 msgid ""
 "If \"LDAP\" was selected for Customer::Authmodule, you can check if the user "
 "is allowed to authenticate because he is in a posixGroup, e.g. user needs to "
-"be in a group xyz to use OTOBO. Specify the group, who may access the system."
+"be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system."
 msgstr ""
 "Wenn \"LDAP\" als Customer::AuthModule ausgewählt ist, können Sie prüfen, ob "
 "der Benutzer aufgrund seiner Mitgliedschaft in einer posixGroup "
 "Authentifizierungsberechtigt (z.B. wenn ein Nutzer Mitglied der Gruppe xyz "
-"sein muss, um OTOBO nutzen zu dürfen). Legen Sie diese Gruppe hier fest."
+"sein muss, um CareOnCloud ESM nutzen zu dürfen). Legen Sie diese Gruppe hier fest."
 
 #. SysConfig
 msgid ""
@@ -30474,21 +30474,21 @@ msgstr ""
 msgid ""
 "If enabled the daemon will use this directory to create its PID files. Note: "
 "Please stop the daemon before any change and use this setting only if "
-"<$OTOBOHome>/var/run/ can not be used."
+"<$CareOnCloud ESMHome>/var/run/ can not be used."
 msgstr ""
 "Wenn aktiviert, verwendet der Daemon dieses Verzeichnis, um seine PID-"
 "Dateien zu erstellen. Hinweis: Bitte stoppen Sie den Daemon vor der Änderung "
-"und nutzen Sie diese Einstellung nur, wenn <$OTOBOHome>/var/run/ nicht "
+"und nutzen Sie diese Einstellung nur, wenn <$CareOnCloud ESMHome>/var/run/ nicht "
 "benutzt werden kann."
 
 #. SysConfig
-msgid "If enabled, OTOBO will deliver all CSS files in minified form."
-msgstr "Wenn aktiviert, liefert OTOBO CSS-Dateien in minifizierter Form aus."
+msgid "If enabled, CareOnCloud ESM will deliver all CSS files in minified form."
+msgstr "Wenn aktiviert, liefert CareOnCloud ESM CSS-Dateien in minifizierter Form aus."
 
 #. SysConfig
-msgid "If enabled, OTOBO will deliver all JavaScript files in minified form."
+msgid "If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form."
 msgstr ""
-"Wenn aktiviert, liefert OTOBO JavaScript-Dateien in minifizierter Form aus."
+"Wenn aktiviert, liefert CareOnCloud ESM JavaScript-Dateien in minifizierter Form aus."
 
 #. SysConfig
 msgid "If enabled, TicketPhone and TicketEmail will be open in new windows."
@@ -30498,11 +30498,11 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"If enabled, the OTOBO version tag will be removed from the Webinterface, the "
+"If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the "
 "HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this "
 "option, please make sure to delete the cache."
 msgstr ""
-"Wenn aktiviert, werden OTOBO-Versionsinformationen aus der Oberfläche und "
+"Wenn aktiviert, werden CareOnCloud ESM-Versionsinformationen aus der Oberfläche und "
 "HTTP-Headern und X-Headern entfernt. Hinweis: Nach Änderung dieser Option "
 "muss der Cache gelöscht werden."
 
@@ -30549,13 +30549,13 @@ msgstr ""
 msgid ""
 "If enabled, users that haven't selected a time zone yet will be notified to "
 "do so. Note: Notification will not be shown if (1) user has not yet selected "
-"a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) "
+"a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) "
 "are not set to UTC."
 msgstr ""
 "Wenn aktiviert, werden Benutzer, die bislang noch keine Zeitzone ausgewählt "
 "haben, benachrichtigt dies zu tun. Hinweis: Die Benachrichtigung wird nicht "
 "angezeigt, wenn (1) der Benutzer noch keine Zeitzone ausgewählt hat und (2) "
-"OTOBOTimeZone und UserDefaultTimeZone identisch sind und (3) nicht auf UTC "
+"CareOnCloud ESMTimeZone und UserDefaultTimeZone identisch sind und (3) nicht auf UTC "
 "gesetzt sind."
 
 #. SysConfig
@@ -30621,10 +30621,10 @@ msgstr ""
 #. SysConfig
 msgid ""
 "If this setting is enabled, it is possible to install packages which are not "
-"verified by OTOBO Team. These packages could threaten your whole system!"
+"verified by CareOnCloud ESM Team. These packages could threaten your whole system!"
 msgstr ""
 "Wenn diese Einstellung aktiviert ist, können auch Pakete installiert werden, "
-"die nicht vom OTOBO Team verifiziert wurden. Diese Pakete können Ihr "
+"die nicht vom CareOnCloud ESM Team verifiziert wurden. Diese Pakete können Ihr "
 "gesamtes System gefährden!"
 
 #. SysConfig
@@ -30845,8 +30845,8 @@ msgid "JavaScript function for the search frontend."
 msgstr "JavaScript-Funktion für das Suche-Frontend."
 
 #. SysConfig
-msgid "Jump to OTOBO!"
-msgstr "Link zu OTOBO!"
+msgid "Jump to CareOnCloud ESM!"
+msgstr "Link zu CareOnCloud ESM!"
 
 #. SysConfig
 msgid "Korean"
@@ -31212,8 +31212,8 @@ msgid "Manage Customer Dashboard Info Tile Entries"
 msgstr "Verwaltung der Info-Kachel-Einträge für das Kunden-Dashboard"
 
 #. SysConfig
-msgid "Manage OTOBO Team cloud services."
-msgstr "Cloud Services des OTOBO Team managen."
+msgid "Manage CareOnCloud ESM Team cloud services."
+msgstr "Cloud Services des CareOnCloud ESM Team managen."
 
 #. SysConfig
 msgid "Manage OpendID Connect OAuth2 Profiles."
@@ -31320,10 +31320,10 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"MaxSize in Bytes until otobo.log gets rotated. Default is 524288000 (500 MB "
+"MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB "
 "= 500 * 1024 * 1024)."
 msgstr ""
-"Maximale Größe in Byte — bis otobo.log rotiert wird. Standardwert ist "
+"Maximale Größe in Byte — bis careoncloud.log rotiert wird. Standardwert ist "
 "524288000 (500 MB = 500 * 1024 * 1024)."
 
 #. SysConfig
@@ -31688,8 +31688,8 @@ msgid "New process ticket"
 msgstr "Neues Prozess-Ticket"
 
 #. SysConfig
-msgid "News about OTOBO."
-msgstr "Neuigkeiten über OTOBO."
+msgid "News about CareOnCloud ESM."
+msgstr "Neuigkeiten über CareOnCloud ESM."
 
 #. SysConfig
 msgid ""
@@ -31829,31 +31829,31 @@ msgid "OIDC Profiles"
 msgstr "OIDC Profile"
 
 #. SysConfig
-msgid "OTOBO News"
-msgstr "Neues von OTOBO"
+msgid "CareOnCloud ESM News"
+msgstr "Neues von CareOnCloud ESM"
 
 #. SysConfig
-msgid "OTOBO Team Services"
-msgstr "Services von Team OTOBO"
+msgid "CareOnCloud ESM Team Services"
+msgstr "Services von Team CareOnCloud ESM"
 
 #. SysConfig
 msgid ""
-"OTOBO can use one or more readonly mirror databases for expensive operations "
+"CareOnCloud ESM can use one or more readonly mirror databases for expensive operations "
 "like fulltext search or statistics generation. Here you can specify the DSN "
 "for the first mirror database."
 msgstr ""
-"OTOBO kann eine oder mehrere Spiegeldatenbanken für aufwändige Operationen "
+"CareOnCloud ESM kann eine oder mehrere Spiegeldatenbanken für aufwändige Operationen "
 "wie Volltextsuchen oder Statistikgenerierungen nutzen. Hier können Sie die "
 "DSN für die erste Spiegeldatenbank hinterlegen."
 
 #. SysConfig
 msgid ""
-"OTOBO doesn't support recurring Appointments without end date or number of "
+"CareOnCloud ESM doesn't support recurring Appointments without end date or number of "
 "iterations. During import process, it might happen that ICS file contains "
 "such Appointments. Instead, system creates all Appointments in the past, "
 "plus Appointments for the next N months (120 months/10 years by default)."
 msgstr ""
-"OTOBO unterstützt keine wiederholenden Termine ohne Enddatum oder Anzahl der "
+"CareOnCloud ESM unterstützt keine wiederholenden Termine ohne Enddatum oder Anzahl der "
 "Durchläufe. Während des Importierungsprozesses kann es vorkommen, dass die "
 "entsprechende ICS-Datei solche Termin enthält. Stattdessen wird das System "
 "alle vergangenen Termine erstellen, sowie zusätzlich Termine für die "
@@ -31883,8 +31883,8 @@ msgid "Open an external link!"
 msgstr "Externen Link öffnen!"
 
 #. SysConfig
-msgid "Open the OTOBO home page in a new window"
-msgstr "Öffnet die OTOBO Homepage in einem neuen Fenster"
+msgid "Open the CareOnCloud ESM home page in a new window"
+msgstr "Öffnet die CareOnCloud ESM Homepage in einem neuen Fenster"
 
 #. SysConfig
 msgid "Open tickets (customer user)"
@@ -32599,21 +32599,21 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Path to CKEditor content CSS file. Changes to this setting will only "
-"consistently apply after deleting the OTOBO Cache via the "
+"consistently apply after deleting the CareOnCloud ESM Cache via the "
 "Maint::Cache::Delete command!"
 msgstr ""
 "Pfad zur CKEditor-CSS-Datei. Änderungen an dieser Einstellung werden erst "
-"nach dem Löschen des OTOBO-Cache über den Befehl Maint::Cache::Delete "
+"nach dem Löschen des CareOnCloud ESM-Cache über den Befehl Maint::Cache::Delete "
 "konsistent übernommen!"
 
 #. SysConfig
 msgid ""
 "Path to CKEditor editor CSS file. Changes to this setting will only "
-"consistently apply after deleting the OTOBO Cache via the "
+"consistently apply after deleting the CareOnCloud ESM Cache via the "
 "Maint::Cache::Delete command!"
 msgstr ""
 "Pfad zur CSS-Datei des CKEditor-Editors. Änderungen an dieser Einstellung "
-"werden erst nach dem Löschen des OTOBO-Cache über den Befehl "
+"werden erst nach dem Löschen des CareOnCloud ESM-Cache über den Befehl "
 "Maint::Cache::Delete konsistent übernommen!"
 
 #. SysConfig
@@ -33223,7 +33223,7 @@ msgstr "Beispielhafte Kommando-Ausgabe"
 msgid ""
 "Saves the attachments of articles. \"DB\" stores all data in the database "
 "(not recommended for storing big attachments). \"FS\" stores the data on the "
-"filesystem; this is faster but the webserver should run under the OTOBO "
+"filesystem; this is faster but the webserver should run under the CareOnCloud ESM "
 "user. You can switch between the modules even on a system that is already in "
 "production without any loss of data. Note: Searching for attachment names is "
 "not supported when \"FS\" is used. \"S3\" is experimental."
@@ -33231,7 +33231,7 @@ msgstr ""
 "Speichert die Anhänge von Artikeln. \"DB\" speichert alle Daten in der "
 "Datenbank (nicht geeignet zur Speicherung großer Anhänge!). \"FS\" speichert "
 "die Daten im Filesystem; das ist schneller, der Webserver sollte aber vom "
-"OTOBO Nutzer ausgeführt werden. Ein Wechsel zwischen den beiden "
+"CareOnCloud ESM Nutzer ausgeführt werden. Ein Wechsel zwischen den beiden "
 "Speicheroptionen ist auch auf Produktivsystemen ohne Datenverlust möglich. "
 "Hinweis: Wird \"FS\" verwendet, kann nicht nach Namen von Anhängen gesucht "
 "werden. \"S3\" ist noch experimentell."
@@ -33330,8 +33330,8 @@ msgid "Select your preferred layout for the software."
 msgstr "Wählen Sie Ihr bevorzugtes Layout aus."
 
 #. SysConfig
-msgid "Select your preferred theme for OTOBO."
-msgstr "Wählen Sie Ihr bevorzugtes Design für OTOBO."
+msgid "Select your preferred theme for CareOnCloud ESM."
+msgstr "Wählen Sie Ihr bevorzugtes Design für CareOnCloud ESM."
 
 #. SysConfig
 msgid "Selects the cache backend to use."
@@ -34299,11 +34299,11 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"Sets the time zone being used internally by OTOBO to e. g. store dates and "
+"Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and "
 "times in the database. WARNING: This setting must not be changed once set "
 "and tickets or any other data containing date/time have been created."
 msgstr ""
-"Legt die Zeitzone fest, die intern von OTOBO genutzt werden soll (z. B. um "
+"Legt die Zeitzone fest, die intern von CareOnCloud ESM genutzt werden soll (z. B. um "
 "Datumsangaben und Zeiten in der Datenbank zu speichern). ACHTUNG: Diese "
 "Einstellung darf nicht mehr geändert werden, sobald Tickets und/oder andere "
 "Objekte erstellt wurden, die Datumsangaben enthalten."
@@ -34312,12 +34312,12 @@ msgstr ""
 msgid ""
 "Sets the time zone that will be assigned to newly created users and will be "
 "used for users that haven't yet set a time zone. This is the time zone being "
-"used as default to convert date and time between the OTOBO time zone and the "
+"used as default to convert date and time between the CareOnCloud ESM time zone and the "
 "user's time zone."
 msgstr ""
 "Legt die Zeitzone fest, die als Voreinstellung für neu angelegte Nutzer "
 "gelten soll. Diese Zeitzone wird dazu verwendet, um Datumsangaben und "
-"Uhrzeiten zwischen der OTOBO-Zeitzone und der Nutzer-Zeitzone korrekt zu "
+"Uhrzeiten zwischen der CareOnCloud ESM-Zeitzone und der Nutzer-Zeitzone korrekt zu "
 "konvertieren."
 
 #. SysConfig
@@ -35169,8 +35169,8 @@ msgstr ""
 "Zeigt Queues als Liste oder Baumstruktur (mit Eltern-/Kind-Beziehung) an."
 
 #. SysConfig
-msgid "Shows information on how to start OTOBO Daemon"
-msgstr "Informationen über das Starten des OTOBO Daemons anzeigen"
+msgid "Shows information on how to start CareOnCloud ESM Daemon"
+msgstr "Informationen über das Starten des CareOnCloud ESM Daemons anzeigen"
 
 #. SysConfig
 msgid ""
@@ -35531,14 +35531,14 @@ msgstr ""
 msgid ""
 "Specifies the email address that should be used by the application when "
 "sending notifications. The email address is used to build the complete "
-"display name for the notification master (i.e. \"OTOBO Notifications\" "
-"otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set "
+"display name for the notification master (i.e. \"CareOnCloud ESM Notifications\" "
+"careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set "
 "in your configuation, or choose another email address."
 msgstr ""
 "Legt die E-Mail-Adresse fest, die zum Versenden von E-Mails durch die "
 "Applikation verwendet werden soll. Die Adresse wird genutzt, um den "
 "vollständigen Anzeigenamen des Benachrichtigungs-Masters zu bilden (z. B. "
-"\"OTOBO Notifications otobo@your.example.com). Sie können die "
+"\"CareOnCloud ESM Notifications careoncloud@your.example.com). Sie können die "
 "OTOBO_CONFIG_FQDN-Variable nutzen, die Sie in der Konfiguration festgelegt "
 "haben, oder eine andere E-Mail-Adresse wählen."
 
@@ -35569,13 +35569,13 @@ msgstr ""
 msgid ""
 "Specifies the name that should be used by the application when sending "
 "notifications. The sender name is used to build the complete display name "
-"for the notification master (i.e. \"OTOBO Notifications\" "
-"otobo@your.example.com)."
+"for the notification master (i.e. \"CareOnCloud ESM Notifications\" "
+"careoncloud@your.example.com)."
 msgstr ""
 "Legt den Namen fest, der beim Versenden von Benachrichtigungen durch die "
 "Applikation verwendet werden soll. Der Absendername wird genutzt, um den "
 "vollständigen Anzeigenamen des Benachrichtigungs-Masters zu bilden (z. B. "
-"\"OTOBO Notifications otobo@your.example.com)."
+"\"CareOnCloud ESM Notifications careoncloud@your.example.com)."
 
 #. SysConfig
 msgid ""
@@ -36157,8 +36157,8 @@ msgid "This module is being used to extend the password policy."
 msgstr "Dieses Modul ergänzt die Passwort-Richtlinie."
 
 #. SysConfig
-msgid "This module is part of the admin area of OTOBO."
-msgstr "Dieses Modul ist ein teil des Admin-Bereiches von OTOBO."
+msgid "This module is part of the admin area of CareOnCloud ESM."
+msgstr "Dieses Modul ist ein teil des Admin-Bereiches von CareOnCloud ESM."
 
 #. SysConfig
 msgid ""
@@ -36229,10 +36229,10 @@ msgstr ""
 "Länderliste nutzen, wenn dies für Sie passender ist."
 
 #. SysConfig
-msgid "This setting is deprecated. Set OTOBOTimeZone instead."
+msgid "This setting is deprecated. Set CareOnCloud ESMTimeZone instead."
 msgstr ""
 "Diese Einstellung ist veraltet. Bitte nutzen Sie stattdessen die Einstellung "
-"OTOBOTimeZone."
+"CareOnCloud ESMTimeZone."
 
 #. SysConfig
 msgid ""
@@ -36474,9 +36474,9 @@ msgid "To view HTML attachments."
 msgstr "Zum Betrachten von HTML-Anhängen."
 
 #. SysConfig
-msgid "Toggles display of OTOBO FeatureAddons list in PackageManager."
+msgid "Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager."
 msgstr ""
-"Schaltet die Anzeige der OTOBO FeatureAddon-Liste in der Paket-Verwaltung um."
+"Schaltet die Anzeige der CareOnCloud ESM FeatureAddon-Liste in der Paket-Verwaltung um."
 
 #. SysConfig
 msgid ""
@@ -36587,13 +36587,13 @@ msgstr "Passen Sie das System nach Ihren Wünschen an."
 
 #. SysConfig
 msgid ""
-"Type of daemon log rotation to use: Choose 'OTOBO' to let OTOBO system to "
+"Type of daemon log rotation to use: Choose 'CareOnCloud ESM' to let CareOnCloud ESM system to "
 "handle the file rotation, or choose 'External' to use a 3rd party rotation "
 "mechanism (i.e. logrotate). Note: External rotation mechanism requires its "
 "own and independent configuration."
 msgstr ""
 "Art der Logrotation, die vom Daemon genutzt werden soll. Wählen Sie "
-"\"OTOBO\", um das System die Rotation verwalten zu lassen oder \"extern\", "
+"\"CareOnCloud ESM\", um das System die Rotation verwalten zu lassen oder \"extern\", "
 "um eine Drittapplikation dafür zu nutzen (z. B. logrotate). Hinweis: externe "
 "Mechanismen erfordern weiterhin eine eigene Konfiguration."
 
@@ -36697,10 +36697,10 @@ msgstr ""
 "Signaturen, Standard Vorlagen, Automatische Antworten und Benachrichtigungen."
 
 #. SysConfig
-msgid "Value map. Define a key and a value map from import file to OTOBO."
+msgid "Value map. Define a key and a value map from import file to CareOnCloud ESM."
 msgstr ""
 "Wertzuordnung. Definieren Sie eine Schlüssel- und Wertzuordnung von der "
-"Importdatei zu OTOBO."
+"Importdatei zu CareOnCloud ESM."
 
 #. SysConfig
 msgid ""
@@ -36753,18 +36753,18 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"We have changed the default ticket unlock behavior in OTOBO 10.1. Now, the "
+"We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the "
 "ticket is not only unlocked, but also handed over to the system user again. "
 "Thus, the behavior is clearer, but it is no longer possible to read out who "
 "last edited the ticket. Please deactivate this option to restore the "
-"behavior of OTRS versions 2 to 6 and OTOBO version 10.0."
+"behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0."
 msgstr ""
-"In OTOBO 10.1 haben wir die Ticketfreigabe angepasst: Das Ticket wird nicht "
+"In CareOnCloud ESM 10.1 haben wir die Ticketfreigabe angepasst: Das Ticket wird nicht "
 "nur entsperrt, sondern zugleich an den Systembenutzer zurückgegeben. So "
 "entspricht die Darstellung klarer den Tatsachen. Zugleich kann aus der "
 "Besitzer-Information nicht mehr ersehen werden, wer ein Ticket zuletzt "
 "bearbeitet hat. Deaktivieren Sie die Option, um das Verhalten der OTRS-"
-"Versionen 2 bis 6 und von OTOBO 10.0 wiederherzustellen."
+"Versionen 2 bis 6 und von CareOnCloud ESM 10.0 wiederherzustellen."
 
 #. SysConfig
 msgid "Web Service"
@@ -36775,8 +36775,8 @@ msgid "Web Services"
 msgstr "Webservices"
 
 #. SysConfig
-msgid "Welcome %s, to your OTOBO."
-msgstr "Willkommen %s, in Deinem OTOBO."
+msgid "Welcome %s, to your CareOnCloud ESM."
+msgstr "Willkommen %s, in Deinem CareOnCloud ESM."
 
 #. SysConfig
 msgid ""
@@ -36900,8 +36900,8 @@ msgid "Yes, but hide archived tickets"
 msgstr "Ja, aber archivierte Tickets verstecken"
 
 #. SysConfig
-msgid "Your Tickets. Your OTOBO."
-msgstr "Deine Tickets. Dein OTOBO."
+msgid "Your Tickets. Your CareOnCloud ESM."
+msgstr "Deine Tickets. Dein CareOnCloud ESM."
 
 #. SysConfig
 msgid ""
@@ -37175,8 +37175,8 @@ msgstr "Stats"
 #~ msgid "Expand"
 #~ msgstr "Ausklappen"
 
-#~ msgid "OTOBO forum"
-#~ msgstr "OTOBO Forum"
+#~ msgid "CareOnCloud ESM forum"
+#~ msgstr "CareOnCloud ESM Forum"
 
 #~ msgid "or directly via mail to"
 #~ msgstr "oder direkt per Mail an"
@@ -37324,7 +37324,7 @@ msgstr "Stats"
 #~ "welche Attribute angezeigt werden sollen. Alle Ticket-Attribute außer der "
 #~ "Queue müssen explizit in Elasticsearch gespeichert werden."
 
-#~ msgid "Sends registration information to OTOBO group."
+#~ msgid "Sends registration information to CareOnCloud ESM group."
 #~ msgstr "Übermitteln der Registrierungsinformationen an die Rother OSS GmbH."
 
 #~ msgid ""
@@ -37342,18 +37342,18 @@ msgstr "Stats"
 #~ "unerledigter-zustand gesetzt wird (Standard: 86400 = 1 Tag)."
 
 #~ msgid ""
-#~ "We have changed the default ticket unlock behaviour in OTOBO 10.1. Now, "
+#~ "We have changed the default ticket unlock behaviour in CareOnCloud ESM 10.1. Now, "
 #~ "the ticket is not only unlocked, but also handed over to the system user "
 #~ "again. Thus, the behaviour is clearer, but it is no longer possible to "
 #~ "read out who last edited the ticket. Please deactivate this option to "
-#~ "restore the behaviour of OTRS version 2-6 and OTOBO 10.."
+#~ "restore the behaviour of OTRS version 2-6 and CareOnCloud ESM 10.."
 #~ msgstr ""
-#~ "In OTOBO 10.1 haben wir die Ticketfreigabe angepasst: Das Ticket wird "
+#~ "In CareOnCloud ESM 10.1 haben wir die Ticketfreigabe angepasst: Das Ticket wird "
 #~ "nicht nur entsperrt, sondern zugleich an den Systembenutzer "
 #~ "zurückgegeben. So entspricht die Darstellung klarer den Tatsachen. "
 #~ "Zugleich kann aus der Besitzerinformation nicht mehr ersehen werden, wer "
 #~ "ein Ticket zuletzt bearbeitet hat. Deaktivieren Sie die Option, um das "
-#~ "Verhalten der OTRS-Versionen 2 bis 6 und von OTOBO 10 wiederherstellen."
+#~ "Verhalten der OTRS-Versionen 2 bis 6 und von CareOnCloud ESM 10 wiederherstellen."
 
 #~ msgid ""
 #~ "Whether fields should be automatically filled (1), and in that case also "
@@ -37461,8 +37461,8 @@ msgstr "Stats"
 #~ "Cachingdauer für das Dashlet in Minuten. Mit \"Mandatory\" kann das "
 #~ "Dashlet so konfiguriert werden, dass Nutzer es nicht ausblenden können."
 
-#~ msgid "News about OTOBO releases!"
-#~ msgstr "Neuigkeiten zu OTOBO-Releases!"
+#~ msgid "News about CareOnCloud ESM releases!"
+#~ msgstr "Neuigkeiten zu CareOnCloud ESM-Releases!"
 
 #~ msgid "Product News"
 #~ msgstr "Produkt-Neuigkeiten"
@@ -37481,8 +37481,8 @@ msgstr "Stats"
 #~ msgid "e.g utf-8, latin1, iso-8859-1, cp1250, Etc."
 #~ msgstr "z. B. utf-8, latin1, iso-8859-1, cp1250, usw."
 
-#~ msgid "New OTOBO Community  Fields"
-#~ msgstr "Neue OTOBO Felder"
+#~ msgid "New CareOnCloud ESM Community  Fields"
+#~ msgstr "Neue CareOnCloud ESM Felder"
 
 #~ msgid ""
 #~ "Here you can activate Ready2Adopt web services showcasing our best "
@@ -37528,8 +37528,8 @@ msgstr "Stats"
 #~ msgid "Ticket decrypted before"
 #~ msgstr "Ticket wurde bereits entschlüsselt"
 
-#~ msgid "Can't read OTOBO RELEASE file: %s: %s!"
-#~ msgstr "Kann OTOBO RELEASE File nicht lesen: %s: %s!"
+#~ msgid "Can't read CareOnCloud ESM RELEASE file: %s: %s!"
+#~ msgstr "Kann CareOnCloud ESM RELEASE File nicht lesen: %s: %s!"
 
 #~ msgid "OTRS RELEASE file %s does not exist: %s!"
 #~ msgstr "OTRS RELEASE Datei %s nicht vorhanden: %s!"
@@ -37576,11 +37576,11 @@ msgstr "Stats"
 
 #~ msgid ""
 #~ "Defines the shown links in the footer area of the customer and public "
-#~ "interface of this OTOBO system. The value in \"Key\" is the external URL, "
+#~ "interface of this CareOnCloud ESM system. The value in \"Key\" is the external URL, "
 #~ "the value in \"Content\" is the shown label."
 #~ msgstr ""
 #~ "Definiert die angezeigten Verknüpfungen im Fußbereich des Öffentlichen- "
-#~ "und Kunden-Interface dieses OTOBO Systems. Der Wert in \"Schlüssel\" ist "
+#~ "und Kunden-Interface dieses CareOnCloud ESM Systems. Der Wert in \"Schlüssel\" ist "
 #~ "die externe URL, der Wert in \"Inhalt\" das angezeigte Label."
 
 #~ msgid "Defines the username to access the SOAP handle (bin/cgi-bin/rpc.pl)."
@@ -37602,14 +37602,14 @@ msgstr "Stats"
 #~ "Saves the attachments of articles. \"DB\" stores all data in the database "
 #~ "(not recommended for storing big attachments). \"FS\" stores the data on "
 #~ "the filesystem; this is faster but the webserver should run under the "
-#~ "OTOBO user. You can switch between the modules even on a system that is "
+#~ "CareOnCloud ESM user. You can switch between the modules even on a system that is "
 #~ "already in production without any loss of data. Note: Searching for "
 #~ "attachment names is not supported when \"FS\" is used."
 #~ msgstr ""
 #~ "Speicherung von Artikel-Ahängen. \"DB\" legt alle Daten in der Datenbank "
 #~ "ab (nicht empfohlen für große Anhänge). \"FS\" legt alle Daten im "
 #~ "Dateisystem ab; dies ist schneller, jedoch sollte der Webserver mit dem "
-#~ "OTOBO-Benutzer betrieben werden. Sie können im laufenden Betrieb ohne "
+#~ "CareOnCloud ESM-Benutzer betrieben werden. Sie können im laufenden Betrieb ohne "
 #~ "Datenverlust zwischen den Modulen wechseln. Bitte beachten Sie, dass das "
 #~ "Suchen nach Anhängen für \"FS\" nicht unterstützt wird."
 
@@ -37619,12 +37619,12 @@ msgstr "Stats"
 #~ msgid "Disk Usage"
 #~ msgstr "Festplatten-Verwendung"
 
-#~ msgid "The partition where OTOBO is located is almost full."
-#~ msgstr "Die Partition, auf der OTOBO sich befindet, ist fast voll."
+#~ msgid "The partition where CareOnCloud ESM is located is almost full."
+#~ msgstr "Die Partition, auf der CareOnCloud ESM sich befindet, ist fast voll."
 
-#~ msgid "The partition where OTOBO is located has no disk space problems."
+#~ msgid "The partition where CareOnCloud ESM is located has no disk space problems."
 #~ msgstr ""
-#~ "Die Partition, auf der OTOBO sich befindet, hat keine Platzprobleme."
+#~ "Die Partition, auf der CareOnCloud ESM sich befindet, hat keine Platzprobleme."
 
 #~ msgid "Custom RSS feed."
 #~ msgstr "Persönlicher RSS Feed."
@@ -37726,8 +37726,8 @@ msgstr "Stats"
 #~ msgid "Copy and migrate files from OTRS"
 #~ msgstr "Kopiert und migriert Dateien aus OTRS"
 
-#~ msgid "OTOBO Home exists."
-#~ msgstr "OTOBO Home vorhanden."
+#~ msgid "CareOnCloud ESM Home exists."
+#~ msgstr "CareOnCloud ESM Home vorhanden."
 
 #~ msgid "Connect to OTRS database or sanity checks failed."
 #~ msgstr ""
@@ -37746,7 +37746,7 @@ msgstr "Stats"
 #~ "It is highly recommended to send this data to Rother OSS GmbH in order to "
 #~ "get better support."
 #~ msgstr ""
-#~ "Es wird empfohlen, diese Daten an das OTOBO Team zu senden, um bessere "
+#~ "Es wird empfohlen, diese Daten an das CareOnCloud ESM Team zu senden, um bessere "
 #~ "Unterstützung zu erhalten."
 
 #~ msgid ""
@@ -37754,7 +37754,7 @@ msgstr "Stats"
 #~ "Rother OSS GmbH."
 #~ msgstr ""
 #~ "Diese Einstellung aktiviert das Senden zusätzlicher Support-Informationen "
-#~ "an das OTOBO-Team."
+#~ "an das CareOnCloud ESM-Team."
 
 #~ msgid ""
 #~ "To enable data sending, please register your system with Rother OSS GmbH "
@@ -37762,14 +37762,14 @@ msgstr "Stats"
 #~ "'send support data' option.)"
 #~ msgstr ""
 #~ "Um das Senden der Daten zu aktivieren, registrieren Sie bitte Ihr System "
-#~ "beim OTOBO-Team oder aktualisieren Sie Ihre Systemregistrierung "
+#~ "beim CareOnCloud ESM-Team oder aktualisieren Sie Ihre Systemregistrierung "
 #~ "(aktivieren Sie die Option 'Supportdaten senden'.)"
 
 #~ msgid ""
 #~ "System registration is a service of Rother OSS GmbH, which provides a lot "
 #~ "of advantages!"
 #~ msgstr ""
-#~ "Die Systemregistrierung ist ein Service von Team OTOBO, der Ihnen viele "
+#~ "Die Systemregistrierung ist ein Service von Team CareOnCloud ESM, der Ihnen viele "
 #~ "Vorteile sichert!"
 
 #~ msgid "More Business Fields"
@@ -37800,8 +37800,8 @@ msgstr "Stats"
 #~ msgid "Manage %s"
 #~ msgstr "%s verwalten"
 
-#~ msgid "Downgrade to ((OTOBO)) Community Edition"
-#~ msgstr "Downgrade auf ((OTOBO)) Community Edition"
+#~ msgid "Downgrade to ((CareOnCloud ESM)) Community Edition"
+#~ msgstr "Downgrade auf ((CareOnCloud ESM)) Community Edition"
 
 #~ msgid "Read documentation"
 #~ msgstr "Dokumentation lesen"
@@ -37881,10 +37881,10 @@ msgstr "Stats"
 #~ msgstr "Weitere Informationen können Sie unter %s finden."
 
 #~ msgid ""
-#~ "Your ((OTOBO)) Community Edition is the base for all future actions. "
+#~ "Your ((CareOnCloud ESM)) Community Edition is the base for all future actions. "
 #~ "Please register first before you continue with the upgrade process of %s!"
 #~ msgstr ""
-#~ "Ihre ((OTOBO)) Community Edition ist die Grundlage für alle zukünftigen "
+#~ "Ihre ((CareOnCloud ESM)) Community Edition ist die Grundlage für alle zukünftigen "
 #~ "Aktionen. Bitte registrieren Sie sich zuerst, bevor Sie mit dem Upgrade-"
 #~ "Prozess von %s fortfahren!"
 
@@ -37902,33 +37902,33 @@ msgstr "Stats"
 #~ "stellen Sie sicher, dass Ihr OTOBO über Port 443 mit cloud.otobo.com "
 #~ "kommunizieren kann."
 
-#~ msgid "Package installation requires patch level update of OTOBO."
-#~ msgstr "Paketinstallation benötigt ein Patchlevel-Update von OTOBO."
+#~ msgid "Package installation requires patch level update of CareOnCloud ESM."
+#~ msgstr "Paketinstallation benötigt ein Patchlevel-Update von CareOnCloud ESM."
 
 #~ msgid "Everything else will be done as part of your contract."
 #~ msgstr "Alles Weitere wird als Teil Ihres Vertrages durchgeführt."
 
-#~ msgid "Your installed OTOBO version is %s."
-#~ msgstr "Die Version Ihrer OTOBO-Installation ist %s."
+#~ msgid "Your installed CareOnCloud ESM version is %s."
+#~ msgstr "Die Version Ihrer CareOnCloud ESM-Installation ist %s."
 
-#~ msgid "To install this package, you need to update to OTOBO %s or higher."
+#~ msgid "To install this package, you need to update to CareOnCloud ESM %s or higher."
 #~ msgstr ""
-#~ "Um dieses Paket zu installieren, müssen Sie zuerst OTOBO auf Version %s "
+#~ "Um dieses Paket zu installieren, müssen Sie zuerst CareOnCloud ESM auf Version %s "
 #~ "oder neuer aktualisieren."
 
-#~ msgid "To install this package, the Maximum OTOBO Version is %s."
+#~ msgid "To install this package, the Maximum CareOnCloud ESM Version is %s."
 #~ msgstr ""
-#~ "Um dieses Paket zu installieren, können sie OTOBO bis maximal zur Version "
+#~ "Um dieses Paket zu installieren, können sie CareOnCloud ESM bis maximal zur Version "
 #~ "%s verwenden."
 
 #~ msgid "To install this package, the required Framework version is %s."
 #~ msgstr ""
 #~ "Um dieses Paket zu installieren, wird die Framework-Version %s benötigt."
 
-#~ msgid "You will receive updates for all other relevant OTOBO issues"
+#~ msgid "You will receive updates for all other relevant CareOnCloud ESM issues"
 #~ msgstr ""
 #~ "Sie erhalten Updates für alle anderen relevanten Probleme im Zusammenhang "
-#~ "mit OTOBO"
+#~ "mit CareOnCloud ESM"
 
 #~ msgid "With your existing contract you can only use a small part of the %s."
 #~ msgstr ""
@@ -37945,8 +37945,8 @@ msgstr "Stats"
 #~ msgid "Cancel downgrade and go back"
 #~ msgstr "Downgrade abbrechen und zurück"
 
-#~ msgid "Go to OTOBO Package Manager"
-#~ msgstr "Zum OTOBO Paket-Manager wechseln"
+#~ msgid "Go to CareOnCloud ESM Package Manager"
+#~ msgstr "Zum CareOnCloud ESM Paket-Manager wechseln"
 
 #~ msgid ""
 #~ "Sorry, but currently you can't downgrade due to the following packages "
@@ -37962,10 +37962,10 @@ msgstr "Stats"
 #~ "Bitte entfernen Sie diese Pakete zunächst und versuchen Sie es nochmals."
 
 #~ msgid ""
-#~ "You are about to downgrade to ((OTOBO)) Community Edition and will lose "
+#~ "You are about to downgrade to ((CareOnCloud ESM)) Community Edition and will lose "
 #~ "the following features and all data related to these:"
 #~ msgstr ""
-#~ "Sie stehen kurz davor, auf ((OTOBO)) Community Edition umzusteigen und "
+#~ "Sie stehen kurz davor, auf ((CareOnCloud ESM)) Community Edition umzusteigen und "
 #~ "verlieren die folgenden Funktionen und alle damit verbundenen Daten:"
 
 #~ msgid "Report Generator"
@@ -37990,14 +37990,14 @@ msgstr "Stats"
 #~ msgstr "Den %s-Skin"
 
 #~ msgid ""
-#~ "If you are a OTOBO Business Solution™ customer, please visit our customer "
+#~ "If you are a CareOnCloud ESM Business Solution™ customer, please visit our customer "
 #~ "portal and file a request."
 #~ msgstr ""
-#~ "Wenn Sie ein OTOBO Business Solution™ Kunde sind, erstellen Sie bitte "
+#~ "Wenn Sie ein CareOnCloud ESM Business Solution™ Kunde sind, erstellen Sie bitte "
 #~ "eine Anfrage in unserem Kundenportal."
 
-#~ msgid "OTOBO Verify™ can not continue!"
-#~ msgstr "OTOBO Verify™ kann nicht fortgesetzt werden!"
+#~ msgid "CareOnCloud ESM Verify™ can not continue!"
+#~ msgstr "CareOnCloud ESM Verify™ kann nicht fortgesetzt werden!"
 
 #~ msgid ""
 #~ "Would you like to benefit from processes created by experts? Upgrade to "
@@ -38008,7 +38008,7 @@ msgstr "Stats"
 #~ "importieren zu können."
 
 #~ msgid "This system is registered with Rother OSS GmbH."
-#~ msgstr "Dieses System ist bei der OTOBO Gruppe registriert."
+#~ msgstr "Dieses System ist bei der CareOnCloud ESM Gruppe registriert."
 
 #~ msgid ""
 #~ "Please note that you can't deregister your system if you're using the %s "
@@ -38019,29 +38019,29 @@ msgstr "Stats"
 
 #~ msgid "A registered system sends the following data to Rother OSS GmbH:"
 #~ msgstr ""
-#~ "Ein registriertes System überträgt folgende Daten an die OTOBO Gruppe:"
+#~ "Ein registriertes System überträgt folgende Daten an die CareOnCloud ESM Gruppe:"
 
 #~ msgid ""
 #~ "This data will be frequently transferred to Rother OSS GmbH when you "
 #~ "register this system."
 #~ msgstr ""
 #~ "Wenn Sie dieses System registrieren, werden folgende Daten in "
-#~ "regelmäßigen Abständen an die OTOBO Gruppe übertragen."
+#~ "regelmäßigen Abständen an die CareOnCloud ESM Gruppe übertragen."
 
 #~ msgid ""
 #~ "Continuing with this step will deregister the system from Rother OSS GmbH."
 #~ msgstr ""
-#~ "Wenn Sie fortfahren, wird dieses System bei der OTOBO Gruppe "
+#~ "Wenn Sie fortfahren, wird dieses System bei der CareOnCloud ESM Gruppe "
 #~ "deregistriert."
 
 #~ msgid "Sending support data to Rother OSS GmbH is not possible!"
-#~ msgstr "Das Senden von Support-Daten an die OTOBO-Gruppe ist nicht möglich!"
+#~ msgstr "Das Senden von Support-Daten an die CareOnCloud ESM-Gruppe ist nicht möglich!"
 
 #~ msgid ""
 #~ "This data is sent to Rother OSS GmbH on a regular basis. To stop sending "
 #~ "this data please update your system registration."
 #~ msgstr ""
-#~ "Diese Daten werden regelmäßig an die OTOBO Gruppe gesendet. Falls Sie das "
+#~ "Diese Daten werden regelmäßig an die CareOnCloud ESM Gruppe gesendet. Falls Sie das "
 #~ "Senden der Daten beenden möchten, aktualisieren Sie bitte ihre "
 #~ "Systemregistrierung."
 
@@ -38049,7 +38049,7 @@ msgstr "Stats"
 #~ "The support bundle will be sent to Rother OSS GmbH via email "
 #~ "automatically."
 #~ msgstr ""
-#~ "Das Support-Paket wird automatisch per E-Mail zur OTOBO Gruppe gesendet."
+#~ "Das Support-Paket wird automatisch per E-Mail zur CareOnCloud ESM Gruppe gesendet."
 
 #~ msgid ""
 #~ "A file containing the support bundle will be downloaded to the local "
@@ -38058,16 +38058,16 @@ msgstr "Stats"
 #~ msgstr ""
 #~ "Das Support-Paket wird als Datei ins lokale Dateisystem heruntergeladen. "
 #~ "Bitte speichern Sie die Datei und senden Sie diese auf anderen Wegen an "
-#~ "die OTOBO Gruppe."
+#~ "die CareOnCloud ESM Gruppe."
 
 #~ msgid "Unauthorized usage of %s detected"
 #~ msgstr "Unerlaubte Nutzung der %s erkannt"
 
 #~ msgid ""
-#~ "If you decide to downgrade to ((OTOBO)) Community Edition, you will lose "
+#~ "If you decide to downgrade to ((CareOnCloud ESM)) Community Edition, you will lose "
 #~ "all database tables and data related to %s."
 #~ msgstr ""
-#~ "Wenn Sie sich für ein Downgrade auf ((OTOBO)) Community Edition "
+#~ "Wenn Sie sich für ein Downgrade auf ((CareOnCloud ESM)) Community Edition "
 #~ "entscheiden, verlieren Sie alle Datenbank-Tabellen und Daten, die sich "
 #~ "auf %s beziehen."
 
@@ -38106,10 +38106,10 @@ msgstr "Stats"
 
 #~ msgid ""
 #~ "Really a bug? 5 out of 10 bug reports result from a wrong or incomplete "
-#~ "installation of OTOBO."
+#~ "installation of CareOnCloud ESM."
 #~ msgstr ""
 #~ "Wirklich ein Bug? 5 von 10 Bugmeldungen resultieren aus einer falschen "
-#~ "oder unvollständigen Installation von OTOBO."
+#~ "oder unvollständigen Installation von CareOnCloud ESM."
 
 #~ msgid ""
 #~ "With %s, our experts take care of correct installation and cover your "
@@ -38128,8 +38128,8 @@ msgstr "Stats"
 #~ msgid "Notifications"
 #~ msgstr "Benachrichtigungen"
 
-#~ msgid "Notifications (OTOBO Business Solution™)"
-#~ msgstr "Benachrichtigungen (OTOBO Business Solution™)"
+#~ msgid "Notifications (CareOnCloud ESM Business Solution™)"
+#~ msgstr "Benachrichtigungen (CareOnCloud ESM Business Solution™)"
 
 #~ msgid "United States"
 #~ msgstr "Vereinigte Staaten von Amerika"
@@ -38198,7 +38198,7 @@ msgstr "Stats"
 #~ "Package not verified by the Rother OSS GmbH! It is recommended not to use "
 #~ "this package."
 #~ msgstr ""
-#~ "Paket wurde nicht von der OTOBO Gruppe verifiziert! Es wird empfohlen, "
+#~ "Paket wurde nicht von der CareOnCloud ESM Gruppe verifiziert! Es wird empfohlen, "
 #~ "dieses Paket nicht zu nutzen."
 
 #~ msgid "Show Ticket Timeline View (%s)"
@@ -38210,15 +38210,15 @@ msgstr "Stats"
 #~ msgid "Contact us at hallo@otobo.de"
 #~ msgstr "Kontaktieren Sie uns unter hallo@otobo.de"
 
-#~ msgid "Upgrade to OTOBO Business Solution™"
-#~ msgstr "Upgraden zur OTOBO Business Solution™"
+#~ msgid "Upgrade to CareOnCloud ESM Business Solution™"
+#~ msgstr "Upgraden zur CareOnCloud ESM Business Solution™"
 
 #~ msgid "Upgrade"
 #~ msgstr "Upgrade"
 
-#~ msgid "Enable cloud services to unleash all OTOBO features!"
+#~ msgid "Enable cloud services to unleash all CareOnCloud ESM features!"
 #~ msgstr ""
-#~ "Aktivieren Sie die Cloud-Services, um alle OTOBO-Funktionen nutzen zu "
+#~ "Aktivieren Sie die Cloud-Services, um alle CareOnCloud ESM-Funktionen nutzen zu "
 #~ "können!"
 
 #~ msgid "%s Upgrade to %s now! %s"
@@ -38247,7 +38247,7 @@ msgstr "Stats"
 #~ "GmbH is activated. These packages could threaten your whole system! It is "
 #~ "recommended not to use unverified packages."
 #~ msgstr ""
-#~ "Die Installation von Paketen, die nicht von der OTOBO Gruppe verifiziert "
+#~ "Die Installation von Paketen, die nicht von der CareOnCloud ESM Gruppe verifiziert "
 #~ "worden sind, ist aktiviert. Diese Pakete können das gesamte System "
 #~ "gefährden! Es wird empfohlen, diese Pakete nicht zu nutzen."
 
@@ -38275,13 +38275,13 @@ msgstr "Stats"
 #~ "<p>If you continue to install this package, the following issues may "
 #~ "occur:</p><ul><li>Security problems</li><li>Stability problems</"
 #~ "li><li>Performance problems</li></ul><p>Please note that issues that are "
-#~ "caused by working with this package are not covered by OTOBO service "
+#~ "caused by working with this package are not covered by CareOnCloud ESM service "
 #~ "contracts.</p>"
 #~ msgstr ""
 #~ "<p>Falls Sie dieses Paket installieren, können folgende Probleme "
 #~ "auftreten:</p><ul><li>Sicherheitsprobleme</li><li>Stabilitätsprobleme</"
 #~ "li><li>Leistungsprobleme</li></ul><p>Bitte beachten Sie, dass von diesem "
-#~ "Paket verursachte Probleme nicht durch OTOBO-Serviceverträge abgedeckt "
+#~ "Paket verursachte Probleme nicht durch CareOnCloud ESM-Serviceverträge abgedeckt "
 #~ "sind.</p>"
 
 #~ msgid ""
@@ -38290,7 +38290,7 @@ msgstr "Stats"
 #~ "verified packages via the \"AllowNotVerifiedPackages\" system "
 #~ "configuration setting.</p>"
 #~ msgstr ""
-#~ "<p>Die Installation von Paketen, die nicht von der OTOBO Gruppe "
+#~ "<p>Die Installation von Paketen, die nicht von der CareOnCloud ESM Gruppe "
 #~ "verifiziert worden sind, ist standardmäßig nicht möglich. Sie können die "
 #~ "Installation nicht-verfizierter Pakete über die Systemkonfiguration "
 #~ "\"AllowNotVerifiedPackages\" aktivieren.</p>"
@@ -38306,32 +38306,32 @@ msgstr "Stats"
 #~ "Some packages are not verified by the Rother OSS GmbH! It is recommended "
 #~ "not to use this packages."
 #~ msgstr ""
-#~ "Einige Pakete wurden nicht von der OTOBO Gruppe verifiziert! Es wird "
+#~ "Einige Pakete wurden nicht von der CareOnCloud ESM Gruppe verifiziert! Es wird "
 #~ "empfohlen, diese Pakete nicht zu nutzen."
 
 #~ msgid "Find out more"
 #~ msgstr "Mehr erfahren"
 
-#~ msgid "All attachments (OTOBO Business Solution™)"
-#~ msgstr "Alle Anhänge (OTOBO Business Solution™)"
+#~ msgid "All attachments (CareOnCloud ESM Business Solution™)"
+#~ msgstr "Alle Anhänge (CareOnCloud ESM Business Solution™)"
 
 #~ msgid "Change the free fields for this ticket"
 #~ msgstr "Freie Felder des Tickets ändern"
 
-#~ msgid "Checks the availability of OTOBO Business Solution™ for this system."
+#~ msgid "Checks the availability of CareOnCloud ESM Business Solution™ for this system."
 #~ msgstr ""
-#~ "Überprüfe die Verfügbarkeit der OTOBO Business Solution™ für dieses "
+#~ "Überprüfe die Verfügbarkeit der CareOnCloud ESM Business Solution™ für dieses "
 #~ "System."
 
-#~ msgid "Checks the entitlement status of OTOBO Business Solution™."
+#~ msgid "Checks the entitlement status of CareOnCloud ESM Business Solution™."
 #~ msgstr ""
-#~ "Überprüfe den Berechtigungsstatus der OTOBO Business Solution™ für dieses "
+#~ "Überprüfe den Berechtigungsstatus der CareOnCloud ESM Business Solution™ für dieses "
 #~ "System."
 
 #~ msgid ""
 #~ "Configure sending of support data to Rother OSS GmbH for improved support."
 #~ msgstr ""
-#~ "Konfigurieren Sie das Senden von Support Daten an die OTOBO-Group für "
+#~ "Konfigurieren Sie das Senden von Support Daten an die CareOnCloud ESM-Group für "
 #~ "eine bessere Unterstützung."
 
 #~ msgid ""
@@ -38350,16 +38350,16 @@ msgstr "Stats"
 #~ "Defines if the communication between this system and Rother OSS GmbH "
 #~ "servers that provide cloud services is possible. If set to 'Disable cloud "
 #~ "services', some functionality will be lost such as system registration, "
-#~ "support data sending, upgrading to and use of OTOBO Business Solution™, "
-#~ "OTOBO Verify™, OTOBO News and product News dashboard widgets, among "
+#~ "support data sending, upgrading to and use of CareOnCloud ESM Business Solution™, "
+#~ "CareOnCloud ESM Verify™, CareOnCloud ESM News and product News dashboard widgets, among "
 #~ "others."
 #~ msgstr ""
 #~ "Deaktiviert die Kommunikation zwischen diesem System und den Servern der "
-#~ "OTOBO Gruppe, die Cloud-Services zur Verfügung stellen. Wenn dies auf "
+#~ "CareOnCloud ESM Gruppe, die Cloud-Services zur Verfügung stellen. Wenn dies auf "
 #~ "'deaktiviere Cloud-Services' eingestellt ist, so werden verschiedene "
 #~ "Funktionen wie unter anderem die Systemregistrierung, das Senden von "
-#~ "Supportdaten, das Upgraden auf und das Nutzen von OTOBO Business "
-#~ "Solution™, OTOBO Verify™, OTOBO Nachrichten und Produktnachrichten im "
+#~ "Supportdaten, das Upgraden auf und das Nutzen von CareOnCloud ESM Business "
+#~ "Solution™, CareOnCloud ESM Verify™, CareOnCloud ESM Nachrichten und Produktnachrichten im "
 #~ "Dashboard-Widget nicht mehr funktionieren."
 
 #~ msgid ""
@@ -38390,10 +38390,10 @@ msgstr "Stats"
 
 #~ msgid ""
 #~ "Defines the module to display a notification in different interfaces on "
-#~ "different occasions for OTOBO Business Solution™."
+#~ "different occasions for CareOnCloud ESM Business Solution™."
 #~ msgstr ""
 #~ "Definiert das Modul, um eine Benachrichtigung in verschiedenen "
-#~ "Schnittstellen zu verschiedenen Zeitpunkten für OTOBO Business Solution™ "
+#~ "Schnittstellen zu verschiedenen Zeitpunkten für CareOnCloud ESM Business Solution™ "
 #~ "anzuzeigen."
 
 #~ msgid ""
@@ -38425,17 +38425,17 @@ msgstr "Stats"
 #~ "in allen Nachrichten-Formularen zur Verfügung steht, um Links auf Tickets "
 #~ "in Ihr System zu generieren."
 
-#~ msgid "Deploy and manage OTOBO Business Solution™."
-#~ msgstr "Bereitstellung und Verwaltung der OTOBO Business Solution ™."
+#~ msgid "Deploy and manage CareOnCloud ESM Business Solution™."
+#~ msgstr "Bereitstellung und Verwaltung der CareOnCloud ESM Business Solution ™."
 
 #~ msgid ""
-#~ "Disables the web installer (http://yourhost.example.com/otobo/"
+#~ "Disables the web installer (http://yourhost.example.com/careoncloud/"
 #~ "installer.pl), to prevent the system from being hijacked. If not enabled, "
 #~ "the system can be reinstalled and the current basic configuration will be "
 #~ "used to pre-populate the questions within the installer script. If "
 #~ "enabled, it also disables the GenericAgent, PackageManager and SQL Box."
 #~ msgstr ""
-#~ "Deaktiviert den Web-Installer (http://yourhost.example.com/otobo/"
+#~ "Deaktiviert den Web-Installer (http://yourhost.example.com/careoncloud/"
 #~ "installer.pl), um unerwünschte Zugriffe auf das System zu verhindern. "
 #~ "Wenn auf \"Nein\" gesetzt, kann das System neu installiert werden und die "
 #~ "aktuelle Basiskonfiguration wird genutzt, um die Fragen des "
@@ -38451,23 +38451,23 @@ msgstr "Stats"
 #~ "system!"
 #~ msgstr ""
 #~ "Wenn diese Einstellung aktiviert ist, so ist es möglich Pakete zu "
-#~ "installieren, die nicht von der OTOBO Gruppe verifiziert sind. Diese "
+#~ "installieren, die nicht von der CareOnCloud ESM Gruppe verifiziert sind. Diese "
 #~ "Pakete können ihr gesamtes System gefährden!"
 
 #~ msgid "Manage Rother OSS GmbH cloud services."
-#~ msgstr "Cloud-Services der OTOBO Gruppe verwalten."
+#~ msgstr "Cloud-Services der CareOnCloud ESM Gruppe verwalten."
 
 #~ msgid "Number of tickets to be displayed in each page."
 #~ msgstr "Anzahl der angezeigten Tickets pro Seite."
 
 #~ msgid "Rother OSS GmbH Services"
-#~ msgstr "Dienstleistungen der OTOBO Gruppe"
+#~ msgstr "Dienstleistungen der CareOnCloud ESM Gruppe"
 
-#~ msgid "Reports (OTOBO Business Solution™)"
-#~ msgstr "Berichte (OTOBO Business Solution™)"
+#~ msgid "Reports (CareOnCloud ESM Business Solution™)"
+#~ msgstr "Berichte (CareOnCloud ESM Business Solution™)"
 
-#~ msgid "Resource Overview (OTOBO Business Solution™)"
-#~ msgstr "Resourcenübersicht (OTOBO Business Solution™)"
+#~ msgid "Resource Overview (CareOnCloud ESM Business Solution™)"
+#~ msgstr "Resourcenübersicht (CareOnCloud ESM Business Solution™)"
 
 #~ msgid "SMS"
 #~ msgstr "SMS"
@@ -38485,10 +38485,10 @@ msgstr "Stats"
 #~ "eingeloggte Agenten angezeigt wird."
 
 #~ msgid ""
-#~ "Shows a teaser link in the menu for the ticket attachment view of OTOBO "
+#~ "Shows a teaser link in the menu for the ticket attachment view of CareOnCloud ESM "
 #~ "Business Solution™."
 #~ msgstr ""
-#~ "Zeigt eine Teaserlink zur Anlagen-Ansicht der OTOBO Business Solution™ im "
+#~ "Zeigt eine Teaserlink zur Anlagen-Ansicht der CareOnCloud ESM Business Solution™ im "
 #~ "Menü für Ticketoptionen."
 
 #~ msgid ""
@@ -38499,7 +38499,7 @@ msgstr "Stats"
 #~ "Tickets (auch wenn diese gesperrt sind)."
 
 #~ msgid ""
-#~ "Specify the channel to be used to fetch OTOBO Business Solution™ updates. "
+#~ "Specify the channel to be used to fetch CareOnCloud ESM Business Solution™ updates. "
 #~ "Warning: Development releases might not be complete, your system might "
 #~ "experience unrecoverable errors and on extreme cases could become "
 #~ "unresponsive!"
@@ -38570,9 +38570,9 @@ msgstr "Stats"
 #~ msgstr "Webansicht"
 
 #, fuzzy
-#~ msgid "e.g https://www.otobo.ch:10745/api/v1.0 (without trailing backslash)"
+#~ msgid "e.g https://www.careoncloud.ch:10745/api/v1.0 (without trailing backslash)"
 #~ msgstr ""
-#~ "z. B. https://www.otobo.ch:10745/api/v1.0 (ohne abschließenden Backslash)"
+#~ "z. B. https://www.careoncloud.ch:10745/api/v1.0 (ohne abschließenden Backslash)"
 
 #~ msgid "e.g. https://local.otrs.com:8000/Webservice/Example"
 #~ msgstr "z.B. https://local.otrs.com:8000/Webservice/Example"
@@ -38606,14 +38606,14 @@ msgstr "Stats"
 #~ "Datenbank in den Zeichensatz 'utf8'."
 
 #~ msgid ""
-#~ "Some packages are not verified by the OTOBO Team! It is recommended not "
+#~ "Some packages are not verified by the CareOnCloud ESM Team! It is recommended not "
 #~ "to use this packages."
 #~ msgstr ""
-#~ "Einige Pakete wurden noch nicht vom OTOBO Team verifiziert. Es wird "
+#~ "Einige Pakete wurden noch nicht vom CareOnCloud ESM Team verifiziert. Es wird "
 #~ "empfohlen, diese Pakete nicht zu nutzen."
 
-#~ msgid "This module is part of the admin area of OTOBO Community Edition."
-#~ msgstr "Diese Modul ist Teil des Admin-Bereichs von OTOBO."
+#~ msgid "This module is part of the admin area of CareOnCloud ESM Community Edition."
+#~ msgstr "Diese Modul ist Teil des Admin-Bereichs von CareOnCloud ESM."
 
 #~ msgid "Clone from this field"
 #~ msgstr "Von diesem Feld clonen"

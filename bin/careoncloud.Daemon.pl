@@ -574,7 +574,7 @@ sub _LogFilesSet {
 
     my $SystemTime = $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch();
 
-    # get log rotation type and backup old logs if logs should be rotated by OTOBO
+    # get log rotation type and backup old logs if logs should be rotated by CareOnCloud ESM
     my $RotationType = lc $ConfigObject->Get('Daemon::Log::RotationType') || 'careoncloud';
     if ( $RotationType eq 'careoncloud' ) {
         if ( -e "$FileStdOut.log" ) {
@@ -598,7 +598,7 @@ sub _LogFilesSet {
 
     return 1 if $RotationType ne 'careoncloud';
 
-    # remove not needed log files if OTOBO rotation is enabled
+    # remove not needed log files if CareOnCloud ESM rotation is enabled
     my $DaysToKeep     = $ConfigObject->Get('Daemon::Log::DaysToKeep') || 1;
     my $DaysToKeepTime = $SystemTime - $DaysToKeep * 24 * 60 * 60;
 
@@ -630,7 +630,7 @@ sub _LogFilesSet {
 sub _LogFilesCleanup {
     my %Param = @_;
 
-    # skip cleanup if OTOBO log rotation is not enabled
+    # skip cleanup if CareOnCloud ESM log rotation is not enabled
     my $RotationType = lc( $Kernel::OM->Get('Kernel::Config')->Get('Daemon::Log::RotationType') || 'careoncloud' );
     return 1 if $RotationType ne 'careoncloud';
 

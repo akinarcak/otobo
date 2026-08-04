@@ -152,7 +152,7 @@ eval {
             ok( 0, "preauth request fail" );
         }
 
-        # on successful login, we will get another rediredt back to otobo
+        # on successful login, we will get another rediredt back to careoncloud
 
         my $Headers  = $Res->headers;
         my $Location = $Headers->{location};

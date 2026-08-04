@@ -43,7 +43,7 @@ sub Run {
 
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
-    # Note that this reports only which OTOBO database driver module is used.
+    # Note that this reports only which CareOnCloud ESM database driver module is used.
     # E.g. the value 'mysql' indicates that Kernel::System::DB::mysql is used.
     my $Type = $DBObject->GetDatabaseFunction('Type') // '';
 

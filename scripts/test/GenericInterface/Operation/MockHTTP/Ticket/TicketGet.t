@@ -165,7 +165,7 @@ ok( $WebserviceID, "Added Web Service" );
 my $PlackTest;
 {
     my $Home = $ConfigObject->Get('Home');
-    ok( -d $Home, 'OTOBO home dir found' );
+    ok( -d $Home, 'CareOnCloud ESM home dir found' );
 
     my $PSGIFile = "$Home/bin/psgi-bin/careoncloud.psgi";
     ok( -f $PSGIFile, 'careoncloud.psgi found' );

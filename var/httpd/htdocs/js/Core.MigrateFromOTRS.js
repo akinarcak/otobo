@@ -91,7 +91,7 @@ Core.MigrateFromOTRS = (function (TargetNS) {
 
 // Package resolve is disabled
 //        // resolve package error for PreChecks step
-//        if ( json.Successful === 0 && $('input[name=Task]').val() == 'OTOBOOTRSPackageCheck' ) {
+//        if ( json.Successful === 0 && $('input[name=Task]').val() == 'CareOnCloud ESMOTRSPackageCheck' ) {
 //            for ( const Package of json.Content ) {
 //                var ResolveBlock = Core.Template.Render('MigrateFromOTRS/PackageResolve', {
 //                    Package: Package,

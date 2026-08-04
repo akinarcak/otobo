@@ -16,24 +16,24 @@
 
 "use strict";
 
-var OTOBO = OTOBO || {};
-OTOBO.Agent = OTOBO.Agent || {};
-OTOBO.Agent.App = OTOBO.Agent.App || {};
+var CareOnCloud ESM = CareOnCloud ESM || {};
+CareOnCloud ESM.Agent = CareOnCloud ESM.Agent || {};
+CareOnCloud ESM.Agent.App = CareOnCloud ESM.Agent.App || {};
 
 /**
  * @namespace
- * @exports TargetNS as OTOBO.Agent.App.Dashboard
+ * @exports TargetNS as CareOnCloud ESM.Agent.App.Dashboard
  * @description
  *      This namespace contains the special module functions for the Dashboard.
  */
-OTOBO.Agent.App.Dashboard = (function (TargetNS) {
+CareOnCloud ESM.Agent.App.Dashboard = (function (TargetNS) {
     /**
      * @function
      * @return nothing
      *      This function initializes the special module functions
      */
     TargetNS.Init = function () {
-        OTOBO.UI.DnD.Sortable(
+        CareOnCloud ESM.UI.DnD.Sortable(
             $(".SidebarColumn"),
             {
                 Handle: '.Header h2',
@@ -45,7 +45,7 @@ OTOBO.Agent.App.Dashboard = (function (TargetNS) {
             }
         );
 
-        OTOBO.UI.DnD.Sortable(
+        CareOnCloud ESM.UI.DnD.Sortable(
             $(".ContentColumn"),
             {
                 Handle: '.Header h2',
@@ -69,10 +69,10 @@ OTOBO.Agent.App.Dashboard = (function (TargetNS) {
     TargetNS.RegisterUpdatePreferences = function ($ClickedElement, ElementID, $Form) {
         if (isJQueryObject($ClickedElement) && $ClickedElement.length) {
             $ClickedElement.click(function () {
-                var URL = OTOBO.Config.Get('Baselink') + OTOBO.AJAX.SerializeForm($Form);
-                OTOBO.AJAX.ContentUpdate($('#' + ElementID), URL, function () {
-                    OTOBO.UI.ToggleTwoContainer($('#' + ElementID + '-setting'), $('#' + ElementID));
-                    OTOBO.UI.Table.InitCSSPseudoClasses();
+                var URL = CareOnCloud ESM.Config.Get('Baselink') + CareOnCloud ESM.AJAX.SerializeForm($Form);
+                CareOnCloud ESM.AJAX.ContentUpdate($('#' + ElementID), URL, function () {
+                    CareOnCloud ESM.UI.ToggleTwoContainer($('#' + ElementID + '-setting'), $('#' + ElementID));
+                    CareOnCloud ESM.UI.Table.InitCSSPseudoClasses();
                 });
                 return false;
             });
@@ -80,4 +80,4 @@ OTOBO.Agent.App.Dashboard = (function (TargetNS) {
     };
 
     return TargetNS;
-}(OTOBO.Agent.App.Dashboard || {}));
+}(CareOnCloud ESM.Agent.App.Dashboard || {}));

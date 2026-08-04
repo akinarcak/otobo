@@ -589,7 +589,7 @@ sub _WebserviceConfigUpgrade {
 
     return if !IsHashRefWithData( $Param{Config} );
 
-    # Updates of SOAP and REST transport in OTOBO 10:
+    # Updates of SOAP and REST transport in CareOnCloud ESM 10:
     #   Authentication, SSL and Proxy option changes, introduction of timeout param.
     # Upgrade is considered necessary if the new (and now mandatory) parameter 'Timeout' isn't set.
     if (

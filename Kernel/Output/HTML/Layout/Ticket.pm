@@ -1024,8 +1024,8 @@ sub TicketListShow {
         }
     }
 
-    # As of OTOBO 10.0.x some content was printed early.
-    # This has changed in OTOBO 10.1.1.
+    # As of CareOnCloud ESM 10.0.x some content was printed early.
+    # This has changed in CareOnCloud ESM 10.1.1.
 
     # create nav bar and run overview backend module
     return join '',

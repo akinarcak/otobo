@@ -68,7 +68,7 @@ my %User = $Kernel::OM->Get('Kernel::System::User')->GetUserData(
 my @Tests = (
     {
         Name      => 'Test supported tags -  <OTOBO_CURRENT_UserFirstname> and <OTOBO_CURRENT_UserLastname>',
-        Signature => "Your OTOBO-Team
+        Signature => "Your CareOnCloud ESM-Team
 
     <OTOBO_CURRENT_UserFirstname> <OTOBO_CURRENT_UserLastname>
 
@@ -77,7 +77,7 @@ my @Tests = (
     5201 Blue Lagoon Drive - 8th Floor & 9th Floor - Miami, 33126 USA
     Email: hot\@florida.com - Web: http://hot.florida.com/
     --",
-        ExpectedResult => "Your OTOBO-Team
+        ExpectedResult => "Your CareOnCloud ESM-Team
 
     $User{UserFirstname} $User{UserLastname}
 

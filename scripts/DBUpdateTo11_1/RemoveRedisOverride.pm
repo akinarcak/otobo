@@ -43,10 +43,10 @@ scripts::DBUpdateTo11_1::RemoveRedisOverride - no longer force Redis to be cachi
 
 =head1 DESCRIPTION
 
-Up the OTOBO 11.0.x the caching backing was hardcoded the C<Kernel::System::Cache::Redis>
+Up the CareOnCloud ESM 11.0.x the caching backing was hardcoded the C<Kernel::System::Cache::Redis>
 when running under Docker. This hard coding was done in F<Kernel/Config.pm>.
 This file overrides the settings in the SysConfig.
-For OTOBO 11.1.x the default caching backend is back to C<FileStorable>.
+For CareOnCloud ESM 11.1.x the default caching backend is back to C<FileStorable>.
 
 =cut
 
@@ -64,7 +64,7 @@ sub Run {
     # Tweak Kernel/Config.pm
     my $Now    = scalar localtime;
     my $Failed = system(
-        qq!$^X -i.backup_upgrade -pe 's/(?=.*\\\$Self->{.Cache::)/# commented out by DBUpdate-to-11.1.pl $Now /' /opt/otobo/Kernel/Config.pm!
+        qq!$^X -i.backup_upgrade -pe 's/(?=.*\\\$Self->{.Cache::)/# commented out by DBUpdate-to-11.1.pl $Now /' /opt/careoncloud/Kernel/Config.pm!
     );
 
     if ($Failed) {

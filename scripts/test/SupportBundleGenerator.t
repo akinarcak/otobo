@@ -125,14 +125,14 @@ else {
     );
 }
 
-# get OTOBO Version
-my $OTOBOVersion = $ConfigObject->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloud ESMVersion = $ConfigObject->Get('Version');
 
 # leave only mayor and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloud ESMVersion .= '.x';
 
 my $TestPackage = '<?xml version="1.0" encoding="utf-8" ?>
 <careoncloud_package version="1.0">
@@ -143,7 +143,7 @@ my $TestPackage = '<?xml version="1.0" encoding="utf-8" ?>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
@@ -429,7 +429,7 @@ my $PerlStructureScalar = $JSONObject->Decode(
 if (%RegistrationInfo) {
     for my $Attribute (
         qw(
-            FQDN OTOBOVersion OSType OSVersion DatabaseVersion PerlVersion
+            FQDN CareOnCloud ESMVersion OSType OSVersion DatabaseVersion PerlVersion
             Description SupportDataSending RegistrationKey APIKey State Type
         )
         )
@@ -538,7 +538,7 @@ $Self->IsDeeply(
 my $MaskPasswordIdentifier = $Helper->GetRandomNumber() . 'MaskPasswords';
 my $MaskPasswordFile       = 'ZZZZUnitTest' . $MaskPasswordIdentifier . '.pm';
 my $MaskPasswordContent    = sprintf <<'END_CUSTOM_CODE', $MaskPasswordIdentifier;
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::ZZZZUnitTest%s;
 use strict;
@@ -559,7 +559,7 @@ sub Load {
         Name   => 'Database Backend',
         Module => 'Kernel::System::CustomerUser::DB',
         Params => {
-           User => 'OTOBO',
+           User => 'CareOnCloud ESM',
            Password => 'secure-password',
            Table => 'customer_user',
         },

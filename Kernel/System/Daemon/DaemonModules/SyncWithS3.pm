@@ -137,7 +137,7 @@ sub Run {
 
     # TODO: what about locking
     # reinstall packages
-    # Use the console command in order to avoid dependance on OTOBO modules in the watchdog loop
+    # Use the console command in order to avoid dependance on CareOnCloud ESM modules in the watchdog loop
     my $Output = qx{$Self->{Home}/bin/careoncloud.Console.pl Admin::Package::ReinstallAll};
     warn "Admin::Package::ReinstallAll: $Output";
 

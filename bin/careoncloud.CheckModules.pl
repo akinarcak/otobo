@@ -30,11 +30,11 @@ bin/careoncloud.CheckModules.pl - a helper for checking CPAN dependencies
     # No version check is done.
     bin/careoncloud.CheckModules.pl --inst
 
-    # Print a list of those required and most commonly used optional packages for OTOBO.
+    # Print a list of those required and most commonly used optional packages for CareOnCloud ESM.
     # The version of the found modules is also checked.
     bin/careoncloud.CheckModules.pl --list
 
-    # Print all required, optional and bundled packages of OTOBO.
+    # Print all required, optional and bundled packages of CareOnCloud ESM.
     bin/careoncloud.CheckModules.pl --all
 
     # Print a list of all available features.
@@ -59,7 +59,7 @@ bin/careoncloud.CheckModules.pl - a helper for checking CPAN dependencies
     bin/careoncloud.CheckModules.pl --cpanfile > cpanfile
 
     # Print a cpanfile with the required modules for a Docker-based installation.
-    # This file is used in otobo.web.dockerfile.
+    # This file is used in careoncloud.web.dockerfile.
     bin/careoncloud.CheckModules.pl --docker-cpanfile > cpanfile.docker
 
     # Print a cpanfile with the required modules for a native installation which use plackup
@@ -351,7 +351,7 @@ if (
 my $ExitCode = 0;    # success
 
 # The array @NeededModules is the declaration of Perl modules that are
-# either required or optional in OTOBO.
+# either required or optional in CareOnCloud ESM.
 # Modules that are required are marked by setting 'Required' to 1.
 #
 # The key 'Features' is only used for supporting features when creating a cpanfile.
@@ -729,7 +729,7 @@ my @NeededModules = (
     {
         Module    => 'Template::Toolkit',
         Required  => 1,
-        Comment   => 'Template::Toolkit, the rendering engine of OTOBO.',
+        Comment   => 'Template::Toolkit, the rendering engine of CareOnCloud ESM.',
         InstTypes => {
             aptget => 'libtemplate-perl',
             emerge => 'dev-perl/Template-Toolkit',

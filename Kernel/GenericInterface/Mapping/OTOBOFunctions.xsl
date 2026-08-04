@@ -3,9 +3,9 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:func="http://exslt.org/functions"
                 xmlns:otobo="http://otobo.org"
-                extension-element-prefixes="func otobo">
+                extension-element-prefixes="func careoncloud">
 
-<func:function name="otobo:date-xsd-to-iso">
+<func:function name="careoncloud:date-xsd-to-iso">
     <xsl:param name="date-time" />
     <xsl:variable name="formatted">
         <xsl:value-of select="substring($date-time, 1, 10)" />
@@ -15,7 +15,7 @@
    <func:result select="string($formatted)" />
 </func:function>
 
-<func:function name="otobo:date-iso-to-xsd">
+<func:function name="careoncloud:date-iso-to-xsd">
     <xsl:param name="date-time" />
     <xsl:variable name="formatted">
         <xsl:value-of select="substring($date-time, 1, 10)" />

@@ -21,7 +21,7 @@ CRON_USER="$2"
 # check if a common user try to use -u
 if test -n "$CRON_USER"; then
     if test $CURRENTUSER != root; then
-        echo "Run this script just as OTOBO user! Or use 'Cron.sh {start|stop|restart} OTOBO_USER' as root!"
+        echo "Run this script just as CareOnCloud ESM user! Or use 'Cron.sh {start|stop|restart} OTOBO_USER' as root!"
         exit 5
     fi
 fi
@@ -29,26 +29,26 @@ fi
 # check if the cron user is specified
 if test -z "$CRON_USER"; then
     if test $CURRENTUSER = root; then
-        echo "Run this script just as OTOBO user! Or use 'Cron.sh {start|stop|restart} OTOBO_USER' as root!"
+        echo "Run this script just as CareOnCloud ESM user! Or use 'Cron.sh {start|stop|restart} OTOBO_USER' as root!"
         exit 5
     fi
 fi
 
-# find otobo root
+# find careoncloud root
 cd "`dirname $0`/../"
 OTOBO_HOME="`pwd`"
 
-#OTOBO_ROOT=/opt/otobo
+#OTOBO_ROOT=/opt/careoncloud
 if test -e $OTOBO_HOME/var/cron; then
     OTOBO_ROOT=$OTOBO_HOME
 else
     echo "No cronjobs in $OTOBO_HOME/var/cron found!";
-    echo " * Check the \$HOME (/etc/passwd) of the OTOBO user. It must be the root dir of your OTOBO system (e. g. /opt/otobo). ";
+    echo " * Check the \$HOME (/etc/passwd) of the CareOnCloud ESM user. It must be the root dir of your CareOnCloud ESM system (e. g. /opt/careoncloud). ";
     exit 5;
 fi
 
 CRON_DIR=$OTOBO_ROOT/var/cron
-CRON_TMP_FILE=$OTOBO_ROOT/var/tmp/otobo-cron-tmp.$$
+CRON_TMP_FILE=$OTOBO_ROOT/var/tmp/careoncloud-cron-tmp.$$
 
 #
 # main part
@@ -103,13 +103,13 @@ case "$1" in
     *)
     cat - <<HELP
 
-Manage OTOBO cron jobs.
+Manage CareOnCloud ESM cron jobs.
 
 Usage:
  Cron.sh [action]
 
 Arguments:
- [action]                      - 'start', 'stop' or 'restart' - activate or deactivate OTOBO cron jobs.
+ [action]                      - 'start', 'stop' or 'restart' - activate or deactivate CareOnCloud ESM cron jobs.
 HELP
 
     exit 1

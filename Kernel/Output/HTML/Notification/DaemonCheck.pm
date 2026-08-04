@@ -52,7 +52,7 @@ sub Run {
 
     my %NotificationDetails = (
         Priority => 'Error',
-        Data     => $LayoutObject->{LanguageObject}->Translate("OTOBO Daemon is not running."),
+        Data     => $LayoutObject->{LanguageObject}->Translate("CareOnCloud ESM Daemon is not running."),
     );
 
     # check if user needs to be notified

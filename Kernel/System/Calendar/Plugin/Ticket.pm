@@ -113,7 +113,7 @@ returns a hash of linked tickets to an appointment
 
     my $Success = $TicketPluginObject->LinkList(
         AppointmentID => 123,
-        PluginURL     => 'https://otobo.example.org/otobo/index.pl?Action=AgentTicketZoom;TicketID=%s',
+        PluginURL     => 'https://careoncloud.example.org/careoncloud/index.pl?Action=AgentTicketZoom;TicketID=%s',
         UserID        => 1,
     );
 

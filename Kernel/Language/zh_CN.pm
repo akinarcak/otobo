@@ -324,25 +324,25 @@ sub Data {
         'Support data collector' => '支持数据收集工具',
         'Hint' => '提示',
         'Currently support data is only shown in this system.' => '当前的支持数据只是在系统中显示。',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
-            '建议将此数据发送给OTOBO团队，有时可以获得更好的支持。',
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
+            '建议将此数据发送给CareOnCloud ESM团队，有时可以获得更好的支持。',
         'Configuration' => '配置',
         'Send support data' => '发送支持数据',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
-            '这样系统可以将更多的支持数据信息发送给OTOBO团队。',
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
+            '这样系统可以将更多的支持数据信息发送给CareOnCloud ESM团队。',
         'Update' => '更新',
         'System Registration' => '系统注册',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            '要启用数据发送，请向OTOBO团队注册系统或更新系统注册信息（确保激活“发送支持数据”选项。）',
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            '要启用数据发送，请向CareOnCloud ESM团队注册系统或更新系统注册信息（确保激活“发送支持数据”选项。）',
         'Register this System' => '注册本系统',
         'System Registration is disabled for your system. Please check your configuration.' =>
             '本系统的系统注册功能已被禁用，请检查你的配置。',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
-            '系统注册是OTOBO团队的一项服务，它具有很多优势！',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            '请注意：为了使用OTOBO云服务，需要先注册系统。',
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
+            '系统注册是CareOnCloud ESM团队的一项服务，它具有很多优势！',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            '请注意：为了使用CareOnCloud ESM云服务，需要先注册系统。',
         'Register this system' => '注册本系统',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             '你可以在这里配置可用的云服务，其与%s的通信是安全的。',
@@ -1036,8 +1036,8 @@ sub Data {
             '该名称可用于区分不同的错误处理配置。',
         'Please provide a unique name for this web service.' => '请为这个Web服务提供一个唯一的名称。',
         'Error handling module backend' => '错误处理模块后端',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
-            '这个OTOBO错误处理后端模块将被内部调用以处理错误处理机制。',
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
+            '这个CareOnCloud ESM错误处理后端模块将被内部调用以处理错误处理机制。',
         'Processing options' => '处理选项',
         'Configure filters to control error handling module execution.' =>
             '配置过滤器来控制错误处理模块执行。',
@@ -1128,15 +1128,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             '该名称通常用于调用远程Web服务的操作。',
         'Invoker backend' => '调用程序后端',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            '这个OTOBO调用程序后端模块被调用后，负责准备需要发送给远程系统的数据，并处理它的响应数据。',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            '这个CareOnCloud ESM调用程序后端模块被调用后，负责准备需要发送给远程系统的数据，并处理它的响应数据。',
         'Mapping for outgoing request data' => '映射出站请求数据',
         'Configure' => '配置',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            '这个映射将对OTOBO调用程序输出的数据进行处理，将它转换为远程系统所期待的数据。',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            '这个映射将对CareOnCloud ESM调用程序输出的数据进行处理，将它转换为远程系统所期待的数据。',
         'Mapping for incoming response data' => '映射入站请求数据',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            '这个映射将对响应数据进行处理，将它转换为OTOBO调用程序所期待的数据。',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            '这个映射将对响应数据进行处理，将它转换为CareOnCloud ESM调用程序所期待的数据。',
         'Asynchronous' => '异步',
         'Condition' => '条件',
         'Edit this event' => '编辑这个事件',
@@ -1144,8 +1144,8 @@ sub Data {
         'Add Event' => '添加事件',
         'To add a new event select the event object and event name and click on the "+" button' =>
             '要添加新事件，请选择事件对象和事件名称，然后单击“+”按钮',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            '异步的事件触发器将由后端的OTOBO调度程序守护进程处理（推荐）。',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            '异步的事件触发器将由后端的CareOnCloud ESM调度程序守护进程处理（推荐）。',
         'Synchronous event triggers would be processed directly during the web request.' =>
             '同步的事件触发器则是在web请求期间直接处理的。',
 
@@ -1282,7 +1282,7 @@ sub Data {
         'Enable Extended XSLT Mapping' => '',
         'Extended XSLT Mapping' => '',
         'Enable' => '启用',
-        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'otoboXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
             '',
 
         # Template: AdminGenericInterfaceOperationDefault
@@ -1293,11 +1293,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             '这个名称通常用于从一个远程系统调用这个web服务操作。',
         'Operation backend' => '操作后端',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            '这个OTOBO操作后端模块将被调用，以便处理请求、生成响应数据。',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            '这个CareOnCloud ESM操作后端模块将被调用，以便处理请求、生成响应数据。',
         'Mapping for incoming request data' => '映射传入请求数据',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            '这个映射将对请求数据进行处理，将它转换为OTOBO所期待的数据。',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            '这个映射将对请求数据进行处理，将它转换为CareOnCloud ESM所期待的数据。',
         'Mapping for outgoing response data' => '映射出站响应数据',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             '这个映射将对响应数据进行处理，以便将它转换成远程系统所期待的数据。',
@@ -1315,8 +1315,8 @@ sub Data {
             '限制这个操作使用指定的请求方法。如果没有选择方法，则所有的请求都可以接受。',
         'Maximum message length' => '消息的最大长度',
         'This field should be an integer number.' => '这个字段值应该是一个整数。',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            '在这里你可以指定OTOBO能够处理的REST消息的最大长度(以字节为单位)。',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            '在这里你可以指定CareOnCloud ESM能够处理的REST消息的最大长度(以字节为单位)。',
         'Send Keep-Alive' => '发送Keep-Alive（保持连接）',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             '此配置定义传入的连接应该关闭还是保持连接。',
@@ -1359,22 +1359,22 @@ sub Data {
         'Client Certificate' => '客户证书',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             'SSL客户端证书文件的完整路径和名称（必须为PEM、DER或PKCS＃12格式）。',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => '例如： /opt/otobo/var/certificates/SOAP/certificate.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => '例如： /opt/careoncloud/var/certificates/SOAP/certificate.pem',
         'Client Certificate Key' => '客户证书密钥',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             'SSL客户端证书密钥文件的完整路径和名称（如果尚未包含在证书文件中）。',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => '例如： /opt/otobo/var/certificates/SOAP/key.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => '例如： /opt/careoncloud/var/certificates/SOAP/key.pem',
         'Client Certificate Key Password' => '客户端证书密钥密码',
         'The password to open the SSL certificate if the key is encrypted.' =>
             '如果密钥被加密，则此密码用于打开SSL证书。',
         'Certification Authority (CA) Certificate' => '认证机构（CA）证书',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             '用来验证SSL证书的认证机构证书文件的完整路径和名称。',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => '例如：/opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => '例如：/opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => '认证机构(CA)目录',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             '认证机构目录的完整路径，文件系统中存储CA证书的地方。',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => '例如：/opt/otobo/var/certificates/SOAP/CA',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => '例如：/opt/careoncloud/var/certificates/SOAP/CA',
         'SSL hostname verification' => 'SSL 主机名称验证',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             '如果无法验证主机名，则中止请求。不过禁用验证时要小心！跳过验证会有安全风险！禁用验证主要用于测试目的（比如自签名SSL证书），或者你明确知道自己在做什么。',
@@ -1443,8 +1443,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             '选择如何构建SOAP回复函数封装器。',
         'Response name free text' => '回复名称自由文本',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            '在这里你可以指定OTOBO能够处理的SOAP消息的最大长度(以字节为单位)。',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            '在这里你可以指定CareOnCloud ESM能够处理的SOAP消息的最大长度(以字节为单位)。',
         'Encoding' => '编码',
         'The character encoding for the SOAP message contents.' => 'SOAP消息内容的字符编码。',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => '',
@@ -1484,10 +1484,10 @@ sub Data {
         'Provider transport' => '服务提供方传输',
         'Requester transport' => '服务请求方传输',
         'Debug threshold' => '调试阀值',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            '在提供方模式中，OTOBO为远程系统提供Web服务。',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            '在请求方模式中，OTOBO使用远程系统的Web服务。',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            '在提供方模式中，CareOnCloud ESM为远程系统提供Web服务。',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            '在请求方模式中，CareOnCloud ESM使用远程系统的Web服务。',
         'Network transport' => '网络传输',
         'Error Handling Modules' => '错误处理模块',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1598,8 +1598,8 @@ sub Data {
         'Filter for mail accounts' => '邮件帐户过滤器',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             '同一帐户的所有传入电子邮件将在所选的队列中分派。',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
-            '如果你的帐户被标记为受信任，则在到达时间已经存在的X-OTOBO标头（优先级等）将被保留并被使用，例如用于邮箱管理员过滤器。',
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+            '如果你的帐户被标记为受信任，则在到达时间已经存在的X-CareOnCloud ESM标头（优先级等）将被保留并被使用，例如用于邮箱管理员过滤器。',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             '外发电子邮件可以通过%s中的Sendmail开头的设置进行配置。',
         'System Configuration' => '系统配置',
@@ -1671,8 +1671,8 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => '使用逗号或分号分隔电子邮件地址。',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
-            '你可以使用诸如<OTOBO_TICKET_DynamicField_...>之类的OTOBO标签来插入当前工单中的值。',
+        'You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            '你可以使用诸如<OTOBO_TICKET_DynamicField_...>之类的CareOnCloud ESM标签来插入当前工单中的值。',
 
         # Template: AdminOAuthTokenStore
         'OAuth2 Token Management (OIDC)' => '',
@@ -1788,8 +1788,8 @@ sub Data {
         'PGP Management' => 'PGP管理',
         'Add PGP Key' => '添加PGP密钥',
         'PGP support is disabled' => 'PGP支持已禁用',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            '要在OTOBO中使用PGP，你必须首先启用它。',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            '要在CareOnCloud ESM中使用PGP，你必须首先启用它。',
         'Enable PGP support' => '启用PGP支持',
         'Faulty PGP configuration' => '错误的PGP配置',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1814,22 +1814,22 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             '您真的想要重新安装该软包吗? 所有该模块的手工设置将丢失.',
         'Go to updating instructions' => '转到升级说明',
-        'Go to the OTOBO customer portal' => '访问OTOBO客户门户',
+        'Go to the CareOnCloud ESM customer portal' => '访问CareOnCloud ESM客户门户',
         'package information' => '软件包信息',
-        'Package installation requires a patch level update of OTOBO.' =>
-            '安装软件包需要将OTOBO补丁级别更新。',
-        'Package update requires a patch level update of OTOBO.' => '升级软件包需要将OTOBO补丁级别更新。',
-        'Please note that your installed OTOBO version is %s.' => '请注意，您安装的OTOBO版本是%s。',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
-            '安装这个软件包，你需要升级OTOBO版本到%s或者更高。',
-        'This package can only be installed on OTOBO version %s or older.' =>
-            '这个软件包只能安装在OTOBO版本%s或者更低。',
-        'This package can only be installed on OTOBO version %s or newer.' =>
-            '这个软件包只能安装在OTOBO版本%s或者更高。',
-        'Why should I keep OTOBO up to date?' => '为什么要保持OTOBO是最新的？',
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
+            '安装软件包需要将CareOnCloud ESM补丁级别更新。',
+        'Package update requires a patch level update of CareOnCloud ESM.' => '升级软件包需要将CareOnCloud ESM补丁级别更新。',
+        'Please note that your installed CareOnCloud ESM version is %s.' => '请注意，您安装的CareOnCloud ESM版本是%s。',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
+            '安装这个软件包，你需要升级CareOnCloud ESM版本到%s或者更高。',
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
+            '这个软件包只能安装在CareOnCloud ESM版本%s或者更低。',
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
+            '这个软件包只能安装在CareOnCloud ESM版本%s或者更高。',
+        'Why should I keep CareOnCloud ESM up to date?' => '为什么要保持CareOnCloud ESM是最新的？',
         'You will receive updates about relevant security issues.' => '您将收到有关安全问题的更新。',
-        'You will receive updates for all other relevant OTOBO issues.' =>
-            '你将收到所有其他有关OTOBO问题的更新。',
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
+            '你将收到所有其他有关CareOnCloud ESM问题的更新。',
         'How can I do a patch level update if I don’t have a contract?' =>
             '如果没有合约，我怎么更新补丁级别？',
         'Please find all relevant information within the updating instructions at %s.' =>
@@ -1845,7 +1845,7 @@ sub Data {
         'Install' => '安装',
         'Update repository information' => '更新软件仓库信息',
         'Cloud services are currently disabled.' => '云服务当前被禁用了。',
-        'OTOBO Verify can not continue!' => 'OTOBO验证不能继续！',
+        'CareOnCloud ESM Verify can not continue!' => 'CareOnCloud ESM验证不能继续！',
         'Enable cloud services' => '启用云服务',
         'Update all installed packages' => '更新所有已安装的软件包',
         'Online Repository' => '在线软件仓库',
@@ -1853,7 +1853,7 @@ sub Data {
         'Action' => '操作',
         'Module documentation' => '模块文档',
         'Local Repository' => '本地软件仓库',
-        'This package is verified by OTOBOverify (tm)' => '此软件包已通过OTOBOverify(tm)的验证',
+        'This package is verified by CareOnCloud ESMverify (tm)' => '此软件包已通过CareOnCloud ESMverify(tm)的验证',
         'Uninstall' => '卸载',
         'Package not correctly deployed! Please reinstall the package.' =>
             '软件包未正确安装！请重新安装软件包。',
@@ -2226,27 +2226,27 @@ sub Data {
         'Edit System Registration' => '编辑系统注册',
         'System Registration Overview' => '系统注册概览',
         'Register System' => '注册系统',
-        'Validate OTOBO-ID' => '验证OTOBO-ID',
+        'Validate CareOnCloud ID' => '验证CareOnCloud ID',
         'Deregister System' => '取消系统注册',
         'Edit details' => '编辑详细信息',
         'Show transmitted data' => '显示已传输的数据',
         'Deregister system' => '取消系统注册',
         'Overview of registered systems' => '注册系统概述',
-        'This system is registered with OTOBO Team.' => '本系统已经在OTOBO团队进行了注册。',
+        'This system is registered with CareOnCloud ESM Team.' => '本系统已经在CareOnCloud ESM团队进行了注册。',
         'System type' => '系统类型',
         'Unique ID' => '唯一ID',
         'Last communication with registration server' => '与注册服务器上一次的通信',
         'System Registration not Possible' => '系统注册不可能',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            '请注意：如果OTOBO守护进程没有正确运行，你就不能注册你的系统！',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            '请注意：如果CareOnCloud ESM守护进程没有正确运行，你就不能注册你的系统！',
         'Instructions' => '说明',
         'System Deregistration not Possible' => '系统取消注册不可能',
-        'OTOBO-ID Login' => 'OTOBO-ID登陆',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
-            '系统注册是OTOBO团队的一项服务，它有很多好处！',
+        'CareOnCloud ID Login' => 'CareOnCloud ID登陆',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
+            '系统注册是CareOnCloud ESM团队的一项服务，它有很多好处！',
         'Read more' => '阅读更多',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            '为了注册系统，需要你先使用OTOBO-ID进行登陆。',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            '为了注册系统，需要你先使用CareOnCloud ID进行登陆。',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'OTOBO-ID是你在OTOBO.com网站注册的电子邮箱地址。',
         'Data Protection' => '数据保护',
@@ -2257,45 +2257,45 @@ sub Data {
         'This is only the beginning!' => '这仅仅是开始！',
         'We will inform you about our new services and offerings soon.' =>
             '有了新的服务和产品我们能很快通知你。',
-        'Can I use OTOBO without being registered?' => '如果不进行系统注册，我还可以使用OTOBO吗?',
+        'Can I use CareOnCloud ESM without being registered?' => '如果不进行系统注册，我还可以使用CareOnCloud ESM吗?',
         'System registration is optional.' => '系统注册是可选的。',
-        'You can download and use OTOBO without being registered.' => '不进行注册，你仍然可以下载和使用OTOBO。',
+        'You can download and use CareOnCloud ESM without being registered.' => '不进行注册，你仍然可以下载和使用CareOnCloud ESM。',
         'Is it possible to deregister?' => '可以取消注册吗？',
         'You can deregister at any time.' => '你可以随时取消系统注册。',
         'Which data is transfered when registering?' => '注册后，哪些数据会被上传?',
-        'A registered system sends the following data to OTOBO Team:' => '已注册的系统会将以下数据发送给OTOBO Team：',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            '域名(FQDN)、OTOBO版本、数据库、操作系统和Perl版本。',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => '已注册的系统会将以下数据发送给CareOnCloud ESM Team：',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            '域名(FQDN)、CareOnCloud ESM版本、数据库、操作系统和Perl版本。',
         'Why do I have to provide a description for my system?' => '为什么需要我提供有关注册系统的描述?',
         'The description of the system is optional.' => '注册系统的描述是可选的。',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             '注册系统描述和类型有助于您识别和管理系统的细节。',
-        'How often does my OTOBO system send updates?' => '我的OTOBO系统上传数据的频度?',
+        'How often does my CareOnCloud ESM system send updates?' => '我的CareOnCloud ESM系统上传数据的频度?',
         'Your system will send updates to the registration server at regular intervals.' =>
             '你的系统将定期向注册服务器发送更新。',
         'Typically this would be around once every three days.' => '通常这将是大约每3天1次。',
         'If you deregister your system, you will lose these benefits:' =>
             '如果你取消注册你的系统，你将失去以下好处：',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            '为了取消注册你的系统，你需要以OTOBO-ID登录。',
-        'OTOBO-ID' => 'OTOBO-ID',
-        'You don\'t have an OTOBO-ID yet?' => '还没有OTOBO-ID吗？',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            '为了取消注册你的系统，你需要以CareOnCloud ID登录。',
+        'CareOnCloud ID' => 'CareOnCloud ID',
+        'You don\'t have a CareOnCloud ID yet?' => '还没有CareOnCloud ID吗？',
         'Sign up now' => '现在注册',
         'Forgot your password?' => '忘记密码了吗？',
         'Retrieve a new one' => '获取新的密码',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
-            '注册该系统时，这些数据将经常传输到OTOBO Team。',
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
+            '注册该系统时，这些数据将经常传输到CareOnCloud ESM Team。',
         'Attribute' => '属性',
         'FQDN' => '正式域名',
-        'OTOBO Version' => 'OTOBO版本',
+        'CareOnCloud ESM Version' => 'CareOnCloud ESM版本',
         'Operating System' => '操作系统',
         'Perl Version' => 'Perl版本',
         'Optional description of this system.' => '本系统可选的描述。',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
-            '这样系统将会将更多的支持数据信息发送给OTOBO Team。',
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
+            '这样系统将会将更多的支持数据信息发送给CareOnCloud ESM Team。',
         'Register' => '注册',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
-            '继续此步骤将从OTOBO团队注销该系统。',
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
+            '继续此步骤将从CareOnCloud ESM团队注销该系统。',
         'Deregister' => '取消注册',
         'You can modify registration settings here.' => '你可以在这里修改注册设置。',
         'Overview of Transmitted Data' => '已传输的数据概览',
@@ -2396,8 +2396,8 @@ sub Data {
         'Add Certificate' => '添加证书',
         'Add Private Key' => '添加私钥',
         'SMIME support is disabled' => 'SMIME支持已禁用',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            '要在OTOBO中使用SMIME，你必须首先启用它。',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            '要在CareOnCloud ESM中使用SMIME，你必须首先启用它。',
         'Enable SMIME support' => '启用SMIME支持',
         'Faulty SMIME configuration' => '错误的SMIME配置',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2527,18 +2527,18 @@ sub Data {
         'This state is used in the following config settings:' => '这个状态已用于以下的系统配置设置：',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => '无法将支持数据发送到OTOBO团队！',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => '无法将支持数据发送到CareOnCloud ESM团队！',
         'Enable Cloud Services' => '启用云服务',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
-            '该数据会定期发送给OTOBO团队。要停止发送此数据，请更新你的系统注册。',
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
+            '该数据会定期发送给CareOnCloud ESM团队。要停止发送此数据，请更新你的系统注册。',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             '你可以通过这个按钮手动发送支持数据：',
         'Send Update' => '发送更新',
         'Currently this data is only shown in this system.' => '目前支持数据只是在本地系统上显示。',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
-            '强烈建议将此数据发送给OTOBO团队，以获得更好的支持。',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            '要启用数据发送，请在OTOBO团队注册你的系统或更新你的系统注册信息（确保激活“发送支持数据”选项。）',
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
+            '强烈建议将此数据发送给CareOnCloud ESM团队，以获得更好的支持。',
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            '要启用数据发送，请在CareOnCloud ESM团队注册你的系统或更新你的系统注册信息（确保激活“发送支持数据”选项。）',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             '点击以下按钮生成支持数据包（包括：系统注册信息、支持数据、已安装软件包列表和本地所有修改过的源代码文件）：',
         'Generate Support Bundle' => '生成支持数据包',
@@ -2550,11 +2550,11 @@ sub Data {
         'The email address for this user is invalid, this option has been disabled.' =>
             '当前用户的邮件地址无效，本选项无法使用。',
         'Sending' => '发送中',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
-            '支持包将通过电子邮件自动发送给OTOBO团队。',
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
+            '支持包将通过电子邮件自动发送给CareOnCloud ESM团队。',
         'Download File' => '下载文件',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
-            '包含支持包的文件可以下载到本地。你可以保存该文件，然后用其他方法将其发送给OTOBO团队。',
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
+            '包含支持包的文件可以下载到本地。你可以保存该文件，然后用其他方法将其发送给CareOnCloud ESM团队。',
         'Error: Support data could not be collected (%s).' => '错误：%s 无法收集支持数据。',
         'Details' => '详情',
 
@@ -2780,7 +2780,7 @@ sub Data {
         'Translation' => '',
         'Marked for Deletion' => '',
         'Edit Translation' => '',
-        'Overwrites OTOBO translation' => '',
+        'Overwrites CareOnCloud ESM translation' => '',
         'Undo Delete Translation' => '',
         'Delete Translation' => '',
         'Translations' => '',
@@ -2952,18 +2952,18 @@ sub Data {
         'Customer User Information Center' => '客户用户信息中心',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'OTOBO守护进程用来执行异步任务，例如：触发工单升级、发送电子邮件等等。',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            'OTOBO守护进程正常运行是正确的系统操作所必需的。',
-        'Starting the OTOBO Daemon' => '正在启动OTOBO守护进程',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            '确保存在文件“%s”（没有.dist扩展名）。这个CRON任务会每5分钟检查一次OTOBO守护进程是否在运行，并在需要时启动它。',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            '执行\'%s start\'确保\'otobo\'用户的cron任务是活动的。',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
-            '5分钟后，在系统中执行\'bin/careoncloud.Daemon.pl status\'，检查OTOBO守护进程是否正常运行。',
-        'Running the OTOBO Daemon in a Docker based installation' => '',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'CareOnCloud ESM守护进程用来执行异步任务，例如：触发工单升级、发送电子邮件等等。',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            'CareOnCloud ESM守护进程正常运行是正确的系统操作所必需的。',
+        'Starting the CareOnCloud ESM Daemon' => '正在启动CareOnCloud ESM守护进程',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            '确保存在文件“%s”（没有.dist扩展名）。这个CRON任务会每5分钟检查一次CareOnCloud ESM守护进程是否在运行，并在需要时启动它。',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            '执行\'%s start\'确保\'careoncloud\'用户的cron任务是活动的。',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            '5分钟后，在系统中执行\'bin/careoncloud.Daemon.pl status\'，检查CareOnCloud ESM守护进程是否正常运行。',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => '',
         'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
             '',
         'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
@@ -3131,7 +3131,7 @@ sub Data {
         'This setting can currently not be saved.' => '此设置目前无法保存。',
         'This setting can currently not be saved' => '此设置目前无法保存',
         'Save this setting' => '保存该设置',
-        'Did you know? You can help translating OTOBO at %s.' => '你知道吗? 你也可以通过%s帮助翻译 OTOBO。',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => '你知道吗? 你也可以通过%s帮助翻译 CareOnCloud ESM。',
 
         # Template: SettingsList
         'Reset to default' => '重置为默认',
@@ -3151,7 +3151,7 @@ sub Data {
         # Template: AgentStatisticsAdd
         'Statistics Management' => '统计管理',
         'Add Statistics' => '添加统计',
-        'Read more about statistics in OTOBO' => '详细了解OTR关于统计的信息',
+        'Read more about statistics in CareOnCloud ESM' => '详细了解OTR关于统计的信息',
         'Dynamic Matrix' => '动态矩阵',
         'Each cell contains a singular data point.' => '每个单元格包含一个单数据点。',
         'Dynamic List' => '动态列表',
@@ -3742,8 +3742,8 @@ sub Data {
 
         # Template: InstallerDBStart
         'Install Type' => '安装类型',
-        'Create a new database for OTOBO' => '为OTOBO创建新的数据库',
-        'Use an existing database for OTOBO' => '使用现有的OTOBO数据库',
+        'Create a new database for CareOnCloud ESM' => '为CareOnCloud ESM创建新的数据库',
+        'Use an existing database for CareOnCloud ESM' => '使用现有的CareOnCloud ESM数据库',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3754,8 +3754,8 @@ sub Data {
         'Database check successful.' => '数据库检查完成。',
         'Database User' => '数据库用户',
         'New' => 'New（新建）',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
-            '已经为OTOBO系统创建了新的数据库普通用户。',
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
+            '已经为CareOnCloud ESM系统创建了新的数据库普通用户。',
         'Generated password' => '自动生成的密码',
         'Repeat Password' => '重复输入密码',
         'Passwords do not match' => '密码不匹配',
@@ -3765,7 +3765,7 @@ sub Data {
 
         # Template: InstallerFinish
         'Start page' => '开始页面',
-        'Your OTOBO Team' => 'OTOBO团队',
+        'Your CareOnCloud ESM Team' => 'CareOnCloud ESM团队',
 
         # Template: InstallerLicense
         'Don\'t accept license' => '不同意许可',
@@ -3795,10 +3795,10 @@ sub Data {
             '手动输入的电子邮件地址将通过DNS服务器验证MX记录。如果DNS服务器响应慢或无法提供公网解析，请不要使用此选项。',
         'Elasticsearch' => 'Elasticsearch',
         'Initialize Elasticsearch' => '初始化 Elasticsearch',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
-            'Elasticsearch服务器已经找到了，并且已经为OTOBO自动激活。',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
-            '正在运行的Elasticsearch服务器似乎不太干净，或者它没有使用标准配置。要手动激活Elasticsearch，必要的时候需要在管理界面中编辑Web服务，在SysConfig中激活\'Elasticsearch :: Active\'和\'Frontend :: ToolBarModule ### 250-Ticket :: ElasticsearchFulltext\'，并运行otobo.Console命令\'Maint :: Elasticsearch :: Migration\'。',
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
+            'Elasticsearch服务器已经找到了，并且已经为CareOnCloud ESM自动激活。',
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
+            '正在运行的Elasticsearch服务器似乎不太干净，或者它没有使用标准配置。要手动激活Elasticsearch，必要的时候需要在管理界面中编辑Web服务，在SysConfig中激活\'Elasticsearch :: Active\'和\'Frontend :: ToolBarModule ### 250-Ticket :: ElasticsearchFulltext\'，并运行careoncloud.Console命令\'Maint :: Elasticsearch :: Migration\'。',
 
         # Template: LinkObject
         'Delete link' => '删除链接',
@@ -3827,16 +3827,16 @@ sub Data {
         'Clean up and finish' => '清理和完成',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
-            '迁移已完成，感谢你试用OTOBO-我们希望你会喜欢。',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
-            '为了能够使用OTOBO, 您必须以root身份在命令行中(Terminal/Shell)输入以下行。',
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
+            '迁移已完成，感谢你试用CareOnCloud ESM-我们希望你会喜欢。',
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+            '为了能够使用CareOnCloud ESM, 您必须以root身份在命令行中(Terminal/Shell)输入以下行。',
         'Restart your webserver' => '重启web服务器',
-        'After doing so your OTOBO is up and running.' => '完成这些后，您的OTOBO系统就启动并运行了。',
+        'After doing so your CareOnCloud ESM is up and running.' => '完成这些后，您的CareOnCloud ESM系统就启动并运行了。',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
-            '这个迁移脚本将引导你逐步完成，将你的工单系统从OTRS或（（OTRS））Community Edition版本6迁移到OTOBO 10。',
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
+            '这个迁移脚本将引导你逐步完成，将你的工单系统从OTRS或（（OTRS））Community Edition版本6迁移到CareOnCloud ESM 10。',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             '你的原始系统不会有任何危险：在那里没有任何更改。',
         'Instructions and details on migration prerequisites can be found in the migration manual. We strongly recommend reading it before starting migration.' =>
@@ -3845,8 +3845,8 @@ sub Data {
             '如果必须停止迁移，则可以在任何时候随时恢复到停止的点，只要尚未删除缓存即可。',
         'All entered passwords are cached until the migration is finished.' =>
             '所有输入的密码都将被缓存，直到迁移完成。',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
-            ' 有权访问此页面，或具有OTOBO主目录读取权限的任何人都可以读到它们。如果中止迁移，你可以选择再次访问此页面来清除缓存。',
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+            ' 有权访问此页面，或具有CareOnCloud ESM主目录读取权限的任何人都可以读到它们。如果中止迁移，你可以选择再次访问此页面来清除缓存。',
         'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
             '',
         'Cached data found' => '发现缓存数据',
@@ -3855,8 +3855,8 @@ sub Data {
         'An error occurred.' => '发生一个错误。',
         'Discard previous progress' => '放弃以前的进程',
         'Insecure HTTP connection' => '不安全的HTTP链接',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
-            '你正在通过http运行迁移脚本，这是非常不安全的，因为在这个过程中需要使用各种密码，而这些密码将以未加密的方式进行传输。你和OTOBO服务器之间的任何人都可以读取它们！所以，请考虑修改设置为https。',
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
+            '你正在通过http运行迁移脚本，这是非常不安全的，因为在这个过程中需要使用各种密码，而这些密码将以未加密的方式进行传输。你和CareOnCloud ESM服务器之间的任何人都可以读取它们！所以，请考虑修改设置为https。',
         'Continue anyways :(' => '不论如何都继续:(',
 
         # Template: OTRSDBSettings
@@ -3879,8 +3879,8 @@ sub Data {
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => '功能不可用',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            '抱歉，当前的OTOBO不能用于移动终端。如果你想在移动终端上使用，你可以切换到桌面模式或使用普通桌面终端。',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            '抱歉，当前的CareOnCloud ESM不能用于移动终端。如果你想在移动终端上使用，你可以切换到桌面模式或使用普通桌面终端。',
 
         # Template: Motd
         'Message of the Day' => '今日消息',
@@ -3920,8 +3920,8 @@ sub Data {
 
         # Template: PublicDefault
         'Welcome' => '欢迎',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            '这是OTOBO默认的公共界面！没有操作参数。',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            '这是CareOnCloud ESM默认的公共界面！没有操作参数。',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             '你可以安装一个定制的有公共界面的公共模块（通过软件包管理器），例如FAQ知识库模块。',
 
@@ -4077,7 +4077,7 @@ sub Data {
         'Delete user\'s value.' => '删除用户的数值。',
 
         # Template: Test
-        'OTOBO Test Page' => 'OTOBO测试页',
+        'CareOnCloud ESM Test Page' => 'CareOnCloud ESM测试页',
         'Unlock' => '解锁',
         'Welcome %s %s' => '欢迎使用%s %s',
         'Counter' => '计数器',
@@ -4122,7 +4122,7 @@ sub Data {
 
         # JS Template: PackageResolve
         'Package' => '包',
-        'Uninstall from OTOBO' => '从OTOBO卸载',
+        'Uninstall from CareOnCloud ESM' => '从CareOnCloud ESM卸载',
         'Ignore' => '忽略',
         'Migrate' => '迁移',
 
@@ -4186,12 +4186,12 @@ sub Data {
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             '数据库中的ACL信息与系统配置不一致，请部署所有ACL。',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            '由于未知错误不能导入ACL，请检查OTOBO日志以获得更多信息',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            '由于未知错误不能导入ACL，请检查CareOnCloud ESM日志以获得更多信息',
         'The following ACLs have been added successfully: %s' => '下列ACL已经成功添加：%s',
         'The following ACLs have been updated successfully: %s' => '下列ACL已经成功更新：%s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
-            '在添加/更新下列ACL：%s 时出现一些错误，请检查OTOBO日志以获得更多信息。',
+            '在添加/更新下列ACL：%s 时出现一些错误，请检查CareOnCloud ESM日志以获得更多信息。',
         'There was an error creating the ACL' => '创建ACL时出现了一个错误',
         'Need ACLID!' => '需要ACLID！',
         'Could not get data for ACLID %s' => '不能获得ACLID为%s 的数据',
@@ -4245,14 +4245,14 @@ sub Data {
         'Unknown Notification %s!' => '未知通知 %s！',
         '%s (copy)' => '%s (副本)',
         'There was an error creating the Notification' => '创建通知时出现了一个错误',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            '由于一个未知错误不能导入通知，请检查OTOBO日志以获取更多信息',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            '由于一个未知错误不能导入通知，请检查CareOnCloud ESM日志以获取更多信息',
         'The following Notifications have been added successfully: %s' =>
             '下列通知已成功添加：%s',
         'The following Notifications have been updated successfully: %s' =>
             '下列通知已成功更新：%s',
         'There where errors adding/updating the following Notifications: %s. Please check the log file for more information.' =>
-            '添加/更新下列通知时出现错误：%s，请检查OTOBO日志以获取更多信息。',
+            '添加/更新下列通知时出现错误：%s，请检查CareOnCloud ESM日志以获取更多信息。',
         'Notification updated!' => '通知已更新！',
         'Agent (resources), who are selected within the appointment' => '这个预约选择的服务人员（资源）',
         'All agents with (at least) read permission for the appointment (calendar)' =>
@@ -4598,12 +4598,12 @@ sub Data {
         'Could not load %s.' => '不能载入 %s。',
         'Could not read %s!' => '不能读取 %s！',
         'Need a file to import!' => '导入需要一个文件！',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            '导入的文件没有有效的YAML内容！请检查OTOBO日志以获取详细信息',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            '导入的文件没有有效的YAML内容！请检查CareOnCloud ESM日志以获取详细信息',
         'Web service "%s" deleted!' => 'Web服务“%s”已经删除！',
-        'OTOBO as provider' => 'OTOBO作为服务提供方',
+        'CareOnCloud ESM as provider' => 'CareOnCloud ESM作为服务提供方',
         'Operations' => '操作',
-        'OTOBO as requester' => 'OTOBO作为服务请求方',
+        'CareOnCloud ESM as requester' => 'CareOnCloud ESM作为服务请求方',
         'Invokers' => '调用程序',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4697,7 +4697,7 @@ sub Data {
         'Can\'t read %s!' => '不能读取%s！',
         'File is OK' => '文件正常',
         'Package has locally modified files.' => '软件包中有本地修改过的文件。',
-        'Package not verified by the OTOBO Team!' => '软件包没有OTOBO团队的验证！',
+        'Package not verified by the CareOnCloud ESM Team!' => '软件包没有CareOnCloud ESM团队的验证！',
         'Not Started' => '没有启动',
         'Updated' => '更新时间',
         'Already up-to-date' => '已经是最新的',
@@ -4718,9 +4718,9 @@ sub Data {
             '在选定的软件仓库中找不到软件包， 请查看日志以获取更多信息！',
         'Package not verified due a communication issue with verification server!' =>
             '不能验证软件包，因为与验证服务器无法正常通信！',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => '不能连接到OTOBO附加功能列表服务器！',
-        'Can\'t get OTOBO Feature Add-on list from server!' => '不能从服务器获取OTOBO附加功能列表！',
-        'Can\'t get OTOBO Feature Add-on from server!' => '不能从服务器获取OTOBO附加功能！',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => '不能连接到CareOnCloud ESM附加功能列表服务器！',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => '不能从服务器获取CareOnCloud ESM附加功能列表！',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => '不能从服务器获取CareOnCloud ESM附加功能！',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => '没有这个过滤器：%s',
@@ -4918,13 +4918,13 @@ sub Data {
         'You currently don\'t have any favourite settings.' => '你目前没有收藏任何设置。',
         'The following settings could not be found: %s' => '找不到以下设置：%s',
         'Import not allowed!' => '不允许导入！',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
-            '由于一个未知错误不能导入系统配置，请检查OTOBO日志以获取更多信息。',
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
+            '由于一个未知错误不能导入系统配置，请检查CareOnCloud ESM日志以获取更多信息。',
         'Category Search' => '搜索类别',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
-            '某些导入的设置不在配置的当前状态中，或者无法进行更新。 请查看OTOBO日志了解更多信息。',
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
+            '某些导入的设置不在配置的当前状态中，或者无法进行更新。 请查看CareOnCloud ESM日志了解更多信息。',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
         'This deployment does not contain changes in the setting values!' =>
@@ -5435,7 +5435,7 @@ sub Data {
         'Configure "Home" in Kernel/Config.pm first!' => '首先在文件Kernel/Config.pm中配置“Home”！',
         'File "%s/Kernel/Config.pm" not found!' => '没有找到文件“%s/Kernel/Config.pm”！',
         'Directory "%s" not found!' => '没有找到目录“%s”！',
-        'Install OTOBO' => '安装OTOBO',
+        'Install CareOnCloud ESM' => '安装CareOnCloud ESM',
         'Intro' => '介绍',
         'Kernel/Config.pm isn\'t writable!' => '文件Kernel/Config.pm不可写入！',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -5452,7 +5452,7 @@ sub Data {
         'Unknown database type "%s".' => '未知的数据库类型“%s”。',
         'Please go back.' => '请返回。',
         'Create Database' => '创建数据库',
-        'Install OTOBO - Error' => '安装OTOBO - 错误',
+        'Install CareOnCloud ESM - Error' => '安装CareOnCloud ESM - 错误',
         'File "%s/%s.xml" not found!' => '没有找到文件“%s/%s.xml”！',
         'Contact your Admin!' => '联系你的系统管理员！',
         'Execution of SQL statement failed: ' => '',
@@ -5477,7 +5477,7 @@ sub Data {
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             '如果要重新运行MigrateFromOTRS工具，请在SysConfig中禁用SecureMode。',
-        'OTRS to OTOBO migration' => '从OTRS迁移到OTOBO',
+        'OTRS to CareOnCloud ESM migration' => '从OTRS迁移到CareOnCloud ESM',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => '没有%s!',
@@ -5614,8 +5614,8 @@ sub Data {
         'Shown Tickets' => '显示工单',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => '无法连接OTOBO新闻服务器！',
-        'Can\'t get OTOBO News from server!' => '无法从服务器获取OTOBO新闻！',
+        'Can\'t connect to CareOnCloud ESM News server!' => '无法连接CareOnCloud ESM新闻服务器！',
+        'Can\'t get CareOnCloud ESM News from server!' => '无法从服务器获取CareOnCloud ESM新闻！',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => '无法连接到产品新闻服务器！',
@@ -5701,7 +5701,7 @@ sub Data {
             '一次系统维护将开始于：%s，预计结束时间为：%s',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'OTOBO守护进程没有运行。',
+        'CareOnCloud ESM Daemon is not running.' => 'CareOnCloud ESM守护进程没有运行。',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5988,7 +5988,7 @@ sub Data {
         'Migration completed, perfect!' => '迁移完成，完美！',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => 'OTOBO缓存清除。',
+        'CareOnCloud ESM Cache cleanup.' => 'CareOnCloud ESM缓存清除。',
         'Completed.' => '完成。',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
@@ -6004,15 +6004,15 @@ sub Data {
         'Data transfer completed.' => '数据传递完成。',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => '检查OTOBO的版本是否正确。',
-        'Check if OTOBO and OTRS connect is possible.' => '检查OTOBO和OTRS能否连接。',
+        'Check if CareOnCloud ESM version is correct.' => '检查CareOnCloud ESM的版本是否正确。',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => '检查CareOnCloud ESM和OTRS能否连接。',
         'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
-        'Check if OTOBO and OTRS version is correct.' => '检查OTOBO 和 OTRS 的版本是否正确。',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => '检查CareOnCloud ESM 和 OTRS 的版本是否正确。',
         '%s does not exist!' => '%s 不存在！',
-        'No OTOBO system found!' => '没发现OTOBO系统！',
+        'No CareOnCloud ESM system found!' => '没发现CareOnCloud ESM系统！',
         'You are trying to run this script on the wrong framework version %s!' =>
             '你是在错误的框架版本 %s 上运行这个脚本！',
-        'OTOBO Version is correct: %s.' => 'OTOBO版本正确：%s。',
+        'CareOnCloud ESM Version is correct: %s.' => 'CareOnCloud ESM版本正确：%s。',
         'Check if OTRS version is correct.' => '检查OTRS版本是否正确。',
         'OTRS RELEASE file %s does not exist!' => '',
         'Can\'t read OTRS RELEASE file: %s' => '',
@@ -6045,8 +6045,8 @@ sub Data {
         # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
         'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
             '',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => '检查OTOBO主页中是否存在Kernel / Config.pm。',
-        'Kernel/Config.pm exists in OTOBO home' => 'OTOBO主页中是否存在Kernel / Config.pm',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => '检查CareOnCloud ESM主页中是否存在Kernel / Config.pm。',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => 'CareOnCloud ESM主页中是否存在Kernel / Config.pm',
         'Check if we are able to connect to OTRS home directory.' => '',
         'Can\'t connect to OTRS file directory.' => '无法连接到OTRS文件目录。',
         'Connect to OTRS file directory is possible.' => '可能可以连接到OTRS文件目录。',
@@ -6123,9 +6123,9 @@ sub Data {
         'File is not installed!' => '文件没有安装！',
         'File is different!' => '文件被修改！',
         'Can\'t read file!' => '不能读取文件！',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
-            '<p>其他软件包可以为OTOBO提供很多有用的增强性功能，不过请确保这些软件包的来源可靠，因为它们有可能以多种方式修改OTOBO。</p>',
-        'Package not verified by the OTOBO community!' => '软件包没有经过OTOBO社区验证！',
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
+            '<p>其他软件包可以为CareOnCloud ESM提供很多有用的增强性功能，不过请确保这些软件包的来源可靠，因为它们有可能以多种方式修改CareOnCloud ESM。</p>',
+        'Package not verified by the CareOnCloud ESM community!' => '软件包没有经过CareOnCloud ESM社区验证！',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '',
         'Verification not possible (e.g. no internet connection)!' => '',
@@ -6323,7 +6323,7 @@ sub Data {
         'Found obsolete cryptographic function.' => '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'OTOBO磁盘分区',
+        'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM磁盘分区',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => '硬盘使用情况',
@@ -6358,7 +6358,7 @@ sub Data {
         'There should be no more than 200 MB swap space used.' => '交换空间不应该使用超过200MB。',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => '信件搜索索引状态',
         'Indexed Articles' => '索引过的信件',
 
@@ -6419,7 +6419,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
         'File System Writable' => '文件系统是可写的',
-        'The file system on your OTOBO partition is not writable.' => 'OTOBO分区所有文件系统是不可写的。',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'CareOnCloud ESM分区所有文件系统是不可写的。',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => '遗留的配置备份',
@@ -6434,7 +6434,7 @@ sub Data {
         'Some packages have locally modified files.' => '一些软件包有在本地修改过的文件。',
         'Some packages are not correctly installed.' => '一些软件包没有正确安装。',
         'Package Verification Status' => '软件包验证状态',
-        'Some packages are not verified by the OTOBO Team.' => '一些软件包未经OTOBO团队验证。',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => '一些软件包未经CareOnCloud ESM团队验证。',
         'Package Framework Version Status' => '软件包框架版本状态',
         'Some packages are not allowed for the current framework version.' =>
             '一些软件包无法在当前的框架版本中使用。',
@@ -6447,7 +6447,7 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
         'Spooled Emails' => '假脱机邮件',
-        'There are emails in var/spool that OTOBO could not process.' => 'var/spool 目录下有一些OTOBO无法处理的邮件。',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => 'var/spool 目录下有一些CareOnCloud ESM无法处理的邮件。',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
@@ -6487,8 +6487,8 @@ sub Data {
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
         'Time Settings' => '时间设置',
         'Server time zone' => '服务器时区',
-        'OTOBO time zone' => 'OTOBO时区',
-        'OTOBO time zone is not set.' => 'OTOBO时区未设置。',
+        'CareOnCloud ESM time zone' => 'CareOnCloud ESM时区',
+        'CareOnCloud ESM time zone is not set.' => 'CareOnCloud ESM时区未设置。',
         'User default time zone' => '用户默认时区',
         'User default time zone is not set.' => '用户默认时区未设置。',
         'Calendar time zone is not set.' => '日历时区未设置。',
@@ -6510,8 +6510,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'MPM多路处理模块',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'OTOBO需要apache运行“prefork”MPM多路处理模块。',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'CareOnCloud ESM需要apache运行“prefork”MPM多路处理模块。',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'CGI加速器用法',
@@ -6541,7 +6541,7 @@ sub Data {
         'Webserver Version' => 'WEB服务器版本',
         'Could not determine webserver version.' => '不能确定WEB服务器版本。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => '并发用户详细信息',
         'Concurrent Users' => '并发用户数',
 
@@ -6568,12 +6568,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => '值不满足正则表达式（%s）。',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
-            '系统无法在OTOBOTimeZone中计算用户的日期！',
+        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+            '系统无法在CareOnCloud ESMTimeZone中计算用户的日期！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
-            '系统无法在OTOBOTimeZone中计算用户的日期时间！',
+        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+            '系统无法在CareOnCloud ESMTimeZone中计算用户的日期时间！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -6857,8 +6857,8 @@ sub Data {
         'Currently not possible' => '目前不可能',
         'This is currently disabled because of an ongoing package upgrade.' =>
             '由于正在进行软件包升级，因此目前已被禁用。',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
-            '由于OTOBO守护进程没有运行，这个选项当前被禁用。',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
+            '由于CareOnCloud ESM守护进程没有运行，这个选项当前被禁用。',
         'Are you sure you want to update all installed packages?' => '您确定要更新所有已安装的软件包吗？',
         'No response from get package upgrade run status.' => '获取软件包升级运行状态时没有响应。',
 
@@ -7004,7 +7004,7 @@ sub Data {
             '请至少输入一个搜索条件或输入*搜索所有。',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => '关于OTOBO守护进程的信息',
+        'Information about the CareOnCloud ESM Daemon' => '关于CareOnCloud ESM守护进程的信息',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => '请检查标记为红色的字段，需要输入有效的值。',
@@ -7179,10 +7179,10 @@ sub Data {
         'This is %s' => '这是%s',
         'Complex %s with %s arguments' => '复杂%s，带有%s参数',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloud ESMLineChart
         'No Data Available.' => '没有可用数据。',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloud ESMMultiBarChart
         'Grouped' => '分组的',
         'Stacked' => '堆叠的',
 
@@ -7281,8 +7281,8 @@ Thanks for your help!
         'Added subscription for user "%s".' => '已为用户“%s”添加关注。',
         'Added system request (%s).' => '已添加系统请求 (%s)。',
         'Added web request from customer.' => '已添加来自客户的网页请求。',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
-            '为OTOBO日志文件添加实际年月的后缀，每月创建一个日志文件。',
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
+            '为CareOnCloud ESM日志文件添加实际年月的后缀，每月创建一个日志文件。',
         'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
             '',
         'Adds customers email addresses to recipients in the ticket compose screen of the agent interface. The customers email address won\'t be added if the article type is email-internal.' =>
@@ -7607,8 +7607,8 @@ Thanks for your help!
         'Configure and manage ACLs.' => '配置和管理ACL。',
         'Configure any additional readonly mirror databases that you want to use.' =>
             '配置任何您想要使用的额外只读镜像数据库。',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
-            '配置将支持数据发送到OTOBO团队以便获得更好的支持。',
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
+            '配置将支持数据发送到CareOnCloud ESM团队以便获得更好的支持。',
         'Configure the About information.' => '',
         'Configure the privacy policy.' => '',
         'Configure which screen should be shown after a new ticket has been created.' =>
@@ -7755,8 +7755,8 @@ Thanks for your help!
         'Default value for NameX' => 'NameX的默认值',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             '定义链接对象小部件(LinkObject::ViewMode = \"complex\")设置按钮中的操作。请注意，这些操作必须已经在以下JS和CSS文件中注册：Core.AllocationList.css、Core.UI.AllocationList.js、 Core.UI.Table.Sort.js、Core.Agent.TableFilters.js。',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（例如：faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（例如：faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             '定义客户用户数据（键）与工单动态字段（值）的映射。目的是在工单动态字段中存储客户用户数据。动态字段必须存在于系统中且启用了AgentTicketFreeText（服务人员工单自由文本），这样才能由服务人员手动设置/更新。动态字段不能在服务人员电话工单、邮件工单和客户工单中启用，否则他们将优先于自动设置值。要使用这些映射，还要激活Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser的设置。',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -7796,14 +7796,14 @@ Thanks for your help!
             '定义一个客户条目，以在客户信息块的尾部生成一个谷歌图标。',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             '定义一个客户条目，以在客户信息块的尾部生成一个谷歌地图图标。',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '定义HTML输出结果中在CVE号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '定义HTML输出结果中在微软公告号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '定义HTML输出结果中在BUG追踪号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '定义HTML输出结果中在CVE号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '定义HTML输出结果中在微软公告号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '定义HTML输出结果中在BUG追踪号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             '定义一个在服务人员工单详情屏幕从信件文本中搜集CVE编号的过滤器，并在靠近信件的一个自定义区块中显示结果。如果想要在鼠标移到到链接元素上时显示内容预览，就填写URLPreview字段。它可以与URL中的地址相同，也可以是另外一个URL。请注意：一些网站不能在iframe框架中显示（如Google），这样就无法在预览模式中正常显示内容。',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -7953,8 +7953,8 @@ Thanks for your help!
         'Defines phone communication channel.' => '定义电话通信渠道。',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             '定义将工单作为日历事件显示的队列。',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            '使用公共模块 \'PublicSupportDataCollector\' （如用于OTOBO守护进程的模块）定义用于搜集支持数据的HTTP主机名。',
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            '使用公共模块 \'PublicSupportDataCollector\' （如用于CareOnCloud ESM守护进程的模块）定义用于搜集支持数据的HTTP主机名。',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             '定义IP正则表达式以访问本地的软件仓库。您需要启用这个设置以访问本地的软件仓库，远程主机上还需要设置package::RepositoryList。',
         'Defines the PostMaster header to be used on the filter for keeping the current state of the ticket.' =>
@@ -8260,8 +8260,8 @@ Thanks for your help!
             '定义链接类型“父子”。如果源名称和目标名称相同，则结果链接是无方向链接，否则结果链接是方向性链接。',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             '定义链接类型组。同一组的链接类型废除另外一个，例如：如果工单A以“普通”链接到工单B，则这些工单不能添加另外的“父子”链接。',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            '定义在线软件仓库列表。另一个用于安装的软件仓库，例如：键="http://example.com/otobo/public.pl?Action=PublicRepository;File=" ，值="Some Name"。',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            '定义在线软件仓库列表。另一个用于安装的软件仓库，例如：键="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" ，值="Some Name"。',
         'Defines the list of params that can be passed to ticket search function.' =>
             '定义能传递到工单搜索功能的参数清单。',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -8271,8 +8271,8 @@ Thanks for your help!
             '定义为额外软件包获取在线软件仓库列表的地址，将使用第一个可用的结果。',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             '定义系统的日志模块。“File（文件）”将所有消息写入一个指定的日志文件，“SysLog（系统日志）”使用操作系统的syslog守护进程如syslogd。',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            '定义通过浏览器上传文件的最大尺寸（单位：字节）。警告：这个选项设置过小将使您的OTOBO实例出现许多遮罩屏幕导致停止工作（可能是需要用户输入的任何遮罩屏幕）。',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            '定义通过浏览器上传文件的最大尺寸（单位：字节）。警告：这个选项设置过小将使您的CareOnCloud ESM实例出现许多遮罩屏幕导致停止工作（可能是需要用户输入的任何遮罩屏幕）。',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             '定义一个会话ID的最大有效时间（单位：秒）。',
         'Defines the maximum number of affected tickets per job.' => '定义每个任务影响的最大工单数。',
@@ -8293,8 +8293,8 @@ Thanks for your help!
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             '定义客户界面显示当前登录的所有客户人员的模块。',
         'Defines the module to authenticate customers.' => '定义客户身份验证的模块。',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            '定义服务人员界面如果OTOBO守护进程没有运行就显示一个通知的模块。',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            '定义服务人员界面如果CareOnCloud ESM守护进程没有运行就显示一个通知的模块。',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             '如果系统配置不同步，定义在服务人员界面中显示一条通知的模块。',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -8333,8 +8333,8 @@ Thanks for your help!
             '定义在偏好设置表中存储用户标识符的列名称。',
         'Defines the name of the indicated calendar.' => '定义指定的日历名称。',
         'Defines the name of the key for customer sessions.' => '定义客户会话中关键词的名称。',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            '定义会话中关键词的名称，如Session、SessionID或OTOBO。',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            '定义会话中关键词的名称，如Session、SessionID或CareOnCloud ESM。',
         'Defines the name of the table where the user preferences are stored.' =>
             '定义存储用户偏好设置的表的名称。',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -8433,7 +8433,7 @@ Thanks for your help!
             '定义服务人员真实姓名和给定队列邮件地址之间的分隔符。',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             '定义在服务人员界面客户用户通讯录搜索结果屏幕中显示的列和位置。',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
             '',
         'Defines the source dynamic field for storing historical data.' =>
             '定义源动态字段用于存储历史数据。',
@@ -8459,7 +8459,7 @@ Thanks for your help!
             '定义快速关闭操作的主题，该主题用于话务员界面的工单历史记录。',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             '定义系统管理员的邮件地址，它将显示在本系统的错误屏幕中。',
-        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO). The SystemID may also be used in HTTP session backends.' =>
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
             '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             '定义到外部客户数据库的目标属性，例如：\'AsPopup PopupType_TicketAction\'。',
@@ -8478,8 +8478,8 @@ Thanks for your help!
         'Defines the ticket plugin for calendar appointments.' => '定义日历预约的工单插件。',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             '定义一个指定日历（可能在以后分配给一个指定的队列）的时区。',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            '使用公共模块“PublicSupportDataCollector”（例如用于OTOBO守护进程的模块）来定义支持数据收集的超时（以秒为单位，最小为20秒）。',
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            '使用公共模块“PublicSupportDataCollector”（例如用于CareOnCloud ESM守护进程的模块）来定义支持数据收集的超时（以秒为单位，最小为20秒）。',
         'Defines the two-factor module to authenticate agents.' => '定义服务人员的双因素身份验证模块。',
         'Defines the two-factor module to authenticate customers.' => '定义客户的双因素身份验证模块。',
         'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
@@ -8491,11 +8491,11 @@ Thanks for your help!
             '定义用户头像。 请注意：将\'Active（激活）\'设置为0只会阻止服务人员在个人偏好设置中编辑此组的设置，但仍然允许管理员以其他用户的名义编辑这些设置。 使用\'PreferenceGroup\'来控制这些设置应该显示在用户界面的哪个区域。',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '定义工单的有效状态类型。如果一个工单处于此设置中任一状态类型的状态，则该工单将被视为打开，否则将被视为关闭。',
-        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/otobo/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
             '',
         'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
             '定义解锁的工单有效的状态。为解锁工单，可以使用脚本"bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout"。',
-        'Defines the value of the SameSite attribute of the OTOBO session cookies. Used in careoncloud.psgi.' =>
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
             '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             '定义工单能看到的锁定状态。注意：修改这个设置后，请确保删除缓存以便使用新值。默认：未锁定，临时锁定。',
@@ -8572,8 +8572,8 @@ Thanks for your help!
         'Dialog to show after marking a ticket as unseen' => '',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             '禁用HHTP头"Content-Security-Policy"以便允许载入扩展的脚本内容。禁用这个HTTP头可能引起安全问题！仅在您知道您在干什么时才禁用它！',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
-            '禁用HHTP头"X-Frame-Options: SAMEORIGIN" 以便允许OTOBO可以包含在其它网址的IFrame框架中。禁用这个HTTP头可能有安全问题！仅在您知道您在干什么时才禁用它！',
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+            '禁用HHTP头"X-Frame-Options: SAMEORIGIN" 以便允许CareOnCloud ESM可以包含在其它网址的IFrame框架中。禁用这个HTTP头可能有安全问题！仅在您知道您在干什么时才禁用它！',
         'Disable autocomplete in the login screen.' => '在登陆窗口禁止自动完成。',
         'Disable cloud services' => '禁用云服务',
         'Disables sending reminder notifications to the responsible agent of a ticket (Ticket::Responsible needs to be enabled).' =>
@@ -8710,8 +8710,8 @@ Thanks for your help!
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             '如果你信任所有的公共和私有PGP密钥（即使它们不是可信任签名认证的），则启用这个参数。',
         'Enabled filters.' => '启用的过滤器。',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            '启用PGP支持。当启用PGP签名和加密邮件时，强烈推荐以OTOBO用户运行WEB服务器，否则，访问.pnugp目录会有权限问题。',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            '启用PGP支持。当启用PGP签名和加密邮件时，强烈推荐以CareOnCloud ESM用户运行WEB服务器，否则，访问.pnugp目录会有权限问题。',
         'Enables S/MIME support.' => '启用S/MIME支持。',
         'Enables customers to create their own accounts.' => '允许客户自己建立帐户。',
         'Enables fetch S/MIME from CustomerUser backend support.' => '在客户用户后端支持模块启用收取S/MIME（邮件）。',
@@ -8736,8 +8736,8 @@ Thanks for your help!
             '启用工单负责人功能，以跟踪指定的工单。',
         'Enables ticket type feature.' => '启用工单类型功能。',
         'Enables ticket watcher feature only for the listed groups.' => '仅对列表中的组启用工单关注人功能。',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
-            '启用SecureMode会禁用Web安装程序（http://yourhost.example.com/otobo/installer.pl）和迁移。这样做是为了防止系统被劫持。如果未启用SecureMode，则可以重新安装系统。在这种情况下，当前的基本配置将用于在安装程序脚本中预先填充问题。启用SecureMode还可以启用GenericAgent，PackageManager和SQL Box。',
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+            '启用SecureMode会禁用Web安装程序（http://yourhost.example.com/careoncloud/installer.pl）和迁移。这样做是为了防止系统被劫持。如果未启用SecureMode，则可以重新安装系统。在这种情况下，当前的基本配置将用于在安装程序脚本中预先填充问题。启用SecureMode还可以启用GenericAgent，PackageManager和SQL Box。',
         'English (Canada)' => '英语（加拿大）',
         'English (United Kingdom)' => '英语（英国）',
         'English (United States)' => '英语（美国）',
@@ -8780,8 +8780,8 @@ Thanks for your help!
             '执行定制的命令或模块。注意：如果使用模块，需要使用函数。',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             '为主题中没有工单编号的邮件执行回复或引用头的跟进检查。',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
-            '对OTOBO头\'X-OTOBO-Bounce\'执行后续检查。',
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-OTOBO-Bounce\'.' =>
+            '对CareOnCloud ESM头\'X-OTOBO-Bounce\'执行后续检查。',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             '为主题中没有工单编号的邮件执行附件内容的跟进检查。',
         'Executes follow-up checks on email body for mails that don\'t have a ticket number in the subject.' =>
@@ -8919,7 +8919,7 @@ Thanks for your help!
         'High Contrast' => '高对比度',
         'High contrast skin for visually impaired users.' => '用于视力受损用户的高对比度皮肤。',
         'Hindi' => '印度语',
-        'How many rotated otobo.log files to keep. Default is 3.' => '',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => '',
         'Hungarian' => '匈牙利语',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             '如果Customer::AuthModule（客户认证模块）选择“数据库”，可以指定数据库驱动（一般使用自动检测）。',
@@ -8967,8 +8967,8 @@ Thanks for your help!
             '如果Customer::AuthModule（客户认证模块）选择“LDAP”，可以在这里指定访问属性。',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             '如果Customer::AuthModule（客户认证模块）选择“LDAP”，您可以指定系统是否要停止的条件（例如由于网络问题无法建立到服务器的连接）。',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            '如果Customer::AuthModule（客户认证模块）选择“LDAP”，您可以检查在posixGroup组中的用户是否允许认证，例如：用户需要在组xyz才能使用OTOBO。指定这个有权访问系统的组名。',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            '如果Customer::AuthModule（客户认证模块）选择“LDAP”，您可以检查在posixGroup组中的用户是否允许认证，例如：用户需要在组xyz才能使用CareOnCloud ESM。指定这个有权访问系统的组名。',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             '如果选用了LDAP，您可以为每个LDAP查询添加一个过滤器，例如：(mail=*)、 (objectclass=user) 或 (!objectclass=computer)。',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -9015,16 +9015,16 @@ Thanks for your help!
             '如果启用了此选项，守护进程的标准错误流将重定向到一个日志文件。',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             '如果启用了此选项，守护进程的标准输出流将重定向到一个日志文件。',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
-            '如果启用，守护程序将使用此目录创建其PID文件。 注意：请在任何更改之前停止守护程序，并且只有在不使用<$OTOBOHome>/var/run/时才使用此设置。',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
-            '如果启用，OTOBO将以最小化的形式提供所有CSS文件。',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
-            '如果启用了此选项，OTOBO将用压缩格式传送所有的JavaScript文件。',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+            '如果启用，守护程序将使用此目录创建其PID文件。 注意：请在任何更改之前停止守护程序，并且只有在不使用<$CareOnCloud ESMHome>/var/run/时才使用此设置。',
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
+            '如果启用，CareOnCloud ESM将以最小化的形式提供所有CSS文件。',
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
+            '如果启用了此选项，CareOnCloud ESM将用压缩格式传送所有的JavaScript文件。',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             '如果启用了此选项，电话工单和邮件工单将在新窗口中打开。',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
-            '如果启用了此选项，将从WEB界面、HTTP头信息和外发邮件的X-Headers头信息中移除OTOBO版本标签。注意：如果你要修改这个选项，请确保清空缓存。',
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+            '如果启用了此选项，将从WEB界面、HTTP头信息和外发邮件的X-Headers头信息中移除CareOnCloud ESM版本标签。注意：如果你要修改这个选项，请确保清空缓存。',
         'If enabled, the cache data be held in memory.' => '如果启用了，缓存数据将会保留在内存中。',
         'If enabled, the cache data will be stored in cache backend.' => '如果启用了，缓存数据将会存储到缓存后端。',
         'If enabled, the customer can search for tickets in all services (regardless what services are assigned to the customer).' =>
@@ -9034,8 +9034,8 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '如果启用了此选项，在鼠标移动到主菜单位置时打开一级子菜单（而不是需要点击后再打开）。',
         'If enabled, the quick close action will create an article.' => '启用后，快速关闭操作将创建一条记录。',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            '如果启用，那么尚未选择时区的用户将被通知选择时区。 注意：如果（1）用户尚未选择时区，并且（2）OTOBOTimeZone和UserDefaultTimeZone相同，（3）未设置为UTC，则不会显示通知。',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            '如果启用，那么尚未选择时区的用户将被通知选择时区。 注意：如果（1）用户尚未选择时区，并且（2）CareOnCloud ESMTimeZone和UserDefaultTimeZone相同，（3）未设置为UTC，则不会显示通知。',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '如果没有指定SendmailNotificationEnvelopeFrom，这个选项可确保使用邮件的发件人地址而不是空白的发件人（在某些邮件服务器的配置中需要此选项）。',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -9048,8 +9048,8 @@ Thanks for your help!
             '如果这个选项启用了，服务人员或客户通过WEB界面创建的工单将收到自动响应（如果配置了自动响应）。如果这个选项不启用，则不会发送自动响应。',
         'If this regex matches, no message will be send by the autoresponder.' =>
             '如果这个正则表达式匹配了，自动响应不会发送任何消息。',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
-            '如果启用此设置，则允许安装未经OTOBO Team验证的软件包，不过这些软件包可能会威胁整个系统！',
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
+            '如果启用此设置，则允许安装未经CareOnCloud ESM Team验证的软件包，不过这些软件包可能会威胁整个系统！',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             '如果启用这个设置，本地修改内容不会在软件包管理器和支持数据收集工具中高亮显示为错误。',
         'If you\'re going to be out of office, you may wish to let other users know by setting the exact dates of your absence.' =>
@@ -9094,7 +9094,7 @@ Thanks for your help!
             '全文索引的意大利语停止词，这些词将从搜索索引中移除。',
         'Japanese' => '日语',
         'JavaScript function for the search frontend.' => '搜索界面的JavaScript函数。',
-        'Jump to OTOBO!' => '跃入OTOBO的怀抱！',
+        'Jump to CareOnCloud ESM!' => '跃入CareOnCloud ESM的怀抱！',
         'Korean' => '韩语',
         'Languages' => '',
         'Large' => '详细',
@@ -9186,7 +9186,7 @@ Thanks for your help!
         'Makes the application check the syntax of email addresses.' => '让系统检查邮件地址的语法。',
         'Malay' => '马来语',
         'Manage Customer Dashboard Info Tile Entries' => '',
-        'Manage OTOBO Team cloud services.' => 'OTOBO管理团队云服务。',
+        'Manage CareOnCloud ESM Team cloud services.' => 'CareOnCloud ESM管理团队云服务。',
         'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => '管理邮件加密的PGP密钥。',
         'Manage POP3 or IMAP accounts to fetch email from.' => '管理收取邮件的POP3或IMAP帐号。',
@@ -9214,7 +9214,7 @@ Thanks for your help!
             '服务人员界面相关的服务人员屏幕的最大尺寸（单位：行）。',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             '在邮件回复和一些概览视图屏幕信件主题的最大尺寸。',
-        'MaxSize in Bytes until otobo.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
             '',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             '一天中给自己的邮件地址发送自动邮件响应的最大数（邮件环路保护）。',
@@ -9305,7 +9305,7 @@ Thanks for your help!
         'New Year\'s Day' => '新年',
         'New Year\'s Eve' => '除夕',
         'New process ticket' => '新的流程工单',
-        'News about OTOBO.' => 'OTOBO新闻。',
+        'News about CareOnCloud ESM.' => 'CareOnCloud ESM新闻。',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             '服务人员界面工单电话接入屏幕在添加一个电话备注后工单可能的下一状态。',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -9338,12 +9338,12 @@ Thanks for your help!
         'OAuth Tokens' => '',
         'OIDC Profile Management' => '',
         'OIDC Profiles' => '',
-        'OTOBO News' => 'OTOBO新闻',
-        'OTOBO Team Services' => 'OTOBO团队服务',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
-            'OTOBO能够使用一个或多个只读镜像数据库以扩展操作（如全文搜索或生成统计报表）。您可以在这里指定第一个镜像数据库的DSN（数据源名称）。',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
-            'OTOBO不支持对没有结束日期或没有重复次数的预约做循环处理。在导入过程中，可能有ICS文件包含了此类预约。作为替代，系统将所有的此类预约创建为已过去的预约，然后加上接下来的N个月(默认120个月或10年)的重复预约。',
+        'CareOnCloud ESM News' => 'CareOnCloud ESM新闻',
+        'CareOnCloud ESM Team Services' => 'CareOnCloud ESM团队服务',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+            'CareOnCloud ESM能够使用一个或多个只读镜像数据库以扩展操作（如全文搜索或生成统计报表）。您可以在这里指定第一个镜像数据库的DSN（数据源名称）。',
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+            'CareOnCloud ESM不支持对没有结束日期或没有重复次数的预约做循环处理。在导入过程中，可能有ICS文件包含了此类预约。作为替代，系统将所有的此类预约创建为已过去的预约，然后加上接下来的N个月(默认120个月或10年)的重复预约。',
         'Object backend module registration for the import/export module.' =>
             '',
         'Objects to search for, how many entries and which attributes to show.' =>
@@ -9351,7 +9351,7 @@ Thanks for your help!
         'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
             '',
         'Open an external link!' => '打开一个外部链接！',
-        'Open the OTOBO home page in a new window' => '',
+        'Open the CareOnCloud ESM home page in a new window' => '',
         'Open tickets (customer user)' => '处理中的工单（客户用户）',
         'Open tickets (customer)' => '处理中的工单（客户）',
         'Option' => '选项',
@@ -9459,9 +9459,9 @@ Thanks for your help!
         'ParentChild' => '父子',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             '日志文件的路径（仅在邮件循环保护模块选择文件系统时适用且这是强制需要的）。',
-        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
             '',
-        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the OTOBO Cache via the Maint::Cache::Delete command!' =>
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
             '',
         'Pending time' => '挂起时间',
         'People' => '人员',
@@ -9617,7 +9617,7 @@ Thanks for your help!
         'SSL_VERIFY_PEER - verify the mail server host' => '',
         'Salutations' => '问候语',
         'Sample command output' => '命令输出样例',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
             '',
         'Schedule a maintenance period.' => '计划一个系统维护期。',
         'Screen after new ticket' => '创建新工单后的视图',
@@ -9642,7 +9642,7 @@ Thanks for your help!
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             '选择你的个人时区，所有时间将相对于这个时区显示。',
         'Select your preferred layout for the software.' => '选择你喜欢的软件布局。',
-        'Select your preferred theme for OTOBO.' => '选择你喜欢的OTOBO界面主题。',
+        'Select your preferred theme for CareOnCloud ESM.' => '选择你喜欢的CareOnCloud ESM界面主题。',
         'Selects the cache backend to use.' => '选择使用的缓存后端。',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             '选择处理WEB界面上传文件的模块。“数据库”存储所有上传文件到数据库中，“文件系统”存储所有上传文件到文件系统中。',
@@ -9891,10 +9891,10 @@ Thanks for your help!
             '设置服务人员界面工单负责人屏幕的工单类型（需要启用Ticket::Type）。',
         'Sets the time units in the ticket note screen of the agent interface.' =>
             '',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
-            '将OTOBO内部使用的时区设置如在数据库中存储日期和时间。 警告：此设置一旦设置就不能更改，包含日期/时间的工单或其他数据已据此创建。',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
-            '设置将分配给新创建的用户的时区，并将用于尚未设置时区的用户。 这是默认使用的时区，用于转换OTOBO时区与用户时区之间的日期和时间。',
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+            '将CareOnCloud ESM内部使用的时区设置如在数据库中存储日期和时间。 警告：此设置一旦设置就不能更改，包含日期/时间的工单或其他数据已据此创建。',
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
+            '设置将分配给新创建的用户的时区，并将用于尚未设置时区的用户。 这是默认使用的时区，用于转换CareOnCloud ESM时区与用户时区之间的日期和时间。',
         'Sets the timeout (in seconds) for http/ftp downloads.' => '设置http/ftp下载的超时时间（单位：秒）。',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
             '设置软件下载的超时时间（单位：秒），覆盖参数“WebUserAgent::Timeout”。',
@@ -10039,7 +10039,7 @@ Thanks for your help!
             '在工单概览简洁版式中显示最近的客户信件的主题或工单标题。',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             '以树形或列表形式显示系统中存在的父/子队列的清单。',
-        'Shows information on how to start OTOBO Daemon' => '显示如何启动OTOBO守护进程的信息',
+        'Shows information on how to start CareOnCloud ESM Daemon' => '显示如何启动CareOnCloud ESM守护进程的信息',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '在服务人员界面的工单详情视图中显示到外部页面的链接。 可以通过使用键“Group”和内容如“rw：group1; move_into：group2”来完成额外的访问控制，以显示或不显示此链接。',
         'Shows the article head information in the agent zoom view.' => '在服务人员工单详情视图显示信件的头部信息。',
@@ -10127,16 +10127,16 @@ Thanks for your help!
         'Specifies the directory where SSL certificates are stored.' => '指定存储SSL证书的目录。',
         'Specifies the directory where private SSL certificates are stored.' =>
             '指定存储私有SSL证书的目录。',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            '指定系统发送通知的邮件地址。这个邮件地址用来创建通知管理员的完整显示名称（如"OTOBO通知"otobo@your.example.com），您可以使用配置的变量OTOBO_CONFIG_FQDN，或者选择另外的邮件地址。',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            '指定系统发送通知的邮件地址。这个邮件地址用来创建通知管理员的完整显示名称（如"CareOnCloud ESM通知"careoncloud@your.example.com），您可以使用配置的变量OTOBO_CONFIG_FQDN，或者选择另外的邮件地址。',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             '指定从调度程序任务获取通知消息的邮件地址。',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
             '指定组名，以便组中有rw（读写）权限的用户能够访问“切换到客户”功能。',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             '指定用户需要rw（读写）权限的组，以便他们可以编辑其他用户的首选项。',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
-            '指定系统发送通知的姓名，这个发件人姓名用于创建通知管理员完整的显示名称（如"OTOBO通知"otobo@your.example.com）。',
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
+            '指定系统发送通知的姓名，这个发件人姓名用于创建通知管理员完整的显示名称（如"CareOnCloud ESM通知"careoncloud@your.example.com）。',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             '指定服务人员显示姓和名的先后顺序。',
         'Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).' =>
@@ -10279,7 +10279,7 @@ Thanks for your help!
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             '每次请求时这个模块和它的PreRun()函数（如果定义了）将被执行。',
         'This module is being used to extend the password policy.' => '此模块用于扩展密码策略。',
-        'This module is part of the admin area of OTOBO.' => '这个模块是OTOBO系统管理的一部分。',
+        'This module is part of the admin area of CareOnCloud ESM.' => '这个模块是CareOnCloud ESM系统管理的一部分。',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             '这个选项定义存储流程管理活动条目ID的动态字段。',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -10294,7 +10294,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '这个设置允许您使用自己的国家列表覆盖内置的国家列表，如果您只想用到一小部分的国家时格外有用。',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => '此设置已弃用。 替代方式是设置OTOBOTimeZone。',
+        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '此设置已弃用。 替代方式是设置CareOnCloud ESMTimeZone。',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '这个设置显示所有概览屏幕（而不是仅队列视图）中的排序属性。',
         'Ticket Close' => '工单关闭',
@@ -10355,8 +10355,8 @@ Thanks for your help!
         'To accept login information, such as an EULA or license.' => '接受登录信息，如EULA（最终用户许可协议）或许可。',
         'To download attachments.' => '下载附件。',
         'To view HTML attachments.' => '查看HTML附件。',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
-            '在软件包管理器中显示/不显示OTOBO扩展功能。',
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
+            '在软件包管理器中显示/不显示CareOnCloud ESM扩展功能。',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '工具栏条目的快捷键。可以通过使用键“Group（组）”和值如“rw:group1;move_into:group2”来实现显示/不显示这个链接的额外访问控制。',
         'Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.' =>
@@ -10379,8 +10379,8 @@ Thanks for your help!
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             '开启远程IP地址检查。如果通过代理或拨号连接访问系统，应该关闭，因为远程IP在每次请求时可能都不一样。',
         'Tweak the system as you wish.' => '根据需要调整系统。',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
-            '要使用的守护程序日志循环类型：选择“OTOBO”以使OTOBO系统处理文件循环，或选择“外部”以使用第三方循环机制（如logrotate）。 注意：外部循环机制需要使用其自身的配置。',
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+            '要使用的守护程序日志循环类型：选择“CareOnCloud ESM”以使CareOnCloud ESM系统处理文件循环，或选择“外部”以使用第三方循环机制（如logrotate）。 注意：外部循环机制需要使用其自身的配置。',
         'Ukrainian' => '乌克兰语',
         'Unlock tickets that are past their unlock timeout.' => '过了解锁超时时间后解锁工单。',
         'Unlock tickets whenever a note is added and the owner is out of office.' =>
@@ -10406,7 +10406,7 @@ Thanks for your help!
         'Uses richtext for viewing and editing ticket notification.' => '查看和编辑工单通知时使用富文本。',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             '查看和编辑以下内容时使用富文本：信件、问候语、签名、标准模板、自动响应和通知。',
-        'Value map. Define a key and a value map from import file to OTOBO.' =>
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
             '',
         'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
             '',
@@ -10421,11 +10421,11 @@ Thanks for your help!
             '我们正在执行系统维护，暂时无法登录。',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             '我们正在执行系统维护，很快就恢复正常使用。',
-        'We have changed the default ticket unlock behavior in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and OTOBO version 10.0.' =>
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
             '',
         'Web Service' => '网络服务',
         'Web Services' => 'Web服务',
-        'Welcome %s, to your OTOBO.' => '',
+        'Welcome %s, to your CareOnCloud ESM.' => '',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             '仪表板开头的欢迎语。名称将插入到WelcomeText的％s中。 “ UserTitle”，“ UserFirstname”，“ UserLastname”，“ UserEmail”和“ UserLogin”将被替换。',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
@@ -10450,7 +10450,7 @@ Thanks for your help!
             '',
         'XOAUTH2' => '',
         'Yes, but hide archived tickets' => '是，但隐藏已归档的工单',
-        'Your Tickets. Your OTOBO.' => '',
+        'Your Tickets. Your CareOnCloud ESM.' => '',
         'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
             '您的工单号为“<OTOBO_TICKET>”的邮件已经退回给“<OTOBO_BOUNCE_TO>”，请联系这个地址以获得更多的信息。',
         'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
@@ -10649,7 +10649,7 @@ Thanks for your help!
         'Ignore',
         'Import web service',
         'Information',
-        'Information about the OTOBO Daemon',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -10836,7 +10836,7 @@ Thanks for your help!
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -10853,7 +10853,7 @@ Thanks for your help!
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

@@ -31,7 +31,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Send an OTOBO system registration update to OTOBO Team.');
+    $Self->Description('Send a CareOnCloud ESM system registration update to CareOnCloud ESM Team.');
 
     $Self->AddOption(
         Name        => 'force',

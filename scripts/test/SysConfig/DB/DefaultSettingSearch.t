@@ -49,7 +49,7 @@ my @Tests = (
     {
         Name   => 'Search XMLContent WrongSearch',
         Config => {
-            Search     => "OTOBONoneExsitingString$RandomNumber-UnitTest",
+            Search     => "CareOnCloud ESMNoneExsitingString$RandomNumber-UnitTest",
             SearchType => 'XMLContent',
         },
         ExpectedResultsInclude => [],
@@ -58,7 +58,7 @@ my @Tests = (
     {
         Name   => 'Search Metadata WrongSearch',
         Config => {
-            Search     => "OTOBONoneExsitingString$RandomNumber-UnitTest",
+            Search     => "CareOnCloud ESMNoneExsitingString$RandomNumber-UnitTest",
             SearchType => 'Metadata',
         },
         ExpectedResultsInclude => [],
@@ -67,7 +67,7 @@ my @Tests = (
     {
         Name   => 'Search Filename WrongSearch',
         Config => {
-            Search     => "OTOBONoneExsitingString$RandomNumber-UnitTest",
+            Search     => "CareOnCloud ESMNoneExsitingString$RandomNumber-UnitTest",
             SearchType => 'Filename',
         },
         ExpectedResultsInclude => [],

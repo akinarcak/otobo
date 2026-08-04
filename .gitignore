@@ -16,7 +16,7 @@ var/log/ssl_request_log
 
 # files that might be generated during development
 build.log
-otobo.iml
+careoncloud.iml
 *.out
 *.err
 git-*.txt
@@ -28,7 +28,7 @@ tmp-cpan-lib
 *.swo
 *~
 
-# OTOBO
+# CareOnCloud ESM
 .procmailrc
 /ARCHIVE
 doc/manual/en
@@ -80,14 +80,14 @@ var/httpd/htdocs/skins/Customer/default/css/*Fred*css
 # CodePolicy
 .tidyall.d
 perltidy.LOG.old
-bin/otobo.CodePolicy.pl
+bin/careoncloud.CodePolicy.pl
 Kernel/cpan-lib/Perl/Tidy*
 TidyAll
 Kernel/cpan-lib/Locale/PO.pm
 scripts/install-git-hooks.pl
 scripts/uninstall-git-hooks.pl
 CodePolicy*
-OTOBOCodePolicy*
+CareOnCloud ESMCodePolicy*
 perltidy.LOG
 
 # ITSM
@@ -112,7 +112,7 @@ var/opm/
 push_to_docker.sh
 
 # Temporary files while running the unit tests
-bin/otobo.CheckDB.pl
+bin/careoncloud.CheckDB.pl
 DeleteMePlease
 Test
 !/scripts/test

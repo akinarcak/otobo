@@ -76,7 +76,7 @@ returns:
         Hostname     => "servername.example.com",
         OS           => "Linux",
         OSName       => "debian 7.1",
-        Path         => "/home/otobo/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games",
+        Path         => "/home/careoncloud/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games",
         POSIX        => [
                         "Linux",
                         "servername",
@@ -84,7 +84,7 @@ returns:
                         "#1 SMP Debian 3.2.46-1",
                         "i686",
                       ],
-        User         => "otobo",
+        User         => "careoncloud",
     );
 
 =cut
@@ -246,7 +246,7 @@ sub PerlInfoGet {
 
         # Add bundled modules and their version.
         # Only the modules that correspond to their distribution are listed here.
-        # Some modules, like Devel::REPL::Plugin::OTOBO, are supplied by OTOBO
+        # Some modules, like Devel::REPL::Plugin::OTOBO, are supplied by CareOnCloud ESM
         my @BundledModules = Kernel::System::Environment->BundleModulesDeclarationGet;
         my %ModuleToVersion =
             map { $_ => $Self->ModuleVersionGet( Module => $_ ) }
@@ -290,7 +290,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 1.1903',
         },
         {
-            'Comment'         => 'needed by e.g. Data::ICal, but not used by OTOBO itself',
+            'Comment'         => 'needed by e.g. Data::ICal, but not used by CareOnCloud ESM itself',
             'Module'          => 'Class::Accessor',
             'Required'        => 1,
             'VersionRequired' => '== 0.34',
@@ -382,7 +382,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 1.06',
         },
         {
-            'Comment'         => 'needed by HTMLUtils, contains adaption by OTOBO',
+            'Comment'         => 'needed by HTMLUtils, contains adaption by CareOnCloud ESM',
             'Module'          => 'HTML::Scrubber',
             'Required'        => 1,
             'VersionRequired' => '== 0.20',
@@ -430,7 +430,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 6.11',
         },
         {
-            'Comment'         => 'not used in OTOBO core except in Email::Valid, please switch to Email::Address::XS',
+            'Comment'         => 'not used in CareOnCloud ESM core except in Email::Valid, please switch to Email::Address::XS',
             'Module'          => 'Mail::Address',
             'Required'        => 1,
             'VersionRequired' => '== 2.18',
@@ -466,7 +466,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 1.1004',
         },
         {
-            'Comment'         => 'needed by CPAN::Audit, could be useful in OTOBO as well',
+            'Comment'         => 'needed by CPAN::Audit, could be useful in CareOnCloud ESM as well',
             'Module'          => 'Module::Extract::VERSION',
             'Required'        => 1,
             'VersionRequired' => '== 1.121',
@@ -508,7 +508,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 1.02',
         },
         {
-            'Comment'         => 'needed by OTOBO generic interface',
+            'Comment'         => 'needed by CareOnCloud ESM generic interface',
             'Module'          => 'REST::Client',
             'Required'        => 1,
             'VersionRequired' => '== 273',
@@ -526,7 +526,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== v4.24.1'
         },
         {
-            'Comment'         => 'needed by OTOBO generic interface',
+            'Comment'         => 'needed by CareOnCloud ESM generic interface',
             'Module'          => 'SOAP::Lite',
             'Required'        => 1,
             'VersionRequired' => '== 1.20',
@@ -579,7 +579,7 @@ sub BundleModulesDeclarationGet {
             'VersionRequired' => '== 0.43',
         },
         {
-            'Comment'         => 'needed by Sisimai, OTOBO itself uses YAML::XS',
+            'Comment'         => 'needed by Sisimai, CareOnCloud ESM itself uses YAML::XS',
             'Module'          => 'YAML',
             'Required'        => 1,
             'VersionRequired' => '== 1.30',
@@ -596,9 +596,9 @@ collect database information
 returns
 
     %DBInfo = (
-        Database => "otoboproduction",
+        Database => "careoncloudproduction",
         Host     => "dbserver.example.com",
-        User     => "otobouser",
+        User     => "careonclouduser",
         Type     => "mysql",
         Version  => "MySQL 5.5.31-0+wheezy1",
     )
@@ -624,33 +624,33 @@ sub DBInfoGet {
     return %EnvDB;
 }
 
-=head2 OTOBOInfoGet()
+=head2 CareOnCloud ESMInfoGet()
 
-collect OTOBO information
+collect CareOnCloud ESM information
 
-    my %OTOBOInfo = $EnvironmentObject->OTOBOInfoGet();
+    my %CareOnCloud ESMInfo = $EnvironmentObject->CareOnCloud ESMInfoGet();
 
 returns:
 
-    %OTOBOInfo = (
-        Product         => "OTOBO",
+    %CareOnCloud ESMInfo = (
+        Product         => "CareOnCloud ESM",
         Version         => "3.3.1",
         DefaultLanguage => "en",
-        Home            => "/opt/otobo",
-        Host            => "otobo.example.org",
+        Home            => "/opt/careoncloud",
+        Host            => "careoncloud.example.org",
         SystemID        => 70,
     );
 
 =cut
 
-sub OTOBOInfoGet {
+sub CareOnCloud ESMInfoGet {
     my ( $Self, %Param ) = @_;
 
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    # collect OTOBO data
-    my %EnvOTOBO = (
+    # collect CareOnCloud ESM data
+    my %EnvCareOnCloud ESM = (
         Version         => $ConfigObject->Get('Version'),
         Home            => $ConfigObject->Get('Home'),
         Host            => $ConfigObject->Get('FQDN'),
@@ -659,7 +659,7 @@ sub OTOBOInfoGet {
         DefaultLanguage => $ConfigObject->Get('DefaultLanguage'),
     );
 
-    return %EnvOTOBO;
+    return %EnvCareOnCloud ESM;
 }
 
 1;

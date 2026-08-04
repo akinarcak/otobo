@@ -125,7 +125,7 @@ my @Tests = (
     {
         Name => 'Invalid Deployment New style',
         Add  => {
-            Comments           => 'OTOBOInvalid-123',
+            Comments           => 'CareOnCloud ESMInvalid-123',
             EffectiveValueStrg => 'Some content',
             UserID             => 1,
         },

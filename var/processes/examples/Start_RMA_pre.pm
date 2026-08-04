@@ -112,8 +112,8 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-no'  => 'no',
-                    'otobo5s-yes' => 'yes',
+                    'careoncloud5s-no'  => 'no',
+                    'careoncloud5s-yes' => 'yes',
                 },
                 TranslatableValues => 0,
             },
@@ -128,8 +128,8 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-approved' => 'approved by agent',
-                    'otobo5s-waiting'  => 'waiting for customer',
+                    'careoncloud5s-approved' => 'approved by agent',
+                    'careoncloud5s-waiting'  => 'waiting for customer',
                 },
                 TranslatableValues => 0,
             },

@@ -141,7 +141,7 @@ sub Run {
                 TTL   => $CacheTTL,
             );
             $Return = $MigrateFromOTRSObject->Run(
-                Task     => 'OTOBOOTRSConnectionCheck',
+                Task     => 'CareOnCloud ESMOTRSConnectionCheck',
                 UserID   => 1,
                 OTRSData => \%GetParam,
             );
@@ -176,7 +176,7 @@ sub Run {
             # "normal" migration
             else {
                 $Return = $MigrateFromOTRSObject->Run(
-                    Task   => 'OTOBOOTRSDBCheck',
+                    Task   => 'CareOnCloud ESMOTRSDBCheck',
                     UserID => 1,
                     DBData => \%GetParam,
                 );
@@ -187,30 +187,30 @@ sub Run {
             my @Taskorder;
             if ( $Self->{Subaction} eq 'PreChecks' ) {
                 @Taskorder = qw(
-                    OTOBOFrameworkVersionCheck
-                    OTOBOPerlModulesCheck
+                    CareOnCloud ESMFrameworkVersionCheck
+                    CareOnCloud ESMPerlModulesCheck
                 );
 
-                #                    OTOBOOTRSPackageCheck
+                #                    CareOnCloud ESMOTRSPackageCheck
             }
             elsif ( $Self->{Subaction} eq 'Copy' ) {
                 @Taskorder = qw(
-                    OTOBODatabaseMigrate
-                    OTOBOCopyFilesFromOTRS
-                    OTOBOMigrateConfigFromOTRS
-                    OTOBONotificationMigrate
-                    OTOBOStatsMigrate
-                    OTOBOItsmTablesMigrate
-                    OTOBOAutoResponseTemplatesMigrate
-                    OTOBOResponseTemplatesMigrate
-                    OTOBOSalutationsMigrate
-                    OTOBOSignaturesMigrate
-                    OTOBOPostmasterFilterMigrate
-                    OTOBOACLDeploy
-                    OTOBOMigrateWebServiceConfiguration
-                    OTOBOProcessDeploy
-                    OTOBOCacheCleanup
-                    OTOBOPackageSpecifics
+                    CareOnCloud ESMDatabaseMigrate
+                    CareOnCloud ESMCopyFilesFromOTRS
+                    CareOnCloud ESMMigrateConfigFromOTRS
+                    CareOnCloud ESMNotificationMigrate
+                    CareOnCloud ESMStatsMigrate
+                    CareOnCloud ESMItsmTablesMigrate
+                    CareOnCloud ESMAutoResponseTemplatesMigrate
+                    CareOnCloud ESMResponseTemplatesMigrate
+                    CareOnCloud ESMSalutationsMigrate
+                    CareOnCloud ESMSignaturesMigrate
+                    CareOnCloud ESMPostmasterFilterMigrate
+                    CareOnCloud ESMACLDeploy
+                    CareOnCloud ESMMigrateWebServiceConfiguration
+                    CareOnCloud ESMProcessDeploy
+                    CareOnCloud ESMCacheCleanup
+                    CareOnCloud ESMPackageSpecifics
                 );
             }
 
@@ -313,7 +313,7 @@ sub Run {
     # if this is not an AJAX request, then build the HTML for the current subaction
 
     # generate current title
-    my $Title     = $LayoutObject->{LanguageObject}->Translate('OTRS to OTOBO migration');
+    my $Title     = $LayoutObject->{LanguageObject}->Translate('OTRS to CareOnCloud ESM migration');
     my %Subtitles = (
         Intro            => 'Intro',
         OTRSFileSettings => 'OTRS server and path',
@@ -390,8 +390,8 @@ sub Run {
         # Use defaults for various settings, unless we have cached data
         if ( !IsHashRefWithData($CachedData) ) {
 
-            # Under Docker we assume that /opt/otrs has been copied into the otobo_opt_otobo volume.
-            my $DefaultOTRSHome = $ENV{OTOBO_RUNS_UNDER_DOCKER} ? '/opt/otobo/var/tmp/copied_otrs' : '/opt/otrs';
+            # Under Docker we assume that /opt/otrs has been copied into the otobo_opt_careoncloud volume.
+            my $DefaultOTRSHome = $ENV{OTOBO_RUNS_UNDER_DOCKER} ? '/opt/careoncloud/var/tmp/copied_otrs' : '/opt/otrs';
             my %Defaults        = (
                 Intro => {
                     Subaction => 'OTRSFileSettings',
@@ -405,10 +405,10 @@ sub Run {
                     DBUser => 'otrs',
                 },
                 PreChecks => {
-                    NextTask => 'OTOBOFrameworkVersionCheck',
+                    NextTask => 'CareOnCloud ESMFrameworkVersionCheck',
                 },
                 Copy => {
-                    NextTask => 'OTOBODatabaseMigrate',
+                    NextTask => 'CareOnCloud ESMDatabaseMigrate',
                 },
             );
 
@@ -591,8 +591,8 @@ sub _Finish {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # index.pl is appended in the template
-    my $OTOBOHandle = $ParamObject->ScriptName();
-    $OTOBOHandle =~ s/\/(.*)\/migration\.pl/$1/;
+    my $CareOnCloud ESMHandle = $ParamObject->ScriptName();
+    $CareOnCloud ESMHandle =~ s/\/(.*)\/migration\.pl/$1/;
 
     # Under Docker the scheme is correctly recognised as there are only two relevant cases:
     #   a) HTTP should actually be used
@@ -612,7 +612,7 @@ sub _Finish {
     return {
         Webserver   => $Webserver,
         Scheme      => $Scheme,
-        OTOBOHandle => $OTOBOHandle,
+        CareOnCloud ESMHandle => $CareOnCloud ESMHandle,
         Host        => $Host,
     };
 }
@@ -630,7 +630,7 @@ sub _CheckConfig {
 
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-    # TODO: is this still needed? ConfigurationXML2DB is already called on OTOBOMigrateConfigFromOTRS
+    # TODO: is this still needed? ConfigurationXML2DB is already called on CareOnCloud ESMMigrateConfigFromOTRS
     return $SysConfigObject->ConfigurationXML2DB(
         UserID    => 1,
         Directory => "$Home/Kernel/Config/Files/XML",

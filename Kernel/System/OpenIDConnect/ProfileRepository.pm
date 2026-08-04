@@ -98,7 +98,7 @@ my $ArrayRef = [
         UseNonce   => 1,      # add a nonce to request and token (this is primarily important for the implicit flow where it is enabled by default)
         RandLength => 22,     # length for state and nonce random strings - default: 22
         RandTTL    => 60 * 5, # valid time period for state and nonce (roughly the time a user can take to authenticate) - default: 300 s
-        Leeway     => 2,      # leeway for small time differences between the OTOBO server and the OpenID provider - default: 2 s
+        Leeway     => 2,      # leeway for small time differences between the CareOnCloud ESM server and the OpenID provider - default: 2 s
     },
 },
 ...
@@ -305,7 +305,7 @@ sub Exists {
                     UseNonce   => 1,      # add a nonce to request and token (this is primarily important for the implicit flow where it is enabled by default)
                     RandLength => 22,     # length for state and nonce random strings - default: 22
                     RandTTL    => 60 * 5, # valid time period for state and nonce (roughly the time a user can take to authenticate) - default: 300 s
-                    Leeway     => 2,      # leeway for small time differences between the OTOBO server and the OpenID provier - default: 2 s
+                    Leeway     => 2,      # leeway for small time differences between the CareOnCloud ESM server and the OpenID provier - default: 2 s
         },
         UserID => $UserID
     );
@@ -392,7 +392,7 @@ sub AddProfile {
                     UseNonce   => 1,      # add a nonce to request and token (this is primarily important for the implicit flow where it is enabled by default)
                     RandLength => 22,     # length for state and nonce random strings - default: 22
                     RandTTL    => 60 * 5, # valid time period for state and nonce (roughly the time a user can take to authenticate) - default: 300 s
-                    Leeway     => 2,      # leeway for small time differences between the OTOBO server and the OpenID provier - default: 2 s
+                    Leeway     => 2,      # leeway for small time differences between the CareOnCloud ESM server and the OpenID provier - default: 2 s
         },
         UserID => $UserID
     );

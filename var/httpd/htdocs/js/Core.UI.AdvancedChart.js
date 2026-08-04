@@ -164,11 +164,11 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.OTOBOlineChart(),
+            var Chart = nv.models.CareOnCloud ESMlineChart(),
                 ShowLegend = Options.HideLegend ? false : true,
                 InitDuration = Options.NoInitAnimation ? 0 : 500;
 
-            // don't let nv/d3 exceptions block the rest of OTOBO JavaScript
+            // don't let nv/d3 exceptions block the rest of CareOnCloud ESM JavaScript
             try {
 
                 Chart.staggerLabels(true);
@@ -301,10 +301,10 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.OTOBOlineChart(),
+            var Chart = nv.models.CareOnCloud ESMlineChart(),
                 ShowLegend = Options.HideLegend ? false : true;
 
-            // don't let nv/d3 exceptions block the rest of OTOBO JavaScript
+            // don't let nv/d3 exceptions block the rest of CareOnCloud ESM JavaScript
             try {
 
                 Chart.margin({
@@ -430,7 +430,7 @@ Core.UI.AdvancedChart = (function (TargetNS) {
                     // because it could happen that x axis headings occur multiple
                     // times (such as Thu 18 for two different months), we
                     // add a custom label for uniquity of the headings which is being
-                    // removed later (see OTOBOmultiBarChart.js)
+                    // removed later (see CareOnCloud ESMmultiBarChart.js)
                     ResultLine.values.push({
                         x: '__LABEL_START__' + InnerCounter + '__LABEL_END__' + HeadingElement + ' ',
                         y: Value
@@ -446,10 +446,10 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.OTOBOmultiBarChart(),
+            var Chart = nv.models.CareOnCloud ESMmultiBarChart(),
                 ShowLegend = Options.HideLegend ? false : true;
 
-            // don't let nv/d3 exceptions block the rest of OTOBO JavaScript
+            // don't let nv/d3 exceptions block the rest of CareOnCloud ESM JavaScript
             try {
 
                 Chart.staggerLabels(true);
@@ -600,10 +600,10 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.OTOBOstackedAreaChart(),
+            var Chart = nv.models.CareOnCloud ESMstackedAreaChart(),
                 ShowLegend = Options.HideLegend ? false : true;
 
-            // don't let nv/d3 exceptions block the rest of OTOBO JavaScript
+            // don't let nv/d3 exceptions block the rest of CareOnCloud ESM JavaScript
             try {
 
                 Chart.staggerLabels(true);

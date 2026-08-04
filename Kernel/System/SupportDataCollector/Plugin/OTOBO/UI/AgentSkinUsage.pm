@@ -30,7 +30,7 @@ our @ObjectDependencies = (
 );
 
 sub GetDisplayPath {
-    return Translatable('OTOBO') . '/' . Translatable('UI - Agent Skin Usage');
+    return Translatable('CareOnCloud ESM') . '/' . Translatable('UI - Agent Skin Usage');
 }
 
 sub Run {

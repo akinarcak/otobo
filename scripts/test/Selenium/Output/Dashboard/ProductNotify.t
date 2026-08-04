@@ -92,19 +92,19 @@ $Selenium->RunTest(
                             CacheTTL => 4320,
                             Release  => [
                                 {
-                                    Name     => 'OTOBO',
+                                    Name     => 'CareOnCloud ESM',
                                     Severity => 'Security',
                                     Version  => $ProductFeeds[2]->{Version},
                                     Link     => $ProductFeeds[2]->{Link},
                                 },
                                 {
-                                    Name     => 'OTOBO',
+                                    Name     => 'CareOnCloud ESM',
                                     Severity => 'Minor',
                                     Version  => $ProductFeeds[1]->{Version},
                                     Link     => $ProductFeeds[1]->{Link},
                                 },
                                 {
-                                    Name     => 'OTOBO',
+                                    Name     => 'CareOnCloud ESM',
                                     Severity => 'Major',
                                     Version  => $ProductFeeds[0]->{Version},
                                     Link     => $ProductFeeds[0]->{Link},

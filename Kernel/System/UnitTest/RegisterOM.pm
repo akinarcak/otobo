@@ -63,7 +63,7 @@ sub import {    ## no critic qw(OTOBO::RequireCamelCase)
 
         # Log to an identifiable logfile.
         'Kernel::System::Log' => {
-            LogPrefix => 'OTOBO-otobo.UnitTest',
+            LogPrefix => 'CareOnCloud ESM-careoncloud.UnitTest',
         },
     );
 

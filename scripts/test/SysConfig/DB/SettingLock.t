@@ -545,7 +545,7 @@ for my $Test (@Tests) {
             );
 
             my $EffectiveValueStrg = <<'EOF';
-# OTOBO config file (Unit Tests)
+# CareOnCloud ESM config file (Unit Tests)
 # VERSION:1.1
 package Kernel::Config::Files::ZZZAAuto;
 use strict;

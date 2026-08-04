@@ -261,7 +261,7 @@ $Selenium->RunTest(
             IsVisibleForCustomer => 0,
             SenderType           => 'customer',
             From                 => $UserFormString,
-            To                   => 'Some Agent <otobo@example.com>',
+            To                   => 'Some Agent <careoncloud@example.com>',
             Subject              => 'some short description',
             Body                 => 'the message text',
             Charset              => 'utf8',

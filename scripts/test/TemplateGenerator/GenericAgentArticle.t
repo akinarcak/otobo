@@ -103,7 +103,7 @@ my %GenericAgentArticle = $Kernel::OM->Get('Kernel::System::TemplateGenerator')-
 $Self->Is(
     $GenericAgentArticle{Body},
     $Ticket{TicketNumber},
-    "TicketNumber found. OTOBO Tag used.",
+    "TicketNumber found. CareOnCloud ESM Tag used.",
 );
 
 $Self->DoneTesting();

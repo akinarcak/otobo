@@ -85,7 +85,7 @@ sub Run {
                 Priority => 'error',
                 Message  => "Need $Key!"
             );
-            $Result{Message}    = $Self->{LanguageObject}->Translate("Check if OTOBO version is correct.");
+            $Result{Message}    = $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM version is correct.");
             $Result{Comment}    = $Self->{LanguageObject}->Translate( 'Need %s!', $Key );
             $Result{Successful} = 0;
             return \%Result;
@@ -108,7 +108,7 @@ sub Run {
                 Priority => 'error',
                 Message  => "Need DBData->$Key!"
             );
-            $Result{Message}    = $Self->{LanguageObject}->Translate("Check if OTOBO version is correct.");
+            $Result{Message}    = $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM version is correct.");
             $Result{Comment}    = $Self->{LanguageObject}->Translate( 'Need %s!', $Key );
             $Result{Successful} = 0;
             return \%Result;
@@ -124,7 +124,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOOTRSPackageCheck',
+            Task      => 'CareOnCloud ESMOTRSPackageCheck',
             SubTask   => "Check which packages are installed on both systems.",
             StartTime => $Epoch,
         },
@@ -138,8 +138,8 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'OTOBOOTRSPackageCheck',
-            SubTask   => 'Check if OTOBO and OTRS versions are correct.',
+            Task      => 'CareOnCloud ESMOTRSPackageCheck',
+            SubTask   => 'Check if CareOnCloud ESM and OTRS versions are correct.',
             StartTime => $Epoch,
         },
     );
@@ -148,23 +148,23 @@ sub Run {
         %Param,
     );
 
-    my $OTOBOPackRef = $Self->_GetPackages(
+    my $CareOnCloud ESMPackRef = $Self->_GetPackages(
     );
 
-    # Check OTOBO version
+    # Check CareOnCloud ESM version
     my @OTRSPackages;
     push( @OTRSPackages, @{$OTRSPackRef} );
-    my @OTOBOPackages;
-    push( @OTOBOPackages, @{$OTOBOPackRef} );
+    my @CareOnCloud ESMPackages;
+    push( @CareOnCloud ESMPackages, @{$CareOnCloud ESMPackRef} );
 
     # Remove all packages which in both systems installed.
     # First we create a hash
     my %TmpOTRSHash  = map { $_ => 1 } @OTRSPackages;
-    my %TmpOTOBOHash = map { $_ => 1 } @OTOBOPackages;
+    my %TmpCareOnCloud ESMHash = map { $_ => 1 } @CareOnCloud ESMPackages;
 
     # Remove if not exist in hash
-    @OTOBOPackages = grep { !exists $TmpOTRSHash{$_} } @OTOBOPackages;
-    @OTRSPackages  = grep { !exists $TmpOTOBOHash{$_} } @OTRSPackages;
+    @CareOnCloud ESMPackages = grep { !exists $TmpOTRSHash{$_} } @CareOnCloud ESMPackages;
+    @OTRSPackages  = grep { !exists $TmpCareOnCloud ESMHash{$_} } @OTRSPackages;
 
     # Get ignore package list from Base.pm
     my @IgnorePackageList = $Self->PackageMigrateIgnorePackages();
@@ -221,7 +221,7 @@ sub _GetPackages {
     my $DBObject;
     my $DBData = $Param{DBData};
 
-    # If DBDSN is given, we need a connection != otobo database
+    # If DBDSN is given, we need a connection != careoncloud database
     if ( defined $DBData ) {
 
         # create CloneDB backend object
@@ -241,12 +241,12 @@ sub _GetPackages {
         SQL => "SELECT name FROM package_repository",
     );
 
-    my @OTOBONames;
+    my @CareOnCloud ESMNames;
     while ( my @Row = $DBObject->FetchrowArray() ) {
-        push( @OTOBONames, $Row[0] );
+        push( @CareOnCloud ESMNames, $Row[0] );
     }
 
-    return \@OTOBONames;
+    return \@CareOnCloud ESMNames;
 }
 
 1;

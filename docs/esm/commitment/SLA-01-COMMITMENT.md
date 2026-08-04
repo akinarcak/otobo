@@ -2,7 +2,7 @@
 
 ## Karar
 
-`D724Commitment`, OTOBO'nun kanitlanmis `Kernel::System::DateTime` business-time hesaplarini kullanir. D724 tablolarinda tenant policy, request'e bagli immutable instance ve append-only lifecycle event'i tutulur. Boylece OTOBO takvim/tatil/timezone davranisi fork edilmez; urune ozel pause, warning, breach ve kanit semantigi eklenir.
+`D724Commitment`, CareOnCloud ESM'nun kanitlanmis `Kernel::System::DateTime` business-time hesaplarini kullanir. D724 tablolarinda tenant policy, request'e bagli immutable instance ve append-only lifecycle event'i tutulur. Boylece CareOnCloud ESM takvim/tatil/timezone davranisi fork edilmez; urune ozel pause, warning, breach ve kanit semantigi eklenir.
 
 ## Veri ve durum modeli
 
@@ -14,7 +14,7 @@ Policy sonradan degisse bile acik request'in hedefi degismez. Ayni request/polic
 
 ## Calisma zamani ve scheduler
 
-Destination ve elapsed hesaplari OTOBO calisma saatleri, tek-seferlik/yillik tatiller ve calendar timezone ayarlarini kullanir. Pause aninda tuketilen business seconds dondurulur; resume kalan sureyi yeni baslangictan hesaplayarak warning ve due zamanlarini kaydirir.
+Destination ve elapsed hesaplari CareOnCloud ESM calisma saatleri, tek-seferlik/yillik tatiller ve calendar timezone ayarlarini kullanir. Pause aninda tuketilen business seconds dondurulur; resume kalan sureyi yeni baslangictan hesaplayarak warning ve due zamanlarini kaydirir.
 
 `D724CommitmentSweep` cron gorevi her dakika, en fazla tek paralel instance ile active commitment'lari degerlendirir. Warning ve breach gecisleri optimistic version kontroluyle yazilir; yarisan worker stale kaydi overwrite edemez.
 
@@ -32,7 +32,7 @@ Katalog workflow'u varsayilan policy'ye ek olarak sadece validate edilmis cevapl
 
 `D724Commitment 0.4.0` dispatcher'i pending/retry kayitlarini atomik lease ile sahiplenir. Yarisan worker ayni action'i alamaz; gecici hata 60 saniyeden baslayan ussel backoff ile yeniden denenir ve maksimum deneme sonunda kayit `dead` olur. `attempt_count`, `lifetime_attempt_count`, `replay_count`, son hata, response code, islenme zamani ve delivery reference commitment kanitinda saklanir.
 
-`notify_role`, alicilari sadece action tenant'indaki aktif directory rol uyeliklerinden cozer ve OTOBO email transport'una tenant/delivery basliklariyla kuyruklar. `assignment`, ayni tenant ve request'teki aktif fulfillment gorevini hedef gruba atar. `webhook`, policy icinde URL kabul etmez: adlandirilmis endpoint SysConfig/secret store'dan cozulur, yalnizca exact allow-list'teki HTTPS host'una canonical JSON gonderir; version, UTC timestamp, delivery ID ve exact body HMAC-SHA256 ile birlikte imzalanir. Ayrintili receiver sozlesmesi `docs/esm/integrations/WEBHOOK-01.md` dosyasindadir.
+`notify_role`, alicilari sadece action tenant'indaki aktif directory rol uyeliklerinden cozer ve CareOnCloud ESM email transport'una tenant/delivery basliklariyla kuyruklar. `assignment`, ayni tenant ve request'teki aktif fulfillment gorevini hedef gruba atar. `webhook`, policy icinde URL kabul etmez: adlandirilmis endpoint SysConfig/secret store'dan cozulur, yalnizca exact allow-list'teki HTTPS host'una canonical JSON gonderir; version, UTC timestamp, delivery ID ve exact body HMAC-SHA256 ile birlikte imzalanir. Ayrintili receiver sozlesmesi `docs/esm/integrations/WEBHOOK-01.md` dosyasindadir.
 
 ## Dogrulama
 

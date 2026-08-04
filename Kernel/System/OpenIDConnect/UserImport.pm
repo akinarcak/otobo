@@ -39,7 +39,7 @@ Kernel::System::OpenIDConnect::UserImport
 
 =for stopwords OIDC
 
-Import users into Otobo based on valid OpenID Connect Token.
+Import users into CareOnCloud based on valid OpenID Connect Token.
 
 =head1 SYNOPSIS
 
@@ -64,7 +64,7 @@ sub new {
 
 =head2 ImportUser()
 
-Import an User into Otobo based on valid OIDC Token
+Import an User into CareOnCloud based on valid OIDC Token
 
     my $Success = $UserImportObject->ImportUser(
         Token => $Token,                        # Token with user details to map
@@ -89,7 +89,7 @@ sub ImportUser {
     my $UserMap = $ConfigObject->Get( $OpenIDConfigName . '::UserMap' ) || $ConfigObject->Get('AuthModule::OpenIDConnect::UserMap');
     my $RoleMap = $ConfigObject->Get( $OpenIDConfigName . '::RoleMap' ) || $ConfigObject->Get('AuthModule::OpenIDConnect::RoleMap');
 
-    # determine jwt clain to otobo UserLogin mapping
+    # determine jwt clain to careoncloud UserLogin mapping
     my $UserLogin = $TokenData->{$UID};
     if ( !$UserLogin ) {
 
@@ -132,7 +132,7 @@ sub ImportUser {
         delete $UserData{UserPw};
 
         # userdata, with reasonable defaults
-        $UserData{UserFirstname} = $UserData{UserFirstname} || $TokenData->{azp}                || 'otobo';
+        $UserData{UserFirstname} = $UserData{UserFirstname} || $TokenData->{azp}                || 'careoncloud';
         $UserData{UserLastname}  = $UserData{UserLastname}  || $TokenData->{preferred_username} || 'bot';
         $UserData{UserEmail}     = $TokenData->{email}      || $UserData{UserEmail}             || 'systemuser@otobo.local';
 
@@ -242,10 +242,10 @@ sub _ExtractMap {
             !ref $Param{Data} ? ( $Param{Data} ) : ();
 
         for my $OpenIDAttribute (@Data) {
-            my $OTOBOAttribute = $Param{Map}{$OpenIDAttribute};
+            my $CareOnCloud ESMAttribute = $Param{Map}{$OpenIDAttribute};
 
-            if ($OTOBOAttribute) {
-                $Return{$OTOBOAttribute} = 1;
+            if ($CareOnCloud ESMAttribute) {
+                $Return{$CareOnCloud ESMAttribute} = 1;
             }
         }
     }

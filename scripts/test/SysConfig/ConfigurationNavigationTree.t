@@ -48,8 +48,8 @@ my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            OTOBO => {
-                DisplayName => 'OTOBO',
+            CareOnCloud ESM => {
+                DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',         'CloudServices.xml',     'Daemon.xml', 'Framework.xml',
                     'GenericInterface.xml', 'ProcessManagement.xml', 'Ticket.xml',

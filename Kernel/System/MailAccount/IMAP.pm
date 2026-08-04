@@ -36,7 +36,7 @@ use Kernel::System::OpenIDConnect::OAuth2MailExtensions;
 no warnings('once');    ## no critic qw(TestingAndDebugging::ProhibitNoWarnings)
 
 # monkey patch support for XOAUTH2/OAUTHBEARER into Mail::IMAPClient
-*Mail::IMAPClient::Otobo_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::ImapClientOAuth2;
+*Mail::IMAPClient::CareOnCloud_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::ImapClientOAuth2;
 
 use warnings('once');
 
@@ -132,7 +132,7 @@ sub Connect {
             };
         }
 
-        my $Result = $IMAPObject->Otobo_OAuth2(
+        my $Result = $IMAPObject->CareOnCloud_OAuth2(
             User      => $Param{Login},
             Token     => $Token->{Token},
             Host      => $Param{Host},

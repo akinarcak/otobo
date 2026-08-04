@@ -129,7 +129,7 @@ for my $Article (@Articles) {
 $Self->Is(
     $ArticleBox[1]->{Body},
     $Ticket{TicketNumber},
-    'TicketNumber found. OTOBO Tag used.'
+    'TicketNumber found. CareOnCloud ESM Tag used.'
 );
 
 # Get articles visible to customer.
@@ -150,7 +150,7 @@ for my $Article (@Articles) {
 $Self->Is(
     $ArticleBoxCustomer[0]->{Body},
     $Ticket{TicketNumber},
-    'Article found in customer view. TicketNumber found. OTOBO Tag used.'
+    'Article found in customer view. TicketNumber found. CareOnCloud ESM Tag used.'
 );
 
 # Add a new job with note visible internally.
@@ -204,7 +204,7 @@ for my $Article (@Articles) {
 $Self->Is(
     $ArticleBox[1]->{Body},
     $Ticket{TicketNumber},
-    'TicketNumber found. OTOBO Tag used.'
+    'TicketNumber found. CareOnCloud ESM Tag used.'
 );
 
 # Get all articles visible to customer.

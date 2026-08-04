@@ -144,7 +144,7 @@ for my $AdminModule (@AdminModules) {
     $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=$AdminModule");
 
     # Check if needed frontend module is registered in sysconfig.
-    # Skip test for unregistered modules (e.g. OTOBO Business)
+    # Skip test for unregistered modules (e.g. CareOnCloud ESM Business)
     if ( !$FrontendModules->{$AdminModule} ) {
 
         ok(

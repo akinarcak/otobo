@@ -28,7 +28,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Delete cache files created by OTOBO.');
+    $Self->Description('Delete cache files created by CareOnCloud ESM.');
     $Self->AddOption(
         Name        => 'expired',
         Description => 'Delete only caches which are expired by TTL.',

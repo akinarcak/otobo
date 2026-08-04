@@ -48,7 +48,7 @@ my %FakeSMTPEnv = (
 
 no strict 'refs';    ## no critic (TestingAndDebugging::ProhibitNoStrict)
 
-# Overwrite the OTOBO Email::SMTP check method to use our fake smtp client,
+# Overwrite the CareOnCloud ESM Email::SMTP check method to use our fake smtp client,
 #   but make this change local to the unit test scope, as you can see, it also
 #   makes use of the %FakeSMTPEnv.
 local *{'Kernel::System::Email::SMTP::Check'} = sub {

@@ -56,7 +56,7 @@ my @TargetUserIDs;
 }
 
 my $FileBase = <<'EOF';
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:2.0
 package Kernel::Config::Files::User::0;
 use strict;

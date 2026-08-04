@@ -4,14 +4,14 @@ Durum: ticket read/search alt kapisi tamamlandi (`2026-07-24`). Genel `SEC-01b` 
 
 ## Garanti
 
-`D724TicketAudit 0.7.1`, OTOBO'nun resmi `Ticket::CustomModule` uzatma noktasinda merkezi `D724::TicketPolicy` servisini yukler.
+`D724TicketAudit 0.7.1`, CareOnCloud ESM'nun resmi `Ticket::CustomModule` uzatma noktasinda merkezi `D724::TicketPolicy` servisini yukler.
 
 - Agent baglami aktif `d724_tenant_agent_role` kayitlarindan, customer baglami aktif customer-company tenant'inden uretilir.
 - `TicketSearch` sorgusu calismadan once izinli tenant listesi `CustomerID` predikati olarak eklenir. Cagiranin filtresi izinli tenant'larla kesistirilir; bos kesisim sonuc dondurmez.
 - `CustomerIDRaw` tenant filtresini atlayabildigi icin policy etkinken reddedilir.
 - Baglamsiz, uyeliksiz, gecersiz veya inactive tenant kimlikleri fail-closed davranir.
 - Tekil erisim immutable `d724_ticket_scope` ve aktif tenant kaydindan dogrulanir; ticket'in degisebilir UI alanlarina guvenilmez.
-- Generic Interface `TicketGet`, `TicketHistoryGet` ve `TicketUpdate` ortak erişim kontrolü hem OTOBO queue/customer iznini hem tenant iznini zorunlu tutar. Ayrıca ayrı `integration.ticket.get`, `integration.ticket.history` ve `integration.ticket.update` kararları uygulanır; requester/auditor update yapamaz ve tanımlanamayan operasyon fail-closed reddedilir.
+- Generic Interface `TicketGet`, `TicketHistoryGet` ve `TicketUpdate` ortak erişim kontrolü hem CareOnCloud ESM queue/customer iznini hem tenant iznini zorunlu tutar. Ayrıca ayrı `integration.ticket.get`, `integration.ticket.history` ve `integration.ticket.update` kararları uygulanır; requester/auditor update yapamaz ve tanımlanamayan operasyon fail-closed reddedilir.
 - Platform bypass yalniz mevcut `D724::TenantGuard::AllowPlatformAdmin` emergency ayari ve acik `platform_admin` baglami ile mumkundur.
 
 Filtre sonuctan sonra uygulanmaz. Bu sayede `Limit`, siralama ve `COUNT` altinda baska tenant kayitlarinin pencereyi doldurup izinli kayitlari gizlemesi engellenir.

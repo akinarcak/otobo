@@ -35,7 +35,7 @@ $Kernel::OM->ObjectParamAdd(
 );
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
-# This test checks if OTOBO correctly detects that an email must not be auto-responded to.
+# This test checks if CareOnCloud ESM correctly detects that an email must not be auto-responded to.
 my @Tests = (
     {
         Name  => 'Regular mail',

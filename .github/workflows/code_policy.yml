@@ -26,7 +26,7 @@ jobs:
               run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install libxml2-utils libxslt-dev graphviz libqrencode-dev odbcinst1debian2 libodbc1 odbcinst unixodbc-dev unixodbc gettext npm
 
             # check out the merge commit of the pull request that triggerd this workflow
-            - name: 'check out OTOBO'
+            - name: 'check out CareOnCloud ESM'
               uses: actions/checkout@v6
 
             # some diagnostics
@@ -94,7 +94,7 @@ jobs:
                 tests: false
                 sudo: false
 
-            # the setup is just like otobo.web.dockerfile and .dockerignore
+            # the setup is just like careoncloud.web.dockerfile and .dockerignore
             - name: set up config
               run: |
                 cp --no-clobber Kernel/Config.pm.docker.dist Kernel/Config.pm

@@ -41,7 +41,7 @@ $Selenium->RunTest(
         # Make sure system is based on UTC.
         $Helper->ConfigSettingChange(
             Valid => 1,
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloud ESMTimeZone',
             Value => 'UTC',
         );
         $Helper->ConfigSettingChange(

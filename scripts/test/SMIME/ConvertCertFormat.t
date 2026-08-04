@@ -204,7 +204,7 @@ my @Certificates = (
     {
     },
     {
-        CertificateName      => 'OTOBOUserCert',
+        CertificateName      => 'CareOnCloud ESMUserCert',
         CertificateFileName1 => 'SMIMEUserCertificate-Axel.crt',
         CertificateFileName2 => 'SMIMEUserCertificate-Axel.p7b',
         CertificateFileName3 => 'SMIMEUserCertificate-Axel.der',
@@ -216,7 +216,7 @@ my @Certificates = (
     {
     },
     {
-        CertificateName      => 'OTOBOUserCert wrong password',
+        CertificateName      => 'CareOnCloud ESMUserCert wrong password',
         CertificateFileName1 => 'SMIMEUserCertificate-Axel.crt',
         CertificateFileName2 => 'SMIMEUserCertificate-Axel.p7b',
         CertificateFileName3 => 'SMIMEUserCertificate-Axel.der',

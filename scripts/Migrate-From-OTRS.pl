@@ -35,7 +35,7 @@ use Kernel::System::ObjectManager ();
 
 local $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-Migrate-From-OTRS.pl',
+        LogPrefix => 'CareOnCloud ESM-Migrate-From-OTRS.pl',
     },
 );
 
@@ -78,14 +78,14 @@ EOF
     if ( $> == 0 ) {    # $EFFECTIVE_USER_ID
         die "
 Cannot run this program as root.
-Please run it as the 'otobo' user or with the help of su:
-    su -c \"$0\" -s /bin/bash otobo
+Please run it as the 'careoncloud' user or with the help of su:
+    su -c \"$0\" -s /bin/bash careoncloud
 ";
     }
 
     my $Result = $Kernel::OM->Create('Kernel::System::MigrateFromOTRS')->Run(
         OTRSHomePath       => '/opt/otrs/',
-        Task               => 'OTOBOPerlModulesCheck',
+        Task               => 'CareOnCloud ESMPerlModulesCheck',
         CommandlineOptions => \%Options,
         UserID             => 1,
     );

@@ -29,10 +29,10 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Generate an index file (otobo.xml) for an OTOBO package repository.');
+    $Self->Description('Generate an index file (careoncloud.xml) for a CareOnCloud ESM package repository.');
     $Self->AddArgument(
         Name        => 'source-directory',
-        Description => "Specify the directory containing the OTOBO packages.",
+        Description => "Specify the directory containing the CareOnCloud ESM packages.",
         Required    => 1,
         ValueRegex  => qr/.*/smx,
     );

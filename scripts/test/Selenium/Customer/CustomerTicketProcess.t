@@ -32,7 +32,7 @@ use Kernel::System::UnitTest::Selenium;
 our $Self;
 
 skip_all(
-    'CustomerTicketProcess is not a separately usable module anymore as of OTOBO 10.1. All ActivityDialog functionality is called from CustomerTicketZoom. Test has to be rewritten.'
+    'CustomerTicketProcess is not a separately usable module anymore as of CareOnCloud ESM 10.1. All ActivityDialog functionality is called from CustomerTicketZoom. Test has to be rewritten.'
 );
 
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );

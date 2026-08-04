@@ -255,7 +255,7 @@ for my $Test (@CryptTests) {
         );
         $CommunicationLogObject->ObjectLogStart( ObjectLogType => 'Message' );
 
-        # use post master to import mail into OTOBO
+        # use post master to import mail into CareOnCloud ESM
         my $PostMasterObject = Kernel::System::PostMaster->new(
             CommunicationLogObject => $CommunicationLogObject,
             Email                  => $Email,
@@ -565,7 +565,7 @@ for my $Test (@ArticleTests) {
         VerifyDecryption => 1,
     };
 
-    # TODO: currently inline signatures tests does not work as OTOBO does not save the signature
+    # TODO: currently inline signatures tests does not work as CareOnCloud ESM does not save the signature
     #    in the Article{Body}, the body remains intact after sending the email, only the email has
     #    the signature
 

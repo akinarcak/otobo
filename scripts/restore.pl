@@ -41,14 +41,14 @@ getopt( 'hbd', \%Opts );
 if ( exists $Opts{h} ) {
     print <<'END_HELP';
 
-Restore an OTOBO system from backup.
+Restore a CareOnCloud ESM system from backup.
 
 Usage:
- restore.pl -b /data_backup/<TIME>/ -d /opt/otobo/
+ restore.pl -b /data_backup/<TIME>/ -d /opt/careoncloud/
 
 Options:
  -b                     - Directory of the backup files.
- -d                     - Target OTOBO home directory.
+ -d                     - Target CareOnCloud ESM home directory.
  [-h]                   - Display help for this command.
 
 END_HELP
@@ -129,7 +129,7 @@ elsif ( -e $ConfigBackupZstd ) {
 # create common objects
 local $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-restore.pl',
+        LogPrefix => 'CareOnCloud ESM-restore.pl',
     },
 );
 
@@ -204,7 +204,7 @@ if ( $DB =~ m/mysql/i ) {
 else {
     $Kernel::OM->Get('Kernel::System::DB')->Prepare(
         SQL =>
-            "SELECT table_name FROM information_schema.tables WHERE table_catalog = 'otobo' AND table_schema = 'public'",
+            "SELECT table_name FROM information_schema.tables WHERE table_catalog = 'careoncloud' AND table_schema = 'public'",
     );
     my $Check = 0;
     while ( my @RowTmp = $Kernel::OM->Get('Kernel::System::DB')->FetchrowArray() ) {

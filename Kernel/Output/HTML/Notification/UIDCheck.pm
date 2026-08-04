@@ -33,7 +33,7 @@ sub Run {
     return '' if $Self->{UserID} != 1;
 
     # get the product name
-    my $ProductName = $Kernel::OM->Get('Kernel::Config')->Get('ProductName') || 'OTOBO';
+    my $ProductName = $Kernel::OM->Get('Kernel::Config')->Get('ProductName') || 'CareOnCloud ESM';
 
     # get layout object
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');

@@ -16,4 +16,4 @@
 
 /*eslint-disable no-unused-vars*/
 
-var OTOBOAdblockDisabled = true;
+var CareOnCloud ESMAdblockDisabled = true;

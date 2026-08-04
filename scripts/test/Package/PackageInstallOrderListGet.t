@@ -132,19 +132,19 @@ my @InstalledPublic501 = (
         Version => '5.0.1',
     },
     {
-        Name    => 'OTOBOAppointmentCalendar',
+        Name    => 'CareOnCloud ESMAppointmentCalendar',
         Version => '5.0.1',
     },
     {
-        Name    => 'OTOBOCloneDB',
+        Name    => 'CareOnCloud ESMCloneDB',
         Version => '5.0.1',
     },
     {
-        Name    => 'OTOBOCodePolicy',
+        Name    => 'CareOnCloud ESMCodePolicy',
         Version => '5.0.1',
     },
     {
-        Name    => 'OTOBOMasterSlave',
+        Name    => 'CareOnCloud ESMMasterSlave',
         Version => '5.0.1',
     },
     {
@@ -171,19 +171,19 @@ my @OnlinePublic502 = (
         Version => '5.0.2'
     },
     {
-        Name    => 'OTOBOAppointmentCalendar',
+        Name    => 'CareOnCloud ESMAppointmentCalendar',
         Version => '5.0.2',
     },
     {
-        Name    => 'OTOBOCloneDB',
+        Name    => 'CareOnCloud ESMCloneDB',
         Version => '5.0.2',
     },
     {
-        Name    => 'OTOBOCodePolicy',
+        Name    => 'CareOnCloud ESMCodePolicy',
         Version => '5.0.2',
     },
     {
-        Name    => 'OTOBOMasterSlave',
+        Name    => 'CareOnCloud ESMMasterSlave',
         Version => '5.0.2',
     },
     {
@@ -287,10 +287,10 @@ my @Tests = (
             InstallOrder => {
                 FAQ                      => 1,
                 Fred                     => 1,
-                OTOBOAppointmentCalendar => 1,
-                OTOBOCloneDB             => 1,
-                OTOBOCodePolicy          => 1,
-                OTOBOMasterSlave         => 1,
+                CareOnCloud ESMAppointmentCalendar => 1,
+                CareOnCloud ESMCloneDB             => 1,
+                CareOnCloud ESMCodePolicy          => 1,
+                CareOnCloud ESMMasterSlave         => 1,
                 Survey                   => 1,
                 SystemMonitoring         => 1,
                 TimeAccounting           => 1,
@@ -299,13 +299,13 @@ my @Tests = (
         },
     },
     {
-        Name   => 'OTOBOGenericInterfaceITSMConfigurationManagement',
+        Name   => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
         Config => {
             InstalledPackages => [
                 @InstalledITSM5017,
                 (
                     {
-                        Name    => 'OTOBOGenericInterfaceITSMConfigurationManagement',
+                        Name    => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
                         Version => '5.0.1',
                     },
                 ),
@@ -314,7 +314,7 @@ my @Tests = (
                 @OnlineITSM5021,
                 (
                     {
-                        Name            => 'OTOBOGenericInterfaceITSMConfigurationManagement',
+                        Name            => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
                         Version         => '5.0.21',
                         PackageRequired => [
                             {
@@ -337,20 +337,20 @@ my @Tests = (
                 ITSMCore                                         => 6,
                 ITSMIncidentProblemManagement                    => 1,
                 ITSMServiceLevelManagement                       => 1,
-                OTOBOGenericInterfaceITSMConfigurationManagement => 1,
+                CareOnCloud ESMGenericInterfaceITSMConfigurationManagement => 1,
             },
             Failed => {},
         },
     },
 
     {
-        Name   => 'OTOBOITSMConfigItemReference',
+        Name   => 'CareOnCloud ESMITSMConfigItemReference',
         Config => {
             InstalledPackages => [
                 @InstalledITSM5017,
                 (
                     {
-                        Name    => 'OTOBOITSMConfigItemReference',
+                        Name    => 'CareOnCloud ESMITSMConfigItemReference',
                         Version => '5.0.1',
                     },
                 ),
@@ -359,7 +359,7 @@ my @Tests = (
                 @OnlineITSM5021,
                 (
                     {
-                        Name            => 'OTOBOITSMConfigItemReference',
+                        Name            => 'CareOnCloud ESMITSMConfigItemReference',
                         Version         => '5.0.21',
                         PackageRequired => [
                             {
@@ -387,7 +387,7 @@ my @Tests = (
                 ITSMCore                      => 6,
                 ITSMIncidentProblemManagement => 1,
                 ITSMServiceLevelManagement    => 1,
-                OTOBOITSMConfigItemReference  => 1,
+                CareOnCloud ESMITSMConfigItemReference  => 1,
             },
             Failed => {},
         },
@@ -400,7 +400,7 @@ my @Tests = (
                 @InstalledITSM5017,
                 (
                     {
-                        Name    => 'OTOBOGenericInterfaceITSMConfigurationManagement',
+                        Name    => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
                         Version => '5.0.1',
                     },
                 ),
@@ -420,7 +420,7 @@ my @Tests = (
             },
             Failed => {
                 NotFound => {
-                    OTOBOGenericInterfaceITSMConfigurationManagement => 1
+                    CareOnCloud ESMGenericInterfaceITSMConfigurationManagement => 1
                 },
             },
         },

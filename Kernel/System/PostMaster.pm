@@ -64,7 +64,7 @@ Don't use the constructor directly, use the ObjectManager instead:
         'Kernel::System::PostMaster',
         ObjectParams => {
             Email        => \@ArrayOfEmailContent,
-            Trusted      => 1, # 1|0 ignore X-OTOBO header if false
+            Trusted      => 1, # 1|0 ignore X-CareOnCloud ESM header if false
         },
     );
 
@@ -96,7 +96,7 @@ sub new {
             || die "Found no '$Option' option in configuration!";
     }
 
-    # should I use X-OTOBO headers?
+    # should I use X-CareOnCloud ESM headers?
     $Self->{Trusted} = $Param{Trusted} // 1;
 
     if ( $Self->{Trusted} ) {
@@ -589,8 +589,8 @@ sub GetEmailParams {
     HEADER:
     for my $Param ( @{ $Self->{'PostmasterX-Header'} } ) {
 
-        # do not scan x-otobo headers if mailbox is not marked as trusted
-        next HEADER if ( !$Self->{Trusted} && $Param =~ /^x-otobo/i );
+        # do not scan x-careoncloud headers if mailbox is not marked as trusted
+        next HEADER if ( !$Self->{Trusted} && $Param =~ /^x-careoncloud/i );
 
         $GetParam{$Param} = $Self->{ParserObject}->GetParam( WHAT => $Param );
 

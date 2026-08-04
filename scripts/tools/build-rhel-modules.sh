@@ -20,8 +20,8 @@ set -Euo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 PROJECT_ROOT="$SCRIPT_DIR/../.."
 TARGET_LIB="$PROJECT_ROOT/install/local"
-ARCHIVE_NAME="otobo-deps-rhel.tar.gz"
-# Directory at /opt/otobo to compress to tar.gz
+ARCHIVE_NAME="careoncloud-deps-rhel.tar.gz"
+# Directory at /opt/careoncloud to compress to tar.gz
 ARCHIVE_DIR="install"
 
 if ! command -v cpanm &> /dev/null; then

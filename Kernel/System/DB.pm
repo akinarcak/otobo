@@ -213,9 +213,9 @@ sub new {
     # The options DB::Attribute is a special case. As with the other options,
     # the value passed in the method call has precedence and default settings can
     # be declared in the SysConfig. But for DB::Attribute there is a default
-    # for the main 'otobo' database connection as well as a default
+    # for the main 'careoncloud' database connection as well as a default
     # for all database connections. It is best practice to declare the defaults
-    # for the 'otobo' connection only, as the declaration for all connections
+    # for the 'careoncloud' connection only, as the declaration for all connections
     # may have unwanted effects.
     for my $Setting (qw(Attribute)) {
         if ( defined $Param{$Setting} ) {
@@ -302,7 +302,7 @@ sub Connect {
                 };
             }
 
-            # In OTOBO 10.0.x running with PostgreSQL the flag pg_enable_utf8 was set to 1.
+            # In CareOnCloud ESM 10.0.x running with PostgreSQL the flag pg_enable_utf8 was set to 1.
             # According to https://metacpan.org/pod/DBD::Pg#pg_enable_utf8-(integer)
             # this is no longer necessary.
             #if ( $Self->{Backend}->{'DB::Type'} eq 'postgresql' ) {
@@ -313,8 +313,8 @@ sub Connect {
         # Note that the default values for the attributes RaiseError and AutoInactiveDestroy differ
         # between DBI and DBIx::Connector. For DBI they are off per default, but for DBIx::Connector
         # they are on per default.
-        # RaiseError: explicitly turn it off as this was the previous setup in OTOBO.
-        #             This is OK as the methods run(), txn(), and svp() are not used in OTOBO.
+        # RaiseError: explicitly turn it off as this was the previous setup in CareOnCloud ESM.
+        #             This is OK as the methods run(), txn(), and svp() are not used in CareOnCloud ESM.
         # AutoInactiveDestroy: Concerns only behavior on forks and such.
         #                      Keep it activated as it is important for DBIx::Connector.
         #
@@ -386,7 +386,7 @@ sub Connect {
                     };
                 }
 
-                # In OTOBO 10.0.x running with PostgreSQL the flag pg_enable_utf8 was set to 1.
+                # In CareOnCloud ESM 10.0.x running with PostgreSQL the flag pg_enable_utf8 was set to 1.
                 # According to https://metacpan.org/pod/DBD::Pg#pg_enable_utf8-(integer)
                 # this is no longer necessary.
                 #if ( $Self->{Backend}->{'DB::Type'} eq 'postgresql' ) {
@@ -1131,13 +1131,13 @@ sub FetchrowArray {
 
 =head2 ListTables()
 
-list all tables in the OTOBO database.
+list all tables in the CareOnCloud ESM database.
 
     my @Tables = $DBObject->ListTables();
 
 On databases like Oracle it could happen that too many tables are listed (all belonging
 to the current user), if the user also has permissions for other databases. So this list
-should only be used for verification of the presence of expected OTOBO tables.
+should only be used for verification of the presence of expected CareOnCloud ESM tables.
 
 The table names are lower cased.
 

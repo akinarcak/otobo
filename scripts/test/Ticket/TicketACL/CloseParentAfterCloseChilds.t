@@ -52,7 +52,7 @@ $ConfigObject->Set(
     },
 );
 
-# prevent otobo ACLs to be running
+# prevent careoncloud ACLs to be running
 $ConfigObject->Set(
     Key   => 'TicketAcl',
     Value => {},

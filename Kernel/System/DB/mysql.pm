@@ -82,7 +82,7 @@ sub LoadPreferences {
     $Self->{'DB::CurrentTimestamp'} = '';
 
     # DBD::MariaDB provides sane Perl strings.
-    # But traditionally OTOBO expect that the utf8-flag is on.
+    # But traditionally CareOnCloud ESM expect that the utf8-flag is on.
     # even for binary data
     $Self->{'DB::Encode'} = 1;
 

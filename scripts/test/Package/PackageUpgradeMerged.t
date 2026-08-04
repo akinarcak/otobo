@@ -28,14 +28,14 @@ my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
 my $DBObject      = $Kernel::OM->Get('Kernel::System::DB');
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
-# get OTOBO Version
-my $OTOBOVersion = $ConfigObject->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloud ESMVersion = $ConfigObject->Get('Version');
 
 # leave only major and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloud ESMVersion .= '.x';
 
 my $Home = $ConfigObject->Get('Home');
 
@@ -54,7 +54,7 @@ my $MergeOne = '<?xml version="1.0" encoding="utf-8" ?>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
   <ModuleRequired Version="1.112">Encode</ModuleRequired>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
   <BuildDate>2012-05-02 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
@@ -105,13 +105,13 @@ my $MainPackageOne = '<?xml version="1.0" encoding="utf-8" ?>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
     <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
     <ModuleRequired Version="1.112">Encode</ModuleRequired>
-    <Framework>' . $OTOBOVersion . '</Framework>
+    <Framework>' . $CareOnCloud ESMVersion . '</Framework>
     <BuildDate>2005-11-10 21:17:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
-    <File Location="bin/otobo.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
+    <File Location="bin/careoncloud.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
     </Filelist>
     <PackageMerge Name="MergeOne" TargetVersion="2.0.0">
       <DatabaseUpgrade Type="merge">
@@ -158,13 +158,13 @@ my $MainPackageTwo = '<?xml version="1.0" encoding="utf-8" ?>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
     <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
     <ModuleRequired Version="1.112">Encode</ModuleRequired>
-    <Framework>' . $OTOBOVersion . '</Framework>
+    <Framework>' . $CareOnCloud ESMVersion . '</Framework>
     <BuildDate>2005-11-10 21:17:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
-    <File Location="bin/otobo.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
+    <File Location="bin/careoncloud.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
     </Filelist>
     <PackageMerge Name="MergeOne" TargetVersion="2.0.1">
       <DatabaseUpgrade Type="merge" Version="2.0.2">
@@ -244,7 +244,7 @@ for my $File (qw( Delete DeleteMe )) {
 }
 
 # check that the framework file still exists including the .save file
-for my $File (qw( bin/otobo.CheckDB.pl )) {
+for my $File (qw( bin/careoncloud.CheckDB.pl )) {
     my $RealFile = $Home . '/' . $File;
     $RealFile =~ s/\/\//\//g;
     $Self->True(
@@ -373,7 +373,7 @@ my $MergeThree = '<?xml version="1.0" encoding="utf-8" ?>
   <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
   <BuildDate>2014-05-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>
@@ -391,7 +391,7 @@ my $MainPackageFour = '<?xml version="1.0" encoding="utf-8" ?>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <ChangeLog>2014-04-28 New package (some test &lt; &gt; &amp;).</ChangeLog>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
-    <Framework>' . $OTOBOVersion . '</Framework>
+    <Framework>' . $CareOnCloud ESMVersion . '</Framework>
     <BuildDate>2014-04-28 16:16:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
@@ -656,7 +656,7 @@ my $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
   <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
   <BuildDate>2014-05-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>
@@ -700,7 +700,7 @@ $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
   <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
   <BuildDate>2014-09-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>

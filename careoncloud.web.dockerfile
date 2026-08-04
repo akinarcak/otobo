@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.9
 
-# This is the build file for the OTOBO web docker image.
-# The services OTOBO web and OTOBO daemon use the same image.
+# This is the build file for the CareOnCloud ESM web docker image.
+# The services CareOnCloud ESM web and CareOnCloud ESM daemon use the same image.
 # There is also an extra build target careoncloud-web-kerberos that adds support for Kerberos.
 
 # See also bin/docker/build_docker_images.sh
@@ -9,14 +9,14 @@
 
 # The Debian version is explicitly set to Trixie, that is Debian 13.
 # This avoids a surprising change of the version of Debian when the image
-# is rebuilt, especially when the image for a new release of OTOBO is built.
+# is rebuilt, especially when the image for a new release of CareOnCloud ESM is built.
 # Note that the minor version of Debian may change between builds.
 #
 # The slim version is used for reducing the size of the image.
 #
 # The three supported release series 10.1, 11.0, and 11.1 should use
 # the same version of Perl. The version of Perl may be updated in a patch level release.
-# The version of Debian should only be changed for a new major or minor version of OTOBO.
+# The version of Debian should only be changed for a new major or minor version of CareOnCloud ESM.
 #
 # The individual build targets may add additional Debian or CPAN packages.
 FROM perl:5.44-slim-trixie AS base
@@ -36,11 +36,11 @@ USER root
 # Create /opt/careoncloud_install already here, in order to reduce the number of build layers.
 # hadolint ignore=DL3008
 #
-# create the otobo user
-#   --user-group            create group 'otobo' and add the user to the created group
+# create the careoncloud user
+#   --user-group            create group 'careoncloud' and add the user to the created group
 #   --home-dir /opt/careoncloud   set $HOME of the user
 #   --create-home           create /opt/careoncloud
-#   --shell /bin/bash       set the login shell, not used here because otobo is system user
+#   --shell /bin/bash       set the login shell, not used here because careoncloud is system user
 #   --comment 'CareOnCloud ESM user'  complete name of the user
 #
 # Also create /opt/careoncloud_install, /opt/careoncloud, and /opt/careoncloud_update
@@ -95,7 +95,7 @@ RUN apt-get update\
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
-# Install CPAN distributions that are required by OTOBO into the local lib directory /opt/careoncloud_install/local.
+# Install CPAN distributions that are required by CareOnCloud ESM into the local lib directory /opt/careoncloud_install/local.
 # './local' happens to be the default installation directory of carton.
 # Installation can be triggered by modifying the file cpanfile.docker.snapshot in any way.
 #
@@ -128,7 +128,7 @@ ENV LANG=C.UTF-8
 # On the Docker host the fatpacked /opt/careoncloud_install/vendor/bin/carton can be copied to bin/docker/carton
 # in the Git sandbox.
 #   docker cp otoelfeins-web-1:/opt/careoncloud/vendor/bin/carton bin/docker/carton
-# Look for 'Hotpatch by the OTOBO Team' in the git diff and apply the hot patches to the new version.
+# Look for 'Hotpatch by the CareOnCloud ESM Team' in the git diff and apply the hot patches to the new version.
 #   git add bin/docker/carton
 #
 # Note that the variable $DOCKER_TAG is already substituted by Docker.
@@ -185,7 +185,7 @@ USER root
 # so we only need to do the cleanup
 RUN rm -rf /var/lib/apt/lists/*
 
-# Copy the OTOBO installation to /opt/careoncloud_install/careoncloud_next and use it as the working dir.
+# Copy the CareOnCloud ESM installation to /opt/careoncloud_install/careoncloud_next and use it as the working dir.
 # The files that are set up in .dockerignore. This means that a potentially existing Kernel/Config.pm
 # won't be copied. Instead Kernel/Config.pm.docker.dist will be copied to Kernel/Config.pm in entrypoint.sh.
 COPY --chown=$CAREONCLOUD_USER:$CAREONCLOUD_GROUP . /opt/careoncloud_install/careoncloud_next
@@ -208,10 +208,10 @@ RUN install --owner $CAREONCLOUD_USER --group $CAREONCLOUD_GROUP -D bin/docker/e
  && install --owner $CAREONCLOUD_USER --group $CAREONCLOUD_GROUP /dev/null docker_firsttime\
  && perl bin/careoncloud.SetPermissions.pl --runs-under-docker
 
-# perform build steps that can be done as the user otobo.
+# perform build steps that can be done as the user careoncloud.
 USER $CAREONCLOUD_USER
 
-# More setup that can be done by the user otobo
+# More setup that can be done by the user careoncloud
 
 # Under Docker the Elasticsearch Daemon is running on the host 'elastic' instead of '127.0.0.1'.
 # The webservice configuration is in a YAML file and it is not obvious how
@@ -261,7 +261,7 @@ END_BASH
 # Up to now we have prepared /opt/careoncloud_install/careoncloud_next.
 # Merging /opt/careoncloud_install/careoncloud_next and /opt/careoncloud is left to /opt/careoncloud_install/entrypoint.sh.
 # Note that for supporting the command 'cron' we need to start as root.
-# For all other commands entrypoint.sh switches to the user otobo.
+# For all other commands entrypoint.sh switches to the user careoncloud.
 WORKDIR $CAREONCLOUD_HOME
 
 # Titel is specific for the build target
@@ -309,7 +309,7 @@ RUN <<END_BASH bash
     rm -rf "/root/.cpanm"
 END_BASH
 
-# perform build steps that can be done as the user otobo.
+# perform build steps that can be done as the user careoncloud.
 USER $CAREONCLOUD_USER
 
 # skipping /opt/careoncloud_install/local

@@ -20,9 +20,9 @@
 # config settings:
 #
 # If use isn't login through apache ($ENV{REMOTE_USER} or $ENV{HTTP_REMOTE_USER})
-# $Self->{CustomerPanelLoginURL} = 'http://host.example.com/not-authorised-for-otobo.html';
+# $Self->{CustomerPanelLoginURL} = 'http://host.example.com/not-authorised-for-careoncloud.html';
 #
-# $Self->{CustomerPanelLogoutURL} = 'http://host.example.com/thanks-for-using-otobo.html';
+# $Self->{CustomerPanelLogoutURL} = 'http://host.example.com/thanks-for-using-careoncloud.html';
 
 package Kernel::System::CustomerAuth::HTTPBasicAuth;
 

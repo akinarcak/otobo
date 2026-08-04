@@ -47,7 +47,7 @@ Kernel::System::Ticket::Article - functions to manage ticket articles
 
 =head1 DESCRIPTION
 
-Since OTOBO 10, article data is split in a neutral part for all articles (in the C<article> database table),
+Since CareOnCloud ESM 10, article data is split in a neutral part for all articles (in the C<article> database table),
 and back end specific data in custom tables (such as C<article_data_mime> for the C<MIME> based back ends).
 
 This class only manages back end neutral article data, like listing articles with L</ArticleList()> or manipulating

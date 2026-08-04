@@ -17,7 +17,7 @@
 
 =head1 NAME
 
-quick_setup.pl - a quick OTOBO setup script that is meant for development
+quick_setup.pl - a quick CareOnCloud ESM setup script that is meant for development
 
 =head1 SYNOPSIS
 
@@ -30,7 +30,7 @@ quick_setup.pl - a quick OTOBO setup script that is meant for development
     # set HttpType to http, the default is https
     bin/docker/quick_setup.pl --db-password 'some-pass' --http-type http
 
-    # do it when OTOBO runs on a special HTTP Port
+    # do it when CareOnCloud ESM runs on a special HTTP Port
     # note that this only affect the message printed by this script
     bin/docker/quick_setup.pl --db-password 'some-pass' --http-port 81
 
@@ -75,7 +75,7 @@ This can be achieved with the bash function:
 =head1 DESCRIPTION
 
 Quickly create a running system that is useful for development and for continuous integration.
-But please note that this script is not meant as an replacement for the OTOBO installer.
+But please note that this script is not meant as an replacement for the CareOnCloud ESM installer.
 
 The script allows to automatically create a sample customer user, admin user, and calendar.
 It allows to set HttpType to http, which is the proven setting for the test suite.
@@ -231,8 +231,8 @@ sub Main {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     const my $DBName          => $ConfigObject->Get('Database');
-    const my $OTOBODBUser     => $ConfigObject->Get('DatabaseUser');
-    const my $OTOBODBPassword => $ConfigObject->Get('DatabasePw');
+    const my $CareOnCloud ESMDBUser     => $ConfigObject->Get('DatabaseUser');
+    const my $CareOnCloud ESMDBPassword => $ConfigObject->Get('DatabasePw');
     const my $DBType          => 'mysql';
 
     {
@@ -252,8 +252,8 @@ sub Main {
             DBName               => $DBName,
             DBPassword           => $DBPassword,
             AuthenticationPlugin => $AuthenticationPlugin,
-            OTOBODBUser          => $OTOBODBUser,
-            OTOBODBPassword      => $OTOBODBPassword,
+            CareOnCloud ESMDBUser          => $CareOnCloud ESMDBUser,
+            CareOnCloud ESMDBPassword      => $CareOnCloud ESMDBPassword,
         );
 
         say $Message if defined $Message;
@@ -263,8 +263,8 @@ sub Main {
 
     $Kernel::OM->ObjectParamAdd(
         'Kernel::System::DB' => {
-            DatabaseUser => $OTOBODBUser,
-            DatabasePw   => $OTOBODBPassword,
+            DatabaseUser => $CareOnCloud ESMDBUser,
+            DatabasePw   => $CareOnCloud ESMDBPassword,
             Type         => $DBType,
         },
     );
@@ -273,7 +273,7 @@ sub Main {
     {
         my $Home = $ConfigObject->Get('Home');
 
-        # the xml files contain the database name 'otobo' hardcoded
+        # the xml files contain the database name 'careoncloud' hardcoded
         my ( $Success, $Message ) = ExecuteSQL(
             XMLFiles => [
                 "$Home/scripts/database/careoncloud-schema.xml",
@@ -312,8 +312,8 @@ sub Main {
 
         # Unique names for session cookies. This allows to run distinct instances on the same host.
         push @Settings, (
-            [ SessionName              => join( '_', 'OTOBOAgentInterface',    $SystemID ) ],
-            [ CustomerPanelSessionName => join( '_', 'OTOBOCustomerInterface', $SystemID ) ],
+            [ SessionName              => join( '_', 'CareOnCloud ESMAgentInterface',    $SystemID ) ],
+            [ CustomerPanelSessionName => join( '_', 'CareOnCloud ESMCustomerInterface', $SystemID ) ],
         );
 
         # These settings are useful for testing and development
@@ -418,7 +418,7 @@ sub Main {
     # add a blurb about MinIO
 
     # looks good
-    say 'For running the unit tests please stop the OTOBO Daemon.';
+    say 'For running the unit tests please stop the CareOnCloud ESM Daemon.';
     say "Finished running $0";
 
     return 0;
@@ -556,7 +556,7 @@ sub DBCreateUserAndDatabase {
     my %Param = @_;
 
     # check the params
-    for my $Key ( grep { !$Param{$_} } qw(DBPassword AuthenticationPlugin DBName OTOBODBUser OTOBODBPassword) ) {
+    for my $Key ( grep { !$Param{$_} } qw(DBPassword AuthenticationPlugin DBName CareOnCloud ESMDBUser CareOnCloud ESMDBPassword) ) {
         my $SubName = subname(__SUB__);
 
         return 0, "$SubName: the parameter '$Key' is required";
@@ -576,7 +576,7 @@ sub DBCreateUserAndDatabase {
     # For now allow the complete network.
     my $Host = '%';
 
-    # SQL for creating the OTOBO user.
+    # SQL for creating the CareOnCloud ESM user.
     #
     # An explicit statement for user creation is needed because MySQL 8 no longer
     # supports implicit user creation via the 'GRANT PRIVILEGES' statement.
@@ -591,7 +591,7 @@ sub DBCreateUserAndDatabase {
 
         # Use the default authentication plugin, works for MariaDB and MySQL
         push @CreateUserSQLs,
-            "CREATE USER `$Param{OTOBODBUser}`\@`$Host` IDENTIFIED BY '$Param{OTOBODBPassword}'";
+            "CREATE USER `$Param{CareOnCloud ESMDBUser}`\@`$Host` IDENTIFIED BY '$Param{CareOnCloud ESMDBPassword}'";
     }
     else {
 
@@ -610,21 +610,21 @@ sub DBCreateUserAndDatabase {
             # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-ed25519
             # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-parsec
             push @CreateUserSQLs,
-                "CREATE USER `$Param{OTOBODBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} USING PASSWORD('$Param{OTOBODBPassword}')";
+                "CREATE USER `$Param{CareOnCloud ESMDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} USING PASSWORD('$Param{CareOnCloud ESMDBPassword}')";
         }
         else {
 
             # The MySQL case.
             # "USING PASSWORD('...')" is not supported
             push @CreateUserSQLs,
-                "CREATE USER `$Param{OTOBODBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} BY '$Param{OTOBODBPassword}'";
+                "CREATE USER `$Param{CareOnCloud ESMDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} BY '$Param{CareOnCloud ESMDBPassword}'";
         }
     }
 
     my @Statements = (
         "CREATE DATABASE `$Param{DBName}` charset utf8mb4 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci",
         @CreateUserSQLs,
-        "GRANT ALL PRIVILEGES ON `$Param{DBName}`.* TO `$Param{OTOBODBUser}`\@`$Host` WITH GRANT OPTION",
+        "GRANT ALL PRIVILEGES ON `$Param{DBName}`.* TO `$Param{CareOnCloud ESMDBUser}`\@`$Host` WITH GRANT OPTION",
     );
 
     for my $Statement (@Statements) {
@@ -679,7 +679,7 @@ sub ExecuteSQL {
 
         # If we parsed the schema, catch post instructions.
         # they will run after the initial insert
-        push @SQLPost, $DBObject->SQLProcessorPost() if $XMLFile =~ m/otobo-schema/;
+        push @SQLPost, $DBObject->SQLProcessorPost() if $XMLFile =~ m/careoncloud-schema/;
     }
 
     # now do the actions that must run after the initial insert
@@ -716,7 +716,7 @@ sub SetRootAtLocalhostPassword {
     return 0, 'Password for root@localhost could not be set' unless $Success;
 
     # Protocol http is fine, as there is an automatic redirect
-    return 1, "Agent: http://$Param{FQDN}:$Param{HTTPPort}/otobo/index.pl user: root\@localhost pw: $Password";
+    return 1, "Agent: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/index.pl user: root\@localhost pw: $Password";
 }
 
 # update sysconfig settings in the database and deploy these settings
@@ -921,7 +921,7 @@ sub AddUser {
     }
 
     # looks good
-    return 1, "Sample user: http://$Param{FQDN}:$Param{HTTPPort}/otobo/index.pl user: $Login pw: $Login";
+    return 1, "Sample user: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/index.pl user: $Login pw: $Login";
 }
 
 sub AddAdminUser {
@@ -993,7 +993,7 @@ sub AddAdminUser {
     );
 
     # looks good
-    return 1, "Admin user: http://$Param{FQDN}:$Param{HTTPPort}/otobo/index.pl user: $Login pw: $Login";
+    return 1, "Admin user: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/index.pl user: $Login pw: $Login";
 }
 
 sub AddCustomerUser {
@@ -1094,7 +1094,7 @@ sub AddCustomerUser {
     }
 
     # looks good
-    return 1, "Customer: http://$Param{FQDN}:$Param{HTTPPort}/otobo/customer.pl user: $Login pw: $Login";
+    return 1, "Customer: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/customer.pl user: $Login pw: $Login";
 }
 
 sub AddCalendar {

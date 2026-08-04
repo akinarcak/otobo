@@ -147,7 +147,7 @@ If you need to set credentials
         Credentials  => {
             User     => 'otobo_user',
             Password => 'otobo_password',
-            Realm    => 'OTOBO Unittests',
+            Realm    => 'CareOnCloud ESM Unittests',
             Location => 'ftp.otobo.org:80',
         },
         SkipSSLVerification => 1,         # (optional)

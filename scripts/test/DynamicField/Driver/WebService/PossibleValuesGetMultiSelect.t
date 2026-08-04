@@ -29,7 +29,7 @@ use Kernel::System::ObjectManager ();
 
 $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-otobo.UnitTest',
+        LogPrefix => 'CareOnCloud ESM-careoncloud.UnitTest',
     },
 );
 

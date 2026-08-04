@@ -281,7 +281,7 @@ sub Run {
 
         if (
             ( grep { $_ eq 'reset-locally' } @Options )
-            && $SysConfigObject->can('UserSettingValueDelete')    # OTOBO Community Solution
+            && $SysConfigObject->can('UserSettingValueDelete')    # CareOnCloud ESM Community Solution
             )
         {
 

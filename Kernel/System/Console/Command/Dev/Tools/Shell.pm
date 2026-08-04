@@ -29,11 +29,11 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('An interactive REPL shell for the OTOBO API.');
+    $Self->Description('An interactive REPL shell for the CareOnCloud ESM API.');
 
     $Self->AddOption(
         Name        => 'eval',
-        Description => 'Perl code that should be evaluated in the OTOBO context.',
+        Description => 'Perl code that should be evaluated in the CareOnCloud ESM context.',
         Required    => 0,
         HasValue    => 1,
         ValueRegex  => qr/.*/smx,
@@ -64,7 +64,7 @@ sub Run {
 
     my $Repl = Devel::REPL->new;
 
-    for my $Plugin (qw(History LexEnv MultiLine::PPI FancyPrompt DumpHistory OTOBO)) {
+    for my $Plugin (qw(History LexEnv MultiLine::PPI FancyPrompt DumpHistory CareOnCloud ESM)) {
         $Repl->load_plugin($Plugin);
     }
 
@@ -72,7 +72,7 @@ sub Run {
     $Repl->fancy_prompt(
         sub {
             my $Self = shift;
-            return sprintf 'OTOBO: %03d%s> ',
+            return sprintf 'CareOnCloud ESM: %03d%s> ',
                 $Self->lines_read(),
                 $Self->can('line_depth') ? ':' . $Self->line_depth() : '';
         }

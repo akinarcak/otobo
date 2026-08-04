@@ -33,7 +33,7 @@ use Kernel::System::UnitTest::RegisterOM;    # set up $Kernel::OM
 my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
 # create database table for tests
-# OTOBO does not use boolean attributes in the database tables. Test with a SMALLINT.
+# CareOnCloud ESM does not use boolean attributes in the database tables. Test with a SMALLINT.
 # SMALLINT has the range -32768 to 32767
 my @XMLArray = $Kernel::OM->Get('Kernel::System::XML')->XMLParse( String => <<'END_XML' );
 <Table Name="test_smallint_table">

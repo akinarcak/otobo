@@ -235,7 +235,7 @@
                                 [% END %]
 
                                 [% IF Data.Overwrite == "1" %]
-                                    <span id="Overwrite">[% Translate('Overwrites OTOBO translation') | html %]</span>
+                                    <span id="Overwrite">[% Translate('Overwrites CareOnCloud ESM translation') | html %]</span>
                                 [% END %]
                             </td>
                             <td [% IF Data.Flag == "d" %] class="FlagDelete" [%END%]>[% Data.Translation | html %]</td>

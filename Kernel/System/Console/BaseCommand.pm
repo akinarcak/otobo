@@ -264,7 +264,7 @@ Alternative names can be declared as well. In this case the I<CanonicalName> has
     $Self->AddOption(
         Name          => 'module-directory|dir',
         CanonicalName => 'module-directory',
-        Description   => "Specify the directory containing the module sources (otherwise the OTOBO home directory will be used).",
+        Description   => "Specify the directory containing the module sources (otherwise the CareOnCloud ESM home directory will be used).",
         Required      => 0,
         HasValue      => 1,
         ValueRegex    => qr/.*/smx,
@@ -434,7 +434,7 @@ sub Execute {
     #   In future we might need to check if it was created and update it on the fly.
     $Kernel::OM->ObjectParamAdd(
         'Kernel::System::Log' => {
-            LogPrefix => 'OTOBO-careoncloud.Console.pl-' . $Self->Name(),
+            LogPrefix => 'CareOnCloud ESM-careoncloud.Console.pl-' . $Self->Name(),
         },
     );
 
@@ -443,9 +443,9 @@ sub Execute {
     # Don't allow to run these scripts as root.
     if ( !$ParsedGlobalOptions->{'allow-root'} && $> == 0 ) {    # $EFFECTIVE_USER_ID
         $Self->PrintError(
-            "You cannot run careoncloud.Console.pl as root. Please run it as the 'otobo' user or with the help of su:"
+            "You cannot run careoncloud.Console.pl as root. Please run it as the 'careoncloud' user or with the help of su:"
         );
-        $Self->Print("  <yellow>su -c \"bin/careoncloud.Console.pl MyCommand\" -s /bin/bash otobo</yellow>\n");
+        $Self->Print("  <yellow>su -c \"bin/careoncloud.Console.pl MyCommand\" -s /bin/bash careoncloud</yellow>\n");
 
         return $Self->ExitCodeError();
     }

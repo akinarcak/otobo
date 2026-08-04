@@ -46,7 +46,7 @@ getopt( 'abd', \%Opts );
 if ( exists $Opts{h} || !keys %Opts ) {
     print <<'END_HELP';
 
-Create or compare OTOBO file checksum information.
+Create or compare CareOnCloud ESM file checksum information.
 
 Usage:
  careoncloud.CheckSum.pl -a create|compare [-b /path/to/ARCHIVE] [-d /path/to/framework]
@@ -54,7 +54,7 @@ Usage:
 Options:
  -a                     - Specify the action (create|compare).
  [-b]                   - Specify the path to archive.
- [-d]                   - Specify the path to OTOBO framework.
+ [-d]                   - Specify the path to CareOnCloud ESM framework.
  [-h]                   - Display help for this command.
 
 END_HELP
@@ -113,7 +113,7 @@ sub ProcessDirectory {
         # clean up directory name
         $File =~ s{//}{/}smxg;
 
-        # always stay in OTOBO directory
+        # always stay in CareOnCloud ESM directory
         next FILE if $File !~ m{^\Q$Start\E};
 
         # ignore source code directories, ARCHIVE file
@@ -123,7 +123,7 @@ sub ProcessDirectory {
         next FILE if $File =~ m{/docker_firsttime}smx;
 
         # ignore obsolete files
-        next FILE if $File =~ m{Kernel/Config/Files/XML/OTOBODynamicFields.xml}smx;
+        next FILE if $File =~ m{Kernel/Config/Files/XML/CareOnCloud ESMDynamicFields.xml}smx;
 
         # recurse into subdirectories, without chdir
         if ( -d $File ) {
@@ -169,7 +169,7 @@ sub ProcessDirectory {
                 print "Notice: Dif $File\n";
             }
             elsif ( -e "$File.save" )
-            {                                                             ## report .save files as modified by the OTOBO Package Manager
+            {                                                             ## report .save files as modified by the CareOnCloud ESM Package Manager
                 print "Notice: OPM Changed $File\n";
             }
             if ( defined $Compare{$File} ) {
