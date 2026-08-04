@@ -194,3 +194,67 @@ bir regression guard tasiyor.
 Bu calismada yalnizca `workflow_dispatch` ile aday (`probe`) tag'leri kullanildi.
 Uretim servisleri, canli cutover, `d724-esm-*` container/volume'lari ve Yetka verileri
 degistirilmedi. GHCR'a yalnizca `v0.0.0-probe*` etiketli aday image'lar itildi.
+
+---
+
+## 9. Codex icin acik isler
+
+Asagidakiler bilerek karara baglanmadi. Kapsam disi olduklari veya urun/politika karari
+gerektirdikleri icin sana birakiliyor.
+
+### 9.1 Karar gerektirenler
+
+**`CAREONCLOUD-ESM-AI-MASTER-CONTEXT.md` versiyonlanmiyor.**
+Dosya calisma agacinda hem kokte hem `docs/esm/` altinda **untracked** duruyor. Iki kopya var
+ve icerikleri ayni degil. Kendi basima repoya eklemedim; hangisinin kanonik oldugu ve Git'e
+girip girmeyecegi urun karari. Karar verilene kadar bu dosyaya yapilan degisiklikler
+kaybolmaya aciktir.
+
+**GHA cache boyutu izlenmiyor.**
+`cache-to: type=gha,mode=max` butun ara katmanlari export eder. GitHub Actions cache'i
+repo basina 10 GB ile sinirlidir ve doldugunda LRU ile tahliye edilir. Bu image icin
+katmanlar buyuk. Eger cache surekli tahliye ediliyorsa `mode=min` veya GHCR'a
+`type=registry` cache daha uygun olabilir. Simdilik `mode=max` birakildi cunku olculmedi;
+tahliye gozlenirse olcup degistir.
+
+### 9.2 Kodda gorulen, dokunulmayan kusurlar
+
+**`careoncloud-web` stage'inde image version label'i bos kaliyor.**
+`careoncloud.web.dockerfile` icinde `ARG DOCKER_TAG` yalnizca `base` stage'inde
+tanimlanmis. ARG'lar `FROM` sinirini gecmez ve `careoncloud-web` stage'i onu yeniden
+tanimlamiyor, ama satir sonunda `LABEL org.opencontainers.image.version=$DOCKER_TAG`
+kullaniyor. Yani bu label ureten imajlarda bostur. `careoncloud-web-kerberos` stage'i
+ise ARG'i dogru sekilde yeniden tanimliyor; tutarsizlik burada.
+
+Duzeltmek istersen: `ARG DOCKER_TAG=unspecified` satirini `careoncloud-web` stage'inin
+**sonuna**, LABEL'lardan hemen once ekle. Oraya konursa yalnizca ucuz LABEL katmanini
+etkiler, pahali CPAN katmanina dokunmaz. Bu bolum 6'daki hatanin tekrari **degildir** —
+kritik olan ARG'in nerede tuketildigidir, sadece tanimlandigi yer degil.
+
+Bu bir provenance eksigidir; release imajlari surumlerini label'dan bildirmiyor.
+Kapsam disi biraktim cunku paylasilan Dockerfile'a dokunuyor.
+
+**SBOM adim adi ile ciktisi uyusmuyor.**
+`.github/workflows/careoncloud-release.yml` icindeki adim `Generate SPDX SBOM` adini
+tasiyor ama `format: cyclonedx-json` ile CycloneDX uretiyor ve dosyayi `.cdx.json` olarak
+yaziyor. Cikti dogru, ad yaniltici. Uyumluluk dokumantasyonunda "SPDX SBOM uretiliyor"
+denmesi riskini tasir. Adi duzeltmek yeterli.
+
+### 9.3 Hala acik olan release kapilari
+
+Bunlar bu calismada **tamamlanmis sayilmadi** ve oyle raporlanmamalidir:
+
+- Gercek `careoncloud-v*` imzali release tag'i (yalnizca `v0.0.0-probe*` aday tag'leri
+  calistirildi)
+- Canli Cloudflare cutover'i ve rollback provasi
+- Uretim kabulu
+- `/careoncloud/` canonical yolunun canli origin'de dogrulanmasi (aday portta gecti,
+  canlida `/otobo/` hala 200 donuyordu)
+
+Kanitlanan sey **release mekanizmasidir**, bir release degil.
+
+### 9.4 Uretim durumu
+
+Bu calismada uretim servisleri, `d724-esm-*` container/volume'lari ve Yetka verileri
+degistirilmedi. GHCR'a yalnizca `v0.0.0-probe*` etiketli aday imajlar itildi. Bunlar
+temizlenebilir; kalici bir release degildirler.
