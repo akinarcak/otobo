@@ -74,8 +74,8 @@ sub new {
 perform a cloud service communication and return result data
 
     my $RequestResult = $CloudServiceObject->Request(
-        CareOnCloud ESMIDAuth => { #  will be send encoded as JSON
-            CareOnCloud ESMID => '',
+        CareOnCloudIDAuth => { #  will be send encoded as JSON
+            CareOnCloudID => '',
             Password => '',
         },
         UniqueIDAuth => { #  will send encoded as JSON
@@ -301,13 +301,13 @@ sub Request {
         }
     }
 
-    # get CareOnCloud ESMIDAuth structure if needed
-    my $CareOnCloud ESMIDAuth = '';
-    if ( $Param{CareOnCloud ESMID} && $Param{Password} ) {
+    # get CareOnCloudIDAuth structure if needed
+    my $CareOnCloudIDAuth = '';
+    if ( $Param{CareOnCloudID} && $Param{Password} ) {
 
-        $CareOnCloud ESMIDAuth = $JSONObject->Encode(
+        $CareOnCloudIDAuth = $JSONObject->Encode(
             Data => {
-                CareOnCloud ESMID  => $Param{CareOnCloud ESMID},
+                CareOnCloudID  => $Param{CareOnCloudID},
                 Password => $Param{Password},
             },
         );
@@ -346,7 +346,7 @@ sub Request {
                 Action       => 'PublicCloudService',
                 RequestData  => $RequestData,
                 UniqueIDAuth => $UniqueIDAuth,
-                CareOnCloud ESMIDAuth  => $CareOnCloud ESMIDAuth,
+                CareOnCloudIDAuth  => $CareOnCloudIDAuth,
             },
         );
 

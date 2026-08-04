@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- nofilter(TidyAll::Plugin::OTOBO::XML::WSDL::XSDValidator) -->
 <application xmlns="http://wadl.dev.java.net/2009/02">
-  <doc title="CareOnCloud ESMGenericTicketConnectorREST" xml:lang="en"/>
+  <doc title="CareOnCloudGenericTicketConnectorREST" xml:lang="en"/>
   <resources base="http://localhost/careoncloud/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST">
     <resource id="Ticket" path="Ticket">
       <doc title="Ticket" xml:lang="en"/>

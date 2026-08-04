@@ -25,7 +25,7 @@ Core.Agent.Admin = Core.Agent.Admin || {};
  * @memberof Core
  * @author Rother OSS GmbH
  * @description
- *      This namespace contains the special functions for CareOnCloud ESMUserSpecificSettings module.
+ *      This namespace contains the special functions for CareOnCloudUserSpecificSettings module.
  */
  Core.Agent.Admin.SystemConfigurationUser = (function (TargetNS) {
 

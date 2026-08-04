@@ -625,13 +625,13 @@ sub LoadDefaults {
     # Optionally enable user authorization via the id token - hashes can be used for complex claims
 #    $Self->{'AuthModule::OpenIDConnect::RoleMap'} = {
 #        TokenAttribute => {
-#            TokenRole1 => 'CareOnCloud ESMRole1',
-#            TokenRole2 => 'CareOnCloud ESMRole2',
+#            TokenRole1 => 'CareOnCloudRole1',
+#            TokenRole2 => 'CareOnCloudRole2',
 #        },
 #        TokenAttribute2 => {
 #            abc123 => {
-#                TokenRole1 => 'CareOnCloud ESMRole1',
-#                TokenRole3 => 'CareOnCloud ESMRole3',
+#                TokenRole1 => 'CareOnCloudRole1',
+#                TokenRole3 => 'CareOnCloudRole3',
 #            }
 #        },
 #    };
@@ -1007,7 +1007,7 @@ sub LoadDefaults {
     # --------------------------------------------------- #
     # TimeZone
     # (set the CareOnCloud ESM time zone, default is UTC)
-#    $Self->{'CareOnCloud ESMTimeZone'} = 'UTC';
+#    $Self->{'CareOnCloudTimeZone'} = 'UTC';
 
     # Time*
     # (Used for ticket age, escalation and system unlock calculation)
@@ -1797,7 +1797,7 @@ via the Preferences button after logging in.
             [ 'UserLogin',        Translatable('Username'),            'login',          1, 1, 'var', '', 0, undef, undef ],
             [ 'UserPassword',     Translatable('Password'),            'pw',             0, 0, 'var', '', 0, undef, undef ],
             [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '', 0, undef, undef ],
-#            [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '[% Env("CGIHandle") %]?Action=AgentTicketCompose;ResponseID=1;TicketID=[% Data.TicketID | uri %];ArticleID=[% Data.ArticleID | uri %]', 0, '', 'AsPopup CareOnCloud ESMPopup_TicketAction' ],
+#            [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '[% Env("CGIHandle") %]?Action=AgentTicketCompose;ResponseID=1;TicketID=[% Data.TicketID | uri %];ArticleID=[% Data.ArticleID | uri %]', 0, '', 'AsPopup CareOnCloudPopup_TicketAction' ],
             [ 'UserCustomerID',   Translatable('CustomerID'),          'customer_id',    0, 1, 'var', '', 0, undef, undef ],
 #            [ 'UserCustomerIDs',  Translatable('CustomerIDs'),         'customer_ids',   1, 0, 'var', '', 0, undef, undef ],
             [ 'UserPhone',        Translatable('Phone'),               'phone',          1, 0, 'var', '', 0, undef, undef ],

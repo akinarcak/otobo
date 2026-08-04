@@ -123,7 +123,7 @@ sub ProcessDirectory {
         next FILE if $File =~ m{/docker_firsttime}smx;
 
         # ignore obsolete files
-        next FILE if $File =~ m{Kernel/Config/Files/XML/CareOnCloud ESMDynamicFields.xml}smx;
+        next FILE if $File =~ m{Kernel/Config/Files/XML/CareOnCloudDynamicFields.xml}smx;
 
         # recurse into subdirectories, without chdir
         if ( -d $File ) {

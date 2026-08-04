@@ -132,19 +132,19 @@ my @InstalledPublic501 = (
         Version => '5.0.1',
     },
     {
-        Name    => 'CareOnCloud ESMAppointmentCalendar',
+        Name    => 'CareOnCloudAppointmentCalendar',
         Version => '5.0.1',
     },
     {
-        Name    => 'CareOnCloud ESMCloneDB',
+        Name    => 'CareOnCloudCloneDB',
         Version => '5.0.1',
     },
     {
-        Name    => 'CareOnCloud ESMCodePolicy',
+        Name    => 'CareOnCloudCodePolicy',
         Version => '5.0.1',
     },
     {
-        Name    => 'CareOnCloud ESMMasterSlave',
+        Name    => 'CareOnCloudMasterSlave',
         Version => '5.0.1',
     },
     {
@@ -171,19 +171,19 @@ my @OnlinePublic502 = (
         Version => '5.0.2'
     },
     {
-        Name    => 'CareOnCloud ESMAppointmentCalendar',
+        Name    => 'CareOnCloudAppointmentCalendar',
         Version => '5.0.2',
     },
     {
-        Name    => 'CareOnCloud ESMCloneDB',
+        Name    => 'CareOnCloudCloneDB',
         Version => '5.0.2',
     },
     {
-        Name    => 'CareOnCloud ESMCodePolicy',
+        Name    => 'CareOnCloudCodePolicy',
         Version => '5.0.2',
     },
     {
-        Name    => 'CareOnCloud ESMMasterSlave',
+        Name    => 'CareOnCloudMasterSlave',
         Version => '5.0.2',
     },
     {
@@ -287,10 +287,10 @@ my @Tests = (
             InstallOrder => {
                 FAQ                      => 1,
                 Fred                     => 1,
-                CareOnCloud ESMAppointmentCalendar => 1,
-                CareOnCloud ESMCloneDB             => 1,
-                CareOnCloud ESMCodePolicy          => 1,
-                CareOnCloud ESMMasterSlave         => 1,
+                CareOnCloudAppointmentCalendar => 1,
+                CareOnCloudCloneDB             => 1,
+                CareOnCloudCodePolicy          => 1,
+                CareOnCloudMasterSlave         => 1,
                 Survey                   => 1,
                 SystemMonitoring         => 1,
                 TimeAccounting           => 1,
@@ -299,13 +299,13 @@ my @Tests = (
         },
     },
     {
-        Name   => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
+        Name   => 'CareOnCloudGenericInterfaceITSMConfigurationManagement',
         Config => {
             InstalledPackages => [
                 @InstalledITSM5017,
                 (
                     {
-                        Name    => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
+                        Name    => 'CareOnCloudGenericInterfaceITSMConfigurationManagement',
                         Version => '5.0.1',
                     },
                 ),
@@ -314,7 +314,7 @@ my @Tests = (
                 @OnlineITSM5021,
                 (
                     {
-                        Name            => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
+                        Name            => 'CareOnCloudGenericInterfaceITSMConfigurationManagement',
                         Version         => '5.0.21',
                         PackageRequired => [
                             {
@@ -337,20 +337,20 @@ my @Tests = (
                 ITSMCore                                         => 6,
                 ITSMIncidentProblemManagement                    => 1,
                 ITSMServiceLevelManagement                       => 1,
-                CareOnCloud ESMGenericInterfaceITSMConfigurationManagement => 1,
+                CareOnCloudGenericInterfaceITSMConfigurationManagement => 1,
             },
             Failed => {},
         },
     },
 
     {
-        Name   => 'CareOnCloud ESMITSMConfigItemReference',
+        Name   => 'CareOnCloudITSMConfigItemReference',
         Config => {
             InstalledPackages => [
                 @InstalledITSM5017,
                 (
                     {
-                        Name    => 'CareOnCloud ESMITSMConfigItemReference',
+                        Name    => 'CareOnCloudITSMConfigItemReference',
                         Version => '5.0.1',
                     },
                 ),
@@ -359,7 +359,7 @@ my @Tests = (
                 @OnlineITSM5021,
                 (
                     {
-                        Name            => 'CareOnCloud ESMITSMConfigItemReference',
+                        Name            => 'CareOnCloudITSMConfigItemReference',
                         Version         => '5.0.21',
                         PackageRequired => [
                             {
@@ -387,7 +387,7 @@ my @Tests = (
                 ITSMCore                      => 6,
                 ITSMIncidentProblemManagement => 1,
                 ITSMServiceLevelManagement    => 1,
-                CareOnCloud ESMITSMConfigItemReference  => 1,
+                CareOnCloudITSMConfigItemReference  => 1,
             },
             Failed => {},
         },
@@ -400,7 +400,7 @@ my @Tests = (
                 @InstalledITSM5017,
                 (
                     {
-                        Name    => 'CareOnCloud ESMGenericInterfaceITSMConfigurationManagement',
+                        Name    => 'CareOnCloudGenericInterfaceITSMConfigurationManagement',
                         Version => '5.0.1',
                     },
                 ),
@@ -420,7 +420,7 @@ my @Tests = (
             },
             Failed => {
                 NotFound => {
-                    CareOnCloud ESMGenericInterfaceITSMConfigurationManagement => 1
+                    CareOnCloudGenericInterfaceITSMConfigurationManagement => 1
                 },
             },
         },

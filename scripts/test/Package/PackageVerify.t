@@ -29,13 +29,13 @@ use Kernel::System::CloudService::Backend::Run ();
 our $Self;
 
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
-my $CareOnCloud ESMVersion  = $Kernel::OM->Get('Kernel::Config')->Get('Version');
+my $CareOnCloudVersion  = $Kernel::OM->Get('Kernel::Config')->Get('Version');
 
 # Leave only major and minor level versions.
-$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # Add x as patch level version.
-$CareOnCloud ESMVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $String = '<?xml version="1.0" encoding="utf-8" ?>
 <careoncloud_package version="1.0">
@@ -48,7 +48,7 @@ my $String = '<?xml version="1.0" encoding="utf-8" ?>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
   <ModuleRequired Version="1.112">Encode</ModuleRequired>
-  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <CodeInstall>
@@ -93,7 +93,7 @@ my $StringSecond = "<?xml version='1.0' encoding='utf-8' ?>
   <Description Lang='en'>A test package (some test &lt; &gt; &amp;).\nNew line for testing.</Description>
   <Description Lang='de'>Ein Test Paket (some test &lt; &gt; &amp;).\nNeue Linie zum Testen.</Description>
   <ModuleRequired Version='1.112'>Encode</ModuleRequired>
-  <Framework>$CareOnCloud ESMVersion</Framework>
+  <Framework>$CareOnCloudVersion</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>

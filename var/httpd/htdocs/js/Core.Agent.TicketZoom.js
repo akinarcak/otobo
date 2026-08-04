@@ -893,7 +893,7 @@ Core.Agent.TicketZoom = (function (TargetNS) {
 
                 if ( $('#ArticleVersion').val() != "" ) {
                     var URL = Core.Config.Get('CGIHandle') + '?Action=AgentTicketArticleVersionView;TicketID='+$("input[name='TicketID']").val() + ';VersionID=' + VersionID +
-                                ';ArticleID='+$('#ArticleVersion').val()+';SourceArticleID='+$("input[name='ArticleID']").val()+';VersionView=1;CareOnCloud ESMAgentInterface='+$("input[name='CareOnCloud ESMAgentInterface']").val();
+                                ';ArticleID='+$('#ArticleVersion').val()+';SourceArticleID='+$("input[name='ArticleID']").val()+';VersionView=1;CareOnCloudAgentInterface='+$("input[name='CareOnCloudAgentInterface']").val();
 
                     Core.UI.Popup.OpenPopup(URL, PopupType);
                     $('#ArticleVersion').val('');

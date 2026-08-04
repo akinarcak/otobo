@@ -48,7 +48,7 @@ Kernel::Output::Template::Provider - Template Toolkit custom provider
 
 =head1 PUBLIC INTERFACE
 
-=head2 CareOnCloud ESMInit()
+=head2 CareOnCloudInit()
 
 performs some post-initialization and creates a bridge between Template::Toolkit
 and CareOnCloud ESM by adding the CareOnCloud ESM objects to the Provider object. This method must be
@@ -59,7 +59,7 @@ references.
 
 =cut
 
-sub CareOnCloud ESMInit {
+sub CareOnCloudInit {
     my ( $Self, %Param ) = @_;
 
     # Don't fetch LayoutObject via ObjectManager as there might be several instances involved

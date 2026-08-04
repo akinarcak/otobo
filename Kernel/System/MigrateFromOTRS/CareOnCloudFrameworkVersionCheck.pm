@@ -114,7 +114,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMFrameworkVersionCheck',
+            Task      => 'CareOnCloudFrameworkVersionCheck',
             SubTask   => "Check required CareOnCloud ESM and OTRS framework version.",
             StartTime => $Epoch,
         },
@@ -151,7 +151,7 @@ sub Run {
     }
 
     # Check CareOnCloud ESM version
-    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloud ESMVersion();
+    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloudVersion();
 
     return $ResultCareOnCloud ESM unless $ResultCareOnCloud ESM->{Successful};
 
@@ -170,12 +170,12 @@ sub Run {
     };
 }
 
-sub _CheckCareOnCloud ESMVersion {
+sub _CheckCareOnCloudVersion {
     my ( $Self, %Param ) = @_;
 
-    my $CareOnCloud ESMHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
+    my $CareOnCloudHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
     my $Message   = $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM version is correct.");
-    my $Location  = "$CareOnCloud ESMHome/RELEASE";
+    my $Location  = "$CareOnCloudHome/RELEASE";
 
     # check existence of the RELEASE file
     if ( !-e $Location ) {

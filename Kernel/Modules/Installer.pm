@@ -271,7 +271,7 @@ sub Run {
         if ( $CheckMode eq 'DB' ) {
             my %DBCredentials;
             for my $Param (
-                qw(DBUser DBPassword DBHost DBType DBPort DBSID DBName InstallType CareOnCloud ESMDBUser CareOnCloud ESMDBPassword)
+                qw(DBUser DBPassword DBHost DBType DBPort DBSID DBName InstallType CareOnCloudDBUser CareOnCloudDBPassword)
                 )
             {
                 $DBCredentials{$Param} = $ParamObject->GetParam( Param => $Param ) || '';
@@ -312,7 +312,7 @@ sub Run {
         my $DBType        = $ParamObject->GetParam( Param => 'DBType' );
         my $DBInstallType = $ParamObject->GetParam( Param => 'DBInstallType' );
 
-        # generate a random password for CareOnCloud ESMDBUser
+        # generate a random password for CareOnCloudDBUser
         my $GeneratedPassword = $MainObject->GenerateRandomString;
 
         if ( $DBType eq 'mysql' ) {
@@ -450,7 +450,7 @@ sub Run {
 
         my %DBCredentials;
         for my $Param (
-            qw(DBUser DBPassword DBHost DBType DBName DBSID DBPort InstallType CareOnCloud ESMDBUser CareOnCloud ESMDBPassword)
+            qw(DBUser DBPassword DBHost DBType DBName DBSID DBPort InstallType CareOnCloudDBUser CareOnCloudDBPassword)
             )
         {
             $DBCredentials{$Param} = $ParamObject->GetParam( Param => $Param ) || '';
@@ -531,15 +531,15 @@ sub Run {
                 # The syntax for CREATE USER is mostly the same between MySQL and MariaDB.
                 #
                 # Different authentication plugins are supported for different database systems.
-                my $CareOnCloud ESMDBUser     = $ParamObject->GetParam( Param => 'CareOnCloud ESMDBUser' );
-                my $CareOnCloud ESMDBPassword = $ParamObject->GetParam( Param => 'CareOnCloud ESMDBPassword' );
+                my $CareOnCloudDBUser     = $ParamObject->GetParam( Param => 'CareOnCloudDBUser' );
+                my $CareOnCloudDBPassword = $ParamObject->GetParam( Param => 'CareOnCloudDBPassword' );
                 my $AuthPlugin      = $ParamObject->GetParam( Param => 'AuthPlugin' );
                 my @CreateUserSQLs;
                 if ( !$AuthPlugin || $AuthPlugin eq 'default' ) {
 
                     # Use the default authentication plugin, works for MariaDB and MySQL
                     push @CreateUserSQLs,
-                        "CREATE USER `$CareOnCloud ESMDBUser`\@`$Host` IDENTIFIED BY '$CareOnCloud ESMDBPassword'";
+                        "CREATE USER `$CareOnCloudDBUser`\@`$Host` IDENTIFIED BY '$CareOnCloudDBPassword'";
                 }
                 else {
 
@@ -558,21 +558,21 @@ sub Run {
                         # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-ed25519
                         # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-parsec
                         push @CreateUserSQLs,
-                            "CREATE USER `$CareOnCloud ESMDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin USING PASSWORD('$CareOnCloud ESMDBPassword')";
+                            "CREATE USER `$CareOnCloudDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin USING PASSWORD('$CareOnCloudDBPassword')";
                     }
                     else {
 
                         # The MySQL case.
                         # "USING PASSWORD('...')" is not supported
                         push @CreateUserSQLs,
-                            "CREATE USER `$CareOnCloud ESMDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin BY '$CareOnCloud ESMDBPassword'";
+                            "CREATE USER `$CareOnCloudDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin BY '$CareOnCloudDBPassword'";
                     }
                 }
 
                 @Statements = (
                     "CREATE DATABASE `$DB{DBName}` charset utf8mb4 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci",
                     @CreateUserSQLs,
-                    "GRANT ALL PRIVILEGES ON `$DB{DBName}`.* TO `$DB{CareOnCloud ESMDBUser}`\@`$Host` WITH GRANT OPTION",
+                    "GRANT ALL PRIVILEGES ON `$DB{DBName}`.* TO `$DB{CareOnCloudDBUser}`\@`$Host` WITH GRANT OPTION",
                 );
             }
 
@@ -584,8 +584,8 @@ sub Run {
 
             if ( $DB{InstallType} eq 'CreateDB' ) {
                 @Statements = (
-                    "CREATE ROLE \"$DB{CareOnCloud ESMDBUser}\" WITH LOGIN PASSWORD '$DB{CareOnCloud ESMDBPassword}'",
-                    "CREATE DATABASE \"$DB{DBName}\" OWNER=\"$DB{CareOnCloud ESMDBUser}\" ENCODING 'utf-8'",
+                    "CREATE ROLE \"$DB{CareOnCloudDBUser}\" WITH LOGIN PASSWORD '$DB{CareOnCloudDBPassword}'",
+                    "CREATE DATABASE \"$DB{DBName}\" OWNER=\"$DB{CareOnCloudDBUser}\" ENCODING 'utf-8'",
                 );
             }
 
@@ -661,8 +661,8 @@ sub Run {
                 DatabaseDSN  => $DB{ConfigDSN},
                 DatabaseHost => $DB{DBHost},
                 Database     => $DB{DBSID},
-                DatabaseUser => $DB{CareOnCloud ESMDBUser},
-                DatabasePw   => $DB{CareOnCloud ESMDBPassword},
+                DatabaseUser => $DB{CareOnCloudDBUser},
+                DatabasePw   => $DB{CareOnCloudDBPassword},
             );
         }
         else {
@@ -670,8 +670,8 @@ sub Run {
                 DatabaseDSN  => $DB{ConfigDSN},
                 DatabaseHost => $DB{DBHost},
                 Database     => $DB{DBName},
-                DatabaseUser => $DB{CareOnCloud ESMDBUser},
-                DatabasePw   => $DB{CareOnCloud ESMDBPassword},
+                DatabaseUser => $DB{CareOnCloudDBUser},
+                DatabasePw   => $DB{CareOnCloudDBPassword},
             );
         }
 
@@ -700,8 +700,8 @@ sub Run {
         $Kernel::OM->ObjectParamAdd(
             'Kernel::System::DB' => {
                 DatabaseDSN  => $DB{DSN},
-                DatabaseUser => $DB{CareOnCloud ESMDBUser},
-                DatabasePw   => $DB{CareOnCloud ESMDBPassword},
+                DatabaseUser => $DB{CareOnCloudDBUser},
+                DatabasePw   => $DB{CareOnCloudDBPassword},
                 Type         => $DB{DBType},
             },
         );
@@ -1081,8 +1081,8 @@ sub Run {
 
         # webserver restart is never necessary
 
-        my $CareOnCloud ESMHandle = $ParamObject->ScriptName;
-        $CareOnCloud ESMHandle =~ s/\/(.*)\/installer\.pl/$1/;
+        my $CareOnCloudHandle = $ParamObject->ScriptName;
+        $CareOnCloudHandle =~ s/\/(.*)\/installer\.pl/$1/;
 
         # Under Docker the scheme is correctly recognised as there are only two relevant cases:
         #   a) HTTP should actually be used
@@ -1106,7 +1106,7 @@ sub Run {
                 Step        => $StepCounter,
                 Host        => $Host,
                 Scheme      => $Scheme,
-                CareOnCloud ESMHandle => $CareOnCloud ESMHandle,
+                CareOnCloudHandle => $CareOnCloudHandle,
                 Password    => $Password,
             },
         );
@@ -1191,7 +1191,7 @@ sub ConnectToDB {
     my @NeededKeys = qw(DBType DBHost DBUser DBPassword);
 
     if ( $Param{InstallType} eq 'CreateDB' ) {
-        push @NeededKeys, qw(CareOnCloud ESMDBUser CareOnCloud ESMDBPassword);
+        push @NeededKeys, qw(CareOnCloudDBUser CareOnCloudDBPassword);
     }
 
     # For Oracle we require DBSID and DBPort.
@@ -1215,10 +1215,10 @@ sub ConnectToDB {
         }
     }
 
-    # If we do not need to create a database for CareOnCloud ESM CareOnCloud ESMDBuser equals DBUser.
+    # If we do not need to create a database for CareOnCloud ESM CareOnCloudDBuser equals DBUser.
     if ( $Param{InstallType} ne 'CreateDB' ) {
-        $Param{CareOnCloud ESMDBUser}     = $Param{DBUser};
-        $Param{CareOnCloud ESMDBPassword} = $Param{DBPassword};
+        $Param{CareOnCloudDBUser}     = $Param{DBUser};
+        $Param{CareOnCloudDBPassword} = $Param{DBPassword};
     }
 
     # Create DSN string for backend.

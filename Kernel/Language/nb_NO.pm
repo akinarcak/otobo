@@ -1855,7 +1855,7 @@ sub Data {
         'Action' => 'Handling',
         'Module documentation' => 'Modul-dokumentasjon',
         'Local Repository' => 'Lokalt pakkelager',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'Denne pakken er verifisert av CareOnCloud ESMverify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Denne pakken er verifisert av CareOnCloud Verify (tm)',
         'Uninstall' => 'Avinstaller',
         'Package not correctly deployed! Please reinstall the package.' =>
             'Pakken er ikke riktig installert! Vennligst installer pakken på nytt.',
@@ -6570,12 +6570,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'Verdien tilfredsstiller ikke regulært uttrykk (%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
-            'Systemet var ikke i stand til å beregne brukerdato i CareOnCloud ESMTimeZone!',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            'Systemet var ikke i stand til å beregne brukerdato i CareOnCloudTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
-            'Systemet var ikke i stand til å beregne brukerens DateTime i CareOnCloud ESMTimeZone!',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            'Systemet var ikke i stand til å beregne brukerens DateTime i CareOnCloudTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -7181,10 +7181,10 @@ sub Data {
         'This is %s' => 'Dette er %s',
         'Complex %s with %s arguments' => 'Kompleks %s med %s argumenter',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => 'Ingen data tilgjengelig.',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Gruppert',
         'Stacked' => 'Stablet',
 
@@ -9019,8 +9019,8 @@ Ditt Helpdesk-team
             'Hvis den er aktivert, vil daemonen omdirigere standard feilstrømmen til en loggfil.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Hvis den er aktivert, vil daemonen omdirigere standard utdatastrømmen til en loggfil.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
-            'Hvis den er aktivert, vil daemonen bruke denne katalogen til å lage sine PID-filer. Merk: Stopp daemonen før noen endring og bruk denne innstillingen kun hvis <$CareOnCloud ESMHome>/var/run/ ikke kan brukes.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            'Hvis den er aktivert, vil daemonen bruke denne katalogen til å lage sine PID-filer. Merk: Stopp daemonen før noen endring og bruk denne innstillingen kun hvis <$CareOnCloudHome>/var/run/ ikke kan brukes.',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             'Hvis aktivert, vil CareOnCloud ESM levere alle CSS-filer i forminsket form.',
         'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
@@ -9038,8 +9038,8 @@ Ditt Helpdesk-team
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Hvis aktivert, åpnes det første nivået av hovedmenyen ved musepeking (i stedet for bare klikk).',
         'If enabled, the quick close action will create an article.' => 'Hvis den er aktivert, vil hurtiglukkingen opprette en artikkel.',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            'Hvis aktivert, vil brukere som ikke har valgt en tidssone ennå bli varslet om å gjøre det. Merk: Varsling vil ikke vises hvis (1) bruker ennå ikke har valgt en tidssone og (2) CareOnCloud ESMTimeZone og UserDefaultTimeZone stemmer overens og (3) ikke er satt til UTC.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            'Hvis aktivert, vil brukere som ikke har valgt en tidssone ennå bli varslet om å gjøre det. Merk: Varsling vil ikke vises hvis (1) bruker ennå ikke har valgt en tidssone og (2) CareOnCloudTimeZone og UserDefaultTimeZone stemmer overens og (3) ikke er satt til UTC.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'Hvis ingen SendmailNotificationEnvelopeFrom er spesifisert, gjør denne innstillingen det mulig å bruke e-postens fra-adresse i stedet for en tom konvoluttavsender (påkrevd i visse e-postserverkonfigurasjoner).',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -10298,7 +10298,7 @@ Ditt Helpdesk-team
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Denne innstillingen lar deg overstyre den innebygde landlisten med din egen liste over land. Dette er spesielt nyttig hvis du bare vil bruke en liten utvalgt gruppe land.',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => 'Denne innstillingen er utdatert. Sett CareOnCloud ESMTimeZone i stedet.',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => 'Denne innstillingen er utdatert. Sett CareOnCloudTimeZone i stedet.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             'Denne innstillingen viser sorteringsattributtene i alle oversiktsskjermer, ikke bare i køvisning.',
         'Ticket Close' => 'Lukk sak',

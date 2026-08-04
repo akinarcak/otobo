@@ -100,7 +100,7 @@ $Selenium->RunTest(
         );
 
         # verify that the deploy notification does not contain the session cookie
-        $Selenium->find_no_element_ok('//a[contains(@href,"Subaction=Deployment")][contains(@href,"CareOnCloud ESMAgentInterface")]');
+        $Selenium->find_no_element_ok('//a[contains(@href,"Subaction=Deployment")][contains(@href,"CareOnCloudAgentInterface")]');
 
         # do the deployment, authenticated with the session cookie in the URL
         $Selenium->find_element('//a[contains(@href,"Subaction=Deployment")]')->VerifiedClick();

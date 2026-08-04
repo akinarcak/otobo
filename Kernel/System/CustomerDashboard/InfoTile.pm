@@ -271,7 +271,7 @@ sub InfoTileGet {
             $InfoTile{TimeZone} = $InfoTileXML->{TimeZone}->[1]->{Content};
         }
         else {
-            $InfoTile{TimeZone} = Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet();
+            $InfoTile{TimeZone} = Kernel::System::DateTime->CareOnCloudTimeZoneGet();
         }
     }
 

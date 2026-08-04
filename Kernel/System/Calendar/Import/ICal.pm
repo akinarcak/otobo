@@ -245,7 +245,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $StartTimeObject->ToCareOnCloud ESMTimeZone();
+                $StartTimeObject->ToCareOnCloudTimeZone();
             }
 
             $Parameters{StartTime} = $StartTimeObject->ToString();
@@ -285,7 +285,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $EndTimeObject->ToCareOnCloud ESMTimeZone();
+                $EndTimeObject->ToCareOnCloudTimeZone();
             }
 
             $Parameters{EndTime} = $EndTimeObject->ToString();
@@ -525,7 +525,7 @@ sub Import {
                         );
 
                         if ( !$Parameters{AllDay} ) {
-                            $ExcludeTimeObject->ToCareOnCloud ESMTimeZone();
+                            $ExcludeTimeObject->ToCareOnCloudTimeZone();
                         }
 
                         push @RecurrenceExclude, $ExcludeTimeObject->ToString();
@@ -654,7 +654,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $RecurrenceIDObject->ToCareOnCloud ESMTimeZone();
+                $RecurrenceIDObject->ToCareOnCloudTimeZone();
             }
 
             $Param{RecurrenceID} = $RecurrenceIDObject->ToString();

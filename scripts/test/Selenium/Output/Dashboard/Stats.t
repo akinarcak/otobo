@@ -170,7 +170,7 @@ $Selenium->RunTest(
         my $SelectedTimeZone = $Selenium->execute_script("return \$('#TimeZone').val();");
         $Self->Is(
             $SelectedTimeZone,
-            $ConfigObject->Get('CareOnCloud ESMTimeZone'),
+            $ConfigObject->Get('CareOnCloudTimeZone'),
             'Default time zone'
         );
 

@@ -164,7 +164,7 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.CareOnCloud ESMlineChart(),
+            var Chart = nv.models.CareOnCloudlineChart(),
                 ShowLegend = Options.HideLegend ? false : true,
                 InitDuration = Options.NoInitAnimation ? 0 : 500;
 
@@ -301,7 +301,7 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.CareOnCloud ESMlineChart(),
+            var Chart = nv.models.CareOnCloudlineChart(),
                 ShowLegend = Options.HideLegend ? false : true;
 
             // don't let nv/d3 exceptions block the rest of CareOnCloud ESM JavaScript
@@ -430,7 +430,7 @@ Core.UI.AdvancedChart = (function (TargetNS) {
                     // because it could happen that x axis headings occur multiple
                     // times (such as Thu 18 for two different months), we
                     // add a custom label for uniquity of the headings which is being
-                    // removed later (see CareOnCloud ESMmultiBarChart.js)
+                    // removed later (see CareOnCloudmultiBarChart.js)
                     ResultLine.values.push({
                         x: '__LABEL_START__' + InnerCounter + '__LABEL_END__' + HeadingElement + ' ',
                         y: Value
@@ -446,7 +446,7 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.CareOnCloud ESMmultiBarChart(),
+            var Chart = nv.models.CareOnCloudmultiBarChart(),
                 ShowLegend = Options.HideLegend ? false : true;
 
             // don't let nv/d3 exceptions block the rest of CareOnCloud ESM JavaScript
@@ -600,7 +600,7 @@ Core.UI.AdvancedChart = (function (TargetNS) {
 
         nv.addGraph(function() {
 
-            var Chart = nv.models.CareOnCloud ESMstackedAreaChart(),
+            var Chart = nv.models.CareOnCloudstackedAreaChart(),
                 ShowLegend = Options.HideLegend ? false : true;
 
             // don't let nv/d3 exceptions block the rest of CareOnCloud ESM JavaScript

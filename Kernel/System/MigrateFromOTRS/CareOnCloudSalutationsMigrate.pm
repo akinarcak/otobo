@@ -78,7 +78,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMSalutationsMigrate',
+            Task      => 'CareOnCloudSalutationsMigrate',
             SubTask   => "Migrate salutation templates to CareOnCloud ESM.",
             StartTime => $Epoch,
         },

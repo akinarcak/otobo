@@ -1404,14 +1404,14 @@
         <Description Translatable="1">Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">CareOnCloud ESMAgentInterface</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloudAgentInterface</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelSessionName" Required="1" Valid="1">
         <Description Translatable="1">Defines the name of the key for customer sessions.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">CareOnCloud ESMCustomerInterface</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloudCustomerInterface</Item>
         </Value>
     </Setting>
     <Setting Name="SessionCheckRemoteIP" Required="1" Valid="1">
@@ -1538,7 +1538,7 @@
         </Value>
     </Setting>
     <Setting Name="TimeZone" Required="0" Valid="0">
-        <Description Translatable="1">This setting is deprecated. Set CareOnCloud ESMTimeZone instead.</Description>
+        <Description Translatable="1">This setting is deprecated. Set CareOnCloudTimeZone instead.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="+0">
@@ -1570,7 +1570,7 @@
             </Item>
         </Value>
     </Setting>
-    <Setting Name="CareOnCloud ESMTimeZone" Required="1" Valid="1">
+    <Setting Name="CareOnCloudTimeZone" Required="1" Valid="1">
         <Description Translatable="1">Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
@@ -1585,7 +1585,7 @@
         </Value>
     </Setting>
     <Setting Name="ShowUserTimeZoneSelectionNotification" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, users that haven't selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.</Description>
+        <Description Translatable="1">If enabled, users that haven't selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -4676,8 +4676,8 @@ via the Preferences button after logging in.
                         <Item>thirdparty/fullcalendar-3.10.2/fullcalendar.min.js</Item>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
@@ -5412,7 +5412,7 @@ via the Preferences button after logging in.
                         <Item Key="Order">4000</Item>
                     </Hash>
                 </Item>
-                <Item Key="CareOnCloud ESMTeamServices">
+                <Item Key="CareOnCloudTeamServices">
                     <Hash>
                         <Item Key="Title" Translatable="1">CareOnCloud ESM Team Services</Item>
                         <Item Key="Order">5000</Item>
@@ -7019,7 +7019,7 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">System Registration</Item>
-                <Item Key="Block">CareOnCloud ESMTeamServices</Item>
+                <Item Key="Block">CareOnCloudTeamServices</Item>
                 <Item Key="Description" Translatable="1">Manage system registration.</Item>
                 <Item Key="IconBig">fa-edit</Item>
                 <Item Key="IconSmall"></Item>
@@ -7094,7 +7094,7 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">Support Data Collector</Item>
-                <Item Key="Block">CareOnCloud ESMTeamServices</Item>
+                <Item Key="Block">CareOnCloudTeamServices</Item>
                 <Item Key="Description" Translatable="1">Manage support data.</Item>
                 <Item Key="IconBig">fa-search</Item>
                 <Item Key="IconSmall"></Item>
@@ -7164,7 +7164,7 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">Cloud Services</Item>
-                <Item Key="Block">CareOnCloud ESMTeamServices</Item>
+                <Item Key="Block">CareOnCloudTeamServices</Item>
                 <Item Key="Description" Translatable="1">Manage CareOnCloud ESM Team cloud services.</Item>
                 <Item Key="IconBig">fa-cloud</Item>
                 <Item Key="IconSmall"></Item>
@@ -8397,8 +8397,8 @@ via the Preferences button after logging in.
                     <Array>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
@@ -10645,8 +10645,8 @@ via the Preferences button after logging in.
                     <Array>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>Core.UI.AdvancedChart.js</Item>
                         <Item>Core.Agent.StatisticsReports.js</Item>
@@ -10877,8 +10877,8 @@ via the Preferences button after logging in.
                         <Item>thirdparty/fullcalendar-3.10.2/fullcalendar.min.js</Item>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloud ESMMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>

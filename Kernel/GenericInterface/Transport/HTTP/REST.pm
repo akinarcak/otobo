@@ -418,7 +418,7 @@ sub ProviderGenerateResponse {
         );
     }
 
-    # added for CareOnCloud ESMTicketInvoker
+    # added for CareOnCloudTicketInvoker
     # Gather additional headers.
     my %ResponseHeaders = $Self->_HeadersGet(
         Type      => 'Operation',
@@ -428,7 +428,7 @@ sub ProviderGenerateResponse {
     # Mirror some HTTP headers when the request comes from a test script
     # that has temporarily set GenericInterface::Transport::UnitTestHeaders.
     # This feature allows to check outgoing HTTP headers of the generic interface.
-    # It was introduced by CareOnCloud ESMTicketInvoker.
+    # It was introduced by CareOnCloudTicketInvoker.
     if ( $Kernel::OM->Get('Kernel::Config')->Get('GenericInterface::Transport::MirrorUnitTestHTTPHeaders') ) {
 
         # The HTTP::REST support works with a request object.
@@ -476,7 +476,7 @@ sub ProviderGenerateResponse {
     $Self->_ThrowWebException(
         HTTPCode => $HTTPCode,
         Content  => $JSONString,
-        Headers  => \%ResponseHeaders,    # added by CareOnCloud ESMTicketInvoker
+        Headers  => \%ResponseHeaders,    # added by CareOnCloudTicketInvoker
     );
 
     return;                               # actually not reached
@@ -933,7 +933,7 @@ sub RequesterPerformRequest {
         if ($IsMultiPartAttachmentUpload) {
 
             # create Boundary
-            my $Boundary = 'CareOnCloud ESMBoundary' . int( rand(1000000) );
+            my $Boundary = 'CareOnCloudBoundary' . int( rand(1000000) );
             $Headers{'Content-Type'} = "multipart/form-data; boundary=$Boundary";
             push @HeadersArr, \%Headers;
 
@@ -1041,7 +1041,7 @@ sub RequesterPerformRequest {
         push @RequestParam, $Controller;
     }
 
-    # added for CareOnCloud ESMTicketInvoker
+    # added for CareOnCloudTicketInvoker
 
     # Gather additional headers.
     %Headers = (
@@ -1150,7 +1150,7 @@ sub RequesterPerformRequest {
         }
     }
 
-    # introduced for CareOnCloud ESMTicketInvoker
+    # introduced for CareOnCloudTicketInvoker
 
     # Report mirrored headers, only used for UnitTests
     my %UnitTestHeaders;
@@ -1169,7 +1169,7 @@ sub RequesterPerformRequest {
         Success         => 1,
         Data            => $Result || undef,
         SizeExceeded    => $SizeExceeded,
-        UnitTestHeaders => \%UnitTestHeaders,    # added by CareOnCloud ESMTicketInvoker
+        UnitTestHeaders => \%UnitTestHeaders,    # added by CareOnCloudTicketInvoker
     };
 }
 
@@ -1269,7 +1269,7 @@ sub _ThrowWebException {
         }
     }
 
-    # introduced by CareOnCloud ESMTicketInvoker
+    # introduced by CareOnCloudTicketInvoker
     # Set additional headers.
     if ( $Param{Headers} ) {
         for my $Header ( sort keys $Param{Headers}->%* ) {
@@ -1337,7 +1337,7 @@ sub _Error {
     };
 }
 
-# introduced for CareOnCloud ESMTicketInvoker
+# introduced for CareOnCloudTicketInvoker
 sub _HeadersGet {
     my ( $Self, %Param ) = @_;
 

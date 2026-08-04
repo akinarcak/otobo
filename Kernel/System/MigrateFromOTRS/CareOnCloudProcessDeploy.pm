@@ -80,7 +80,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMProcessDeploy',
+            Task      => 'CareOnCloudProcessDeploy',
             SubTask   => "Deploy the process management configuration.",
             StartTime => $Epoch,
         },

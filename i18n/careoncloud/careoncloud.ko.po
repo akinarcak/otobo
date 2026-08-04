@@ -6347,8 +6347,8 @@ msgid "Local Repository"
 msgstr "로컬 저장소"
 
 #. Template: AdminPackageManager
-msgid "This package is verified by CareOnCloud ESMverify (tm)"
-msgstr "이 패키지는 CareOnCloud ESMverify (tm)에 의해 검증됩니다."
+msgid "This package is verified by CareOnCloud Verify (tm)"
+msgstr "이 패키지는 CareOnCloud Verify (tm)에 의해 검증됩니다."
 
 #. Template: AdminPackageManager
 msgid "Uninstall"
@@ -20219,12 +20219,12 @@ msgid "Value doesn't satisfy regex (%s)."
 msgstr "값이 정규식 (%s)을 만족하지 않습니다."
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-msgid "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
-msgstr "시스템이 CareOnCloud ESMTimeZone에서 사용자 날짜를 계산할 수 없습니다!"
+msgid "System was not able to calculate user Date in CareOnCloudTimeZone!"
+msgstr "시스템이 CareOnCloudTimeZone에서 사용자 날짜를 계산할 수 없습니다!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-msgid "System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!"
-msgstr "시스템은 CareOnCloud ESMTimeZone에서 사용자 DateTime을 계산할 수 없었습니다!"
+msgid "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
+msgstr "시스템은 CareOnCloudTimeZone에서 사용자 DateTime을 계산할 수 없었습니다!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
 msgid "Value is not correct! Please, consider updating this module."
@@ -21837,15 +21837,15 @@ msgstr "이것은 %s입니다."
 msgid "Complex %s with %s arguments"
 msgstr "%s 인수가있는 복합 %s"
 
-#. JS File: CareOnCloud ESMLineChart
+#. JS File: CareOnCloudLineChart
 msgid "No Data Available."
 msgstr "자료 없음."
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Grouped"
 msgstr "그룹화 된"
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Stacked"
 msgstr "누적된"
 
@@ -28884,10 +28884,10 @@ msgstr "사용 가능하면 데몬은 표준 출력 스트림을 로그 파일�
 msgid ""
 "If enabled the daemon will use this directory to create its PID files. Note: "
 "Please stop the daemon before any change and use this setting only if "
-"<$CareOnCloud ESMHome>/var/run/ can not be used."
+"<$CareOnCloudHome>/var/run/ can not be used."
 msgstr ""
 "이 설정을 사용하면 데몬은이 디렉토리를 사용하여 PID 파일을 만듭니다. 참고 : "
-"변경하기 전에 데몬을 중지하고 <$ CareOnCloud ESMHome> / var / run /을 사용할 수없는 경"
+"변경하기 전에 데몬을 중지하고 <$ CareOnCloudHome> / var / run /을 사용할 수없는 경"
 "우에만이 설정을 사용하십시오."
 
 #. SysConfig
@@ -28954,11 +28954,11 @@ msgstr ""
 msgid ""
 "If enabled, users that haven't selected a time zone yet will be notified to "
 "do so. Note: Notification will not be shown if (1) user has not yet selected "
-"a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) "
+"a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) "
 "are not set to UTC."
 msgstr ""
 "사용하도록 설정하면 아직 시간대를 선택하지 않은 사용자에게 알림이 전송됩니"
-"다. 참고 : (1) 사용자가 아직 시간대를 선택하지 않았으며 (2) CareOnCloud ESMTimeZone과 "
+"다. 참고 : (1) 사용자가 아직 시간대를 선택하지 않았으며 (2) CareOnCloudTimeZone과 "
 "UserDefaultTimeZone이 일치하고 (3) UTC로 설정되지 않은 경우 알림이 표시되지 "
 "않습니다."
 
@@ -34092,8 +34092,8 @@ msgstr ""
 "니다. 소규모 그룹을 선택하고 싶을 때 특히 편리합니다."
 
 #. SysConfig
-msgid "This setting is deprecated. Set CareOnCloud ESMTimeZone instead."
-msgstr "이 설정은 사용되지 않습니다. 대신 CareOnCloud ESMTimeZone을 설정하십시오."
+msgid "This setting is deprecated. Set CareOnCloudTimeZone instead."
+msgstr "이 설정은 사용되지 않습니다. 대신 CareOnCloudTimeZone을 설정하십시오."
 
 #. SysConfig
 msgid ""

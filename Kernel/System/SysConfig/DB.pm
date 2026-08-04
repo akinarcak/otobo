@@ -4485,7 +4485,7 @@ sub DeploymentAdd {
         }
     }
 
-    my $UID = 'CareOnCloud ESMInvalid-' . $Self->_GetUID();
+    my $UID = 'CareOnCloudInvalid-' . $Self->_GetUID();
 
     # Create a deployment record without the real comments.
     return if !$DBObject->Do(
@@ -5359,7 +5359,7 @@ sub DeploymentListCleanup {
             SELECT id, create_time
             FROM sysconfig_deployment
             WHERE effective_value LIKE \'Invalid%\'
-                OR comments LIKE \'CareOnCloud ESMInvalid-%\'
+                OR comments LIKE \'CareOnCloudInvalid-%\'
             ORDER BY id DESC',
     );
 

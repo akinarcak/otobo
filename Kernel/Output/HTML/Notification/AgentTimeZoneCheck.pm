@@ -59,11 +59,11 @@ sub Run {
     # Do not show notification if user has already valid time zone in the preferences.
     return '' if $UserPreferences{UserTimeZone};
 
-    # If CareOnCloud ESMTimeZone and UserDefaultTimeZone match and are not set to UTC, don't show a notification,
+    # If CareOnCloudTimeZone and UserDefaultTimeZone match and are not set to UTC, don't show a notification,
     # because in this case it almost certainly means that only this time zone is relevant.
-    my $CareOnCloud ESMTimeZone       = Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet();
+    my $CareOnCloudTimeZone       = Kernel::System::DateTime->CareOnCloudTimeZoneGet();
     my $UserDefaultTimeZone = Kernel::System::DateTime->UserDefaultTimeZoneGet();
-    return '' if $CareOnCloud ESMTimeZone eq $UserDefaultTimeZone && $CareOnCloud ESMTimeZone ne 'UTC';
+    return '' if $CareOnCloudTimeZone eq $UserDefaultTimeZone && $CareOnCloudTimeZone ne 'UTC';
 
     # show notification to set time zone
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');

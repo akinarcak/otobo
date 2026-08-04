@@ -3473,7 +3473,7 @@ sub TransformDateSelection {
         );
 
         if ($DateTimeObject) {
-            $DateTimeObject->ToCareOnCloud ESMTimeZone();
+            $DateTimeObject->ToCareOnCloudTimeZone();
             my $DateTimeValues = $DateTimeObject->Get();
 
             $Param{ $Prefix . 'Year' }   = $DateTimeValues->{Year};
@@ -6739,7 +6739,7 @@ This method may be called via the package name when C<RegisterInOM> is active.
 
    Kernel::Output::HTML::Layout->SetCookie(
        RegisterInOM => 1,
-       Key          => 'CookieForCareOnCloud ESMSessionID',
+       Key          => 'CookieForCareOnCloudSessionID',
        Name         => $Param{SessionName},
        Value        => $NewSessionID,
        Expires      => $Expires,

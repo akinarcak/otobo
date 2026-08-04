@@ -111,7 +111,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMOTRSConnectionCheck',
+            Task      => 'CareOnCloudOTRSConnectionCheck',
             SubTask   => "Check if a connection via ssh or local is possible.",
             StartTime => $Epoch,
         },
@@ -148,7 +148,7 @@ sub Run {
     }
 
     # Check CareOnCloud ESM version
-    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloud ESMConfigpmExists();
+    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloudConfigpmExists();
 
     return $ResultCareOnCloud ESM unless $ResultCareOnCloud ESM->{Successful};
 
@@ -167,17 +167,17 @@ sub Run {
     };
 }
 
-sub _CheckCareOnCloud ESMConfigpmExists {
+sub _CheckCareOnCloudConfigpmExists {
     my ( $Self, %Param ) = @_;
 
-    my $CareOnCloud ESMHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
+    my $CareOnCloudHome = $Kernel::OM->Get('Kernel::Config')->Get('Home');
     my $Message   = $Self->{LanguageObject}->Translate("Check if Kernel/Config.pm exists in CareOnCloud ESM home.");
 
     # load Kernel/Config.pm file
-    if ( !-e "$CareOnCloud ESMHome/Kernel/Config.pm" ) {
+    if ( !-e "$CareOnCloudHome/Kernel/Config.pm" ) {
         my %Result;
         $Result{Message}    = $Message;
-        $Result{Comment}    = $Self->{LanguageObject}->Translate( '%s does not exist!', "$CareOnCloud ESMHome/Kernel/Config.pm" );
+        $Result{Comment}    = $Self->{LanguageObject}->Translate( '%s does not exist!', "$CareOnCloudHome/Kernel/Config.pm" );
         $Result{Successful} = 0;
 
         return \%Result;

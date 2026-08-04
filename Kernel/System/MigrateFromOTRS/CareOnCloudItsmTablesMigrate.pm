@@ -81,7 +81,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMItsmTablesMigrate',
+            Task      => 'CareOnCloudItsmTablesMigrate',
             SubTask   => "Migrate ITSM tables to CareOnCloud ESM.",
             StartTime => $Epoch,
         },

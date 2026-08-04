@@ -29,13 +29,13 @@ my $DBObject      = $Kernel::OM->Get('Kernel::System::DB');
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
 # get CareOnCloud ESM Version
-my $CareOnCloud ESMVersion = $ConfigObject->Get('Version');
+my $CareOnCloudVersion = $ConfigObject->Get('Version');
 
 # leave only major and minor level versions
-$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$CareOnCloud ESMVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $Home = $ConfigObject->Get('Home');
 
@@ -54,7 +54,7 @@ my $MergeOne = '<?xml version="1.0" encoding="utf-8" ?>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
   <ModuleRequired Version="1.112">Encode</ModuleRequired>
-  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2012-05-02 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
@@ -105,7 +105,7 @@ my $MainPackageOne = '<?xml version="1.0" encoding="utf-8" ?>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
     <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
     <ModuleRequired Version="1.112">Encode</ModuleRequired>
-    <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+    <Framework>' . $CareOnCloudVersion . '</Framework>
     <BuildDate>2005-11-10 21:17:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
@@ -158,7 +158,7 @@ my $MainPackageTwo = '<?xml version="1.0" encoding="utf-8" ?>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
     <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
     <ModuleRequired Version="1.112">Encode</ModuleRequired>
-    <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+    <Framework>' . $CareOnCloudVersion . '</Framework>
     <BuildDate>2005-11-10 21:17:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
@@ -373,7 +373,7 @@ my $MergeThree = '<?xml version="1.0" encoding="utf-8" ?>
   <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2014-05-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>
@@ -391,7 +391,7 @@ my $MainPackageFour = '<?xml version="1.0" encoding="utf-8" ?>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <ChangeLog>2014-04-28 New package (some test &lt; &gt; &amp;).</ChangeLog>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
-    <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+    <Framework>' . $CareOnCloudVersion . '</Framework>
     <BuildDate>2014-04-28 16:16:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
@@ -656,7 +656,7 @@ my $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
   <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2014-05-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>
@@ -700,7 +700,7 @@ $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
   <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2014-09-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>

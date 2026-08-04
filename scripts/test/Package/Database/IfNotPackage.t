@@ -128,13 +128,13 @@ my $ExecuteXMLDBString = sub {
 };
 
 # get CareOnCloud ESM Version
-my $CareOnCloud ESMVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
+my $CareOnCloudVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
 
 # leave only major and minor level versions
-$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$CareOnCloud ESMVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $RandomID = $Helper->GetRandomID();
 
@@ -148,7 +148,7 @@ my %Packages = (
     <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Yet another CareOnCloud ESM package that is only used as a test case in IfNotPackage.t.</Description>
-    <Framework>$CareOnCloud ESMVersion</Framework>
+    <Framework>$CareOnCloudVersion</Framework>
     <PackageIsVisible>1</PackageIsVisible>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsRemovable>1</PackageIsRemovable>
@@ -172,7 +172,7 @@ EOF
     <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <Description Lang="en">Yet another CareOnCloud ESM package that is only used as a test case in IfNotPackage.t.</Description>
-    <Framework>$CareOnCloud ESMVersion</Framework>
+    <Framework>$CareOnCloudVersion</Framework>
     <PackageIsVisible>1</PackageIsVisible>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsRemovable>1</PackageIsRemovable>

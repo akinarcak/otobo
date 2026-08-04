@@ -77,7 +77,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMCacheCleanup',
+            Task      => 'CareOnCloudCacheCleanup',
             SubTask   => "Cleanup the system cache.",
             StartTime => $Epoch,
         },

@@ -182,7 +182,7 @@ for my $Hours ( sort keys %WorkingHours ) {
             SalutationID        =>  1,
             SignatureID         =>  1,
             UserID              =>  1,
-            Comment             => "Queue for CareOnCloud ESMEscalationEvents.t for test run at $StartingTimeStamp",
+            Comment             => "Queue for CareOnCloudEscalationEvents.t for test run at $StartingTimeStamp",
         );
         $Self->True( $QueueID, "QueueAdd() $QueueName" );
 
@@ -354,7 +354,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # run GenericAgent job again, with suppressed event generation
     {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 100,
         );
 
@@ -372,7 +372,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # run GenericAgent job again, without suppressed event generation
     {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 0,
         );
 
@@ -395,7 +395,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # generate an response and see the first response escalation go away
     {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 0,
         );
 
@@ -451,7 +451,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # no new escalations when escalation times are far in the future
     {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 0,
         );
 

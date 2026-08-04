@@ -25,7 +25,7 @@ our $Self;
 
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 $ConfigObject->Set(
-    Key   => 'CareOnCloud ESMTimeZone',
+    Key   => 'CareOnCloudTimeZone',
     Value => 'UTC',
 );
 
@@ -276,7 +276,7 @@ for my $Test (@TestsNextEventGet) {
 
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => $Test->{Config}->{TimeZone},
         );
     }
@@ -308,10 +308,10 @@ for my $Test (@TestsNextEventGet) {
         );
     }
 
-    # Reset back CareOnCloud ESMTimeZone if it was changed.
+    # Reset back CareOnCloudTimeZone if it was changed.
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => 'UTC',
         );
     }
@@ -492,7 +492,7 @@ for my $Test (@TestsNextEventList) {
 
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => $Test->{Config}->{TimeZone},
         );
     }
@@ -532,10 +532,10 @@ for my $Test (@TestsNextEventList) {
         );
     }
 
-    # Reset back CareOnCloud ESMTimeZone if it was changed.
+    # Reset back CareOnCloudTimeZone if it was changed.
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => 'UTC',
         );
     }
@@ -699,7 +699,7 @@ for my $Test (@TestsPreviousEventList) {
 
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => $Test->{Config}->{TimeZone},
         );
     }
@@ -731,10 +731,10 @@ for my $Test (@TestsPreviousEventList) {
         );
     }
 
-    # Reset back CareOnCloud ESMTimeZone if it was changed.
+    # Reset back CareOnCloudTimeZone if it was changed.
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => 'UTC',
         );
     }

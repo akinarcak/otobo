@@ -82,7 +82,7 @@ Core.Agent.Admin.Translations = (function (TargetNS) {
                 Action: 'AdminTranslations',
                 Object: encodeURIComponent($("#Object").val()),
                 LanguageID: encodeURIComponent($("input[name=LanguageID]").val()),
-                CareOnCloud ESMAgentInterface: encodeURIComponent($("input[name=CareOnCloud ESMAgentInterface]").val())
+                CareOnCloudAgentInterface: encodeURIComponent($("input[name=CareOnCloudAgentInterface]").val())
             };
 
             /* Show containers and data */
@@ -238,7 +238,7 @@ Core.Agent.Admin.Translations = (function (TargetNS) {
             Object: encodeURIComponent($("#Object").val()),
             DynamicFieldID: encodeURIComponent($('#' + FieldID).val()),
             LanguageID: encodeURIComponent($("input[name=LanguageID]").val()),
-            CareOnCloud ESMAgentInterface: encodeURIComponent($("input[name=CareOnCloud ESMAgentInterface]").val())
+            CareOnCloudAgentInterface: encodeURIComponent($("input[name=CareOnCloudAgentInterface]").val())
         };
 
         /* Get field data or data table from backend */
@@ -275,7 +275,7 @@ Core.Agent.Admin.Translations = (function (TargetNS) {
             Action: 'AdminTranslations',
             Subaction: 'Deploy',
             UserLanguage: encodeURIComponent($("input[name=UserLanguage]").val()),
-            CareOnCloud ESMAgentInterface: encodeURIComponent($("input[name=CareOnCloud ESMAgentInterface]").val())
+            CareOnCloudAgentInterface: encodeURIComponent($("input[name=CareOnCloudAgentInterface]").val())
         };
 
         /* Get field data or data table from backend */
@@ -303,7 +303,7 @@ Core.Agent.Admin.Translations = (function (TargetNS) {
                             Label: Core.Language.Translate('Close this dialog'),
                             Function: function () {
                                 Core.UI.Dialog.CloseDialog($('.Dialog:visible'));
-                                window.location = Core.Config.Get('CGIHandle') + "?Action=AdminTranslations;UserLanguage="+encodeURIComponent($("input[name=UserLanguage]").val())+";CareOnCloud ESMAgentInterface="+encodeURIComponent($("input[name=CareOnCloud ESMAgentInterface]").val());
+                                window.location = Core.Config.Get('CGIHandle') + "?Action=AdminTranslations;UserLanguage="+encodeURIComponent($("input[name=UserLanguage]").val())+";CareOnCloudAgentInterface="+encodeURIComponent($("input[name=CareOnCloudAgentInterface]").val());
                             },
                             Class: 'CallForAction'
                         }

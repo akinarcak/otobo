@@ -51,7 +51,7 @@ else {
         },
         {
             Name     => 'CareOnCloud ESM Version variable',
-            Code     => 'my $CareOnCloud ESMVersion = $Kernel::OM->Get("Kernel::Config")->Get("Version");',
+            Code     => 'my $CareOnCloudVersion = $Kernel::OM->Get("Kernel::Config")->Get("Version");',
             Result   => '"' . $ConfigObject->Get('Version') . '"',
             ExitCode => 0,
         },

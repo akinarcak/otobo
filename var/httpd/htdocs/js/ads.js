@@ -16,4 +16,4 @@
 
 /*eslint-disable no-unused-vars*/
 
-var CareOnCloud ESMAdblockDisabled = true;
+var CareOnCloudAdblockDisabled = true;

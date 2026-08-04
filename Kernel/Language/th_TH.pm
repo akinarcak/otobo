@@ -1847,7 +1847,7 @@ sub Data {
         'Action' => 'การดำเนินการ',
         'Module documentation' => 'เอกสารของโมดูล',
         'Local Repository' => 'พื้นที่เก็บข้อมูลท้องถิ่น',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'แพคเกจนี้ถูกตรวจสอบโดยCareOnCloud ESMverify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'แพคเกจนี้ถูกตรวจสอบโดยCareOnCloud Verify (tm)',
         'Uninstall' => 'ยกเลิกการติดตั้ง',
         'Package not correctly deployed! Please reinstall the package.' =>
             'ไม่สามารถใช้งานแพคเกจได้อย่างถูกต้อง! กรุณาติดตั้งแพคเกจ',
@@ -6565,11 +6565,11 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -7176,10 +7176,10 @@ sub Data {
         'This is %s' => '',
         'Complex %s with %s arguments' => '',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'จัดกลุ่ม',
         'Stacked' => 'ซ้อนกัน',
 
@@ -9017,7 +9017,7 @@ Thanks for your help!
             'หากเปิดใช้งานเดมอนจะเปลี่ยนเส้นทางค่าสตรีมข้อผิดพลาดมาตรฐานไปยังล็อกไฟล์',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'หากเปิดใช้งานเดมอนจะเปลี่ยนเส้นทางค่าสตรีมออกมาตรฐานการล็อกไฟล์',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
             '',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '',
@@ -9036,7 +9036,7 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             '',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '',
@@ -10296,7 +10296,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',

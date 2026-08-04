@@ -41,8 +41,8 @@ sub Configure {
     my ( $Self, %Param ) = @_;
 
     $Self->Description(
-        "Integrate CareOnCloud ESMAGents Dynamic Fields. \n" .
-            "Migrates custom CareOnCloud ESMAgents Dynamic Fields to rel-11_x standard Agent Reference fields. \n"
+        "Integrate CareOnCloudAGents Dynamic Fields. \n" .
+            "Migrates custom CareOnCloudAgents Dynamic Fields to rel-11_x standard Agent Reference fields. \n"
     );
 
     return;
@@ -51,12 +51,12 @@ sub Configure {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    if ( !$Kernel::OM->Get('Kernel::System::Main')->Require('scripts::DBUpdateTo11_0::DBUpdateCareOnCloud ESMAgentsDF') ) {
+    if ( !$Kernel::OM->Get('Kernel::System::Main')->Require('scripts::DBUpdateTo11_0::DBUpdateCareOnCloudAgentsDF') ) {
 
         return $Self->ExitCodeError();
     }
 
-    my $Success = $Kernel::OM->Create('scripts::DBUpdateTo11_0::DBUpdateCareOnCloud ESMAgentsDF')->Run;
+    my $Success = $Kernel::OM->Create('scripts::DBUpdateTo11_0::DBUpdateCareOnCloudAgentsDF')->Run;
 
     if ( !$Success ) {
         return $Self->ExitCodeError();

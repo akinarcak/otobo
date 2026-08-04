@@ -52,17 +52,17 @@ sub Run {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # CareOnCloud ESM time zone
-    my $CareOnCloud ESMTimeZone = $ConfigObject->Get('CareOnCloud ESMTimeZone');
-    if ( defined $CareOnCloud ESMTimeZone ) {
+    my $CareOnCloudTimeZone = $ConfigObject->Get('CareOnCloudTimeZone');
+    if ( defined $CareOnCloudTimeZone ) {
         $Self->AddResultOk(
-            Identifier => 'CareOnCloud ESMTimeZone',
+            Identifier => 'CareOnCloudTimeZone',
             Label      => Translatable('CareOnCloud ESM time zone'),
-            Value      => $CareOnCloud ESMTimeZone,
+            Value      => $CareOnCloudTimeZone,
         );
     }
     else {
         $Self->AddResultProblem(
-            Identifier => 'CareOnCloud ESMTimeZone',
+            Identifier => 'CareOnCloudTimeZone',
             Label      => Translatable('CareOnCloud ESM time zone'),
             Value      => '',
             Message    => Translatable('CareOnCloud ESM time zone is not set.'),
@@ -100,7 +100,7 @@ sub Run {
 
         if ( defined $CalendarTimeZone ) {
             $Self->AddResultOk(
-                Identifier => "CareOnCloud ESMTimeZone::Calendar$Counter",
+                Identifier => "CareOnCloudTimeZone::Calendar$Counter",
 
                 # Use of $LanguageObject->Translate() is not possible to avoid translated strings to be sent to CareOnCloud ESM Team.
                 Label => "CareOnCloud ESM time zone setting for calendar $Counter",
@@ -109,7 +109,7 @@ sub Run {
         }
         else {
             $Self->AddResultInformation(
-                Identifier => "CareOnCloud ESMTimeZone::Calendar$Counter",
+                Identifier => "CareOnCloudTimeZone::Calendar$Counter",
 
                 # Use of $LanguageObject->Translate() is not possible to avoid translated strings to be sent to CareOnCloud ESM Team.
                 Label   => "CareOnCloud ESM time zone setting for calendar $Counter",

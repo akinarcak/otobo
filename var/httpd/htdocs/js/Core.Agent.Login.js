@@ -77,7 +77,7 @@ Core.Agent.Login = (function (TargetNS) {
         }
 
         // display ad blocker warning
-        if (window.CareOnCloud ESMAdblockDisabled === undefined && !localStorage.getItem("UserDontShowAdBlockWarning") && !$('#LoginBox').hasClass('PreLogin')) {
+        if (window.CareOnCloudAdblockDisabled === undefined && !localStorage.getItem("UserDontShowAdBlockWarning") && !$('#LoginBox').hasClass('PreLogin')) {
             $('#LoginBox')
                 .prepend('<div class="ErrorBox" style="display: none;"><span>' + Core.Language.Translate("Are you using a browser plugin like AdBlock or AdBlockPlus? This can cause several issues and we highly recommend you to add an exception for this domain.") + ' <i class="fa fa-long-arrow-right"></i> <a href="#" id="HideAdBlockMessage">' + Core.Language.Translate("Do not show this warning again.") + '</a></span></div>')
                 .find('#HideAdBlockMessage')

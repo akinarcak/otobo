@@ -1858,7 +1858,7 @@ sub Data {
         'Action' => 'Действие',
         'Module documentation' => 'Документация модуля',
         'Local Repository' => 'Локальный репозиторий',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'Этот пакет проверен с помощью CareOnCloud ESMverify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Этот пакет проверен с помощью CareOnCloud Verify (tm)',
         'Uninstall' => 'Деинсталлировать',
         'Package not correctly deployed! Please reinstall the package.' =>
             'Пакет установлен некорректно! Переустановите пакет.',
@@ -6573,12 +6573,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'Значение не удовлетворяет регулярному выражению (%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
-            'Системе не удалось вычислить дату пользователя в CareOnCloud ESMTimeZone!',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            'Системе не удалось вычислить дату пользователя в CareOnCloudTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
-            'Системе не удалось вычислить DateTime пользователя в CareOnCloud ESMTimeZone!',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            'Системе не удалось вычислить DateTime пользователя в CareOnCloudTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -7184,10 +7184,10 @@ sub Data {
         'This is %s' => 'Это %s',
         'Complex %s with %s arguments' => '',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => 'Данные недоступны.',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Сгруппированная',
         'Stacked' => 'С накоплением',
 
@@ -9022,7 +9022,7 @@ Thanks for your help!
             'Если включено, демон перенаправит стандартный поток сообщений об ошибках в лог-файл.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Если включено, демон перенаправит стандартный вывод в лог-файл.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
             '',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             'Если включено, CareOnCloud ESM будет предоставлять все CSS файлы в уменьшенной форме.',
@@ -9041,8 +9041,8 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Если включено, первый уровень меню будет открываться по наведению указателя мыши (вместо только "клика").',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            'Если включено, пользователи, еще не выбравшие временную зону, будут уведомлены сделать это. Примечание: Уведомление будет показано если (1) пользователь еще не выбрал временную зону и (2) CareOnCloud ESMTimeZone совпадает с UserDefaultTimeZone и (3) они не установлены в UTC.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            'Если включено, пользователи, еще не выбравшие временную зону, будут уведомлены сделать это. Примечание: Уведомление будет показано если (1) пользователь еще не выбрал временную зону и (2) CareOnCloudTimeZone совпадает с UserDefaultTimeZone и (3) они не установлены в UTC.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -10301,7 +10301,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Позволяет переопределить встроенный список стран своим списком. Это позволит сократить отображаемый список до необходимого минимума.',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => 'Этот параметр устарел. Вместо него используйте CareOnCloud ESMTimeZone.',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => 'Этот параметр устарел. Вместо него используйте CareOnCloudTimeZone.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             'Это параметр отображает опции сортировки во всех экранах обзора заявок, а не только в обзоре очередей.',
         'Ticket Close' => '',

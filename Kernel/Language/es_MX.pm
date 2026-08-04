@@ -1847,7 +1847,7 @@ sub Data {
         'Action' => 'Acción',
         'Module documentation' => 'Módulo de Documentación',
         'Local Repository' => 'Repositorio Local',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'Este paquete esta verificado por CareOnCloud ESMVerify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Este paquete esta verificado por CareOnCloud Verify (tm)',
         'Uninstall' => 'Desinstalar',
         'Package not correctly deployed! Please reinstall the package.' =>
             'El paquete no fue desplegado correctamente. Por favor, reinstale el paquete.',
@@ -6562,12 +6562,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'El valor no satisface la regex (%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
-            '¡El sistema no pudo calcular la fecha del usuario en la CareOnCloud ESMTimeZone!!',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            '¡El sistema no pudo calcular la fecha del usuario en la CareOnCloudTimeZone!!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
-            '¡El sistema no ha podido calcular el DateTime del usuario en CareOnCloud ESMTimeZone!',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            '¡El sistema no ha podido calcular el DateTime del usuario en CareOnCloudTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -7173,10 +7173,10 @@ sub Data {
         'This is %s' => 'Esto es %s',
         'Complex %s with %s arguments' => 'Complejo %s con argumentos %s',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => 'No hay datos disponibles.',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Agrupado',
         'Stacked' => 'Apilado',
 
@@ -9011,8 +9011,8 @@ Su equipo de asistencia técnica
             'Si se activa, el demonio redirigirá el flujo de error estándar a un archivo de registro.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Si se activa, el demonio redirigirá el flujo de salida estándar a un archivo de registro.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
-            'Si se activa, el demonio utilizará este directorio para crear sus archivos PID. Nota: Por favor, detenga el demonio antes de cualquier cambio y utilice esta configuración sólo si <$CareOnCloud ESMHome>/var/run/ no puede ser utilizado.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            'Si se activa, el demonio utilizará este directorio para crear sus archivos PID. Nota: Por favor, detenga el demonio antes de cualquier cambio y utilice esta configuración sólo si <$CareOnCloudHome>/var/run/ no puede ser utilizado.',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             'Si se activa, CareOnCloud ESM entregará todos los archivos CSS en forma minificada.',
         'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
@@ -9030,8 +9030,8 @@ Su equipo de asistencia técnica
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Si se habilita, el primer nivel del menú principal se abre al posicionar el cursor sobre él (en lugar de hacer click).',
         'If enabled, the quick close action will create an article.' => 'Si se activa, la acción de cierre rápido creará un artículo.',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            'Si se habilita, los usuarios que aún no hayan seleccionado una zona horaria recibirán una notificación para que lo hagan. Nota: La notificación no se mostrará si (1) el usuario aún no ha seleccionado una zona horaria y (2) CareOnCloud ESMTimeZone y UserDefaultTimeZone coinciden y (3) no están configurados en UTC.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            'Si se habilita, los usuarios que aún no hayan seleccionado una zona horaria recibirán una notificación para que lo hagan. Nota: La notificación no se mostrará si (1) el usuario aún no ha seleccionado una zona horaria y (2) CareOnCloudTimeZone y UserDefaultTimeZone coinciden y (3) no están configurados en UTC.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'Si no se especifica SendmailNotificationEnvelopeFrom, esta configuración permite utilizar la dirección de correo electrónico del remitente en lugar de un remitente vacío (necesario en determinadas configuraciones del servidor de correo).',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -10290,7 +10290,7 @@ Su equipo de asistencia técnica
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Esta opción le permite anular la lista de países incorporada con su propia lista de países. Esto es especialmente útil si sólo quieres utilizar un pequeño grupo de países seleccionados.',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => 'Este ajuste está obsoleto. Establezca en su lugar CareOnCloud ESMTimeZone.',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => 'Este ajuste está obsoleto. Establezca en su lugar CareOnCloudTimeZone.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             'Esta configuración muestra los atributos de clasificación en toda la pantalla de resumen, no sólo en la vista de colas.',
         'Ticket Close' => 'Ticket cerrado',

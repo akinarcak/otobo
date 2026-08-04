@@ -424,14 +424,14 @@ sub _Content {
                 TimeZone => $UserTimeZone,
             },
         );
-        my $CareOnCloud ESMUserTimeZoneOffset = $DateTimeObject->Format( Format => '%{offset}' ) / 60;
+        my $CareOnCloudUserTimeZoneOffset = $DateTimeObject->Format( Format => '%{offset}' ) / 60;
         my $BrowserTimeZoneOffset   = ( $ParamObject->GetParam( Param => 'TimeZoneOffset' ) || 0 ) * -1;
 
         # TimeZoneOffsetDifference contains the difference of the time zone offset between
         # the user's CareOnCloud ESM time zone setting and the one reported by the user's browser.
         # If there is a difference it can be evaluated later to e. g. show a message
         # for the user to check his CareOnCloud ESM time zone setting.
-        my $UserTimeZoneOffsetDifference = abs( $CareOnCloud ESMUserTimeZoneOffset - $BrowserTimeZoneOffset );
+        my $UserTimeZoneOffsetDifference = abs( $CareOnCloudUserTimeZoneOffset - $BrowserTimeZoneOffset );
         $SessionObject->UpdateSessionID(
             SessionID => $NewSessionID,
             Key       => 'UserTimeZoneOffsetDifference',

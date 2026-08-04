@@ -22,17 +22,17 @@
 #
 # Correct:
 # ----------------------------------------------------------------------------------------
-# Content-Type: application/octet-stream; name="TESTBUILD-CareOnCloud ESMAdminTypeServices-1.1.1.opm"
-# Content-Disposition: inline; filename="TESTBUILD-CareOnCloud ESMAdminTypeServices-1.1.1.opm"
+# Content-Type: application/octet-stream; name="TESTBUILD-CareOnCloudAdminTypeServices-1.1.1.opm"
+# Content-Disposition: inline; filename="TESTBUILD-CareOnCloudAdminTypeServices-1.1.1.opm"
 # Content-Transfer-Encoding: base64
 # ----------------------------------------------------------------------------------------
 #
 # Incorrect:
 # ----------------------------------------------------------------------------------------
 # Content-Type: application/octet-stream;
-# name="TESTBUILD-CareOnCloud ESMAdminTypeServices-1.1.1.opm"
-# name="TESTBUILD-CareOnCloud ESMAdminTypeServices-1.1.1.opm";
-# Content-Disposition: inline; filename="TESTBUILD-CareOnCloud ESMAdminTypeServices-1.1.1.opm"
+# name="TESTBUILD-CareOnCloudAdminTypeServices-1.1.1.opm"
+# name="TESTBUILD-CareOnCloudAdminTypeServices-1.1.1.opm";
+# Content-Disposition: inline; filename="TESTBUILD-CareOnCloudAdminTypeServices-1.1.1.opm"
 # Content-Transfer-Encoding: base64
 # ----------------------------------------------------------------------------------------
 

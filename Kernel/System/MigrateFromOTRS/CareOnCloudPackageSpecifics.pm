@@ -113,7 +113,7 @@ sub Run {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'CareOnCloud ESMPackageSpecifics',
+                Task      => 'CareOnCloudPackageSpecifics',
                 SubTask   => $SubTask->{Description},
                 StartTime => $Epoch,
             },

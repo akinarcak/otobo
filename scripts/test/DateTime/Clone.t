@@ -43,7 +43,7 @@ my @Tests = (
 for my $Timezone (@Timezones) {
 
     $ConfigObject->Set(
-        Key   => 'CareOnCloud ESMTimeZone',
+        Key   => 'CareOnCloudTimeZone',
         Value => $Timezone,
     );
 

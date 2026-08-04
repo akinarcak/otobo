@@ -231,7 +231,7 @@ sub Run {
 
             # Clean content of files if $CleanContent option is defined
             if ($CleanContent) {
-                $MigrationBaseObject->CleanOTRSFileToCareOnCloud ESMStyle(
+                $MigrationBaseObject->CleanOTRSFileToCareOnCloudStyle(
                     File   => $File,
                     UserID => 1,
                 );

@@ -609,27 +609,27 @@ $Self->True(
     'StatsCleanUp() - clean up stats',
 );
 
-# Check _ToCareOnCloud ESMTimeZone for invalid date (Daylight Saving Time).
+# Check _ToCareOnCloudTimeZone for invalid date (Daylight Saving Time).
 # See bug#14511 for more information.
-my $String = $StatsObject->_ToCareOnCloud ESMTimeZone(
+my $String = $StatsObject->_ToCareOnCloudTimeZone(
     String   => '2019-03-31 02:30:00',
     TimeZone => 'Europe/Berlin',
 );
 
 $Self->False(
     $String,
-    '_ToCareOnCloud ESMTimeZone() - invalid date',
+    '_ToCareOnCloudTimeZone() - invalid date',
 );
 
-# Check _ToCareOnCloud ESMTimeZone for valid date.
-$String = $StatsObject->_ToCareOnCloud ESMTimeZone(
+# Check _ToCareOnCloudTimeZone for valid date.
+$String = $StatsObject->_ToCareOnCloudTimeZone(
     String   => '2019-03-31 12:30:00',
     TimeZone => 'Europe/Berlin',
 );
 
 $Self->True(
     $String,
-    '_ToCareOnCloud ESMTimeZone() - valid date',
+    '_ToCareOnCloudTimeZone() - valid date',
 );
 
 # cleanup is done by RestoreDatabase

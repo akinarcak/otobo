@@ -282,9 +282,9 @@
                     <h2>[% Translate(Data.Title) | html %]</h2>
                 </div>
                 <div class="Content">
-[% RenderBlockStart("CareOnCloud ESMVerifyLogo") %]
-                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="CareOnCloud ESMVerifyLogoBig" />
-[% RenderBlockEnd("CareOnCloud ESMVerifyLogo") %]
+[% RenderBlockStart("CareOnCloud VerifyLogo") %]
+                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="CareOnCloud VerifyLogoBig" />
+[% RenderBlockEnd("CareOnCloud VerifyLogo") %]
                     <div class="IntroInstall [% Data.VerifyCSSClass | html %]">
                         <h3>[% Data.Name | html %] [% Data.Version | html %]</h3>
                         [% Data.Description %]
@@ -482,7 +482,7 @@
                             <tr>
                                 <td>
 [% RenderBlockStart("ShowLocalPackageVerifyLogo") %]
-                                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="CareOnCloud ESMVerifyLogo" alt="[% Translate("This package is verified by CareOnCloud ESM") | html %]" />
+                                    <img src="[% Config("Frontend::ImagePath") %]/careoncloud-signet.png" class="CareOnCloud VerifyLogo" alt="[% Translate("This package is verified by CareOnCloud ESM") | html %]" />
 [% RenderBlockEnd("ShowLocalPackageVerifyLogo") %]
                                     <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=View;Name=[% Data.Name | uri %];Version=[% Data.Version | uri %]">[% Data.Name | html %]</a>
                                 </td>

@@ -6441,8 +6441,8 @@ msgid "Local Repository"
 msgstr "الدليل المحلي"
 
 #. Template: AdminPackageManager
-msgid "This package is verified by CareOnCloud ESMverify (tm)"
-msgstr "تمت مراجعة هذه الحزمة من قبل CareOnCloud ESMVerify (tm)"
+msgid "This package is verified by CareOnCloud Verify (tm)"
+msgstr "تمت مراجعة هذه الحزمة من قبل CareOnCloud Verify (tm)"
 
 #. Template: AdminPackageManager
 msgid "Uninstall"
@@ -20437,11 +20437,11 @@ msgid "Value doesn't satisfy regex (%s)."
 msgstr "لا تفي القيمة بالقيمة regex (‎%s)."
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-msgid "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user Date in CareOnCloudTimeZone!"
 msgstr "تعذر حساب تاريخ المستخدم في المنطقة الزمنية CareOnCloud ESM!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-msgid "System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
 msgstr "تعذر حساب تاريخ المستخدم ووقته في المنطقة الزمنية ل CareOnCloud ESM!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -22057,15 +22057,15 @@ msgstr "هذا ‎%s"
 msgid "Complex %s with %s arguments"
 msgstr "معقد ‎%s مع ‎%s وسيطات"
 
-#. JS File: CareOnCloud ESMLineChart
+#. JS File: CareOnCloudLineChart
 msgid "No Data Available."
 msgstr "لا تتوفر بيانات."
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Grouped"
 msgstr "جُمِّعَ"
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Stacked"
 msgstr "مُكَدَّس"
 
@@ -29256,11 +29256,11 @@ msgstr "تمكين لإعادة توجيه الإخراج الافتراضي ل 
 msgid ""
 "If enabled the daemon will use this directory to create its PID files. Note: "
 "Please stop the daemon before any change and use this setting only if "
-"<$CareOnCloud ESMHome>/var/run/ can not be used."
+"<$CareOnCloudHome>/var/run/ can not be used."
 msgstr ""
 "عند تمكين هذا الخيار، يستخدم المراقب (daemon) هذا الدليل لإنشاء ملفاته PID. "
 "ملاحظة: الرجاء إيقاف البرنامج قبل التغيير واستخدام هذا الإعداد فقط في حالة "
-"عدم إمكانية إستخدام <$CareOnCloud ESMHome>/var/run/."
+"عدم إمكانية إستخدام <$CareOnCloudHome>/var/run/."
 
 #. SysConfig
 msgid "If enabled, CareOnCloud ESM will deliver all CSS files in minified form."
@@ -29325,12 +29325,12 @@ msgstr "إذا تم تنشيط المعلمة، يتم إنشاء مقالة ب�
 msgid ""
 "If enabled, users that haven't selected a time zone yet will be notified to "
 "do so. Note: Notification will not be shown if (1) user has not yet selected "
-"a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) "
+"a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) "
 "are not set to UTC."
 msgstr ""
 "في حالة التمكين، سيتم إخطار المستخدمين الذين لم يختاروا منطقة زمنية بعد "
 "للقيام بذلك. ملاحظة: لن يتم عرض الإشعار إذا (1) لم يحدد المستخدم منطقة زمنية "
-"بعد، و (2) CareOnCloud ESMTimeZone و UserDefaultTimeZone متماثلان، و (3) لم يتم "
+"بعد، و (2) CareOnCloudTimeZone و UserDefaultTimeZone متماثلان، و (3) لم يتم "
 "تعيينهما على UTC."
 
 #. SysConfig
@@ -34011,7 +34011,7 @@ msgid ""
 msgstr ""
 
 #. SysConfig
-msgid "This setting is deprecated. Set CareOnCloud ESMTimeZone instead."
+msgid "This setting is deprecated. Set CareOnCloudTimeZone instead."
 msgstr ""
 
 #. SysConfig

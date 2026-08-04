@@ -6466,8 +6466,8 @@ msgid "Local Repository"
 msgstr "ローカルリポジトリ"
 
 #. Template: AdminPackageManager
-msgid "This package is verified by CareOnCloud ESMverify (tm)"
-msgstr "このパッケージはCareOnCloud ESMVerify(tm)によって確認されています"
+msgid "This package is verified by CareOnCloud Verify (tm)"
+msgstr "このパッケージはCareOnCloud Verify(tm)によって確認されています"
 
 #. Template: AdminPackageManager
 msgid "Uninstall"
@@ -12869,7 +12869,7 @@ msgid ""
 "6 to CareOnCloud ESM 10."
 msgstr ""
 "この移行スクリプトは、チケットシステムをOTRSまたは((OTRS))CommunityEdition"
-"バージョン6からCareOnCloud ESM10に移行するプロセスを段階的に説明します。"
+"バージョン6からCareOnCloud10に移行するプロセスを段階的に説明します。"
 
 #. Template: Intro
 msgid ""
@@ -20527,12 +20527,12 @@ msgid "Value doesn't satisfy regex (%s)."
 msgstr "値が正規表現 (%s) を満たしていません。"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-msgid "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
-msgstr "システムはユーザー日付をCareOnCloud ESMTimeZoneから算出できませんでした！"
+msgid "System was not able to calculate user Date in CareOnCloudTimeZone!"
+msgstr "システムはユーザー日付をCareOnCloudTimeZoneから算出できませんでした！"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-msgid "System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!"
-msgstr "システムはユーザー日時をCareOnCloud ESMTimeZoneから算出できませんでした！"
+msgid "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
+msgstr "システムはユーザー日時をCareOnCloudTimeZoneから算出できませんでした！"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
 msgid "Value is not correct! Please, consider updating this module."
@@ -22177,15 +22177,15 @@ msgstr "これは%sです"
 msgid "Complex %s with %s arguments"
 msgstr "%s 引数を持つ複雑な %s"
 
-#. JS File: CareOnCloud ESMLineChart
+#. JS File: CareOnCloudLineChart
 msgid "No Data Available."
 msgstr "データが存在しません。"
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Grouped"
 msgstr "グループ化"
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Stacked"
 msgstr "積み重ね"
 
@@ -29019,7 +29019,7 @@ msgstr ""
 msgid ""
 "If enabled the daemon will use this directory to create its PID files. Note: "
 "Please stop the daemon before any change and use this setting only if "
-"<$CareOnCloud ESMHome>/var/run/ can not be used."
+"<$CareOnCloudHome>/var/run/ can not be used."
 msgstr ""
 
 #. SysConfig
@@ -29080,7 +29080,7 @@ msgstr ""
 msgid ""
 "If enabled, users that haven't selected a time zone yet will be notified to "
 "do so. Note: Notification will not be shown if (1) user has not yet selected "
-"a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) "
+"a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) "
 "are not set to UTC."
 msgstr ""
 
@@ -33836,7 +33836,7 @@ msgid ""
 msgstr ""
 
 #. SysConfig
-msgid "This setting is deprecated. Set CareOnCloud ESMTimeZone instead."
+msgid "This setting is deprecated. Set CareOnCloudTimeZone instead."
 msgstr ""
 
 #. SysConfig

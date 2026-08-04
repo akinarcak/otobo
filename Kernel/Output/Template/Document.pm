@@ -42,7 +42,7 @@ and processing.
 sub process {
     my ( $Self, $Context ) = @_;
 
-    $Self->_InstallCareOnCloud ESMExtensions($Context);
+    $Self->_InstallCareOnCloudExtensions($Context);
     $Self->_PrecalculateBlockStructure($Context);
     $Self->_PrecalculateBlockHookSubscriptions($Context);
 
@@ -51,13 +51,13 @@ sub process {
 
 =begin Internal:
 
-=head2 _InstallCareOnCloud ESMExtensions()
+=head2 _InstallCareOnCloudExtensions()
 
 adds some CareOnCloud ESM specific extensions to Template::Toolkit.
 
 =cut
 
-sub _InstallCareOnCloud ESMExtensions {
+sub _InstallCareOnCloudExtensions {
     my ( $Self, $Context ) = @_;
 
     # Already installed, nothing to do.

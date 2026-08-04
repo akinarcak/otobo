@@ -107,7 +107,7 @@ my @Tests = (
 for my $Test (@Tests) {
 
     $Kernel::OM->Get('Kernel::Config')->Set(
-        Key   => 'CareOnCloud ESMTimeZone',
+        Key   => 'CareOnCloudTimeZone',
         Value => 'UTC',
     );
 

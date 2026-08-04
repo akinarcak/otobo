@@ -126,13 +126,13 @@ else {
 }
 
 # get CareOnCloud ESM Version
-my $CareOnCloud ESMVersion = $ConfigObject->Get('Version');
+my $CareOnCloudVersion = $ConfigObject->Get('Version');
 
 # leave only mayor and minor level versions
-$CareOnCloud ESMVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$CareOnCloud ESMVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $TestPackage = '<?xml version="1.0" encoding="utf-8" ?>
 <careoncloud_package version="1.0">
@@ -143,7 +143,7 @@ my $TestPackage = '<?xml version="1.0" encoding="utf-8" ?>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
-  <Framework>' . $CareOnCloud ESMVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
@@ -429,7 +429,7 @@ my $PerlStructureScalar = $JSONObject->Decode(
 if (%RegistrationInfo) {
     for my $Attribute (
         qw(
-            FQDN CareOnCloud ESMVersion OSType OSVersion DatabaseVersion PerlVersion
+            FQDN CareOnCloudVersion OSType OSVersion DatabaseVersion PerlVersion
             Description SupportDataSending RegistrationKey APIKey State Type
         )
         )

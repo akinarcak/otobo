@@ -23,7 +23,7 @@ $Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationDispatchEnable
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationBatchSize', Value => 25 );
 $Helper->ConfigSettingChange( Key => 'D724::Commitment::EscalationMaxAttempts', Value => 3 );
 $Helper->ConfigSettingChange( Key => 'CheckEmailAddresses', Value => 0 );
-$Helper->ConfigSettingChange( Key => 'CareOnCloud ESMTimeZone', Value => 'UTC' );
+$Helper->ConfigSettingChange( Key => 'CareOnCloudTimeZone', Value => 'UTC' );
 $Helper->ConfigSettingChange(
     Key => 'TimeWorkingHours',
     Value => { Mon => [ 8 .. 16 ], Tue => [ 8 .. 16 ], Wed => [ 8 .. 16 ], Thu => [ 8 .. 16 ], Fri => [ 8 .. 16 ], Sat => [], Sun => [] },

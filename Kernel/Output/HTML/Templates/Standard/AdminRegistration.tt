@@ -33,7 +33,7 @@
             [% BreadcrumbPath.push({ Name => Translate("System Registration Overview"),}) %]
         [% CASE 'Register' %]
             [% BreadcrumbPath.push({ Name => Translate("Register System"),}) %]
-        [% CASE 'CareOnCloud ESMIDValidate' %]
+        [% CASE 'CareOnCloudIDValidate' %]
             [% BreadcrumbPath.push({ Name => Translate("Validate CareOnCloud ID"),}) %]
         [% CASE 'Deregister' %]
             [% BreadcrumbPath.push({ Name => Translate("Deregister System"),}) %]
@@ -74,7 +74,7 @@
 [% RenderBlockEnd("ActionSentDataOverview") %]
 [% RenderBlockStart("ActionDeregister") %]
                     <li>
-                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=CareOnCloud ESMIDValidate" class="CallForAction Fullsize Center">
+                        <a href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=CareOnCloudIDValidate" class="CallForAction Fullsize Center">
                             <span><i class="fa fa-sign-out"></i> [% Translate("Deregister system") | html %]</span>
                         </a>
                     </li>
@@ -141,13 +141,13 @@
             </div>
             <div class="Clear"></div>
 [% RenderBlockEnd("DaemonNotRunning") %]
-[% RenderBlockStart("CareOnCloud ESMIDDeregistrationNotPossible") %]
+[% RenderBlockStart("CareOnCloudIDDeregistrationNotPossible") %]
             <div class="Header">
                 <h2>[% Translate("System Deregistration not Possible") | html %]</h2>
             </div>
             <div class="Clear"></div>
-[% RenderBlockEnd("CareOnCloud ESMIDDeregistrationNotPossible") %]
-[% RenderBlockStart("CareOnCloud ESMIDValidation") %]
+[% RenderBlockEnd("CareOnCloudIDDeregistrationNotPossible") %]
+[% RenderBlockStart("CareOnCloudIDValidation") %]
             <div class="Header">
                 <h2>[% Translate("CareOnCloud ID Login") | html %]</h2>
             </div>
@@ -155,9 +155,9 @@
                 <form id="FormRegistration" method="post" class="Validate PreventMultipleSubmits">
                     <input type="hidden" name="BaseLink" value="[% Env("CGIHandle") %]" />
                     <input type="hidden" name="Action" value="[% Env("Action") %]" />
-                    <input type="hidden" name="Subaction" value="CheckCareOnCloud ESMID" />
+                    <input type="hidden" name="Subaction" value="CheckCareOnCloudID" />
 
-[% RenderBlockStart("CareOnCloud ESMIDRegistration") %]
+[% RenderBlockStart("CareOnCloudIDRegistration") %]
                     <div class="ServiceDescription">
                         <p>
                             [% Translate("System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!") | html %]
@@ -305,8 +305,8 @@
                         [% END %]
                         </div>
                     </div>
-[% RenderBlockEnd("CareOnCloud ESMIDRegistration") %]
-[% RenderBlockStart("CareOnCloud ESMIDDeregistration") %]
+[% RenderBlockEnd("CareOnCloudIDRegistration") %]
+[% RenderBlockStart("CareOnCloudIDDeregistration") %]
                     <div class="ServiceDescription">
                         <p>
                             [% Translate("If you deregister your system, you will lose these benefits:") | html %]
@@ -322,24 +322,24 @@
                         <p>[% Translate("You need to log in with your CareOnCloud ID to deregister your system.") | html %]</p>
                         <p>[% Translate("Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.") | html %]</p>
                     </div>
-[% RenderBlockEnd("CareOnCloud ESMIDDeregistration") %]
-[% RenderBlockStart("CareOnCloud ESMIDValidationDaemonNotRunning") %]
+[% RenderBlockEnd("CareOnCloudIDDeregistration") %]
+[% RenderBlockStart("CareOnCloudIDValidationDaemonNotRunning") %]
                     <div class="ServiceDescription">
                         <p>
                             [% Translate("Please note that you can't register your system if CareOnCloud ESM Daemon is not running correctly!") | html %]
                             <a href="#" class="DaemonInfo">[% Translate("Instructions") | html %]</a>.
                         </p>
                     </div>
-[% RenderBlockEnd("CareOnCloud ESMIDValidationDaemonNotRunning") %]
-[% RenderBlockStart("CareOnCloud ESMIDValidationForm") %]
+[% RenderBlockEnd("CareOnCloudIDValidationDaemonNotRunning") %]
+[% RenderBlockStart("CareOnCloudIDValidationForm") %]
                     <fieldset class="TableLike">
-                        <label class="Mandatory" for="CareOnCloud ESMID"><span class="Marker">*</span> [% Translate("CareOnCloud ID") | html %]:</label>
+                        <label class="Mandatory" for="CareOnCloudID"><span class="Marker">*</span> [% Translate("CareOnCloud ID") | html %]:</label>
                         <div class="Field">
-                            <input type="email" name="CareOnCloud ESMID" id="CareOnCloud ESMID" value="[% Data.CareOnCloud ESMID | html %]" class="W50pc Validate_Required [% Data.EmailInvalid | html %]" maxlength="200"/>
-                            <div id="CareOnCloud ESMIDError" class="TooltipErrorMessage">
+                            <input type="email" name="CareOnCloudID" id="CareOnCloudID" value="[% Data.CareOnCloudID | html %]" class="W50pc Validate_Required [% Data.EmailInvalid | html %]" maxlength="200"/>
+                            <div id="CareOnCloudIDError" class="TooltipErrorMessage">
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>
-                            <div id="CareOnCloud ESMIDServerError" class="TooltipErrorMessage">
+                            <div id="CareOnCloudIDServerError" class="TooltipErrorMessage">
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>
                         </div>
@@ -382,10 +382,10 @@
                         </div>
                         <div class="Clear"></div>
                     </fieldset>
-[% RenderBlockEnd("CareOnCloud ESMIDValidationForm") %]
+[% RenderBlockEnd("CareOnCloudIDValidationForm") %]
                 </form>
             </div>
-[% RenderBlockEnd("CareOnCloud ESMIDValidation") %]
+[% RenderBlockEnd("CareOnCloudIDValidation") %]
 [% RenderBlockStart("Registration") %]
             <div class="Header">
                 <h2>[% Translate("System Registration") | html %]</h2>
@@ -409,7 +409,7 @@
                             </tr>
                             <tr>
                                 <td>[% Translate("CareOnCloud ESM Version") | html %]</td>
-                                <td>[% Data.CareOnCloud ESMVersion | html %]</td>
+                                <td>[% Data.CareOnCloudVersion | html %]</td>
                             </tr>
                             <tr>
                                 <td>[% Translate("Database") | html %]</td>
@@ -431,7 +431,7 @@
                     <input type="hidden" name="Action" value="[% Env("Action") %]"/>
                     <input type="hidden" name="Subaction" value="AddAction"/>
                     <input type="hidden" name="Token" value="[% Data.Token | html %]"/>
-                    <input type="hidden" name="CareOnCloud ESMID" value="[% Data.CareOnCloud ESMID | html %]"/>
+                    <input type="hidden" name="CareOnCloudID" value="[% Data.CareOnCloudID | html %]"/>
 
                     <fieldset class="TableLike Registration">
 
@@ -491,7 +491,7 @@
                     <input type="hidden" name="Action" value="[% Env("Action") %]"/>
                     <input type="hidden" name="Subaction" value="DeregisterAction"/>
                     <input type="hidden" name="Token" value="[% Data.Token | html %]"/>
-                    <input type="hidden" name="CareOnCloud ESMID" value="[% Data.CareOnCloud ESMID | html %]"/>
+                    <input type="hidden" name="CareOnCloudID" value="[% Data.CareOnCloudID | html %]"/>
 
                     <fieldset class="TableLike">
                         <div class="ServiceDescription">

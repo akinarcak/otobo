@@ -59,9 +59,9 @@ my $DoSuccess = $DBObject->Prepare(
 
 skip_all('cannot get defaults') unless $DoSuccess;
 
-my $CareOnCloud ESMSettings;
+my $CareOnCloudSettings;
 while ( my @Data = $DBObject->FetchrowArray() ) {
-    $CareOnCloud ESMSettings = $Data[0];
+    $CareOnCloudSettings = $Data[0];
 }
 
 my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
@@ -111,7 +111,7 @@ my @Tests = (
         Params => {
             Category => 'CareOnCloud ESM',
         },
-        ExpectedResult => $CareOnCloud ESMSettings,
+        ExpectedResult => $CareOnCloudSettings,
         Success        => 1,
     },
     {

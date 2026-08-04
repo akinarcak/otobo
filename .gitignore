@@ -87,7 +87,7 @@ Kernel/cpan-lib/Locale/PO.pm
 scripts/install-git-hooks.pl
 scripts/uninstall-git-hooks.pl
 CodePolicy*
-CareOnCloud ESMCodePolicy*
+CareOnCloudCodePolicy*
 perltidy.LOG
 
 # ITSM

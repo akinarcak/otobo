@@ -6414,8 +6414,8 @@ msgid "Local Repository"
 msgstr "Dépôt local"
 
 #. Template: AdminPackageManager
-msgid "This package is verified by CareOnCloud ESMverify (tm)"
-msgstr "Ce paquet est vérifié par CareOnCloud ESMverify (tm)"
+msgid "This package is verified by CareOnCloud Verify (tm)"
+msgstr "Ce paquet est vérifié par CareOnCloud Verify (tm)"
 
 #. Template: AdminPackageManager
 msgid "Uninstall"
@@ -20153,11 +20153,11 @@ msgid "Value doesn't satisfy regex (%s)."
 msgstr "La valeur n'est pas une expression régulière ( %s )."
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-msgid "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user Date in CareOnCloudTimeZone!"
 msgstr ""
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-msgid "System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
 msgstr ""
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -21745,15 +21745,15 @@ msgstr ""
 msgid "Complex %s with %s arguments"
 msgstr ""
 
-#. JS File: CareOnCloud ESMLineChart
+#. JS File: CareOnCloudLineChart
 msgid "No Data Available."
 msgstr ""
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Grouped"
 msgstr "Groupé"
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Stacked"
 msgstr "Empilé"
 
@@ -27827,7 +27827,7 @@ msgstr ""
 msgid ""
 "If enabled the daemon will use this directory to create its PID files. Note: "
 "Please stop the daemon before any change and use this setting only if "
-"<$CareOnCloud ESMHome>/var/run/ can not be used."
+"<$CareOnCloudHome>/var/run/ can not be used."
 msgstr ""
 
 #. SysConfig
@@ -27885,7 +27885,7 @@ msgstr ""
 msgid ""
 "If enabled, users that haven't selected a time zone yet will be notified to "
 "do so. Note: Notification will not be shown if (1) user has not yet selected "
-"a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) "
+"a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) "
 "are not set to UTC."
 msgstr ""
 
@@ -32287,8 +32287,8 @@ msgstr ""
 "de pays."
 
 #. SysConfig
-msgid "This setting is deprecated. Set CareOnCloud ESMTimeZone instead."
-msgstr "Ce paramètre est déprécié. Utilisez CareOnCloud ESMTimeZone."
+msgid "This setting is deprecated. Set CareOnCloudTimeZone instead."
+msgstr "Ce paramètre est déprécié. Utilisez CareOnCloudTimeZone."
 
 #. SysConfig
 msgid ""

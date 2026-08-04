@@ -1,4 +1,4 @@
-nv.models.CareOnCloud ESMlineChart = function() {
+nv.models.CareOnCloudlineChart = function() {
     "use strict";
 
     //============================================================

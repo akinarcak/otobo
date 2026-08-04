@@ -6474,8 +6474,8 @@ msgid "Local Repository"
 msgstr "Локално спремиште"
 
 #. Template: AdminPackageManager
-msgid "This package is verified by CareOnCloud ESMverify (tm)"
-msgstr "Овај пакет је верификован од стране CareOnCloud ESMverify (tm)"
+msgid "This package is verified by CareOnCloud Verify (tm)"
+msgstr "Овај пакет је верификован од стране CareOnCloud Verify (tm)"
 
 #. Template: AdminPackageManager
 msgid "Uninstall"
@@ -20523,12 +20523,12 @@ msgid "Value doesn't satisfy regex (%s)."
 msgstr "Вредност не задовољава регуларни израз (%s)."
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-msgid "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
-msgstr "Систем није успео да израчуна кориснички Date у CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user Date in CareOnCloudTimeZone!"
+msgstr "Систем није успео да израчуна кориснички Date у CareOnCloudTimeZone!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-msgid "System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!"
-msgstr "Систем није успео да израчуна кориснички DateTime у CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
+msgstr "Систем није успео да израчуна кориснички DateTime у CareOnCloudTimeZone!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
 msgid "Value is not correct! Please, consider updating this module."
@@ -22174,15 +22174,15 @@ msgstr "Ово је %s"
 msgid "Complex %s with %s arguments"
 msgstr "Комплексан %s са %s аргумената"
 
-#. JS File: CareOnCloud ESMLineChart
+#. JS File: CareOnCloudLineChart
 msgid "No Data Available."
 msgstr "Нема информација."
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Grouped"
 msgstr "Груписано"
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Stacked"
 msgstr "Наслагано"
 
@@ -29486,12 +29486,12 @@ msgstr ""
 msgid ""
 "If enabled the daemon will use this directory to create its PID files. Note: "
 "Please stop the daemon before any change and use this setting only if "
-"<$CareOnCloud ESMHome>/var/run/ can not be used."
+"<$CareOnCloudHome>/var/run/ can not be used."
 msgstr ""
 "Уколико је омогућено, системски сервис ће користити овај директоријум за "
 "снимање процесних (PID) датотека. Напомена: молимо стопирајте системски "
 "сервис пре измене овог подешавања и користите га само у случају кад је "
-"<$CareOnCloud ESMHome>/var/run/ недоступан."
+"<$CareOnCloudHome>/var/run/ недоступан."
 
 #. SysConfig
 msgid "If enabled, CareOnCloud ESM will deliver all CSS files in minified form."
@@ -29561,12 +29561,12 @@ msgstr ""
 msgid ""
 "If enabled, users that haven't selected a time zone yet will be notified to "
 "do so. Note: Notification will not be shown if (1) user has not yet selected "
-"a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) "
+"a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) "
 "are not set to UTC."
 msgstr ""
 "Уколико је укључено, корисници који још нису одабрали временску зону биће "
 "обавештени о томе. Напомена: обавештење неће бити приказано уколико (1) "
-"корисник још није одабрао временску зону и (2) CareOnCloud ESMTimeZone и "
+"корисник још није одабрао временску зону и (2) CareOnCloudTimeZone и "
 "UserDefaultTimeZone се подударају и (3) нису постављена на UTC."
 
 #. SysConfig
@@ -34934,8 +34934,8 @@ msgstr ""
 "посбно корисно ако у селекцији желите да користите само мали број држава."
 
 #. SysConfig
-msgid "This setting is deprecated. Set CareOnCloud ESMTimeZone instead."
-msgstr "Ово подешавање је застарело. Подесите CareOnCloud ESMTimeZone уместо њега."
+msgid "This setting is deprecated. Set CareOnCloudTimeZone instead."
+msgstr "Ово подешавање је застарело. Подесите CareOnCloudTimeZone уместо њега."
 
 #. SysConfig
 msgid ""

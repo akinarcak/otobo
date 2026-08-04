@@ -1233,7 +1233,7 @@ sub Run {
                     },
                 );
                 if ( $Self->{UserTimeZone} ) {
-                    $StartTimeObject->ToCareOnCloud ESMTimeZone();
+                    $StartTimeObject->ToCareOnCloudTimeZone();
                 }
                 $GetParam{StartTime} = $StartTimeObject->ToString();
             }
@@ -1264,7 +1264,7 @@ sub Run {
                     },
                 );
                 if ( $Self->{UserTimeZone} ) {
-                    $EndTimeObject->ToCareOnCloud ESMTimeZone();
+                    $EndTimeObject->ToCareOnCloudTimeZone();
                 }
 
                 # Get already calculated local start time.
@@ -1441,7 +1441,7 @@ sub Run {
                 );
 
                 if ( $Self->{UserTimeZone} ) {
-                    $NotificationCustomDateTimeObject->ToCareOnCloud ESMTimeZone();
+                    $NotificationCustomDateTimeObject->ToCareOnCloudTimeZone();
                 }
 
                 $GetParam{NotificationCustomDateTime} = $NotificationCustomDateTimeObject->ToString();

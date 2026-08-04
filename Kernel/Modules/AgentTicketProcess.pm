@@ -5134,8 +5134,8 @@ sub _StoreActivityDialog {
                 # get the current server Time-stamp
                 my $DateTimeObject   = $Kernel::OM->Create('Kernel::System::DateTime');
                 my $CurrentTimeStamp = $DateTimeObject->ToString();
-                my $CareOnCloud ESMTimeZone    = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
-                $TicketParam{Title} = "$Param{ProcessName} - $CurrentTimeStamp ($CareOnCloud ESMTimeZone)";
+                my $CareOnCloudTimeZone    = $DateTimeObject->CareOnCloudTimeZoneGet();
+                $TicketParam{Title} = "$Param{ProcessName} - $CurrentTimeStamp ($CareOnCloudTimeZone)";
 
                 # use article subject from the web request if any
                 if ( IsStringWithData( $Param{GetParam}{Subject} ) ) {

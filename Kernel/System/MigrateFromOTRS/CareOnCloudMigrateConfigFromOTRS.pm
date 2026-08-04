@@ -84,7 +84,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMMigrateConfigFromOTRS',
+            Task      => 'CareOnCloudMigrateConfigFromOTRS',
             SubTask   => "Migrate configuration to CareOnCloud ESM.",
             StartTime => $Epoch,
         },
@@ -121,7 +121,7 @@ sub Run {
         Permission => '660',                     # unix file permissions
     );
 
-    $Self->CleanOTRSFileToCareOnCloud ESMStyle(
+    $Self->CleanOTRSFileToCareOnCloudStyle(
         File   => $TmpDirectory . '/' . 'SysConfigDump.sysconf',
         UserID => 1,
     );

@@ -1849,7 +1849,7 @@ sub Data {
         'Action' => 'إِجْرَاءٌ',
         'Module documentation' => 'وثائق الوحدة',
         'Local Repository' => 'الدليل المحلي',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'تمت مراجعة هذه الحزمة من قبل CareOnCloud ESMVerify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'تمت مراجعة هذه الحزمة من قبل CareOnCloud Verify (tm)',
         'Uninstall' => 'إلغاء تثبيت',
         'Package not correctly deployed! Please reinstall the package.' =>
             'الحزمة غير مثبتة بشكل صحيح. الرجاء التثبيت مرة أخرى.',
@@ -6564,11 +6564,11 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'لا تفي القيمة بالقيمة regex (‎%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
             'تعذر حساب تاريخ المستخدم في المنطقة الزمنية CareOnCloud ESM!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
             'تعذر حساب تاريخ المستخدم ووقته في المنطقة الزمنية ل CareOnCloud ESM!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -7175,10 +7175,10 @@ sub Data {
         'This is %s' => 'هذا ‎%s',
         'Complex %s with %s arguments' => 'معقد ‎%s مع ‎%s وسيطات',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => 'لا تتوفر بيانات.',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'جُمِّعَ',
         'Stacked' => 'مُكَدَّس',
 
@@ -9013,8 +9013,8 @@ Thanks for your help!
             'تمكين لإعادة توجيه إخراج الخطأ من daemon إلى ملف سجل.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'تمكين لإعادة توجيه الإخراج الافتراضي ل daemon إلى ملف سجل.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
-            'عند تمكين هذا الخيار، يستخدم المراقب (daemon) هذا الدليل لإنشاء ملفاته PID. ملاحظة: الرجاء إيقاف البرنامج قبل التغيير واستخدام هذا الإعداد فقط في حالة عدم إمكانية إستخدام <$CareOnCloud ESMHome>/var/run/.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            'عند تمكين هذا الخيار، يستخدم المراقب (daemon) هذا الدليل لإنشاء ملفاته PID. ملاحظة: الرجاء إيقاف البرنامج قبل التغيير واستخدام هذا الإعداد فقط في حالة عدم إمكانية إستخدام <$CareOnCloudHome>/var/run/.',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             'عند تمكين هذا الخيار، سيقوم CareOnCloud ESM بإرجاع ملفات CSS في نموذج مصغر.',
         'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
@@ -9032,8 +9032,8 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'في حالة التنشيط، يتم فتح المستوى الأول من القائمة الرئيسية عند التمرير فوق الماوس (بدلا من النقر فقط).',
         'If enabled, the quick close action will create an article.' => 'إذا تم تنشيط المعلمة، يتم إنشاء مقالة بواسطة إجراء "إغلاق فوري".',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            'في حالة التمكين، سيتم إخطار المستخدمين الذين لم يختاروا منطقة زمنية بعد للقيام بذلك. ملاحظة: لن يتم عرض الإشعار إذا (1) لم يحدد المستخدم منطقة زمنية بعد، و (2) CareOnCloud ESMTimeZone و UserDefaultTimeZone متماثلان، و (3) لم يتم تعيينهما على UTC.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            'في حالة التمكين، سيتم إخطار المستخدمين الذين لم يختاروا منطقة زمنية بعد للقيام بذلك. ملاحظة: لن يتم عرض الإشعار إذا (1) لم يحدد المستخدم منطقة زمنية بعد، و (2) CareOnCloudTimeZone و UserDefaultTimeZone متماثلان، و (3) لم يتم تعيينهما على UTC.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'إذا لم يتم تعريف SendmailNotificationEnvelopeFrom، فإن هذا الإعداد يسمح لك باستخدام عنوان مرسل البريد الإلكتروني بدلا من مرسل مغلف فارغ (مطلوب بواسطة بعض تكوينات خادم البريد).',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -10292,7 +10292,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',

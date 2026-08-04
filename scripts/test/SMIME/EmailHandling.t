@@ -182,7 +182,7 @@ my @Certificates = (
         PrivateSecretFileName => 'SMIMEPrivateKeyPass-2.asc',
     },
     {
-        CertificateName       => 'CareOnCloud ESMUserCert',
+        CertificateName       => 'CareOnCloudUserCert',
         CertificateHash       => $AxelCertHash,
         CertificateFileName   => 'SMIMEUserCertificate-Axel.crt',
         PrivateKeyFileName    => 'SMIMEUserPrivateKey-Axel.pem',

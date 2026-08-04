@@ -290,18 +290,18 @@ sub MigrateXMLConfig {
     return $SaveSuccess;
 }
 
-=head2 CleanOTRSFileToCareOnCloud ESMStyle()
+=head2 CleanOTRSFileToCareOnCloudStyle()
 
 clean given file to CareOnCloud ESM style
 
-    $OTRSToCareOnCloudObject->CleanOTRSFileToCareOnCloud ESMStyle(
+    $OTRSToCareOnCloudObject->CleanOTRSFileToCareOnCloudStyle(
         FilePath         => '/opt/careoncloud/Test.pm',
         UserID           => 1,
     );
 
 =cut
 
-sub CleanOTRSFileToCareOnCloud ESMStyle {
+sub CleanOTRSFileToCareOnCloudStyle {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
@@ -377,11 +377,11 @@ sub CleanOTRSFileToCareOnCloud ESMStyle {
     return 1;
 }
 
-=head2 CleanOTRSFilesToCareOnCloud ESMStyleInDir()
+=head2 CleanOTRSFilesToCareOnCloudStyleInDir()
 
 clean given directory to CareOnCloud ESM style
 
-    $OTRSToCareOnCloudObject->CleanOTRSFilesToCareOnCloud ESMStyleInDir(
+    $OTRSToCareOnCloudObject->CleanOTRSFilesToCareOnCloudStyleInDir(
         Path         => '/opt/careoncloud/',
         Filter       => '*',
         Recursive    => 1
@@ -390,7 +390,7 @@ clean given directory to CareOnCloud ESM style
 
 =cut
 
-sub CleanOTRSFilesToCareOnCloud ESMStyleInDir {
+sub CleanOTRSFilesToCareOnCloudStyleInDir {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
@@ -420,7 +420,7 @@ sub CleanOTRSFilesToCareOnCloud ESMStyleInDir {
     );
 
     for my $File (@UncleanDirAndFileList) {
-        $Self->CleanOTRSFileToCareOnCloud ESMStyle(
+        $Self->CleanOTRSFileToCareOnCloudStyle(
             File   => $File,
             UserID => 1,
         );

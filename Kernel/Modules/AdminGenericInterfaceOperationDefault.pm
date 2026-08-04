@@ -425,7 +425,7 @@ sub _ChangeAction {
         $WebserviceData->{Config}->{Provider}->{ErrorHandling} = $ErrorHandlingConfig;
     }
 
-    # added for CareOnCloud ESMTicketInvoker
+    # added for CareOnCloudTicketInvoker
 
     # Take care of operation dependent configuration if operation was renamed.
     if ( $GetParam->{OldOperation} ne $GetParam->{Operation} ) {

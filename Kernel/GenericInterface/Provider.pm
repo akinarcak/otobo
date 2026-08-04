@@ -425,7 +425,7 @@ sub _Content {
     $TransportObject->ProviderGenerateResponse(
         Success   => 1,
         Data      => $DataOut,
-        Operation => $Operation,    # introduced by CareOnCloud ESMTicketInvoker
+        Operation => $Operation,    # introduced by CareOnCloudTicketInvoker
     );
 
     return;                         # actually not reached

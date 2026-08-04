@@ -78,7 +78,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMNotificationMigrate',
+            Task      => 'CareOnCloudNotificationMigrate',
             SubTask   => "Migrate notifications to CareOnCloud ESM.",
             StartTime => $Epoch,
         },

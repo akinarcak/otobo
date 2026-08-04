@@ -79,7 +79,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMACLDeploy',
+            Task      => 'CareOnCloudACLDeploy',
             SubTask   => "Deploy new ACL settings.",
             StartTime => $Epoch,
         },

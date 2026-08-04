@@ -43,7 +43,7 @@ my $Values = $DateTimeObject->Get;
 
 is(
     $Values->{TimeZone},
-    $DateTimeObject->CareOnCloud ESMTimeZoneGet(),
+    $DateTimeObject->CareOnCloudTimeZoneGet(),
     'Time zone of DateTime object must match the one configured for data storage.'
 );
 
@@ -78,7 +78,7 @@ is(
     'Time zone of DateTime object must match the one configured for data storage.'
 );
 
-# Test for ToCareOnCloud ESMDateTimeZone
+# Test for ToCareOnCloudDateTimeZone
 $DateTimeObject = $Kernel::OM->Create(
     'Kernel::System::DateTime',
     ObjectParams => {
@@ -92,17 +92,17 @@ $DateTimeObject = $Kernel::OM->Create(
     },
 );
 
-my $OriginalCareOnCloud ESMTimeZone = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
+my $OriginalCareOnCloudTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet();
 
 # set specific time zone for data storage
 $ConfigObject->Set(
-    Key   => 'CareOnCloud ESMTimeZone',
+    Key   => 'CareOnCloudTimeZone',
     Value => 'UTC',
 );
 
-my $CareOnCloud ESMTimeZone = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
+my $CareOnCloudTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet();
 
-$DateTimeObject->ToCareOnCloud ESMTimeZone();
+$DateTimeObject->ToCareOnCloudTimeZone();
 my $DateTimeValues         = $DateTimeObject->Get();
 my $ExpectedDateTimeValues = {
     Year      => 2016,
@@ -120,7 +120,7 @@ my $ExpectedDateTimeValues = {
 is(
     $DateTimeValues,
     $ExpectedDateTimeValues,
-    'Date and time after call to ToCareOnCloud ESMTimeZone must match expected values.'
+    'Date and time after call to ToCareOnCloudTimeZone must match expected values.'
 );
 
 #
@@ -337,7 +337,7 @@ for my $TestConfig (@DateTimeTestConfigs) {
 
             my $ExpectedValue = $TestConfig->{Params}->{$ValueName} || 0;
             if ( !$ExpectedValue && $ValueName eq 'TimeZone' ) {
-                $ExpectedValue = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
+                $ExpectedValue = $DateTimeObject->CareOnCloudTimeZoneGet();
             }
 
             if ( !defined $Values->{$ValueName} || $Values->{$ValueName} ne $ExpectedValue ) {
@@ -367,7 +367,7 @@ my @StringTestConfigs = (
             Hour      => 14,
             Minute    => 59,
             Second    => 0,
-            TimeZone  => $CareOnCloud ESMTimeZone,
+            TimeZone  => $CareOnCloudTimeZone,
         },
     },
     {
@@ -384,7 +384,7 @@ my @StringTestConfigs = (
             Hour      => 0,
             Minute    => 7,
             Second    => 45,
-            TimeZone  => $CareOnCloud ESMTimeZone,
+            TimeZone  => $CareOnCloudTimeZone,
         },
     },
     {

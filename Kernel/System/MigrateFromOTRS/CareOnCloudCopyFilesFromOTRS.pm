@@ -88,7 +88,7 @@ sub Run {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'CareOnCloud ESMCopyFilesFromOTRS',
+                Task      => 'CareOnCloudCopyFilesFromOTRS',
                 SubTask   => $Message,
                 StartTime => $StartTime,
             },
@@ -167,11 +167,11 @@ sub Run {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # Now we copy and clean the files in for{}
-    my $CareOnCloud ESMHome = $ConfigObject->Get('Home');
+    my $CareOnCloudHome = $ConfigObject->Get('Home');
     FILE:
     for my $File (@FileList) {
 
-        my $CareOnCloud ESMPathFile = File::Spec->catfile( $CareOnCloud ESMHome, $File );
+        my $CareOnCloudPathFile = File::Spec->catfile( $CareOnCloudHome, $File );
         my $OTRSPathFile  = File::Spec->catfile( $OTRS6path, $File );
 
         # First we copy the file from OTRS HOME to CareOnCloud ESM HOME
@@ -183,24 +183,24 @@ sub Run {
             # We copy only the content, if OTRS exists on localhost, otherwise we move the content from tmp
             if ( -f $OTRSPathFile ) {
                 if ( $Param{OTRSData}->{OTRSLocation} eq 'localhost' ) {
-                    $ExitCode = system("cp $OTRSPathFile $CareOnCloud ESMPathFile");
+                    $ExitCode = system("cp $OTRSPathFile $CareOnCloudPathFile");
                 }
                 else {
-                    $ExitCode = system("mv $OTRSPathFile $CareOnCloud ESMPathFile");
+                    $ExitCode = system("mv $OTRSPathFile $CareOnCloudPathFile");
                 }
 
             }
             elsif ( -d $OTRSPathFile ) {
                 if ( $Param{OTRSData}->{OTRSLocation} eq 'localhost' ) {
-                    $ExitCode = system("cp -r $OTRSPathFile/* $CareOnCloud ESMPathFile");
+                    $ExitCode = system("cp -r $OTRSPathFile/* $CareOnCloudPathFile");
                 }
                 else {
-                    $ExitCode = system("mv $OTRSPathFile/* $CareOnCloud ESMPathFile");
+                    $ExitCode = system("mv $OTRSPathFile/* $CareOnCloudPathFile");
                 }
             }
 
             if ( $ExitCode && $ExitCode != 0 && $ExitCode != 256 ) {
-                print STDERR "EXIT: $ExitCode \n OTRSPath: $OTRSPathFile\n CareOnCloud ESM: $CareOnCloud ESMPathFile\n ";
+                print STDERR "EXIT: $ExitCode \n OTRSPath: $OTRSPathFile\n CareOnCloud ESM: $CareOnCloudPathFile\n ";
 
                 return {
                     Message    => $Self->{LanguageObject}->Translate($Message),
@@ -214,18 +214,18 @@ sub Run {
         next FILE if $DoNotClean{$File};
 
         # We need to clean files inside a directory
-        if ( -d $CareOnCloud ESMPathFile ) {
+        if ( -d $CareOnCloudPathFile ) {
 
             # Clean license header
             $Self->CleanLicenseHeaderInDir(
-                Path      => $CareOnCloud ESMPathFile,
+                Path      => $CareOnCloudPathFile,
                 Filter    => '*',
                 Recursive => 1,
                 UserID    => 1,
             );
 
-            $Self->CleanOTRSFilesToCareOnCloud ESMStyleInDir(
-                Path      => $CareOnCloud ESMPathFile,
+            $Self->CleanOTRSFilesToCareOnCloudStyleInDir(
+                Path      => $CareOnCloudPathFile,
                 Filter    => '*',
                 Recursive => 1,
                 UserID    => 1,
@@ -233,15 +233,15 @@ sub Run {
         }
 
         # We need to copy only a single file
-        elsif ( -f $CareOnCloud ESMPathFile ) {
+        elsif ( -f $CareOnCloudPathFile ) {
 
             $Self->CleanLicenseHeader(
-                File   => $CareOnCloud ESMPathFile,
+                File   => $CareOnCloudPathFile,
                 UserID => 1,
             );
 
-            $Self->CleanOTRSFileToCareOnCloud ESMStyle(
-                File   => $CareOnCloud ESMPathFile,
+            $Self->CleanOTRSFileToCareOnCloudStyle(
+                File   => $CareOnCloudPathFile,
                 UserID => 1,
             );
         }
@@ -253,16 +253,16 @@ sub Run {
         # in the original CareOnCloud ESM Kernel/Config.pm will end up as
         #     $Self->{'DatabaseDSN'} = "DBI:MariaDB:database=careoncloud;host=127.0.0.1;"; # from original CareOnCloud ESM config
         # after the migration.
-        if ( $CareOnCloud ESMPathFile =~ m/Config\.pm/ ) {
+        if ( $CareOnCloudPathFile =~ m/Config\.pm/ ) {
 
             # remember the current basic settings, Database and installation dir
-            my %CareOnCloud ESMParams = map { $_ => $ConfigObject->Get($_) } qw(DatabaseHost Database DatabaseUser DatabasePw DatabaseDSN Home);
+            my %CareOnCloudParams = map { $_ => $ConfigObject->Get($_) } qw(DatabaseHost Database DatabaseUser DatabasePw DatabaseDSN Home);
 
             # inject extra settings in the Docker case, see also Kernel/Config.pm.dist.docker
             my $DockerSpecificSettings = $ENV{CareOnCloud_RUNS_UNDER_DOCKER} ? <<'END_SETTINGS' : undef;
 
     # ---------------------------------------------------- #
-    # setting for running CareOnCloud ESM under Docker, injected by CareOnCloud ESMCopyFilesFromOTRS
+    # setting for running CareOnCloud ESM under Docker, injected by CareOnCloudCopyFilesFromOTRS
     # ---------------------------------------------------- #
     $Self->{'LogModule'}                   = 'Kernel::System::Log::File';
     $Self->{'LogModule::LogFile'}          = '/opt/careoncloud/var/log/careoncloud.log';
@@ -284,7 +284,7 @@ sub Run {
 END_SETTINGS
 
             $Self->ReConfigure(
-                %CareOnCloud ESMParams,
+                %CareOnCloudParams,
                 ExtraSettings => $DockerSpecificSettings
             );
         }
@@ -353,7 +353,7 @@ sub ReConfigure {
 
             # Replace OTRS path with CareOnCloud ESM path, usually /opt/otrs with /opt/careoncloud.
             # This can be useful when e.g.  LogModule::LogFile is set to '/opt/otrs/var/log/otrs.log'
-            # Remember that CleanOTRSFileToCareOnCloud ESMStyle() has an excemption for Config.pm, so that /opt/otrs is still in the file.
+            # Remember that CleanOTRSFileToCareOnCloudStyle() has an excemption for Config.pm, so that /opt/otrs is still in the file.
             # Attention: this assumes that custom settings come after the standard settings
             # Attention: this is an heuristic that won't give useful results for all installations.
             if ($OTRSHomeFromConfigFile) {
@@ -363,7 +363,7 @@ sub ReConfigure {
             # Need to comment out SecureMode, as it should be configured in the SysConfig
             if ( $ChangedLine =~ m/SecureMode/ ) {
                 chomp $ChangedLine;
-                $Config .= "# $ChangedLine  commented out by CareOnCloud ESMCopyFilesFromOTRS\n";
+                $Config .= "# $ChangedLine  commented out by CareOnCloudCopyFilesFromOTRS\n";
 
                 next LINE;
             }

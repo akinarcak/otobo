@@ -127,7 +127,7 @@ my @Tests = (
     {
         Config => {
             Type          => 'Date',
-            CareOnCloud ESMTimeZone => 'UTC',
+            CareOnCloudTimeZone => 'UTC',
             UserTimeZone  => 'Europe/Berlin',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{Date},
@@ -186,7 +186,7 @@ my @Tests = (
     {
         Config => {
             Type          => 'Date',
-            CareOnCloud ESMTimeZone => 'Europe/Berlin',
+            CareOnCloudTimeZone => 'Europe/Berlin',
             UserTimeZone  => 'America/New_York',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{Date},
@@ -249,7 +249,7 @@ my @Tests = (
     {
         Config => {
             Type          => 'DateTime',
-            CareOnCloud ESMTimeZone => 'UTC',
+            CareOnCloudTimeZone => 'UTC',
             UserTimeZone  => 'Europe/Berlin',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{DateTime},
@@ -326,7 +326,7 @@ my @Tests = (
     {
         Config => {
             Type          => 'DateTime',
-            CareOnCloud ESMTimeZone => 'Europe/Berlin',
+            CareOnCloudTimeZone => 'Europe/Berlin',
             UserTimeZone  => 'America/New_York',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{DateTime},
@@ -403,7 +403,7 @@ my @Tests = (
     {
         Config => {
             Type          => 'DateTime',
-            CareOnCloud ESMTimeZone => 'Europe/Berlin',
+            CareOnCloudTimeZone => 'Europe/Berlin',
             UserTimeZone  => 'Europe/Berlin',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{DateTime},
@@ -483,13 +483,13 @@ my @Tests = (
 for my $Test (@Tests) {
 
     my $UserTimeZone  = $Test->{Config}->{UserTimeZone}  || 'no user time zone';
-    my $CareOnCloud ESMTimeZone = $Test->{Config}->{CareOnCloud ESMTimeZone} || 'no CareOnCloud ESM time zone';
-    my $SubtestDesc   = "Field type $Test->{Config}->{Type}, User time zone: $UserTimeZone, CareOnCloud ESM time zone $CareOnCloud ESMTimeZone";
+    my $CareOnCloudTimeZone = $Test->{Config}->{CareOnCloudTimeZone} || 'no CareOnCloud ESM time zone';
+    my $SubtestDesc   = "Field type $Test->{Config}->{Type}, User time zone: $UserTimeZone, CareOnCloud ESM time zone $CareOnCloudTimeZone";
 
     subtest $SubtestDesc => sub {
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
-            Value => $Test->{Config}->{CareOnCloud ESMTimeZone},
+            Key   => 'CareOnCloudTimeZone',
+            Value => $Test->{Config}->{CareOnCloudTimeZone},
         );
 
         # get Layout object with correct user time zone

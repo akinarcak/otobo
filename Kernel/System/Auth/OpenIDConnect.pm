@@ -463,10 +463,10 @@ sub _ExtractMap {
             !ref $Param{Data} ? ( $Param{Data} ) : ();
 
         for my $OpenIDAttribute (@Data) {
-            my $CareOnCloud ESMAttribute = $Param{Map}{$OpenIDAttribute};
+            my $CareOnCloudAttribute = $Param{Map}{$OpenIDAttribute};
 
-            if ($CareOnCloud ESMAttribute) {
-                $Return{$CareOnCloud ESMAttribute} = 1;
+            if ($CareOnCloudAttribute) {
+                $Return{$CareOnCloudAttribute} = 1;
             }
         }
     }

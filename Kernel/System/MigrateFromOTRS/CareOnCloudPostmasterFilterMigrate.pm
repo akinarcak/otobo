@@ -78,7 +78,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMPostmasterFilterMigrate',
+            Task      => 'CareOnCloudPostmasterFilterMigrate',
             SubTask   => "Migrate postmaster filter to CareOnCloud ESM.",
             StartTime => $Epoch,
         },

@@ -368,7 +368,7 @@ sub GetTransportRecipients {
         if ( $Param{Notification}->{Data}->{RecipientEmail}->[0] ) {
             my $RecipientEmail = $Param{Notification}->{Data}->{RecipientEmail}->[0];
 
-            # replace CareOnCloud ESMish attributes in recipient email
+            # replace CareOnCloudish attributes in recipient email
             $RecipientEmail = $Self->_ReplaceTicketAttributes(
                 Ticket => $Param{Ticket},
                 Field  => $RecipientEmail,

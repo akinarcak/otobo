@@ -45,10 +45,10 @@ sub Run {
     );
 
     my $Webservice = $Kernel::OM->Get('Kernel::System::GenericInterface::Webservice')->WebserviceGet(
-        Name => 'CareOnCloud ESMConnector',
+        Name => 'CareOnCloudConnector',
     );
 
-    # This setting has been introduced for CareOnCloud ESMTicketInvoker
+    # This setting has been introduced for CareOnCloudTicketInvoker
     my @Data = (
         {
             'GenericInterface::Invoker::Settings::ResponseDynamicField' => {

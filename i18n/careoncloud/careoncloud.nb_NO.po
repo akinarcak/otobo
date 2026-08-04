@@ -6559,8 +6559,8 @@ msgid "Local Repository"
 msgstr "Lokalt pakkelager"
 
 #. Template: AdminPackageManager
-msgid "This package is verified by CareOnCloud ESMverify (tm)"
-msgstr "Denne pakken er verifisert av CareOnCloud ESMverify (tm)"
+msgid "This package is verified by CareOnCloud Verify (tm)"
+msgstr "Denne pakken er verifisert av CareOnCloud Verify (tm)"
 
 #. Template: AdminPackageManager
 msgid "Uninstall"
@@ -20765,13 +20765,13 @@ msgid "Value doesn't satisfy regex (%s)."
 msgstr "Verdien tilfredsstiller ikke regulært uttrykk (%s)."
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-msgid "System was not able to calculate user Date in CareOnCloud ESMTimeZone!"
-msgstr "Systemet var ikke i stand til å beregne brukerdato i CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user Date in CareOnCloudTimeZone!"
+msgstr "Systemet var ikke i stand til å beregne brukerdato i CareOnCloudTimeZone!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-msgid "System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!"
+msgid "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
 msgstr ""
-"Systemet var ikke i stand til å beregne brukerens DateTime i CareOnCloud ESMTimeZone!"
+"Systemet var ikke i stand til å beregne brukerens DateTime i CareOnCloudTimeZone!"
 
 #. Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
 msgid "Value is not correct! Please, consider updating this module."
@@ -22430,15 +22430,15 @@ msgstr "Dette er %s"
 msgid "Complex %s with %s arguments"
 msgstr "Kompleks %s med %s argumenter"
 
-#. JS File: CareOnCloud ESMLineChart
+#. JS File: CareOnCloudLineChart
 msgid "No Data Available."
 msgstr "Ingen data tilgjengelig."
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Grouped"
 msgstr "Gruppert"
 
-#. JS File: CareOnCloud ESMMultiBarChart
+#. JS File: CareOnCloudMultiBarChart
 msgid "Stacked"
 msgstr "Stablet"
 
@@ -29786,11 +29786,11 @@ msgstr ""
 msgid ""
 "If enabled the daemon will use this directory to create its PID files. Note: "
 "Please stop the daemon before any change and use this setting only if "
-"<$CareOnCloud ESMHome>/var/run/ can not be used."
+"<$CareOnCloudHome>/var/run/ can not be used."
 msgstr ""
 "Hvis den er aktivert, vil daemonen bruke denne katalogen til å lage sine PID-"
 "filer. Merk: Stopp daemonen før noen endring og bruk denne innstillingen kun "
-"hvis <$CareOnCloud ESMHome>/var/run/ ikke kan brukes."
+"hvis <$CareOnCloudHome>/var/run/ ikke kan brukes."
 
 #. SysConfig
 msgid "If enabled, CareOnCloud ESM will deliver all CSS files in minified form."
@@ -29854,12 +29854,12 @@ msgstr "Hvis den er aktivert, vil hurtiglukkingen opprette en artikkel."
 msgid ""
 "If enabled, users that haven't selected a time zone yet will be notified to "
 "do so. Note: Notification will not be shown if (1) user has not yet selected "
-"a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) "
+"a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) "
 "are not set to UTC."
 msgstr ""
 "Hvis aktivert, vil brukere som ikke har valgt en tidssone ennå bli varslet "
 "om å gjøre det. Merk: Varsling vil ikke vises hvis (1) bruker ennå ikke har "
-"valgt en tidssone og (2) CareOnCloud ESMTimeZone og UserDefaultTimeZone stemmer "
+"valgt en tidssone og (2) CareOnCloudTimeZone og UserDefaultTimeZone stemmer "
 "overens og (3) ikke er satt til UTC."
 
 #. SysConfig
@@ -35294,8 +35294,8 @@ msgstr ""
 "utvalgt gruppe land."
 
 #. SysConfig
-msgid "This setting is deprecated. Set CareOnCloud ESMTimeZone instead."
-msgstr "Denne innstillingen er utdatert. Sett CareOnCloud ESMTimeZone i stedet."
+msgid "This setting is deprecated. Set CareOnCloudTimeZone instead."
+msgstr "Denne innstillingen er utdatert. Sett CareOnCloudTimeZone i stedet."
 
 #. SysConfig
 msgid ""

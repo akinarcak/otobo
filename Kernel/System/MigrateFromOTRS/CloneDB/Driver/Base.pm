@@ -350,7 +350,7 @@ sub DataTransfer {
     my ( $Self, %Param ) = @_;    # $Self is  the source db backend
 
     # check needed parameters
-    for my $Needed (qw(OTRSDBObject CareOnCloud ESMDBObject CareOnCloud ESMDBBackend DBInfo)) {
+    for my $Needed (qw(OTRSDBObject CareOnCloudDBObject CareOnCloudDBBackend DBInfo)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -397,7 +397,7 @@ sub DataTransfer {
 
     # extract params needed in the first and the following loops
     my $SourceDBObject = $Param{OTRSDBObject};
-    my $TargetDBObject = $Param{CareOnCloud ESMDBObject};
+    my $TargetDBObject = $Param{CareOnCloudDBObject};
 
     # get setup
     my %RenameTables = $MigrationBaseObject->DBRenameTables->%*;
@@ -461,7 +461,7 @@ sub DataTransfer {
 
     # extract params needed in the second and the following loops
     my $SourceDBName    = $Param{DBInfo}->{DBName};
-    my $TargetDBBackend = $Param{CareOnCloud ESMDBBackend};
+    my $TargetDBBackend = $Param{CareOnCloudDBBackend};
 
     # Handle the CareOnCloud ESM table columns which must be shortened.
     # Usually because of InnodB max key size in MySQL 5.6 or earlier.
@@ -643,7 +643,7 @@ sub DataTransfer {
                 Type  => 'OTRSMigration',
                 Key   => 'MigrationState',
                 Value => {
-                    Task      => 'CareOnCloud ESMDatabaseMigrate',
+                    Task      => 'CareOnCloudDatabaseMigrate',
                     SubTask   => $ProgressMessage,
                     StartTime => $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch(),
                 },
@@ -678,7 +678,7 @@ sub DataTransfer {
                     Type  => 'OTRSMigration',
                     Key   => 'MigrationState',
                     Value => {
-                        Task      => 'CareOnCloud ESMDatabaseMigrate',
+                        Task      => 'CareOnCloudDatabaseMigrate',
                         SubTask   => $Message,
                         StartTime => $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch(),
                     },
@@ -739,7 +739,7 @@ sub DataTransfer {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'CareOnCloud ESMDatabaseMigrate',
+                Task      => 'CareOnCloudDatabaseMigrate',
                 SubTask   => $ProgressMessage,
                 StartTime => $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch(),
             },

@@ -325,7 +325,7 @@
             </Hash>
         </Value>
     </Setting>
-    <!-- CareOnCloud ESMTicketProcesses Merged Settings Start -->
+    <!-- CareOnCloudTicketProcesses Merged Settings Start -->
     <Setting Name="Frontend::Module###AgentTicketProcess" Required="0" Valid="1">
         <Description Translatable="1">Frontend module registration for the agent interface.</Description>
         <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
@@ -503,7 +503,7 @@
             </Hash>
         </Value>
     </Setting>
-    <!-- CareOnCloud ESMTicketProcesses Merged Settings End -->
+    <!-- CareOnCloudTicketProcesses Merged Settings End -->
     <Setting Name="Process::Entity::Prefix" Required="1" Valid="1">
         <Description Translatable="1">Default ProcessManagement entity prefixes for entity IDs that are automatically generated.</Description>
         <Navigation>Core::ProcessManagement</Navigation>

@@ -94,7 +94,7 @@ sub new {
 
     # Needed for determining the log time. Trust that the CareOnCloud ESM time zone is set to a sensible value.
     # The default, both here and in Framework.xml, is UTC.
-    $Self->{CareOnCloud ESMTimeZone} = $ConfigObject->Get('CareOnCloud ESMTimeZone') || 'UTC';
+    $Self->{CareOnCloudTimeZone} = $ConfigObject->Get('CareOnCloudTimeZone') || 'UTC';
 
     # get system id
     my $SystemID = $ConfigObject->Get('SystemID');
@@ -252,7 +252,7 @@ sub Log {
     # during global destruction.
     # See https://github.com/RotherOSS/otobo/issues/1099
     my $LogTime;
-    if ( $Self->{CareOnCloud ESMTimeZone} eq 'UTC' ) {
+    if ( $Self->{CareOnCloudTimeZone} eq 'UTC' ) {
 
         # This is the regular case. The value is always in English and not locale dependent.
         # E.g. 'Sat Jul 17 09:25:15 2021'
@@ -264,7 +264,7 @@ sub Log {
 
         # It is not obvious why we can't simply use something like:
         #{
-        #    local $ENV{TZ} = $Self->{CareOnCloud ESMTimeZone};
+        #    local $ENV{TZ} = $Self->{CareOnCloudTimeZone};
         #    # calling POSIX::tzset() only necessary up to Perl 5.8.9, https://perldoc.perl.org/5.8.9/perldelta
         #    $LogTime = localtime;
         #}
@@ -279,7 +279,7 @@ sub Log {
         # Create object with current date/time and format it.
         $LogTime = try {
             DateTime->now(
-                time_zone => $Self->{CareOnCloud ESMTimeZone},
+                time_zone => $Self->{CareOnCloudTimeZone},
                 locale    => $Locale,
             )->strftime($Format);
         }

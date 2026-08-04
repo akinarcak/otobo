@@ -52,7 +52,7 @@ my @Tests = (
 
     {
         Name           => 'No options',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2016-02-10 09:04:23',                            # in CareOnCloud ESM time zone
         Config         => {},
@@ -68,7 +68,7 @@ my @Tests = (
     },
     {
         Name           => 'No options',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2016-02-10 23:04:23',                            # in CareOnCloud ESM time zone
         Config         => {},
@@ -84,7 +84,7 @@ my @Tests = (
     },
     {
         Name           => 'Long Format',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2016-02-10 09:04:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -108,7 +108,7 @@ my @Tests = (
     },
     {
         Name           => 'Long Format',
-        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
+        CareOnCloudTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'America/New_York',
         DateTimeString => '2016-05-01 04:24:06',    # in CareOnCloud ESM time zone
         Config         => {
@@ -132,7 +132,7 @@ my @Tests = (
     },
     {
         Name           => 'Optional',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2016-10-02 09:04:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -153,7 +153,7 @@ my @Tests = (
     },
     {
         Name           => 'Optional',
-        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
+        CareOnCloudTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2016-10-02 00:04:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -174,7 +174,7 @@ my @Tests = (
     },
     {
         Name           => 'No Options (Input)',
-        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
+        CareOnCloudTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2016-10-02 00:04:23',    # in CareOnCloud ESM time zone
         Config         => {},
@@ -190,7 +190,7 @@ my @Tests = (
     },
     {
         Name           => 'Long Format (Input)',
-        CareOnCloud ESMTimeZone  => 'Europe/Berlin',
+        CareOnCloudTimeZone  => 'Europe/Berlin',
         UserTimeZone   => 'UTC',
         DateTimeString => '2016-10-02 00:04:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -205,7 +205,7 @@ my @Tests = (
     },
     {
         Name           => 'Optional (Input)',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2016-06-08 23:04:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -222,7 +222,7 @@ my @Tests = (
     # TODO: add more tests for the different parameters here!
     {
         Name           => 'Disabled',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2016-06-08 23:04:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -245,7 +245,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Long Format',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2014-06-08 23:24:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -270,7 +270,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Optional',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2014-06-08 23:24:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -292,7 +292,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled (Input)',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2014-06-08 23:24:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -310,7 +310,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled (Input)',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2014-06-09 01:24:23',    # in CareOnCloud ESM time zone
         Config         => {
@@ -328,7 +328,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Long Format (Input)',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2014-06-08 23:24:23',            # in CareOnCloud ESM time zone
         Config         => {
@@ -344,7 +344,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Long Format (Input)',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2014-06-08 23:24:23',            # in CareOnCloud ESM time zone
         Config         => {
@@ -360,7 +360,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Optional (Input)',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => undef,
         DateTimeString => '2014-06-08 23:24:23',         # in CareOnCloud ESM time zone
         Config         => {
@@ -376,7 +376,7 @@ my @Tests = (
     },
     {
         Name           => 'Disabled Optional (Input)',
-        CareOnCloud ESMTimeZone  => 'UTC',
+        CareOnCloudTimeZone  => 'UTC',
         UserTimeZone   => 'Europe/Berlin',
         DateTimeString => '2014-06-08 23:24:23',         # in CareOnCloud ESM time zone
         Config         => {
@@ -396,8 +396,8 @@ TESTCASE:
 for my $Test (@Tests) {
 
     $ConfigObject->Set(
-        Key   => 'CareOnCloud ESMTimeZone',
-        Value => $Test->{CareOnCloud ESMTimeZone},
+        Key   => 'CareOnCloudTimeZone',
+        Value => $Test->{CareOnCloudTimeZone},
     );
 
     my $DateTimeObject = $Kernel::OM->Create(
@@ -456,7 +456,7 @@ for my $Test (@Tests) {
         $Self->Is(
             $HTML,
             $Test->{ExpectedValue},
-            "BuildDateSelection(): $Test->{Name}, CareOnCloud ESM time zone $Test->{CareOnCloud ESMTimeZone}, "
+            "BuildDateSelection(): $Test->{Name}, CareOnCloud ESM time zone $Test->{CareOnCloudTimeZone}, "
                 . ( $Test->{UserTimeZone} ? "user time zone $Test->{UserTimeZone}" : 'no user time zone' )
                 . ", date/time " . ( $DateTimeAsParams ? 'as explicit parameters' : 'via fixed date/time' ),
         );

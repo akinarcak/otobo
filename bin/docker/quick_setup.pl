@@ -231,8 +231,8 @@ sub Main {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     const my $DBName          => $ConfigObject->Get('Database');
-    const my $CareOnCloud ESMDBUser     => $ConfigObject->Get('DatabaseUser');
-    const my $CareOnCloud ESMDBPassword => $ConfigObject->Get('DatabasePw');
+    const my $CareOnCloudDBUser     => $ConfigObject->Get('DatabaseUser');
+    const my $CareOnCloudDBPassword => $ConfigObject->Get('DatabasePw');
     const my $DBType          => 'mysql';
 
     {
@@ -252,8 +252,8 @@ sub Main {
             DBName               => $DBName,
             DBPassword           => $DBPassword,
             AuthenticationPlugin => $AuthenticationPlugin,
-            CareOnCloud ESMDBUser          => $CareOnCloud ESMDBUser,
-            CareOnCloud ESMDBPassword      => $CareOnCloud ESMDBPassword,
+            CareOnCloudDBUser          => $CareOnCloudDBUser,
+            CareOnCloudDBPassword      => $CareOnCloudDBPassword,
         );
 
         say $Message if defined $Message;
@@ -263,8 +263,8 @@ sub Main {
 
     $Kernel::OM->ObjectParamAdd(
         'Kernel::System::DB' => {
-            DatabaseUser => $CareOnCloud ESMDBUser,
-            DatabasePw   => $CareOnCloud ESMDBPassword,
+            DatabaseUser => $CareOnCloudDBUser,
+            DatabasePw   => $CareOnCloudDBPassword,
             Type         => $DBType,
         },
     );
@@ -312,8 +312,8 @@ sub Main {
 
         # Unique names for session cookies. This allows to run distinct instances on the same host.
         push @Settings, (
-            [ SessionName              => join( '_', 'CareOnCloud ESMAgentInterface',    $SystemID ) ],
-            [ CustomerPanelSessionName => join( '_', 'CareOnCloud ESMCustomerInterface', $SystemID ) ],
+            [ SessionName              => join( '_', 'CareOnCloudAgentInterface',    $SystemID ) ],
+            [ CustomerPanelSessionName => join( '_', 'CareOnCloudCustomerInterface', $SystemID ) ],
         );
 
         # These settings are useful for testing and development
@@ -556,7 +556,7 @@ sub DBCreateUserAndDatabase {
     my %Param = @_;
 
     # check the params
-    for my $Key ( grep { !$Param{$_} } qw(DBPassword AuthenticationPlugin DBName CareOnCloud ESMDBUser CareOnCloud ESMDBPassword) ) {
+    for my $Key ( grep { !$Param{$_} } qw(DBPassword AuthenticationPlugin DBName CareOnCloudDBUser CareOnCloudDBPassword) ) {
         my $SubName = subname(__SUB__);
 
         return 0, "$SubName: the parameter '$Key' is required";
@@ -591,7 +591,7 @@ sub DBCreateUserAndDatabase {
 
         # Use the default authentication plugin, works for MariaDB and MySQL
         push @CreateUserSQLs,
-            "CREATE USER `$Param{CareOnCloud ESMDBUser}`\@`$Host` IDENTIFIED BY '$Param{CareOnCloud ESMDBPassword}'";
+            "CREATE USER `$Param{CareOnCloudDBUser}`\@`$Host` IDENTIFIED BY '$Param{CareOnCloudDBPassword}'";
     }
     else {
 
@@ -610,21 +610,21 @@ sub DBCreateUserAndDatabase {
             # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-ed25519
             # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-parsec
             push @CreateUserSQLs,
-                "CREATE USER `$Param{CareOnCloud ESMDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} USING PASSWORD('$Param{CareOnCloud ESMDBPassword}')";
+                "CREATE USER `$Param{CareOnCloudDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} USING PASSWORD('$Param{CareOnCloudDBPassword}')";
         }
         else {
 
             # The MySQL case.
             # "USING PASSWORD('...')" is not supported
             push @CreateUserSQLs,
-                "CREATE USER `$Param{CareOnCloud ESMDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} BY '$Param{CareOnCloud ESMDBPassword}'";
+                "CREATE USER `$Param{CareOnCloudDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} BY '$Param{CareOnCloudDBPassword}'";
         }
     }
 
     my @Statements = (
         "CREATE DATABASE `$Param{DBName}` charset utf8mb4 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci",
         @CreateUserSQLs,
-        "GRANT ALL PRIVILEGES ON `$Param{DBName}`.* TO `$Param{CareOnCloud ESMDBUser}`\@`$Host` WITH GRANT OPTION",
+        "GRANT ALL PRIVILEGES ON `$Param{DBName}`.* TO `$Param{CareOnCloudDBUser}`\@`$Host` WITH GRANT OPTION",
     );
 
     for my $Statement (@Statements) {

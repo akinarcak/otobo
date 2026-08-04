@@ -95,7 +95,7 @@ Get a token needed for system registration.
 To obtain this token, you need to pass a valid CareOnCloud ESM ID and password.
 
     my %Result = $RegistrationObject->TokenGet(
-        CareOnCloud ESMID   => 'myname@example.com',
+        CareOnCloudID   => 'myname@example.com',
         Password => 'mysecretpass',
     );
 
@@ -126,7 +126,7 @@ sub TokenGet {
     my ( $Self, %Param ) = @_;
 
     # check needed parameters
-    for my $Needed (qw(CareOnCloud ESMID Password)) {
+    for my $Needed (qw(CareOnCloudID Password)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -240,7 +240,7 @@ Register the system;
 
     my $Success = $RegistrationObject->Register(
         Token       => '8a85ad4c-e5ff-4b91-a4b3-0b9ea8e2a3dc'
-        CareOnCloud ESMID      => 'myname@example.com'
+        CareOnCloudID      => 'myname@example.com'
         Type        => 'production',
         Description => 'Main ticketing system',  # optional
     );
@@ -251,7 +251,7 @@ sub Register {
     my ( $Self, %Param ) = @_;
 
     # check needed parameters
-    for my $Needed (qw(Token CareOnCloud ESMID Type)) {
+    for my $Needed (qw(Token CareOnCloudID Type)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -274,7 +274,7 @@ sub Register {
         PerlVersion        => sprintf( '%vd', $^V ),
         OSType             => $OSInfo{OS},
         OSVersion          => $OSInfo{OSName},
-        CareOnCloud ESMVersion       => $ConfigObject->Get('Version'),
+        CareOnCloudVersion       => $ConfigObject->Get('Version'),
         FQDN               => $ConfigObject->Get('FQDN'),
         DatabaseVersion    => $Kernel::OM->Get('Kernel::System::DB')->Version(),
         SupportDataSending => $SupportDataSending,
@@ -317,7 +317,7 @@ sub Register {
                         OldUniqueID => $OldRegistration{UniqueID} || '',
                         OldAPIKey   => $OldRegistration{APIKey}   || '',
                         Token       => $Param{Token},
-                        CareOnCloud ESMID     => $Param{CareOnCloud ESMID},
+                        CareOnCloudID     => $Param{CareOnCloudID},
                         Type        => $Param{Type},
                         Description => $Param{Description},
                     },
@@ -549,7 +549,7 @@ sub RegistrationDataGet {
             PerlVersion     => sprintf( '%vd', $^V ),
             OSType          => $OSInfo{OS},
             OSVersion       => $OSInfo{OSName},
-            CareOnCloud ESMVersion    => $ConfigObject->Get('Version'),
+            CareOnCloudVersion    => $ConfigObject->Get('Version'),
             FQDN            => $ConfigObject->Get('FQDN'),
             DatabaseVersion => $Kernel::OM->Get('Kernel::System::DB')->Version(),
         };
@@ -612,7 +612,7 @@ sub RegistrationUpdateSend {
         PerlVersion     => sprintf( '%vd', $^V ),
         OSType          => $OSInfo{OS},
         OSVersion       => $OSInfo{OSName},
-        CareOnCloud ESMVersion    => $ConfigObject->Get('Version'),
+        CareOnCloudVersion    => $ConfigObject->Get('Version'),
         FQDN            => $ConfigObject->Get('FQDN'),
         DatabaseVersion => $Kernel::OM->Get('Kernel::System::DB')->Version(),
     );
@@ -874,7 +874,7 @@ Deregister the system. Deregistering also stops any update jobs.
 
     my $Success = $RegistrationObject->Deregister(
         Token  => '8a85ad4c-e5ff-4b91-a4b3-0b9ea8e2a3dc',
-        CareOnCloud ESMID => 'myname@example.com',
+        CareOnCloudID => 'myname@example.com',
     );
 
     returns '1' for success or a description if there was no success
@@ -885,7 +885,7 @@ sub Deregister {
     my ( $Self, %Param ) = @_;
 
     # check needed parameters
-    for my $Needed (qw(Token CareOnCloud ESMID)) {
+    for my $Needed (qw(Token CareOnCloudID)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -910,7 +910,7 @@ sub Deregister {
                     Operation => $Operation,
                     Data      => {
                         APIVersion => $Self->{APIVersion},
-                        CareOnCloud ESMID    => $Param{CareOnCloud ESMID},
+                        CareOnCloudID    => $Param{CareOnCloudID},
                         Token      => $Param{Token},
                         APIKey     => $RegistrationInfo{APIKey},
                         UniqueID   => $RegistrationInfo{UniqueID},

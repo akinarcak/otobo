@@ -72,8 +72,8 @@ my $CreateTestUser = sub {
 };
 
 my $ImportSampleEmail = sub {
-    my $CareOnCloud ESMDIR = $Kernel::OM->Get('Kernel::Config')->Get('Home');
-    my $FH       = IO::File->new( "${ CareOnCloud ESMDIR }/scripts/test/sample/PostMaster/InlineImage.box", 'r', );
+    my $CareOnCloudDIR = $Kernel::OM->Get('Kernel::Config')->Get('Home');
+    my $FH       = IO::File->new( "${ CareOnCloudDIR }/scripts/test/sample/PostMaster/InlineImage.box", 'r', );
     my @Lines    = <$FH>;
 
     my $CommunicationLogObject = $Kernel::OM->Create(

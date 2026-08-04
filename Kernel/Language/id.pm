@@ -1847,7 +1847,7 @@ sub Data {
         'Action' => 'Tindakan',
         'Module documentation' => 'Modul dokumentasi',
         'Local Repository' => 'Lokal repositori',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'Paket ini telah di verifikasi oleh CareOnCloud ESMverify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Paket ini telah di verifikasi oleh CareOnCloud Verify (tm)',
         'Uninstall' => 'Uninstal',
         'Package not correctly deployed! Please reinstall the package.' =>
             'Paket tidak disebarkan dengan benar! Silahkan untuk menginstal ulang paket ini.',
@@ -6564,11 +6564,11 @@ bin/careoncloud.Daemon.pl status\').',
         'Value doesn\'t satisfy regex (%s).' => '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -7175,10 +7175,10 @@ bin/careoncloud.Daemon.pl status\').',
         'This is %s' => '',
         'Complex %s with %s arguments' => '',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Grup',
         'Stacked' => 'Ditumpuk',
 
@@ -9014,7 +9014,7 @@ Helpdesk Team Anda
             'Jika diaktifkan daemon akan mengarahkan aliran standard error ke file log.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Jika diaktifkan daemon akan mengarahkan output stream standar untuk file log.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
             '',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '',
@@ -9033,7 +9033,7 @@ Helpdesk Team Anda
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Jika diaktifkan, tingkat pertama dari menu utama terbuka pada mouse hover (bukan klik saja).',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             '',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '',
@@ -10293,7 +10293,7 @@ Helpdesk Team Anda
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Pengaturan ini memungkinkan Anda untuk menimpa daftar statebuilt-in dengan daftar negara Anda sendiri. Hal ini terutama berguna jika Anda hanya ingin menggunakan kelompok memilih kecil negara.',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',

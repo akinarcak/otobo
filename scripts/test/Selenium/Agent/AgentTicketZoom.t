@@ -77,7 +77,7 @@ $DefaultCustomerUser->{Map}->[5] = [
     '[% Env("CGIHandle") %]?Action=AgentTicketCompose;ResponseID=1;TicketID=[% Data.TicketID | uri %];ArticleID=[% Data.ArticleID | uri %]',
     0,
     '',
-    'AsPopup CareOnCloud ESMPopup_TicketAction',
+    'AsPopup CareOnCloudPopup_TicketAction',
 ];
 $Helper->ConfigSettingChange(
     Key   => 'CustomerUser',

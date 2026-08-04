@@ -79,7 +79,7 @@ sub Run {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'CareOnCloud ESMOTRSDBCheck',
+                Task      => 'CareOnCloudOTRSDBCheck',
                 SubTask   => "Checks if connect to OTRS DB is possible.",
                 StartTime => $Epoch,
             },

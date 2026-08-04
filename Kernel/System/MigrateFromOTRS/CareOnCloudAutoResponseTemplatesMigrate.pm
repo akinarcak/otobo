@@ -78,7 +78,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMAutoResponseTemplatesMigrate',
+            Task      => 'CareOnCloudAutoResponseTemplatesMigrate',
             SubTask   => "Migrate auto response table to CareOnCloud ESM.",
             StartTime => $Epoch,
         },

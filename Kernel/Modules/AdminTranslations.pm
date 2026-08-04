@@ -560,7 +560,7 @@ sub Run {
         $LayoutObject->ChallengeTokenCheck();
 
         $Param{UserLanguage}        = $ParamObject->GetParam( Param => 'UserLanguage' )        || '';
-        $Param{CareOnCloud ESMAgentInterface} = $ParamObject->GetParam( Param => 'CareOnCloud ESMAgentInterface' ) || '';
+        $Param{CareOnCloudAgentInterface} = $ParamObject->GetParam( Param => 'CareOnCloudAgentInterface' ) || '';
 
         my $Message;
         my $Success = $TranslationsObject->WriteTranslationFile(

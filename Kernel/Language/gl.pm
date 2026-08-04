@@ -1847,7 +1847,7 @@ sub Data {
         'Action' => 'Acción',
         'Module documentation' => 'Documentación do módulo',
         'Local Repository' => 'Repositorio local',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'Este pauqete foi verificado por CareOnCloud ESMverify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Este pauqete foi verificado por CareOnCloud Verify (tm)',
         'Uninstall' => 'Desinstale',
         'Package not correctly deployed! Please reinstall the package.' =>
             'O paquete non foi correctamente despregado! Por favor, volva a instalar o paquete.',
@@ -6562,11 +6562,11 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -7173,10 +7173,10 @@ sub Data {
         'This is %s' => '',
         'Complex %s with %s arguments' => '',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Agrupado',
         'Stacked' => 'Amoreados',
 
@@ -9000,7 +9000,7 @@ Thanks for your help!
             '',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             '',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
             '',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '',
@@ -9019,7 +9019,7 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Se habilitado, o primeiro nivel do menu principal abriráse o pasar o rato por enriba (en lugar de só o facer clic).',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             '',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '',
@@ -10279,7 +10279,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Este axuste permite sobreescribir a lista construida de paises coa súa propia lista de paises. Isto é particularmente práctico se só quere usar un pequeno grupo seleccionado de países. ',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',

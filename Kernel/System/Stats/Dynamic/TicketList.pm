@@ -1403,13 +1403,13 @@ sub GetStatTable {
             # convert from CareOnCloud ESM time zone to given time zone
             if (
                 $Param{TimeZone}
-                && $Param{TimeZone} ne Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet()
+                && $Param{TimeZone} ne Kernel::System::DateTime->CareOnCloudTimeZoneGet()
                 && $Ticket{$Attribute}
                 && $Ticket{$Attribute} =~ /\A(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2}):(\d{2})\z/
                 )
             {
 
-                $Ticket{$Attribute} = $StatsObject->_FromCareOnCloud ESMTimeZone(
+                $Ticket{$Attribute} = $StatsObject->_FromCareOnCloudTimeZone(
                     String   => $Ticket{$Attribute},
                     TimeZone => $Param{TimeZone},
                 );

@@ -1297,7 +1297,7 @@ sub _FindRecipientTimeZone {
 
     # fall back to the CareOnCloud ESM time zone
     return $UserPreferences{UserTimeZone} if $UserPreferences{UserTimeZone};
-    return $Kernel::OM->Create('Kernel::System::DateTime')->CareOnCloud ESMTimeZoneGet();
+    return $Kernel::OM->Create('Kernel::System::DateTime')->CareOnCloudTimeZoneGet();
 }
 
 =head2 _Replace()
@@ -1977,7 +1977,7 @@ sub _Replace {
                 $Tag = $Start . 'CareOnCloud_EMAIL_DATE';
 
                 my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
-                my $SystemTimeZone = $DateTimeObject->CareOnCloud ESMTimeZoneGet();
+                my $SystemTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet();
 
                 $Param{Text} =~ s{
                     $Start

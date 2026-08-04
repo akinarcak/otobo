@@ -1,4 +1,4 @@
-nv.models.CareOnCloud ESMmultiBarChart = function() {
+nv.models.CareOnCloudmultiBarChart = function() {
     "use strict";
 
     //============================================================

@@ -58,7 +58,7 @@ our $Locale = DateTime::Locale->load('en_US');
 
 our %EXPORT_TAGS = (    ## no critic qw(OTOBO::RequireCamelCase)
     all => [
-        'CareOnCloud ESMTimeZoneGet',
+        'CareOnCloudTimeZoneGet',
         'SystemTimeZoneGet',
         'TimeZoneList',
         'UserDefaultTimeZoneGet',
@@ -90,7 +90,7 @@ the current namespace. The subroutines are:
 
 =over 4
 
-=item CareOnCloud ESMTimeZoneGet()
+=item CareOnCloudTimeZoneGet()
 
 =item SystemTimeZoneGet()
 
@@ -105,7 +105,7 @@ the current namespace. The subroutines are:
 Creates a DateTime object. Do not use new() directly, instead use the object manager:
 
     # Create an object with current date and time
-    # within time zone set in SysConfig CareOnCloud ESMTimeZone:
+    # within time zone set in SysConfig CareOnCloudTimeZone:
     my $DateTimeObject = $Kernel::OM->Create(
         'Kernel::System::DateTime'
     );
@@ -129,7 +129,7 @@ Creates a DateTime object. Do not use new() directly, instead use the object man
             Hour     => 12,                     # optional, defaults to 0
             Minute   => 35,                     # optional, defaults to 0
             Second   => 59,                     # optional, defaults to 0
-            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloud ESMTimeZone
+            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloudTimeZone
         }
     );
 
@@ -152,7 +152,7 @@ Creates a DateTime object. Do not use new() directly, instead use the object man
         'Kernel::System::DateTime',
         ObjectParams => {
             String   => '2016-08-14 22:45:00',
-            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloud ESMTimeZone
+            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloudTimeZone
         }
     );
 
@@ -493,7 +493,7 @@ sub Add {
 
             # Switch to time zone of calendar
             $TimeZone = $ConfigObject->Get( "TimeZone::Calendar" . $Param{Calendar} )
-                || $Self->CareOnCloud ESMTimeZoneGet();
+                || $Self->CareOnCloudTimeZoneGet();
 
             # Use Kernel::System::DateTime's ToTimeZone() here because of error handling
             # and because performance is irrelevant at this point.
@@ -943,7 +943,7 @@ sub Delta {
 
             # switch to time zone of calendar
             $TimeZone = $ConfigObject->Get( "TimeZone::Calendar" . $Param{Calendar} )
-                || $Self->CareOnCloud ESMTimeZoneGet();
+                || $Self->CareOnCloudTimeZoneGet();
 
             eval {
                 $StartDateTimeObject->set_time_zone($TimeZone);
@@ -1211,11 +1211,11 @@ sub ToTimeZone {
     return 1;
 }
 
-=head2 ToCareOnCloud ESMTimeZone()
+=head2 ToCareOnCloudTimeZone()
 
 Converts the date and time of this object to the data storage time zone.
 
-    my $Success = $DateTimeObject->ToCareOnCloud ESMTimeZone();
+    my $Success = $DateTimeObject->ToCareOnCloudTimeZone();
 
 Returns:
 
@@ -1223,10 +1223,10 @@ Returns:
 
 =cut
 
-sub ToCareOnCloud ESMTimeZone {
+sub ToCareOnCloudTimeZone {
     my ( $Self, %Param ) = @_;
 
-    return $Self->ToTimeZone( TimeZone => $Self->CareOnCloud ESMTimeZoneGet() );
+    return $Self->ToTimeZone( TimeZone => $Self->CareOnCloudTimeZoneGet() );
 }
 
 =head2 Validate()
@@ -1376,7 +1376,7 @@ Returns the date/time of this object as time stamp in RFC 2822 format to be used
     my $MailTimeStamp = $DateTimeObject->ToEmailTimeStamp();
 
     # If you already have a DateTime object, possibly in another time zone:
-    $DateTimeObject->ToCareOnCloud ESMTimeZone();
+    $DateTimeObject->ToCareOnCloudTimeZone();
     my $MailTimeStamp = $DateTimeObject->ToEmailTimeStamp();
 
 Returns:
@@ -1468,7 +1468,7 @@ sub IsVacationDay {
 
             # Switch to time zone of calendar
             my $TimeZone = $ConfigObject->Get( "TimeZone::Calendar" . $Param{Calendar} )
-                || $Self->CareOnCloud ESMTimeZoneGet();
+                || $Self->CareOnCloudTimeZoneGet();
 
             if ( defined $TimeZone ) {
                 $Self->ToTimeZone( TimeZone => $TimeZone );
@@ -1677,30 +1677,30 @@ sub IsTimeZoneValid {
     return $ValidTimeZones->{ $Param{TimeZone} } ? 1 : 0;
 }
 
-=head2 CareOnCloud ESMTimeZoneGet()
+=head2 CareOnCloudTimeZoneGet()
 
 Returns the time zone set for CareOnCloud ESM in the SysConfig. The default is C<'UTC'>.
 
-    my $CareOnCloud ESMTimeZone = $DateTimeObject->CareOnCloud ESMTimeZoneGet;
+    my $CareOnCloudTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet;
 
 You can also call this subroutine without an object:
 
-    my $CareOnCloud ESMTimeZone = Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet;
+    my $CareOnCloudTimeZone = Kernel::System::DateTime->CareOnCloudTimeZoneGet;
 
 Importing this subroutine is also supported:
 
-    use Kernel::System::DateTime qw(CareOnCloud ESMTimeZone);
+    use Kernel::System::DateTime qw(CareOnCloudTimeZone);
 
-    my $CareOnCloud ESMTimeZone = CareOnCloud ESMTimeZoneGet();
+    my $CareOnCloudTimeZone = CareOnCloudTimeZoneGet();
 
 Returns:
 
-    my $CareOnCloud ESMTimeZone = 'Europe/Berlin';
+    my $CareOnCloudTimeZone = 'Europe/Berlin';
 
 =cut
 
-sub CareOnCloud ESMTimeZoneGet {
-    return $Kernel::OM->Get('Kernel::Config')->Get('CareOnCloud ESMTimeZone') || 'UTC';
+sub CareOnCloudTimeZoneGet {
+    return $Kernel::OM->Get('Kernel::Config')->Get('CareOnCloudTimeZone') || 'UTC';
 }
 
 =head2 UserDefaultTimeZoneGet()
@@ -2068,7 +2068,7 @@ sub _StringToHash {
             time_zone => $OffsetOrTZ,
         );
         $DT->set_time_zone('UTC');
-        $DT->set_time_zone( $Self->CareOnCloud ESMTimeZoneGet() );
+        $DT->set_time_zone( $Self->CareOnCloudTimeZoneGet() );
 
         return {
             ( map { ucfirst $_ => $DT->$_() } qw(year month day hour minute second) )
@@ -2088,7 +2088,7 @@ sub _StringToHash {
 Creates a CPAN DateTime object which will be stored within this object and used for date/time calculations.
 
     # Create an object with current date and time
-    # within time zone set in SysConfig CareOnCloud ESMTimeZone:
+    # within time zone set in SysConfig CareOnCloudTimeZone:
     my $CPANDateTimeObject = $DateTimeObject->_CPANDateTimeObjectCreate();
 
     # Create an object with current date and time
@@ -2105,7 +2105,7 @@ Creates a CPAN DateTime object which will be stored within this object and used 
         Hour     => 12,                 # optional, defaults to 0
         Minute   => 35,                 # optional, defaults to 0
         Second   => 59,                 # optional, defaults to 0
-        TimeZone => 'Europe/Berlin',    # optional, defaults to setting of SysConfig CareOnCloud ESMTimeZone
+        TimeZone => 'Europe/Berlin',    # optional, defaults to setting of SysConfig CareOnCloudTimeZone
     );
 
     # Create an object from an epoch timestamp. These timestamps are always UTC/GMT,
@@ -2122,7 +2122,7 @@ Creates a CPAN DateTime object which will be stored within this object and used 
     # for the list of supported string formats.
     my $CPANDateTimeObject = $DateTimeObject->_CPANDateTimeObjectCreate(
         String   => '2016-08-14 22:45:00',
-        TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloud ESMTimeZone
+        TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloudTimeZone
     );
 
     # For setting the time zone one may also pass an offset or 'Z'
@@ -2158,7 +2158,7 @@ sub _CPANDateTimeObjectCreate {
         );
     }
 
-    my $OffsetOrTZ = $Param{TimeZone} || $Self->CareOnCloud ESMTimeZoneGet();
+    my $OffsetOrTZ = $Param{TimeZone} || $Self->CareOnCloudTimeZoneGet();
 
     if ( $OffsetOrTZ ne 'Z' && $OffsetOrTZ !~ m/[+-]\d{2}:?(?:\d{2})?/i ) {
         if ( !$Self->IsTimeZoneValid( TimeZone => $OffsetOrTZ ) ) {

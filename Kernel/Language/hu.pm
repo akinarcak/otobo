@@ -1852,7 +1852,7 @@ sub Data {
         'Action' => 'Művelet',
         'Module documentation' => 'Modul-dokumentáció',
         'Local Repository' => 'Helyi tároló',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'Ezt a csomagot az CareOnCloud ESMverify (tm) ellenőrizte',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Ezt a csomagot az CareOnCloud Verify (tm) ellenőrizte',
         'Uninstall' => 'Eltávolítás',
         'Package not correctly deployed! Please reinstall the package.' =>
             'A csomag nincs megfelelően üzembe állítva! Telepítse újra a csomagot.',
@@ -6567,11 +6567,11 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'Az érték nem teljesíti a reguláris kifejezést (%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
             'A rendszer nem volt képes kiszámítani a felhasználó dátumát az CareOnCloud ESM időzónájában!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
             'A rendszer nem volt képes kiszámítani a felhasználó dátumát és idejét az CareOnCloud ESM időzónájában!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -7178,10 +7178,10 @@ sub Data {
         'This is %s' => 'Ez egy %s',
         'Complex %s with %s arguments' => 'Összetett %s %s argumentummal',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => 'Nem érhető el adat.',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Csoportosított',
         'Stacked' => 'Halmozott',
 
@@ -9016,8 +9016,8 @@ Az Ön ügyfélszolgálati csapata
             'Ha engedélyezve van, akkor a démon át fogja irányítani a szabványos hibafolyamot egy naplófájlba.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Ha engedélyezve van, akkor a démon át fogja irányítani a szabványos kimenetfolyamot egy naplófájlba.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
-            'Ha engedélyezve van, akkor a démon ezt a könyvtárat fogja használni a PID-fájljai létrehozásához. Megjegyzés: állítsa le a démont, mielőtt bármit megváltoztatna, és csak akkor használja ezt a beállítást, ha az <$CareOnCloud ESMHome>/var/run/ nem használható.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            'Ha engedélyezve van, akkor a démon ezt a könyvtárat fogja használni a PID-fájljai létrehozásához. Megjegyzés: állítsa le a démont, mielőtt bármit megváltoztatna, és csak akkor használja ezt a beállítást, ha az <$CareOnCloudHome>/var/run/ nem használható.',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             'Ha engedélyezve van, akkor az CareOnCloud ESM minden CSS fájlt minimalizált formában fog szállítani.',
         'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
@@ -9035,7 +9035,7 @@ Az Ön ügyfélszolgálati csapata
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Ha engedélyezve van, akkor a főmenü első szintje megnyílik az egérrel való rámutatáskor (a csak kattintás helyet).',
         'If enabled, the quick close action will create an article.' => 'Ha engedélyezve van, akkor a gyors lezárás művelet bejegyzést fog létrehozni.',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             'Ha engedélyezve van, akkor azok a felhasználók, akik még nem választottak időzónát, értesítve lesznek, hogy válasszanak. Megjegyzés: az értesítés nem lesz megjelenítve, ha (1) a felhasználó még nem választott időzónát és (2) az CareOnCloud ESM időzónája, valamint a felhasználó alapértelmezett időzónája megegyezik és (3) nincsenek UTC-re állítva.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'Ha nincs SendmailNotificationEnvelopeFrom megadva, akkor ez a beállítás lehetővé teszi az e-mailek feladó címének használatát egy üres boríték küldő helyett (bizonyos levelezőkiszolgálók beállításainál szükséges).',
@@ -10295,7 +10295,7 @@ Az Ön ügyfélszolgálati csapata
             'Ez a beállítás meg fogja tagadni azon ügyfél-vállalati jegyekhez való hozzáférést, amelyeket nem az ügyfél-felhasználó hozott létre. Kapcsolja ki a „CustomerFrontend::Navigation###CustomerTicketOverview###002-Ticket” beállítást is, hogy a gomb többé ne legyen látható.',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Ez a beállítás lehetővé teszi a beépített országlista felülbírálását a saját országlistájával. Ez különösen hasznos, ha az országoknak csak egy kiválasztott kis csoportját szeretné használni.',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => 'Ez a beállítás elavult. Állítsa be az CareOnCloud ESMTimeZone beállítást helyette.',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => 'Ez a beállítás elavult. Állítsa be az CareOnCloudTimeZone beállítást helyette.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             'Ez a beállítás megjeleníti a rendezési attribútumokat az összes képernyőn, nem csak a várólista nézeten.',
         'Ticket Close' => 'Jegylezárás',

@@ -1847,7 +1847,7 @@ sub Data {
         'Action' => 'Акција',
         'Module documentation' => 'Документација модула',
         'Local Repository' => 'Локално спремиште',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'Овај пакет је верификован од стране CareOnCloud ESMverify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Овај пакет је верификован од стране CareOnCloud Verify (tm)',
         'Uninstall' => 'Деинсталирај',
         'Package not correctly deployed! Please reinstall the package.' =>
             'Пакет није коректно инсталиран! Инсталирајте га поново.',
@@ -6562,12 +6562,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => 'Вредност не задовољава регуларни израз (%s).',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
-            'Систем није успео да израчуна кориснички Date у CareOnCloud ESMTimeZone!',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            'Систем није успео да израчуна кориснички Date у CareOnCloudTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
-            'Систем није успео да израчуна кориснички DateTime у CareOnCloud ESMTimeZone!',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            'Систем није успео да израчуна кориснички DateTime у CareOnCloudTimeZone!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -7173,10 +7173,10 @@ sub Data {
         'This is %s' => 'Ово је %s',
         'Complex %s with %s arguments' => 'Комплексан %s са %s аргумената',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => 'Нема информација.',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Груписано',
         'Stacked' => 'Наслагано',
 
@@ -9011,8 +9011,8 @@ Thanks for your help!
             'Ако је активирано, сервис ће преусмерити стандардни ток грешке у лог датотеку.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Ако је активирано, сервис ће преусмерити стандардни излазни ток у лог датотеку.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
-            'Уколико је омогућено, системски сервис ће користити овај директоријум за снимање процесних (PID) датотека. Напомена: молимо стопирајте системски сервис пре измене овог подешавања и користите га само у случају кад је <$CareOnCloud ESMHome>/var/run/ недоступан.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            'Уколико је омогућено, системски сервис ће користити овај директоријум за снимање процесних (PID) датотека. Напомена: молимо стопирајте системски сервис пре измене овог подешавања и користите га само у случају кад је <$CareOnCloudHome>/var/run/ недоступан.',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             'Уколико је укључено, CareOnCloud ESM ће испоручити све CSS датотеке у смањеној форми.',
         'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
@@ -9030,8 +9030,8 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Ако је активирано, први ниво главног менија се отвара на прелаз миша (уместо само на клик).',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            'Уколико је укључено, корисници који још нису одабрали временску зону биће обавештени о томе. Напомена: обавештење неће бити приказано уколико (1) корисник још није одабрао временску зону и (2) CareOnCloud ESMTimeZone и UserDefaultTimeZone се подударају и (3) нису постављена на UTC.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            'Уколико је укључено, корисници који још нису одабрали временску зону биће обавештени о томе. Напомена: обавештење неће бити приказано уколико (1) корисник још није одабрао временску зону и (2) CareOnCloudTimeZone и UserDefaultTimeZone се подударају и (3) нису постављена на UTC.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'Ако SendmailNotificationEnvelopeFrom није наведен, ова поставка омогућава коришћење адересе пошињаоца имејлова  уместо празног оквира заглавља (обавезно у поставкама неких имејл сервера).',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -10290,7 +10290,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Ова опција вам дозвољава да уграђену листу држава замените својом. Ово је посбно корисно ако у селекцији желите да користите само мали број држава.',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => 'Ово подешавање је застарело. Подесите CareOnCloud ESMTimeZone уместо њега.',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => 'Ово подешавање је застарело. Подесите CareOnCloudTimeZone уместо њега.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             'Ово подешавање приказује атрибуте сортирања у свим екранима прегледа, не само у приказу редова.',
         'Ticket Close' => '',

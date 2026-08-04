@@ -1,4 +1,4 @@
-nv.models.CareOnCloud ESMstackedAreaChart = function() {
+nv.models.CareOnCloudstackedAreaChart = function() {
     "use strict";
 
     //============================================================

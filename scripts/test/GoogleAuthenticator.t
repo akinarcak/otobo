@@ -42,7 +42,7 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
 $ConfigObject->Set(
-    Key   => 'CareOnCloud ESMTimeZone',
+    Key   => 'CareOnCloudTimeZone',
     Value => 'UTC',
 );
 
@@ -223,7 +223,7 @@ for my $Test (@Tests) {
     if ( ( $Test->{TimeZone} || 'UTC' ) ne $CurrentConfig{TimeZone} ) {
         $CurrentConfig{TimeZone} = $Test->{TimeZone} || 'UTC';
         $ConfigObject->Set(
-            Key   => 'CareOnCloud ESMTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => $CurrentConfig{TimeZone},
         );
     }

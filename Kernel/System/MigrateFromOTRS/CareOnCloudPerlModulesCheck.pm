@@ -82,7 +82,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMPerlModulesCheck',
+            Task      => 'CareOnCloudPerlModulesCheck',
             SubTask   => "Check if all needed Perl modules have been installed.",
             StartTime => $Epoch,
         },

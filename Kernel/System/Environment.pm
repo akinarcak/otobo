@@ -624,15 +624,15 @@ sub DBInfoGet {
     return %EnvDB;
 }
 
-=head2 CareOnCloud ESMInfoGet()
+=head2 CareOnCloudInfoGet()
 
 collect CareOnCloud ESM information
 
-    my %CareOnCloud ESMInfo = $EnvironmentObject->CareOnCloud ESMInfoGet();
+    my %CareOnCloudInfo = $EnvironmentObject->CareOnCloudInfoGet();
 
 returns:
 
-    %CareOnCloud ESMInfo = (
+    %CareOnCloudInfo = (
         Product         => "CareOnCloud ESM",
         Version         => "3.3.1",
         DefaultLanguage => "en",
@@ -643,7 +643,7 @@ returns:
 
 =cut
 
-sub CareOnCloud ESMInfoGet {
+sub CareOnCloudInfoGet {
     my ( $Self, %Param ) = @_;
 
     # get config object

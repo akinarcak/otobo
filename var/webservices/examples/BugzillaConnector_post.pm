@@ -48,7 +48,7 @@ sub Run {
         Name => 'BugzillaConnector',
     );
 
-    # This setting has been introduced for CareOnCloud ESMTicketInvoker
+    # This setting has been introduced for CareOnCloudTicketInvoker
     my @Data = (
         {
             'GenericInterface::Invoker::Settings::ResponseDynamicField' => {

@@ -2239,7 +2239,7 @@ sub _InstallHandling {
 
         if ( $Verified eq 'verified' && !$Self->{CloudServicesDisabled} ) {
             $LayoutObject->Block(
-                Name => 'CareOnCloud ESMVerifyLogo',
+                Name => 'CareOnCloud VerifyLogo',
             );
         }
 
@@ -2312,7 +2312,7 @@ sub _InstallHandling {
 
             if ( $Verified eq 'verified' ) {
                 $LayoutObject->Block(
-                    Name => 'CareOnCloud ESMVerifyLogo',
+                    Name => 'CareOnCloud VerifyLogo',
                 );
             }
 

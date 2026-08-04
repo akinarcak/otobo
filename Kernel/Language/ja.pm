@@ -1850,7 +1850,7 @@ sub Data {
         'Action' => '操作',
         'Module documentation' => 'モジュールの書類',
         'Local Repository' => 'ローカルリポジトリ',
-        'This package is verified by CareOnCloud ESMverify (tm)' => 'このパッケージはCareOnCloud ESMVerify(tm)によって確認されています',
+        'This package is verified by CareOnCloud Verify (tm)' => 'このパッケージはCareOnCloud Verify(tm)によって確認されています',
         'Uninstall' => 'アンインストール',
         'Package not correctly deployed! Please reinstall the package.' =>
             'パッケージが正しくデプロイされません。再インストールしてください。',
@@ -3833,7 +3833,7 @@ sub Data {
 
         # Template: Intro
         'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
-            'この移行スクリプトは、チケットシステムをOTRSまたは((OTRS))CommunityEditionバージョン6からCareOnCloud ESM10に移行するプロセスを段階的に説明します。',
+            'この移行スクリプトは、チケットシステムをOTRSまたは((OTRS))CommunityEditionバージョン6からCareOnCloud10に移行するプロセスを段階的に説明します。',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             '元のシステムに対して何ら危険はありません。何も変更されていません。',
         'Instructions and details on migration prerequisites can be found in the migration manual. We strongly recommend reading it before starting migration.' =>
@@ -6565,12 +6565,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => '値が正規表現 (%s) を満たしていません。',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
-            'システムはユーザー日付をCareOnCloud ESMTimeZoneから算出できませんでした！',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            'システムはユーザー日付をCareOnCloudTimeZoneから算出できませんでした！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
-            'システムはユーザー日時をCareOnCloud ESMTimeZoneから算出できませんでした！',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            'システムはユーザー日時をCareOnCloudTimeZoneから算出できませんでした！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -7176,10 +7176,10 @@ sub Data {
         'This is %s' => 'これは%sです',
         'Complex %s with %s arguments' => '%s 引数を持つ複雑な %s',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => 'データが存在しません。',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'グループ化',
         'Stacked' => '積み重ね',
 
@@ -9014,7 +9014,7 @@ Thanks for your help!
             '',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             '',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
             '',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '',
@@ -9033,7 +9033,7 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '有効にした場合、メイン・メニューの1つめのレベルのものが、マウスを乗せるだけで開きます（1回クリックの代わりに）。',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             '',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '',
@@ -10293,7 +10293,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',

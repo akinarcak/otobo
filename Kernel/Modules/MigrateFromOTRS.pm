@@ -141,7 +141,7 @@ sub Run {
                 TTL   => $CacheTTL,
             );
             $Return = $MigrateFromOTRSObject->Run(
-                Task     => 'CareOnCloud ESMOTRSConnectionCheck',
+                Task     => 'CareOnCloudOTRSConnectionCheck',
                 UserID   => 1,
                 OTRSData => \%GetParam,
             );
@@ -176,7 +176,7 @@ sub Run {
             # "normal" migration
             else {
                 $Return = $MigrateFromOTRSObject->Run(
-                    Task   => 'CareOnCloud ESMOTRSDBCheck',
+                    Task   => 'CareOnCloudOTRSDBCheck',
                     UserID => 1,
                     DBData => \%GetParam,
                 );
@@ -187,30 +187,30 @@ sub Run {
             my @Taskorder;
             if ( $Self->{Subaction} eq 'PreChecks' ) {
                 @Taskorder = qw(
-                    CareOnCloud ESMFrameworkVersionCheck
-                    CareOnCloud ESMPerlModulesCheck
+                    CareOnCloudFrameworkVersionCheck
+                    CareOnCloudPerlModulesCheck
                 );
 
-                #                    CareOnCloud ESMOTRSPackageCheck
+                #                    CareOnCloudOTRSPackageCheck
             }
             elsif ( $Self->{Subaction} eq 'Copy' ) {
                 @Taskorder = qw(
-                    CareOnCloud ESMDatabaseMigrate
-                    CareOnCloud ESMCopyFilesFromOTRS
-                    CareOnCloud ESMMigrateConfigFromOTRS
-                    CareOnCloud ESMNotificationMigrate
-                    CareOnCloud ESMStatsMigrate
-                    CareOnCloud ESMItsmTablesMigrate
-                    CareOnCloud ESMAutoResponseTemplatesMigrate
-                    CareOnCloud ESMResponseTemplatesMigrate
-                    CareOnCloud ESMSalutationsMigrate
-                    CareOnCloud ESMSignaturesMigrate
-                    CareOnCloud ESMPostmasterFilterMigrate
-                    CareOnCloud ESMACLDeploy
-                    CareOnCloud ESMMigrateWebServiceConfiguration
-                    CareOnCloud ESMProcessDeploy
-                    CareOnCloud ESMCacheCleanup
-                    CareOnCloud ESMPackageSpecifics
+                    CareOnCloudDatabaseMigrate
+                    CareOnCloudCopyFilesFromOTRS
+                    CareOnCloudMigrateConfigFromOTRS
+                    CareOnCloudNotificationMigrate
+                    CareOnCloudStatsMigrate
+                    CareOnCloudItsmTablesMigrate
+                    CareOnCloudAutoResponseTemplatesMigrate
+                    CareOnCloudResponseTemplatesMigrate
+                    CareOnCloudSalutationsMigrate
+                    CareOnCloudSignaturesMigrate
+                    CareOnCloudPostmasterFilterMigrate
+                    CareOnCloudACLDeploy
+                    CareOnCloudMigrateWebServiceConfiguration
+                    CareOnCloudProcessDeploy
+                    CareOnCloudCacheCleanup
+                    CareOnCloudPackageSpecifics
                 );
             }
 
@@ -405,10 +405,10 @@ sub Run {
                     DBUser => 'otrs',
                 },
                 PreChecks => {
-                    NextTask => 'CareOnCloud ESMFrameworkVersionCheck',
+                    NextTask => 'CareOnCloudFrameworkVersionCheck',
                 },
                 Copy => {
-                    NextTask => 'CareOnCloud ESMDatabaseMigrate',
+                    NextTask => 'CareOnCloudDatabaseMigrate',
                 },
             );
 
@@ -591,8 +591,8 @@ sub _Finish {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # index.pl is appended in the template
-    my $CareOnCloud ESMHandle = $ParamObject->ScriptName();
-    $CareOnCloud ESMHandle =~ s/\/(.*)\/migration\.pl/$1/;
+    my $CareOnCloudHandle = $ParamObject->ScriptName();
+    $CareOnCloudHandle =~ s/\/(.*)\/migration\.pl/$1/;
 
     # Under Docker the scheme is correctly recognised as there are only two relevant cases:
     #   a) HTTP should actually be used
@@ -612,7 +612,7 @@ sub _Finish {
     return {
         Webserver   => $Webserver,
         Scheme      => $Scheme,
-        CareOnCloud ESMHandle => $CareOnCloud ESMHandle,
+        CareOnCloudHandle => $CareOnCloudHandle,
         Host        => $Host,
     };
 }
@@ -630,7 +630,7 @@ sub _CheckConfig {
 
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-    # TODO: is this still needed? ConfigurationXML2DB is already called on CareOnCloud ESMMigrateConfigFromOTRS
+    # TODO: is this still needed? ConfigurationXML2DB is already called on CareOnCloudMigrateConfigFromOTRS
     return $SysConfigObject->ConfigurationXML2DB(
         UserID    => 1,
         Directory => "$Home/Kernel/Config/Files/XML",

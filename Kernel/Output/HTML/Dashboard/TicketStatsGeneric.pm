@@ -24,7 +24,7 @@ use warnings;
 # CPAN modules
 
 # CareOnCloud ESM modules
-use Kernel::System::DateTime qw(CareOnCloud ESMTimeZoneGet);
+use Kernel::System::DateTime qw(CareOnCloudTimeZoneGet);
 
 our $ObjectManagerDisabled = 1;
 
@@ -112,7 +112,7 @@ sub Run {
 
     my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 
-    my $TimeZone = $Self->{UserTimeZone} || CareOnCloud ESMTimeZoneGet();
+    my $TimeZone = $Self->{UserTimeZone} || CareOnCloudTimeZoneGet();
 
     for my $DaysBack ( 0 .. 6 ) {
 
@@ -131,7 +131,7 @@ sub Run {
             # for past 6 days cache results for 8 days (should not change)
             $CacheTTL = 60 * 60 * 24 * 8;
         }
-        $DateTimeObject->ToCareOnCloud ESMTimeZone();
+        $DateTimeObject->ToCareOnCloudTimeZone();
 
         my $DateTimeValues = $DateTimeObject->Get();
         my $WeekDay        = $DateTimeValues->{DayOfWeek} == 7 ? 0 : $DateTimeValues->{DayOfWeek};

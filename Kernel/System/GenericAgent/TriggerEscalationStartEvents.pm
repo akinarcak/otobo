@@ -115,7 +115,7 @@ sub Run {
     for my $Attr ( grep { defined $Ticket{$_} } sort keys %TicketAttr2Event ) {
 
         # the decay time is configured in minutes
-        my $DecayTimeInSeconds = $Kernel::OM->Get('Kernel::Config')->Get('CareOnCloud ESMEscalationEvents::DecayTime') || 0;
+        my $DecayTimeInSeconds = $Kernel::OM->Get('Kernel::Config')->Get('CareOnCloudEscalationEvents::DecayTime') || 0;
 
         $DecayTimeInSeconds *= 60;
 

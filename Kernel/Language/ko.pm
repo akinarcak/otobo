@@ -1847,7 +1847,7 @@ sub Data {
         'Action' => '동작',
         'Module documentation' => '모듈 문서',
         'Local Repository' => '로컬 저장소',
-        'This package is verified by CareOnCloud ESMverify (tm)' => '이 패키지는 CareOnCloud ESMverify (tm)에 의해 검증됩니다.',
+        'This package is verified by CareOnCloud Verify (tm)' => '이 패키지는 CareOnCloud Verify (tm)에 의해 검증됩니다.',
         'Uninstall' => '제거',
         'Package not correctly deployed! Please reinstall the package.' =>
             '패키지가 올바르게 배치되지 않았습니다! 패키지를 다시 설치하십시오.',
@@ -6562,12 +6562,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => '값이 정규식 (%s)을 만족하지 않습니다.',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
-            '시스템이 CareOnCloud ESMTimeZone에서 사용자 날짜를 계산할 수 없습니다!',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            '시스템이 CareOnCloudTimeZone에서 사용자 날짜를 계산할 수 없습니다!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
-            '시스템은 CareOnCloud ESMTimeZone에서 사용자 DateTime을 계산할 수 없었습니다!',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            '시스템은 CareOnCloudTimeZone에서 사용자 DateTime을 계산할 수 없었습니다!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -7173,10 +7173,10 @@ sub Data {
         'This is %s' => '이것은 %s입니다.',
         'Complex %s with %s arguments' => '%s 인수가있는 복합 %s',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '자료 없음.',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => '그룹화 된',
         'Stacked' => '누적된',
 
@@ -9011,8 +9011,8 @@ Thanks for your help!
             '사용 가능하면 데몬은 표준 오류 스트림을 로그 파일로 재지정합니다.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             '사용 가능하면 데몬은 표준 출력 스트림을 로그 파일로 재지정합니다.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
-            '이 설정을 사용하면 데몬은이 디렉토리를 사용하여 PID 파일을 만듭니다. 참고 : 변경하기 전에 데몬을 중지하고 <$ CareOnCloud ESMHome> / var / run /을 사용할 수없는 경우에만이 설정을 사용하십시오.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            '이 설정을 사용하면 데몬은이 디렉토리를 사용하여 PID 파일을 만듭니다. 참고 : 변경하기 전에 데몬을 중지하고 <$ CareOnCloudHome> / var / run /을 사용할 수없는 경우에만이 설정을 사용하십시오.',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '사용하도록 설정하면 CareOnCloud ESM는 모든 CSS 파일을 축소 된 형식으로 제공합니다.',
         'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
@@ -9030,8 +9030,8 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '이 옵션을 사용하면 메인 메뉴의 첫 번째 레벨이 마우스를 올리면 열리게 됩니다 (클릭만 하는 대신).',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            '사용하도록 설정하면 아직 시간대를 선택하지 않은 사용자에게 알림이 전송됩니다. 참고 : (1) 사용자가 아직 시간대를 선택하지 않았으며 (2) CareOnCloud ESMTimeZone과 UserDefaultTimeZone이 일치하고 (3) UTC로 설정되지 않은 경우 알림이 표시되지 않습니다.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            '사용하도록 설정하면 아직 시간대를 선택하지 않은 사용자에게 알림이 전송됩니다. 참고 : (1) 사용자가 아직 시간대를 선택하지 않았으며 (2) CareOnCloudTimeZone과 UserDefaultTimeZone이 일치하고 (3) UTC로 설정되지 않은 경우 알림이 표시되지 않습니다.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'SendmailNotificationEnvelopeFrom이 지정되지 않은 경우이 설정을 사용하면 빈 봉투 발신자 대신 (특정 전자 메일 서버 구성에서 필요) 전자 메일의 보낸 사람 주소를 사용할 수 있습니다.',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -10290,7 +10290,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '이 설정을 사용하면 기본 제공 국가 목록을 자신의 국가 목록으로 대체할 수 있습니다. 소규모 그룹을 선택하고 싶을 때 특히 편리합니다.',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '이 설정은 사용되지 않습니다. 대신 CareOnCloud ESMTimeZone을 설정하십시오.',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '이 설정은 사용되지 않습니다. 대신 CareOnCloudTimeZone을 설정하십시오.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '이 설정은 대기열보기 뿐만 아니라 모든 개요 화면에서 정렬 속성을 표시합니다.',
         'Ticket Close' => '',

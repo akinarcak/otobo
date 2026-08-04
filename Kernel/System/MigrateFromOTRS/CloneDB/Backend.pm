@@ -212,15 +212,15 @@ sub DataTransfer {
         },
     );
 
-    my $CareOnCloud ESMDBObject = $Kernel::OM->Get('Kernel::System::DB');
+    my $CareOnCloudDBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     # set the target db specific backend
-    my $CareOnCloud ESMDBBackend = 'CloneDB' . $CareOnCloud ESMDBObject->{'DB::Type'} . 'Object';
+    my $CareOnCloudDBBackend = 'CloneDB' . $CareOnCloudDBObject->{'DB::Type'} . 'Object';
 
-    if ( !$Self->{$CareOnCloud ESMDBBackend} ) {
+    if ( !$Self->{$CareOnCloudDBBackend} ) {
         $LogObject->Log(
             Priority => 'error',
-            Message  => "Backend $CareOnCloud ESMDBObject->{'DB::Type'} is invalid!",
+            Message  => "Backend $CareOnCloudDBObject->{'DB::Type'} is invalid!",
         );
 
         return;
@@ -229,8 +229,8 @@ sub DataTransfer {
     # call DataTransfer on the specific backend
     return $SourceDBBackend->DataTransfer(
         OTRSDBObject   => $Param{OTRSDBObject},
-        CareOnCloud ESMDBObject  => $CareOnCloud ESMDBObject,
-        CareOnCloud ESMDBBackend => $Self->{$CareOnCloud ESMDBBackend},
+        CareOnCloudDBObject  => $CareOnCloudDBObject,
+        CareOnCloudDBBackend => $Self->{$CareOnCloudDBBackend},
         DBInfo         => $Param{OTRSDBSettings},
         Force          => $Param{Force},
     );

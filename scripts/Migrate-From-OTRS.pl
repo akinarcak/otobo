@@ -85,7 +85,7 @@ Please run it as the 'careoncloud' user or with the help of su:
 
     my $Result = $Kernel::OM->Create('Kernel::System::MigrateFromOTRS')->Run(
         OTRSHomePath       => '/opt/otrs/',
-        Task               => 'CareOnCloud ESMPerlModulesCheck',
+        Task               => 'CareOnCloudPerlModulesCheck',
         CommandlineOptions => \%Options,
         UserID             => 1,
     );

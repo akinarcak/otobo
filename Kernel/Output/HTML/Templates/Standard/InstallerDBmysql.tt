@@ -90,30 +90,30 @@
                         [% Translate("Database User") | html %] ([% Translate("New") | html %])
                     </h4>
 
-                    <label for="CareOnCloud ESMDBUser">[% Translate("User") | html %]:</label>
+                    <label for="CareOnCloudDBUser">[% Translate("User") | html %]:</label>
                     <div class="Field">
-                        <input type="text" id="CareOnCloud ESMDBUser" name="CareOnCloud ESMDBUser" value="[% Config("DatabaseUser") %]" class="W50pc" autocomplete="off" />
+                        <input type="text" id="CareOnCloudDBUser" name="CareOnCloudDBUser" value="[% Config("DatabaseUser") %]" class="W50pc" autocomplete="off" />
                         <p class="FieldExplanation">
                             [% Translate("A new database user with limited permissions will be created for this CareOnCloud ESM system.") | html %]
                         </p>
                     </div>
                     <div class="Clear"></div>
 
-                    <label for="CareOnCloud ESMDBPassword">[% Translate("Password") | html %]:</label>
+                    <label for="CareOnCloudDBPassword">[% Translate("Password") | html %]:</label>
                     <div class="Field">
-                        <input type="password" id="CareOnCloud ESMDBPassword" name="CareOnCloud ESMDBPassword" value="[% Data.Password | html %]" class="W50pc" autocomplete="off" />
+                        <input type="password" id="CareOnCloudDBPassword" name="CareOnCloudDBPassword" value="[% Data.Password | html %]" class="W50pc" autocomplete="off" />
                         <p class="FieldExplanation">
                             [% Translate("Generated password") | html %]: <span class="Emphasis">[% Data.Password | html %]</span>
                         </p>
                     </div>
                     <div class="Clear"></div>
 
-                    <label for="RepeatCareOnCloud ESMDBPassword">[% Translate("Repeat Password") | html %]:</label>
+                    <label for="RepeatCareOnCloudDBPassword">[% Translate("Repeat Password") | html %]:</label>
                     <div class="Field">
-                        <input type="password" id="RepeatCareOnCloud ESMDBPassword" name="RepeatCareOnCloud ESMDBPassword" value="[% Data.Password | html %]"
-                        class="W50pc Validate_Equal Validate_Equal_CareOnCloud ESMDBPassword" autocomplete="off" />
+                        <input type="password" id="RepeatCareOnCloudDBPassword" name="RepeatCareOnCloudDBPassword" value="[% Data.Password | html %]"
+                        class="W50pc Validate_Equal Validate_Equal_CareOnCloudDBPassword" autocomplete="off" />
                     </div>
-                    <div id="RepeatCareOnCloud ESMDBPasswordError" class="TooltipErrorMessage"><p>[% Translate("Passwords do not match") | html %]!</p></div>
+                    <div id="RepeatCareOnCloudDBPasswordError" class="TooltipErrorMessage"><p>[% Translate("Passwords do not match") | html %]!</p></div>
                     <div class="Clear"></div>
 
                     <label for="AuthPlugin">[% Translate("Authentication Plugin") | html %]:</label>

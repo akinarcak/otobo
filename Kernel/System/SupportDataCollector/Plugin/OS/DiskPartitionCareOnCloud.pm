@@ -42,12 +42,12 @@ sub Run {
     #   /dev/sda5         76371740 60836612  11612544      84% /
     # The complete command then gives /dev/sda5
     my $Home           = $Kernel::OM->Get('Kernel::Config')->Get('Home');
-    my $CareOnCloud ESMPartition = `df -P $Home | tail -1 | cut -d' ' -f 1`;
-    chomp $CareOnCloud ESMPartition;
+    my $CareOnCloudPartition = `df -P $Home | tail -1 | cut -d' ' -f 1`;
+    chomp $CareOnCloudPartition;
 
     $Self->AddResultInformation(
         Label => Translatable('CareOnCloud ESM Disk Partition'),
-        Value => $CareOnCloud ESMPartition,
+        Value => $CareOnCloudPartition,
     );
 
     return $Self->GetResults();

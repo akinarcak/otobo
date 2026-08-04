@@ -1264,7 +1264,7 @@ sub _MaskUpdate {
     for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
 
-        # Check if field is Attachment type ( from CareOnCloud ESMDynamicFieldAttachment )
+        # Check if field is Attachment type ( from CareOnCloudDynamicFieldAttachment )
         #   this field is not updatable by Generic Agent
         my $IsAttachment = $DynamicFieldBackendObject->HasBehavior(
             DynamicFieldConfig => $DynamicFieldConfig,

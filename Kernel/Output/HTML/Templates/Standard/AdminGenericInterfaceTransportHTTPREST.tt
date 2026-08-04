@@ -449,7 +449,7 @@
 
 [% RenderBlockEnd("MultipartBlock") %]
 
-# added for CareOnCloud ESMTicketInvoker
+# added for CareOnCloudTicketInvoker
 
 [% IF Data.CommunicationType == 'Requester' %]
 [% USE HeadersTitleCommon    = String(Translate("Additional request headers (all invokers)")) %]

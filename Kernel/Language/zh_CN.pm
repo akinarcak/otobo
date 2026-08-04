@@ -1853,7 +1853,7 @@ sub Data {
         'Action' => '操作',
         'Module documentation' => '模块文档',
         'Local Repository' => '本地软件仓库',
-        'This package is verified by CareOnCloud ESMverify (tm)' => '此软件包已通过CareOnCloud ESMverify(tm)的验证',
+        'This package is verified by CareOnCloud Verify (tm)' => '此软件包已通过CareOnCloud Verify(tm)的验证',
         'Uninstall' => '卸载',
         'Package not correctly deployed! Please reinstall the package.' =>
             '软件包未正确安装！请重新安装软件包。',
@@ -6568,12 +6568,12 @@ sub Data {
         'Value doesn\'t satisfy regex (%s).' => '值不满足正则表达式（%s）。',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in CareOnCloud ESMTimeZone!' =>
-            '系统无法在CareOnCloud ESMTimeZone中计算用户的日期！',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            '系统无法在CareOnCloudTimeZone中计算用户的日期！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in CareOnCloud ESMTimeZone!' =>
-            '系统无法在CareOnCloud ESMTimeZone中计算用户的日期时间！',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            '系统无法在CareOnCloudTimeZone中计算用户的日期时间！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -7179,10 +7179,10 @@ sub Data {
         'This is %s' => '这是%s',
         'Complex %s with %s arguments' => '复杂%s，带有%s参数',
 
-        # JS File: CareOnCloud ESMLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '没有可用数据。',
 
-        # JS File: CareOnCloud ESMMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => '分组的',
         'Stacked' => '堆叠的',
 
@@ -9015,8 +9015,8 @@ Thanks for your help!
             '如果启用了此选项，守护进程的标准错误流将重定向到一个日志文件。',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             '如果启用了此选项，守护进程的标准输出流将重定向到一个日志文件。',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloud ESMHome>/var/run/ can not be used.' =>
-            '如果启用，守护程序将使用此目录创建其PID文件。 注意：请在任何更改之前停止守护程序，并且只有在不使用<$CareOnCloud ESMHome>/var/run/时才使用此设置。',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            '如果启用，守护程序将使用此目录创建其PID文件。 注意：请在任何更改之前停止守护程序，并且只有在不使用<$CareOnCloudHome>/var/run/时才使用此设置。',
         'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '如果启用，CareOnCloud ESM将以最小化的形式提供所有CSS文件。',
         'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
@@ -9034,8 +9034,8 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '如果启用了此选项，在鼠标移动到主菜单位置时打开一级子菜单（而不是需要点击后再打开）。',
         'If enabled, the quick close action will create an article.' => '启用后，快速关闭操作将创建一条记录。',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloud ESMTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            '如果启用，那么尚未选择时区的用户将被通知选择时区。 注意：如果（1）用户尚未选择时区，并且（2）CareOnCloud ESMTimeZone和UserDefaultTimeZone相同，（3）未设置为UTC，则不会显示通知。',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            '如果启用，那么尚未选择时区的用户将被通知选择时区。 注意：如果（1）用户尚未选择时区，并且（2）CareOnCloudTimeZone和UserDefaultTimeZone相同，（3）未设置为UTC，则不会显示通知。',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '如果没有指定SendmailNotificationEnvelopeFrom，这个选项可确保使用邮件的发件人地址而不是空白的发件人（在某些邮件服务器的配置中需要此选项）。',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
@@ -10294,7 +10294,7 @@ Thanks for your help!
             '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '这个设置允许您使用自己的国家列表覆盖内置的国家列表，如果您只想用到一小部分的国家时格外有用。',
-        'This setting is deprecated. Set CareOnCloud ESMTimeZone instead.' => '此设置已弃用。 替代方式是设置CareOnCloud ESMTimeZone。',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '此设置已弃用。 替代方式是设置CareOnCloudTimeZone。',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '这个设置显示所有概览屏幕（而不是仅队列视图）中的排序属性。',
         'Ticket Close' => '工单关闭',

@@ -43,7 +43,7 @@ sub Run {
         'Version',
         'ProductName',
         'Organization',
-        'CareOnCloud ESMTimeZone',
+        'CareOnCloudTimeZone',
         'Ticket::IndexModule',
         'Ticket::SearchIndexModule',
         'Ticket::Article::Backend::MIMEBase::ArticleStorage',

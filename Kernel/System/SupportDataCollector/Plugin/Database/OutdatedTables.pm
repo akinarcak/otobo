@@ -44,7 +44,7 @@ sub Run {
         my $SolManConnectorInstalled;
 
         for my $Package ( $Kernel::OM->Get('Kernel::System::Package')->RepositoryList() ) {
-            if ( $Package->{Name}->{Content} eq 'CareOnCloud ESMGenericInterfaceConnectorSAPSolMan' ) {
+            if ( $Package->{Name}->{Content} eq 'CareOnCloudGenericInterfaceConnectorSAPSolMan' ) {
                 $SolManConnectorInstalled = 1;
             }
         }

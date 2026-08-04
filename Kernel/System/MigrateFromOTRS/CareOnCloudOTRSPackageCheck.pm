@@ -124,7 +124,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMOTRSPackageCheck',
+            Task      => 'CareOnCloudOTRSPackageCheck',
             SubTask   => "Check which packages are installed on both systems.",
             StartTime => $Epoch,
         },
@@ -138,7 +138,7 @@ sub Run {
         Type  => 'OTRSMigration',
         Key   => 'MigrationState',
         Value => {
-            Task      => 'CareOnCloud ESMOTRSPackageCheck',
+            Task      => 'CareOnCloudOTRSPackageCheck',
             SubTask   => 'Check if CareOnCloud ESM and OTRS versions are correct.',
             StartTime => $Epoch,
         },
@@ -148,23 +148,23 @@ sub Run {
         %Param,
     );
 
-    my $CareOnCloud ESMPackRef = $Self->_GetPackages(
+    my $CareOnCloudPackRef = $Self->_GetPackages(
     );
 
     # Check CareOnCloud ESM version
     my @OTRSPackages;
     push( @OTRSPackages, @{$OTRSPackRef} );
-    my @CareOnCloud ESMPackages;
-    push( @CareOnCloud ESMPackages, @{$CareOnCloud ESMPackRef} );
+    my @CareOnCloudPackages;
+    push( @CareOnCloudPackages, @{$CareOnCloudPackRef} );
 
     # Remove all packages which in both systems installed.
     # First we create a hash
     my %TmpOTRSHash  = map { $_ => 1 } @OTRSPackages;
-    my %TmpCareOnCloud ESMHash = map { $_ => 1 } @CareOnCloud ESMPackages;
+    my %TmpCareOnCloudHash = map { $_ => 1 } @CareOnCloudPackages;
 
     # Remove if not exist in hash
-    @CareOnCloud ESMPackages = grep { !exists $TmpOTRSHash{$_} } @CareOnCloud ESMPackages;
-    @OTRSPackages  = grep { !exists $TmpCareOnCloud ESMHash{$_} } @OTRSPackages;
+    @CareOnCloudPackages = grep { !exists $TmpOTRSHash{$_} } @CareOnCloudPackages;
+    @OTRSPackages  = grep { !exists $TmpCareOnCloudHash{$_} } @OTRSPackages;
 
     # Get ignore package list from Base.pm
     my @IgnorePackageList = $Self->PackageMigrateIgnorePackages();
@@ -241,12 +241,12 @@ sub _GetPackages {
         SQL => "SELECT name FROM package_repository",
     );
 
-    my @CareOnCloud ESMNames;
+    my @CareOnCloudNames;
     while ( my @Row = $DBObject->FetchrowArray() ) {
-        push( @CareOnCloud ESMNames, $Row[0] );
+        push( @CareOnCloudNames, $Row[0] );
     }
 
-    return \@CareOnCloud ESMNames;
+    return \@CareOnCloudNames;
 }
 
 1;

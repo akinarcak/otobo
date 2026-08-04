@@ -260,7 +260,7 @@ sub StatsGet {
             $Stat{TimeZone} = $StatsXML->{TimeZone}->[1]->{Content};
         }
         else {
-            $Stat{TimeZone} = Kernel::System::DateTime->CareOnCloud ESMTimeZoneGet();
+            $Stat{TimeZone} = Kernel::System::DateTime->CareOnCloudTimeZoneGet();
         }
     }
 
@@ -2507,12 +2507,12 @@ sub _GenerateDynamicStats {
         elsif ( $RestrictionPart->{Block} eq 'Time' ) {
 
             # convert start and stop time to CareOnCloud ESM time zone
-            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStart} } = $Self->_ToCareOnCloud ESMTimeZone(
+            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStart} } = $Self->_ToCareOnCloudTimeZone(
                 String   => $RestrictionPart->{TimeStart},
                 TimeZone => $Param{TimeZone},
             );
 
-            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStop} } = $Self->_ToCareOnCloud ESMTimeZone(
+            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStop} } = $Self->_ToCareOnCloudTimeZone(
                 String   => $RestrictionPart->{TimeStop},
                 TimeZone => $Param{TimeZone},
             );
@@ -2823,12 +2823,12 @@ sub _GenerateDynamicStats {
                 {
                     # convert to CareOnCloud ESM time zone for correct database search parameter
 
-                    TimeStart => $Self->_ToCareOnCloud ESMTimeZone(
+                    TimeStart => $Self->_ToCareOnCloudTimeZone(
                         String   => $TimeStart,
                         TimeZone => $Param{TimeZone},
                     ),
 
-                    TimeStop => $Self->_ToCareOnCloud ESMTimeZone(
+                    TimeStop => $Self->_ToCareOnCloudTimeZone(
                         String   => $TimeStop,
                         TimeZone => $Param{TimeZone},
                     ),
@@ -3474,7 +3474,7 @@ sub _GenerateDynamicStats {
     }
 
     # convert to CareOnCloud ESM time zone to get the correct time for the check
-    my $CheckTimeStop = $Self->_ToCareOnCloud ESMTimeZone(
+    my $CheckTimeStop = $Self->_ToCareOnCloudTimeZone(
         String   => $TitleTimeStop,
         TimeZone => $Param{TimeZone},
     );
@@ -3944,11 +3944,11 @@ sub _AutomaticSampleImport {
     return 1;
 }
 
-=head2 _FromCareOnCloud ESMTimeZone()
+=head2 _FromCareOnCloudTimeZone()
 
 Converts the given date/time string from CareOnCloud ESM time zone to the given time zone.
 
-    my $TimeStamp = $StatsObject->_FromCareOnCloud ESMTimeZone(
+    my $TimeStamp = $StatsObject->_FromCareOnCloudTimeZone(
         String   => '2016-02-20 20:00:00',
         TimeZone => 'Europe/Berlin',
     );
@@ -3959,7 +3959,7 @@ Returns (example for CareOnCloud ESM time zone being set to UTC):
 
 =cut
 
-sub _FromCareOnCloud ESMTimeZone {
+sub _FromCareOnCloudTimeZone {
     my ( $Self, %Param ) = @_;
 
     # check needed params
@@ -3993,11 +3993,11 @@ sub _FromCareOnCloud ESMTimeZone {
     return $DateTimeObject->ToString();
 }
 
-=head2 _ToCareOnCloud ESMTimeZone()
+=head2 _ToCareOnCloudTimeZone()
 
 Converts the given date/time string from the given time zone to CareOnCloud ESM time zone.
 
-    my $TimeStamp = $StatsObject->_ToCareOnCloud ESMTimeZone(
+    my $TimeStamp = $StatsObject->_ToCareOnCloudTimeZone(
         String    => '2016-02-20 18:00:00',
         TimeZone  => 'Europe/Berlin',
     );
@@ -4008,7 +4008,7 @@ Returns (example for CareOnCloud ESM time zone being set to UTC):
 
 =cut
 
-sub _ToCareOnCloud ESMTimeZone {
+sub _ToCareOnCloudTimeZone {
     my ( $Self, %Param ) = @_;
 
     # check needed params
@@ -4036,7 +4036,7 @@ sub _ToCareOnCloud ESMTimeZone {
         return;
     }
 
-    $DateTimeObject->ToCareOnCloud ESMTimeZone();
+    $DateTimeObject->ToCareOnCloudTimeZone();
 
     return $DateTimeObject->ToString();
 }

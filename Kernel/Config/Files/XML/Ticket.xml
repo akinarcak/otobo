@@ -237,7 +237,7 @@
             <Item ValueType="Checkbox">1</Item>
         </Value>
     </Setting>
-    <Setting Name="CareOnCloud ESMEscalationEvents::DecayTime" Required="0" Valid="1">
+    <Setting Name="CareOnCloudEscalationEvents::DecayTime" Required="0" Valid="1">
         <Description Translatable="1">The duration in minutes after emitting an event, in which the new escalation notify and start events are suppressed.</Description>
         <Navigation>Core::Ticket</Navigation>
         <Value>
