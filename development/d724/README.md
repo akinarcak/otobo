@@ -1,6 +1,6 @@
 # D724 ESM Development Runtime
 
-This profile builds the current checkout as a CareOnCloud ESM `otobo-web` image and starts MariaDB, Redis, Elasticsearch, the web process and the daemon. It binds HTTP only to localhost by default. A test server may set `D724_BIND_ADDRESS` to its private Tailscale address; never use `0.0.0.0` without TLS and an explicit firewall policy.
+This profile builds the current checkout as a CareOnCloud ESM `careoncloud-web` image and starts MariaDB, Redis, Elasticsearch, the web process and the daemon. It binds HTTP only to localhost by default. A test server may set `D724_BIND_ADDRESS` to its private Tailscale address; never use `0.0.0.0` without TLS and an explicit firewall policy.
 
 ## Requirements
 

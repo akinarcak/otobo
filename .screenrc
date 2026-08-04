@@ -17,7 +17,7 @@
 # or see http://www.gnu.org/licenses/agpl.txt.
 # --
 
-# Running screen with the otobo_web_1 container had the effect that new sessions
+# Running screen with the careoncloud_web_1 container had the effect that new sessions
 # start with /bin/sh. Even though $SHELL is set to /bin/bash and no shell
 # has been set up in /etc/screenrc.
 # As a workaround set the shell explicitly in this ~careoncloud/.screenrc file.

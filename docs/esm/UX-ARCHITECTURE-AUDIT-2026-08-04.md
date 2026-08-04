@@ -19,7 +19,7 @@
 | `/careoncloud/index.pl` | **404** | `Kernel/Config/Defaults.pm:112` → `ScriptAlias = 'careoncloud/'` |
 | `/careoncloud/index.pl` | **200** | kaynakta artık kanonik değil |
 | `/careoncloud-web/...` | **404** | `Defaults.pm:360` → `Frontend::WebPath = '/careoncloud-web/'` |
-| `/otobo-web/...` | **200**, tüm CSS/JS/ikon buradan | — |
+| `/careoncloud-web/...` | **200**, tüm CSS/JS/ikon buradan | — |
 | Karşılama kaydı | `Welcome to CareOnCloud ESM!` (kullanıcı ekran görüntüsü) | `scripts/database/careoncloud-initial_insert.xml:1283` → `Welcome to CareOnCloud ESM!` |
 | Müşteri logo dosyası | `careon-signet.png` | repoda `careoncloud-signet.png` **ve** template `careon-signet.png` istiyor → isim tutarsızlığı |
 
@@ -62,7 +62,7 @@ Bu, "renkleri değiştirelim" sorunu değildir. Ürünün altı personasından *
 Bunlar geçilmeden pilot müşteriye ekran gösterilmemelidir:
 
 - **G1** — Müşteri giriş ekranında CareOnCloud ESM markası ve sloganı (`P0-01`)
-- **G2** — Kullanıcıya görünen `/careoncloud/` ve `/otobo-web/` yolları (`P0-02`)
+- **G2** — Kullanıcıya görünen `/careoncloud/` ve `/careoncloud-web/` yolları (`P0-02`)
 - **G3** — Müşterinin talebini takip edememesi (`P0-05`)
 - **G4** — Türkçe arayüzün eksik/karışık olması (`P0-07`, `P0-08`)
 - **G5** — Tenant bağlamının agent ekranında ham `TenantID` olarak gösterilmesi ve kazara değiştirilebilmesi (`P0-06`)
@@ -362,7 +362,7 @@ Müşteri portalı menü
 | ID | Kanıt | Rol | Ekran / yolculuk | Sorun | Etki | Önem | Kök neden | Öneri | Bağımlılık | Kabul kriteri |
 |---|---|---|---|---|---|---|---|---|---|---|
 | P0-01 | OBSERVED + `Layout.pm:4221` | Müşteri | Müşteri login | `Your Tickets. Your CareOnCloud ESM.` başlığı + CareOnCloud ESM tavus kuşu arka planı | Marka ihlali; ilk izlenim başka ürün | P0 | Hardcoded fallback + `CustomerLogin::Settings` boş | Fallback'i çevrilebilir CareOnCloud metnine çevir; `LoginBG.jpg`'i değiştir | — | `curl customer.pl` çıktısında `CareOnCloud ESM` geçmez; TR ve EN'de doğru slogan |
-| P0-02 | OBSERVED | Hepsi | Tüm rotalar | Canlıda `/careoncloud/index.pl`, `/otobo-web/` | Marka ihlali, adres çubuğunda görünür | P0 | Cutover yapılmadı; kaynak zaten doğru | `careoncloud-v0.1.0` imajını aday portta ayağa kaldır, kabul sonrası kes | Rollback provası | `/careoncloud/index.pl` 200; `/careoncloud/*` 404 veya 301 |
+| P0-02 | OBSERVED | Hepsi | Tüm rotalar | Canlıda `/careoncloud/index.pl`, `/careoncloud-web/` | Marka ihlali, adres çubuğunda görünür | P0 | Cutover yapılmadı; kaynak zaten doğru | `careoncloud-v0.1.0` imajını aday portta ayağa kaldır, kabul sonrası kes | Rollback provası | `/careoncloud/index.pl` 200; `/careoncloud/*` 404 veya 301 |
 | P0-03 | `Framework.xml:8726,8727,8763,9267` | Agent | Dashboard | otobo.io RSS widget'ı, otobo.io CDN görseli, `HomePage www.otobo.io` | Marka ihlali + müşteri ortamından dışa istek | P0 | Upstream varsayılanları temizlenmemiş | Widget'ları kaldır veya CareOnCloud kaynağına yönlendir | — | Dashboard HTML'inde `otobo.io` geçmez; giden istek yok |
 | P0-04 | `Test-CareOnCloudBrand.ps1:38-53` | — | CI | Marka testi yalnız dosya yolu tarıyor, render metnini taramıyor | P0-01 testlerden geçti | P0 | Test tasarımı eksik | Şablon+Perl string taraması ekle: `Layout.pm`, `*.tt`, `Framework.xml` | — | Test, `Layout.pm:4221` geri konursa **kırmızı** olur |
 | P0-05 | VERIFIED_IN_SOURCE | Müşteri | Talep takibi | `CustomerD724Request` yalnızca `Submit`; liste/detay yok | Müşteri talebini göremiyor → portal kullanılamaz | P0 | Ekran hiç yazılmamış | `Taleplerim` listesi + talep detay/timeline ekranı | Request read API | Müşteri gönderdiği talebi listede görür; durum, sorumlu, hedef süre görünür |

@@ -60,7 +60,7 @@ quick_setup.pl - a quick CareOnCloud ESM setup script that is meant for developm
 
 It might be convenient the call this script via an alias.
 
-    alias otobo_docker_quick_setup='docker exec -t otobo_web_1 bash -c "date ; hostname ; rm -f Kernel/Config/Files/ZZZAAuto.pm ; bin/docker/quick_setup.pl --db-password otobo_root --http-port 81 --activate-elasticsearch --add-user --add-admin-user --add-customer-user --add-calendar --http-type http" --fqdn localhost'
+    alias otobo_docker_quick_setup='docker exec -t careoncloud_web_1 bash -c "date ; hostname ; rm -f Kernel/Config/Files/ZZZAAuto.pm ; bin/docker/quick_setup.pl --db-password otobo_root --http-port 81 --activate-elasticsearch --add-user --add-admin-user --add-customer-user --add-calendar --http-type http" --fqdn localhost'
 
 Sometimes it is convenient to specify unique SystemIDs so that different installation can be
 used in the same browser. The convention is to set the SystemID to the same value as the HTTP port.

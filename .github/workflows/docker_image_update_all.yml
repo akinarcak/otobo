@@ -30,72 +30,72 @@ jobs:
     outputs:
 
       # web
-      otobo_web_rel_10_1_15: ${{ steps.collect_summary.outputs.otobo_web_rel_10_1_15 }}
-      otobo_web_rel_10_1_16: ${{ steps.collect_summary.outputs.otobo_web_rel_10_1_16 }}
-      otobo_web_rel_10_1_17: ${{ steps.collect_summary.outputs.otobo_web_rel_10_1_17 }}
-      otobo_web_latest_10_1: ${{ steps.collect_summary.outputs.otobo_web_latest_10_1 }}
-      otobo_web_devel_rel_10_1: ${{ steps.collect_summary.outputs.otobo_web_devel_rel_10_1 }}
+      careoncloud_web_rel_10_1_15: ${{ steps.collect_summary.outputs.careoncloud_web_rel_10_1_15 }}
+      careoncloud_web_rel_10_1_16: ${{ steps.collect_summary.outputs.careoncloud_web_rel_10_1_16 }}
+      careoncloud_web_rel_10_1_17: ${{ steps.collect_summary.outputs.careoncloud_web_rel_10_1_17 }}
+      careoncloud_web_latest_10_1: ${{ steps.collect_summary.outputs.careoncloud_web_latest_10_1 }}
+      careoncloud_web_devel_rel_10_1: ${{ steps.collect_summary.outputs.careoncloud_web_devel_rel_10_1 }}
 
-      otobo_web_rel_11_0_14: ${{ steps.collect_summary.outputs.otobo_web_rel_11_0_14 }}
-      otobo_web_rel_11_0_15: ${{ steps.collect_summary.outputs.otobo_web_rel_11_0_15 }}
-      otobo_web_rel_11_0_16: ${{ steps.collect_summary.outputs.otobo_web_rel_11_0_16 }}
-      otobo_web_latest_11_0: ${{ steps.collect_summary.outputs.otobo_web_latest_11_0 }}
-      otobo_web_devel_rel_11_0: ${{ steps.collect_summary.outputs.otobo_web_devel_rel_11_0 }}
+      careoncloud_web_rel_11_0_14: ${{ steps.collect_summary.outputs.careoncloud_web_rel_11_0_14 }}
+      careoncloud_web_rel_11_0_15: ${{ steps.collect_summary.outputs.careoncloud_web_rel_11_0_15 }}
+      careoncloud_web_rel_11_0_16: ${{ steps.collect_summary.outputs.careoncloud_web_rel_11_0_16 }}
+      careoncloud_web_latest_11_0: ${{ steps.collect_summary.outputs.careoncloud_web_latest_11_0 }}
+      careoncloud_web_devel_rel_11_0: ${{ steps.collect_summary.outputs.careoncloud_web_devel_rel_11_0 }}
 
-      otobo_web_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.otobo_web_rel_11_1_0-beta1 }}
-      otobo_web_latest_11_1: ${{ steps.collect_summary.outputs.otobo_web_latest_11_1 }}
-      otobo_web_devel_rel_11_1: ${{ steps.collect_summary.outputs.otobo_web_devel_rel_11_1 }}
+      careoncloud_web_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.careoncloud_web_rel_11_1_0-beta1 }}
+      careoncloud_web_latest_11_1: ${{ steps.collect_summary.outputs.careoncloud_web_latest_11_1 }}
+      careoncloud_web_devel_rel_11_1: ${{ steps.collect_summary.outputs.careoncloud_web_devel_rel_11_1 }}
 
       # elasticsearch
-      otobo_elasticsearch_rel_10_1_15: ${{ steps.collect_summary.outputs.otobo_elasticsearch_rel_10_1_15 }}
-      otobo_elasticsearch_rel_10_1_16: ${{ steps.collect_summary.outputs.otobo_elasticsearch_rel_10_1_16 }}
-      otobo_elasticsearch_rel_10_1_17: ${{ steps.collect_summary.outputs.otobo_elasticsearch_rel_10_1_17 }}
-      otobo_elasticsearch_latest_10_1: ${{ steps.collect_summary.outputs.otobo_elasticsearch_latest_10_1 }}
-      otobo_elasticsearch_devel_rel_10_1: ${{ steps.collect_summary.outputs.otobo_elasticsearch_devel_rel_10_1 }}
+      careoncloud_elasticsearch_rel_10_1_15: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_rel_10_1_15 }}
+      careoncloud_elasticsearch_rel_10_1_16: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_rel_10_1_16 }}
+      careoncloud_elasticsearch_rel_10_1_17: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_rel_10_1_17 }}
+      careoncloud_elasticsearch_latest_10_1: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_latest_10_1 }}
+      careoncloud_elasticsearch_devel_rel_10_1: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_devel_rel_10_1 }}
 
-      otobo_elasticsearch_rel_11_0_14: ${{ steps.collect_summary.outputs.otobo_elasticsearch_rel_11_0_14 }}
-      otobo_elasticsearch_rel_11_0_15: ${{ steps.collect_summary.outputs.otobo_elasticsearch_rel_11_0_15 }}
-      otobo_elasticsearch_rel_11_0_16: ${{ steps.collect_summary.outputs.otobo_elasticsearch_rel_11_0_16 }}
-      otobo_elasticsearch_latest_11_0: ${{ steps.collect_summary.outputs.otobo_elasticsearch_latest_11_0 }}
-      otobo_elasticsearch_devel_rel_11_0: ${{ steps.collect_summary.outputs.otobo_elasticsearch_devel_rel_11_0 }}
+      careoncloud_elasticsearch_rel_11_0_14: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_rel_11_0_14 }}
+      careoncloud_elasticsearch_rel_11_0_15: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_rel_11_0_15 }}
+      careoncloud_elasticsearch_rel_11_0_16: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_rel_11_0_16 }}
+      careoncloud_elasticsearch_latest_11_0: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_latest_11_0 }}
+      careoncloud_elasticsearch_devel_rel_11_0: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_devel_rel_11_0 }}
 
-      otobo_elasticsearch_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.otobo_elasticsearch_rel_11_1_0-beta1 }}
-      otobo_elasticsearch_latest_11_1: ${{ steps.collect_summary.outputs.otobo_elasticsearch_latest_11_1 }}
-      otobo_elasticsearch_devel_rel_11_1: ${{ steps.collect_summary.outputs.otobo_elasticsearch_devel_rel_11_1 }}
+      careoncloud_elasticsearch_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_rel_11_1_0-beta1 }}
+      careoncloud_elasticsearch_latest_11_1: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_latest_11_1 }}
+      careoncloud_elasticsearch_devel_rel_11_1: ${{ steps.collect_summary.outputs.careoncloud_elasticsearch_devel_rel_11_1 }}
 
       # nginx_webproxy
-      otobo_nginx_webproxy_rel_10_1_15: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_rel_10_1_15 }}
-      otobo_nginx_webproxy_rel_10_1_16: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_rel_10_1_16 }}
-      otobo_nginx_webproxy_rel_10_1_17: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_rel_10_1_17 }}
-      otobo_nginx_webproxy_latest_10_1: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_latest_10_1 }}
-      otobo_nginx_webproxy_devel_rel_10_1: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_devel_rel_10_1 }}
+      careoncloud_nginx_webproxy_rel_10_1_15: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_rel_10_1_15 }}
+      careoncloud_nginx_webproxy_rel_10_1_16: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_rel_10_1_16 }}
+      careoncloud_nginx_webproxy_rel_10_1_17: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_rel_10_1_17 }}
+      careoncloud_nginx_webproxy_latest_10_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_latest_10_1 }}
+      careoncloud_nginx_webproxy_devel_rel_10_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_devel_rel_10_1 }}
 
-      otobo_nginx_webproxy_rel_11_0_14: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_rel_11_0_14 }}
-      otobo_nginx_webproxy_rel_11_0_15: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_rel_11_0_15 }}
-      otobo_nginx_webproxy_rel_11_0_16: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_rel_11_0_16 }}
-      otobo_nginx_webproxy_latest_11_0: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_latest_11_0 }}
-      otobo_nginx_webproxy_devel_rel_11_0: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_devel_rel_11_0 }}
+      careoncloud_nginx_webproxy_rel_11_0_14: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_rel_11_0_14 }}
+      careoncloud_nginx_webproxy_rel_11_0_15: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_rel_11_0_15 }}
+      careoncloud_nginx_webproxy_rel_11_0_16: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_rel_11_0_16 }}
+      careoncloud_nginx_webproxy_latest_11_0: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_latest_11_0 }}
+      careoncloud_nginx_webproxy_devel_rel_11_0: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_devel_rel_11_0 }}
 
-      otobo_nginx_webproxy_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_rel_11_1_0-beta1 }}
-      otobo_nginx_webproxy_latest_11_1: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_latest_11_1 }}
-      otobo_nginx_webproxy_devel_rel_11_1: ${{ steps.collect_summary.outputs.otobo_nginx_webproxy_devel_rel_11_1 }}
+      careoncloud_nginx_webproxy_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_rel_11_1_0-beta1 }}
+      careoncloud_nginx_webproxy_latest_11_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_latest_11_1 }}
+      careoncloud_nginx_webproxy_devel_rel_11_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_webproxy_devel_rel_11_1 }}
 
       # nginx_kerberos_webproxy
-      otobo_nginx_kerberos_webproxy_rel_10_1_15: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_rel_10_1_15 }}
-      otobo_nginx_kerberos_webproxy_rel_10_1_16: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_rel_10_1_16 }}
-      otobo_nginx_kerberos_webproxy_rel_10_1_17: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_rel_10_1_17 }}
-      otobo_nginx_kerberos_webproxy_latest_10_1: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_latest_10_1 }}
-      otobo_nginx_kerberos_webproxy_devel_rel_10_1: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_devel_rel_10_1 }}
+      careoncloud_nginx_kerberos_webproxy_rel_10_1_15: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_rel_10_1_15 }}
+      careoncloud_nginx_kerberos_webproxy_rel_10_1_16: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_rel_10_1_16 }}
+      careoncloud_nginx_kerberos_webproxy_rel_10_1_17: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_rel_10_1_17 }}
+      careoncloud_nginx_kerberos_webproxy_latest_10_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_latest_10_1 }}
+      careoncloud_nginx_kerberos_webproxy_devel_rel_10_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_devel_rel_10_1 }}
 
-      otobo_nginx_kerberos_webproxy_rel_11_0_14: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_rel_11_0_14 }}
-      otobo_nginx_kerberos_webproxy_rel_11_0_15: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_rel_11_0_15 }}
-      otobo_nginx_kerberos_webproxy_rel_11_0_16: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_rel_11_0_16 }}
-      otobo_nginx_kerberos_webproxy_latest_11_0: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_latest_11_0 }}
-      otobo_nginx_kerberos_webproxy_devel_rel_11_0: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_devel_rel_11_0 }}
+      careoncloud_nginx_kerberos_webproxy_rel_11_0_14: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_rel_11_0_14 }}
+      careoncloud_nginx_kerberos_webproxy_rel_11_0_15: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_rel_11_0_15 }}
+      careoncloud_nginx_kerberos_webproxy_rel_11_0_16: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_rel_11_0_16 }}
+      careoncloud_nginx_kerberos_webproxy_latest_11_0: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_latest_11_0 }}
+      careoncloud_nginx_kerberos_webproxy_devel_rel_11_0: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_devel_rel_11_0 }}
 
-      otobo_nginx_kerberos_webproxy_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_rel_11_1_0-beta1 }}
-      otobo_nginx_kerberos_webproxy_latest_11_1: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_latest_11_1 }}
-      otobo_nginx_kerberos_webproxy_devel_rel_11_1: ${{ steps.collect_summary.outputs.otobo_nginx_kerberos_webproxy_devel_rel_11_1 }}
+      careoncloud_nginx_kerberos_webproxy_rel_11_1_0-beta1: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_rel_11_1_0-beta1 }}
+      careoncloud_nginx_kerberos_webproxy_latest_11_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_latest_11_1 }}
+      careoncloud_nginx_kerberos_webproxy_devel_rel_11_1: ${{ steps.collect_summary.outputs.careoncloud_nginx_kerberos_webproxy_devel_rel_11_1 }}
 
       # selenium_chrome
       otobo_selenium_chrome_rel_10_1_15: ${{ steps.collect_summary.outputs.otobo_selenium_chrome_rel_10_1_15 }}
@@ -116,10 +116,10 @@ jobs:
 
     strategy:
       # create different images
-      # note that there is no release build for the otobo-web-kerberos target
+      # note that there is no release build for the careoncloud-web-kerberos target
       # this currently has to be updated every release
       matrix:
-        target: [ 'otobo-web', 'otobo-nginx-webproxy', 'otobo-nginx-kerberos-webproxy', 'otobo-selenium-chrome', 'otobo-elasticsearch', ]
+        target: [ 'careoncloud-web', 'otobo-nginx-webproxy', 'otobo-nginx-kerberos-webproxy', 'otobo-selenium-chrome', 'otobo-elasticsearch', ]
         docker_tag: [
           'rel-10_1_15', 'rel-10_1_16', 'rel-10_1_17', 'latest-10_1', 'devel-rel-10_1',
           'rel-11_0_14', 'rel-11_0_15', 'rel-11_0_16', 'latest-11_0', 'devel-rel-11_0',
@@ -180,21 +180,21 @@ jobs:
           # the base image perl:5.40-bookworm is used since rel-10_1_15 and rel-11_0_12
           # perl:5.40-slim-trixie is used since rel-11_1_1. Override needed as perl:5.40-bookworm is the default.
           -
-            target:     'otobo-web'
+            target:     'careoncloud-web'
             dockerfile: 'careoncloud.web.dockerfile'
             context:    '.'
             repository: 'rotheross/otobo'
             base_image: 'perl:5.40-bookworm'
           -
-            target:     'otobo-web'
+            target:     'careoncloud-web'
             docker_tag: 'latest-11_1'
             base_image: 'perl:5.40-slim-trixie'
           -
-            target:     'otobo-web'
+            target:     'careoncloud-web'
             docker_tag: 'rel-11_1_0-beta1'
             base_image: 'perl:5.40-slim-trixie'
           -
-            target:     'otobo-web'
+            target:     'careoncloud-web'
             docker_tag: 'devel-rel-11_1'
             base_image: 'perl:5.40-slim-trixie'
 
@@ -296,11 +296,11 @@ jobs:
           docker_tag=${{ matrix.docker_tag }}
           build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           (
-            echo "otobo_branch=${patch}"
-            echo "otobo_docker_tag=${docker_tag}"
-            echo "otobo_ref=${{ matrix.repository }}:${docker_tag}"
-            echo "otobo_base_image=${{ matrix.base_image }}"
-            echo "otobo_build_date=${build_date}"
+            echo "careoncloud_branch=${patch}"
+            echo "careoncloud_docker_tag=${docker_tag}"
+            echo "careoncloud_ref=${{ matrix.repository }}:${docker_tag}"
+            echo "careoncloud_base_image=${{ matrix.base_image }}"
+            echo "careoncloud_build_date=${build_date}"
           ) >> $GITHUB_ENV
 
       -
@@ -312,11 +312,11 @@ jobs:
           docker_tag=${{ matrix.docker_tag }}
           build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           (
-            echo "otobo_branch=${patch}"
-            echo "otobo_docker_tag=${docker_tag}"
-            echo "otobo_ref=${{ matrix.repository }}:${docker_tag}"
-            echo "otobo_base_image=${{ matrix.base_image }}"
-            echo "otobo_build_date=${build_date}"
+            echo "careoncloud_branch=${patch}"
+            echo "careoncloud_docker_tag=${docker_tag}"
+            echo "careoncloud_ref=${{ matrix.repository }}:${docker_tag}"
+            echo "careoncloud_base_image=${{ matrix.base_image }}"
+            echo "careoncloud_build_date=${build_date}"
           ) >> $GITHUB_ENV
 
       -
@@ -328,11 +328,11 @@ jobs:
           docker_tag=${{ matrix.docker_tag }}
           build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           (
-            echo "otobo_branch=${patch}"
-            echo "otobo_docker_tag=${docker_tag}"
-            echo "otobo_ref=${{ matrix.repository }}:${docker_tag}"
-            echo "otobo_base_image=${{ matrix.base_image }}"
-            echo "otobo_build_date=${build_date}"
+            echo "careoncloud_branch=${patch}"
+            echo "careoncloud_docker_tag=${docker_tag}"
+            echo "careoncloud_ref=${{ matrix.repository }}:${docker_tag}"
+            echo "careoncloud_base_image=${{ matrix.base_image }}"
+            echo "careoncloud_build_date=${build_date}"
           ) >> $GITHUB_ENV
 
       -
@@ -341,8 +341,8 @@ jobs:
         id: check
         uses: lucacome/docker-image-update-checker@v3
         with:
-          base-image: ${{ env.otobo_base_image }}
-          image:      ${{ env.otobo_ref }}
+          base-image: ${{ env.careoncloud_base_image }}
+          image:      ${{ env.careoncloud_ref }}
 
       -
         # print the result in any case

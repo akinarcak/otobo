@@ -24,13 +24,13 @@ jobs:
     strategy:
 
       # create different images
-      # note that there no Docker image is built for the otobo-web-kerberos target
+      # note that there no Docker image is built for the careoncloud-web-kerberos target
       matrix:
-        target: [ 'otobo-web', 'otobo-elasticsearch', 'otobo-nginx-webproxy', 'otobo-nginx-kerberos-webproxy', 'otobo-selenium-chrome' ]
+        target: [ 'careoncloud-web', 'otobo-elasticsearch', 'otobo-nginx-webproxy', 'otobo-nginx-kerberos-webproxy', 'otobo-selenium-chrome' ]
         tag_prefix: [ 'devel-' ]
         include:
           -
-            target:     'otobo-web'
+            target:     'careoncloud-web'
             dockerfile: 'careoncloud.web.dockerfile'
             context:    '.'
             repository: 'rotheross/otobo'
@@ -66,11 +66,11 @@ jobs:
           docker_tag="${{ matrix.tag_prefix }}$branch"
           build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           (
-            echo "otobo_branch=$branch"
-            echo "otobo_docker_tag=$docker_tag"
-            echo "otobo_ref=${{ matrix.repository }}:$docker_tag"
-            echo "otobo_build_date=$build_date"
-            echo "otobo_commit=${{ github.sha }}"
+            echo "careoncloud_branch=$branch"
+            echo "careoncloud_docker_tag=$docker_tag"
+            echo "careoncloud_ref=${{ matrix.repository }}:$docker_tag"
+            echo "careoncloud_build_date=$build_date"
+            echo "careoncloud_commit=${{ github.sha }}"
           ) >> $GITHUB_ENV
 
       -
@@ -115,4 +115,4 @@ jobs:
           dockerfile: ${{ steps.get-dockerfile.outputs.dockerfile }}
           context: ${{ matrix.context }}
           target: ${{ matrix.target }}
-          dockerhub_tags: ${{ env.otobo_ref }}
+          dockerhub_tags: ${{ env.careoncloud_ref }}

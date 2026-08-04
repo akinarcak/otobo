@@ -1774,7 +1774,7 @@ sub _ChangeFileInfo {
             FileType          => 'All',
             FileNameBlacklist => { 'Config.pm' => 1 },
             Search            => 'otrs-web',
-            Change            => 'otobo-web'
+            Change            => 'careoncloud-web'
         },
         {
             FileType => 'All',
