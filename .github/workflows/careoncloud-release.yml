@@ -58,8 +58,12 @@ jobs:
           file: careoncloud.web.dockerfile
           target: careoncloud-web
           pull: true
-          build-args: |
-            DOCKER_TAG=careoncloud-${{ steps.tag.outputs.tag }}
+          # Deliberately no DOCKER_TAG build-arg. It is consumed by the expensive
+          # `carton install` layer in careoncloud.web.dockerfile, so a per-release
+          # value invalidates the CPAN cache on every build (measured: run
+          # 30882609007 re-installed 213 distributions in 211.9s while every
+          # preceding base layer was CACHED). The Dockerfile default `unspecified`
+          # already selects the locked `carton install --deployment` path.
           push: true
           tags: ${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}
           cache-from: type=gha,scope=careoncloud-web
