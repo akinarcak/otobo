@@ -18,6 +18,7 @@ $Required = @(
     'cache-from: type=gha,scope=careoncloud-web'
     'cache-to: type=gha,mode=max,scope=careoncloud-web'
     'anchore/sbom-action@'
+    'name: Generate CycloneDX SBOM'
     'sigstore/cosign-installer@'
     'cosign sign --yes'
     'id-token: write'

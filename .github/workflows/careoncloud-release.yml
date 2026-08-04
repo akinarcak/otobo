@@ -72,7 +72,7 @@ jobs:
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
 
-      - name: Generate SPDX SBOM
+      - name: Generate CycloneDX SBOM
         uses: anchore/sbom-action@v0
         with:
           image: ${{ env.IMAGE }}:${{ steps.tag.outputs.tag }}
