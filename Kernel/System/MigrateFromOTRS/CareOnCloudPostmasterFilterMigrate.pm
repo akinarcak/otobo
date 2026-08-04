@@ -91,7 +91,7 @@ sub Run {
 
     # map wrong to correct tags
     my %PFOld2New = (
-        'X-OTRS-' => 'X-OTOBO-',
+        'X-OTRS-' => 'X-CareOnCloud-',
     );
 
     # get needed objects

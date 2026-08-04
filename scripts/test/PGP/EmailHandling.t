@@ -233,7 +233,7 @@ my %PostMasterReturnLookup = (
     2 => 'follow up / open/reopen',
     3 => 'follow up / close -> new ticket',
     4 => 'follow up / close -> reject',
-    5 => 'ignored (because of X-OTOBO-Ignore header)',
+    5 => 'ignored (because of X-CareOnCloud-Ignore header)',
 );
 
 for my $Test (@CryptTests) {

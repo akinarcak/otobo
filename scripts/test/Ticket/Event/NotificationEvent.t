@@ -1155,7 +1155,7 @@ my @Tests = (
         Name => 'RecipientEmail additional recipient by dynamic field',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update' ],
-            RecipientEmail => ["<OTOBO_TICKET_DynamicField_DFT2${RandomID}>"],
+            RecipientEmail => ["<CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>"],
         },
         Config => {
             Event => 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update',
@@ -1177,7 +1177,7 @@ my @Tests = (
         Name => 'RecipientEmail additional recipient by dynamic field (first position)',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update' ],
-            RecipientEmail => ["<OTOBO_TICKET_DynamicField_DFT2${RandomID}>, test\@careoncloudexample.com"],
+            RecipientEmail => ["<CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>, test\@careoncloudexample.com"],
         },
         Config => {
             Event => 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update',
@@ -1203,7 +1203,7 @@ my @Tests = (
         Name => 'RecipientEmail additional recipient by dynamic field (last position)',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update' ],
-            RecipientEmail => ["test\@careoncloudexample.com, <OTOBO_TICKET_DynamicField_DFT2${RandomID}>"],
+            RecipientEmail => ["test\@careoncloudexample.com, <CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>"],
         },
         Config => {
             Event => 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update',
@@ -1230,7 +1230,7 @@ my @Tests = (
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT3' . $RandomID . 'Update' ],
             RecipientEmail => [
-                "<OTOBO_TICKET_DynamicField_DFT3${RandomID}>, <OTOBO_TICKET_DynamicField_DFT2${RandomID}>"
+                "<CareOnCloud_TICKET_DynamicField_DFT3${RandomID}>, <CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>"
             ],
         },
         Config => {
@@ -1546,12 +1546,12 @@ for my $Test (@Tests) {
         Message => {
             en => {
                 Subject     => 'JobName',
-                Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+                Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
                 ContentType => 'text/plain',
             },
             de => {
                 Subject     => 'JobName',
-                Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+                Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
                 ContentType => 'text/plain',
             },
         },

@@ -490,7 +490,7 @@ Core.UI.Popup = (function (TargetNS) {
                  * it will ensure that popup is nor linked with the parent window
                  */
                 if (Unlinked && Unlinked === 1) {
-                    WindowName = 'PopupOTOBO_' + Type + '_' + Date.parse(new Date());
+                    WindowName = 'PopupCareOnCloud_' + Type + '_' + Date.parse(new Date());
                 }
                 else {
                     WindowName = 'CareOnCloudPopup_' + Type + '_' + Date.parse(new Date());

@@ -37,11 +37,15 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 # get needed objects
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
+my $UserObject   = $Kernel::OM->Get('Kernel::System::User');
+my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 
 # ensure that the appropriate X-Headers are available in the config
 my %NeededXHeaders = (
-    'X-OTOBO-Title'          => 1,
-    'X-OTOBO-FollowUp-Title' => 1,
+    'X-CareOnCloud-FollowUp-OwnerID'       => 1,
+    'X-CareOnCloud-FollowUp-Owner'         => 1,
+    'X-CareOnCloud-FollowUp-ResponsibleID' => 1,
+    'X-CareOnCloud-FollowUp-Responsible'   => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -58,31 +62,109 @@ $ConfigObject->Set(
     Value => \@PostmasterXHeader
 );
 
+# set ticket hook
+$ConfigObject->Set(
+    Key   => 'Ticket::Hook',
+    Value => 'Ticket#',
+);
+$ConfigObject->Set(
+    Key   => 'Ticket::HookDivider',
+    Value => '',
+);
+
+# ticket number is in subject on the left
+$ConfigObject->Set(
+    Key   => 'Ticket::SubjectFormat',
+    Value => 'Left',
+);
+
+my $TicketID = $TicketObject->TicketCreate(
+    Title        => 'My ticket created by Agent',
+    Queue        => 'Junk',
+    Lock         => 'unlock',
+    Priority     => '3 normal',
+    State        => 'removed',
+    CustomerUser => 'external@example.com',
+    OwnerID      => 1,
+    UserID       => 1,
+);
+$TicketID //= '';
+
+ok(
+    $TicketID,
+    "Ticket created - TicketID=$TicketID."
+);
+
+my %TestTicket = $TicketObject->TicketGet(
+    TicketID => $TicketID,
+    UserID   => 1,
+);
+
+my $UserRand;
+TRY:
+for my $Try ( 1 .. 20 ) {
+
+    $UserRand = 'unittest-' . $Helper->GetRandomID();
+
+    my $UserID = $UserObject->UserLookup(
+        UserLogin => $UserRand,
+    );
+
+    last TRY if !$UserID;
+
+    next TRY if $Try ne 20;
+
+    ok(
+        0,
+        'Find non existing user login.',
+    );
+}
+
+$ConfigObject->Set(
+    Key   => 'CheckEmailAddresses',
+    Value => 0,
+);
+
+# add user
+my $UserID = $UserObject->UserAdd(
+    UserFirstname => 'Firstname Test1',
+    UserLastname  => 'Lastname Test1',
+    UserLogin     => $UserRand,
+    UserEmail     => $UserRand . '@example.com',
+    ValidID       => 1,
+    ChangeUserID  => 1,
+);
+
+ok(
+    $UserID,
+    'UserAdd()',
+);
+
 # filter test
 my @Tests = (
     {
-        Name  => '#1 - Body Test',
-        Email => 'From: Sender <sender@example.com>
-To: Some Name <recipient@example.com>
-Subject: A simple question
-X-OTOBO-Title: UnitTest-1
+        Name  => '#1 - Owner Test',
+        Email => "From: Sender <sender\@example.com>
+To: Some Name <recipient\@example.com>
+Subject: [TNR] A simple question
+X-CareOnCloud-FollowUp-Owner: $UserRand
 
 This is a multiline
 email for server: example.tld
 
 The IP address: 192.168.0.1
-        ',
-        Return => 1,    # it's a new ticket
+        ",
+        Return => 2,    # it's a followup
         Check  => {
-            Title => 'UnitTest-1',
+            Owner => $UserRand,
         },
     },
     {
-        Name  => '#2 - Subject Test',
+        Name  => '#2 - OwnerID Test',
         Email => 'From: Sender <sender@example.com>
 To: Some Name <recipient@example.com>
-Subject: [#1] Another question
-X-OTOBO-FollowUp-Title: UnitTest-1 - Response 1
+Subject: [TNR] Another question
+X-CareOnCloud-FollowUp-OwnerID: 1
 
 This is a multiline
 email for server: example.tld
@@ -91,7 +173,41 @@ The IP address: 192.168.0.1
         ',
         Return => 2,    # it's a followup
         Check  => {
-            Title => 'UnitTest-1 - Response 1',
+            OwnerID => 1,
+        },
+    },
+    {
+        Name  => '#3 - Responsible Test',
+        Email => "From: Sender <sender\@example.com>
+To: Some Name <recipient\@example.com>
+Subject: [TNR] A simple question
+X-CareOnCloud-FollowUp-Responsible: $UserRand
+
+This is a multiline
+email for server: example.tld
+
+The IP address: 192.168.0.1
+        ",
+        Return => 2,    # it's a followup
+        Check  => {
+            Responsible => $UserRand,
+        },
+    },
+    {
+        Name  => '#4 - ResponsibleID Test',
+        Email => 'From: Sender <sender@example.com>
+To: Some Name <recipient@example.com>
+Subject: [TNR] Another question
+X-CareOnCloud-FollowUp-ResponsibleID: 1
+
+This is a multiline
+email for server: example.tld
+
+The IP address: 192.168.0.1
+        ',
+        Return => 2,    # it's a followup
+        Check  => {
+            ResponsibleID => 1,
         },
     },
 );
@@ -104,7 +220,7 @@ for my $Test (@Tests) {
     my $Name  = $Test->{Name};
     my $Email = $Test->{Email};
 
-    $Email =~ s{\[#([0-9]+)\]}{[Ticket#$TicketNumbers{$1}]};
+    $Email =~ s{\[TNR\]}{[Ticket#$TestTicket{TicketNumber}]};
 
     my @Return;
     {
@@ -165,22 +281,19 @@ for my $Test (@Tests) {
     $Index++;
 }
 
-for my $TicketID ( sort keys %TicketIDs ) {
+# new/clear ticket object
+$Kernel::OM->ObjectsDiscard( Objects => ['Kernel::System::Ticket'] );
+$TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 
-    # new/clear ticket object
-    $Kernel::OM->ObjectsDiscard( Objects => ['Kernel::System::Ticket'] );
-    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+# delete ticket
+my $Delete = $TicketObject->TicketDelete(
+    TicketID => $TicketID,
+    UserID   => 1,
+);
 
-    # delete ticket
-    my $Delete = $TicketObject->TicketDelete(
-        TicketID => $TicketID,
-        UserID   => 1,
-    );
-
-    ok(
-        $Delete || 0,
-        "#Filter TicketDelete()",
-    );
-}
+ok(
+    $Delete,
+    "#Filter TicketDelete()",
+);
 
 done_testing;

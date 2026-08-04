@@ -172,7 +172,7 @@
                 </Item>
                 <Item Key="Set">
                     <Hash>
-                        <Item Key="X-OTOBO-Ignore">yes</Item>
+                        <Item Key="X-CareOnCloud-Ignore">yes</Item>
                     </Hash>
                 </Item>
             </Hash>

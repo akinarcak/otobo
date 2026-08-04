@@ -36,10 +36,10 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 # add salutation
 my $SalutationName = 'salutation' . $Helper->GetRandomID();
-my $Salutation     = "Dear <OTOBO_CUSTOMER_REALNAME>,
+my $Salutation     = "Dear <CareOnCloud_CUSTOMER_REALNAME>,
 
 Thank you for your request. Your email address in our database
-is \"<OTOBO_CUSTOMER_DATA_UserEmail>\".
+is \"<CareOnCloud_CUSTOMER_DATA_UserEmail>\".
 ";
 
 my $SalutationID = $SalutationObject->SalutationAdd(

@@ -260,7 +260,7 @@ for my $Test (@Tests) {
         "Test $Count : Test backend Email - empty after cleanup",
     );
 
-    # check auto response suppression with X-OTOBO-Loop
+    # check auto response suppression with X-CareOnCloud-Loop
     $ArticleIDOne = $ArticleBackendObject->ArticleCreate(
         TicketID             => $TicketIDOne,
         IsVisibleForCustomer => 1,
@@ -281,7 +281,7 @@ for my $Test (@Tests) {
             To             => $QueueName,
             Subject        => 'UnitTest article one',
             Body           => 'UnitTest body',
-            'X-OTOBO-Loop' => 'yes'
+            'X-CareOnCloud-Loop' => 'yes'
 
         },
         Queue => $QueueName,
@@ -301,7 +301,7 @@ for my $Test (@Tests) {
         my $Emails = $TestEmailObject->EmailsGet();
         $Self->True(
             !$LastArticleMailSent && !scalar( @{$Emails} ),
-            "Test $Count : Emails fetched from backend - AutoResponse $Test->{AutoResponseType} suppressed by X-OTOBO-Loop",
+            "Test $Count : Emails fetched from backend - AutoResponse $Test->{AutoResponseType} suppressed by X-CareOnCloud-Loop",
         );
     }
 
@@ -317,7 +317,7 @@ for my $Test (@Tests) {
         "Test $Count : Test backend Email - empty after cleanup",
     );
 
-    # check auto response re-enabling with X-OTOBO-Loop
+    # check auto response re-enabling with X-CareOnCloud-Loop
     $ArticleIDOne = $ArticleBackendObject->ArticleCreate(
         TicketID             => $TicketIDOne,
         IsVisibleForCustomer => 1,
@@ -338,7 +338,7 @@ for my $Test (@Tests) {
             To             => $QueueName,
             Subject        => 'UnitTest article one',
             Body           => 'UnitTest body',
-            'X-OTOBO-Loop' => 'no'
+            'X-CareOnCloud-Loop' => 'no'
 
         },
         Queue => $QueueName,
@@ -358,7 +358,7 @@ for my $Test (@Tests) {
         my $Emails = $TestEmailObject->EmailsGet();
         $Self->True(
             $LastArticleMailSent && ( scalar @{$Emails} ) == 1,
-            "Test $Count : Emails fetched from backend - AutoResponse $Test->{AutoResponseType} re-enabled by X-OTOBO-Loop",
+            "Test $Count : Emails fetched from backend - AutoResponse $Test->{AutoResponseType} re-enabled by X-CareOnCloud-Loop",
         );
     }
 

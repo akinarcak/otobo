@@ -246,7 +246,7 @@ sub CleanLicenseHeaderInDir {
 
 =head2 MigrateXMLConfig()
 
-replace the XML element I<otrs_config> to I<otobo_config>.
+replace the XML element I<otrs_config> to I<careoncloud_config>.
 
     $OTRSToCareOnCloudObject->MigrateXMLConfig(
         File         => '/opt/careoncloud/Test.pm',
@@ -277,8 +277,8 @@ sub MigrateXMLConfig {
     return 1 unless $Content =~ m{<otrs_config.*?version="2.0"};
 
     # now the actual transformation
-    $Content =~ s{^<otrs_config}{<otobo_config}gsmx;
-    $Content =~ s{^</otrs_config}{</otobo_config}gsmx;
+    $Content =~ s{^<otrs_config}{<careoncloud_config}gsmx;
+    $Content =~ s{^</otrs_config}{</careoncloud_config}gsmx;
 
     # Save result in the original file
     my $SaveSuccess = $MainObject->FileWrite(
@@ -355,9 +355,9 @@ sub CleanOTRSFileToCareOnCloud ESMStyle {
 
             $Line =~ s/$Search/$Change/g;
 
-            # If $1 exist, we need to check if we change OTOBO_XXX from Replacements
+            # If $1 exist, we need to check if we change CareOnCloud_XXX from Replacements
             if ( my $Tmp = $1 ) {
-                $Line =~ s/OTOBO_XXX/$Tmp/g;
+                $Line =~ s/CareOnCloud_XXX/$Tmp/g;
             }
         }
         $NewContent .= $Line;
@@ -994,8 +994,8 @@ reference to an array of array references.
         Columns      => [ qw(text) ],
         Replacements =>
             [
-                [ '<OTRS_', '<OTOBO_' ],
-                [ '&lt;OTRS_', '&lt;OTOBO_' ]
+                [ '<OTRS_', '<CareOnCloud_' ],
+                [ '&lt;OTRS_', '&lt;CareOnCloud_' ]
             ],
     );
 
@@ -1654,7 +1654,7 @@ sub CopyFileListfromOTRSToCareOnCloud {
     );
 
     # Under Docker there is no var/cron
-    if ( !$ENV{OTOBO_RUNS_UNDER_DOCKER} ) {
+    if ( !$ENV{CareOnCloud_RUNS_UNDER_DOCKER} ) {
         push @Files, '/var/cron';
     }
 
@@ -1819,12 +1819,12 @@ sub _ChangeFileInfo {
         {
             FileType => 'opm',
             Search   => '<File Location\=\"(.*)\"\s.*\s.*\">.*<\/File>',
-            Change   => '<File Location="OTOBO_XXX" Permission="644" ></File>'
+            Change   => '<File Location="CareOnCloud_XXX" Permission="644" ></File>'
         },
         {
             FileType => 'opm',
             Search   => '<File Permission\=.*Location\=\"(.*)\"\s.*\">.*<\/File>',
-            Change   => '<File Location="OTOBO_XXX" Permission="660" ></File>'
+            Change   => '<File Location="CareOnCloud_XXX" Permission="660" ></File>'
         },
     );
 

@@ -141,8 +141,8 @@ sub Run {
     my $Output = qx{$Self->{Home}/bin/careoncloud.Console.pl Admin::Package::ReinstallAll};
     warn "Admin::Package::ReinstallAll: $Output";
 
-    # TODO: $OTOBO_HOME/bin/careoncloud.Console.pl Maint::Config::Rebuild
-    # TODO: $OTOBO_HOME/bin/careoncloud.Console.pl Maint::Cache::Delete
+    # TODO: $CareOnCloud_HOME/bin/careoncloud.Console.pl Maint::Config::Rebuild
+    # TODO: $CareOnCloud_HOME/bin/careoncloud.Console.pl Maint::Cache::Delete
 
     # no locking required as there should be no concurrent access
 

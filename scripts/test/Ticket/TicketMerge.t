@@ -457,8 +457,8 @@ my $LanguageObject = $Kernel::OM->Get('Kernel::Language');
 
 my $Body = $Kernel::OM->Get('Kernel::Config')->Get('Ticket::Frontend::AutomaticMergeText');
 $Body = $LanguageObject->Translate($Body);
-$Body =~ s{<OTOBO_TICKET>}{$MergeTicket{TicketNumber}}xms;
-$Body =~ s{<OTOBO_MERGE_TO_TICKET>}{$MainTicket{TicketNumber}}xms;
+$Body =~ s{<CareOnCloud_TICKET>}{$MergeTicket{TicketNumber}}xms;
+$Body =~ s{<CareOnCloud_MERGE_TO_TICKET>}{$MainTicket{TicketNumber}}xms;
 
 $Self->Is(
     $Body,

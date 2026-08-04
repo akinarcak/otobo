@@ -253,8 +253,8 @@ sub Run {
         if ( $LayoutObject->{BrowserRichText} ) {
 
             # prepare bounce tags
-            $Param{BounceText} =~ s/<OTOBO_TICKET>/&lt;OTOBO_TICKET&gt;/g;
-            $Param{BounceText} =~ s/<OTOBO_BOUNCE_TO>/&lt;OTOBO_BOUNCE_TO&gt;/g;
+            $Param{BounceText} =~ s/<CareOnCloud_TICKET>/&lt;CareOnCloud_TICKET&gt;/g;
+            $Param{BounceText} =~ s/<CareOnCloud_BOUNCE_TO>/&lt;CareOnCloud_BOUNCE_TO&gt;/g;
 
             $Param{BounceText} = $LayoutObject->Ascii2RichText(
                 String => $Param{BounceText},
@@ -459,8 +459,8 @@ $Param{Signature}";
             if ( $LayoutObject->{BrowserRichText} ) {
 
                 # prepare bounce tags
-                $Param{Body} =~ s/&lt;OTOBO_TICKET&gt;/&amp;lt;OTOBO_TICKET&amp;gt;/gi;
-                $Param{Body} =~ s/&lt;OTOBO_BOUNCE_TO&gt;/&amp;lt;OTOBO_BOUNCE_TO&amp;gt;/gi;
+                $Param{Body} =~ s/&lt;CareOnCloud_TICKET&gt;/&amp;lt;CareOnCloud_TICKET&amp;gt;/gi;
+                $Param{Body} =~ s/&lt;CareOnCloud_BOUNCE_TO&gt;/&amp;lt;CareOnCloud_BOUNCE_TO&amp;gt;/gi;
             }
 
             $Param{InformationFormat}   = $Param{Body};
@@ -532,8 +532,8 @@ $Param{Signature}";
             }
 
             # replace placeholders
-            $Param{Body} =~ s/(&lt;|<)OTOBO_TICKET(&gt;|>)/$Ticket{TicketNumber}/g;
-            $Param{Body} =~ s/(&lt;|<)OTOBO_BOUNCE_TO(&gt;|>)/$Param{BounceTo}/g;
+            $Param{Body} =~ s/(&lt;|<)CareOnCloud_TICKET(&gt;|>)/$Ticket{TicketNumber}/g;
+            $Param{Body} =~ s/(&lt;|<)CareOnCloud_BOUNCE_TO(&gt;|>)/$Param{BounceTo}/g;
 
             # send
             my $ArticleID = $ArticleBackendObject->ArticleSend(

@@ -39,7 +39,7 @@ $Kernel::OM->ObjectParamAdd(
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 $Kernel::OM->Get('Kernel::System::Type')->TypeAdd(
-    Name    => "X-OTOBO-Type-Test",
+    Name    => "X-CareOnCloud-Type-Test",
     ValidID => 1,
     UserID  => 1,
 );
@@ -50,7 +50,7 @@ my @Tests = (
         Name  => 'Valid ticket type (Unclassified)',
         Email => 'From: Sender <sender@example.com>
 To: Some Name <recipient@example.com>
-X-OTOBO-Type: Unclassified
+X-CareOnCloud-Type: Unclassified
 Subject: Test
 
 Some Content in Body',
@@ -63,20 +63,20 @@ Some Content in Body',
         Name  => 'Valid ticket type (Unclassified)',
         Email => 'From: Sender <sender@example.com>
 To: Some Name <recipient@example.com>
-X-OTOBO-Type: X-OTOBO-Type-Test
+X-CareOnCloud-Type: X-CareOnCloud-Type-Test
 Subject: Test
 
 Some Content in Body',
         NewTicket => 1,
         Check     => {
-            Type => 'X-OTOBO-Type-Test',
+            Type => 'X-CareOnCloud-Type-Test',
         }
     },
     {
         Name  => 'Invalid ticket type, ticket still needs to be created',
         Email => 'From: Sender <sender@example.com>
 To: Some Name <recipient@example.com>
-X-OTOBO-Type: Nonexisting
+X-CareOnCloud-Type: Nonexisting
 Subject: Test
 
 Some Content in Body',

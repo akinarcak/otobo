@@ -143,18 +143,18 @@ sub GetTrustedQueueID {
     # get email headers
     my %GetParam = %{ $Param{Params} };
 
-    return if !$GetParam{'X-OTOBO-Queue'};
+    return if !$GetParam{'X-CareOnCloud-Queue'};
 
     $Self->{CommunicationLogObject}->ObjectLog(
         ObjectLogType => 'Message',
         Priority      => 'Debug',
         Key           => 'Kernel::System::PostMaster::DestQueue',
-        Value         => "Existing X-OTOBO-Queue header: $GetParam{'X-OTOBO-Queue'} (MessageID:$GetParam{'Message-ID'})!",
+        Value         => "Existing X-CareOnCloud-Queue header: $GetParam{'X-CareOnCloud-Queue'} (MessageID:$GetParam{'Message-ID'})!",
     );
 
     # get dest queue
     return $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup(
-        Queue => $GetParam{'X-OTOBO-Queue'},
+        Queue => $GetParam{'X-CareOnCloud-Queue'},
     );
 }
 

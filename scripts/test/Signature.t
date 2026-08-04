@@ -38,7 +38,7 @@ my $SignatureObject = $Kernel::OM->Get('Kernel::System::Signature');
 my $SignatureName = $Helper->GetRandomID();
 my $SignatureText = "Your CareOnCloud ESM-Team
 
-<OTOBO_CURRENT_UserFirstname> <OTOBO_CURRENT_UserLastname>
+<CareOnCloud_CURRENT_UserFirstname> <CareOnCloud_CURRENT_UserLastname>
 
 --
 Super Support Company Inc. - Waterford Business Park

@@ -115,11 +115,11 @@ foreach ($PackageSourceFile in $PackageSources) {
         }
         if ($File.Location -match '\.xml$') {
             [xml] $PackageXML = Get-Content $PackageFile -Raw
-            if ($PackageXML.otobo_config -eq $null) {
-                throw "$PackageName XML must use the framework otobo_config root: $($File.Location)"
+            if ($PackageXML.careoncloud_config -eq $null) {
+                throw "$PackageName XML must use the framework careoncloud_config root: $($File.Location)"
             }
-            if ([string] $PackageXML.otobo_config.init -notin @('Framework', 'Application', 'Config', 'Changes')) {
-                throw "$PackageName XML has an invalid otobo_config init value: $($File.Location)"
+            if ([string] $PackageXML.careoncloud_config.init -notin @('Framework', 'Application', 'Config', 'Changes')) {
+                throw "$PackageName XML has an invalid careoncloud_config init value: $($File.Location)"
             }
         }
     }

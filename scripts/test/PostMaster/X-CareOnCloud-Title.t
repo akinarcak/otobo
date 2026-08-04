@@ -32,8 +32,7 @@ $Kernel::OM->ObjectParamAdd(
         RestoreDatabase => 1,
     },
 );
-my $Helper                = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
-my $TestCustomerUserLogin = $Helper->TestCustomerUserCreate();
+my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 # get needed objects
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -41,7 +40,8 @@ my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
 
 # ensure that the appropriate X-Headers are available in the config
 my %NeededXHeaders = (
-    'X-OTOBO-From' => 1,
+    'X-CareOnCloud-Title'          => 1,
+    'X-CareOnCloud-FollowUp-Title' => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -65,7 +65,7 @@ my @Tests = (
         Email => 'From: Sender <sender@example.com>
 To: Some Name <recipient@example.com>
 Subject: A simple question
-X-OTOBO-From: ' . $TestCustomerUserLogin . '@localunittest.com
+X-CareOnCloud-Title: UnitTest-1
 
 This is a multiline
 email for server: example.tld
@@ -74,7 +74,24 @@ The IP address: 192.168.0.1
         ',
         Return => 1,    # it's a new ticket
         Check  => {
-            CustomerUserID => $TestCustomerUserLogin,
+            Title => 'UnitTest-1',
+        },
+    },
+    {
+        Name  => '#2 - Subject Test',
+        Email => 'From: Sender <sender@example.com>
+To: Some Name <recipient@example.com>
+Subject: [#1] Another question
+X-CareOnCloud-FollowUp-Title: UnitTest-1 - Response 1
+
+This is a multiline
+email for server: example.tld
+
+The IP address: 192.168.0.1
+        ',
+        Return => 2,    # it's a followup
+        Check  => {
+            Title => 'UnitTest-1 - Response 1',
         },
     },
 );

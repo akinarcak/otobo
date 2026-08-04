@@ -1667,8 +1667,8 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => 'استخدم الفواصل أو الفاصلة المنقوطة للفصل بين عناوين البريد الإلكتروني.',
-        'You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
-            'يمكنك استخدام علامات CareOnCloud ESM مثل <..._OTOBO_TICKET_DynamicField> لإدراج قيم التذكرة الحالية.',
+        'You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            'يمكنك استخدام علامات CareOnCloud ESM مثل <..._CareOnCloud_TICKET_DynamicField> لإدراج قيم التذكرة الحالية.',
 
         # Template: AdminOAuthTokenStore
         'OAuth2 Token Management (OIDC)' => '',
@@ -8181,8 +8181,8 @@ Thanks for your help!
             'يحدد عامل التصفية الذي يعالج النص في المقالات، من أجل تسليط الضوء على عناوين URL.',
         'Defines the format of responses in the ticket compose screen of the agent interface ([% Data.OrigFrom | html %] is From 1:1, [% Data.OrigFromName | html %] is only realname of From).' =>
             'يتحكم في تنسيق الإجابات في شاشة إنشاء التذاكر في منطقة العميل ([% Data.OrigFrom | html %] يتوافق تماما مع المرسل، [% Data.OrigFromName | html %] يحتوي على الاسم الحقيقي للمرسل فقط).',
-        'Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
-            'يحدد اسم المجال المؤهل بالكامل للنظام. يتم استخدام هذا الإعداد كمتغير، OTOBO_CONFIG_FQDN الموجود في جميع أشكال الرسائل التي يستخدمها التطبيق ، لإنشاء روابط للتذاكر داخل نظامك.',
+        'Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
+            'يحدد اسم المجال المؤهل بالكامل للنظام. يتم استخدام هذا الإعداد كمتغير، CareOnCloud_CONFIG_FQDN الموجود في جميع أشكال الرسائل التي يستخدمها التطبيق ، لإنشاء روابط للتذاكر داخل نظامك.',
         'Defines the groups every customer user will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer user for these groups).' =>
             'يتحكم في المجموعات التي تريد أن يكون مستخدم العميل فيها بشكل افتراضي (إذا تم تمكين CustomerGroupSupport ولا تريد التحكم في كل علاقة مجموعة للمستخدمين بشكل فردي).',
         'Defines the groups every customer will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer for these groups).' =>
@@ -8317,8 +8317,8 @@ Thanks for your help!
             '',
         'Defines the module to generate code for periodic page reloads.' =>
             'يعرف الوحدة النمطية لإنشاء التعليمات البرمجية عند إعادة تحميل الصفحات بشكل دوري.',
-        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
-            'يحدد الوحدة النمطية لإرسال رسائل البريد الإلكتروني. "DoNotSendEmail" لا يرسل أي رسائل بريد إلكتروني على الإطلاق. تستخدم كل آلية من آليات "SMTP" خادم بريد (خارجي) محدد. يستخدم "Sendmail" مباشرة ثنائي sendmail لنظام التشغيل الخاص بك. لا يرسل "اختبار" رسائل البريد الإلكتروني، ولكنه يكتبها إلى $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ لأغراض الاختبار.',
+        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
+            'يحدد الوحدة النمطية لإرسال رسائل البريد الإلكتروني. "DoNotSendEmail" لا يرسل أي رسائل بريد إلكتروني على الإطلاق. تستخدم كل آلية من آليات "SMTP" خادم بريد (خارجي) محدد. يستخدم "Sendmail" مباشرة ثنائي sendmail لنظام التشغيل الخاص بك. لا يرسل "اختبار" رسائل البريد الإلكتروني، ولكنه يكتبها إلى $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ لأغراض الاختبار.',
         'Defines the module used to store the session data. With "DB" the frontend server can be splitted from the db server. "FS" is faster.' =>
             'يحدد الوحدة النمطية التي سيتم استخدامها لتخزين بيانات جلسة العمل. باستخدام "DB" ، يمكن تشغيل خادم العرض بشكل منفصل عن خادم DB. "FS" أسرع.',
         'Defines the modules in Kernel/Output/HTML/GenericContent/ which provide the inner content to the chosen key.' =>
@@ -8431,8 +8431,8 @@ Thanks for your help!
             'يحدد الفاصل بين الاسم الحقيقي للوكيل وعنوان البريد الإلكتروني المحدد لقائمة الانتظار.',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             'تعيين الأعمدة المعروضة وموضعها لشاشة النتائج الخاصة ب AgentCustomerUserAddressBook.',
-        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
-            'يحدد الروابط المعروضة في منطقة تذييل بوابة عملاء CareOnCloud ESM. في حقل "المفتاح"، أدخل عنوان URL الخارجي، ونص الرابط الذي سيتم عرضه ك "محتوى". <OTOBO_CONFIG_HttpType>وسيتم <OTOBO_CONFIG_FQDN> <OTOBO_CONFIG_ScriptAlias> استبدالها.',
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> and <CareOnCloud_CONFIG_ScriptAlias> will be substituted.' =>
+            'يحدد الروابط المعروضة في منطقة تذييل بوابة عملاء CareOnCloud ESM. في حقل "المفتاح"، أدخل عنوان URL الخارجي، ونص الرابط الذي سيتم عرضه ك "محتوى". <CareOnCloud_CONFIG_HttpType>وسيتم <CareOnCloud_CONFIG_FQDN> <CareOnCloud_CONFIG_ScriptAlias> استبدالها.',
         'Defines the source dynamic field for storing historical data.' =>
             'يحدد حقل المصدر الديناميكي لتخزين البيانات التاريخية.',
         'Defines the standard permissions available for customers within the application. If more permissions are needed, you can enter them here. Permissions must be hard coded to be effective. Please ensure, when adding any of the afore mentioned permissions, that the "rw" permission remains the last entry.' =>
@@ -8480,8 +8480,8 @@ Thanks for your help!
             'يضبط المهلة بالثواني لجمع بيانات الدعم من الوحدة العامة \'PublicSupportDataCollector\'، والتي على سبيل المثال. مستخدم من قبل CareOnCloud ESM Daemon (دقيقة ٢٠ ثانية).',
         'Defines the two-factor module to authenticate agents.' => 'يحدد الوحدة النمطية للمصادقة الثنائية للوكلاء.',
         'Defines the two-factor module to authenticate customers.' => 'يحدد الوحدة النمطية للمصادقة الثنائية للعملاء.',
-        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
-            'يحدد البروتوكول الذي يستخدمه خادم الويب للاتصال بالتطبيق. إذا كان خادم الويب يستخدم HTTP بدلا من HTTPS، فيجب تحديد "http" هنا. إعداد HttpType ليس له أي تأثير على إعدادات أو سلوك ملقم ويب. على وجه الخصوص، لن يغير كيفية الوصول إلى التطبيق. إذا كان الإعداد غير صحيح، فلن يمنعك من الوصول إلى التطبيق. يتم استخدام الإعداد بشكل أساسي عبر متغير القالب OTOBO_CONFIG_HttpType. يمكن العثور على هذا المتغير في جميع نماذج الإشعارات الخاصة بالتطبيق. يتم استخدامه لبناء روابط للتذاكر في نظامك. تأثير آخر لترك "HttpType" في "https" هو أن ملف تعريف ارتباط الجلسة يتم تعيينه فقط للاتصالات الآمنة.',
+        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
+            'يحدد البروتوكول الذي يستخدمه خادم الويب للاتصال بالتطبيق. إذا كان خادم الويب يستخدم HTTP بدلا من HTTPS، فيجب تحديد "http" هنا. إعداد HttpType ليس له أي تأثير على إعدادات أو سلوك ملقم ويب. على وجه الخصوص، لن يغير كيفية الوصول إلى التطبيق. إذا كان الإعداد غير صحيح، فلن يمنعك من الوصول إلى التطبيق. يتم استخدام الإعداد بشكل أساسي عبر متغير القالب CareOnCloud_CONFIG_HttpType. يمكن العثور على هذا المتغير في جميع نماذج الإشعارات الخاصة بالتطبيق. يتم استخدامه لبناء روابط للتذاكر في نظامك. تأثير آخر لترك "HttpType" في "https" هو أن ملف تعريف ارتباط الجلسة يتم تعيينه فقط للاتصالات الآمنة.',
         'Defines the used character for plaintext email quotes in the ticket compose screen of the agent interface. If this is empty or inactive, original emails will not be quoted but appended to the response.' =>
             'يضبط الحرف المستخدم لعلامات التنصيص في رسائل البريد الإلكتروني النصية العادية في شاشة المؤلف من جزء الوكالات. إذا كان الحقل فارغا أو لم يتم تمكين الإعداد، فلن يتم اقتباس البريد الإلكتروني الأصلي، بل سيتم إلحاقه بالإجابة.',
         'Defines the user identifier for the customer panel.' => 'يحدد معرف المستخدم لواجهة العميل.',
@@ -8778,8 +8778,8 @@ Thanks for your help!
             'يشغل أمرًا مخصصًا أو وحدة نمطية. ملاحظة: إذا تم استخدام وحدة نمطية، فيجب أن تكون الوظيفة متاحة.',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             'يقوم بإجراء فحوصات متابعة على رؤوس الرسائل الواردة في الرد أو المراجع التي لا يحتوي موضوعها على رقم تذكرة.',
-        'Executes follow-up checks on CareOnCloud ESM Header \'X-OTOBO-Bounce\'.' =>
-            'يقوم بإجراء فحوصات متابعة X-OTOBO-Bounce\' CareOnCloud ESM Header\'.',
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'.' =>
+            'يقوم بإجراء فحوصات متابعة X-CareOnCloud-Bounce\' CareOnCloud ESM Header\'.',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             'يقوم بإجراء فحوصات متابعة على مرفقات رسائل البريد الإلكتروني التي لا يحتوي موضوعها على رقم تذكرة.',
         'Executes follow-up checks on email body for mails that don\'t have a ticket number in the subject.' =>
@@ -8809,10 +8809,10 @@ Thanks for your help!
             'الحقول المراد البحث فيها في فهرس التذكرة. يتم حفظ الحقول أيضا، ولكنها غير مطلوبة للوظائف العامة.',
         'File that is displayed in the Kernel::Modules::AgentInfo module, if located under Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.' =>
             'الملف المستخدم في وحدة Kernel::Modules::AgentInfo إذا كان موجودًا في Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.',
-        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'مرشحات لتصحيح أخطاء قوائم التحكم في الوصول (ACLs). ملاحظة: يمكن إضافة سمات تذكرة إضافية بالتنسيق <OTOBO_TICKET_Attribute> (على سبيل المثال<OTOBO_TICKET_Priority>).',
-        'Filter for debugging Transitions. Note: More filters can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'عوامل تصفية لتصحيح الانتقالات. ملاحظة: يمكن إضافة عوامل تصفية أخرى في تنسيق <OTOBO_TICKET_Attribute> (مثل <OTOBO_TICKET_Priority>).',
+        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'مرشحات لتصحيح أخطاء قوائم التحكم في الوصول (ACLs). ملاحظة: يمكن إضافة سمات تذكرة إضافية بالتنسيق <CareOnCloud_TICKET_Attribute> (على سبيل المثال<CareOnCloud_TICKET_Priority>).',
+        'Filter for debugging Transitions. Note: More filters can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'عوامل تصفية لتصحيح الانتقالات. ملاحظة: يمكن إضافة عوامل تصفية أخرى في تنسيق <CareOnCloud_TICKET_Attribute> (مثل <CareOnCloud_TICKET_Priority>).',
         'Filter incoming emails.' => 'تصفية رسائل البريد الإلكتروني الواردة.',
         'Finnish' => 'الفنلندية',
         'First Christmas Day' => 'اليوم الأول من عيد الميلاد',
@@ -9240,7 +9240,7 @@ Thanks for your help!
         'Medium' => 'وسط',
         'Merge this ticket and all articles into another ticket' => 'ادمج هذه التذكرة وجميع المقالات في تذكرة أخرى',
         'Merged Ticket (%s/%s) to (%s/%s).' => 'تم دمج التذكرة (‎%s/%s) مع (‎%s/%s).',
-        'Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>.' => 'تم دمج التذكرة <OTOBO_TICKET> في <OTOBO_MERGE_TO_TICKET>.',
+        'Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>.' => 'تم دمج التذكرة <CareOnCloud_TICKET> في <CareOnCloud_MERGE_TO_TICKET>.',
         'Message of the day' => '',
         'Minute' => 'دقيقة',
         'Miscellaneous' => 'مُتَنَوِّع',
@@ -9262,7 +9262,7 @@ Thanks for your help!
         'Module to filter and manipulate incoming messages. Block/ignore all spam email with From: noreply@ address.' =>
             'وحدة نمطية لتصفية الرسائل الواردة ومعالجتها. حظر/تجاهل كافة رسائل البريد الإلكتروني العشوائي بعنوان من: noreply@.',
         'Module to filter and manipulate incoming messages. Get a 4 digit number to ticket free text, use regex in Match e. g. From => \'(.+?)@.+?\', and use () as [***] in Set =>.' =>
-            'وحدة لتصفية وتعديل الرسائل الواردة. على سبيل المثال، استخرج رقما مكونا من أربعة أرقام من الموضوع (SomeNumber: 1234) وقم بتخزينه في حقل ديناميكي عن طريق إنشاء مفتاح "Subject" بالتعبير العادي "SomeNumber:(\d\d\d\d\d)" في "Match" ومفتاح "X-OTOBO-DynamicField-Name" بقيمة "[***]" في "Set".',
+            'وحدة لتصفية وتعديل الرسائل الواردة. على سبيل المثال، استخرج رقما مكونا من أربعة أرقام من الموضوع (SomeNumber: 1234) وقم بتخزينه في حقل ديناميكي عن طريق إنشاء مفتاح "Subject" بالتعبير العادي "SomeNumber:(\d\d\d\d\d)" في "Match" ومفتاح "X-CareOnCloud-DynamicField-Name" بقيمة "[***]" في "Set".',
         'Module to filter encrypted bodies of incoming messages.' => 'وحدة لتصفية النصوص المشفرة على الرسائل الواردة.',
         'Module to generate accounted time ticket statistics.' => 'وحدة لتوليد الإحصاءات لوقت المعالجة المطلوب.',
         'Module to generate html OpenSearch profile for short ticket search in the agent interface.' =>
@@ -9792,7 +9792,7 @@ Thanks for your help!
         'Sets the prefered time units (e.g. work units, hours, minutes).' =>
             '',
         'Sets the preferred digest to be used for PGP binary.' => '',
-        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
+        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
             '',
         'Sets the queue in the ticket close screen of a zoomed ticket in the agent interface.' =>
             '',
@@ -10125,7 +10125,7 @@ Thanks for your help!
         'Specifies the directory where SSL certificates are stored.' => '',
         'Specifies the directory where private SSL certificates are stored.' =>
             '',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
             '',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             '',
@@ -10449,10 +10449,10 @@ Thanks for your help!
         'XOAUTH2' => '',
         'Yes, but hide archived tickets' => '',
         'Your Tickets. Your CareOnCloud ESM.' => '',
-        'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
+        'Your email with ticket number "<CareOnCloud_TICKET>" is bounced to "<CareOnCloud_BOUNCE_TO>". Contact this address for further information.' =>
             '',
-        'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
-            'بريدك مع رقم البطاقة "<OTOBO_TICKET>" دمجت مع "<OTOBO_MERGE_TO_TICKET>".',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is merged to "<CareOnCloud_MERGE_TO_TICKET>".' =>
+            'بريدك مع رقم البطاقة "<CareOnCloud_TICKET>" دمجت مع "<CareOnCloud_MERGE_TO_TICKET>".',
         'Your external tools' => '',
         'Your last tickets' => '',
         'Your queue selection of your preferred queues. You also get notified about those queues via email if enabled.' =>

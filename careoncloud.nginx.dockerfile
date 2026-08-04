@@ -69,7 +69,7 @@ ENV LANG=C.UTF-8
 # This setting works in the devel environment.
 # In the general case CAREONCLOUD_NGINX_WEB_HOST can be set when starting the container:
 #   docker run -e CAREONCLOUD_NGINX_WEB_HOST=$(ip -4 addr show docker0 | grep -Po 'inet \K[\d.]+') -p 443:443 careoncloud_nginx
-# Attention: specify OTOBO_WEB_PORT to 5000 in .env when
+# Attention: specify CareOnCloud_WEB_PORT to 5000 in .env when
 # starting HTTP with 'docker-compose -f docker-compose.yml up'
 ENV CAREONCLOUD_NGINX_WEB_HOST=172.17.0.1
 ENV CAREONCLOUD_NGINX_WEB_PORT=5000

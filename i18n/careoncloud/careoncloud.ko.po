@@ -5675,10 +5675,10 @@ msgstr ""
 
 #. Template: AdminNotificationEventTransportEmailSettings
 msgid ""
-"You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values "
+"You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values "
 "from the current ticket."
 msgstr ""
-"<OTOBO_TICKET_DynamicField _...>와 같은 CareOnCloud ESM 태그를 사용하여 현재 티켓의 값"
+"<CareOnCloud_TICKET_DynamicField _...>와 같은 CareOnCloud ESM 태그를 사용하여 현재 티켓의 값"
 "을 삽입 할 수 있습니다."
 
 #. Template: AdminOAuthTokenStore
@@ -25735,11 +25735,11 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Defines the fully qualified domain name of the system. This setting is used "
-"as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging "
+"as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging "
 "used by the application, to build links to the tickets within your system."
 msgstr ""
 "시스템의 정규화 된 도메인 이름을 정의합니다. 이 설정은 응용 프로그램에서 사용"
-"하는 모든 형식의 메시징에있는 변수 인 OTOBO_CONFIG_FQDN으로 사용되어 시스템 "
+"하는 모든 형식의 메시징에있는 변수 인 CareOnCloud_CONFIG_FQDN으로 사용되어 시스템 "
 "내의 티켓에 대한 링크를 만듭니다."
 
 #. SysConfig
@@ -26265,7 +26265,7 @@ msgid ""
 "Defines the module to send emails. \"DoNotSendEmail\" doesn't send emails at "
 "all. Any of the \"SMTP\" mechanisms use a specified (external) mailserver. "
 "\"Sendmail\" directly uses the sendmail binary of your operating system. "
-"\"Test\" doesn't send emails, but writes them to $OTOBO_HOME/var/tmp/"
+"\"Test\" doesn't send emails, but writes them to $CareOnCloud_HOME/var/tmp/"
 "CacheFileStorable/EmailTest/ for testing purposes."
 msgstr ""
 
@@ -26707,8 +26707,8 @@ msgstr ""
 msgid ""
 "Defines the shown links in the footer area of the customer interface of this "
 "CareOnCloud ESM system. The value in \"Key\" is the external URL, the value in "
-"\"Content\" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> "
-"and <OTOBO_CONFIG_ScriptAlias> will be substituted."
+"\"Content\" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> "
+"and <CareOnCloud_CONFIG_ScriptAlias> will be substituted."
 msgstr ""
 
 #. SysConfig
@@ -26894,7 +26894,7 @@ msgid ""
 "server's settings or behavior. Specifically, it will not change the method "
 "of access to the application. If the setting is wrong, it will not prevent "
 "you from logging into the application. This setting is used mainly via the "
-"template variable OTOBO_CONFIG_HttpType. This variable is found in all forms "
+"template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms "
 "of messaging used by the application. It is used to build links to the "
 "tickets within your system. Another effect of keeping 'HttpType' set to "
 "'https' is that the session management cookie will only be set for secure "
@@ -27966,8 +27966,8 @@ msgstr ""
 "사를 실행합니다."
 
 #. SysConfig
-msgid "Executes follow-up checks on CareOnCloud ESM Header 'X-OTOBO-Bounce'."
-msgstr "CareOnCloud ESM Header 'X-OTOBO-Bounce'에 대한 후속 검사를 실행합니다."
+msgid "Executes follow-up checks on CareOnCloud ESM Header 'X-CareOnCloud-Bounce'."
+msgstr "CareOnCloud ESM Header 'X-CareOnCloud-Bounce'에 대한 후속 검사를 실행합니다."
 
 #. SysConfig
 msgid ""
@@ -28080,7 +28080,7 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Filter for debugging ACLs. Note: More ticket attributes can be added in the "
-"format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>."
+"format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>."
 msgstr ""
 "ACL 디버깅 용 필터. 참고 : 더 많은 티켓 속성을 1과 같은 형식으로 추가 할 수 "
 "있습니다. 2."
@@ -28088,7 +28088,7 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Filter for debugging Transitions. Note: More filters can be added in the "
-"format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>."
+"format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>."
 msgstr ""
 "전환 디버깅을위한 필터. 참고 : 더 많은 필터를 1과 같은 형식으로 추가 할 수 있"
 "습니다. 2."
@@ -29741,7 +29741,7 @@ msgid "Merged Ticket (%s/%s) to (%s/%s)."
 msgstr "합쳐진 티켓 (%s/ %s) ~ (%s/ 1 % s)."
 
 #. SysConfig
-msgid "Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>."
+msgid "Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>."
 msgstr "Merged Ticket 1 to 2."
 
 #. SysConfig
@@ -32039,13 +32039,13 @@ msgstr "PGP 바이너리에 사용할 선호 다이제스트를 설정합니다.
 #. SysConfig
 msgid ""
 "Sets the prefix to the scripts folder on the server, as configured on the "
-"web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias "
+"web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias "
 "which is found in all forms of messaging used by the application, to build "
 "links to the tickets within the system."
 msgstr ""
 "접두어를 웹 서버에 구성된대로 서버의 scripts 폴더에 설정합니다. 이 설정은 응"
 "용 프로그램에서 사용하는 모든 형식의 메시징에서 발견되는 변수 인 "
-"OTOBO_CONFIG_ScriptAlias로 사용되어 시스템 내의 티켓에 대한 링크를 작성합니"
+"CareOnCloud_CONFIG_ScriptAlias로 사용되어 시스템 내의 티켓에 대한 링크를 작성합니"
 "다."
 
 #. SysConfig
@@ -33480,13 +33480,13 @@ msgid ""
 "Specifies the email address that should be used by the application when "
 "sending notifications. The email address is used to build the complete "
 "display name for the notification master (i.e. \"CareOnCloud ESM Notifications\" "
-"careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set "
+"careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set "
 "in your configuation, or choose another email address."
 msgstr ""
 "알림을 보낼 때 응용 프로그램에서 사용해야하는 전자 메일 주소를 지정합니다. 이"
 "메일 주소는 알림 마스터의 전체 표시 이름 (예 : \"CareOnCloud ESM "
 "Notifications\"careoncloud@your.example.com)을 작성하는 데 사용됩니다. "
-"OTOBO_CONFIG_FQDN 변수를 설정에 사용하거나 다른 이메일 주소를 선택할 수 있습"
+"CareOnCloud_CONFIG_FQDN 변수를 설정에 사용하거나 다른 이메일 주소를 선택할 수 있습"
 "니다."
 
 #. SysConfig
@@ -34699,16 +34699,16 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"Your email with ticket number \"<OTOBO_TICKET>\" is bounced to "
-"\"<OTOBO_BOUNCE_TO>\". Contact this address for further information."
+"Your email with ticket number \"<CareOnCloud_TICKET>\" is bounced to "
+"\"<CareOnCloud_BOUNCE_TO>\". Contact this address for further information."
 msgstr ""
 "티켓 번호가 \"1\"인 이메일은 \"2\"로 반송됩니다. 자세한 내용은이 주소로 문의"
 "하십시오."
 
 #. SysConfig
 msgid ""
-"Your email with ticket number \"<OTOBO_TICKET>\" is merged to "
-"\"<OTOBO_MERGE_TO_TICKET>\"."
+"Your email with ticket number \"<CareOnCloud_TICKET>\" is merged to "
+"\"<CareOnCloud_MERGE_TO_TICKET>\"."
 msgstr "티켓 번호가 \"1\"인 이메일은 \"2\"로 병합됩니다."
 
 #. SysConfig
@@ -35687,7 +35687,7 @@ msgstr "통계"
 #~ "settings or behavior, it will not change the method of access to the "
 #~ "application and, if it is wrong, it will not prevent you from logging "
 #~ "into the application. This setting is only used as a variable, "
-#~ "OTOBO_CONFIG_HttpType which is found in all forms of messaging used by "
+#~ "CareOnCloud_CONFIG_HttpType which is found in all forms of messaging used by "
 #~ "the application, to build links to the tickets within your system."
 #~ msgstr ""
 #~ "응용 프로그램을 제공하기 위해 웹 서버에서 사용하는 프로토콜 유형을 정의합"
@@ -35695,7 +35695,7 @@ msgstr "통계"
 #~ "다. 이것은 웹 서버의 설정이나 동작에 영향을 미치지 않으므로 응용 프로그램"
 #~ "에 대한 액세스 방법을 변경하지 않으며, 틀린 경우 응용 프로그램에 로그인하"
 #~ "지 못하게하지 않습니다. 이 설정은 응용 프로그램에서 사용하는 모든 형식의 "
-#~ "메시징에서 찾을 수있는 OTOBO_CONFIG_HttpType 변수로만 사용되어 시스템 내"
+#~ "메시징에서 찾을 수있는 CareOnCloud_CONFIG_HttpType 변수로만 사용되어 시스템 내"
 #~ "의 티켓에 대한 링크를 만듭니다."
 
 #~ msgid "Deploy and manage CareOnCloud ESM Business Solution™."

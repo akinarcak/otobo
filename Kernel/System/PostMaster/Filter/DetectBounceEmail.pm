@@ -47,8 +47,8 @@ sub new {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    # Ensure that the flag X-OTOBO-Bounce doesn't exist if we didn't analysed it yet.
-    delete $Param{GetParam}->{'X-OTOBO-Bounce'};
+    # Ensure that the flag X-CareOnCloud-Bounce doesn't exist if we didn't analysed it yet.
+    delete $Param{GetParam}->{'X-CareOnCloud-Bounce'};
 
     $Self->{CommunicationLogObject}->ObjectLog(
         ObjectLogType => 'Message',
@@ -71,10 +71,10 @@ sub Run {
 
     $MessageID = sprintf '<%s>', $MessageID;
 
-    $Param{GetParam}->{'X-OTOBO-Bounce'}                   = 1;
-    $Param{GetParam}->{'X-OTOBO-Bounce-OriginalMessageID'} = $MessageID;
-    $Param{GetParam}->{'X-OTOBO-Bounce-ErrorMessage'}      = $Param{GetParam}->{Body};
-    $Param{GetParam}->{'X-OTOBO-Loop'}                     = 1;
+    $Param{GetParam}->{'X-CareOnCloud-Bounce'}                   = 1;
+    $Param{GetParam}->{'X-CareOnCloud-Bounce-OriginalMessageID'} = $MessageID;
+    $Param{GetParam}->{'X-CareOnCloud-Bounce-ErrorMessage'}      = $Param{GetParam}->{Body};
+    $Param{GetParam}->{'X-CareOnCloud-Loop'}                     = 1;
 
     $Self->{CommunicationLogObject}->ObjectLog(
         ObjectLogType => 'Message',

@@ -110,7 +110,7 @@ $Selenium->RunTest(
         my $SignatureRandomID = "Signature" . $Helper->GetRandomID();
 
         # Also check leading and trailing white space.
-        my $SignatureRichText = "\n\nYour Ticket-Team \n\n<OTOBO_Owner_UserFirstname> <OTOBO_Owner_UserLastname>\n";
+        my $SignatureRichText = "\n\nYour Ticket-Team \n\n<CareOnCloud_Owner_UserFirstname> <CareOnCloud_Owner_UserLastname>\n";
         my $SignatureComment  = "Selenium Signature test";
 
         $Selenium->find_element( "#Name",     'css' )->send_keys($SignatureRandomID);
@@ -168,7 +168,7 @@ $Selenium->RunTest(
         }
 
         # Edit test Signature, clear comment and set it to invalid.
-        my $EditSignatureRichText = "Your Ticket-Team \n\n<OTOBO_Responsible_UserFirstname> <OTOBO_Responsible_UserLastname>";
+        my $EditSignatureRichText = "Your Ticket-Team \n\n<CareOnCloud_Responsible_UserFirstname> <CareOnCloud_Responsible_UserLastname>";
 
         $Selenium->find_element( "#RichText", 'css' )->clear();
         $Selenium->find_element( "#RichText", 'css' )->send_keys($EditSignatureRichText);

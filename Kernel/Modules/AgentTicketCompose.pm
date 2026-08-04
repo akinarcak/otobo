@@ -1018,10 +1018,10 @@ sub Run {
             return $Output;
         }
 
-        # replace <OTOBO_TICKET_STATE> with next ticket state name
+        # replace <CareOnCloud_TICKET_STATE> with next ticket state name
         if ( $StateData{Name} ) {
-            $GetParam{Body} =~ s/<OTOBO_TICKET_STATE>/$StateData{Name}/g;
-            $GetParam{Body} =~ s/&lt;OTOBO_TICKET_STATE&gt;/$StateData{Name}/g;
+            $GetParam{Body} =~ s/<CareOnCloud_TICKET_STATE>/$StateData{Name}/g;
+            $GetParam{Body} =~ s/&lt;CareOnCloud_TICKET_STATE&gt;/$StateData{Name}/g;
         }
 
         # get pre loaded attachments

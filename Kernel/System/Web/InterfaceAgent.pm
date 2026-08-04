@@ -709,7 +709,7 @@ sub _Content {
             my $Subject = $ConfigObject->Get('NotificationSubjectLostPasswordToken')
                 || 'ERROR: NotificationSubjectLostPasswordToken is missing!';
             for ( sort keys %UserData ) {
-                $Body =~ s/<OTOBO_$_>/$UserData{$_}/gi;
+                $Body =~ s/<CareOnCloud_$_>/$UserData{$_}/gi;
             }
             my $Sent = $EmailObject->Send(
                 To       => $UserData{UserEmail},
@@ -759,11 +759,11 @@ sub _Content {
 
         # send notify email
         my $Body = $ConfigObject->Get('NotificationBodyLostPassword')
-            || 'New Password is: <OTOBO_NEWPW>';
+            || 'New Password is: <CareOnCloud_NEWPW>';
         my $Subject = $ConfigObject->Get('NotificationSubjectLostPassword')
             || 'New Password!';
         for ( sort keys %UserData ) {
-            $Body =~ s/<OTOBO_$_>/$UserData{$_}/gi;
+            $Body =~ s/<CareOnCloud_$_>/$UserData{$_}/gi;
         }
         my $Sent = $EmailObject->Send(
             To       => $UserData{UserEmail},

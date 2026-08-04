@@ -302,12 +302,12 @@ sub _Replace {
     # replace the secret config options before the normal config options
     for my $SecretConfigOption (@SecretConfigOptions) {
 
-        my $Tag = $Start . 'OTOBO_CONFIG_' . $SecretConfigOption . $End;
+        my $Tag = $Start . 'CareOnCloud_CONFIG_' . $SecretConfigOption . $End;
         $Param{Text} =~ s{$Tag}{xxx}gx;
     }
 
     # replace config options
-    my $Tag = $Start . 'OTOBO_CONFIG_';
+    my $Tag = $Start . 'CareOnCloud_CONFIG_';
     $Param{Text} =~ s{$Tag(.+?)$End}{$ConfigObject->Get($1) // ''}egx;
 
     # cleanup
@@ -357,7 +357,7 @@ sub _Replace {
     # ------------------------------------------------------------ #
 
     # replace config options
-    $Tag = $Start . 'OTOBO_APPOINTMENT_';
+    $Tag = $Start . 'CareOnCloud_APPOINTMENT_';
 
     # replace appointment tags
     ATTRIBUTE:
@@ -553,7 +553,7 @@ sub _Replace {
     # ------------------------------------------------------------ #
 
     # replace config options
-    $Tag = $Start . 'OTOBO_CALENDAR_';
+    $Tag = $Start . 'CareOnCloud_CALENDAR_';
 
     # replace appointment tags
     ATTRIBUTE:
@@ -635,7 +635,7 @@ sub _Replace {
         my $Keys = join '|', map {quotemeta} grep { defined $H{$_} } keys %H;
 
         # Add all keys also as lowercase to be able to match case insensitive,
-        #   e. g. <OTOBO_CUSTOMER_From> and <OTOBO_CUSTOMER_FROM>.
+        #   e. g. <CareOnCloud_CUSTOMER_From> and <CareOnCloud_CUSTOMER_FROM>.
         for my $Key ( sort keys %H ) {
             $H{ lc $Key } = $H{$Key};
         }
@@ -643,11 +643,11 @@ sub _Replace {
         $Param{Text} =~ s/(?:$Tag)($Keys)$End/$H{ lc $1 }/ieg;
     };
 
-    # get recipient data and replace it with <OTOBO_...
-    $Tag = $Start . 'OTOBO_';
+    # get recipient data and replace it with <CareOnCloud_...
+    $Tag = $Start . 'CareOnCloud_';
 
-    # include more readable tag <OTOBO_NOTIFICATION_RECIPIENT
-    my $RecipientTag = $Start . 'OTOBO_NOTIFICATION_RECIPIENT_';
+    # include more readable tag <CareOnCloud_NOTIFICATION_RECIPIENT
+    my $RecipientTag = $Start . 'CareOnCloud_NOTIFICATION_RECIPIENT_';
 
     if (%Recipient) {
 

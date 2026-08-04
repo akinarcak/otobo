@@ -427,7 +427,7 @@ my @Tests = (
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientEmail =>
-                ["zz1test\@careoncloudexample.com, <OTOBO_TICKET_DynamicField_$FieldName[0]>, zz2test\@careoncloudexample.com;"],
+                ["zz1test\@careoncloudexample.com, <CareOnCloud_TICKET_DynamicField_$FieldName[0]>, zz2test\@careoncloudexample.com;"],
         },
         ExpectedResults => [
             {
@@ -449,7 +449,7 @@ my @Tests = (
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientEmail =>
-                ["zz1test\@careoncloudexample.com, <OTOBO_TICKET_DynamicField_$FieldName[1]>, zz2test\@careoncloudexample.com;"],
+                ["zz1test\@careoncloudexample.com, <CareOnCloud_TICKET_DynamicField_$FieldName[1]>, zz2test\@careoncloudexample.com;"],
         },
         ExpectedResults => [
             {
@@ -471,7 +471,7 @@ my @Tests = (
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientEmail =>
-                ["<OTOBO_TICKET_DynamicField_$FieldName[2]>"],
+                ["<CareOnCloud_TICKET_DynamicField_$FieldName[2]>"],
         },
         ExpectedResults => [
             {
@@ -517,7 +517,7 @@ for my $Test (@Tests) {
         Message => {
             en => {
                 Subject     => 'JobName',
-                Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+                Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
                 ContentType => 'text/plain',
             },
         },

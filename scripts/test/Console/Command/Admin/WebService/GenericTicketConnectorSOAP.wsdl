@@ -37,25 +37,25 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
                 </xsd:element>
                 <xsd:element
                     name="Ticket"
-                    type="tns:OTOBO_TicketCreate_Ticket"
+                    type="tns:CareOnCloud_TicketCreate_Ticket"
                     minOccurs="1"
                     maxOccurs="1">
                 </xsd:element>
                 <xsd:element
                     name="Article"
-                    type="tns:OTOBO_Article"
+                    type="tns:CareOnCloud_Article"
                     minOccurs="1"
                     maxOccurs="1">
                 </xsd:element>
                 <xsd:element
                     name="DynamicField"
-                    type="tns:OTOBO_DynamicField"
+                    type="tns:CareOnCloud_DynamicField"
                     minOccurs="0"
                     maxOccurs="unbounded">
                 </xsd:element>
                 <xsd:element
                     name="Attachment"
-                    type="tns:OTOBO_Attachment" minOccurs="0" maxOccurs="unbounded">
+                    type="tns:CareOnCloud_Attachment" minOccurs="0" maxOccurs="unbounded">
                 </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
@@ -82,12 +82,12 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
                 </xsd:element>
                 <xsd:element
                     name="Error"
-                    type="tns:OTOBO_Error" minOccurs="0" maxOccurs="1">
+                    type="tns:CareOnCloud_Error" minOccurs="0" maxOccurs="1">
                 </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    <xsd:complexType name="OTOBO_TicketCreate_Ticket">
+    <xsd:complexType name="CareOnCloud_TicketCreate_Ticket">
         <xsd:sequence>
             <xsd:element
                 name="Title"
@@ -252,12 +252,12 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
             </xsd:element>
             <xsd:element
                 name="PendingTime"
-                type="tns:OTOBO_PendingTime" minOccurs="0">
+                type="tns:CareOnCloud_PendingTime" minOccurs="0">
             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_PendingTime">
+    <xsd:complexType name="CareOnCloud_PendingTime">
         <xsd:choice>
             <xsd:sequence>
                 <xsd:element
@@ -288,7 +288,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:choice>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_Article">
+    <xsd:complexType name="CareOnCloud_Article">
         <xsd:sequence>
             <xsd:choice
                 maxOccurs="1"
@@ -408,7 +408,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_DynamicField">
+    <xsd:complexType name="CareOnCloud_DynamicField">
         <xsd:sequence>
             <xsd:element
                 name="Name"
@@ -423,7 +423,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_Attachment">
+    <xsd:complexType name="CareOnCloud_Attachment">
         <xsd:sequence>
             <xsd:element
                 name="Content"
@@ -446,7 +446,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_Error">
+    <xsd:complexType name="CareOnCloud_Error">
         <xsd:sequence>
             <xsd:element
                 name="ErrorCode"
@@ -508,23 +508,23 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
                 </xsd:choice>
                 <xsd:element
                     name="Ticket"
-                    type="tns:OTOBO_TicketUpdate_Ticket" minOccurs="0" maxOccurs="1">
+                    type="tns:CareOnCloud_TicketUpdate_Ticket" minOccurs="0" maxOccurs="1">
                 </xsd:element>
                 <xsd:element
                     name="Article"
-                    type="tns:OTOBO_Article"
+                    type="tns:CareOnCloud_Article"
                     maxOccurs="1"
                     minOccurs="0">
                 </xsd:element>
                 <xsd:element
                     name="DynamicField"
-                    type="tns:OTOBO_DynamicField"
+                    type="tns:CareOnCloud_DynamicField"
                     maxOccurs="unbounded"
                     minOccurs="0">
                 </xsd:element>
                 <xsd:element
                     name="Attachment"
-                    type="tns:OTOBO_Attachment"
+                    type="tns:CareOnCloud_Attachment"
                     maxOccurs="unbounded"
                     minOccurs="0">
                 </xsd:element>
@@ -552,13 +552,13 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
                 </xsd:element>
                 <xsd:element
                     name="Error"
-                    type="tns:OTOBO_Error" minOccurs="0">
+                    type="tns:CareOnCloud_Error" minOccurs="0">
                 </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:complexType name="OTOBO_TicketUpdate_Ticket">
+    <xsd:complexType name="CareOnCloud_TicketUpdate_Ticket">
         <xsd:sequence>
             <xsd:element
                 name="Title"
@@ -706,7 +706,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
             </xsd:element>
             <xsd:element
                 name="PendingTime"
-                type="tns:OTOBO_PendingTime"
+                type="tns:CareOnCloud_PendingTime"
                 minOccurs="0">
             </xsd:element>
         </xsd:sequence>
@@ -789,13 +789,13 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
             <xsd:sequence>
                 <xsd:element
                     name="Ticket"
-                    type="tns:OTOBO_TicketGetResponse_Ticket" maxOccurs="unbounded">
+                    type="tns:CareOnCloud_TicketGetResponse_Ticket" maxOccurs="unbounded">
                 </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:complexType name="OTOBO_TicketGetResponse_Ticket">
+    <xsd:complexType name="CareOnCloud_TicketGetResponse_Ticket">
         <xsd:sequence>
             <xsd:element
                 name="Age"
@@ -809,7 +809,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
             </xsd:element>
             <xsd:element
                 name="Article"
-                type="tns:OTOBO_TicketGetResponse_Article" minOccurs="0" maxOccurs="unbounded">
+                type="tns:CareOnCloud_TicketGetResponse_Article" minOccurs="0" maxOccurs="unbounded">
             </xsd:element>
             <xsd:element
                 name="ChangeBy"
@@ -849,7 +849,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
             </xsd:element>
             <xsd:element
                 name="DynamicField"
-                type="tns:OTOBO_DynamicField"
+                type="tns:CareOnCloud_DynamicField"
                 minOccurs="0" maxOccurs="unbounded">
             </xsd:element>
             <xsd:element
@@ -1176,7 +1176,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_TicketGetResponse_Article">
+    <xsd:complexType name="CareOnCloud_TicketGetResponse_Article">
         <xsd:sequence>
             <xsd:element
                 name="Age"
@@ -1205,7 +1205,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
             </xsd:element>
             <xsd:element
                 name="Attachment"
-                type="tns:OTOBO_TicketGetResponse_Attachment" maxOccurs="unbounded" minOccurs="0">
+                type="tns:CareOnCloud_TicketGetResponse_Attachment" maxOccurs="unbounded" minOccurs="0">
             </xsd:element>
             <xsd:element
                 name="Body"
@@ -1559,7 +1559,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_TicketGetResponse_Attachment">
+    <xsd:complexType name="CareOnCloud_TicketGetResponse_Attachment">
         <xsd:sequence>
             <xsd:element
                 name="Content"
@@ -1833,13 +1833,13 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
                 </xsd:element>
                 <xsd:element
                     name="DynamicFields"
-                    type="tns:OTOBO_TicketSearch_DynamicField"
+                    type="tns:CareOnCloud_TicketSearch_DynamicField"
                     minOccurs="0"
                     maxOccurs="unbounded">
                 </xsd:element>
                 <xsd:element
                     name="Ticketflag"
-                    type="tns:OTOBO_TicketSearch_TicketFlag" minOccurs="0">
+                    type="tns:CareOnCloud_TicketSearch_TicketFlag" minOccurs="0">
                 </xsd:element>
                 <xsd:element
                     name="MIMEBase_From"
@@ -2095,7 +2095,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:complexType>
     </xsd:element>
 
-    <xsd:complexType name="OTOBO_TicketSearch_DynamicField">
+    <xsd:complexType name="CareOnCloud_TicketSearch_DynamicField">
         <xsd:sequence>
             <xsd:choice minOccurs="1" maxOccurs="1">
                 <xsd:annotation>
@@ -2135,7 +2135,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="OTOBO_TicketSearch_TicketFlag">
+    <xsd:complexType name="CareOnCloud_TicketSearch_TicketFlag">
         <xsd:sequence>
                     <xsd:annotation>
                         <xsd:documentation>It should be possible to use other flags in future, rather than just 'Seen' </xsd:documentation>
@@ -2184,7 +2184,7 @@ WARNING: This WSDL file is for Development and Test purposes ONLY!
                 </xsd:element>
                 <xsd:element
                     name="Error"
-                    type="tns:OTOBO_Error"
+                    type="tns:CareOnCloud_Error"
                     maxOccurs="1"
                     minOccurs="0">
                 </xsd:element>

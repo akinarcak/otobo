@@ -89,7 +89,7 @@ $Self->True(
 
 my $TestAutoResponse = '<!DOCTYPE html><html>' .
     '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head>' .
-    '<body>&lt;OTOBO_CUSTOMER_EMAIL&gt;</body>' .
+    '<body>&lt;CareOnCloud_CUSTOMER_EMAIL&gt;</body>' .
     '</html>';
 
 # Create test auto response with tags.

@@ -162,8 +162,8 @@ TransitionActions:
         CommunicationChannel: Internal
         IsVisibleForCustomer: '1'
         Body: Dear ladies and gentelmen, the decission regarding your request for
-          room <OTOBO_TICKET_DynamicField_PreProcConferenceRoomNo_Value> was set to
-          <OTOBO_TICKET_DynamicField_PreProcReservationDecision_Value>. Kind Regards
+          room <CareOnCloud_TICKET_DynamicField_PreProcConferenceRoomNo_Value> was set to
+          <CareOnCloud_TICKET_DynamicField_PreProcReservationDecision_Value>. Kind Regards
           Your Office Management
         ContentType: text/plain; charset=ISO-8859-15
         From: Office Management

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Framework">
+<careoncloud_config version="2.0" init="Framework">
     <Setting Name="SecureMode" Required="1" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.</Description>
         <Navigation>Core</Navigation>
@@ -61,7 +61,7 @@
         </Value>
     </Setting>
     <Setting Name="FQDN" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.</Description>
+        <Description Translatable="1">Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">yourhost.example.com</Item>
@@ -92,7 +92,7 @@
         </Value>
     </Setting>
     <Setting Name="HttpType" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then 'http' must be specified here. The setting of 'HttpType' has no affect on the web server's settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping 'HttpType' set to 'https' is that the session management cookie will only be set for secure connections.</Description>
+        <Description Translatable="1">Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then 'http' must be specified here. The setting of 'HttpType' has no affect on the web server's settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping 'HttpType' set to 'https' is that the session management cookie will only be set for secure connections.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="https">
@@ -109,7 +109,7 @@
         </Value>
     </Setting>
     <Setting Name="ScriptAlias" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.</Description>
+        <Description Translatable="1">Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">careoncloud/</Item>
@@ -119,7 +119,7 @@
         <Description Translatable="1">Defines the system administrator's email address. It will be displayed in the error screens of the application.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">support@&lt;OTOBO_CONFIG_FQDN&gt;</Item>
+            <Item ValueType="String" ValueRegex="">support@&lt;CareOnCloud_CONFIG_FQDN&gt;</Item>
         </Value>
     </Setting>
     <Setting Name="Organization" Required="1" Valid="1">
@@ -465,21 +465,21 @@
         <Description Translatable="1">Defines the URL image path of icons for navigation.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;skins/Agent/default/img/</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;skins/Agent/default/img/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::CSSPath" Required="1" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Defines the URL CSS path.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;css/</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;css/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::JavaScriptPath" Required="1" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Defines the URL java script path.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;js/</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;js/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::DefaultInterface" Required="1" Valid="1" ConfigLevel="200">
@@ -504,7 +504,7 @@
         <Description Translatable="1">Defines the URL rich text editor path.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;js/thirdparty/ckeditor5-47.6.1/</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;js/thirdparty/ckeditor5-47.6.1/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::RichTextHeight" Required="1" Valid="1">
@@ -1100,7 +1100,7 @@
         </Value>
     </Setting>
     <Setting Name="SendmailModule" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the module to send emails. "DoNotSendEmail" doesn't send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn't send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.</Description>
+        <Description Translatable="1">Defines the module to send emails. "DoNotSendEmail" doesn't send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn't send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
             <Item ValueType="PerlModule" ValueFilter="Kernel/System/Email/*.pm">Kernel::System::Email::Sendmail</Item>
@@ -1513,7 +1513,7 @@
         <Description Translatable="1">If "FS" was selected for SessionModule, a directory where the session data will be stored must be specified.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/var/sessions</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/var/sessions</Item>
         </Value>
     </Setting>
     <Setting Name="SessionTable" Required="1" Valid="1">
@@ -3083,7 +3083,7 @@
         <Description Translatable="1">Specifies the path to the converter that allows the view of XML files, in the web interface.</Description>
         <Navigation>Frontend::Agent::MIMEViewer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/scripts/tools/xml2html.pl</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/scripts/tools/xml2html.pl</Item>
         </Value>
     </Setting>
     <Setting Name="WebUserAgent::Timeout" Required="1" Valid="1" ConfigLevel="200">
@@ -3241,7 +3241,7 @@
         <Navigation>Core::PDF</Navigation>
         <Value>
             <!-- the modifier 'i' is for ignoring case, works for both Perl and JavaScript regex -->
-            <Item ValueType="String" ValueRegex="\.(?i:gif|jpeg|jpg|png)$">&lt;OTOBO_CONFIG_Home&gt;/var/logo-careoncloud.png</Item>
+            <Item ValueType="String" ValueRegex="\.(?i:gif|jpeg|jpg|png)$">&lt;CareOnCloud_CONFIG_Home&gt;/var/logo-careoncloud.png</Item>
         </Value>
     </Setting>
     <Setting Name="PDF::PageSize" Required="1" Valid="1">
@@ -3478,10 +3478,10 @@
         </Value>
     </Setting>
     <Setting Name="NotificationSenderEmail" Required="1" Valid="1">
-        <Description Translatable="1">Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.</Description>
+        <Description Translatable="1">Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">esm@&lt;OTOBO_CONFIG_FQDN&gt;</Item>
+            <Item ValueType="String" ValueRegex="">esm@&lt;CareOnCloud_CONFIG_FQDN&gt;</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationSubjectLostPasswordToken" Required="1" Valid="1">
@@ -3495,14 +3495,14 @@
         <Description Translatable="1">Defines the body text for notification mails sent to agents, with token about new requested password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
 You or someone impersonating you has requested to change your CareOnCloud ESM
 password.
 
 If you want to do this, click on the link below. You will receive another email containing the password.
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;index.pl?Action=LostPassword;Token=&lt;OTOBO_TOKEN&gt;
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;index.pl?Action=LostPassword;Token=&lt;CareOnCloud_TOKEN&gt;
 
 If you did not request a new password, please ignore this email.
             </Item>
@@ -3519,16 +3519,16 @@ If you did not request a new password, please ignore this email.
         <Description Translatable="1">Defines the body text for notification mails sent to agents, about new password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
 
 Here's your new CareOnCloud ESM password.
 
-New password: &lt;OTOBO_NEWPW&gt;
+New password: &lt;CareOnCloud_NEWPW&gt;
 
 You can log in via the following URL:
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;index.pl
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;index.pl
             </Item>
         </Value>
     </Setting>
@@ -3593,7 +3593,7 @@ You can log in via the following URL:
         <Description Translatable="1">Specifies the path of the file for the performance log.</Description>
         <Navigation>Core::PerformanceLog</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/var/log/Performance.log</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/var/log/Performance.log</Item>
         </Value>
     </Setting>
     <Setting Name="PerformanceLog::FileMax" Required="1" Valid="1" ConfigLevel="200">
@@ -4129,14 +4129,14 @@ You can log in via the following URL:
         <Description Translatable="1">Defines the body text for notification mails sent to customers, with token about new requested password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
 You or someone impersonating you has requested to change your CareOnCloud ESM
 password.
 
 If you want to do this, click on this link. You will receive another email containing the password.
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerLostPassword;Token=&lt;OTOBO_TOKEN&gt;
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerLostPassword;Token=&lt;CareOnCloud_TOKEN&gt;
 
 If you did not request a new password, please ignore this email.
             </Item>
@@ -4153,12 +4153,12 @@ If you did not request a new password, please ignore this email.
         <Description Translatable="1">Defines the body text for notification mails sent to customers, about new password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
 
-New password: &lt;OTOBO_NEWPW&gt;
+New password: &lt;CareOnCloud_NEWPW&gt;
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl
             </Item>
         </Value>
     </Setting>
@@ -4173,19 +4173,19 @@ New password: &lt;OTOBO_NEWPW&gt;
         <Description Translatable="1">Defines the body text for notification mails sent to customers, about new account.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
 You or someone impersonating you has created a new CareOnCloud ESM account for
 you.
 
-Full name: &lt;OTOBO_USERFIRSTNAME&gt; &lt;OTOBO_USERLASTNAME&gt;
-User name: &lt;OTOBO_USERLOGIN&gt;
-Password : &lt;OTOBO_USERPASSWORD&gt;
+Full name: &lt;CareOnCloud_USERFIRSTNAME&gt; &lt;CareOnCloud_USERLASTNAME&gt;
+User name: &lt;CareOnCloud_USERLOGIN&gt;
+Password : &lt;CareOnCloud_USERPASSWORD&gt;
 
 You can log in via the following URL. We encourage you to change your password
 via the Preferences button after logging in.
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl
             </Item>
         </Value>
     </Setting>
@@ -7741,7 +7741,7 @@ via the Preferences button after logging in.
         <Value>
             <Hash>
                 <Item Key="LoginText" Translatable="1">Your tickets. Your CareOnCloud ESM.</Item>
-                <Item Key="Background">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;common/img/LoginBG.jpg</Item>
+                <Item Key="Background">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/LoginBG.jpg</Item>
             </Hash>
         </Value>
     </Setting>
@@ -7858,7 +7858,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
 
-    <!-- setup of the tiles, <OTOBO_CONFIG_SettingName> is replaced in the Config entry -->
+    <!-- setup of the tiles, <CareOnCloud_CONFIG_SettingName> is replaced in the Config entry -->
     <Setting Name="CustomerDashboard::Tiles###NewTicket" Required="0" Valid="1">
         <Description Translatable="1">Tile registration for the customer dashboard. Module is required.</Description>
         <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
@@ -7884,7 +7884,7 @@ via the Preferences button after logging in.
                 <Item Key="Config">
                     <Hash>
                         <Item Key="TextColor">#ffffff</Item>
-                        <Item Key="BackgroundImage">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/dashboard_bgfl.png</Item>
+                        <Item Key="BackgroundImage">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/dashboard_bgfl.png</Item>
                         <Item Key="HeaderText">CareOnCloud ESM | Service Management</Item>
                         <Item Key="MainText">CareOnCloud ESM brings service modelling, integration, system connectivity and administration together in one platform.</Item>
                         <Item Key="FooterText">Explore &gt;</Item>
@@ -7981,7 +7981,7 @@ via the Preferences button after logging in.
                     <Hash>
                         <Item Key="Text">Overview</Item>
                         <Item Key="TextColor">#00023c</Item>
-                        <Item Key="Image">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/Example.png</Item>
+                        <Item Key="Image">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/Example.png</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -8287,12 +8287,12 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="CustomerFrontend::FooterLinks" Required="0" Valid="0">
-        <Description Translatable="1">Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. &lt;OTOBO_CONFIG_HttpType&gt;, &lt;OTOBO_CONFIG_FQDN&gt; and &lt;OTOBO_CONFIG_ScriptAlias&gt; will be substituted.</Description>
+        <Description Translatable="1">Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. &lt;CareOnCloud_CONFIG_HttpType&gt;, &lt;CareOnCloud_CONFIG_FQDN&gt; and &lt;CareOnCloud_CONFIG_ScriptAlias&gt; will be substituted.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
             <Hash>
-                <Item Key="&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerGenericContent&amp;Key=About">About</Item>
-                <Item Key="&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerAccept&amp;Review=1">Privacy Policy</Item>
+                <Item Key="&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerGenericContent&amp;Key=About">About</Item>
+                <Item Key="&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerAccept&amp;Review=1">Privacy Policy</Item>
             </Hash>
         </Value>
     </Setting>
@@ -11111,4 +11111,4 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <!-- End Namespaces -->
-</otobo_config>
+</careoncloud_config>

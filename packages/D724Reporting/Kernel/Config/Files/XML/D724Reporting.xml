@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="D724::Reporting::Enabled" Required="1" Valid="1">
         <Description Translatable="1">Enables tenant-safe operational reporting and export.</Description>
         <Navigation>Core::D724::Reporting</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
@@ -14,4 +14,4 @@
     </Setting>
     <Setting Name="Frontend::Module###AgentD724Operations" Required="0" Valid="1"><Description Translatable="1">Tenant-authorized CareOnCloud operations dashboard.</Description><Navigation>Frontend::Agent::ModuleRegistration</Navigation><Value><Item ValueType="FrontendRegistration"><Hash><Item Key="Group"><Array></Array></Item><Item Key="GroupRo"><Array></Array></Item><Item Key="Description" Translatable="1">Management summary for requests, demand and SLA health.</Item><Item Key="NavBarName">D724Operations</Item><Item Key="Title" Translatable="1">Operations Center</Item></Hash></Item></Value></Setting>
     <Setting Name="Frontend::Navigation###AgentD724Operations###001-D724" Required="0" Valid="1"><Description Translatable="1">CareOnCloud operations center main menu.</Description><Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation><Value><Array><DefaultItem ValueType="FrontendNavigation"><Hash></Hash></DefaultItem><Item><Hash><Item Key="Group"><Array></Array></Item><Item Key="GroupRo"><Array></Array></Item><Item Key="Description" Translatable="1">View tenant-scoped operational KPIs.</Item><Item Key="Name" Translatable="1">Operations Center</Item><Item Key="Link">Action=AgentD724Operations</Item><Item Key="LinkOption"></Item><Item Key="NavBar">D724Operations</Item><Item Key="Type">Menu</Item><Item Key="Block"></Item><Item Key="AccessKey">o</Item><Item Key="Prio">80</Item></Hash></Item></Array></Value></Setting>
-</otobo_config>
+</careoncloud_config>

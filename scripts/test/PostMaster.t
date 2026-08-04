@@ -120,22 +120,22 @@ for my $FieldName ( sort @NeededDynamicfields ) {
 }
 
 my %NeededXHeaders = (
-    'X-OTOBO-DynamicField-TicketFreeKey1'  => 1,
-    'X-OTOBO-DynamicField-TicketFreeText1' => 1,
-    'X-OTOBO-DynamicField-TicketFreeKey2'  => 1,
-    'X-OTOBO-DynamicField-TicketFreeText2' => 1,
-    'X-OTOBO-DynamicField-TicketFreeKey3'  => 1,
-    'X-OTOBO-DynamicField-TicketFreeText3' => 1,
-    'X-OTOBO-DynamicField-TicketFreeTime1' => 1,
-    'X-OTOBO-DynamicField-TicketFreeTime2' => 1,
-    'X-OTOBO-DynamicField-TicketFreeTime3' => 1,
-    'X-OTOBO-DynamicField-TicketFreeTime4' => 1,
-    'X-OTOBO-DynamicField-TicketFreeTime5' => 1,
-    'X-OTOBO-DynamicField-TicketFreeTime6' => 1,
-    'X-OTOBO-Owner'                        => 1,
-    'X-OTOBO-OwnerID'                      => 1,
-    'X-OTOBO-Responsible'                  => 1,
-    'X-OTOBO-ResponsibleID'                => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeKey1'  => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeText1' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeKey2'  => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeText2' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeKey3'  => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeText3' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeTime1' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeTime2' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeTime3' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeTime4' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeTime5' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeTime6' => 1,
+    'X-CareOnCloud-Owner'                        => 1,
+    'X-CareOnCloud-OwnerID'                      => 1,
+    'X-CareOnCloud-Responsible'                  => 1,
+    'X-CareOnCloud-ResponsibleID'                => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -221,15 +221,15 @@ for my $TicketSubjectConfig ( 'Right', 'Left' ) {
                     ],
                     Set => [
                         {
-                            Key   => 'X-OTOBO-DynamicField-TicketFreeKey1',
+                            Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey1',
                             Value => 'Key1',
                         },
                         {
-                            Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                            Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                             Value => 'Text1',
                         },
                         {
-                            Key   => 'X-OTOBO-Queue',
+                            Key   => 'X-CareOnCloud-Queue',
                             Value => 'Misc',
                         },
                     ],
@@ -260,11 +260,11 @@ for my $TicketSubjectConfig ( 'Right', 'Left' ) {
                     ],
                     Set => [
                         {
-                            Key   => 'X-OTOBO-DynamicField-TicketFreeKey2',
+                            Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey2',
                             Value => 'Key2',
                         },
                         {
-                            Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                            Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                             Value => 'Text2',
                         },
                     ],
@@ -295,11 +295,11 @@ for my $TicketSubjectConfig ( 'Right', 'Left' ) {
                     ],
                     Set => [
                         {
-                            Key   => 'X-OTOBO-DynamicField-TicketFreeKey3',
+                            Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey3',
                             Value => 'Key3',
                         },
                         {
-                            Key   => 'X-OTOBO-DynamicField-TicketFreeText3',
+                            Key   => 'X-CareOnCloud-DynamicField-TicketFreeText3',
                             Value => '³ - U+000B3 - SUPERSCRIPT THREE, ٣ - U+00663 - ARABIC-INDIC DIGIT THREE',
                         },
                     ],
@@ -330,7 +330,7 @@ for my $TicketSubjectConfig ( 'Right', 'Left' ) {
                     ],
                     Set => [
                         {
-                            Key   => 'X-OTOBO-Ignore',
+                            Key   => 'X-CareOnCloud-Ignore',
                             Value => 'yes',
                         },
                     ],
@@ -887,23 +887,23 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-Queue',
+                    Key   => 'X-CareOnCloud-Queue',
                     Value => 'Misc',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey1',
                     Value => 'Key1',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                     Value => 'Text1',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey3',
                     Value => 'Key3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText3',
                     Value => 'Text3',
                 },
             ],
@@ -917,23 +917,23 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-Queue',
+                    Key   => 'X-CareOnCloud-Queue',
                     Value => 'Misc',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey1',
                     Value => 'Key1',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                     Value => 'Text1',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey3',
                     Value => 'Key3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText3',
                     Value => 'Text3',
                 },
             ],
@@ -956,23 +956,23 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-Queue',
+                    Key   => 'X-CareOnCloud-Queue',
                     Value => 'Misc',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey1',
                     Value => 'Key1#2',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                     Value => 'Text1#2',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey4',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey4',
                     Value => 'Key4#2',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText4',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText4',
                     Value => 'Text4#2',
                 },
             ],
@@ -986,23 +986,23 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-Queue',
+                    Key   => 'X-CareOnCloud-Queue',
                     Value => 'Misc',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey1',
                     Value => 'Key1#2',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                     Value => 'Text1#2',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey4',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey4',
                     Value => 'Key4#2',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText4',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText4',
                     Value => 'Text4#2',
                 },
             ],
@@ -1020,23 +1020,23 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-Queue',
+                    Key   => 'X-CareOnCloud-Queue',
                     Value => 'Misc',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey1',
                     Value => 'Key1#3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                     Value => 'Text1#3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey3',
                     Value => 'Key3#3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText3',
                     Value => 'Text3#3',
                 },
             ],
@@ -1050,23 +1050,23 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-Queue',
+                    Key   => 'X-CareOnCloud-Queue',
                     Value => 'Misc',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey1',
                     Value => 'Key1#3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                     Value => 'Text1#3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey3',
                     Value => 'Key3#3',
                 },
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeText3',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeText3',
                     Value => 'Text3#3',
                 },
             ],
@@ -1087,7 +1087,7 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey4',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey4',
                     Value => '[***]',
                 },
             ],
@@ -1101,7 +1101,7 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey4',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey4',
                     Value => '[***]',
                 },
             ],
@@ -1122,7 +1122,7 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey5',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey5',
                     Value => '[***]',
                 },
             ],
@@ -1136,7 +1136,7 @@ my @Tests = (
             ],
             Set => [
                 {
-                    Key   => 'X-OTOBO-DynamicField-TicketFreeKey5',
+                    Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey5',
                     Value => '[***]',
                 },
             ],
@@ -1260,15 +1260,15 @@ Some Content in Body
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-Queue',
+                Key   => 'X-CareOnCloud-Queue',
                 Value => 'Junk',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeKey5',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey5',
                 Value => 'Key5#1',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText5',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText5',
                 Value => 'Text5#1',
             },
         ],
@@ -1296,15 +1296,15 @@ Some Content in Body
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-Queue',
+                Key   => 'X-CareOnCloud-Queue',
                 Value => 'Misc',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeKey6',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeKey6',
                 Value => 'Key6#1',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText6',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText6',
                 Value => 'Text6#1',
             },
         ],
@@ -1328,9 +1328,9 @@ Some Content in Body
             'X-Envelope-To' => 'xenvelopeto@example.com'
         },
         Set => {
-            'X-OTOBO-Queue'                        => 'Misc',
-            'X-OTOBO-DynamicField-TicketFreeKey6'  => 'Key6#1',
-            'X-OTOBO-DynamicField-TicketFreeText6' => 'Text6#1',
+            'X-CareOnCloud-Queue'                        => 'Misc',
+            'X-CareOnCloud-DynamicField-TicketFreeKey6'  => 'Key6#1',
+            'X-CareOnCloud-DynamicField-TicketFreeText6' => 'Text6#1',
         },
         Check => {
             Queue                        => 'Misc',
@@ -1358,7 +1358,7 @@ Some Content in Body
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-Ignore',
+                Key   => 'X-CareOnCloud-Ignore',
                 Value => 'yes',
             }
         ],
@@ -1382,7 +1382,7 @@ Some Content in Body
             'X-Envelope-To' => 'xenvelopeto@example.com'
         },
         Set => {
-            'X-OTOBO-Ignore' => 'yes',
+            'X-CareOnCloud-Ignore' => 'yes',
         },
         Check => {
             ReturnCode => 5,
@@ -1404,7 +1404,7 @@ Some Content in Body
     #         CMD => 'echo "SPAM"',
     #         Set => [
     #             {
-    #                 Key   => 'X-OTOBO-Ignore',
+    #                 Key   => 'X-CareOnCloud-Ignore',
     #                 Value => 'yes',
     #             }
     #         ],
@@ -1425,7 +1425,7 @@ Some Content in Body
     #         Module => 'Kernel::System::PostMaster::Filter::CMD',
     #         CMD => 'echo "SPAM"',
     #         Set => {
-    #             'X-OTOBO-Ignore' => 'yes',
+    #             'X-CareOnCloud-Ignore' => 'yes',
     #         },
     #         Check => {
     #             ReturnCode => 5,
@@ -1478,7 +1478,7 @@ for my $Test (@Tests) {
 
         my %LookupRejectReturnCode = (
             4 => 1,    # follow up / close -> reject
-            5 => 1,    # ignored (because of X-OTOBO-Ignore header)
+            5 => 1,    # ignored (because of X-CareOnCloud-Ignore header)
         );
 
         if ( !$Test->{Check}->{ReturnCode} || !$LookupRejectReturnCode{ $Test->{Check}->{ReturnCode} } ) {
@@ -1561,7 +1561,7 @@ for my $DynamicFieldID (@DynamicfieldIDs) {
     );
 }
 
-# test X-OTOBO-(Owner|Responsible)
+# test X-CareOnCloud-(Owner|Responsible)
 my ( $Login, $UserID ) = $Helper->TestUserCreate();
 
 my %OwnerResponsibleTests = (
@@ -1603,8 +1603,8 @@ for my $Test ( sort keys %OwnerResponsibleTests ) {
     );
 
     for my $Line ( @{$ContentRef} ) {
-        $Line =~ s{ ^ (X-OTOBO-(?:Owner|Responsible):) .*? $ }{$1$Login}x;
-        $Line =~ s{ ^ (X-OTOBO-(?:Owner|Responsible)ID:) .*? $ }{$1$UserID}x;
+        $Line =~ s{ ^ (X-CareOnCloud-(?:Owner|Responsible):) .*? $ }{$1$Login}x;
+        $Line =~ s{ ^ (X-CareOnCloud-(?:Owner|Responsible)ID:) .*? $ }{$1$UserID}x;
     }
 
     my $PostMasterObject = Kernel::System::PostMaster->new(

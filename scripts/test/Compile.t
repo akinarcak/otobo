@@ -144,7 +144,7 @@ note('check syntax of some shell scripts');
     # grab scripts in bin/docker and bin/devel
     my @ShellScripts = glob 'bin/*/*.sh';
 
-    if ( !$ENV{OTOBO_RUNS_UNDER_DOCKER} ) {
+    if ( !$ENV{CareOnCloud_RUNS_UNDER_DOCKER} ) {
         push @ShellScripts, 'bin/Cron.sh';
     }
 

@@ -6487,8 +6487,8 @@ sub TicketMerge {
 
     my $Body = $ConfigObject->Get('Ticket::Frontend::AutomaticMergeText');
     $Body = $LanguageObject->Translate($Body);
-    $Body =~ s{<OTOBO_TICKET>}{$MergeTicket{TicketNumber}}xms;
-    $Body =~ s{<OTOBO_MERGE_TO_TICKET>}{$MainTicket{TicketNumber}}xms;
+    $Body =~ s{<CareOnCloud_TICKET>}{$MergeTicket{TicketNumber}}xms;
+    $Body =~ s{<CareOnCloud_MERGE_TO_TICKET>}{$MainTicket{TicketNumber}}xms;
 
     my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
 

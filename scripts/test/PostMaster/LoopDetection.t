@@ -48,7 +48,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => '',
+            'X-CareOnCloud-Loop' => '',
         },
     },
     {
@@ -63,7 +63,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -78,7 +78,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -93,22 +93,22 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
-        Name  => 'X-OTOBO-Loop',
+        Name  => 'X-CareOnCloud-Loop',
         Email =>
             'From: test@home.com
 To: test@home.com
-X-OTOBO-Loop: yes
+X-CareOnCloud-Loop: yes
 Subject: Testmail
 
 Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -123,7 +123,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -138,7 +138,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -153,7 +153,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => '',
+            'X-CareOnCloud-Loop' => '',
         },
     },
 );

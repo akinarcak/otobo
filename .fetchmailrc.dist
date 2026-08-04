@@ -18,13 +18,13 @@
 # simple example:
 #-----------------#
 
-#poll <MAIL_SERVER> protocol POP3 user <MAIL_USERNAME> pass <MAIL_PASSWORD> is <LOCAL_OTOBO_USERNAME> here
+#poll <MAIL_SERVER> protocol POP3 user <MAIL_USERNAME> pass <MAIL_PASSWORD> is <LOCAL_CareOnCloud_USERNAME> here
 
 #-------------------------------------------------#
 # example for polling from an IMAP-Server via SSL.
 #-------------------------------------------------#
 
-#poll <MAIL_SERVER> protocol IMAP port 993 plugin "openssl s_client -connect %h:%p" user <MAIL_USERNAME> pass <MAIL_PASSWORD> is <LOCAL_OTOBO_USERNAME> here
+#poll <MAIL_SERVER> protocol IMAP port 993 plugin "openssl s_client -connect %h:%p" user <MAIL_USERNAME> pass <MAIL_PASSWORD> is <LOCAL_CareOnCloud_USERNAME> here
 
 #--------------------------------------------------------#
 # The openssl command has to be installed and accessible

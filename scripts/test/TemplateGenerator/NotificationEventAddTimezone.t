@@ -228,12 +228,12 @@ my $DynamicFieldConfig = $DynamicFieldObject->DynamicFieldGet(
 );
 
 my $NotificationBody =
-    "TicketID: <OTOBO_TICKET_TicketID>\n" .
-    "OTOBO_TICKET_DynamicField: <OTOBO_TICKET_DynamicField_$DynamicFieldName>\n" .
-    "OTOBO_TICKET_DynamicField_Value: <OTOBO_TICKET_DynamicField_${DynamicFieldName}_Value>\n" .
-    "EscalationDestinationDate: <OTOBO_TICKET_EscalationDestinationDate>\n" .
-    "FirstResponseTimeDestinationDate: <OTOBO_TICKET_FirstResponseTimeDestinationDate>\n" .
-    "SolutionTimeDestinationDate: <OTOBO_TICKET_SolutionTimeDestinationDate>";
+    "TicketID: <CareOnCloud_TICKET_TicketID>\n" .
+    "CareOnCloud_TICKET_DynamicField: <CareOnCloud_TICKET_DynamicField_$DynamicFieldName>\n" .
+    "CareOnCloud_TICKET_DynamicField_Value: <CareOnCloud_TICKET_DynamicField_${DynamicFieldName}_Value>\n" .
+    "EscalationDestinationDate: <CareOnCloud_TICKET_EscalationDestinationDate>\n" .
+    "FirstResponseTimeDestinationDate: <CareOnCloud_TICKET_FirstResponseTimeDestinationDate>\n" .
+    "SolutionTimeDestinationDate: <CareOnCloud_TICKET_SolutionTimeDestinationDate>";
 
 my %Notification = (
     en => {
@@ -329,24 +329,24 @@ my @Tests = (
         Result      => {
             $TestUserData{UserEmail} => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 15:00:00 ($TimezoneEN)",
-                OTOBO_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($TimezoneEN)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 15:00:00 ($TimezoneEN)",
+                CareOnCloud_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($TimezoneEN)",
                 EscalationDestinationDate        => "12/06/2018 12:10 ($TimezoneEN)",
                 FirstResponseTimeDestinationDate => "12/06/2018 12:10 ($TimezoneEN)",
                 SolutionTimeDestinationDate      => "12/06/2018 12:40 ($TimezoneEN)",
             },
             $TestCustomerUserData{UserEmail} => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 15:00:00 ($TimezoneEN)",
-                OTOBO_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($TimezoneEN)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 15:00:00 ($TimezoneEN)",
+                CareOnCloud_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($TimezoneEN)",
                 EscalationDestinationDate        => "12/06/2018 12:10 ($TimezoneEN)",
                 FirstResponseTimeDestinationDate => "12/06/2018 12:10 ($TimezoneEN)",
                 SolutionTimeDestinationDate      => "12/06/2018 12:40 ($TimezoneEN)",
             },
             $AdditionalRecipientEmailAddress => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 15:00:00 ($SystemTimezone)",
-                OTOBO_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($SystemTimezone)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 15:00:00 ($SystemTimezone)",
+                CareOnCloud_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($SystemTimezone)",
                 EscalationDestinationDate        => "12/06/2018 12:10 ($SystemTimezone)",
                 FirstResponseTimeDestinationDate => "12/06/2018 12:10 ($SystemTimezone)",
                 SolutionTimeDestinationDate      => "12/06/2018 12:40 ($SystemTimezone)",
@@ -360,24 +360,24 @@ my @Tests = (
         Result      => {
             $TestUserData{UserEmail} => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 16:00:00 ($TimezoneDE)",
-                OTOBO_TICKET_DynamicField_Value  => "07.12.2018 16:00 ($TimezoneDE)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 16:00:00 ($TimezoneDE)",
+                CareOnCloud_TICKET_DynamicField_Value  => "07.12.2018 16:00 ($TimezoneDE)",
                 EscalationDestinationDate        => "06.12.2018 13:10 ($TimezoneDE)",
                 FirstResponseTimeDestinationDate => "06.12.2018 13:10 ($TimezoneDE)",
                 SolutionTimeDestinationDate      => "06.12.2018 13:40 ($TimezoneDE)",
             },
             $TestCustomerUserData{UserEmail} => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 16:00:00 ($TimezoneDE)",
-                OTOBO_TICKET_DynamicField_Value  => "07.12.2018 16:00 ($TimezoneDE)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 16:00:00 ($TimezoneDE)",
+                CareOnCloud_TICKET_DynamicField_Value  => "07.12.2018 16:00 ($TimezoneDE)",
                 EscalationDestinationDate        => "06.12.2018 13:10 ($TimezoneDE)",
                 FirstResponseTimeDestinationDate => "06.12.2018 13:10 ($TimezoneDE)",
                 SolutionTimeDestinationDate      => "06.12.2018 13:40 ($TimezoneDE)",
             },
             $AdditionalRecipientEmailAddress => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 15:00:00 ($SystemTimezone)",
-                OTOBO_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($SystemTimezone)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 15:00:00 ($SystemTimezone)",
+                CareOnCloud_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($SystemTimezone)",
                 EscalationDestinationDate        => "12/06/2018 12:10 ($SystemTimezone)",
                 FirstResponseTimeDestinationDate => "12/06/2018 12:10 ($SystemTimezone)",
                 SolutionTimeDestinationDate      => "12/06/2018 12:40 ($SystemTimezone)",
@@ -391,24 +391,24 @@ my @Tests = (
         Result      => {
             $TestUserData{UserEmail} => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 09:00:00 ($TimezoneES)",
-                OTOBO_TICKET_DynamicField_Value  => "07/12/2018 - 09:00 ($TimezoneES)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 09:00:00 ($TimezoneES)",
+                CareOnCloud_TICKET_DynamicField_Value  => "07/12/2018 - 09:00 ($TimezoneES)",
                 EscalationDestinationDate        => "06/12/2018 - 06:10 ($TimezoneES)",
                 FirstResponseTimeDestinationDate => "06/12/2018 - 06:10 ($TimezoneES)",
                 SolutionTimeDestinationDate      => "06/12/2018 - 06:40 ($TimezoneES)",
             },
             $TestCustomerUserData{UserEmail} => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 09:00:00 ($TimezoneES)",
-                OTOBO_TICKET_DynamicField_Value  => "07/12/2018 - 09:00 ($TimezoneES)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 09:00:00 ($TimezoneES)",
+                CareOnCloud_TICKET_DynamicField_Value  => "07/12/2018 - 09:00 ($TimezoneES)",
                 EscalationDestinationDate        => "06/12/2018 - 06:10 ($TimezoneES)",
                 FirstResponseTimeDestinationDate => "06/12/2018 - 06:10 ($TimezoneES)",
                 SolutionTimeDestinationDate      => "06/12/2018 - 06:40 ($TimezoneES)",
             },
             $AdditionalRecipientEmailAddress => {
                 TicketID                         => $TicketID,
-                OTOBO_TICKET_DynamicField        => "2018-12-07 15:00:00 ($SystemTimezone)",
-                OTOBO_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($SystemTimezone)",
+                CareOnCloud_TICKET_DynamicField        => "2018-12-07 15:00:00 ($SystemTimezone)",
+                CareOnCloud_TICKET_DynamicField_Value  => "12/07/2018 15:00 ($SystemTimezone)",
                 EscalationDestinationDate        => "12/06/2018 12:10 ($SystemTimezone)",
                 FirstResponseTimeDestinationDate => "12/06/2018 12:10 ($SystemTimezone)",
                 SolutionTimeDestinationDate      => "12/06/2018 12:40 ($SystemTimezone)",

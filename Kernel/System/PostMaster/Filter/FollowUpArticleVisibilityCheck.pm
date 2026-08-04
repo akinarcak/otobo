@@ -66,8 +66,8 @@ sub Run {
     #   automatic notifications. In these cases there is no need to hide them.
     #   See also bug#10182 for details.
     if (
-        !$Param{GetParam}->{'X-OTOBO-FollowUp-SenderType'}
-        || $Param{GetParam}->{'X-OTOBO-FollowUp-SenderType'} ne 'customer'
+        !$Param{GetParam}->{'X-CareOnCloud-FollowUp-SenderType'}
+        || $Param{GetParam}->{'X-CareOnCloud-FollowUp-SenderType'} ne 'customer'
         )
     {
         return 1;
@@ -161,8 +161,8 @@ sub Run {
 
     return 1 if !$IsInternalForward;
 
-    $Param{GetParam}->{'X-OTOBO-FollowUp-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer} // 0;
-    $Param{GetParam}->{'X-OTOBO-FollowUp-SenderType'}           = $Param{JobConfig}->{SenderType} || 'customer';
+    $Param{GetParam}->{'X-CareOnCloud-FollowUp-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer} // 0;
+    $Param{GetParam}->{'X-CareOnCloud-FollowUp-SenderType'}           = $Param{JobConfig}->{SenderType} || 'customer';
 
     return 1;
 }

@@ -46,9 +46,9 @@ sub new {
 
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  => "Can't write $Self->{DataDir}! try: \$OTOBO_HOME/bin/careoncloud.SetPermissions.pl!",
+            Message  => "Can't write $Self->{DataDir}! try: \$CareOnCloud_HOME/bin/careoncloud.SetPermissions.pl!",
         );
-        die "Can't write $Self->{DataDir}! try: \$OTOBO_HOME/bin/careoncloud.SetPermissions.pl!";
+        die "Can't write $Self->{DataDir}! try: \$CareOnCloud_HOME/bin/careoncloud.SetPermissions.pl!";
     }
 
     # config (not used right now)

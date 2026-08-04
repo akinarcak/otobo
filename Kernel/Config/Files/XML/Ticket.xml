@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="Ticket::Hook" Required="1" Valid="1">
         <Description Translatable="1">The identifier for a ticket, e.g. Ticket#, Call#, MyTicket#. The default is Ticket#.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -227,7 +227,7 @@
         <Description Translatable="1">Specifies the directory to store the data in, if "FS" was selected for ArticleStorage.</Description>
         <Navigation>Core::CommunicationChannel::MIMEBase</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/var/article</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/var/article</Item>
         </Value>
     </Setting>
     <Setting Name="Ticket::Article::Backend::MIMEBase::IndexAttachmentNames" Required="1" Valid="1" ConfigLevel="200">
@@ -4906,7 +4906,7 @@
         <Description Translatable="1">Defines the default ticket bounced notification for customer/sender in the ticket bounce screen of the agent interface.</Description>
         <Navigation>Frontend::Agent::View::TicketBounce</Navigation>
         <Value>
-            <Item ValueType="Textarea" Translatable="1">Your email with ticket number "&lt;OTOBO_TICKET&gt;" is bounced to "&lt;OTOBO_BOUNCE_TO&gt;". Contact this address for further information.</Item>
+            <Item ValueType="Textarea" Translatable="1">Your email with ticket number "&lt;CareOnCloud_TICKET&gt;" is bounced to "&lt;CareOnCloud_BOUNCE_TO&gt;". Contact this address for further information.</Item>
         </Value>
     </Setting>
     <Setting Name="Ticket::Frontend::AgentTicketCompose###Permission" Required="1" Valid="1">
@@ -5461,7 +5461,7 @@
         <Description Translatable="1">When tickets are merged, the customer can be informed per email by setting the check box "Inform Sender". In this text area, you can define a pre-formatted text which can later be modified by the agents.</Description>
         <Navigation>Frontend::Agent::View::TicketMerge</Navigation>
         <Value>
-            <Item ValueType="Textarea" Translatable="1">Your email with ticket number "&lt;OTOBO_TICKET&gt;" is merged to "&lt;OTOBO_MERGE_TO_TICKET&gt;".</Item>
+            <Item ValueType="Textarea" Translatable="1">Your email with ticket number "&lt;CareOnCloud_TICKET&gt;" is merged to "&lt;CareOnCloud_MERGE_TO_TICKET&gt;".</Item>
         </Value>
     </Setting>
     <Setting Name="Ticket::Frontend::AutomaticMergeSubject" Required="1" Valid="1">
@@ -5475,7 +5475,7 @@
         <Description Translatable="1">When tickets are merged, a note will be added automatically to the ticket which is no longer active. Here you can define the body of this note (this text cannot be changed by the agent).</Description>
         <Navigation>Frontend::Agent::View::TicketMerge</Navigation>
         <Value>
-            <Item ValueType="Textarea" Translatable="1">Merged Ticket &lt;OTOBO_TICKET&gt; to &lt;OTOBO_MERGE_TO_TICKET&gt;.</Item>
+            <Item ValueType="Textarea" Translatable="1">Merged Ticket &lt;CareOnCloud_TICKET&gt; to &lt;CareOnCloud_MERGE_TO_TICKET&gt;.</Item>
         </Value>
     </Setting>
     <Setting Name="Ticket::ViewableSenderTypes" Required="1" Valid="1">
@@ -12528,12 +12528,12 @@
         </Value>
     </Setting>
     <Setting Name="TicketACL::Debug::Filter###00-Default" Required="0" Valid="0">
-        <Description Translatable="1">Filter for debugging ACLs. Note: More ticket attributes can be added in the format &lt;OTOBO_TICKET_Attribute&gt; e.g. &lt;OTOBO_TICKET_Priority&gt;.</Description>
+        <Description Translatable="1">Filter for debugging ACLs. Note: More ticket attributes can be added in the format &lt;CareOnCloud_TICKET_Attribute&gt; e.g. &lt;CareOnCloud_TICKET_Priority&gt;.</Description>
         <Navigation>Core::Ticket::ACL</Navigation>
         <Value>
             <Hash>
                 <Item Key="ACLName"></Item>
-                <Item Key="&lt;OTOBO_TICKET_TicketNumber&gt;"></Item>
+                <Item Key="&lt;CareOnCloud_TICKET_TicketNumber&gt;"></Item>
             </Hash>
         </Value>
     </Setting>
@@ -12577,7 +12577,7 @@
         <Description Translatable="1">Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).</Description>
         <Navigation>Core::Email::PostMaster</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/var/log/LoopProtection</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/var/log/LoopProtection</Item>
         </Value>
     </Setting>
     <Setting Name="PostmasterAutoHTML2Text" Required="1" Valid="1">
@@ -12633,7 +12633,7 @@
         <Description Translatable="1">Defines the PostMaster header to be used on the filter for keeping the current state of the ticket.</Description>
         <Navigation>Core::Email::PostMaster</Navigation>
         <Value>
-            <Item ValueType="String">X-OTOBO-FollowUp-State-Keep</Item>
+            <Item ValueType="String">X-CareOnCloud-FollowUp-State-Keep</Item>
         </Value>
     </Setting>
     <Setting Name="PostmasterFollowUpOnUnlockAgentNotifyOnlyToOwner" Required="1" Valid="1">
@@ -12697,45 +12697,45 @@
                 <Item>Envelope-To</Item>
                 <Item>X-Envelope-To</Item>
                 <Item>Return-Path</Item>
-                <Item>X-OTOBO-AttachmentExists</Item>
-                <Item>X-OTOBO-AttachmentCount</Item>
-                <Item>X-OTOBO-Owner</Item>
-                <Item>X-OTOBO-OwnerID</Item>
-                <Item>X-OTOBO-Responsible</Item>
-                <Item>X-OTOBO-ResponsibleID</Item>
-                <Item>X-OTOBO-Loop</Item>
-                <Item>X-OTOBO-Priority</Item>
-                <Item>X-OTOBO-Queue</Item>
-                <Item>X-OTOBO-Lock</Item>
-                <Item>X-OTOBO-Ignore</Item>
-                <Item>X-OTOBO-State</Item>
-                <Item>X-OTOBO-State-PendingTime</Item>
-                <Item>X-OTOBO-Type</Item>
-                <Item>X-OTOBO-Service</Item>
-                <Item>X-OTOBO-SLA</Item>
-                <Item>X-OTOBO-Title</Item>
-                <Item>X-OTOBO-From</Item>
-                <Item>X-OTOBO-CustomerNo</Item>
-                <Item>X-OTOBO-CustomerUser</Item>
-                <Item>X-OTOBO-SenderType</Item>
-                <Item>X-OTOBO-IsVisibleForCustomer</Item>
-                <Item>X-OTOBO-FollowUp-Owner</Item>
-                <Item>X-OTOBO-FollowUp-OwnerID</Item>
-                <Item>X-OTOBO-FollowUp-Responsible</Item>
-                <Item>X-OTOBO-FollowUp-ResponsibleID</Item>
-                <Item>X-OTOBO-FollowUp-Priority</Item>
-                <Item>X-OTOBO-FollowUp-Queue</Item>
-                <Item>X-OTOBO-FollowUp-Lock</Item>
-                <Item>X-OTOBO-FollowUp-State</Item>
-                <Item>X-OTOBO-FollowUp-State-PendingTime</Item>
-                <Item>X-OTOBO-FollowUp-Type</Item>
-                <Item>X-OTOBO-FollowUp-Service</Item>
-                <Item>X-OTOBO-FollowUp-SLA</Item>
-                <Item>X-OTOBO-FollowUp-SenderType</Item>
-                <Item>X-OTOBO-FollowUp-IsVisibleForCustomer</Item>
-                <Item>X-OTOBO-FollowUp-Title</Item>
-                <Item>X-OTOBO-FollowUp-State-Keep</Item>
-                <Item>X-OTOBO-BodyDecrypted</Item>
+                <Item>X-CareOnCloud-AttachmentExists</Item>
+                <Item>X-CareOnCloud-AttachmentCount</Item>
+                <Item>X-CareOnCloud-Owner</Item>
+                <Item>X-CareOnCloud-OwnerID</Item>
+                <Item>X-CareOnCloud-Responsible</Item>
+                <Item>X-CareOnCloud-ResponsibleID</Item>
+                <Item>X-CareOnCloud-Loop</Item>
+                <Item>X-CareOnCloud-Priority</Item>
+                <Item>X-CareOnCloud-Queue</Item>
+                <Item>X-CareOnCloud-Lock</Item>
+                <Item>X-CareOnCloud-Ignore</Item>
+                <Item>X-CareOnCloud-State</Item>
+                <Item>X-CareOnCloud-State-PendingTime</Item>
+                <Item>X-CareOnCloud-Type</Item>
+                <Item>X-CareOnCloud-Service</Item>
+                <Item>X-CareOnCloud-SLA</Item>
+                <Item>X-CareOnCloud-Title</Item>
+                <Item>X-CareOnCloud-From</Item>
+                <Item>X-CareOnCloud-CustomerNo</Item>
+                <Item>X-CareOnCloud-CustomerUser</Item>
+                <Item>X-CareOnCloud-SenderType</Item>
+                <Item>X-CareOnCloud-IsVisibleForCustomer</Item>
+                <Item>X-CareOnCloud-FollowUp-Owner</Item>
+                <Item>X-CareOnCloud-FollowUp-OwnerID</Item>
+                <Item>X-CareOnCloud-FollowUp-Responsible</Item>
+                <Item>X-CareOnCloud-FollowUp-ResponsibleID</Item>
+                <Item>X-CareOnCloud-FollowUp-Priority</Item>
+                <Item>X-CareOnCloud-FollowUp-Queue</Item>
+                <Item>X-CareOnCloud-FollowUp-Lock</Item>
+                <Item>X-CareOnCloud-FollowUp-State</Item>
+                <Item>X-CareOnCloud-FollowUp-State-PendingTime</Item>
+                <Item>X-CareOnCloud-FollowUp-Type</Item>
+                <Item>X-CareOnCloud-FollowUp-Service</Item>
+                <Item>X-CareOnCloud-FollowUp-SLA</Item>
+                <Item>X-CareOnCloud-FollowUp-SenderType</Item>
+                <Item>X-CareOnCloud-FollowUp-IsVisibleForCustomer</Item>
+                <Item>X-CareOnCloud-FollowUp-Title</Item>
+                <Item>X-CareOnCloud-FollowUp-State-Keep</Item>
+                <Item>X-CareOnCloud-BodyDecrypted</Item>
             </Array>
         </Value>
     </Setting>
@@ -12762,7 +12762,7 @@
                 </Item>
                 <Item Key="Set">
                     <Hash>
-                        <Item Key="X-OTOBO-Ignore">yes</Item>
+                        <Item Key="X-CareOnCloud-Ignore">yes</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -12781,8 +12781,8 @@
                 </Item>
                 <Item Key="Set">
                     <Hash>
-                        <Item Key="X-OTOBO-DynamicField-TicketFreeKey1">SomeNumber</Item>
-                        <Item Key="X-OTOBO-DynamicField-TicketFreeText1">[***]</Item>
+                        <Item Key="X-CareOnCloud-DynamicField-TicketFreeKey1">SomeNumber</Item>
+                        <Item Key="X-CareOnCloud-DynamicField-TicketFreeText1">[***]</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -12801,7 +12801,7 @@
                 </Item>
                 <Item Key="Set">
                     <Hash>
-                        <Item Key="X-OTOBO-Ignore">yes</Item>
+                        <Item Key="X-CareOnCloud-Ignore">yes</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -12848,7 +12848,7 @@ Thanks for your help!
                 <Item Key="CMD">/usr/bin/some.bin</Item>
                 <Item Key="Set">
                     <Hash>
-                        <Item Key="X-OTOBO-Ignore">yes</Item>
+                        <Item Key="X-CareOnCloud-Ignore">yes</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -12863,7 +12863,7 @@ Thanks for your help!
                 <Item Key="CMD">/usr/bin/spamassassin | grep -i "X-Spam-Status: yes"</Item>
                 <Item Key="Set">
                     <Hash>
-                        <Item Key="X-OTOBO-Ignore">yes</Item>
+                        <Item Key="X-CareOnCloud-Ignore">yes</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -12878,7 +12878,7 @@ Thanks for your help!
                 <Item Key="CMD">/usr/bin/spamassassin | grep -i "X-Spam-Status: yes"</Item>
                 <Item Key="Set">
                     <Hash>
-                        <Item Key="X-OTOBO-Queue">spam</Item>
+                        <Item Key="X-CareOnCloud-Queue">spam</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -13014,7 +13014,7 @@ Thanks for your help!
         </Value>
     </Setting>
     <Setting Name="PostMaster::CheckFollowUpModule###0000-BounceEmail" Required="0" Valid="1">
-        <Description Translatable="1">Executes follow-up checks on CareOnCloud ESM Header 'X-OTOBO-Bounce'.</Description>
+        <Description Translatable="1">Executes follow-up checks on CareOnCloud ESM Header 'X-CareOnCloud-Bounce'.</Description>
         <Navigation>Core::Email::PostMaster</Navigation>
         <Value>
             <Hash>
@@ -15853,4 +15853,4 @@ Thanks for your help!
             </Hash>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

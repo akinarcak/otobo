@@ -229,7 +229,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                State => '<OTOBO_TICKET_Title>',
+                State => '<CareOnCloud_TICKET_Title>',
             },
         },
         Success => 1,
@@ -240,7 +240,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                State => '<OTOBO_TICKET_NotExisting>',
+                State => '<CareOnCloud_TICKET_NotExisting>',
             },
         },
         Success => 0,
@@ -323,7 +323,7 @@ for my $Test (@Tests) {
             my $ExpectedValue = $Test->{Config}->{Config}->{$Attribute};
             if (
                 $OrigTest->{Config}->{Config}->{$Attribute}
-                =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+                =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
                 )
             {
                 $ExpectedValue = $Ticket{$1} // '';

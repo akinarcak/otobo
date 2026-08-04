@@ -143,7 +143,7 @@ my $NotificationID = $NotificationEventObject->NotificationAdd(
             Subject => 'Test external note',
 
             # include non-breaking space (bug#10970)
-            Body => 'Ticket:&nbsp;<OTOBO_TICKET_TicketID>&nbsp;<OTOBO_OWNER_UserFirstname>',
+            Body => 'Ticket:&nbsp;<CareOnCloud_TICKET_TicketID>&nbsp;<CareOnCloud_OWNER_UserFirstname>',
 
             ContentType => 'text/html',
         },

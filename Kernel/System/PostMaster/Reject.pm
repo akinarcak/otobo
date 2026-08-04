@@ -85,15 +85,15 @@ sub Run {
         ChannelName => 'Email',
     );
 
-    # Check if X-OTOBO-SenderType exists, if not set default 'customer'.
-    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-OTOBO-SenderType'} ) ) {
+    # Check if X-CareOnCloud-SenderType exists, if not set default 'customer'.
+    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-CareOnCloud-SenderType'} ) ) {
         $Self->{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
             Priority      => 'Error',
             Key           => 'Kernel::System::PostMaster::Reject',
-            Value         => "Can't find valid SenderType '$GetParam{'X-OTOBO-SenderType'}' in DB, take 'customer'",
+            Value         => "Can't find valid SenderType '$GetParam{'X-CareOnCloud-SenderType'}' in DB, take 'customer'",
         );
-        $GetParam{'X-OTOBO-SenderType'} = 'customer';
+        $GetParam{'X-CareOnCloud-SenderType'} = 'customer';
     }
 
     $Self->{CommunicationLogObject}->ObjectLog(
@@ -106,8 +106,8 @@ sub Run {
     # do db insert
     my $ArticleID = $ArticleBackendObject->ArticleCreate(
         TicketID             => $Param{TicketID},
-        IsVisibleForCustomer => $GetParam{'X-OTOBO-IsVisibleForCustomer'} // 1,
-        SenderType           => $GetParam{'X-OTOBO-SenderType'},
+        IsVisibleForCustomer => $GetParam{'X-CareOnCloud-IsVisibleForCustomer'} // 1,
+        SenderType           => $GetParam{'X-CareOnCloud-SenderType'},
         From                 => $GetParam{From},
         ReplyTo              => $GetParam{ReplyTo},
         To                   => $GetParam{To},
@@ -220,7 +220,7 @@ sub Run {
         next DYNAMICFIELDID if !$DynamicFieldID;
         next DYNAMICFIELDID if !$DynamicFieldList->{$DynamicFieldID};
 
-        my $Key = 'X-OTOBO-FollowUp-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
+        my $Key = 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
         if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
 
             # get dynamic field config

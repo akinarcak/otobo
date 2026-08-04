@@ -75,7 +75,7 @@ sub new {
         $Self->{Plugins}->{$PluginKey}->{PluginModule} = $GenericModule->new( %{$Self} );
 
         my $PluginURL = $PluginConfig->{$PluginKey}->{URL};
-        $PluginURL =~ s{<OTOBO_CONFIG_(.+?)>}{$Kernel::OM->Get('Kernel::Config')->Get($1)}egx;
+        $PluginURL =~ s{<CareOnCloud_CONFIG_(.+?)>}{$Kernel::OM->Get('Kernel::Config')->Get($1)}egx;
         $Self->{Plugins}->{$PluginKey}->{PluginURL} = $PluginURL;
     }
 

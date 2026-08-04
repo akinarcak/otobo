@@ -157,7 +157,7 @@ returns the specified field with replaced CareOnCloud ESM-tags
         Field  => $RecipientEmail,
     );
 
-    for example: $RecipientEmail = '<OTOBO_TICKET_DynamicField_Name1>';
+    for example: $RecipientEmail = '<CareOnCloud_TICKET_DynamicField_Name1>';
 
 returns:
 
@@ -174,14 +174,14 @@ sub _ReplaceTicketAttributes {
     my $DynamicFieldObject        = $Kernel::OM->Get('Kernel::System::DynamicField');
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
-    # replace ticket attributes such as <OTOBO_Ticket_DynamicField_Name1> or
-    # <OTOBO_TICKET_DynamicField_Name1>
-    # <OTOBO_Ticket_*> is deprecated and should be removed in further versions of CareOnCloud ESM
+    # replace ticket attributes such as <CareOnCloud_Ticket_DynamicField_Name1> or
+    # <CareOnCloud_TICKET_DynamicField_Name1>
+    # <CareOnCloud_Ticket_*> is deprecated and should be removed in further versions of CareOnCloud ESM
     my $Count = 0;
     REPLACEMENT:
     while (
         $Param{Field}
-        && $Param{Field} =~ m{<OTOBO_TICKET_([A-Za-z0-9\-_]+)>}msxi
+        && $Param{Field} =~ m{<CareOnCloud_TICKET_([A-Za-z0-9\-_]+)>}msxi
         && $Count++ < 1000
         )
     {
@@ -206,15 +206,15 @@ sub _ReplaceTicketAttributes {
                 Value              => $DisplayValue,
             );
 
-            $Param{Field} =~ s{<OTOBO_TICKET_$TicketAttribute>}{$DisplayValueStrg->{Value} // ''}ige;
+            $Param{Field} =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$DisplayValueStrg->{Value} // ''}ige;
 
             next REPLACEMENT;
         }
 
         # if ticket value is scalar substitute all instances (as strings)
-        # this will allow replacements for "<OTOBO_TICKET_Title> <OTOBO_TICKET_Queue"
+        # this will allow replacements for "<CareOnCloud_TICKET_Title> <CareOnCloud_TICKET_Queue"
         if ( !ref $Param{Ticket}->{$TicketAttribute} ) {
-            $Param{Field} =~ s{<OTOBO_TICKET_$TicketAttribute>}{$Param{Ticket}->{$TicketAttribute} // ''}ige;
+            $Param{Field} =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$Param{Ticket}->{$TicketAttribute} // ''}ige;
         }
         else {
             # if the value is an array (e.g. a multiselect dynamic field) set the value directly

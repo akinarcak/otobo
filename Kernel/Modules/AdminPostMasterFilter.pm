@@ -293,8 +293,8 @@ sub Run {
             ResultType => 'HASH',
         );
         for my $DynamicField ( values %$DynamicFields ) {
-            push @Headers, 'X-OTOBO-DynamicField-' . $DynamicField;
-            push @Headers, 'X-OTOBO-FollowUp-DynamicField-' . $DynamicField;
+            push @Headers, 'X-CareOnCloud-DynamicField-' . $DynamicField;
+            push @Headers, 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicField;
         }
 
         my %Header = map { $_ => $_ } @Headers;
@@ -433,8 +433,8 @@ sub _MaskUpdate {
         ResultType => 'HASH',
     );
     for my $DynamicField ( values %$DynamicFields ) {
-        push @Headers, 'X-OTOBO-DynamicField-' . $DynamicField;
-        push @Headers, 'X-OTOBO-FollowUp-DynamicField-' . $DynamicField;
+        push @Headers, 'X-CareOnCloud-DynamicField-' . $DynamicField;
+        push @Headers, 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicField;
     }
 
     my %Header = map { $_ => $_ } @Headers;

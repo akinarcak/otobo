@@ -39,7 +39,7 @@ use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # For now test only when running under Docker,
 # even though this route could also be available outside Docker.
-skip_all 'not running under Docker' unless $ENV{OTOBO_RUNS_UNDER_DOCKER};
+skip_all 'not running under Docker' unless $ENV{CareOnCloud_RUNS_UNDER_DOCKER};
 
 # get needed singletons
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');

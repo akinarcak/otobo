@@ -51,7 +51,7 @@ sub Run {
     }
     elsif ( $Param{Config}->{File} ) {
 
-        $Param{Config}->{File} =~ s{<OTOBO_CONFIG_(.+?)>}{$Kernel::OM->Get('Kernel::Config')->Get($1)}egx;
+        $Param{Config}->{File} =~ s{<CareOnCloud_CONFIG_(.+?)>}{$Kernel::OM->Get('Kernel::Config')->Get($1)}egx;
 
         return '' if !-e $Param{Config}->{File};
 

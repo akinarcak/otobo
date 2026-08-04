@@ -102,8 +102,8 @@ for my $FieldName ( sort keys %NeededDynamicfields ) {
 }
 
 my %NeededXHeaders = (
-    'X-OTOBO-DynamicField-TicketFreeText1' => 1,
-    'X-OTOBO-DynamicField-TicketFreeText2' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeText1' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeText2' => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -136,11 +136,11 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => '[**\server**]',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => '[**\ip**]',
             },
         ],
@@ -164,11 +164,11 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => '[**\server**]',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => '[**\ip**]',
             },
         ],

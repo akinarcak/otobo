@@ -66,21 +66,37 @@ kendiliğinden temizler; çeviri dosyaları ayrıca elle düzenlenmemelidir.
 Dikkat: destek verisi tanımlayıcıları modül adından türetilir; destek paketi çıktısını
 doğrulayan testler birlikte güncellenmelidir.
 
-## Faz 4 — Şablon değişkenleri (canlı veri göçü gerektirir)
+## Faz 4 — Şablon değişkenleri ve mail başlıkları (tamamlandı, veri göçü bekliyor)
 
-`OTOBO_TICKET_*`, `OTOBO_CONFIG_*`, `OTOBO_AGENT_*`, `OTOBO_APPOINTMENT_*`,
-`OTOBO_MERGE_TO_TICKET` ve benzerleri **üretim veritabanındaki satırların içinde** durur:
-bildirim gövdeleri, otomatik yanıtlar, selamlamalar, imzalar, şablonlar.
+Karar: **tam temizlik**, geriye dönük alias yok. Kodda ve tohum veride şu adlar değişti:
 
-Önerilen yaklaşım — çift destek:
+| Eski | Yeni | Nerede saklanır |
+|---|---|---|
+| `OTOBO_*` smart tag | `CareOnCloud_*` | bildirim gövdeleri, otomatik yanıtlar, selamlama, imza, şablon |
+| `X-OTOBO-*` | `X-CareOnCloud-*` | PostMaster filtreleri, `PostmasterX-Header` ayarı |
+| `otobo_config` | `careoncloud_config` | SysConfig XML kök elemanı (37 dosya + ayrıştırıcı) |
+| `otobo_stats` | `careoncloud_stats` | dışa aktarılmış istatistik XML'i |
+| `otobo_infotile` | `careoncloud_infotile` | `xml_storage` satırları |
+| `urn:otobo-com` | `urn:careoncloud-com` | örnek SOAP ad alanı |
 
-1. `CareOnCloud_*` biçimi kanonik hale getirilir.
-2. `OTOBO_*` biçimi geriye dönük alias olarak çözümlenmeye devam eder.
-3. DB içeriğini yeni biçime çeviren bir göç betiği yazılır ve önce kopya ortamda çalıştırılır.
-4. Alias tablosu, kullanım gözlendikten sonra planlı bir sürümde kaldırılır.
+### Veri göçü zorunludur
 
-Kod tarafında `otobo` yalnızca bu alias tablosunda kalır; bu, BRAND-01'in izin verdiği
-"süreli göç kodu" istisnasıdır.
+Alias bırakılmadığı için, **göç çalıştırılmadan mevcut veritabanındaki şablonlar bozulur**:
+`<OTOBO_TICKET_...>` etiketleri artık çözümlenmez ve `X-OTOBO-*` başlıkları tanınmaz.
+
+```bash
+bin/careoncloud.Console.pl Maint::CareOnCloud::MigrateBrandTags            # kuru çalışma
+bin/careoncloud.Console.pl Maint::CareOnCloud::MigrateBrandTags --execute
+bin/careoncloud.Console.pl Maint::Config::Rebuild
+```
+
+Komut varsayılan olarak yalnızca rapor verir. Şu tabloları günceller:
+`notification_event_message`, `auto_response`, `salutation`, `signature`,
+`standard_template`, `postmaster_filter`, `sysconfig_modified`, `xml_storage`.
+
+Doğrulanmamış nokta: komut bu geliştirme makinesinde **çalıştırılamadı** (Perl/Docker yok).
+Yalnızca yapısal denetimden geçti. İlk çalıştırma kopya bir veritabanında, önce kuru
+çalışma ile yapılmalıdır.
 
 ## Faz 5 — Docker imaj yolları ve CI
 

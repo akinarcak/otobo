@@ -1,5 +1,5 @@
 If you need to modify already existing framework Perl module files or tt template files
-or unit test files for customizations, you can do this in the $OTOBO_HOME/Custom/ directory.
+or unit test files for customizations, you can do this in the $CareOnCloud_HOME/Custom/ directory.
 
 Example:
 

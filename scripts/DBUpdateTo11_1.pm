@@ -99,7 +99,7 @@ sub Run {
             Module => 'SysConfigUpdateTicketZoomDFScreens',
         },
         {
-            Name   => 'Add X-OTOBO-From to PostmasterX-Header.',
+            Name   => 'Add X-CareOnCloud-From to PostmasterX-Header.',
             Module => 'SysConfigUpdatePostmasterXHeader',
         },
         {

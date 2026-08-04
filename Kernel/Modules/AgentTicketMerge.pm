@@ -353,9 +353,9 @@ sub Run {
                     );
                 }
                 my %Ticket = $TicketObject->TicketGet( TicketID => $Self->{TicketID} );
-                $GetParam{Body} =~ s/(&lt;|<)OTOBO_TICKET(&gt;|>)/$Ticket{TicketNumber}/g;
+                $GetParam{Body} =~ s/(&lt;|<)CareOnCloud_TICKET(&gt;|>)/$Ticket{TicketNumber}/g;
                 $GetParam{Body}
-                    =~ s/(&lt;|<)OTOBO_MERGE_TO_TICKET(&gt;|>)/$GetParam{'MainTicketNumber'}/g;
+                    =~ s/(&lt;|<)CareOnCloud_MERGE_TO_TICKET(&gt;|>)/$GetParam{'MainTicketNumber'}/g;
 
                 my $EmailArticleBackendObject = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForChannel(
                     ChannelName => 'Email',

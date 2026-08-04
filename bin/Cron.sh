@@ -21,7 +21,7 @@ CRON_USER="$2"
 # check if a common user try to use -u
 if test -n "$CRON_USER"; then
     if test $CURRENTUSER != root; then
-        echo "Run this script just as CareOnCloud ESM user! Or use 'Cron.sh {start|stop|restart} OTOBO_USER' as root!"
+        echo "Run this script just as CareOnCloud ESM user! Or use 'Cron.sh {start|stop|restart} CareOnCloud_USER' as root!"
         exit 5
     fi
 fi
@@ -29,26 +29,26 @@ fi
 # check if the cron user is specified
 if test -z "$CRON_USER"; then
     if test $CURRENTUSER = root; then
-        echo "Run this script just as CareOnCloud ESM user! Or use 'Cron.sh {start|stop|restart} OTOBO_USER' as root!"
+        echo "Run this script just as CareOnCloud ESM user! Or use 'Cron.sh {start|stop|restart} CareOnCloud_USER' as root!"
         exit 5
     fi
 fi
 
 # find careoncloud root
 cd "`dirname $0`/../"
-OTOBO_HOME="`pwd`"
+CareOnCloud_HOME="`pwd`"
 
-#OTOBO_ROOT=/opt/careoncloud
-if test -e $OTOBO_HOME/var/cron; then
-    OTOBO_ROOT=$OTOBO_HOME
+#CareOnCloud_ROOT=/opt/careoncloud
+if test -e $CareOnCloud_HOME/var/cron; then
+    CareOnCloud_ROOT=$CareOnCloud_HOME
 else
-    echo "No cronjobs in $OTOBO_HOME/var/cron found!";
+    echo "No cronjobs in $CareOnCloud_HOME/var/cron found!";
     echo " * Check the \$HOME (/etc/passwd) of the CareOnCloud ESM user. It must be the root dir of your CareOnCloud ESM system (e. g. /opt/careoncloud). ";
     exit 5;
 fi
 
-CRON_DIR=$OTOBO_ROOT/var/cron
-CRON_TMP_FILE=$OTOBO_ROOT/var/tmp/careoncloud-cron-tmp.$$
+CRON_DIR=$CareOnCloud_ROOT/var/cron
+CRON_TMP_FILE=$CareOnCloud_ROOT/var/tmp/careoncloud-cron-tmp.$$
 
 #
 # main part
@@ -66,7 +66,7 @@ case "$1" in
         if mkdir -p $CRON_DIR; cd $CRON_DIR && ls -d * | grep -Ev "(\.(dist|rpm|bak|backup|custom_backup|save|swp)|\~)$" | xargs cat > $CRON_TMP_FILE && crontab $CRON_USER $CRON_TMP_FILE; then
 
             rm -rf $CRON_TMP_FILE
-            echo "(using $OTOBO_ROOT) done";
+            echo "(using $CareOnCloud_ROOT) done";
             exit 0;
         else
             echo "failed";

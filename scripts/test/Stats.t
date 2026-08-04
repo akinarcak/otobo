@@ -442,12 +442,12 @@ $ExportContent = $StatsObject->Export(
 
 # the following line are because of different spelling 'ISO-8859' or 'iso-8859'
 # but this is no solution for the problem if one string is iso and the other utf!
-$ImportContent =~ s/^<\?xml.*?>.*?<otobo_stats/<otobo_stats/ms;
+$ImportContent =~ s/^<\?xml.*?>.*?<careoncloud_stats/<careoncloud_stats/ms;
 
 # this line is for Windows check-out
 $ImportContent =~ s{\r\n}{\n}smxg;
 
-$ExportContent->{Content} =~ s/^<\?xml.*?>.*?<otobo_stats/<otobo_stats/ms;
+$ExportContent->{Content} =~ s/^<\?xml.*?>.*?<careoncloud_stats/<careoncloud_stats/ms;
 $Self->Is(
     $ImportContent,
     $ExportContent->{Content},

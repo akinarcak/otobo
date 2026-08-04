@@ -102,8 +102,8 @@ sub Run {
         Columns      => [qw(text)],
         Replacements =>
             [
-                [ '<OTRS_',    '<OTOBO_' ],
-                [ '&lt;OTRS_', '&lt;OTOBO_' ]
+                [ '<OTRS_',    '<CareOnCloud_' ],
+                [ '&lt;OTRS_', '&lt;CareOnCloud_' ]
             ],
     );
 

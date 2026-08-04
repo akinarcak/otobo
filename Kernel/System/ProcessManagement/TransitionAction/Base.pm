@@ -97,15 +97,15 @@ sub _ReplaceTicketAttributes {
     for my $Attribute ( sort keys %{ $Param{Config} } ) {
 
         # Replace ticket attributes such as
-        # <OTOBO_Ticket_DynamicField_Name1> or <OTOBO_TICKET_DynamicField_Name1>
+        # <CareOnCloud_Ticket_DynamicField_Name1> or <CareOnCloud_TICKET_DynamicField_Name1>
         # or
-        # <OTOBO_TICKET_DynamicField_Name1_Value> or <OTOBO_Ticket_DynamicField_Name1_Value>.
-        # <OTOBO_Ticket_*> is deprecated and should be removed in further versions of CareOnCloud ESM.
+        # <CareOnCloud_TICKET_DynamicField_Name1_Value> or <CareOnCloud_Ticket_DynamicField_Name1_Value>.
+        # <CareOnCloud_Ticket_*> is deprecated and should be removed in further versions of CareOnCloud ESM.
         my $Count = 0;
         REPLACEMENT:
         while (
             $Param{Config}->{$Attribute}
-            && $Param{Config}->{$Attribute} =~ m{<OTOBO_TICKET_([A-Za-z0-9_\-]+)>}msxi
+            && $Param{Config}->{$Attribute} =~ m{<CareOnCloud_TICKET_([A-Za-z0-9_\-]+)>}msxi
             && $Count++ < 1000
             )
         {
@@ -131,7 +131,7 @@ sub _ReplaceTicketAttributes {
                 );
 
                 $Param{Config}->{$Attribute}
-                    =~ s{<OTOBO_TICKET_$TicketAttribute>}{$DisplayValueStrg->{Value} // ''}ige;
+                    =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$DisplayValueStrg->{Value} // ''}ige;
 
                 next REPLACEMENT;
             }
@@ -157,16 +157,16 @@ sub _ReplaceTicketAttributes {
                 );
 
                 $Param{Config}->{$Attribute}
-                    =~ s{<OTOBO_TICKET_$TicketAttribute>}{$ValueStrg->{Value} // ''}ige;
+                    =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$ValueStrg->{Value} // ''}ige;
 
                 next REPLACEMENT;
             }
 
             # if ticket value is scalar substitute all instances (as strings)
-            # this will allow replacements for "<OTOBO_TICKET_Title> <OTOBO_TICKET_Queue>"
+            # this will allow replacements for "<CareOnCloud_TICKET_Title> <CareOnCloud_TICKET_Queue>"
             if ( !ref $Param{Ticket}->{$TicketAttribute} ) {
                 $Param{Config}->{$Attribute}
-                    =~ s{<OTOBO_TICKET_$TicketAttribute>}{$Param{Ticket}->{$TicketAttribute} // ''}ige;
+                    =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$Param{Ticket}->{$TicketAttribute} // ''}ige;
             }
             else {
 
@@ -315,7 +315,7 @@ sub _ReplaceAdditionalAttributes {
 
         my $ConfigValue = $Param{Config}->{$Attribute};
 
-        if ( $ConfigValue && $ConfigValue =~ m{<OTOBO_[A-Za-z0-9_]+(?:\[(?:.+?)\])?>}smxi ) {
+        if ( $ConfigValue && $ConfigValue =~ m{<CareOnCloud_[A-Za-z0-9_]+(?:\[(?:.+?)\])?>}smxi ) {
 
             if ($RichText) {
                 $ConfigValue = $HTMLUtilsObject->ToHTML(

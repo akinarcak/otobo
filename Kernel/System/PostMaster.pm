@@ -116,8 +116,8 @@ sub new {
 
         for my $DynamicField ( values %$DynamicFields ) {
             for my $Header (
-                'X-OTOBO-DynamicField-' . $DynamicField,
-                'X-OTOBO-FollowUp-DynamicField-' . $DynamicField,
+                'X-CareOnCloud-DynamicField-' . $DynamicField,
+                'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicField,
                 )
             {
 
@@ -150,7 +150,7 @@ The first returned value indicates what has been done.
     2 = follow up / open/reopen
     3 = follow up / close -> new ticket
     4 = follow up / close -> reject
-    5 = ignored (because of X-OTOBO-Ignore header)
+    5 = ignored (because of X-CareOnCloud-Ignore header)
 
 When there is a new or followup ticket then this ticket id is returned as the second value.
 
@@ -220,14 +220,14 @@ sub Run {
     }
 
     # should I ignore the incoming mail?
-    if ( $GetParam->{'X-OTOBO-Ignore'} && $GetParam->{'X-OTOBO-Ignore'} =~ /(yes|true)/i ) {
+    if ( $GetParam->{'X-CareOnCloud-Ignore'} && $GetParam->{'X-CareOnCloud-Ignore'} =~ /(yes|true)/i ) {
         $Self->{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
             Priority      => 'Info',
             Key           => 'Kernel::System::PostMaster',
             Value         =>
                 "Ignored Email (From: $GetParam->{'From'}, Message-ID: $GetParam->{'Message-ID'}) "
-                . "because the X-OTOBO-Ignore is set (X-OTOBO-Ignore: $GetParam->{'X-OTOBO-Ignore'}).",
+                . "because the X-CareOnCloud-Ignore is set (X-CareOnCloud-Ignore: $GetParam->{'X-CareOnCloud-Ignore'}).",
         );
 
         return (5);
@@ -317,7 +317,7 @@ sub Run {
 
         # Check if we need to treat a bounce e-mail always as a normal follow-up (to reopen the ticket if needed).
         my $BounceEmailAsFollowUp = 0;
-        if ( $GetParam->{'X-OTOBO-Bounce'} ) {
+        if ( $GetParam->{'X-CareOnCloud-Bounce'} ) {
             $BounceEmailAsFollowUp = $ConfigObject->Get('PostmasterBounceEmailAsFollowUp');
         }
 
@@ -616,14 +616,14 @@ sub GetEmailParams {
         || $GetParam{'Precedence'}
         || $GetParam{'X-Loop'}
         || $GetParam{'X-No-Loop'}
-        || $GetParam{'X-OTOBO-Loop'}
+        || $GetParam{'X-CareOnCloud-Loop'}
         || (
             $GetParam{'Auto-Submitted'}
             && substr( $GetParam{'Auto-Submitted'}, 0, 5 ) eq 'auto-'
         )
         )
     {
-        $GetParam{'X-OTOBO-Loop'} = 'yes';
+        $GetParam{'X-CareOnCloud-Loop'} = 'yes';
     }
     if ( !$GetParam{'X-Sender'} ) {
 
@@ -640,13 +640,13 @@ sub GetEmailParams {
     my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
 
     # set sender type if not given
-    for my $Key (qw(X-OTOBO-SenderType X-OTOBO-FollowUp-SenderType)) {
+    for my $Key (qw(X-CareOnCloud-SenderType X-CareOnCloud-FollowUp-SenderType)) {
 
         if ( !$GetParam{$Key} ) {
             $GetParam{$Key} = 'customer';
         }
 
-        # check if X-OTOBO-SenderType exists, if not, set customer
+        # check if X-CareOnCloud-SenderType exists, if not, set customer
         if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{$Key} ) ) {
             $Self->{CommunicationLogObject}->ObjectLog(
                 ObjectLogType => 'Message',
@@ -659,7 +659,7 @@ sub GetEmailParams {
     }
 
     # Set article customer visibility if not given.
-    for my $Key (qw(X-OTOBO-IsVisibleForCustomer X-OTOBO-FollowUp-IsVisibleForCustomer)) {
+    for my $Key (qw(X-CareOnCloud-IsVisibleForCustomer X-CareOnCloud-FollowUp-IsVisibleForCustomer)) {
         if ( !defined $GetParam{$Key} ) {
             $GetParam{$Key} = 1;
         }

@@ -67,10 +67,10 @@ my %User = $Kernel::OM->Get('Kernel::System::User')->GetUserData(
 
 my @Tests = (
     {
-        Name      => 'Test supported tags -  <OTOBO_CURRENT_UserFirstname> and <OTOBO_CURRENT_UserLastname>',
+        Name      => 'Test supported tags -  <CareOnCloud_CURRENT_UserFirstname> and <CareOnCloud_CURRENT_UserLastname>',
         Signature => "Your CareOnCloud ESM-Team
 
-    <OTOBO_CURRENT_UserFirstname> <OTOBO_CURRENT_UserLastname>
+    <CareOnCloud_CURRENT_UserFirstname> <CareOnCloud_CURRENT_UserLastname>
 
     --
     Super Support Company Inc. - Waterford Business Park
@@ -89,19 +89,19 @@ my @Tests = (
     },
     {
         Name           => 'Test unsupported tags',
-        Signature      => 'Test: <OTOBO_AGENT_SUBJECT> <OTOBO_AGENT_BODY> <OTOBO_CUSTOMER_BODY> <OTOBO_CUSTOMER_SUBJECT>',
+        Signature      => 'Test: <CareOnCloud_AGENT_SUBJECT> <CareOnCloud_AGENT_BODY> <CareOnCloud_CUSTOMER_BODY> <CareOnCloud_CUSTOMER_SUBJECT>',
         ExpectedResult => 'Test: - - - -',
     },
     {
-        Name      => 'Test supported tags - <OTOBO_TICKET_*> without TicketID',
+        Name      => 'Test supported tags - <CareOnCloud_TICKET_*> without TicketID',
         Signature =>
-            'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_State>)',
+            'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_State>)',
         ExpectedResult => 'Options of the ticket data (e. g. -, -, -)',
     },
     {
-        Name      => 'Test supported tags - <OTOBO_TICKET_*>  with TicketID',
+        Name      => 'Test supported tags - <CareOnCloud_TICKET_*>  with TicketID',
         Signature =>
-            'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_State>)',
+            'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_State>)',
     },
 );
 

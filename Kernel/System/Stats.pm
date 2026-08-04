@@ -159,7 +159,7 @@ sub StatsAdd {
 
     # start new stats record
     my @XMLHash = (
-        { otobo_stats => [ \%MetaData ] },
+        { careoncloud_stats => [ \%MetaData ] },
     );
     my $Success = $XMLObject->XMLHashAdd(
         Type    => 'Stats',
@@ -235,7 +235,7 @@ sub StatsGet {
     }
 
     my %Stat;
-    my $StatsXML = $XMLHash[0]->{otobo_stats}->[1];
+    my $StatsXML = $XMLHash[0]->{careoncloud_stats}->[1];
 
     # process all strings
     $Stat{StatID} = $Param{StatID};
@@ -555,7 +555,7 @@ sub StatsUpdate {
 
     my @Array = (
         {
-            otobo_stats => [ \%StatXML ],
+            careoncloud_stats => [ \%StatXML ],
         },
     );
 
@@ -1309,7 +1309,7 @@ sub Export {
         Type => 'Stats',
         Key  => $Param{StatID},
     );
-    my $StatsXML = $XMLHash[0]->{otobo_stats}->[1];
+    my $StatsXML = $XMLHash[0]->{careoncloud_stats}->[1];
 
     my %File;
     $File{Filename} = $Self->StringAndTimestamp2Filename(
@@ -1354,7 +1354,7 @@ sub Export {
     # convert hash to string
     $File{Content} = $XMLObject->XMLHash2XML(
         {
-            otobo_stats => [
+            careoncloud_stats => [
                 undef,
                 $StatsXML,
             ],
@@ -1399,9 +1399,9 @@ sub Import {
 
     # We love to import OTRS stats too, so we need to check
     my $StatsXML;
-    if ( $XMLHash[0]->{otobo_stats}->[1] ) {
+    if ( $XMLHash[0]->{careoncloud_stats}->[1] ) {
 
-        $StatsXML = $XMLHash[0]->{otobo_stats}->[1];
+        $StatsXML = $XMLHash[0]->{careoncloud_stats}->[1];
 
     }
     elsif ( $XMLHash[0]->{otrs_stats}->[1] ) {
@@ -1413,7 +1413,7 @@ sub Import {
 
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
-            Message  => "Can't import Stat, because the required element otobo_stats or otrs_stats is not available!"
+            Message  => "Can't import Stat, because the required element careoncloud_stats or otrs_stats is not available!"
         );
         return;
     }
@@ -1528,7 +1528,7 @@ sub Import {
         Key     => $StatID,
         XMLHash => [
             {
-                otobo_stats => [
+                careoncloud_stats => [
                     undef,
                     $StatsXML,
                 ],
@@ -1923,7 +1923,7 @@ sub StatNumber2StatID {
 
     my @Key = $Kernel::OM->Get('Kernel::System::XML')->XMLHashSearch(
         Type => 'Stats',
-        What => [ { "[%]{'otobo_stats'}[%]{'StatNumber'}[%]{'Content'}" => $Param{StatNumber} } ],
+        What => [ { "[%]{'careoncloud_stats'}[%]{'StatNumber'}[%]{'Content'}" => $Param{StatNumber} } ],
     );
     if ( @Key && $#Key < 1 ) {
         return $Key[0];

@@ -368,7 +368,7 @@ sub TicketAcl {
             next DEBUGFILTER if $DebugFilter eq 'ACLName';
             next DEBUGFILTER if !$Self->{ACLDebugFilters}->{$DebugFilter};
 
-            if ( $DebugFilter =~ m{<OTOBO_TICKET_([^>]+)>}msx ) {
+            if ( $DebugFilter =~ m{<CareOnCloud_TICKET_([^>]+)>}msx ) {
                 my $TicketParam = $1;
 
                 if (

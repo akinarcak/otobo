@@ -5520,7 +5520,7 @@ msgstr ""
 
 #. Template: AdminNotificationEventTransportEmailSettings
 msgid ""
-"You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values "
+"You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values "
 "from the current ticket."
 msgstr ""
 
@@ -24983,10 +24983,10 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Defines the fully qualified domain name of the system. This setting is used "
-"as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging "
+"as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging "
 "used by the application, to build links to the tickets within your system."
 msgstr ""
-"กำหนดชื่อโดเมนที่มีคุณสมบัติครบถ้วนของระบบ การตั้งค่านี้จะถูกใช้เป็นตัวแปร OTOBO_CONFIG_FQDN "
+"กำหนดชื่อโดเมนที่มีคุณสมบัติครบถ้วนของระบบ การตั้งค่านี้จะถูกใช้เป็นตัวแปร CareOnCloud_CONFIG_FQDN "
 "ซึ่งพบได้ในรูปแบบของการส่งข้อความทั้งหมดที่ใช้โดยแอพลิเคชั่นเพื่อใช้ในการสร้างการเชื่อมโยงไปตั๋วภายในระบบของคุณ"
 
 #. SysConfig
@@ -25485,7 +25485,7 @@ msgid ""
 "Defines the module to send emails. \"DoNotSendEmail\" doesn't send emails at "
 "all. Any of the \"SMTP\" mechanisms use a specified (external) mailserver. "
 "\"Sendmail\" directly uses the sendmail binary of your operating system. "
-"\"Test\" doesn't send emails, but writes them to $OTOBO_HOME/var/tmp/"
+"\"Test\" doesn't send emails, but writes them to $CareOnCloud_HOME/var/tmp/"
 "CacheFileStorable/EmailTest/ for testing purposes."
 msgstr ""
 
@@ -25865,8 +25865,8 @@ msgstr ""
 msgid ""
 "Defines the shown links in the footer area of the customer interface of this "
 "CareOnCloud ESM system. The value in \"Key\" is the external URL, the value in "
-"\"Content\" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> "
-"and <OTOBO_CONFIG_ScriptAlias> will be substituted."
+"\"Content\" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> "
+"and <CareOnCloud_CONFIG_ScriptAlias> will be substituted."
 msgstr ""
 
 #. SysConfig
@@ -26042,7 +26042,7 @@ msgid ""
 "server's settings or behavior. Specifically, it will not change the method "
 "of access to the application. If the setting is wrong, it will not prevent "
 "you from logging into the application. This setting is used mainly via the "
-"template variable OTOBO_CONFIG_HttpType. This variable is found in all forms "
+"template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms "
 "of messaging used by the application. It is used to build links to the "
 "tickets within your system. Another effect of keeping 'HttpType' set to "
 "'https' is that the session management cookie will only be set for secure "
@@ -27040,7 +27040,7 @@ msgstr ""
 "หรือการอ้างอิงข้อมูลส่วนหัวสำหรับอีเมลที่ไม่ได้หมายเลขตั๋วในเนื้อเรื่อง"
 
 #. SysConfig
-msgid "Executes follow-up checks on CareOnCloud ESM Header 'X-OTOBO-Bounce'."
+msgid "Executes follow-up checks on CareOnCloud ESM Header 'X-CareOnCloud-Bounce'."
 msgstr ""
 
 #. SysConfig
@@ -27147,19 +27147,19 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Filter for debugging ACLs. Note: More ticket attributes can be added in the "
-"format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>."
+"format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>."
 msgstr ""
 "ตัวกรองสำหรับการดีบัก ACLs หมายเหตุ: คุณลักษณะตั๋วเพิ่มเติมสามารถเพิ่มในรูปแบบ "
-"<OTOBO_TICKET_Attribute> เช่น <OTOBO_TICKET_Priority>"
+"<CareOnCloud_TICKET_Attribute> เช่น <CareOnCloud_TICKET_Priority>"
 
 #. SysConfig
 msgid ""
 "Filter for debugging Transitions. Note: More filters can be added in the "
-"format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>."
+"format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>."
 msgstr ""
 "ตัวกรองสำหรับการดีบักการเปลี่ยนภาพ หมายเหตุ: "
-"ตัวกรองเพิ่มเติมสามารถเพิ่มในรูปแบบ<OTOBO_TICKET_Attribute> เช่น "
-"<OTOBO_TICKET_Priority>"
+"ตัวกรองเพิ่มเติมสามารถเพิ่มในรูปแบบ<CareOnCloud_TICKET_Attribute> เช่น "
+"<CareOnCloud_TICKET_Priority>"
 
 #. SysConfig
 msgid "Filter incoming emails."
@@ -28666,7 +28666,7 @@ msgid "Merged Ticket (%s/%s) to (%s/%s)."
 msgstr ""
 
 #. SysConfig
-msgid "Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>."
+msgid "Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>."
 msgstr ""
 
 #. SysConfig
@@ -30623,7 +30623,7 @@ msgstr ""
 #. SysConfig
 msgid ""
 "Sets the prefix to the scripts folder on the server, as configured on the "
-"web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias "
+"web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias "
 "which is found in all forms of messaging used by the application, to build "
 "links to the tickets within the system."
 msgstr ""
@@ -31763,7 +31763,7 @@ msgid ""
 "Specifies the email address that should be used by the application when "
 "sending notifications. The email address is used to build the complete "
 "display name for the notification master (i.e. \"CareOnCloud ESM Notifications\" "
-"careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set "
+"careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set "
 "in your configuation, or choose another email address."
 msgstr ""
 
@@ -32881,16 +32881,16 @@ msgstr ""
 
 #. SysConfig
 msgid ""
-"Your email with ticket number \"<OTOBO_TICKET>\" is bounced to "
-"\"<OTOBO_BOUNCE_TO>\". Contact this address for further information."
+"Your email with ticket number \"<CareOnCloud_TICKET>\" is bounced to "
+"\"<CareOnCloud_BOUNCE_TO>\". Contact this address for further information."
 msgstr ""
 
 #. SysConfig
 msgid ""
-"Your email with ticket number \"<OTOBO_TICKET>\" is merged to "
-"\"<OTOBO_MERGE_TO_TICKET>\"."
+"Your email with ticket number \"<CareOnCloud_TICKET>\" is merged to "
+"\"<CareOnCloud_MERGE_TO_TICKET>\"."
 msgstr ""
-"อีเมล์ของคุณที่มีหมายเลขตั๋ว \"<OTOBO_TICKET>\" ถูกรวมกับ \"<OTOBO_MERGE_TO_TICKET>\"."
+"อีเมล์ของคุณที่มีหมายเลขตั๋ว \"<CareOnCloud_TICKET>\" ถูกรวมกับ \"<CareOnCloud_MERGE_TO_TICKET>\"."
 
 #. SysConfig
 msgid "Your external tools"
@@ -33504,13 +33504,13 @@ msgstr ""
 #~ "settings or behavior, it will not change the method of access to the "
 #~ "application and, if it is wrong, it will not prevent you from logging "
 #~ "into the application. This setting is only used as a variable, "
-#~ "OTOBO_CONFIG_HttpType which is found in all forms of messaging used by "
+#~ "CareOnCloud_CONFIG_HttpType which is found in all forms of messaging used by "
 #~ "the application, to build links to the tickets within your system."
 #~ msgstr ""
 #~ "กำหนดประเภทของโปรโตคอลที่ใช้โดยเว็บเซิร์ฟเวอร์ที่จะให้บริการแอพลิเคชัน หากโปรโตคอล "
 #~ "HTTPS จะถูกนำมาใช้แทน http ธรรมดาจะต้องมีการระบุไว้ที่นี่ "
 #~ "เนื่องจากไม่มีผลต่อการตั้งค่าหรือพฤติกรรมเว็บเซิร์ฟเวอร์ก็จะไม่เปลี่ยนวิธีการในการเข้าถึงแอพลิเคชันและถ้ามันไม่ถูกต้องก็จะไม่ป้องกันคุณจากการเข้าสู่แอพลิเคชัน "
-#~ "การตั้งค่านี้จะถูกใช้เป็นตัวแปร OTOBO_CONFIG_HttpType "
+#~ "การตั้งค่านี้จะถูกใช้เป็นตัวแปร CareOnCloud_CONFIG_HttpType "
 #~ "ซึ่งพบได้ในทุกรูปแบบของข้อความที่ใช้โดยโปรแกรมเพื่อสร้างการเชื่อมโยงตั๋วภายในระบบของคุณเท่านั้น"
 
 #~ msgid "Deploy and manage CareOnCloud ESM Business Solution™."

@@ -16,16 +16,16 @@ Subject: 2nd try: Again some stuff =?iso-8859-1?B?aPxi?=
 Message-ID: <20070412132542.GB29977@tuxbrett.hq.otobo.org>
 MIME-Version: 1.0
 Content-Type: multipart/mixed; boundary="J/dobhs11T7y2rNN"
-X-OTOBO-TicketKey1: Test
-X-OTOBO-TicketValue1: ABC
-X-OTOBO-TicketKey2: Test2
-X-OTOBO-TicketValue2: ABC2
-X-OTOBO-TicketTime1: 2008-01-12 13:14:15
-X-OTOBO-TicketTime2: 2008-01-12 13:15:16
-X-OTOBO-TicketTime3: 2008-01-12 13:16:17
-X-OTOBO-TicketTime4: 2008-01-12 13:17:18
-X-OTOBO-TicketTime5: 2008-01-12 13:18:19
-X-OTOBO-TicketTime6: 2008-01-12 13:19:20
+X-CareOnCloud-TicketKey1: Test
+X-CareOnCloud-TicketValue1: ABC
+X-CareOnCloud-TicketKey2: Test2
+X-CareOnCloud-TicketValue2: ABC2
+X-CareOnCloud-TicketTime1: 2008-01-12 13:14:15
+X-CareOnCloud-TicketTime2: 2008-01-12 13:15:16
+X-CareOnCloud-TicketTime3: 2008-01-12 13:16:17
+X-CareOnCloud-TicketTime4: 2008-01-12 13:17:18
+X-CareOnCloud-TicketTime5: 2008-01-12 13:18:19
+X-CareOnCloud-TicketTime6: 2008-01-12 13:19:20
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 User-Agent: mutt-ng/devel-r804 (Debian)

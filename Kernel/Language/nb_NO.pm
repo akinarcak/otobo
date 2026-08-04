@@ -1601,7 +1601,7 @@ sub Data {
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             'Alle innkommende e-poster med én konto vil bli sendt i den valgte køen.',
         'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
-            'Hvis kontoen din er merket som klarert, vil X-OTOBO-overskriftene som allerede eksisterer ved ankomsttid (for prioritet osv.) beholdes og brukes, for eksempel i PostMaster-filtre.',
+            'Hvis kontoen din er merket som klarert, vil X-CareOnCloud-overskriftene som allerede eksisterer ved ankomsttid (for prioritet osv.) beholdes og brukes, for eksempel i PostMaster-filtre.',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             'Utgående e-post kan konfigureres via Sendmail*-innstillingene i %s.',
         'System Configuration' => 'Systeminstillinger',
@@ -1673,8 +1673,8 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => 'Bruk komma eller semikolon for å skille e-postadresser.',
-        'You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
-            'Du kan bruke CareOnCloud ESM-tagger som <OTOBO_TICKET_DynamicField_...> for å sette inn verdier fra gjeldende sak.',
+        'You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            'Du kan bruke CareOnCloud ESM-tagger som <CareOnCloud_TICKET_DynamicField_...> for å sette inn verdier fra gjeldende sak.',
 
         # Template: AdminOAuthTokenStore
         'OAuth2 Token Management (OIDC)' => '',
@@ -8187,8 +8187,8 @@ Ditt Helpdesk-team
             'Definerer filteret som behandler teksten i artiklene, for å fremheve URL-er.',
         'Defines the format of responses in the ticket compose screen of the agent interface ([% Data.OrigFrom | html %] is From 1:1, [% Data.OrigFromName | html %] is only realname of From).' =>
             'Definerer formatet på svarene i saksskrivingsskjermen til agentgrensesnittet ([% Data.OrigFrom | html %] er fra 1:1, [% Data.OrigFromName | html %] er bare ekte navn på From).',
-        'Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
-            'Definerer det fullt kvalifiserte domenenavnet til systemet. Denne innstillingen brukes som en variabel, OTOBO_CONFIG_FQDN som finnes i alle former for meldinger som brukes av applikasjonen, for å bygge lenker til sakene i systemet ditt.',
+        'Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
+            'Definerer det fullt kvalifiserte domenenavnet til systemet. Denne innstillingen brukes som en variabel, CareOnCloud_CONFIG_FQDN som finnes i alle former for meldinger som brukes av applikasjonen, for å bygge lenker til sakene i systemet ditt.',
         'Defines the groups every customer user will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer user for these groups).' =>
             'Definerer gruppene hver kundebruker skal være i (hvis CustomerGroupSupport er aktivert og du ikke vil administrere hver kundebruker for disse gruppene).',
         'Defines the groups every customer will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer for these groups).' =>
@@ -8323,8 +8323,8 @@ Ditt Helpdesk-team
             '',
         'Defines the module to generate code for periodic page reloads.' =>
             'Definerer modulen for å generere kode for periodiske sideinnlastinger.',
-        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
-            'Definerer modulen for å sende e-post. "DoNotSendEmail" sender ikke e-post i det hele tatt. Enhver av "SMTP"-mekanismene bruker en spesifisert (ekstern) e-postserver. "Sendmail" bruker direkte sendmail-binæren til operativsystemet ditt. "Test" sender ikke e-poster, men skriver dem til $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testformål.',
+        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
+            'Definerer modulen for å sende e-post. "DoNotSendEmail" sender ikke e-post i det hele tatt. Enhver av "SMTP"-mekanismene bruker en spesifisert (ekstern) e-postserver. "Sendmail" bruker direkte sendmail-binæren til operativsystemet ditt. "Test" sender ikke e-poster, men skriver dem til $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testformål.',
         'Defines the module used to store the session data. With "DB" the frontend server can be splitted from the db server. "FS" is faster.' =>
             'Definerer modulen som brukes til å lagre øktdataene. Med "DB" kan frontend-serveren splittes fra db-serveren. "FS" er raskere.',
         'Defines the modules in Kernel/Output/HTML/GenericContent/ which provide the inner content to the chosen key.' =>
@@ -8437,8 +8437,8 @@ Ditt Helpdesk-team
             'Definerer skillet mellom agentens virkelige navn og den oppgitte kø-e-postadressen.',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             'Definerer de viste kolonnene og plasseringen i resultatskjermbildet AgentCustomerUserAddressBook.',
-        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
-            'Definerer de viste koblingene i bunntekstområdet i kundegrensesnittet til dette CareOnCloud ESM-systemet. Verdien i "Nøkkel" er den eksterne URL-en, verdien i "Innhold" er den viste etiketten. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> og <OTOBO_CONFIG_ScriptAlias> vil bli erstattet.',
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> and <CareOnCloud_CONFIG_ScriptAlias> will be substituted.' =>
+            'Definerer de viste koblingene i bunntekstområdet i kundegrensesnittet til dette CareOnCloud ESM-systemet. Verdien i "Nøkkel" er den eksterne URL-en, verdien i "Innhold" er den viste etiketten. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> og <CareOnCloud_CONFIG_ScriptAlias> vil bli erstattet.',
         'Defines the source dynamic field for storing historical data.' =>
             'Definerer kildedynamikkfeltet for lagring av historiske data.',
         'Defines the standard permissions available for customers within the application. If more permissions are needed, you can enter them here. Permissions must be hard coded to be effective. Please ensure, when adding any of the afore mentioned permissions, that the "rw" permission remains the last entry.' =>
@@ -8486,8 +8486,8 @@ Ditt Helpdesk-team
             'Definerer tidsavbruddet (i sekunder, minimum er 20 sekunder) for innsamling av støttedata med den offentlige modulen \'PublicSupportDataCollector\' (f.eks. brukt fra CareOnCloud ESM Daemon).',
         'Defines the two-factor module to authenticate agents.' => 'Definerer tofaktormodulen for å autentisere agenter.',
         'Defines the two-factor module to authenticate customers.' => 'Definerer tofaktormodulen for å autentisere kunder.',
-        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
-            'Definerer typen protokoll som brukes av webserveren for å betjene applikasjonen. Hvis webserveren bruker HTTP i stedet for HTTPS, må \'http\' angis her. Innstillingen for \'HttpType\' har ingen innvirkning på webserverens innstillinger eller oppførsel. Det vil spesifikt ikke endre metoden for tilgang til applikasjonen. Hvis innstillingen er feil, vil det ikke hindre deg i å logge på applikasjonen. Denne innstillingen brukes hovedsakelig via malvariabelen OTOBO_CONFIG_HttpType. Denne variabelen finnes i alle former for meldinger som brukes av applikasjonen. Den brukes til å bygge lenker til sakene i systemet ditt. En annen effekt av å holde \'HttpType\' satt til \'https\' er at øktadministrasjonsinformasjonskapselen kun vil bli satt for sikre tilkoblinger.',
+        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
+            'Definerer typen protokoll som brukes av webserveren for å betjene applikasjonen. Hvis webserveren bruker HTTP i stedet for HTTPS, må \'http\' angis her. Innstillingen for \'HttpType\' har ingen innvirkning på webserverens innstillinger eller oppførsel. Det vil spesifikt ikke endre metoden for tilgang til applikasjonen. Hvis innstillingen er feil, vil det ikke hindre deg i å logge på applikasjonen. Denne innstillingen brukes hovedsakelig via malvariabelen CareOnCloud_CONFIG_HttpType. Denne variabelen finnes i alle former for meldinger som brukes av applikasjonen. Den brukes til å bygge lenker til sakene i systemet ditt. En annen effekt av å holde \'HttpType\' satt til \'https\' er at øktadministrasjonsinformasjonskapselen kun vil bli satt for sikre tilkoblinger.',
         'Defines the used character for plaintext email quotes in the ticket compose screen of the agent interface. If this is empty or inactive, original emails will not be quoted but appended to the response.' =>
             'Definerer det brukte tegnet for e-postsitater i klartekst i skjermbildet for bestilling av saker i agentgrensesnittet. Hvis dette er tomt eller inaktivt, vil ikke originale e-poster bli sitert, men lagt til svaret.',
         'Defines the user identifier for the customer panel.' => 'Definerer brukeridentifikatoren for kundepanelet.',
@@ -8784,8 +8784,8 @@ Ditt Helpdesk-team
             'Utfører en egendefinert kommando eller modul. Merk: hvis modul brukes, er funksjon nødvendig.',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             'Utfører oppfølgingskontroller på In-Reply-To eller References-hoder for e-poster som ikke har et saksnummer i emnet.',
-        'Executes follow-up checks on CareOnCloud ESM Header \'X-OTOBO-Bounce\'.' =>
-            'Utfører oppfølgingskontroller på CareOnCloud ESM Header \'X-OTOBO-Bounce\'.',
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'.' =>
+            'Utfører oppfølgingskontroller på CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'.',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             'Utfører oppfølgingskontroller av vedleggsinnhold for e-poster som ikke har saksnummer i emnet.',
         'Executes follow-up checks on email body for mails that don\'t have a ticket number in the subject.' =>
@@ -8815,10 +8815,10 @@ Ditt Helpdesk-team
             'Felter som skal søkes i saksregisteret. Felt lagres også, men er ikke obligatoriske for den generelle funksjonaliteten.',
         'File that is displayed in the Kernel::Modules::AgentInfo module, if located under Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.' =>
             'Fil som vises i Kernel::Modules::AgentInfo-modulen, hvis den ligger under Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.',
-        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'Filter for feilsøking av ACLer. Merk: Flere saksattributter kan legges til i formatet <OTOBO_TICKET_Attribute>, f.eks. <OTOBO_TICKET_Priority>.',
-        'Filter for debugging Transitions. Note: More filters can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'Filter for feilsøking av overganger. Merk: Flere filtre kan legges til i formatet <OTOBO_TICKET_Attribute>, f.eks. <OTOBO_TICKET_Priority>.',
+        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'Filter for feilsøking av ACLer. Merk: Flere saksattributter kan legges til i formatet <CareOnCloud_TICKET_Attribute>, f.eks. <CareOnCloud_TICKET_Priority>.',
+        'Filter for debugging Transitions. Note: More filters can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'Filter for feilsøking av overganger. Merk: Flere filtre kan legges til i formatet <CareOnCloud_TICKET_Attribute>, f.eks. <CareOnCloud_TICKET_Priority>.',
         'Filter incoming emails.' => 'Filtrering av innkommende e-poster.',
         'Finnish' => 'Finsk',
         'First Christmas Day' => 'Første juledag',
@@ -9246,7 +9246,7 @@ Ditt Helpdesk-team
         'Medium' => 'Medium',
         'Merge this ticket and all articles into another ticket' => 'Slå sammen denne saken og alle artiklene til en annen sak',
         'Merged Ticket (%s/%s) to (%s/%s).' => 'Sammenslått sak (%s/%s) til (%s/%s).',
-        'Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>.' => 'Sammenslått sak <OTOBO_TICKET> til <OTOBO_MERGE_TO_TICKET>.',
+        'Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>.' => 'Sammenslått sak <CareOnCloud_TICKET> til <CareOnCloud_MERGE_TO_TICKET>.',
         'Message of the day' => '',
         'Minute' => 'Minutt',
         'Miscellaneous' => 'Diverse',
@@ -9798,8 +9798,8 @@ Ditt Helpdesk-team
         'Sets the prefered time units (e.g. work units, hours, minutes).' =>
             'Stiller inn foretrukne tidsenheter (f.eks. arbeidsenheter, timer, minutter).',
         'Sets the preferred digest to be used for PGP binary.' => 'Angir det foretrukne sammendraget som skal brukes for PGP-binær.',
-        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
-            'Setter prefikset til skriptmappen på serveren, slik den er konfigurert på webserveren. Denne innstillingen brukes som en variabel, OTOBO_CONFIG_ScriptAlias som finnes i alle former for meldinger som brukes av applikasjonen, for å bygge lenker til sakene i systemet.',
+        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
+            'Setter prefikset til skriptmappen på serveren, slik den er konfigurert på webserveren. Denne innstillingen brukes som en variabel, CareOnCloud_CONFIG_ScriptAlias som finnes i alle former for meldinger som brukes av applikasjonen, for å bygge lenker til sakene i systemet.',
         'Sets the queue in the ticket close screen of a zoomed ticket in the agent interface.' =>
             'Stiller inn køen i billettlukkingsskjermen til en zoomet billett i agentgrensesnittet.',
         'Sets the queue in the ticket free text screen of a zoomed ticket in the agent interface.' =>
@@ -10131,8 +10131,8 @@ Ditt Helpdesk-team
         'Specifies the directory where SSL certificates are stored.' => 'Spesifiserer mappen der SSL-sertifikatene lagres.',
         'Specifies the directory where private SSL certificates are stored.' =>
             'Spesifiserer mappen der private SSL-sertifikater lagres.',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            'Angir e-postadressen som skal brukes av programmet når du sender varsler. E-postadressen brukes til å bygge det fullstendige visningsnavnet for varslingsmasteren (dvs. "CareOnCloud ESM Notifications" careoncloud@your.example.com). Du kan bruke OTOBO_CONFIG_FQDN-variabelen som angitt i konfigurasjonen, eller velge en annen e-postadresse.',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            'Angir e-postadressen som skal brukes av programmet når du sender varsler. E-postadressen brukes til å bygge det fullstendige visningsnavnet for varslingsmasteren (dvs. "CareOnCloud ESM Notifications" careoncloud@your.example.com). Du kan bruke CareOnCloud_CONFIG_FQDN-variabelen som angitt i konfigurasjonen, eller velge en annen e-postadresse.',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             'Spesifiserer e-postadressene for å motta varslingsmeldinger fra planleggeroppgaver.',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
@@ -10455,10 +10455,10 @@ Ditt Helpdesk-team
         'XOAUTH2' => '',
         'Yes, but hide archived tickets' => 'Ja, men skjul de arkiverte sakene',
         'Your Tickets. Your CareOnCloud ESM.' => '',
-        'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
-            'Din e-post med saksnummeret «<OTOBO_TICKET>» blir returnert til «<OTOBO_BOUNCE_TO>». Kontakt denne adressen for mer informasjon.',
-        'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
-            'Din e-postsak med nummer "<OTOBO_TICKET>" er flettet med "<OTOBO_MERGE_TO_TICKET>".',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is bounced to "<CareOnCloud_BOUNCE_TO>". Contact this address for further information.' =>
+            'Din e-post med saksnummeret «<CareOnCloud_TICKET>» blir returnert til «<CareOnCloud_BOUNCE_TO>». Kontakt denne adressen for mer informasjon.',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is merged to "<CareOnCloud_MERGE_TO_TICKET>".' =>
+            'Din e-postsak med nummer "<CareOnCloud_TICKET>" er flettet med "<CareOnCloud_MERGE_TO_TICKET>".',
         'Your external tools' => '',
         'Your last tickets' => '',
         'Your queue selection of your preferred queues. You also get notified about those queues via email if enabled.' =>

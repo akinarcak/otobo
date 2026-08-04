@@ -377,7 +377,7 @@ sub _GetWebserviceConfigs {
 
     # some heuristics for where Elasticsearch is running.
     my $ElasticsearchPort = 9200;
-    my $ElasticsearchHost = $ENV{OTOBO_RUNS_UNDER_DOCKER} ? 'elastic' : 'localhost';
+    my $ElasticsearchHost = $ENV{CareOnCloud_RUNS_UNDER_DOCKER} ? 'elastic' : 'localhost';
 
     return
         Elasticsearch => {

@@ -247,7 +247,7 @@ add a filter
         ],
         Set = [
             {
-                Key   => 'X-OTOBO-Queue',
+                Key   => 'X-CareOnCloud-Queue',
                 Value => 'Some::Queue',
             },
             ...
@@ -366,7 +366,7 @@ Returns a hash with the keys Match, Set, and Not.
         ],
         Set = [
             {
-                Key   => 'X-OTOBO-Queue',
+                Key   => 'X-CareOnCloud-Queue',
                 Value => 'Some::Queue',
             },
             ...

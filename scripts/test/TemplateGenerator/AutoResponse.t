@@ -100,7 +100,7 @@ my %AutoResponseTemplate = (
     Name        => $AutoResonseName,
     ValidID     => 1,
     Subject     => 'Some Subject..',
-    Response    => 'S:&nbsp;&lt;OTOBO_TICKET_State&gt;',    # include non-breaking space (bug#12097)
+    Response    => 'S:&nbsp;&lt;CareOnCloud_TICKET_State&gt;',    # include non-breaking space (bug#12097)
     ContentType => 'text/html',
     AddressID   => 1,
     TypeID      => 4,                                       # auto reply/new ticket
@@ -231,16 +231,16 @@ ok( $TestQueueID, "TestQueueID $TestQueueID is created" );
 my $TestAutoResponse = '<!DOCTYPE html><html>' .
     '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head>'
     . '<body style="font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;">'
-    . 'OTOBO_TICKET_Created: &lt;OTOBO_TICKET_Created&gt;<br />'
-    . 'OTOBO_TICKET_Changed: &lt;OTOBO_TICKET_Changed&gt;<br />'
-    . 'OTOBO_TICKET_DynamicField_'
+    . 'CareOnCloud_TICKET_Created: &lt;CareOnCloud_TICKET_Created&gt;<br />'
+    . 'CareOnCloud_TICKET_Changed: &lt;CareOnCloud_TICKET_Changed&gt;<br />'
+    . 'CareOnCloud_TICKET_DynamicField_'
     . $DynamicFieldName
-    . ': &lt;OTOBO_TICKET_DynamicField_'
+    . ': &lt;CareOnCloud_TICKET_DynamicField_'
     . $DynamicFieldName
     . '&gt;<br />'
-    . 'OTOBO_TICKET_DynamicField_'
+    . 'CareOnCloud_TICKET_DynamicField_'
     . $DynamicFieldName
-    . '_Value: &lt;OTOBO_TICKET_DynamicField_'
+    . '_Value: &lt;CareOnCloud_TICKET_DynamicField_'
     . $DynamicFieldName
     . '_Value&gt;<br />'
     . '</body>'
@@ -250,7 +250,7 @@ my $TestAutoResponse = '<!DOCTYPE html><html>' .
 my $TestAutoResponseID = $AutoResponseObject->AutoResponseAdd(
     Name        => "TestAutoResponse$RandomID",
     ValidID     => 1,
-    Subject     => "$RandomID - <OTOBO_TICKET_Created>",
+    Subject     => "$RandomID - <CareOnCloud_TICKET_Created>",
     Response    => $TestAutoResponse,
     ContentType => 'text/html',
     AddressID   => 1,
@@ -314,9 +314,9 @@ ok( $Success, "Dynamic field value is set successfully" );
         Language        => 'de',
         ExpectedSubject => "[Ticket#$TicketNumber] $RandomID - 06.12.2018 13:00 (Europe/Berlin)",
         ExpectedText    =>
-            '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body style="font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;">OTOBO_TICKET_Created: 06.12.2018 13:00 (Europe/Berlin)<br />OTOBO_TICKET_Changed: 06.12.2018 13:00 (Europe/Berlin)<br />OTOBO_TICKET_DynamicField_'
+            '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body style="font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;">CareOnCloud_TICKET_Created: 06.12.2018 13:00 (Europe/Berlin)<br />CareOnCloud_TICKET_Changed: 06.12.2018 13:00 (Europe/Berlin)<br />CareOnCloud_TICKET_DynamicField_'
             . $DynamicFieldName
-            . ': 2018-12-03 16:00:00 (Europe/Berlin)<br />OTOBO_TICKET_DynamicField_'
+            . ': 2018-12-03 16:00:00 (Europe/Berlin)<br />CareOnCloud_TICKET_DynamicField_'
             . $DynamicFieldName
             . '_Value: 03.12.2018 16:00 (Europe/Berlin)<br /></body></html>',
     },
@@ -325,9 +325,9 @@ ok( $Success, "Dynamic field value is set successfully" );
         Language        => 'es',
         ExpectedSubject => "[Ticket#$TicketNumber] $RandomID - 06/12/2018 - 07:00 (America/Bogota)",
         ExpectedText    =>
-            '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body style="font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;">OTOBO_TICKET_Created: 06/12/2018 - 07:00 (America/Bogota)<br />OTOBO_TICKET_Changed: 06/12/2018 - 07:00 (America/Bogota)<br />OTOBO_TICKET_DynamicField_'
+            '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body style="font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;">CareOnCloud_TICKET_Created: 06/12/2018 - 07:00 (America/Bogota)<br />CareOnCloud_TICKET_Changed: 06/12/2018 - 07:00 (America/Bogota)<br />CareOnCloud_TICKET_DynamicField_'
             . $DynamicFieldName
-            . ': 2018-12-03 10:00:00 (America/Bogota)<br />OTOBO_TICKET_DynamicField_'
+            . ': 2018-12-03 10:00:00 (America/Bogota)<br />CareOnCloud_TICKET_DynamicField_'
             . $DynamicFieldName
             . '_Value: 03/12/2018 - 10:00 (America/Bogota)<br /></body></html>',
     },
@@ -336,9 +336,9 @@ ok( $Success, "Dynamic field value is set successfully" );
         Language        => 'en',
         ExpectedSubject => "[Ticket#$TicketNumber] $RandomID - 12/06/2018 19:00 (Asia/Bangkok)",
         ExpectedText    =>
-            '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body style="font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;">OTOBO_TICKET_Created: 12/06/2018 19:00 (Asia/Bangkok)<br />OTOBO_TICKET_Changed: 12/06/2018 19:00 (Asia/Bangkok)<br />OTOBO_TICKET_DynamicField_'
+            '<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head><body style="font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;">CareOnCloud_TICKET_Created: 12/06/2018 19:00 (Asia/Bangkok)<br />CareOnCloud_TICKET_Changed: 12/06/2018 19:00 (Asia/Bangkok)<br />CareOnCloud_TICKET_DynamicField_'
             . $DynamicFieldName
-            . ': 2018-12-03 22:00:00 (Asia/Bangkok)<br />OTOBO_TICKET_DynamicField_'
+            . ': 2018-12-03 22:00:00 (Asia/Bangkok)<br />CareOnCloud_TICKET_DynamicField_'
             . $DynamicFieldName
             . '_Value: 12/03/2018 22:00 (Asia/Bangkok)<br /></body></html>',
     }

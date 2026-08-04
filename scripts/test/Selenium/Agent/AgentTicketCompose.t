@@ -194,21 +194,21 @@ $Selenium->RunTest(
         my $TemplateID = $StandardTemplateObject->StandardTemplateAdd(
             Name     => 'New Standard Template' . $RandomID,
             Template => "Thank you for your email.
-                             Ticket state: <OTOBO_TICKET_State>.\n
-                             Ticket lock: <OTOBO_TICKET_Lock>.\n
-                             Ticket priority: <OTOBO_TICKET_Priority>.\n
-                             Ticket created: <OTOBO_TICKET_Created>.\n
-                             Ticket pending until time: <OTOBO_TICKET_UntilTime>.\n
-                             Ticket will not be used till: <OTOBO_TICKET_RealTillTimeNotUsed>.\n
-                             DynamicField Text: <OTOBO_TICKET_DynamicField_" . $DynamicFields{Text}->{Name} . "_Value>
-                             DynamicField Dropdown: <OTOBO_TICKET_DynamicField_"
+                             Ticket state: <CareOnCloud_TICKET_State>.\n
+                             Ticket lock: <CareOnCloud_TICKET_Lock>.\n
+                             Ticket priority: <CareOnCloud_TICKET_Priority>.\n
+                             Ticket created: <CareOnCloud_TICKET_Created>.\n
+                             Ticket pending until time: <CareOnCloud_TICKET_UntilTime>.\n
+                             Ticket will not be used till: <CareOnCloud_TICKET_RealTillTimeNotUsed>.\n
+                             DynamicField Text: <CareOnCloud_TICKET_DynamicField_" . $DynamicFields{Text}->{Name} . "_Value>
+                             DynamicField Dropdown: <CareOnCloud_TICKET_DynamicField_"
                 . $DynamicFields{Dropdown}->{Name}
                 . "_Value>
-                             DynamicField Multiselect: <OTOBO_TICKET_DynamicField_"
+                             DynamicField Multiselect: <CareOnCloud_TICKET_DynamicField_"
                 . $DynamicFields{Multiselect}->{Name}
                 . "_Value>
-                             DynamicField Date: <OTOBO_TICKET_DynamicField_" . $DynamicFields{Date}->{Name} . "_Value>
-                             DynamicField DateTime: <OTOBO_TICKET_DynamicField_"
+                             DynamicField Date: <CareOnCloud_TICKET_DynamicField_" . $DynamicFields{Date}->{Name} . "_Value>
+                             DynamicField DateTime: <CareOnCloud_TICKET_DynamicField_"
                 . $DynamicFields{DateTime}->{Name}
                 . "_Value>
                             ",
@@ -473,7 +473,7 @@ $Selenium->RunTest(
         );
 
         # Test bug #11810 - http://bugs.otrs.org/show_bug.cgi?id=11810.
-        # Translate ticket data tags (e.g. <OTOBO_TICKET_State> ) in standard template.
+        # Translate ticket data tags (e.g. <CareOnCloud_TICKET_State> ) in standard template.
         $Kernel::OM->ObjectParamAdd(
             'Kernel::Language' => {
                 UserLanguage => $Language,

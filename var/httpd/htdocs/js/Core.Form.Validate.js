@@ -994,7 +994,7 @@ Core.Form.Validate = (function (TargetNS) {
      * @memberof Core.Form.Validate
      * @function
      * @param {String} Name - The name of the rule.
-     * @param {Object} MethodHash - This JS object defines, which methods should be included in this rule, e.g. { OTOBO_Validate_Required: true, CareOnCloud ESM-Validate_MinLength: 2 }.
+     * @param {Object} MethodHash - This JS object defines, which methods should be included in this rule, e.g. { CareOnCloud_Validate_Required: true, CareOnCloud ESM-Validate_MinLength: 2 }.
      * @description
      *      This function is used to add special validation rules. The name is also the class name you can use in the HTML.
      */

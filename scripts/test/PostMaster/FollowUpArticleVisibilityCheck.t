@@ -231,7 +231,7 @@ Some Content in Body",
         Name  => 'Provider notification',
         Email => "From: Provider <$InternalAddress>
 To: Agent <$AgentAddress>
-X-OTOBO-FollowUp-SenderType: system
+X-CareOnCloud-FollowUp-SenderType: system
 Subject: $Subject
 
 Some Content in Body",

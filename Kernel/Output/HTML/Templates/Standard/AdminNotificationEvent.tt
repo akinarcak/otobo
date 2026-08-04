@@ -735,99 +735,99 @@
                 <p>[% Translate("You can use the following tags") | html %]:</p>
 
                 <dl>
-                    <dt><code>&lt;OTOBO_AGENT_SUBJECT[20]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_AGENT_SUBJECT[20]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 20 character of the subject (of the latest agent article).") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_AGENT_BODY[5]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_AGENT_BODY[5]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 5 lines of the body (of the latest agent article).") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_AGENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_AGENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("To get the article attribute") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_AGENT_From&gt;, &lt;OTOBO_AGENT_To&gt;, &lt;OTOBO_AGENT_Cc&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_AGENT_From&gt;, &lt;CareOnCloud_AGENT_To&gt;, &lt;CareOnCloud_AGENT_Cc&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_SUBJECT[20]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_SUBJECT[20]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 20 character of the subject (of the latest customer article).") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_BODY[5]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_BODY[5]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 5 lines of the body (of the latest customer article).") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_REALNAME&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_REALNAME&gt;</code></dt>
                     <dd>
                         [% Translate("To get the name of the ticket's customer user (if given).") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_*&gt;</code></dt>
                     <dd>
                         [% Translate("To get the article attribute") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CUSTOMER_From&gt;, &lt;OTOBO_CUSTOMER_To&gt;,
-                        &lt;OTOBO_CUSTOMER_Cc&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CUSTOMER_From&gt;, &lt;CareOnCloud_CUSTOMER_To&gt;,
+                        &lt;CareOnCloud_CUSTOMER_Cc&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_DATA_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_DATA_*&gt;</code></dt>
                     <dd>
                         [% Translate("Attributes of the current customer user data") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CUSTOMER_DATA_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CUSTOMER_DATA_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_OWNER_*&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_TICKET_OWNER_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_OWNER_*&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_TICKET_OWNER_*&gt;</code></dt>
                     <dd>
                         [% Translate("Attributes of the current ticket owner user data") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_OWNER_UserFirstname&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_TICKET_OWNER_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_OWNER_UserFirstname&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_TICKET_OWNER_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_RESPONSIBLE_*&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_TICKET_RESPONSIBLE_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_RESPONSIBLE_*&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_TICKET_RESPONSIBLE_*&gt;</code></dt>
                     <dd>
                         [% Translate("Attributes of the current ticket responsible user data") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_RESPONSIBLE_UserFirstname&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_TICKET_RESPONSIBLE_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_RESPONSIBLE_UserFirstname&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_TICKET_RESPONSIBLE_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CURRENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CURRENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("Attributes of the current agent user who requested this action") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CURRENT_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CURRENT_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_*&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_NOTIFICATION_RECIPIENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_*&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_NOTIFICATION_RECIPIENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("Attributes of the recipient user for the notification") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_UserFullname&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_NOTIFICATION_RECIPIENT_UserFullname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_UserFullname&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_NOTIFICATION_RECIPIENT_UserFullname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_*&gt;</code></dt>
                     <dd>
                         [% Translate("Attributes of the ticket data") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_TicketNumber&gt;, &lt;OTOBO_TICKET_TicketID&gt;,
-                        &lt;OTOBO_TICKET_Queue&gt;, &lt;OTOBO_TICKET_State&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_TicketNumber&gt;, &lt;CareOnCloud_TICKET_TicketID&gt;,
+                        &lt;CareOnCloud_TICKET_Queue&gt;, &lt;CareOnCloud_TICKET_State&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_DynamicField_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_DynamicField_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket dynamic fields internal key values") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_DynamicField_TestField&gt;,
-                        &lt;OTOBO_TICKET_DynamicField_TicketFreeText1&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_DynamicField_TestField&gt;,
+                        &lt;CareOnCloud_TICKET_DynamicField_TicketFreeText1&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_DynamicField_*_Value&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_DynamicField_*_Value&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket dynamic fields display values, useful for Dropdown and Multiselect fields") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_DynamicField_TestField_Value&gt;,
-                        &lt;OTOBO_TICKET_DynamicField_TicketFreeText1_Value&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_DynamicField_TestField_Value&gt;,
+                        &lt;CareOnCloud_TICKET_DynamicField_TicketFreeText1_Value&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CONFIG_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CONFIG_*&gt;</code></dt>
                     <dd>
                         [% Translate("Config options") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CONFIG_HttpType&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CONFIG_HttpType&gt;</code>).
                     </dd>
                 </dl>
 
@@ -835,21 +835,21 @@
                     [% Translate("Example notification") | html %]:
                 </p>
                 <label for="SubjectExample">[% Translate("Subject") | html %]</label>:
-                <input type="text" name="SubjectExample" id="SubjectExample" value="Ticket Created: &lt;OTOBO_TICKET_Title&gt;" size="80" maxlength="80" readonly />
+                <input type="text" name="SubjectExample" id="SubjectExample" value="Ticket Created: &lt;CareOnCloud_TICKET_Title&gt;" size="80" maxlength="80" readonly />
                 <br/>
                 <label for="ResponseExample">[% Translate("Text") | html %]</label>:
                 <br/>
                 <textarea rows="12" cols="70" name="ResponseExample" id="ResponseExample" readonly>
-Hi &lt;OTOBO_NOTIFICATION_RECIPIENT_UserFirstname&gt;,
+Hi &lt;CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname&gt;,
 
-ticket [&lt;OTOBO_CONFIG_TicketHook&gt;&lt;OTOBO_TICKET_TicketNumber&gt;] has been created in queue &lt;OTOBO_TICKET_Queue&gt;.
+ticket [&lt;CareOnCloud_CONFIG_TicketHook&gt;&lt;CareOnCloud_TICKET_TicketNumber&gt;] has been created in queue &lt;CareOnCloud_TICKET_Queue&gt;.
 
-&lt;OTOBO_CUSTOMER_REALNAME&gt; wrote:
-&lt;OTOBO_CUSTOMER_Body[30]&gt;
+&lt;CareOnCloud_CUSTOMER_REALNAME&gt; wrote:
+&lt;CareOnCloud_CUSTOMER_Body[30]&gt;
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;index.pl?Action=AgentTicketZoom;TicketID=&lt;OTOBO_TICKET_TicketID&gt;
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;index.pl?Action=AgentTicketZoom;TicketID=&lt;CareOnCloud_TICKET_TicketID&gt;
 
--- &lt;OTOBO_CONFIG_NotificationSenderName&gt;
+-- &lt;CareOnCloud_CONFIG_NotificationSenderName&gt;
                 </textarea>
             </div>
         </div>

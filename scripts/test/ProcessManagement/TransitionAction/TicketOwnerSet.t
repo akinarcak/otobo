@@ -227,7 +227,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                OwnerID => '<OTOBO_TICKET_QueueID>',
+                OwnerID => '<CareOnCloud_TICKET_QueueID>',
             },
         },
         Success => 1,
@@ -238,7 +238,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                OwnerID => '<OTOBO_TICKET_NotExisting>',
+                OwnerID => '<CareOnCloud_TICKET_NotExisting>',
             },
         },
         Success => 0,
@@ -261,7 +261,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                Owner  => '<OTOBO_CURRENT_UserLogin>',
+                Owner  => '<CareOnCloud_CURRENT_UserLogin>',
                 UserID => $TestUserID,
             },
         },
@@ -307,7 +307,7 @@ for my $Test (@Tests) {
             my $ExpectedValue = $Test->{Config}->{Config}->{$Attribute};
             if (
                 $OrigTest->{Config}->{Config}->{$Attribute}
-                =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+                =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
                 )
             {
                 $ExpectedValue = $Ticket{$1} // '';

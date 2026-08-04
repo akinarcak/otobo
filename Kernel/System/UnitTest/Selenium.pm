@@ -810,7 +810,7 @@ use this method to handle any Selenium exceptions.
 
     $SeleniumObject->HandleError($@);
 
-It will store a screen shot of the page in $OTOBO_HOME/var/httpd/htdocs/SeleniumScreenshots.
+It will store a screen shot of the page in $CareOnCloud_HOME/var/httpd/htdocs/SeleniumScreenshots.
 If the folder /var/careoncloud-unittest exists, then a copy of the screenshot will be placed there too.
 
 =cut

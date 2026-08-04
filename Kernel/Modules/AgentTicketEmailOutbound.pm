@@ -1318,9 +1318,9 @@ sub SendEmail {
         return $Output;
     }
 
-    # replace <OTOBO_TICKET_STATE> with next ticket state name
+    # replace <CareOnCloud_TICKET_STATE> with next ticket state name
     if ($NextState) {
-        $GetParam{Body} =~ s/(&lt;|<)OTOBO_TICKET_STATE(&gt;|>)/$NextState/g;
+        $GetParam{Body} =~ s/(&lt;|<)CareOnCloud_TICKET_STATE(&gt;|>)/$NextState/g;
     }
 
     # get pre loaded attachments

@@ -44,8 +44,8 @@ my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
 # ensure that the appropriate X-Headers are available in the config
 {
     my %NeededXHeaders = (
-        'X-OTOBO-AttachmentExists' => 1,
-        'X-OTOBO-AttachmentCount'  => 1,
+        'X-CareOnCloud-AttachmentExists' => 1,
+        'X-CareOnCloud-AttachmentCount'  => 1,
     );
 
     my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -155,21 +155,21 @@ my @Tests = (
         ValidID => 1,
         Match   => [
             {
-                Key   => 'X-OTOBO-AttachmentExists',
+                Key   => 'X-CareOnCloud-AttachmentExists',
                 Value => 'no',
             },
             {
-                Key   => 'X-OTOBO-AttachmentCount',
+                Key   => 'X-CareOnCloud-AttachmentCount',
                 Value => 0,
             }
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => 'No Attachments in mail',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => 'CeroAttachments',
             },
         ],
@@ -193,21 +193,21 @@ END_EMAIL
         ValidID => 1,
         Match   => [
             {
-                Key   => 'X-OTOBO-AttachmentExists',
+                Key   => 'X-CareOnCloud-AttachmentExists',
                 Value => 'yes',
             },
             {
-                Key   => 'X-OTOBO-AttachmentCount',
+                Key   => 'X-CareOnCloud-AttachmentCount',
                 Value => 1,
             }
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => 'A normal SMIME email',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => 'AtLeastOneAttachment',
             },
         ],
@@ -222,21 +222,21 @@ END_EMAIL
         ValidID => 1,
         Match   => [
             {
-                Key   => 'X-OTOBO-AttachmentExists',
+                Key   => 'X-CareOnCloud-AttachmentExists',
                 Value => 'yes',
             },
             {
-                Key   => 'X-OTOBO-AttachmentCount',
+                Key   => 'X-CareOnCloud-AttachmentCount',
                 Value => 1,
             }
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => 'This should not be set',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => 'This should not be set',
             },
         ],

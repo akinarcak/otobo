@@ -309,7 +309,7 @@ sub Run {
 
     # Convert DynamicField value to HTML string, see bug#14229.
     my $HTMLUtilsObject = $Kernel::OM->Get('Kernel::System::HTMLUtils');
-    if ( $Param{Config}->{Body} =~ /OTOBO_TICKET_DynamicField_/ ) {
+    if ( $Param{Config}->{Body} =~ /CareOnCloud_TICKET_DynamicField_/ ) {
         MATCH:
         for my $Match ( sort keys %{ $Param{Ticket} } ) {
             if ( $Match =~ m/DynamicField_(.*)/ && $Param{Ticket}->{$Match} ) {

@@ -4220,7 +4220,7 @@ sub CustomerLogin {
     my $BGConfig = $ConfigObject->Get('CustomerLogin::Settings');
     $Param{LoginText}  = $BGConfig->{LoginText} // 'Your Tickets. Your CareOnCloud ESM.';
     $Param{Background} = $BGConfig->{Background} || '';
-    $Param{Background} =~ s{<OTOBO_CONFIG_(.+?)>}{$ConfigObject->Get($1)}egx;
+    $Param{Background} =~ s{<CareOnCloud_CONFIG_(.+?)>}{$ConfigObject->Get($1)}egx;
 
     # define color scheme
     my $ColorDefinitions = $ConfigObject->Get('CustomerColorDefinitions');
@@ -4517,7 +4517,7 @@ sub CustomerFooter {
         for my $Link ( sort keys %{$FooterLinks} ) {
             my $SubstitutedLink = $Link;
             for my $Option (qw/HttpType FQDN ScriptAlias/) {
-                $SubstitutedLink =~ s/<OTOBO_CONFIG_$Option>/$URLConfig{ $Option }/g;
+                $SubstitutedLink =~ s/<CareOnCloud_CONFIG_$Option>/$URLConfig{ $Option }/g;
             }
 
             push @FooterLinks, {

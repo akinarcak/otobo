@@ -241,7 +241,7 @@ sub ImportAction {
             Param    => 'File',
             Encoding => 'Raw'
         );
-        if ( $UploadStuff{Content} =~ m{<otobo_stats>}x || $UploadStuff{Content} =~ m{<otrs_stats>}x ) {
+        if ( $UploadStuff{Content} =~ m{<careoncloud_stats>}x || $UploadStuff{Content} =~ m{<otrs_stats>}x ) {
             my $StatID = $Kernel::OM->Get('Kernel::System::Stats')->Import(
                 Content => $UploadStuff{Content},
                 UserID  => $Self->{UserID},

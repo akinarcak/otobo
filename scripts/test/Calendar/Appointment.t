@@ -157,8 +157,8 @@ my $NotificationID  = $Kernel::OM->Get('Kernel::System::NotificationEvent')->Not
     ValidID => 1,
     Message => {
         en => {
-            Body        => 'appointment "&lt;OTOBO_APPOINTMENT_TITLE&gt;" has reached its notification time.',
-            Subject     => 'Reminder: <OTOBO_APPOINTMENT_TITLE> DELETE',
+            Body        => 'appointment "&lt;CareOnCloud_APPOINTMENT_TITLE&gt;" has reached its notification time.',
+            Subject     => 'Reminder: <CareOnCloud_APPOINTMENT_TITLE> DELETE',
             ContentType => 'text/html'
         }
     },

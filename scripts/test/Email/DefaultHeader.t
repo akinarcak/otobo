@@ -107,7 +107,7 @@ my @Tests = (
             Charset => 'utf8',
         },
         Check => {
-            'X-OTOBO-Test' => 'DefaultHeader',
+            'X-CareOnCloud-Test' => 'DefaultHeader',
         },
     },
 );

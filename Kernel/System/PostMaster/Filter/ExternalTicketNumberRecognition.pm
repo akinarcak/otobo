@@ -221,13 +221,13 @@ sub Run {
         $Param{GetParam}->{'X-OTRS-FollowUp-RecognizedTicketNumber'} = $TicketNumber;
 
         # set sender type and article type.
-        $Param{GetParam}->{'X-OTOBO-FollowUp-SenderType'}           = $Param{JobConfig}->{SenderType};
-        $Param{GetParam}->{'X-OTOBO-FollowUp-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer};
+        $Param{GetParam}->{'X-CareOnCloud-FollowUp-SenderType'}           = $Param{JobConfig}->{SenderType};
+        $Param{GetParam}->{'X-CareOnCloud-FollowUp-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer};
 
         # also set these parameters. It could be that the follow up is rejected by Reject.pm
         #   (follow-ups not allowed), but the original article will still be attached to the ticket.
-        $Param{GetParam}->{'X-OTOBO-SenderType'}           = $Param{JobConfig}->{SenderType};
-        $Param{GetParam}->{'X-OTOBO-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer};
+        $Param{GetParam}->{'X-CareOnCloud-SenderType'}           = $Param{JobConfig}->{SenderType};
+        $Param{GetParam}->{'X-CareOnCloud-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer};
 
     }
     else {
@@ -240,11 +240,11 @@ sub Run {
 
         # get the dynamic field name and description from JobConfig, set as headers
         my $TicketDynamicFieldName = $Param{JobConfig}->{'DynamicFieldName'};
-        $Param{GetParam}->{ 'X-OTOBO-DynamicField-' . $TicketDynamicFieldName } = $Self->{Number};
+        $Param{GetParam}->{ 'X-CareOnCloud-DynamicField-' . $TicketDynamicFieldName } = $Self->{Number};
 
         # set sender type and article type
-        $Param{GetParam}->{'X-OTOBO-SenderType'}           = $Param{JobConfig}->{SenderType};
-        $Param{GetParam}->{'X-OTOBO-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer};
+        $Param{GetParam}->{'X-CareOnCloud-SenderType'}           = $Param{JobConfig}->{SenderType};
+        $Param{GetParam}->{'X-CareOnCloud-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer};
     }
 
     return 1;

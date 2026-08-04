@@ -36,7 +36,7 @@ Core.Form.ErrorTooltips = (function (TargetNS) {
      * @description
      *      ID of the container DOM element.
      */
-    var TooltipContainerID = 'OTOBO_UI_Tooltips_ErrorTooltip',
+    var TooltipContainerID = 'CareOnCloud_UI_Tooltips_ErrorTooltip',
     /**
      * @private
      * @name TooltipOffsetTop

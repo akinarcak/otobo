@@ -21,7 +21,7 @@ like( $Source, qr/FILTER_UNSUPPORTED/, 'filters fail closed outside the bounded 
 like( $Source, qr/ExpectedVersion/, 'writes require optimistic concurrency' );
 like( $Source, qr/_AgentHasActiveMembership/, 'tenant deprovision preserves agents used by another tenant' );
 like( $Source, qr/native_user_id/, 'native CareOnCloud user link uses brand-neutral schema naming' );
-unlike( $Source, qr/otobo_user_id|CareOnCloud ESMUserID/, 'legacy upstream-branded user link is absent from runtime code' );
+unlike( $Source, qr/careoncloud_user_id|CareOnCloud ESMUserID/, 'legacy upstream-branded user link is absent from runtime code' );
 like( $Source, qr/sub GroupDelete/, 'group removal reconciles role memberships' );
 unlike( $Source, qr/AccessToken\s*=>\s*\$P\{TenantID\}/, 'tenant identifiers are never treated as bearer tokens' );
 

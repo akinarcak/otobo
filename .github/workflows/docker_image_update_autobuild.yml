@@ -281,7 +281,7 @@ jobs:
 
             This means that there is work to do. Please test the newly created Docker images.
             This can be done via the 'New Pipeline' button in https://git.otobo.org/otobo/otobo/-/pipelines .
-            Choose 'autobuild' for the variable OTOBO_DOCKER_DEVEL.
+            Choose 'autobuild' for the variable CareOnCloud_DOCKER_DEVEL.
 
             Note that the GitLab pipeline tests do not cover the service nginx. Please do manual sanity testing.
             First pull current images with 'docker compose pull'. Then start an installation with the autobuild images

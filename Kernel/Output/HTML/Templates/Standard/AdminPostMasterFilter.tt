@@ -339,7 +339,7 @@
 
                     <label for="SetHeaderExample">[% Translate("Header") | html %] 1:</label>
                     <div class="Field">
-                        <select name="SetHeaderExample" id="SetHeaderExample" class="Modernize W33pc"><option selected value="X-OTOBO-Queue">X-OTOBO-Queue</option></select>
+                        <select name="SetHeaderExample" id="SetHeaderExample" class="Modernize W33pc"><option selected value="X-CareOnCloud-Queue">X-CareOnCloud-Queue</option></select>
                         <label for="SetValueExample">[% Translate("Value") | html %] 1:</label>
                         <input type="text" name="SetValueExample" id="SetValueExample" value="SomeQueue" class="W33pc" maxlength="50"/>
                     </div>

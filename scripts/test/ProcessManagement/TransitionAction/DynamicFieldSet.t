@@ -302,7 +302,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                $DFName1 => '<OTOBO_TICKET_Queue>',
+                $DFName1 => '<CareOnCloud_TICKET_Queue>',
             },
         },
         Success => 1,
@@ -313,7 +313,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                $DFName1 => '<OTOBO_TICKET_Queue> <OTOBO_TICKET_QueueID>',
+                $DFName1 => '<CareOnCloud_TICKET_Queue> <CareOnCloud_TICKET_QueueID>',
             },
         },
         Success => 1,
@@ -324,7 +324,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                $DFName1 => '<OTOBO_TICKET_NotExisting>',
+                $DFName1 => '<CareOnCloud_TICKET_NotExisting>',
             },
         },
         NoValue => 1,
@@ -361,7 +361,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                $DFName3 => '<OTOBO_CUSTOMER_DATA_UserFirstname>',
+                $DFName3 => '<CareOnCloud_CUSTOMER_DATA_UserFirstname>',
             },
         },
         Success => 1,
@@ -434,7 +434,7 @@ for my $Test (@Tests) {
         my $ExpectedValue = $Test->{Config}->{Config}->{$Attribute};
         if (
             $OrigTest->{Config}->{Config}->{$Attribute}
-            =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+            =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
             )
         {
             $ExpectedValue = $Ticket{$1} // '';
@@ -446,7 +446,7 @@ for my $Test (@Tests) {
         }
         elsif (
             $OrigTest->{Config}->{Config}->{$Attribute}
-            =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)> [ ] <OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+            =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)> [ ] <CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
             )
         {
             $ExpectedValue = ( $Ticket{$1} // '' ) . ' ' . ( $Ticket{$2} // '' );
@@ -476,7 +476,7 @@ for my $Test (@Tests) {
 }
 
 # Test bug#14646 (https://bugs.otrs.org/show_bug.cgi?id=14646).
-# DynamicField value set with <OTOBO_CUSTOMER_DATA_*> tag.
+# DynamicField value set with <CareOnCloud_CUSTOMER_DATA_*> tag.
 %Ticket = $TicketObject->TicketGet(
     TicketID      => $TicketID,
     DynamicFields => 1,

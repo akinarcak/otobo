@@ -538,7 +538,7 @@ sub _SendSupportBundle {
                 Charset       => 'utf-8',
                 Body          => $Body,
                 CustomHeaders => {
-                    'X-OTOBO-RegistrationKey' => $Data{'RegistrationKey'} || 'Not registered',
+                    'X-CareOnCloud-RegistrationKey' => $Data{'RegistrationKey'} || 'Not registered',
                 },
                 Attachment => [
                     {

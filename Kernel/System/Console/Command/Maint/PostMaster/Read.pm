@@ -212,7 +212,7 @@ sub Run {
         2 => 'Successful',    # follow up / open/reopen
         3 => 'Successful',    # follow up / close -> new ticket
         4 => 'Failed',        # follow up / close -> reject
-        5 => 'Successful',    # ignored (because of X-OTOBO-Ignore header)
+        5 => 'Successful',    # ignored (because of X-CareOnCloud-Ignore header)
     );
 
     $CommunicationLogObject->CommunicationStop(

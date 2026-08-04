@@ -17,10 +17,10 @@ To: darthvader@otobo.org
 Cc: skywalker@otobo.org
 In-Reply-To: <3CFDCF81.5000409@example.com>
 Date: Mon, 21 Oct 2002 17:56:13 +0200 (CEST)
-X-OTOBO-CustomerNo: example7
-X-OTOBO-Priority: 5 very high
-X-OTOBO-DynamicField-TicketFreeText1: sun
-X-OTOBO-DynamicField-Planet: earth
+X-CareOnCloud-CustomerNo: example7
+X-CareOnCloud-Priority: 5 very high
+X-CareOnCloud-DynamicField-TicketFreeText1: sun
+X-CareOnCloud-DynamicField-Planet: earth
 
 Hi Darthvader,
 

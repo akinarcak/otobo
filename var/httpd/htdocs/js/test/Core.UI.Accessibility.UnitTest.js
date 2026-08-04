@@ -27,7 +27,7 @@ Core.UI.Accessibility = (function (Namespace) {
             /*
              * Create a div containter for the tests
              */
-            var $TestDiv = $('<div id="OTOBO_UI_Accessibility_UnitTest"></div>');
+            var $TestDiv = $('<div id="CareOnCloud_UI_Accessibility_UnitTest"></div>');
             $TestDiv.append('<div class="ARIARoleBanner"></div>');
             $TestDiv.append('<div class="ARIARoleNavigation"></div>');
             $TestDiv.append('<div class="ARIARoleSearch"></div>');
@@ -66,7 +66,7 @@ Core.UI.Accessibility = (function (Namespace) {
             /*
              * Cleanup div container and contents
              */
-            $('#OTOBO_UI_Accessibility_UnitTest').remove();
+            $('#CareOnCloud_UI_Accessibility_UnitTest').remove();
         });
     };
 

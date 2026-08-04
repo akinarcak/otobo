@@ -511,7 +511,7 @@ sub SendAutoResponse {
     }
 
     # log that no auto response was sent!
-    if ( $OrigHeader{'X-OTOBO-Loop'} && $OrigHeader{'X-OTOBO-Loop'} !~ /^(false|no)$/i ) {
+    if ( $OrigHeader{'X-CareOnCloud-Loop'} && $OrigHeader{'X-CareOnCloud-Loop'} !~ /^(false|no)$/i ) {
 
         # add history row
         $TicketObject->HistoryAdd(

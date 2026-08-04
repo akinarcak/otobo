@@ -97,11 +97,11 @@ $Self->True(
 
 my @Tests = (
     {
-        Name       => 'Test supported tags -<OTOBO_CUSTOMER_REALNAME> and <OTOBO_CUSTOMER_DATA_UserEmail>',
-        Salutation => "Dear <OTOBO_CUSTOMER_REALNAME>,
+        Name       => 'Test supported tags -<CareOnCloud_CUSTOMER_REALNAME> and <CareOnCloud_CUSTOMER_DATA_UserEmail>',
+        Salutation => "Dear <CareOnCloud_CUSTOMER_REALNAME>,
 
     Thank you for your request. Your email address in our database
-    is \"<OTOBO_CUSTOMER_DATA_UserEmail>\".
+    is \"<CareOnCloud_CUSTOMER_DATA_UserEmail>\".
     ",
         ExpectedResult => "Dear $TestUserFirstname $TestUserLastname,
 
@@ -111,13 +111,13 @@ my @Tests = (
     },
     {
         Name           => 'Test unsupported tags',
-        Salutation     => 'Test: <OTOBO_AGENT_SUBJECT> <OTOBO_AGENT_BODY> <OTOBO_CUSTOMER_BODY> <OTOBO_CUSTOMER_SUBJECT>',
+        Salutation     => 'Test: <CareOnCloud_AGENT_SUBJECT> <CareOnCloud_AGENT_BODY> <CareOnCloud_CUSTOMER_BODY> <CareOnCloud_CUSTOMER_SUBJECT>',
         ExpectedResult => 'Test: - - - -',
     },
     {
-        Name       => 'Test supported tags - <OTOBO_TICKET_*>  with TicketID',
+        Name       => 'Test supported tags - <CareOnCloud_TICKET_*>  with TicketID',
         Salutation =>
-            'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_Queue>, <OTOBO_TICKET_State>)',
+            'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_Queue>, <CareOnCloud_TICKET_State>)',
     },
 );
 

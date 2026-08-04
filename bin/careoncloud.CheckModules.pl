@@ -1671,7 +1671,7 @@ sub Check {
         }
 
         # There might be a version requirement
-        my $VersionRequired = $ENV{OTOBO_RUNS_UNDER_DOCKER}
+        my $VersionRequired = $ENV{CareOnCloud_RUNS_UNDER_DOCKER}
             ?
             ( $Module->{DockerVersionRequired} // $Module->{VersionRequired} )
             :

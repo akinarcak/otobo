@@ -249,7 +249,7 @@ Core.Agent.DynamicFieldDBSearch = (function(TargetNS) {
             $Element.off('keyup.Validate').on('keyup.Validate', function() {
                 Value = $Element.val();
                 if($Element.hasClass('ServerError') && Value.length) {
-                    $('#OTOBO_UI_Tooltips_ErrorTooltip').hide();
+                    $('#CareOnCloud_UI_Tooltips_ErrorTooltip').hide();
                 }
             });
 

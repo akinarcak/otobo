@@ -113,7 +113,7 @@ sub LoadDefaults {
 
     # AdminEmail
     # (Email of the system admin.)
-    $Self->{AdminEmail} = 'support@<OTOBO_CONFIG_FQDN>';
+    $Self->{AdminEmail} = 'support@<CareOnCloud_CONFIG_FQDN>';
 
     # Organization
     # (If this is anything other than '', then the email will have an
@@ -147,10 +147,10 @@ sub LoadDefaults {
     # DatabaseDSN
     # The database DSN for MySQL and MariaDB ==> more: "perldoc DBD::MariaDB"
     # Note that internally a DSN starting with 'DBI:mysql' would be switched to 'DBI:MariaDB'
-    $Self->{DatabaseDSN} = "DBI:MariaDB:database=<OTOBO_CONFIG_Database>;host=<OTOBO_CONFIG_DatabaseHost>;";
+    $Self->{DatabaseDSN} = "DBI:MariaDB:database=<CareOnCloud_CONFIG_Database>;host=<CareOnCloud_CONFIG_DatabaseHost>;";
 
     # The database DSN for PostgreSQL ==> more: "perldoc DBD::Pg"
-#    $Self->{DatabaseDSN} = "DBI:Pg:dbname=<OTOBO_CONFIG_Database>;host=<OTOBO_CONFIG_DatabaseHost>;";
+#    $Self->{DatabaseDSN} = "DBI:Pg:dbname=<CareOnCloud_CONFIG_Database>;host=<CareOnCloud_CONFIG_DatabaseHost>;";
 
     # The database DSN for Oracle ==> more: "perldoc DBD::oracle"
 #    $Self->{DatabaseDSN} = "DBI:Oracle://$Self->{DatabaseHost}:1521/$Self->{Database}";
@@ -361,11 +361,11 @@ sub LoadDefaults {
 
     # Frontend::JavaScriptPath
     # (URL JavaScript path.)
-    $Self->{'Frontend::JavaScriptPath'} = '<OTOBO_CONFIG_Frontend::WebPath>js/';
+    $Self->{'Frontend::JavaScriptPath'} = '<CareOnCloud_CONFIG_Frontend::WebPath>js/';
 
     # Frontend::CSSPath
     # (URL CSS path.)
-    $Self->{'Frontend::CSSPath'} = '<OTOBO_CONFIG_Frontend::WebPath>css/';
+    $Self->{'Frontend::CSSPath'} = '<CareOnCloud_CONFIG_Frontend::WebPath>css/';
 
     # AgentColorDefinitions
     $Self->{'AgentColorDefinitions'} = {
@@ -395,7 +395,7 @@ sub LoadDefaults {
 
     # Frontend::ImagePath
     # (URL image path of icons for navigation.)
-    $Self->{'Frontend::ImagePath'} = '<OTOBO_CONFIG_Frontend::WebPath>skins/Agent/default/img/';
+    $Self->{'Frontend::ImagePath'} = '<CareOnCloud_CONFIG_Frontend::WebPath>skins/Agent/default/img/';
 
     # DefaultViewNewLine
     # (insert new line in text messages after max x chars and
@@ -995,7 +995,7 @@ sub LoadDefaults {
     # SessionDir
     # directory for all session id information (just needed if
     # $Self->{SessionModule}='Kernel::System::AuthSession::FS)
-    $Self->{SessionDir} = '<OTOBO_CONFIG_Home>/var/sessions';
+    $Self->{SessionDir} = '<CareOnCloud_CONFIG_Home>/var/sessions';
 
     # SessionTable*
     # (just needed if $Self->{SessionModule}='Kernel::System::AuthSession::DB)
@@ -1104,17 +1104,17 @@ sub LoadDefaults {
     $Self->{Home} = '/opt/careoncloud';
 
     # tmp dir
-    $Self->{TempDir} = '<OTOBO_CONFIG_Home>/var/tmp';
+    $Self->{TempDir} = '<CareOnCloud_CONFIG_Home>/var/tmp';
 
     # article dir
-    $Self->{'Ticket::Article::Backend::MIMEBase::ArticleDataDir'} = '<OTOBO_CONFIG_Home>/var/article';
+    $Self->{'Ticket::Article::Backend::MIMEBase::ArticleDataDir'} = '<CareOnCloud_CONFIG_Home>/var/article';
 
     # HTML template dirs
     #
     # TemplateDir is also used for assembling the path Kernel/Output/HMTL/Layout/,
     # which holds the base classes of the Kernel::Output::HTML::Layout module
-    $Self->{TemplateDir}       = '<OTOBO_CONFIG_Home>/Kernel/Output';
-    $Self->{CustomTemplateDir} = '<OTOBO_CONFIG_Home>/Custom/Kernel/Output';
+    $Self->{TemplateDir}       = '<CareOnCloud_CONFIG_Home>/Kernel/Output';
+    $Self->{CustomTemplateDir} = '<CareOnCloud_CONFIG_Home>/Custom/Kernel/Output';
 
     # --------------------------------------------------- #
     # CommonCSS                                           #
@@ -1402,20 +1402,20 @@ sub LoadDefaults {
 
     # notification sender
     $Self->{NotificationSenderName}  = 'CareOnCloud ESM Notifications';
-    $Self->{NotificationSenderEmail} = 'esm@<OTOBO_CONFIG_FQDN>';
+    $Self->{NotificationSenderEmail} = 'esm@<CareOnCloud_CONFIG_FQDN>';
 
     # notification email for new password
     $Self->{NotificationSubjectLostPassword} = 'New CareOnCloud ESM password';
-    $Self->{NotificationBodyLostPassword}    = 'Hi <OTOBO_USERFIRSTNAME>,
+    $Self->{NotificationBodyLostPassword}    = 'Hi <CareOnCloud_USERFIRSTNAME>,
 
 
 Here\'s your new CareOnCloud ESM password.
 
-New password: <OTOBO_NEWPW>
+New password: <CareOnCloud_NEWPW>
 
 You can log in via the following URL:
 
-<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl
+<CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl
             ';
 
     # --------------------------------------------------- #
@@ -1493,31 +1493,31 @@ You can log in via the following URL:
     # notification email about new password               #
     # --------------------------------------------------- #
     $Self->{CustomerPanelSubjectLostPassword} = 'New CareOnCloud ESM password';
-    $Self->{CustomerPanelBodyLostPassword}    = 'Hi <OTOBO_USERFIRSTNAME>,
+    $Self->{CustomerPanelBodyLostPassword}    = 'Hi <CareOnCloud_USERFIRSTNAME>,
 
 
-New password: <OTOBO_NEWPW>
+New password: <CareOnCloud_NEWPW>
 
-<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>customer.pl
+<CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>customer.pl
             ';
 
     # --------------------------------------------------- #
     # notification email about new account                #
     # --------------------------------------------------- #
     $Self->{CustomerPanelSubjectNewAccount} = 'New CareOnCloud ESM Account!';
-    $Self->{CustomerPanelBodyNewAccount}    = 'Hi <OTOBO_USERFIRSTNAME>,
+    $Self->{CustomerPanelBodyNewAccount}    = 'Hi <CareOnCloud_USERFIRSTNAME>,
 
 You or someone impersonating you has created a new CareOnCloud ESM account for
 you.
 
-Full name: <OTOBO_USERFIRSTNAME> <OTOBO_USERLASTNAME>
-User name: <OTOBO_USERLOGIN>
-Password : <OTOBO_USERPASSWORD>
+Full name: <CareOnCloud_USERFIRSTNAME> <CareOnCloud_USERLASTNAME>
+User name: <CareOnCloud_USERLOGIN>
+Password : <CareOnCloud_USERPASSWORD>
 
 You can log in via the following URL. We encourage you to change your password
 via the Preferences button after logging in.
 
-<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>customer.pl
+<CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>customer.pl
             ';
 
     # --------------------------------------------------- #
@@ -2388,7 +2388,7 @@ sub new {
     # do not use ZZZ files
     if ( !$Param{Level} ) {
 
-        # replace config variables in variables that contain the '<OTOBO_CONFIG_SettingName> pattern
+        # replace config variables in variables that contain the '<CareOnCloud_CONFIG_SettingName> pattern
         KEY:
         for my $Key ( sort keys %{$Self} ) {
 
@@ -2399,7 +2399,7 @@ sub new {
                 # do the replacements only on top level string values
                 next KEY unless ref $Self->{$Key} eq '';
 
-                $Self->{$Key} =~ s/\<OTOBO_CONFIG_(.+?)\>/$Self->{$1}/g;
+                $Self->{$Key} =~ s/\<CareOnCloud_CONFIG_(.+?)\>/$Self->{$1}/g;
             }
             else {
                 print STDERR "ERROR: $Key not defined!\n";

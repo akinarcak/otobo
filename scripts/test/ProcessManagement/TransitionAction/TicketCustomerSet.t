@@ -213,7 +213,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerUserID => '<OTOBO_TICKET_Queue>',
+                CustomerUserID => '<CareOnCloud_TICKET_Queue>',
             },
         },
         Success => 1,
@@ -224,7 +224,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerUserID => '<OTOBO_TICKET_NotExisting>',
+                CustomerUserID => '<CareOnCloud_TICKET_NotExisting>',
             },
         },
         Success => 0,
@@ -247,7 +247,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerID => '<OTOBO_CURRENT_UserLogin>',
+                CustomerID => '<CareOnCloud_CURRENT_UserLogin>',
             },
         },
         ExpectedCustomerID => $TestUserLogin,
@@ -259,7 +259,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerUserID => '<OTOBO_CURRENT_UserLogin>',
+                CustomerUserID => '<CareOnCloud_CURRENT_UserLogin>',
             },
         },
         ExpectedCustomerUserID => $TestUserLogin,
@@ -296,7 +296,7 @@ for my $Test (@Tests) {
             $Self->Is(
                 $TestUserLogin,
                 $Ticket{CustomerUserID},
-                "CustomerUserID is successfully replaced by OTOBO_CURRENT_ tag",
+                "CustomerUserID is successfully replaced by CareOnCloud_CURRENT_ tag",
             );
         }
 
@@ -304,7 +304,7 @@ for my $Test (@Tests) {
             $Self->Is(
                 $TestUserLogin,
                 $Ticket{CustomerID},
-                "CustomerID is successfully replaced by OTOBO_CURRENT_ tag",
+                "CustomerID is successfully replaced by CareOnCloud_CURRENT_ tag",
             );
         }
 
@@ -324,7 +324,7 @@ for my $Test (@Tests) {
             my $ExpectedValue = $Test->{Config}->{Config}->{$Attribute};
             if (
                 $OrigTest->{Config}->{Config}->{$Attribute}
-                =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+                =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
                 )
             {
                 $ExpectedValue = $Ticket{$1} // '';

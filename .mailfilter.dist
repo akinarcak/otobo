@@ -29,13 +29,13 @@ YEARFOLDER=`date +%Y`
 
 if (/^To:.*@example.com/)
 {
-    xfilter "grep -vi '^X-OTOBO-'"
+    xfilter "grep -vi '^X-CareOnCloud-'"
 }
 
-# or just no emails with "X-OTOBO-Ident: ahfiw2Fw32r230dddl2foeo3r" header!
-#if (/^X-OTOBO-Ident: ahfiw2Fw32r230dddl2foeo3r/)
+# or just no emails with "X-CareOnCloud-Ident: ahfiw2Fw32r230dddl2foeo3r" header!
+#if (/^X-CareOnCloud-Ident: ahfiw2Fw32r230dddl2foeo3r/)
 #{
-#    xfilter "grep -vi '^X-OTOBO-'"
+#    xfilter "grep -vi '^X-CareOnCloud-'"
 #}
 
 
@@ -44,12 +44,12 @@ if (/^To:.*@example.com/)
 
 if (/^To:.*@example.com/)
 {
-    xfilter "formail -I \"X-OTOBO-Queue: example\""
+    xfilter "formail -I \"X-CareOnCloud-Queue: example\""
 }
 
 if (/^List-Id:.*OpenAntiVirus/)
 {
-    xfilter "formail -I \"X-OTOBO-Queue: OpenAntiVirus\""
+    xfilter "formail -I \"X-CareOnCloud-Queue: OpenAntiVirus\""
 }
 
 
@@ -57,8 +57,8 @@ if (/^List-Id:.*OpenAntiVirus/)
 
 if (/^To:.*@example.com/)
 {
-    xfilter "formail -I \"X-OTOBO-ArticleKey1: Test\""
-    xfilter "formail -I \"X-OTOBO-ArticleValue1: True!\""
+    xfilter "formail -I \"X-CareOnCloud-ArticleKey1: Test\""
+    xfilter "formail -I \"X-CareOnCloud-ArticleValue1: True!\""
 }
 
 

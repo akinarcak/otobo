@@ -493,7 +493,7 @@ sub Run {
 
                 # Determine current host for MySQL account.
                 my $Host;
-                if ( $ENV{OTOBO_RUNS_UNDER_DOCKER} ) {
+                if ( $ENV{CareOnCloud_RUNS_UNDER_DOCKER} ) {
 
                     # When running under Docker we assume that the database also runs in the subnet provided by Docker.
                     # This is the case when the standard docker-compose.yml is used.

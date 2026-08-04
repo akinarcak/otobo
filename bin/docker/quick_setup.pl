@@ -67,7 +67,7 @@ used in the same browser. The convention is to set the SystemID to the same valu
 This can be achieved with the bash function:
 
     otobo_docker_quick_setup() {
-        http_port=`perl -ne 'print $1 if m/^OTOBO_WEB_HTTP_PORT=(\d+)/' .env`
+        http_port=`perl -ne 'print $1 if m/^CareOnCloud_WEB_HTTP_PORT=(\d+)/' .env`
         system_id=${1:-$http_port}
         docker compose exec web bash -c "date ; hostname ; rm -f Kernel/Config/Files/ZZZAAuto.pm ; bin/docker/quick_setup.pl --db-password otobo_root --system-id $system_id --http-type http --http-port $http_port --activate-elasticsearch --add-user --add-admin-user --add-customer-user --add-calendar"
     }

@@ -54,7 +54,7 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     # check if this needs to be executed
-    if ( !$ENV{OTOBO_RUNS_UNDER_DOCKER} ) {
+    if ( !$ENV{CareOnCloud_RUNS_UNDER_DOCKER} ) {
         print "\n\n    Skipping this step as it is relevant only for Docker based installations.\n";
 
         # Not running under Docker is fine

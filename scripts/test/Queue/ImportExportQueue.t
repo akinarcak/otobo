@@ -104,7 +104,7 @@ my %QueueExpectedData = (
         Comment     => "Standard Salutation.",
         ContentType => "text/plain; charset=utf-8",
         Name        => "system standard salutation (en)",
-        Text        => "Dear <OTOBO_CUSTOMER_REALNAME>,\n\nThank you for your request.\n\n",
+        Text        => "Dear <CareOnCloud_CUSTOMER_REALNAME>,\n\nThank you for your request.\n\n",
         Valid       => "valid",
     },
     Signature => {
@@ -112,7 +112,7 @@ my %QueueExpectedData = (
         ContentType => "text/plain; charset=utf-8",
         Name        => "system standard signature (en)",
         Text        =>
-            "\nYour Ticket-Team\n\n <OTOBO_Agent_UserFirstname> <OTOBO_Agent_UserLastname>\n\n--\n Super Support - Waterford Business Park\n 5201 Blue Lagoon Drive - 8th Floor & 9th Floor - Miami, 33126 USA\n Email: hot\@example.com - Web: http://www.example.com/\n--",
+            "\nYour Ticket-Team\n\n <CareOnCloud_Agent_UserFirstname> <CareOnCloud_Agent_UserLastname>\n\n--\n Super Support - Waterford Business Park\n 5201 Blue Lagoon Drive - 8th Floor & 9th Floor - Miami, 33126 USA\n Email: hot\@example.com - Web: http://www.example.com/\n--",
         Valid => "valid",
     },
     Comment => 'TestComment1' . $RandomID,
@@ -229,7 +229,7 @@ my %AdvancedImportData = (
         Comment     => 'TestSalutationComment' . $RandomID,
         ContentType => 'text/plain; charset=utf-8',
         Name        => 'TestSalutation' . $RandomID,
-        Text        => "Dear <OTOBO_CUSTOMER_REALNAME>,\n\nThank you for your request.\n\n",
+        Text        => "Dear <CareOnCloud_CUSTOMER_REALNAME>,\n\nThank you for your request.\n\n",
         Valid       => 'valid',
     },
     Signature => {
@@ -237,7 +237,7 @@ my %AdvancedImportData = (
         ContentType => 'text/plain; charset=utf-8',
         Name        => 'TestSignature' . $RandomID,
         Text        =>
-            "\nYour Ticket-Team\n\n <OTOBO_Agent_UserFirstname> <OTOBO_Agent_UserLastname>\n\n--\n Super Support - Waterford Business Park\n 5201 Blue Lagoon Drive - 8th Floor & 9th Floor - Miami, 33126 USA\n Email: hot\@example.com - Web: http://www.example.com/\n--",
+            "\nYour Ticket-Team\n\n <CareOnCloud_Agent_UserFirstname> <CareOnCloud_Agent_UserLastname>\n\n--\n Super Support - Waterford Business Park\n 5201 Blue Lagoon Drive - 8th Floor & 9th Floor - Miami, 33126 USA\n Email: hot\@example.com - Web: http://www.example.com/\n--",
         Valid => 'valid',
     },
     Comment => 'TestComment3' . $RandomID,

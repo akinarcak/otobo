@@ -199,7 +199,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                Title => '<OTOBO_TICKET_Queue>',
+                Title => '<CareOnCloud_TICKET_Queue>',
             },
         },
         Success => 1,
@@ -210,7 +210,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                Title => '<OTOBO_TICKET_NotExisting>',
+                Title => '<CareOnCloud_TICKET_NotExisting>',
             },
         },
         Success => 1,
@@ -259,7 +259,7 @@ for my $Test (@Tests) {
             my $ExpectedValue = $Test->{Config}->{Config}->{$Attribute};
             if (
                 $OrigTest->{Config}->{Config}->{$Attribute}
-                =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+                =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
                 )
             {
                 $ExpectedValue = $Ticket{$1} // '';
@@ -298,7 +298,7 @@ for my $Test (@Tests) {
     }
 }
 
-# Check tags <OTOBO_TICKET_DynamicField_Name1> and <OTOBO_TICKET_DynamicField_Name1_Value>
+# Check tags <CareOnCloud_TICKET_DynamicField_Name1> and <CareOnCloud_TICKET_DynamicField_Name1_Value>
 # for date type DF (see bug#13795).
 # Create test ticket.
 $TicketID = $TicketObject->TicketCreate(
@@ -360,10 +360,10 @@ $Self->True(
 );
 
 my @Titles = (
-    '<OTOBO_TICKET_DynamicField_' . $DynamicFieldName . '>',
-    '<OTOBO_Ticket_DynamicField_' . $DynamicFieldName . '>',
-    '<OTOBO_TICKET_DynamicField_' . $DynamicFieldName . '_Value>',
-    '<OTOBO_Ticket_DynamicField_' . $DynamicFieldName . '_Value>',
+    '<CareOnCloud_TICKET_DynamicField_' . $DynamicFieldName . '>',
+    '<CareOnCloud_Ticket_DynamicField_' . $DynamicFieldName . '>',
+    '<CareOnCloud_TICKET_DynamicField_' . $DynamicFieldName . '_Value>',
+    '<CareOnCloud_Ticket_DynamicField_' . $DynamicFieldName . '_Value>',
 );
 
 for my $Title (@Titles) {

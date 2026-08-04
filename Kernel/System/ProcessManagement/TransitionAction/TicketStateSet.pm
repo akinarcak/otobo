@@ -85,7 +85,7 @@ sub Params {
         },
         {
             Key      => 'PendingTime',
-            Value    => '<OTOBO_TICKET_DynamicField_Name1> (set a pending time other than now)',
+            Value    => '<CareOnCloud_TICKET_DynamicField_Name1> (set a pending time other than now)',
             Optional => 1,
         },
         {
@@ -114,7 +114,7 @@ sub Params {
             # or
             StateID => 3,
 
-            PendingTime     => '<OTOBO_TICKET_DynamicField_Name1>', # optional, used for pending states
+            PendingTime     => '<CareOnCloud_TICKET_DynamicField_Name1>', # optional, used for pending states
             PendingTimeDiff => 123,             # optional, used for pending states, difference in seconds from
                                                 #   current time to desired pending time (e.g. a value of 3600 means
                                                 #   that the pending time will be 1 hr after the Transition Action is

@@ -90,7 +90,7 @@ my $AutoResponseNameRand = 'AutoResponse' . $RandomID;
 my $AutoResponseID       = $AutoResponseObject->AutoResponseAdd(
     Name        => $AutoResponseNameRand,
     Subject     => 'Unit Test AutoResponse Bug#4640',
-    Response    => 'OTOBO_CUSTOMER_REALNAME tag: <OTOBO_CUSTOMER_REALNAME>',
+    Response    => 'CareOnCloud_CUSTOMER_REALNAME tag: <CareOnCloud_CUSTOMER_REALNAME>',
     Comment     => 'Unit test auto response',
     AddressID   => $SystemAddressID,
     TypeID      => 1,
@@ -136,7 +136,7 @@ $Self->True(
 my $NotificationName = 'Notification' . $RandomID;
 my $NotificationID   = $Kernel::OM->Get('Kernel::System::NotificationEvent')->NotificationAdd(
     Name    => $NotificationName,
-    Comment => 'Unit Test Notification <OTOBO_CUSTOMER_REALNAME> tag',
+    Comment => 'Unit Test Notification <CareOnCloud_CUSTOMER_REALNAME> tag',
     Data    => {
         Transports => ['Email'],
         Events     => ['NotificationNewTicket'],
@@ -146,7 +146,7 @@ my $NotificationID   = $Kernel::OM->Get('Kernel::System::NotificationEvent')->No
     Message => {
         en => {
             Subject     => 'Notification subject',
-            Body        => 'OTOBO_CUSTOMER_REALNAME tag: <OTOBO_CUSTOMER_REALNAME>',
+            Body        => 'CareOnCloud_CUSTOMER_REALNAME tag: <CareOnCloud_CUSTOMER_REALNAME>',
             ContentType => 'text/plain',
         },
     },
@@ -166,11 +166,11 @@ my @Tests = (
             "From: TestFrom\@home.com\nTo: TestTo\@home.com\nSubject: Email without Reply-To tag\nTest Body Email.\n",
         ResultAutoResponse => {
             To   => 'TestFrom@home.com',
-            Body => 'OTOBO_CUSTOMER_REALNAME tag: TestFrom@home.com',
+            Body => 'CareOnCloud_CUSTOMER_REALNAME tag: TestFrom@home.com',
         },
         ResultNotification => {
             To   => 'TestFrom@home.com',
-            Body => 'OTOBO_CUSTOMER_REALNAME tag: TestFrom@home.com',
+            Body => 'CareOnCloud_CUSTOMER_REALNAME tag: TestFrom@home.com',
         },
     },
     {
@@ -179,11 +179,11 @@ my @Tests = (
             "From: TestFrom\@home.com\nTo: TestTo\@home.com\nReply-To: TestReplyTo\@home.com\nSubject: Email with Reply-To tag\nTest Body Email.\n",
         ResultAutoResponse => {
             To   => 'TestReplyTo@home.com',
-            Body => 'OTOBO_CUSTOMER_REALNAME tag: TestReplyTo@home.com',
+            Body => 'CareOnCloud_CUSTOMER_REALNAME tag: TestReplyTo@home.com',
         },
         ResultNotification => {
             To   => 'TestReplyTo@home.com',
-            Body => 'OTOBO_CUSTOMER_REALNAME tag: TestReplyTo@home.com',
+            Body => 'CareOnCloud_CUSTOMER_REALNAME tag: TestReplyTo@home.com',
         },
     },
     {
@@ -192,11 +192,11 @@ my @Tests = (
             "From: $CustomerUser\@home.com\nTo: TestTo\@home.com\nSubject: Email with valid CustomerID\nTest Body Email.\n",
         ResultAutoResponse => {
             To   => "$CustomerUser\@home.com",
-            Body => "OTOBO_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
+            Body => "CareOnCloud_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
         },
         ResultNotification => {
             To   => "$CustomerUser\@home.com",
-            Body => "OTOBO_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
+            Body => "CareOnCloud_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
         },
     },
     {
@@ -205,11 +205,11 @@ my @Tests = (
             "From: $CustomerUser\@home.com\nTo: TestTo\@home.com\nReply-To: TestReplyTo\@home.com\nSubject: Email with valid CustomerID\nTest Body Email.\n",
         ResultAutoResponse => {
             To   => 'TestReplyTo@home.com',
-            Body => "OTOBO_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
+            Body => "CareOnCloud_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
         },
         ResultNotification => {
             To   => 'TestReplyTo@home.com',
-            Body => "OTOBO_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
+            Body => "CareOnCloud_CUSTOMER_REALNAME tag: $CustomerUser $CustomerUser",
         },
     },
     {
@@ -218,11 +218,11 @@ my @Tests = (
             "From: TestRecipient\@home.com\nTo: $CustomerUser\@home.com\nSubject: Email with Recipient\nTest Body Email.\n",
         ResultAutoResponse => {
             To   => 'TestRecipient@home.com',
-            Body => 'OTOBO_CUSTOMER_REALNAME tag: TestRecipient@home.com',
+            Body => 'CareOnCloud_CUSTOMER_REALNAME tag: TestRecipient@home.com',
         },
         ResultNotification => {
             To   => 'TestRecipient@home.com',
-            Body => 'OTOBO_CUSTOMER_REALNAME tag: TestRecipient@home.com',
+            Body => 'CareOnCloud_CUSTOMER_REALNAME tag: TestRecipient@home.com',
         },
     },
 );

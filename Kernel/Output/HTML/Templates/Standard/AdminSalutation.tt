@@ -218,44 +218,44 @@
 
                 <p>[% Translate("You can use the following tags") | html %]:</p>
                 <dl>
-                    <dt><code>&lt;OTOBO_OWNER_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_OWNER_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket owner options") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_OWNER_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_OWNER_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_RESPONSIBLE_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_RESPONSIBLE_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket responsible options") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_RESPONSIBLE_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_RESPONSIBLE_UserFirstname&gt;</code>).
                     </dd>
-                    <dt><code>&lt;OTOBO_CURRENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CURRENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current user who requested this action") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_CURRENT_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_CURRENT_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the ticket data") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_TICKET_TicketNumber>, &lt;OTOBO_TICKET_TicketID&gt;, &lt;OTOBO_TICKET_Queue&gt;, &lt;OTOBO_TICKET_State&gt;</code>).
+                        <code>&lt;CareOnCloud_TICKET_TicketNumber>, &lt;CareOnCloud_TICKET_TicketID&gt;, &lt;CareOnCloud_TICKET_Queue&gt;, &lt;CareOnCloud_TICKET_State&gt;</code>).
                     </dd>
-                    <dt><code>&lt;OTOBO_CUSTOMER_DATA_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_DATA_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current customer user data") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_CUSTOMER_DATA_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_CUSTOMER_DATA_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CONFIG_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CONFIG_*&gt;</code></dt>
                     <dd>
-                        [% Translate("Config options") | html %] ([% Translate("e. g.") | html %] <code>&lt;OTOBO_CONFIG_HttpType&gt;</code>).
+                        [% Translate("Config options") | html %] ([% Translate("e. g.") | html %] <code>&lt;CareOnCloud_CONFIG_HttpType&gt;</code>).
                     </dd>
                 </dl>
                 <p class="SpacingTop">
                     [% Translate("Example salutation") | html %]:
                 </p>
                 <textarea rows="5" cols="60" name="Response">
-Dear &lt;OTOBO_CUSTOMER_REALNAME&gt;,
+Dear &lt;CareOnCloud_CUSTOMER_REALNAME&gt;,
 
 Thank you for your request.
                 </textarea>

@@ -4971,7 +4971,7 @@ msgid "Use comma or semicolon to separate email addresses."
 msgstr ""
 
 #. Template: AdminNotificationEventTransportEmailSettings
-msgid "You can use CareOnCloud ESM-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket."
+msgid "You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values from the current ticket."
 msgstr ""
 
 #. Template: AdminOAuthTokenStore
@@ -22138,7 +22138,7 @@ msgid "Defines the format of responses in the ticket compose screen of the agent
 msgstr ""
 
 #. SysConfig
-msgid "Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system."
+msgid "Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system."
 msgstr ""
 
 #. SysConfig
@@ -22422,7 +22422,7 @@ msgid "Defines the module to generate code for periodic page reloads."
 msgstr ""
 
 #. SysConfig
-msgid "Defines the module to send emails. \"DoNotSendEmail\" doesn't send emails at all. Any of the \"SMTP\" mechanisms use a specified (external) mailserver. \"Sendmail\" directly uses the sendmail binary of your operating system. \"Test\" doesn't send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes."
+msgid "Defines the module to send emails. \"DoNotSendEmail\" doesn't send emails at all. Any of the \"SMTP\" mechanisms use a specified (external) mailserver. \"Sendmail\" directly uses the sendmail binary of your operating system. \"Test\" doesn't send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes."
 msgstr ""
 
 #. SysConfig
@@ -22670,7 +22670,7 @@ msgid "Defines the shown columns and the position in the AgentCustomerUserAddres
 msgstr ""
 
 #. SysConfig
-msgid "Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in \"Key\" is the external URL, the value in \"Content\" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted."
+msgid "Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in \"Key\" is the external URL, the value in \"Content\" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> and <CareOnCloud_CONFIG_ScriptAlias> will be substituted."
 msgstr ""
 
 #. SysConfig
@@ -22782,7 +22782,7 @@ msgid "Defines the two-factor module to authenticate customers."
 msgstr ""
 
 #. SysConfig
-msgid "Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then 'http' must be specified here. The setting of 'HttpType' has no affect on the web server's settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping 'HttpType' set to 'https' is that the session management cookie will only be set for secure connections."
+msgid "Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then 'http' must be specified here. The setting of 'HttpType' has no affect on the web server's settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping 'HttpType' set to 'https' is that the session management cookie will only be set for secure connections."
 msgstr ""
 
 #. SysConfig
@@ -23538,7 +23538,7 @@ msgid "Executes follow-up checks on In-Reply-To or References headers for mails 
 msgstr ""
 
 #. SysConfig
-msgid "Executes follow-up checks on CareOnCloud ESM Header 'X-OTOBO-Bounce'."
+msgid "Executes follow-up checks on CareOnCloud ESM Header 'X-CareOnCloud-Bounce'."
 msgstr ""
 
 #. SysConfig
@@ -23610,11 +23610,11 @@ msgid "File that is displayed in the Kernel::Modules::AgentInfo module, if locat
 msgstr ""
 
 #. SysConfig
-msgid "Filter for debugging ACLs. Note: More ticket attributes can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>."
+msgid "Filter for debugging ACLs. Note: More ticket attributes can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>."
 msgstr ""
 
 #. SysConfig
-msgid "Filter for debugging Transitions. Note: More filters can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>."
+msgid "Filter for debugging Transitions. Note: More filters can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>."
 msgstr ""
 
 #. SysConfig
@@ -24810,7 +24810,7 @@ msgid "Merged Ticket (%s/%s) to (%s/%s)."
 msgstr ""
 
 #. SysConfig
-msgid "Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>."
+msgid "Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>."
 msgstr ""
 
 #. SysConfig
@@ -26266,7 +26266,7 @@ msgid "Sets the preferred digest to be used for PGP binary."
 msgstr ""
 
 #. SysConfig
-msgid "Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system."
+msgid "Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system."
 msgstr ""
 
 #. SysConfig
@@ -27002,7 +27002,7 @@ msgid "Specifies the directory where private SSL certificates are stored."
 msgstr ""
 
 #. SysConfig
-msgid "Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. \"CareOnCloud ESM Notifications\" careoncloud@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address."
+msgid "Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. \"CareOnCloud ESM Notifications\" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address."
 msgstr ""
 
 #. SysConfig
@@ -27906,11 +27906,11 @@ msgid "Your Tickets. Your CareOnCloud ESM."
 msgstr ""
 
 #. SysConfig
-msgid "Your email with ticket number \"<OTOBO_TICKET>\" is bounced to \"<OTOBO_BOUNCE_TO>\". Contact this address for further information."
+msgid "Your email with ticket number \"<CareOnCloud_TICKET>\" is bounced to \"<CareOnCloud_BOUNCE_TO>\". Contact this address for further information."
 msgstr ""
 
 #. SysConfig
-msgid "Your email with ticket number \"<OTOBO_TICKET>\" is merged to \"<OTOBO_MERGE_TO_TICKET>\"."
+msgid "Your email with ticket number \"<CareOnCloud_TICKET>\" is merged to \"<CareOnCloud_MERGE_TO_TICKET>\"."
 msgstr ""
 
 #. SysConfig

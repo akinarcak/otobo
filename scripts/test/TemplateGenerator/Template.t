@@ -60,7 +60,7 @@ $Helper->ConfigSettingChange(
 
 # Fiddle with the timestamp only after the config setting changes,
 # as a changed time stamp interferes with a possible interaction with S3.
-# The fixed time will be used when evaluating <OTOBO_EMAIL_DATE> tags.
+# The fixed time will be used when evaluating <CareOnCloud_EMAIL_DATE> tags.
 my $DateTimeObject = $Kernel::OM->Create(
     'Kernel::System::DateTime',
     ObjectParams => {
@@ -104,7 +104,7 @@ customer-Article#6-Line3
                                # avoid trailing space
 The customer body contains a macro for itself. This macro should not
 be substituted as that would cause recursion.
-Circular: <OTOBO_CUSTOMER_BODY[10]>
+Circular: <CareOnCloud_CUSTOMER_BODY[10]>
 END_BODY
 my $LastCustomerBody1 = '> customer-Article#6-Line1';
 
@@ -179,21 +179,21 @@ my %Supported = (
     Note    => 1,
 );
 
-# setup for the test case 'RichText Tag <OTOBO_AGENT_BODY[2]>'
+# setup for the test case 'RichText Tag <CareOnCloud_AGENT_BODY[2]>'
 # Note that there is no line break after the last line.
 my $RichTestFormat = join "\n",
     qq{Test: <blockquote type="cite">%s<br/>},
     qq{%s</blockquote>};
 
-# This is for the special case where first <OTOBO_CUSTOMER_BODY> is evaluated
-# from the template and then <OTOBO_CUSTOMER_BODY[10]> from the replaced body.
+# This is for the special case where first <CareOnCloud_CUSTOMER_BODY> is evaluated
+# from the template and then <CareOnCloud_CUSTOMER_BODY[10]> from the replaced body.
 # The double replacement is not sensible, but at least we verify that
 # no infinite look occurs.
 #
 # There are two more quirks.
-# A) The replacement of <OTOBO_CUSTOMER_BODY[10]> is block quoted with
-#    "> " while the replacement of <OTOBO_CUSTOMER_BODY> adds no quotes.
-# B) The replacement of <OTOBO_CUSTOMER_BODY[10]> causes another <OTOBO_CUSTOMER_BODY[10]> to be added.
+# A) The replacement of <CareOnCloud_CUSTOMER_BODY[10]> is block quoted with
+#    "> " while the replacement of <CareOnCloud_CUSTOMER_BODY> adds no quotes.
+# B) The replacement of <CareOnCloud_CUSTOMER_BODY[10]> causes another <CareOnCloud_CUSTOMER_BODY[10]> to be added.
 #    That string is eventually replaced by a minus character '-'.
 my $DoubleReplacementBody = <<'END_BODY';
 Test: customer-Article#6-Line1
@@ -213,24 +213,24 @@ END_BODY
 
 my @Tests = (
     {
-        Name           => 'Supported tag - <OTOBO_CONFIG_ScriptAlias>',
-        TemplateText   => 'Thank you for your email. <OTOBO_CONFIG_ScriptAlias>',
+        Name           => 'Supported tag - <CareOnCloud_CONFIG_ScriptAlias>',
+        TemplateText   => 'Thank you for your email. <CareOnCloud_CONFIG_ScriptAlias>',
         ExpectedResult => 'Thank you for your email. ' . $ConfigObject->Get('ScriptAlias'),
     },
     {
-        Name           => 'Supported tags - <OTOBO_TICKET_*> without TicketID',
-        TemplateText   => 'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_Queue>)',
+        Name           => 'Supported tags - <CareOnCloud_TICKET_*> without TicketID',
+        TemplateText   => 'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_Queue>)',
         ExpectedResult => 'Options of the ticket data (e. g. -, -, -)',
     },
     {
-        Name           => 'Supported tags - <OTOBO_TICKET_*>  with TicketID',
-        TemplateText   => 'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_Queue>, <OTOBO_TICKET_State>)',
+        Name           => 'Supported tags - <CareOnCloud_TICKET_*>  with TicketID',
+        TemplateText   => 'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_Queue>, <CareOnCloud_TICKET_State>)',
         ExpectedResult => "Options of the ticket data (e. g. $TicketNumber, $TicketID, Raw, open)",
         TicketID       => $TicketID,
     },
     {
-        Name           => 'Tag <OTOBO_AGENT_SUBJECT>',
-        TemplateText   => 'Test: <OTOBO_AGENT_SUBJECT>',
+        Name           => 'Tag <CareOnCloud_AGENT_SUBJECT>',
+        TemplateText   => 'Test: <CareOnCloud_AGENT_SUBJECT>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => "Test: $LastAgentSubject",
@@ -246,8 +246,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'Tag <OTOBO_AGENT_SUBJECT[9]>',
-        TemplateText   => 'Test: <OTOBO_AGENT_SUBJECT[9]>',
+        Name           => 'Tag <CareOnCloud_AGENT_SUBJECT[9]>',
+        TemplateText   => 'Test: <CareOnCloud_AGENT_SUBJECT[9]>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => "Test: $LastAgentSubject9",
@@ -263,8 +263,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'Tag <OTOBO_AGENT_BODY>',
-        TemplateText   => 'Test: <OTOBO_AGENT_BODY>',
+        Name           => 'Tag <CareOnCloud_AGENT_BODY>',
+        TemplateText   => 'Test: <CareOnCloud_AGENT_BODY>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => "Test: $LastAgentBody",
@@ -280,8 +280,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'Tag <OTOBO_AGENT_BODY[2]>',
-        TemplateText   => 'Test: <OTOBO_AGENT_BODY[2]>',
+        Name           => 'Tag <CareOnCloud_AGENT_BODY[2]>',
+        TemplateText   => 'Test: <CareOnCloud_AGENT_BODY[2]>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => "Test: $LastAgentBody2",
@@ -297,8 +297,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'RichText Tag <OTOBO_AGENT_BODY[2]>',
-        TemplateText   => 'Test: <OTOBO_AGENT_BODY[2]>',
+        Name           => 'RichText Tag <CareOnCloud_AGENT_BODY[2]>',
+        TemplateText   => 'Test: <CareOnCloud_AGENT_BODY[2]>',
         TicketID       => $TicketID,
         RichText       => 1,
         TemplateResult => {
@@ -319,8 +319,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'Tag <OTOBO_CUSTOMER_SUBJECT>',
-        TemplateText   => 'Test: <OTOBO_CUSTOMER_SUBJECT>',
+        Name           => 'Tag <CareOnCloud_CUSTOMER_SUBJECT>',
+        TemplateText   => 'Test: <CareOnCloud_CUSTOMER_SUBJECT>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => "Test: $LastCustomerSubject",
@@ -336,8 +336,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'Tag <OTOBO_CUSTOMER_SUBJECT[12]>',
-        TemplateText   => 'Test: <OTOBO_CUSTOMER_SUBJECT[12]>',
+        Name           => 'Tag <CareOnCloud_CUSTOMER_SUBJECT[12]>',
+        TemplateText   => 'Test: <CareOnCloud_CUSTOMER_SUBJECT[12]>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => "Test: $LastCustomerSubject12",
@@ -353,8 +353,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'Tag <OTOBO_CUSTOMER_BODY>',
-        TemplateText   => 'Test: <OTOBO_CUSTOMER_BODY>',
+        Name           => 'Tag <CareOnCloud_CUSTOMER_BODY>',
+        TemplateText   => 'Test: <CareOnCloud_CUSTOMER_BODY>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => $DoubleReplacementBody,
@@ -370,8 +370,8 @@ my @Tests = (
         }
     },
     {
-        Name           => 'Tag <OTOBO_CUSTOMER_BODY[1]>',
-        TemplateText   => 'Test: <OTOBO_CUSTOMER_BODY[1]>',
+        Name           => 'Tag <CareOnCloud_CUSTOMER_BODY[1]>',
+        TemplateText   => 'Test: <CareOnCloud_CUSTOMER_BODY[1]>',
         TicketID       => $TicketID,
         TemplateResult => {
             Note      => "Test: $LastCustomerBody1",
@@ -387,18 +387,18 @@ my @Tests = (
         }
     },
     {
-        Name         => 'Test supported tag - <OTOBO_EMAIL_DATE[*]> with time zones',
+        Name         => 'Test supported tag - <CareOnCloud_EMAIL_DATE[*]> with time zones',
         TemplateText =>
-            'Belgrade: <OTOBO_EMAIL_DATE[Europe/Belgrade]>; Denver: <OTOBO_EMAIL_DATE[America/Denver]>; Tokyo: <OTOBO_EMAIL_DATE[Asia/Tokyo]>',
+            'Belgrade: <CareOnCloud_EMAIL_DATE[Europe/Belgrade]>; Denver: <CareOnCloud_EMAIL_DATE[America/Denver]>; Tokyo: <CareOnCloud_EMAIL_DATE[Asia/Tokyo]>',
         ExpectedResult =>
             "Belgrade: Friday, January 10, 2020 at 17:00:00 (Europe/Belgrade); Denver: Friday, January 10, 2020 at 09:00:00 (America/Denver); Tokyo: Saturday, January 11, 2020 at 01:00:00 (Asia/Tokyo)",
         Data     => \%TicketData,
         TicketID => $TicketID,
     },
     {
-        Name         => 'Test supported tag - <OTOBO_EMAIL_DATE> without time zone',
+        Name         => 'Test supported tag - <CareOnCloud_EMAIL_DATE> without time zone',
         TemplateText =>
-            'No TimeZone specified (UTC): <OTOBO_EMAIL_DATE>',
+            'No TimeZone specified (UTC): <CareOnCloud_EMAIL_DATE>',
         ExpectedResult => 'No TimeZone specified (UTC): Friday, January 10, 2020 at 16:00:00 (UTC)',
         Data           => \%TicketData,
         TicketID       => $TicketID,

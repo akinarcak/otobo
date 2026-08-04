@@ -248,77 +248,77 @@
                 <p>[% Translate("You can use the following tags") | html %]:</p>
                 <dl>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_SUBJECT[20]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_SUBJECT[20]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 20 character of the subject.") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_EMAIL[5]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_EMAIL[5]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 5 lines of the email.") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_REALNAME&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_REALNAME&gt;</code></dt>
                     <dd>
                         [% Translate("To get the name of the ticket's customer user (if given).") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_*&gt;</code></dt>
                     <dd>
                         [% Translate("To get the article attribute") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CUSTOMER_From&gt;, &lt;OTOBO_CUSTOMER_To&gt;,
-                        &lt;OTOBO_CUSTOMER_Cc&gt;, &lt;OTOBO_CUSTOMER_Subject&gt;, &lt;OTOBO_CUSTOMER_Body&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CUSTOMER_From&gt;, &lt;CareOnCloud_CUSTOMER_To&gt;,
+                        &lt;CareOnCloud_CUSTOMER_Cc&gt;, &lt;CareOnCloud_CUSTOMER_Subject&gt;, &lt;CareOnCloud_CUSTOMER_Body&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_DATA_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_DATA_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current customer user data") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CUSTOMER_DATA_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CUSTOMER_DATA_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_OWNER_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_OWNER_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket owner options") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_OWNER_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_OWNER_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_RESPONSIBLE_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_RESPONSIBLE_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket responsible options") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_RESPONSIBLE_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_RESPONSIBLE_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CURRENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CURRENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current user who requested this action") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CURRENT_UserFirstname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CURRENT_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the ticket data") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_TicketNumber&gt;, &lt;OTOBO_TICKET_TicketID&gt;,
-                        &lt;OTOBO_TICKET_Queue&gt;, &lt;OTOBO_TICKET_State&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_TicketNumber&gt;, &lt;CareOnCloud_TICKET_TicketID&gt;,
+                        &lt;CareOnCloud_TICKET_Queue&gt;, &lt;CareOnCloud_TICKET_State&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_DynamicField_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_DynamicField_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of ticket dynamic fields internal key values") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_DynamicField_TestField&gt;,
-                        &lt;OTOBO_TICKET_DynamicField_TicketFreeText1&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_DynamicField_TestField&gt;,
+                        &lt;CareOnCloud_TICKET_DynamicField_TicketFreeText1&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_DynamicField_*_Value&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_DynamicField_*_Value&gt;</code></dt>
                     <dd>
                         [% Translate("Options of ticket dynamic fields display values, useful for Dropdown and Multiselect fields") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_DynamicField_TestField_Value&gt;,
-                        &lt;OTOBO_TICKET_DynamicField_TicketFreeText1_Value&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_DynamicField_TestField_Value&gt;,
+                        &lt;CareOnCloud_TICKET_DynamicField_TicketFreeText1_Value&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CONFIG_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CONFIG_*&gt;</code></dt>
                     <dd>
                         [% Translate("Config options") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CONFIG_HttpType&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CONFIG_HttpType&gt;</code>).
                     </dd>
 
                 </dl>
@@ -333,7 +333,7 @@ Thanks for your email.
 
 You wrote:
 &lt;snip&gt;
-&lt;OTOBO_CUSTOMER_EMAIL[6]&gt;
+&lt;CareOnCloud_CUSTOMER_EMAIL[6]&gt;
 &lt;/snip&gt;
 
 --

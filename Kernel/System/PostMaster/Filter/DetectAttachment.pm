@@ -81,8 +81,8 @@ sub Run {
         }
     }
 
-    $Param{GetParam}->{'X-OTOBO-AttachmentExists'} = ( $AttachmentCount ? 'yes' : 'no' );
-    $Param{GetParam}->{'X-OTOBO-AttachmentCount'}  = $AttachmentCount;
+    $Param{GetParam}->{'X-CareOnCloud-AttachmentExists'} = ( $AttachmentCount ? 'yes' : 'no' );
+    $Param{GetParam}->{'X-CareOnCloud-AttachmentCount'}  = $AttachmentCount;
 
     return 1;
 }

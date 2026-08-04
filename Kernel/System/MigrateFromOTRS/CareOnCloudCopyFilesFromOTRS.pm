@@ -259,7 +259,7 @@ sub Run {
             my %CareOnCloud ESMParams = map { $_ => $ConfigObject->Get($_) } qw(DatabaseHost Database DatabaseUser DatabasePw DatabaseDSN Home);
 
             # inject extra settings in the Docker case, see also Kernel/Config.pm.dist.docker
-            my $DockerSpecificSettings = $ENV{OTOBO_RUNS_UNDER_DOCKER} ? <<'END_SETTINGS' : undef;
+            my $DockerSpecificSettings = $ENV{CareOnCloud_RUNS_UNDER_DOCKER} ? <<'END_SETTINGS' : undef;
 
     # ---------------------------------------------------- #
     # setting for running CareOnCloud ESM under Docker, injected by CareOnCloud ESMCopyFilesFromOTRS

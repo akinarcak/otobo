@@ -89,7 +89,7 @@ my %CustomerUserData = $Kernel::OM->Get('Kernel::System::CustomerUser')->Custome
 
 my %Notification = (
     Subject     => '',
-    Body        => '<OTOBO_TICKET_TicketNumber>',
+    Body        => '<CareOnCloud_TICKET_TicketNumber>',
     ContentType => 'text/plain',
 );
 

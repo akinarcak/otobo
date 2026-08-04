@@ -91,7 +91,7 @@ sub Run {
 
     # map wrong to correct tags
     my %StatsTagsOld2New = (
-        'otrs_stats' => 'otobo_stats',
+        'otrs_stats' => 'careoncloud_stats',
     );
 
     # get needed objects

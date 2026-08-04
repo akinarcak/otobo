@@ -2517,15 +2517,15 @@ sub ConfigurationXML2DB {
             next FILE;
         }
 
-        # Extract otobo_config Init attribute. E.g. 'Framework', 'Config'
-        my ($InitValue) = $ConfigFile->$* =~ m{<otobo_config.*?init="(.*?)"}gsmx;
+        # Extract careoncloud_config Init attribute. E.g. 'Framework', 'Config'
+        my ($InitValue) = $ConfigFile->$* =~ m{<careoncloud_config.*?init="(.*?)"}gsmx;
         $InitValue //= '';
 
         # Check if InitValue is Valid.
         if ( !defined $SettingsByInit{$InitValue} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Invalid otobo_config Init value ($InitValue)! Allowed values: Framework, Application, Config, Changes.",
+                Message  => "Invalid careoncloud_config Init value ($InitValue)! Allowed values: Framework, Application, Config, Changes.",
             );
 
             next FILE;
@@ -4832,7 +4832,7 @@ sub OverriddenFileNameGet {
     # Replace config variables in effective values.
     # NOTE: First level only, make sure to update this code once same mechanism has been improved in Defaults.pm.
     #   Please see bug#12916 and bug#13376 for more information.
-    $EffectiveValue =~ s/\<OTOBO_CONFIG_(.+?)\>/$ConfigObject->{$1}/g;
+    $EffectiveValue =~ s/\<CareOnCloud_CONFIG_(.+?)\>/$ConfigObject->{$1}/g;
 
     my $IsOverridden = DataIsDifferent(
         Data1 => $EffectiveValue       // {},

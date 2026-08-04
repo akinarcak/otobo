@@ -107,7 +107,7 @@ $Selenium->RunTest(
         );
 
         # Add test template of type 'Create'.
-        my $TemplateText           = 'This is selected customer user first name: "<OTOBO_CUSTOMER_DATA_UserFirstname>"';
+        my $TemplateText           = 'This is selected customer user first name: "<CareOnCloud_CUSTOMER_DATA_UserFirstname>"';
         my $StandardTemplateObject = $Kernel::OM->Get('Kernel::System::StandardTemplate');
         my $TemplateID             = $StandardTemplateObject->StandardTemplateAdd(
             Name         => 'CreateTemplate' . $RandomID,

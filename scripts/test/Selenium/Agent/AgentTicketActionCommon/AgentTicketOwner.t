@@ -267,7 +267,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
             "There is no Out Of Office message in the article 'Sender' column."
         );
 
-        # Check <OTOBO_CUSTOMER_BODY> tag in NotificationOwnerUpdate notification body (see bug#14678).
+        # Check <CareOnCloud_CUSTOMER_BODY> tag in NotificationOwnerUpdate notification body (see bug#14678).
         my $MailQueueObject = $Kernel::OM->Get('Kernel::System::MailQueue');
         my $TestEmailObject = $Kernel::OM->Get('Kernel::System::Email::Test');
 
@@ -342,7 +342,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
             Message => {
                 en => {
                     Subject     => "Notification-Subject-$RandomID",
-                    Body        => 'OTOBO_CUSTOMER_BODY tag: <OTOBO_CUSTOMER_BODY>',
+                    Body        => 'CareOnCloud_CUSTOMER_BODY tag: <CareOnCloud_CUSTOMER_BODY>',
                     ContentType => 'text/plain',
                 },
             },
@@ -373,9 +373,9 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
         # Get test emails.
         my $Emails = $TestEmailObject->EmailsGet();
 
-        # Check if OTOBO_CUSTOMER_BODY tag is replaced correctly in any email.
+        # Check if CareOnCloud_CUSTOMER_BODY tag is replaced correctly in any email.
         my $Found = 0;
-        my $Match = "OTOBO_CUSTOMER_BODY tag: $Body";
+        my $Match = "CareOnCloud_CUSTOMER_BODY tag: $Body";
         EMAIL:
         for my $Email ( @{$Emails} ) {
             $Found = ( ${ $Email->{Body} } =~ m/$Match/ ? 1 : 0 );
@@ -383,7 +383,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
             last EMAIL if $Found;
         }
 
-        ok( $Found, 'OTOBO_CUSTOMER_BODY tag is replaced correctly' );
+        ok( $Found, 'CareOnCloud_CUSTOMER_BODY tag is replaced correctly' );
 
         # Cleanup test email backend and mail queue.
         $TestEmailObject->CleanUp();

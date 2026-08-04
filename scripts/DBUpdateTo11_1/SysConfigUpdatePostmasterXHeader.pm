@@ -37,7 +37,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-scripts::DBUpdateTo11_1::SysConfigUpdatePostmasterXHeader - Add the key 'X-OTOBO-From' to the setting 'PostmasterX-Header'
+scripts::DBUpdateTo11_1::SysConfigUpdatePostmasterXHeader - Add the key 'X-CareOnCloud-From' to the setting 'PostmasterX-Header'
 
 =cut
 
@@ -61,7 +61,7 @@ sub Run {
 
     # There is nothing to do if the key is already present. Report success early on.
     # Proceeding would only add a duplicate.
-    return 1 if ( any { $_ eq 'X-OTOBO-From' } $PostmasterXHeaderSetting{EffectiveValue}->@* );
+    return 1 if ( any { $_ eq 'X-CareOnCloud-From' } $PostmasterXHeaderSetting{EffectiveValue}->@* );
 
     my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
         UserID    => 1,
@@ -75,7 +75,7 @@ sub Run {
         IsValid        => 1,
         EffectiveValue => [
             $PostmasterXHeaderSetting{EffectiveValue}->@*,
-            'X-OTOBO-From',
+            'X-CareOnCloud-From',
         ],
         ExclusiveLockGUID => $ExclusiveLockGUID,
         UserID            => 1,

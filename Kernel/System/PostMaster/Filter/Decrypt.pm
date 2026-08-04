@@ -101,31 +101,31 @@ sub Run {
     if ( $EncryptionMethod eq 'PGP' ) {
 
         # Try to decrypt body with PGP.
-        $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} = $Self->_DecryptPGP(
+        $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} = $Self->_DecryptPGP(
             Body        => $Message,
             ContentType => $ContentType,
             %Param
         ) || '';
 
         # Return PGP decrypted content if encryption is PGP.
-        return $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} if $Param{GetParam}->{'X-OTOBO-BodyDecrypted'};
+        return $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} if $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'};
     }
     elsif ( $EncryptionMethod eq 'SMIME' ) {
 
         # Try to decrypt body with SMIME.
         # Actually pass the complete mail as a string as
         # the crypted body will be detected in _DecryptSMIME().
-        $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} = $Self->_DecryptSMIME(
+        $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} = $Self->_DecryptSMIME(
             Body        => $Self->{ParserObject}->GetPlainEmail,
             ContentType => $ContentType,
             %Param
         ) || '';
 
         # Return SMIME decrypted content if encryption is SMIME
-        return $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} if $Param{GetParam}->{'X-OTOBO-BodyDecrypted'};
+        return $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} if $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'};
     }
     else {
-        $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} = '';
+        $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} = '';
     }
 
     return 1;

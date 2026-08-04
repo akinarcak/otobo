@@ -242,7 +242,7 @@ $BackupDir = abs_path($BackupDir);
 # create new backup directory
 my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-# make sure backup dir is not under OTOBO_HOME (usually /opt/careoncloud)
+# make sure backup dir is not under CareOnCloud_HOME (usually /opt/careoncloud)
 if ( dir($Home)->contains($BackupDir) ) {
 
     say STDERR ("Backup directory '$BackupDir' is under '$Home', please chose a different backup directory not below the CareOnCloud ESM home directory with the -d option!");
@@ -774,7 +774,7 @@ Clone the schema 'otrs' into the schema 'careoncloud'. This can be done with DBA
   - GRANT READ, WRITE ON DIRECTORY OTRS_DUMP_DIR TO sys;      # sys as sysdba
   - expdp \"sys/SYS_PASSWORD@//127.0.0.1/SID as sysdba\"  schemas=otrs directory=OTRS_DUMP_DIR dumpfile=otrs.dmp logfile=expdp_otrs.log
   - impdp \"sys/SYS_PASSWORD@//127.0.0.1/SID as sysdba\" directory=OTRS_DUMP_DIR dumpfile=otrs.dmp logfile=impdpcareoncloud.log  remap_schema=otrs:careoncloud
-  - ALTER USER careoncloud IDENTIFIED BY [OTOBO_PASSWORD];
+  - ALTER USER careoncloud IDENTIFIED BY [CareOnCloud_PASSWORD];
 
 Adapt the schema careoncloud as the user careoncloud.
     - run $PostprocessFile

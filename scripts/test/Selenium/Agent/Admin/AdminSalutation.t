@@ -111,7 +111,7 @@ $Selenium->RunTest(
 
         # Create real test Salutation.
         my $SalutationRandomID = "Salutation" . $Helper->GetRandomID();
-        my $SalutationRichText = "Dear <OTOBO_OWNER_Userfirstname>>,\n\nThank you for your request.";
+        my $SalutationRichText = "Dear <CareOnCloud_OWNER_Userfirstname>>,\n\nThank you for your request.";
         my $SalutationComment  = "Selenium Salutation test";
 
         $Selenium->find_element( "#Name",     'css' )->send_keys($SalutationRandomID);
@@ -162,7 +162,7 @@ $Selenium->RunTest(
         }
 
         # Edit test Salutation, clear comment and set it to invalid.
-        my $EditSalutationRichText = "Dear <OTOBO_CUSTOMER_Userlastname>,\n\nThank you for your request.";
+        my $EditSalutationRichText = "Dear <CareOnCloud_CUSTOMER_Userlastname>,\n\nThank you for your request.";
 
         $Selenium->find_element( "#RichText", 'css' )->clear();
         $Selenium->find_element( "#RichText", 'css' )->send_keys($EditSalutationRichText);

@@ -219,7 +219,7 @@ sub TransitionCheck {
             next DEBUGFILTER if !$Self->{TransitionDebugFilters}->{$DebugFilter};
             next DEBUGFILTER if ref $Param{Data} ne 'HASH';
 
-            if ( $DebugFilter =~ m{<OTOBO_TICKET_([^>]+)>}msx ) {
+            if ( $DebugFilter =~ m{<CareOnCloud_TICKET_([^>]+)>}msx ) {
                 my $TicketParam = $1;
 
                 if (

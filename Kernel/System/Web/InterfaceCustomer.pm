@@ -663,7 +663,7 @@ sub _Content {
             my $Subject = $ConfigObject->Get('CustomerPanelSubjectLostPasswordToken')
                 || 'ERROR: CustomerPanelSubjectLostPasswordToken is missing!';
             for ( sort keys %UserData ) {
-                $Body =~ s/<OTOBO_$_>/$UserData{$_}/gi;
+                $Body =~ s/<CareOnCloud_$_>/$UserData{$_}/gi;
             }
             my $Sent = $EmailObject->Send(
                 To       => $UserData{UserEmail},
@@ -720,11 +720,11 @@ sub _Content {
 
         # send notify email
         my $Body = $ConfigObject->Get('CustomerPanelBodyLostPassword')
-            || 'New Password is: <OTOBO_NEWPW>';
+            || 'New Password is: <CareOnCloud_NEWPW>';
         my $Subject = $ConfigObject->Get('CustomerPanelSubjectLostPassword')
             || 'New Password!';
         for ( sort keys %UserData ) {
-            $Body =~ s/<OTOBO_$_>/$UserData{$_}/gi;
+            $Body =~ s/<CareOnCloud_$_>/$UserData{$_}/gi;
         }
         my $Sent = $EmailObject->Send(
             To       => $UserData{UserEmail},
@@ -902,7 +902,7 @@ sub _Content {
         my $Subject = $ConfigObject->Get('CustomerPanelSubjectNewAccount')
             || 'New CareOnCloud ESM Account!';
         for ( sort keys %GetParams ) {
-            $Body =~ s/<OTOBO_$_>/$GetParams{$_}/gi;
+            $Body =~ s/<CareOnCloud_$_>/$GetParams{$_}/gi;
         }
 
         # send account info

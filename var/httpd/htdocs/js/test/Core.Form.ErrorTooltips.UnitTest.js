@@ -25,7 +25,7 @@ Core.Form.ErrorTooltips = (function (Namespace) {
         QUnit.test('Core.Form.ErrorTooltip()', function(Assert){
             var $TestForm = $('<form id="TestForm" class="Validate"></form>'),
                 ErrorTooltipMessage = 'UT Error Tooltip message',
-                ErrorTooltipID = '#OTOBO_UI_Tooltips_ErrorTooltip',
+                ErrorTooltipID = '#CareOnCloud_UI_Tooltips_ErrorTooltip',
                 TestFieldElement;
 
             Assert.expect(9);

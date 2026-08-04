@@ -177,7 +177,7 @@ sub InfoTileAdd {
 
     # compose new info tile entry
     my @XMLHash = (
-        { otobo_infotile => [ \%MetaData ] },
+        { careoncloud_infotile => [ \%MetaData ] },
     );
     my $Success = $XMLObject->XMLHashAdd(
         Type    => 'InfoTiles',
@@ -248,7 +248,7 @@ sub InfoTileGet {
     }
 
     my %InfoTile;
-    my $InfoTileXML = $XMLHash[0]->{otobo_infotile}->[1];
+    my $InfoTileXML = $XMLHash[0]->{careoncloud_infotile}->[1];
 
     # process all strings
     $InfoTile{ID} = $Param{ID};
@@ -466,7 +466,7 @@ sub InfoTileUpdate {
 
     # compose new info tile entry
     my @XMLHash = (
-        { otobo_infotile => [ \%MetaData ] },
+        { careoncloud_infotile => [ \%MetaData ] },
     );
 
     my $Success = $XMLObject->XMLHashUpdate(

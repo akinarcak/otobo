@@ -192,13 +192,13 @@ $PostMasterFilter->FilterAdd(
     StopAfterMatch => 0,
     Match          => [
         {
-            Key   => 'X-OTOBO-BodyDecrypted',
+            Key   => 'X-CareOnCloud-BodyDecrypted',
             Value => 'test',
         },
     ],
     Set => [
         {
-            Key   => 'X-OTOBO-Queue',
+            Key   => 'X-CareOnCloud-Queue',
             Value => 'Junk',
         },
     ],

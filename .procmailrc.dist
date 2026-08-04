@@ -31,12 +31,12 @@ COMSAT=no
 
 :0 fhw :
 * !^From.*@example.com
-| grep -vi '^X-OTOBO-'
+| grep -vi '^X-CareOnCloud-'
 
-# or just no emails with "X-OTOBO-Ident: ahfiw2Fw32r230dddl2foeo3r" header!
+# or just no emails with "X-CareOnCloud-Ident: ahfiw2Fw32r230dddl2foeo3r" header!
 #:0 fhw :
-#* !^X-OTOBO-Ident: ahfiw2Fw32r230dddl2foeo3r
-#| grep -vi '^X-OTOBO-'
+#* !^X-CareOnCloud-Ident: ahfiw2Fw32r230dddl2foeo3r
+#| grep -vi '^X-CareOnCloud-'
 
 
 
@@ -44,18 +44,18 @@ COMSAT=no
 
 :0 fhw :
 * TO:.*@example.com
-| formail -I "X-OTOBO-Queue: example"
+| formail -I "X-CareOnCloud-Queue: example"
 
 :0 fhw :
 * ^List-Id:.*OpenAntiVirus
-| formail -I "X-OTOBO-Queue: OpenAntiVirus"
+| formail -I "X-CareOnCloud-Queue: OpenAntiVirus"
 
 
 # Example for add free form key and value (max 3).
 
 :0 fhw :
 * TO:.*@example.com
-| formail -I "X-OTOBO-ArticleKey1: Test" |  formail -I "X-OTOBO-ArticleValue1: True!"
+| formail -I "X-CareOnCloud-ArticleKey1: Test" |  formail -I "X-CareOnCloud-ArticleValue1: True!"
 
 
 # Example for assigning the "email domain as customer ID" automaticaly.
@@ -64,7 +64,7 @@ COMSAT=no
 #CUSTOMERID=|formail -X "From:"|perl -e '$i=<STDIN>; $i=~s/^From: //;$i=~s/\(.*?\)//;$i=~s/<(.*?)>/$1/;$i=~s/ //g;$i=~s/.*@(.*)/$1/;print $i'
 #
 #:0 fhw :
-#| formail -I "X-OTOBO-CustomerNo: $CUSTOMERID"
+#| formail -I "X-CareOnCloud-CustomerNo: $CUSTOMERID"
 
 
 # Backup of all incoming emails.

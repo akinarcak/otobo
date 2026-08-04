@@ -216,7 +216,7 @@ my $NotificationID = $NotificationEventObject->NotificationAdd(
     Message => {
         en => {
             Subject     => 'JobName',
-            Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+            Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
             ContentType => 'text/html',
         },
     },

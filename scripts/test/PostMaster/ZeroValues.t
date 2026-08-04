@@ -64,8 +64,8 @@ ok(
 
 # ensure that the appropriate X-Headers are available in the config
 my %NeededXHeaders = (
-    "X-OTOBO-$FieldName"          => 1,
-    "X-OTOBO-FollowUp-$FieldName" => 1,
+    "X-CareOnCloud-$FieldName"          => 1,
+    "X-CareOnCloud-FollowUp-$FieldName" => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -89,7 +89,7 @@ my @Tests = (
         Email => "From: Sender <sender\@example.com>
 To: Some Name <recipient\@example.com>
 Subject: A simple question
-X-OTOBO-DynamicField-$FieldName: 1
+X-CareOnCloud-DynamicField-$FieldName: 1
 
 This is a multiline
 email for server: example.tld
@@ -106,7 +106,7 @@ The IP address: 192.168.0.1
         Email => "From: Sender <sender\@example.com>
 To: Some Name <recipient\@example.com>
 Subject: [#1] Another question
-X-OTOBO-FollowUp-DynamicField-$FieldName: 0
+X-CareOnCloud-FollowUp-DynamicField-$FieldName: 0
 
 This is a multiline
 email for server: example.tld
@@ -123,7 +123,7 @@ The IP address: 192.168.0.1
         Email => "From: Sender <sender\@example.com>
 To: Some Name <recipient\@example.com>
 Subject: A simple question
-X-OTOBO-DynamicField-$FieldName: 0
+X-CareOnCloud-DynamicField-$FieldName: 0
 
 This is a multiline
 email for server: example.tld

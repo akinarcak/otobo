@@ -157,7 +157,7 @@ sub Run {
             for ( sort keys $ConfigObject->Get('MIME-Viewer')->%* ) {
                 if ( $Data{ContentType} =~ m/^$_/i ) {
                     $Viewer = $ConfigObject->Get('MIME-Viewer')->{$_};
-                    $Viewer =~ s/\<OTOBO_CONFIG_(.+?)\>/$ConfigObject->{$1}/g;
+                    $Viewer =~ s/\<CareOnCloud_CONFIG_(.+?)\>/$ConfigObject->{$1}/g;
                 }
             }
         }

@@ -124,15 +124,15 @@ sub Run {
         # create a backend object
         my $BackendObject = $BackendModule->new();
 
-        # replace the OTOBO_CONFIG macro in the config, for settings like:
-        #   <Item Key="BackgroundImage">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/dashboard_bgfl.png</Item>
+        # replace the CareOnCloud_CONFIG macro in the config, for settings like:
+        #   <Item Key="BackgroundImage">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/dashboard_bgfl.png</Item>
         my $Config = $UsedTiles->{$Tile}->{Config} || {};
         KEY:
         for my $Key ( keys $Config->%* ) {
             next KEY unless defined $Config->{$Key};
             next KEY unless ref $Config->{$Key} eq '';
 
-            $Config->{$Key} =~ s{<OTOBO_CONFIG_(.+?)>}{$ConfigObject->Get($1)}egx;
+            $Config->{$Key} =~ s{<CareOnCloud_CONFIG_(.+?)>}{$ConfigObject->Get($1)}egx;
         }
 
         my $TileID = sprintf '%02d', $UsedTiles->{$Tile}{Order};    # assuming Order being less than 100

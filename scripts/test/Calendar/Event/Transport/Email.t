@@ -289,7 +289,7 @@ for my $Test (@Tests) {
         Message => {
             en => {
                 Subject     => 'JobName',
-                Body        => 'Calender: <OTOBO_CALENDAR_CALENDARNAME>',
+                Body        => 'Calender: <CareOnCloud_CALENDAR_CALENDARNAME>',
                 ContentType => 'text/plain',
             },
         },
