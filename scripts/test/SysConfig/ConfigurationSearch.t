@@ -109,7 +109,7 @@ my @Tests = (
     {
         Name   => 'Size Result',
         Params => {
-            Category => 'CareOnCloud ESM',
+            Category => 'CareOnCloud',
         },
         ExpectedResult => $CareOnCloudSettings,
         Success        => 1,

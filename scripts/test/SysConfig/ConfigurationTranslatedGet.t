@@ -49,7 +49,7 @@ my @Tests = (
         Line          => __LINE__,
         Name          => 'Ticket::Frontend::AgentTicketQueue###SortBy::Default',
         ExpectedValue => {
-            'Category'    => 'CareOnCloud ESM',
+            'Category'    => 'CareOnCloud',
             'IsInvisible' => '0',
             'Metadata'    => "ticket::frontend::agentticketqueue###sortby::default--- alter
 definiert die standardmäßig eingestellten sortierkriterien für alle in der queue-ansicht angezeigten queues."
@@ -59,7 +59,7 @@ definiert die standardmäßig eingestellten sortierkriterien für alle in der qu
         Line          => __LINE__,
         Name          => 'Ticket::Frontend::AgentTicketQueue###Order::Default',
         ExpectedValue => {
-            'Category'    => 'CareOnCloud ESM',
+            'Category'    => 'CareOnCloud',
             'IsInvisible' => 0,
             'Metadata'    => 'ticket::frontend::agentticketqueue###order::default--- auf
 definiert die standardmäßig eingestellten sortierkriterien für alle in der queue-ansicht angezeigten queues, nachdem nach priorität sortiert wurde.'
@@ -69,7 +69,7 @@ definiert die standardmäßig eingestellten sortierkriterien für alle in der qu
         Line          => __LINE__,
         Name          => 'Ticket::Frontend::AgentTicketService###SortBy::Default',
         ExpectedValue => {
-            'Category'    => 'CareOnCloud ESM',
+            'Category'    => 'CareOnCloud',
             'IsInvisible' => 0,
             'Metadata'    => 'ticket::frontend::agentticketservice###sortby::default--- alter
 definiert die standardmäßig eingestellten sortierkriterien für alle in der service-ansicht angezeigten services.'
@@ -79,7 +79,7 @@ definiert die standardmäßig eingestellten sortierkriterien für alle in der se
         Line          => __LINE__,
         Name          => 'Ticket::Frontend::AgentTicketSearch###SearchCSVData',
         ExpectedValue => {
-            'Category'    => 'CareOnCloud ESM',
+            'Category'    => 'CareOnCloud',
             'IsInvisible' => 0,
             'Metadata'    => 'ticket::frontend::agentticketsearch###searchcsvdata---
 - ticketnumber
@@ -112,7 +112,7 @@ daten die verwendet werden um das suchergebnis im csv-format zu exportieren.'
         Line          => __LINE__,
         Name          => 'Ticket::Frontend::AgentTicketPhone###SplitLinkType',
         ExpectedValue => {
-            'Category'    => 'CareOnCloud ESM',
+            'Category'    => 'CareOnCloud',
             'IsInvisible' => 0,
             'Metadata'    => 'ticket::frontend::agentticketphone###splitlinktype---
 direction: target
@@ -124,7 +124,7 @@ bestimmt den standard-linktyp für geteilte tickets im agentenbereich.'
         Line          => __LINE__,
         Name          => 'Ticket::Frontend::HistoryTypes###000-Framework',
         ExpectedValue => {
-            'Category'    => 'CareOnCloud ESM',
+            'Category'    => 'CareOnCloud',
             'IsInvisible' => 0,
             'Metadata'    => q{ticket::frontend::historytypes###000-framework---
 addnote: added note (%s).

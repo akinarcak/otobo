@@ -1223,7 +1223,7 @@ Get default setting list with complete data.
         UserPreferencesGroup     => 'Some Group',
         Navigation               => 'ASimple::Path::Structure',
         Locked                   => 1, # check for locked settings
-        Category                 => 'CareOnCloud ESM',                             # optional (requires CategoryFiles)
+        Category                 => 'CareOnCloud',                             # optional (requires CategoryFiles)
         CategoryFiles            => ['Framework.xml', 'Ticket.xml', ],  # optional (requires Category)
         NoCache                  => 0,                                  # (optional) Default 0. If set, system will not generate cache.
     );

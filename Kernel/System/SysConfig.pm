@@ -2115,7 +2115,7 @@ Returns:
 
     %Result = (
        'ACL::CacheTTL' => {
-            'Category' => 'CareOnCloud ESM',
+            'Category' => 'CareOnCloud',
             'IsInvisible' => '0',
             'Metadata' => "ACL::CacheTTL--- '3600'
 Cache-Zeit in Sekunden f\x{fc}r Datenbank ACL-Backends.",
@@ -2756,7 +2756,7 @@ Returns navigation tree in the hash format.
         RootNavigation         => 'Parent',     # (optional) If provided only sub groups of the root navigation are returned.
         UserModificationActive => 1,            # (optional) Return settings that can be modified on user level only.
         IsValid                => 1,            # (optional) By default, display all settings.
-        Category               => 'CareOnCloud ESM'        # (optional)
+        Category               => 'CareOnCloud'        # (optional)
     );
 
 Returns:
@@ -4400,7 +4400,7 @@ Returns a list of setting names.
 
     my @Result = $SysConfigObject->ConfigurationSearch(
         Search           => 'The search string', # (optional)
-        Category         => 'CareOnCloud ESM'               # (optional)
+        Category         => 'CareOnCloud'               # (optional)
         IncludeInvisible => 1,                   # (optional) Default 0.
     );
 
@@ -6141,7 +6141,7 @@ Returns:
 
     %Result = (
        'ACL::CacheTTL' => {
-            'Category' => 'CareOnCloud ESM',
+            'Category' => 'CareOnCloud',
             'IsInvisible' => '0',
             'Metadata' => "ACL::CacheTTL--- '3600'
 Cache-Zeit in Sekunden f\x{fc}r Datenbank ACL-Backends.",
