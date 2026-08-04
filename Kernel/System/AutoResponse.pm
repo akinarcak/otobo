@@ -262,7 +262,7 @@ Return example:
 
     %QueueAddressData(
         #Auto Response Data
-        'Text'            => 'Your CareOnCloud ESM TeamCareOnCloud ESM! answered by a human asap.',
+        'Text'            => 'Your CareOnCloud ESM TeamCareOnCloud! answered by a human asap.',
         'Subject'         => 'New ticket has been created! (RE: <CareOnCloud_CUSTOMER_SUBJECT[24]>)',
         'ContentType'     => 'text/plain',
         'SystemAddressID' => '1',

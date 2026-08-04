@@ -650,7 +650,7 @@ sub CareOnCloudInfoGet {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # collect CareOnCloud ESM data
-    my %EnvCareOnCloud ESM = (
+    my %EnvCareOnCloud = (
         Version         => $ConfigObject->Get('Version'),
         Home            => $ConfigObject->Get('Home'),
         Host            => $ConfigObject->Get('FQDN'),
@@ -659,7 +659,7 @@ sub CareOnCloudInfoGet {
         DefaultLanguage => $ConfigObject->Get('DefaultLanguage'),
     );
 
-    return %EnvCareOnCloud ESM;
+    return %EnvCareOnCloud;
 }
 
 1;

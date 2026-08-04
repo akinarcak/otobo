@@ -148,9 +148,9 @@ sub Run {
     }
 
     # Check CareOnCloud ESM version
-    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloudConfigpmExists();
+    my $ResultCareOnCloud = $Self->_CheckCareOnCloudConfigpmExists();
 
-    return $ResultCareOnCloud ESM unless $ResultCareOnCloud ESM->{Successful};
+    return $ResultCareOnCloud unless $ResultCareOnCloud->{Successful};
 
     # Check OTRS version
     my $ResultOTRS = $Self->_CheckOTRSConfigpm(
@@ -162,7 +162,7 @@ sub Run {
     # Everything is correct, return that info
     return {
         Message    => $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS connect is possible."),
-        Comment    => "$ResultCareOnCloud ESM->{Comment}  $ResultOTRS->{Comment}",
+        Comment    => "$ResultCareOnCloud->{Comment}  $ResultOTRS->{Comment}",
         Successful => 1,
     };
 }

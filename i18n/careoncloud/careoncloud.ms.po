@@ -12734,7 +12734,7 @@ msgstr ""
 
 #. Template: Intro
 msgid ""
-"If you need support, just ask our experts – either at %sCareOnCloud ESM forum%s or "
+"If you need support, just ask our experts – either at %sCareOnCloud forum%s or "
 "directly via mail to %ssales@otobo.io%s."
 msgstr ""
 
@@ -28513,7 +28513,7 @@ msgstr ""
 "Jika \"LDAP\" dipilih untuk Customer::AuthModule, anda boleh semak jika "
 "pengguna dibenarkan untuk mengesahkan sebab pengguna tersebut berada dalam "
 "posixGroup, cth: pengguna perlu berada di dalam kumpulan xyz untuk "
-"gunaCareOnCloud ESM. Tentukan kumpulan tersebut, siapa yang boleh akses sistem "
+"gunaCareOnCloud. Tentukan kumpulan tersebut, siapa yang boleh akses sistem "
 "tersebut."
 
 #. SysConfig

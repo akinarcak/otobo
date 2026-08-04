@@ -151,9 +151,9 @@ sub Run {
     }
 
     # Check CareOnCloud ESM version
-    my $ResultCareOnCloud ESM = $Self->_CheckCareOnCloudVersion();
+    my $ResultCareOnCloud = $Self->_CheckCareOnCloudVersion();
 
-    return $ResultCareOnCloud ESM unless $ResultCareOnCloud ESM->{Successful};
+    return $ResultCareOnCloud unless $ResultCareOnCloud->{Successful};
 
     # Check OTRS version
     my $ResultOTRS = $Self->_CheckOTRSRelease(
@@ -165,7 +165,7 @@ sub Run {
     # Everything if correct, return success
     return {
         Message    => $Self->{LanguageObject}->Translate("Check if CareOnCloud ESM and OTRS version is correct."),
-        Comment    => join( ' ', $ResultCareOnCloud ESM->{Comment}, $ResultOTRS->{Comment} ),
+        Comment    => join( ' ', $ResultCareOnCloud->{Comment}, $ResultOTRS->{Comment} ),
         Successful => 1,
     };
 }

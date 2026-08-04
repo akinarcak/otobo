@@ -12911,7 +12911,7 @@ msgstr ""
 #, fuzzy
 #| msgid "If you need support, just ask our experts – either at"
 msgid ""
-"If you need support, just ask our experts – either at %sCareOnCloud ESM forum%s or "
+"If you need support, just ask our experts – either at %sCareOnCloud forum%s or "
 "directly via mail to %ssales@otobo.io%s."
 msgstr "サポートが必要な場合は、当社の専門家にお問い合わせください"
 
