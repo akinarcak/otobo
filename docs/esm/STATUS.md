@@ -603,3 +603,9 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `VERIFIED_BY_CURRENT_TEST`: Run `30883550612` still finished the full chain with `conclusion: success` — build/push, SBOM generation, SBOM artifact upload and Cosign keyless OIDC signing. The cache optimisation did not weaken the signed release path.
 - `SCOPE`: Candidate-only `workflow_dispatch` probe tags. Production services, live cutover, `d724-esm-*` containers/volumes and Yetka data were not touched.
 - `RISK`: Still open and not claimed as done: an actual `careoncloud-v*` signed release tag, live Cloudflare cutover with rollback rehearsal, and production acceptance.
+
+## 2026-08-04 - First signed CareOnCloud release
+
+- `DONE_AND_VERIFIED`: Real tag `careoncloud-v0.1.0` completed GitHub Actions run `30886590617` successfully. Build/push completed in 6m46s, CycloneDX SBOM in 51s, artifact upload, Cosign install and keyless signature all passed.
+- `VERIFIED_BY_CURRENT_TEST`: Image digest `sha256:7c1091f92d168e9e4980eedb8156d9c9be07cd4cffcb0a0fe78b55fe72938b44` was pushed to GHCR; SBOM artifact `careoncloud-sbom-v0.1.0` finalized at 1,287,333 bytes (artifact `8883513965`); Rekor tlog index `2339297418` was recorded.
+- `SCOPE`: This is the signed release image only. Live `/careoncloud/` cutover, rollback rehearsal and production acceptance remain separate, pending the next controlled step.

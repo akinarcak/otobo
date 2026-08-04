@@ -278,3 +278,11 @@ adlandirmasi ile basarili oldu. Build/push 9 saniye cache hit, SBOM 60 saniye,
 artifact upload ve Cosign keyless imza basariliydi. Probe image digest'i
 `sha256:7c999567722ca3847f1cd5104c015173dbb1584b51106075cacc8d0e16c664d9`, Rekor
 index `2339281679`. Bu probe tag'idir; gercek release veya canli cutover degildir.
+
+### 9.6 Gercek imzali release (4 Agustos 2026)
+
+`careoncloud-v0.1.0` etiketiyle run `30886590617` basarili oldu. Image digest'i
+`sha256:7c1091f92d168e9e4980eedb8156d9c9be07cd4cffcb0a0fe78b55fe72938b44`, SBOM
+artifact'i `careoncloud-sbom-v0.1.0` (1,287,333 byte, ID `8883513965`), Rekor
+index `2339297418`. Bu, ilk gercek imzali release image'idir; canli cutover ve
+rollback ayri kontrollu adimlar olarak kalir.
