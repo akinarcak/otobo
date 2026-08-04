@@ -134,7 +134,31 @@ Ustelik **hicbir islevsel fayda saglamaz**: Dockerfile'daki tek kullanimi
 `if [[ $DOCKER_TAG == local-* ]]` kosuludur; varsayilan deger `unspecified` zaten
 `local-*` desenine uymaz ve istenen `carton install --deployment` yoluna girer.
 
-> Olcum sonucu ve alinan aksiyon icin `STATUS.md` icindeki ilgili kayda bakiniz.
+### Olcum (varsayim degil)
+
+Ayni commit, ayni workflow, yalnizca image tag'i farkli iki run:
+
+| Run | Tag | `DOCKER_TAG` | Build adimi | `base 7/7` (`carton install`) |
+|---|---|---|---|---|
+| 30824056768 | probe | var | 7dk04sn | miss (soguk cache) |
+| 30882609007 | probe2 | var | 4dk45sn | **miss** — 213 dagitim, 211.9sn |
+| 30883159985 | probe3 | **yok** | 4dk50sn | miss (yeni anahtar, cache yazildi) |
+| 30883550612 | probe4 | **yok** | **9 saniye** | **CACHED** — 0 kurulum |
+
+`30882609007` calisirken `base 1/7` ... `base 6/7` katmanlarinin hepsi `CACHED` raporlandi;
+cache hit tam olarak ARG'i tuketen katmanda kesildi. Bu, build-arg'in sucunu tek basina
+kanitlar.
+
+`30883550612`'nin tag'i `30883159985`'ten **farklidir**. Eskiden bu tek basina CPAN
+katmanini bozmaya yetiyordu; artik yetmiyor.
+
+### Alinan aksiyon
+
+Commit `41fc6a9b1` build-arg'i kaldirdi. Build+push 7dk04sn -> 9sn, tam zincir
+9dk55sn -> 1dk32sn. Zincir yine `success` verdi; imza yolu zayiflamadi.
+
+`Test-CareOnCloudReleaseWorkflow.ps1` artik `DOCKER_TAG=` yeniden eklenirse fail eden
+bir regression guard tasiyor.
 
 ---
 

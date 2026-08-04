@@ -573,3 +573,11 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: The `DOCKER_TAG=careoncloud-<tag>` build-arg was removed from `.github/workflows/careoncloud-release.yml` in commit `41fc6a9b1`. It provided no function: the Dockerfile default `unspecified` already fails the `local-*` test and selects the locked `carton install --deployment` path. The version label it appears to feed is out of scope in the `careoncloud-web` stage regardless, because ARGs do not cross a `FROM` boundary and that stage never redeclares it.
 - `VERIFIED_BY_CURRENT_TEST`: `Test-CareOnCloudReleaseWorkflow.ps1` passed after the change and now carries a regression guard that fails if a `DOCKER_TAG=` build-arg is reintroduced.
 - `DONE_AND_VERIFIED`: `docs/esm/NOTES-FOR-CODEX.md` records the root cause, the measurement error that produced it, and the operating rules to avoid repeating it.
+
+## 2026-08-04 - Cache fix verified: tag changes no longer rebuild the CPAN layer
+
+- `VERIFIED_BY_CURRENT_TEST`: After commit `41fc6a9b1` removed the `DOCKER_TAG` build-arg, run `30883159985` (tag `probe3`) repopulated the cache under the new key in 4m50s, and run `30883550612` (tag `probe4`) completed its build and push in **9 seconds** with `#11 [base 7/7] RUN` reported `CACHED` and zero `Successfully installed` lines. `carton install` did not execute at all.
+- `VERIFIED_BY_CURRENT_TEST`: The decisive condition is that `probe4` differs from `probe3`. A differing tag previously invalidated the CPAN layer on its own; it no longer does. Build and push fell from 7m04s cold to 9s cached, and the complete chain from 9m55s to 1m32s.
+- `VERIFIED_BY_CURRENT_TEST`: Run `30883550612` still finished the full chain with `conclusion: success` — build/push, SBOM generation, SBOM artifact upload and Cosign keyless OIDC signing. The cache optimisation did not weaken the signed release path.
+- `SCOPE`: Candidate-only `workflow_dispatch` probe tags. Production services, live cutover, `d724-esm-*` containers/volumes and Yetka data were not touched.
+- `RISK`: Still open and not claimed as done: an actual `careoncloud-v*` signed release tag, live Cloudflare cutover with rollback rehearsal, and production acceptance.
