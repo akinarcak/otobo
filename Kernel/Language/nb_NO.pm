@@ -1327,8 +1327,8 @@ sub Data {
         'Endpoint' => 'Sluttpunkt',
         'URI to indicate specific location for accessing a web service.' =>
             'URI for å angi spesifikk plassering for tilgang til en nettjeneste.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
-            'f.eks. https://www.otobo.de:10745/api/v1.0 (uten etterfølgende skråstrek)',
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
+            'f.eks. https://careoncloud.example.com:10745/api/v1.0 (uten etterfølgende skråstrek)',
         'Timeout' => 'Pause',
         'Timeout value for requests.' => 'Tidsavbruddsverdi for forespørsler.',
         'Authentication' => 'Autentisering',
@@ -1427,8 +1427,8 @@ sub Data {
         'SOAPAction free text' => 'SOAPAction fritekst',
         'Text to be used to as SOAPAction.' => 'Tekst som skal brukes som SOAPAction.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI for å gi SOAP-metoder en kontekst og redusere tvetydigheter.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
-            'f.eks. urn:otobo-com:soap:functions eller http://www.otobo.de/GenericInterface/actions',
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
+            'f.eks. urn:careoncloud-com:soap:functions eller http://careoncloud.example.com/GenericInterface/actions',
         'Request name scheme' => 'Be om navneskjema',
         'Select how SOAP request function wrapper should be constructed.' =>
             'Velg hvordan SOAP request-funksjonsomslag skal konstrueres.',

@@ -4627,9 +4627,9 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "URI for å angi spesifikk plassering for tilgang til en nettjeneste."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 msgstr ""
-"f.eks. https://www.otobo.de:10745/api/v1.0 (uten etterfølgende skråstrek)"
+"f.eks. https://careoncloud.example.com:10745/api/v1.0 (uten etterfølgende skråstrek)"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Timeout"
@@ -5008,10 +5008,10 @@ msgstr "URI for å gi SOAP-metoder en kontekst og redusere tvetydigheter."
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
-"f.eks. urn:otobo-com:soap:functions eller http://www.otobo.de/"
+"f.eks. urn:careoncloud-com:soap:functions eller http://careoncloud.example.com/"
 "GenericInterface/actions"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
@@ -36412,9 +36412,9 @@ msgstr "statistikk"
 #~ "mange fordeler!"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 #~ msgstr ""
-#~ "f.eks. https://www.otobo.com:10745/api/v1.0 (uten skråstrek på slutten)"
+#~ "f.eks. https://careoncloud.example.com:10745/api/v1.0 (uten skråstrek på slutten)"
 
 #~ msgid "Read documentation"
 #~ msgstr "Les dokumentasjonen"

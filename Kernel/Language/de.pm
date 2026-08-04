@@ -1319,8 +1319,8 @@ sub Data {
         'Endpoint' => 'Endpunkt',
         'URI to indicate specific location for accessing a web service.' =>
             'URI zur Angabe eines bestimmten Standorts für den Zugriff auf einen Webservice.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
-            'z. B. https://www.otobo.de:10745/api/v1.0 (ohne Trailing Slash)',
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
+            'z. B. https://careoncloud.example.com:10745/api/v1.0 (ohne Trailing Slash)',
         'Timeout' => 'Timeout',
         'Timeout value for requests.' => 'Timeout-Wert für Anfragen.',
         'Authentication' => 'Authentifizierung',
@@ -1419,8 +1419,8 @@ sub Data {
         'SOAPAction free text' => 'SOAPAction Freitext',
         'Text to be used to as SOAPAction.' => 'Text welcher als SOAPAction genutzt werden soll.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI, die SOAP-Methoden einen Kontext gibt und damit Mehrdeutigkeiten auflöst.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
-            'z. B. urn:otobo-com:soap:functions oder http://www.otobo.de/GenericInterface/actions',
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
+            'z. B. urn:careoncloud-com:soap:functions oder http://careoncloud.example.com/GenericInterface/actions',
         'Request name scheme' => 'Anfragen-Namensschema',
         'Select how SOAP request function wrapper should be constructed.' =>
             'Wählen Sie, wie der SOAP-Funktionsaufruf konstruiert werden soll.',

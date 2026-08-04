@@ -4544,7 +4544,7 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "URI за идентификацију специфичне локације за приступ сервису."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
@@ -4916,7 +4916,7 @@ msgstr "URI који даје контекст SOAP методама, смању
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
 
@@ -36100,17 +36100,17 @@ msgstr "статистика"
 #~ "%s за приступ следећим врстама поља:"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "нпр. https://www.otobo.com:10745/api/v1.0 (без косе црте на крају)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "нпр. https://careoncloud.example.com:10745/api/v1.0 (без косе црте на крају)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "нпр. https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "нпр. urn:otobo-com:soap:functions или http://www.otobo.com/"
+#~ "нпр. urn:careoncloud-com:soap:functions или http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "Manage %s"

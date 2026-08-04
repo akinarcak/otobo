@@ -1325,7 +1325,7 @@ sub Data {
         'Endpoint' => 'Eindpunt',
         'URI to indicate specific location for accessing a web service.' =>
             '',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => 'time-out',
         'Timeout value for requests.' => '',
@@ -1425,7 +1425,7 @@ sub Data {
         'SOAPAction free text' => '',
         'Text to be used to as SOAPAction.' => '',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI om SOAP methods een context te geven.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => 'Verzoek naamschema',
         'Select how SOAP request function wrapper should be constructed.' =>

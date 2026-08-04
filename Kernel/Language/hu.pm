@@ -1324,8 +1324,8 @@ sub Data {
         'Endpoint' => 'Végpont',
         'URI to indicate specific location for accessing a web service.' =>
             'Adott helyet jelző URI egy webszolgáltatáshoz való hozzáféréshez.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
-            'például https://www.otobo.de:10745/api/v1.0 (lezáró perjel nélkül)',
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
+            'például https://careoncloud.example.com:10745/api/v1.0 (lezáró perjel nélkül)',
         'Timeout' => 'Időkorlát',
         'Timeout value for requests.' => 'Időkorlátérték a kérésekhez.',
         'Authentication' => 'Hitelesítés',
@@ -1424,8 +1424,8 @@ sub Data {
         'SOAPAction free text' => 'SOAP-művelet szabad szövege',
         'Text to be used to as SOAPAction.' => 'SOAP-műveletként használandó szöveg.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI egy környezethez való SOAP metódusok adásához csökkentve a kétértelműséget.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
-            'például urn:otobo-com:soap:functions vagy http://www.otobo.de/GenericInterface/actions',
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
+            'például urn:careoncloud-com:soap:functions vagy http://careoncloud.example.com/GenericInterface/actions',
         'Request name scheme' => 'Kérés névséma',
         'Select how SOAP request function wrapper should be constructed.' =>
             'Válassza ki, hogy a SOAP-kérés függvénycsomagolót hogyan kell felépíteni.',

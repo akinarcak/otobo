@@ -4409,7 +4409,7 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
@@ -4777,7 +4777,7 @@ msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
 
@@ -34338,14 +34338,14 @@ msgstr ""
 #~ "vantaxes!"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "p.ex. https://www.otobo.com:10745/api/v1.0 (sen barra final)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "p.ex. https://careoncloud.example.com:10745/api/v1.0 (sen barra final)"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "ex. urn:otobo-com:soap:functions ou http://www.otobo.com/GenericInterface/"
+#~ "ex. urn:careoncloud-com:soap:functions ou http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 
 #~ msgid "Manage %s"

@@ -1319,7 +1319,7 @@ sub Data {
         'Endpoint' => '종점',
         'URI to indicate specific location for accessing a web service.' =>
             '웹 서비스에 액세스하기위한 특정 위치를 나타내는 URI.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => '제한시간',
         'Timeout value for requests.' => '요청에 대한 시간 초과값 입니다.',
@@ -1419,7 +1419,7 @@ sub Data {
         'SOAPAction free text' => 'SOAPAction 자유 텍스트',
         'Text to be used to as SOAPAction.' => 'SOAPAction로서 사용되는 텍스트.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI는 SOAP 메소드에 컨텍스트를 제공하여 모호성을 줄입니다.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => '요청 이름 체계',
         'Select how SOAP request function wrapper should be constructed.' =>

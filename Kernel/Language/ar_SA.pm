@@ -1321,8 +1321,8 @@ sub Data {
         'Endpoint' => 'نقطة النهاية',
         'URI to indicate specific location for accessing a web service.' =>
             'عنوان URI لتحديد موقع معين للوصول إلى خدمة ويب.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
-            'على سبيل المثال https://www.otobo.de:10745/api/v1.0 (بدون الخط المائل العكسي)',
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
+            'على سبيل المثال https://careoncloud.example.com:10745/api/v1.0 (بدون الخط المائل العكسي)',
         'Timeout' => 'مُهْلَةٌ',
         'Timeout value for requests.' => 'قيمة المهلة للطلبات.',
         'Authentication' => 'مُصَادَقَةٌ',
@@ -1421,8 +1421,8 @@ sub Data {
         'SOAPAction free text' => 'نص مجاني من SOAPAction',
         'Text to be used to as SOAPAction.' => 'النص المراد استخدامه ك SOAPAction.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI الذي يعطي أساليب SOAP سياقًا، مما يقلل الغموض.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
-            'على سبيل المثال urn:otobo-com:soap:functions أو http://www.otobo.de/GenericInterface/actions',
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
+            'على سبيل المثال urn:careoncloud-com:soap:functions أو http://careoncloud.example.com/GenericInterface/actions',
         'Request name scheme' => 'طلب مخطط التسمية',
         'Select how SOAP request function wrapper should be constructed.' =>
             'اختر كيفية إنشاء استدعاء وظيفة SOAP.',

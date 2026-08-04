@@ -4672,8 +4672,8 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "URI для указания точного расположения для доступа к веб-сервису."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
-msgstr "например, https://www.otobo.de:10745/api/v1.0 (без обратного слеша)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+msgstr "например, https://careoncloud.example.com:10745/api/v1.0 (без обратного слеша)"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Timeout"
@@ -5051,10 +5051,10 @@ msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
-"Например urn:otobo-com:soap:functions или http://www.otobo.de/"
+"Например urn:careoncloud-com:soap:functions или http://careoncloud.example.com/"
 "GenericInterface/actions"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
@@ -35800,18 +35800,18 @@ msgstr "отчеты"
 #~ "Обновите систему до %s для доступа к следующим типам полей:"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 #~ msgstr ""
-#~ "например, https://www.otobo.com:10745/api/v1.0 (без обратных слэшей)"
+#~ "например, https://careoncloud.example.com:10745/api/v1.0 (без обратных слэшей)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "например https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "например, urn:otobo-com:soap:functions или http://www.otobo.com/"
+#~ "например, urn:careoncloud-com:soap:functions или http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "Manage %s"

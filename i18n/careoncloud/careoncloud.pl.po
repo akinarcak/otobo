@@ -4582,7 +4582,7 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
@@ -4945,7 +4945,7 @@ msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
 
@@ -34126,8 +34126,8 @@ msgstr "statystyki"
 #~ msgid "Product News"
 #~ msgstr "Wiadomości o produkcie"
 
-#~ msgid "e.g https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "np. https://www.otobo.de:10745/api/v1.0 (bez końcowego slash'a)"
+#~ msgid "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "np. https://careoncloud.example.com:10745/api/v1.0 (bez końcowego slash'a)"
 
 #~ msgid "e.g utf-8, latin1, iso-8859-1, cp1250, Etc."
 #~ msgstr "np. utf-8, latin1, iso-8859-1, cp1250, etc."
@@ -34242,17 +34242,17 @@ msgstr "statystyki"
 #~ "Uaktualnij do %s, aby uzyskać dostęp do następujących typów pól:"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "np. https://www.otobo.com:10745/api/v1.0 (bez ukośnika na końcu)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "np. https://careoncloud.example.com:10745/api/v1.0 (bez ukośnika na końcu)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "np. https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "np. urn:otobo-com:soap:functions lub http://www.otobo.com/"
+#~ "np. urn:careoncloud-com:soap:functions lub http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "Manage %s"

@@ -1327,7 +1327,7 @@ sub Data {
         'Endpoint' => 'Terminatore',
         'URI to indicate specific location for accessing a web service.' =>
             'URI per indicare la posizione specifica per l\'accesso a un servizio web.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => 'Tempo scaduto',
         'Timeout value for requests.' => 'Valore di time scaduto per le richieste.',
@@ -1427,7 +1427,7 @@ sub Data {
         'SOAPAction free text' => 'SOAPAction testo libero',
         'Text to be used to as SOAPAction.' => 'Testo da utilizzare come SOAPAction.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI per indicare ai metodi SOAP il contesto, per ridurre le ambiguità',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => 'Schema del nome di richiesta',
         'Select how SOAP request function wrapper should be constructed.' =>

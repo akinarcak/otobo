@@ -1324,8 +1324,8 @@ sub Data {
         'Endpoint' => 'Endpoint',
         'URI to indicate specific location for accessing a web service.' =>
             'URI que indica a localização específica para acessar um webservice.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
-            'e.g. https://www.otobo.de:10745/api/v1.0 (sem barra invertida)',
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
+            'e.g. https://careoncloud.example.com:10745/api/v1.0 (sem barra invertida)',
         'Timeout' => 'Expiração',
         'Timeout value for requests.' => 'Valor de timeout para requisições.',
         'Authentication' => 'Autenticação',
@@ -1424,8 +1424,8 @@ sub Data {
         'SOAPAction free text' => 'Texto livre SOAPAction',
         'Text to be used to as SOAPAction.' => 'Texto a ser usado no SOAPAction.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI de contexto dos métodos SOAP, reduzindo ambiguidades.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
-            'e.g. urn:otobo-com:soap:functions ou http://www.otobo.de/GenericInterface/actions',
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
+            'e.g. urn:careoncloud-com:soap:functions ou http://careoncloud.example.com/GenericInterface/actions',
         'Request name scheme' => 'Solicitar nome do esquema',
         'Select how SOAP request function wrapper should be constructed.' =>
             'Seleciona como o encapsulador da função de solicitação SOAP precisa ser construído.',

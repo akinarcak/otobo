@@ -4535,9 +4535,9 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "عنوان URI لتحديد موقع معين للوصول إلى خدمة ويب."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 msgstr ""
-"على سبيل المثال https://www.otobo.de:10745/api/v1.0 (بدون الخط المائل العكسي)"
+"على سبيل المثال https://careoncloud.example.com:10745/api/v1.0 (بدون الخط المائل العكسي)"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Timeout"
@@ -4903,10 +4903,10 @@ msgstr "URI الذي يعطي أساليب SOAP سياقًا، مما يقلل �
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
-"على سبيل المثال urn:otobo-com:soap:functions أو http://www.otobo.de/"
+"على سبيل المثال urn:careoncloud-com:soap:functions أو http://careoncloud.example.com/"
 "GenericInterface/actions"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP

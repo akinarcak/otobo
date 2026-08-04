@@ -1319,7 +1319,7 @@ sub Data {
         'Endpoint' => 'Крајња тачка',
         'URI to indicate specific location for accessing a web service.' =>
             'URI за идентификацију специфичне локације за приступ сервису.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => 'Временско ограничење',
         'Timeout value for requests.' => 'Временско ограничење за захтеве.',
@@ -1419,7 +1419,7 @@ sub Data {
         'SOAPAction free text' => 'SOAPAction слободан текст',
         'Text to be used to as SOAPAction.' => 'Текст који ће се користити као SOAPAction.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI који даје контекст SOAP методама, смањује двосмислености.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => 'Захтев за шему назива',
         'Select how SOAP request function wrapper should be constructed.' =>

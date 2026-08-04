@@ -4458,7 +4458,7 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "웹 서비스에 액세스하기위한 특정 위치를 나타내는 URI."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
@@ -4826,7 +4826,7 @@ msgstr "URI는 SOAP 메소드에 컨텍스트를 제공하여 모호성을 줄�
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
 
@@ -35212,17 +35212,17 @@ msgstr "통계"
 #~ "에 액세스하려면 %s로 업그레이드하십시오."
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "예 : https://www.otobo.com:10745/api/v1.0( 후행 백 슬래시 없음)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "예 : https://careoncloud.example.com:10745/api/v1.0( 후행 백 슬래시 없음)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "예 : https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "예 : urn : otobo-com : soap : 함수 또는 http://www.otobo.com/"
+#~ "예 : urn : otobo-com : soap : 함수 또는 http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "Manage %s"

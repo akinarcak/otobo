@@ -4668,8 +4668,8 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "Adott helyet jelző URI egy webszolgáltatáshoz való hozzáféréshez."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
-msgstr "például https://www.otobo.de:10745/api/v1.0 (lezáró perjel nélkül)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+msgstr "például https://careoncloud.example.com:10745/api/v1.0 (lezáró perjel nélkül)"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Timeout"
@@ -5056,10 +5056,10 @@ msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
-"például urn:otobo-com:soap:functions vagy http://www.otobo.de/"
+"például urn:careoncloud-com:soap:functions vagy http://careoncloud.example.com/"
 "GenericInterface/actions"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
@@ -37479,17 +37479,17 @@ msgstr "statisztikák"
 #~ "következő mezőtípusokhoz:"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "például https://www.otobo.com:10745/api/v1.0 (lezáró perjel nélkül)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "például https://careoncloud.example.com:10745/api/v1.0 (lezáró perjel nélkül)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "például https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "például urn:otobo-com:soap:functions vagy http://www.otobo.com/"
+#~ "például urn:careoncloud-com:soap:functions vagy http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "Manage %s"

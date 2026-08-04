@@ -4731,8 +4731,8 @@ msgstr ""
 "Webservice."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
-msgstr "z. B. https://www.otobo.de:10745/api/v1.0 (ohne Trailing Slash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+msgstr "z. B. https://careoncloud.example.com:10745/api/v1.0 (ohne Trailing Slash)"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Timeout"
@@ -5131,10 +5131,10 @@ msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
-"z. B. urn:otobo-com:soap:functions oder http://www.otobo.de/GenericInterface/"
+"z. B. urn:careoncloud-com:soap:functions oder http://careoncloud.example.com/GenericInterface/"
 "actions"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
@@ -37467,15 +37467,15 @@ msgstr "Stats"
 #~ msgid "Product News"
 #~ msgstr "Produkt-Neuigkeiten"
 
-#~ msgid "e.g https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+#~ msgid "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 #~ msgstr ""
-#~ "z. B. https://www.otobo.de:10745/api/v1.0 (ohne abschließenden Backslash)"
+#~ "z. B. https://careoncloud.example.com:10745/api/v1.0 (ohne abschließenden Backslash)"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "z. B. urn:otobo-com:soap:functions oder http://www.otobo.de/"
+#~ "z. B. urn:careoncloud-com:soap:functions oder http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "e.g utf-8, latin1, iso-8859-1, cp1250, Etc."
@@ -37783,18 +37783,18 @@ msgstr "Stats"
 #~ "Sie zur %s, um diese zusätzlichen Feldtypen freizuschalten:"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 #~ msgstr ""
-#~ "z. B. https://www.otobo.de:10745/api/v1.0 (ohne abschließenden Backslash)"
+#~ "z. B. https://careoncloud.example.com:10745/api/v1.0 (ohne abschließenden Backslash)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "z.B. https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "z. B. urn:otobo-com:soap:functions oder http://www.otobo.com/"
+#~ "z. B. urn:careoncloud-com:soap:functions oder http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "Manage %s"

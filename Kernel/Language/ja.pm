@@ -1322,8 +1322,8 @@ sub Data {
         'Endpoint' => 'エンドポイント',
         'URI to indicate specific location for accessing a web service.' =>
             'Web サービスにアクセスするための特定の場所を示す URI。',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
-            '例: https://www.otobo.de:10745/api/v1.0 (末尾のバックスラッシュなし)',
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
+            '例: https://careoncloud.example.com:10745/api/v1.0 (末尾のバックスラッシュなし)',
         'Timeout' => 'タイムアウト',
         'Timeout value for requests.' => 'リクエストのタイムアウト値',
         'Authentication' => '認証',
@@ -1422,8 +1422,8 @@ sub Data {
         'SOAPAction free text' => 'SOAPアクション・フリーテキスト',
         'Text to be used to as SOAPAction.' => 'SOAPAction として使用されるテキスト。',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'SOAP メソッドにコンテキストを与え、曖昧さを減らす URI。',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
-            '例: urn:otobo-com:soap:functions または http://www.otobo.de/GenericInterface/actions',
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
+            '例: urn:careoncloud-com:soap:functions または http://careoncloud.example.com/GenericInterface/actions',
         'Request name scheme' => 'リクエスト名スキーム',
         'Select how SOAP request function wrapper should be constructed.' =>
             'SOAP 要求関数ラッパーの構築方法を選択します。',

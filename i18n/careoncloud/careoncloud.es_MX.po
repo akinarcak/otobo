@@ -4698,7 +4698,7 @@ msgstr ""
 "URI para indicar la ubicación específica para acceder a un servicio web."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
@@ -5082,7 +5082,7 @@ msgstr ""
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
 
@@ -37379,16 +37379,16 @@ msgstr "estadísticas"
 #~ msgid "Product News"
 #~ msgstr "Noticias de Productos"
 
-#~ msgid "e.g https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
+#~ msgid "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 #~ msgstr ""
-#~ "Por ejemplo, https://www.otobo.de:10745/api/v1.0 (sin barra invertida al "
+#~ "Por ejemplo, https://careoncloud.example.com:10745/api/v1.0 (sin barra invertida al "
 #~ "final)"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "ejemplo: urn:otobo-com:soap:functions or http://www.otobo.de/"
+#~ "ejemplo: urn:careoncloud-com:soap:functions or http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "e.g utf-8, latin1, iso-8859-1, cp1250, Etc."
@@ -37607,8 +37607,8 @@ msgstr "estadísticas"
 #~ "innumerables ventajas!"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "ej. https://www.otobo.com:10745/api/v1.0 (sin la barra invertida)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "ej. https://careoncloud.example.com:10745/api/v1.0 (sin la barra invertida)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "p.e. https://local.otobo.com:8000/Webservice/Example"

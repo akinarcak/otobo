@@ -1330,8 +1330,8 @@ sub Data {
         'Endpoint' => 'Конечная точка',
         'URI to indicate specific location for accessing a web service.' =>
             'URI для указания точного расположения для доступа к веб-сервису.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
-            'например, https://www.otobo.de:10745/api/v1.0 (без обратного слеша)',
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
+            'например, https://careoncloud.example.com:10745/api/v1.0 (без обратного слеша)',
         'Timeout' => 'Тайм-аут',
         'Timeout value for requests.' => 'Значение Timeout для запросов.',
         'Authentication' => 'Аутентификация',
@@ -1430,8 +1430,8 @@ sub Data {
         'SOAPAction free text' => 'Произвольный текст SOAPAction',
         'Text to be used to as SOAPAction.' => 'Текст для использования в качестве SOAPAction.',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI, предоставляющий SOAP методам контекст для уменьшения двусмысленности.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
-            'Например urn:otobo-com:soap:functions или http://www.otobo.de/GenericInterface/actions',
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
+            'Например urn:careoncloud-com:soap:functions или http://careoncloud.example.com/GenericInterface/actions',
         'Request name scheme' => 'Схема именования запросов',
         'Select how SOAP request function wrapper should be constructed.' =>
             'Выберите способ построения обертки функции SOAP запросов.',

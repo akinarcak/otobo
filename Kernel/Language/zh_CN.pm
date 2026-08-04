@@ -1325,7 +1325,7 @@ sub Data {
         'Endpoint' => '端点',
         'URI to indicate specific location for accessing a web service.' =>
             '用于指示访问Web服务的特定位置的URI。',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => '超时',
         'Timeout value for requests.' => '请求的超时值。',
@@ -1425,7 +1425,7 @@ sub Data {
         'SOAPAction free text' => 'SOAPAction自由文本',
         'Text to be used to as SOAPAction.' => '要用作SOAPAction的文本。',
         'URI to give SOAP methods a context, reducing ambiguities.' => '为SOAP方法指定URI(通用资源标识符), 以便消除二义性。',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => '请求名称方案',
         'Select how SOAP request function wrapper should be constructed.' =>

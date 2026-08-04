@@ -4549,8 +4549,8 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "Web サービスにアクセスするための特定の場所を示す URI。"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
-msgstr "例: https://www.otobo.de:10745/api/v1.0 (末尾のバックスラッシュなし)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+msgstr "例: https://careoncloud.example.com:10745/api/v1.0 (末尾のバックスラッシュなし)"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Timeout"
@@ -4921,10 +4921,10 @@ msgstr "SOAP メソッドにコンテキストを与え、曖昧さを減らす 
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
-"例: urn:otobo-com:soap:functions または http://www.otobo.de/GenericInterface/"
+"例: urn:careoncloud-com:soap:functions または http://careoncloud.example.com/GenericInterface/"
 "actions"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
@@ -34764,10 +34764,10 @@ msgstr "統計"
 #~ msgstr "製品ニュース"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "例: urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+#~ "例: urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 
 #~ msgid "e.g utf-8, latin1, iso-8859-1, cp1250, Etc."
@@ -34916,17 +34916,17 @@ msgstr "統計"
 #~ msgstr "その他のビジネス分野"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "例… https://www.otobo.com:10745/api/v1.0 (バックスラッシュを除く)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "例… https://careoncloud.example.com:10745/api/v1.0 (バックスラッシュを除く)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "例. https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "例… urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "例… urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 
 #~ msgid "Manage %s"

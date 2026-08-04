@@ -4715,8 +4715,8 @@ msgid "URI to indicate specific location for accessing a web service."
 msgstr "URI que indica a localização específica para acessar um webservice."
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
-msgid "e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
-msgstr "e.g. https://www.otobo.de:10745/api/v1.0 (sem barra invertida)"
+msgid "e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+msgstr "e.g. https://careoncloud.example.com:10745/api/v1.0 (sem barra invertida)"
 
 #. Template: AdminGenericInterfaceTransportHTTPREST
 msgid "Timeout"
@@ -5095,10 +5095,10 @@ msgstr "URI de contexto dos métodos SOAP, reduzindo ambiguidades."
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
 msgid ""
-"e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 "actions"
 msgstr ""
-"e.g. urn:otobo-com:soap:functions ou http://www.otobo.de/GenericInterface/"
+"e.g. urn:careoncloud-com:soap:functions ou http://careoncloud.example.com/GenericInterface/"
 "actions"
 
 #. Template: AdminGenericInterfaceTransportHTTPSOAP
@@ -36230,14 +36230,14 @@ msgstr "estatísticas"
 #~ msgid "Product News"
 #~ msgstr "Notícias do Produto"
 
-#~ msgid "e.g https://www.otobo.de:10745/api/v1.0 (without trailing backslash)"
-#~ msgstr "exemplo: https://www.otobo.de:10745/api/v1.0 (sem barra invertida)"
+#~ msgid "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
+#~ msgstr "exemplo: https://careoncloud.example.com:10745/api/v1.0 (sem barra invertida)"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "ex. urn:otobo-com:soap:functions ou http://www.otobo.de/GenericInterface/"
+#~ "ex. urn:careoncloud-com:soap:functions ou http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 
 #~ msgid "e.g utf-8, latin1, iso-8859-1, cp1250, Etc."
@@ -36407,18 +36407,18 @@ msgstr "estatísticas"
 #~ "negócios? Atualize para %s e tenha acesso aos seguintes tipos de campos:"
 
 #~ msgid ""
-#~ "e.g https://www.otobo.com:10745/api/v1.0 (without trailing backslash)"
+#~ "e.g https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)"
 #~ msgstr ""
-#~ "ex: https://www.otobo.com:10745/api/v1.0 (sem fuga da barra invertida)"
+#~ "ex: https://careoncloud.example.com:10745/api/v1.0 (sem fuga da barra invertida)"
 
 #~ msgid "e.g. https://local.otobo.com:8000/Webservice/Example"
 #~ msgstr "ex. https://local.otobo.com:8000/Webservice/Example"
 
 #~ msgid ""
-#~ "e.g urn:otobo-com:soap:functions or http://www.otobo.com/GenericInterface/"
+#~ "e.g urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/"
 #~ "actions"
 #~ msgstr ""
-#~ "ex.: urn:otobo-com:soap:functions or http://www.otobo.com/"
+#~ "ex.: urn:careoncloud-com:soap:functions or http://careoncloud.example.com/"
 #~ "GenericInterface/actions"
 
 #~ msgid "Manage %s"
