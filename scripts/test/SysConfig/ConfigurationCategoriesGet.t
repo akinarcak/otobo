@@ -93,7 +93,7 @@ my @Tests = (
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            CareOnCloud ESM => {
+            CareOnCloud => {
                 DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',          'CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml',
@@ -114,7 +114,7 @@ my @Tests = (
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            CareOnCloud ESM => {
+            CareOnCloud => {
                 DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',          'CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml',
@@ -139,7 +139,7 @@ my @Tests = (
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            CareOnCloud ESM => {
+            CareOnCloud => {
                 DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',          'CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml',
