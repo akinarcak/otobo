@@ -17,7 +17,7 @@
 [%
     SET DocumentationLinkText  = Translate('online administrator documentation');
     SET DocumentationLink      = ""
-        _ "<a href='https://doc.otobo.org/"
+        _ "<a href='https://esm.arcak.net/"
         _ Data.ManualVersion
         _ "/en/content/administration-area/administration/system-configuration.html' target='_blank'>"
         _ DocumentationLinkText.html()

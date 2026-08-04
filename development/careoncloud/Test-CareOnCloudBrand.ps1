@@ -86,6 +86,14 @@ Assert-True ($FrameworkXML -match '<Item ValueType="String" ValueRegex="">/careo
 Assert-True ($DaemonXML -match 'SelectedID="careoncloud"') 'Daemon rotation type is not careoncloud.'
 Assert-True ($PSGI -match "mount '/careoncloud' => \`$CareOnCloudApp") 'Canonical /careoncloud PSGI mount is missing.'
 Assert-True ($PSGI -notmatch "mount '/otobo'") 'Legacy public PSGI mount must not be present.'
+
+# The compatibility route that briefly existed on the test server was a PATH_INFO
+# rewrite rather than a mount, so the assertion above would not have caught it.
+# Forbid every spelling of a legacy /otobo entry point. Attribution lines are
+# excluded: both the copyright URL and upstream issue links contain the old
+# project path without being routes.
+$PSGIRoutes = ($PSGI -split "`n" | Where-Object { $_ -notmatch 'github\.com' -and $_ -notmatch 'otobo\.io' }) -join "`n"
+Assert-True ($PSGIRoutes -notmatch '/otobo') 'Legacy /otobo route must not be present in the PSGI application.'
 Assert-True ($Compose -match 'careoncloud-app:/opt/careoncloud') 'CareOnCloud application volume mapping is missing.'
 Assert-True ($Compose -match 'careoncloud-update:/opt/careoncloud_update') 'CareOnCloud update volume mapping is missing.'
 Assert-True ($FrameworkXML -match '<Item ValueType="String" ValueRegex="">CareOnCloud ESM</Item>') 'ProductName is not CareOnCloud ESM.'
