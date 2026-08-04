@@ -268,6 +268,7 @@ WORKDIR $CAREONCLOUD_HOME
 LABEL org.opencontainers.image.title='CareOnCloud ESM'
 
 # These labels change with every build
+ARG DOCKER_TAG=unspecified
 ARG BUILD_DATE=unspecified
 LABEL org.opencontainers.image.created=$BUILD_DATE
 LABEL org.opencontainers.image.revision=$GIT_COMMIT
