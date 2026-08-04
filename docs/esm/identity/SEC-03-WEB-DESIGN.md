@@ -8,8 +8,8 @@ geçişi sağlamak.
 
 ## CareOnCloud ESM entegrasyon kararı
 
-`Kernel::System::Auth::D724OpenIDConnect` ve
-`Kernel::System::CustomerAuth::D724OpenIDConnect` birincil auth backend olarak
+`Kernel::System::Auth::CareOnCloudOpenIDConnect` ve
+`Kernel::System::CustomerAuth::CareOnCloudOpenIDConnect` birincil auth backend olarak
 çalışır. Sıradan kullanıcı/parola isteğini mevcut `DB` backend'ine delegeler.
 `PreAuth` yalnız istek geçerli `TenantID + ProviderKey` seçimi taşıyorsa veya bir
 CareOnCloud OIDC callback state'i varsa etkin olur. Böylece SSO yapılandırılmamış
@@ -17,7 +17,7 @@ tenant'lar ve demo hesapları mevcut parola ekranını kullanmaya devam eder.
 
 ## Provider yapılandırması
 
-- Trust route kaynağı `d724_identity_provider` tablosudur.
+- Trust route kaynağı `careoncloud_identity_provider` tablosudur.
 - Client secret yeni bir CareOnCloud tablosuna kopyalanmaz. CareOnCloud ESM'nun mevcut
   `oidc_profiles` deposundaki `careoncloud:<tenant>:<provider>:<surface>` adlı profil kullanılır.
 - Profil `client_id` değeri trust route `audience` değeriyle exact eşleşmelidir.

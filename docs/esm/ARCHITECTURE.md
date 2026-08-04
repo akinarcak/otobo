@@ -11,7 +11,7 @@ Portal / Agent UI / Admin UI
             |
         API Gateway
             |
-CareOnCloud ESM Core + D724 ESM Packages ---- Event Outbox
+CareOnCloud ESM Core + CareOnCloud ESM Packages ---- Event Outbox
        |          |                     |
    MariaDB     Redis Cache        Worker / Connectors
        |                                |
@@ -20,14 +20,14 @@ CareOnCloud ESM Core + D724 ESM Packages ---- Event Outbox
 
 ### Cekirdek paketler
 
-- `D724ServicePortfolio`: hizmet, teklif, sahiplik ve yasam dongusu
-- `D724Catalog`: hizmet/teklif/katalog ogesi, dinamik form ve uygunluk
-- `D724Request`: idempotent talep, rol-bazli onay ve fulfillment gorev durum makinesi
-- `D724Commitment`: tenant policy snapshot'i, CareOnCloud ESM business calendar, pause/resume, warning/breach ve zamanlanmis degerlendirme
-- `D724TenantGuard`: organizasyon kapsami ve veri erisim politikasi
-- `D724Audit`: normalize, eklemeli denetim olaylari ve kanit disari aktarimi
-- `D724Automation`: olay-kosul-eylem kurallari ve guvenli webhook
-- `D724AIAssist`: saglayicidan bagimsiz, insan onayli AI kullanim noktasi
+- `CareOnCloudServicePortfolio`: hizmet, teklif, sahiplik ve yasam dongusu
+- `CareOnCloudCatalog`: hizmet/teklif/katalog ogesi, dinamik form ve uygunluk
+- `CareOnCloudRequest`: idempotent talep, rol-bazli onay ve fulfillment gorev durum makinesi
+- `CareOnCloudCommitment`: tenant policy snapshot'i, CareOnCloud ESM business calendar, pause/resume, warning/breach ve zamanlanmis degerlendirme
+- `CareOnCloudTenantGuard`: organizasyon kapsami ve veri erisim politikasi
+- `CareOnCloudAudit`: normalize, eklemeli denetim olaylari ve kanit disari aktarimi
+- `CareOnCloudAutomation`: olay-kosul-eylem kurallari ve guvenli webhook
+- `CareOnCloudAIAssist`: saglayicidan bagimsiz, insan onayli AI kullanim noktasi
 
 Paketler birbirinin tablolarina dogrudan yazmaz; yayinlanan Perl API'lerini ve Generic Interface sozlesmelerini kullanir. Dis istemciler `/api/v1` altinda surumlu JSON sozlesmeleri kullanir. Tekrarlanan istekler idempotency anahtari tasir; webhook'lar imzali, tekrar denenebilir ve dead-letter kayitlidir.
 

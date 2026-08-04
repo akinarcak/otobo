@@ -4,7 +4,7 @@ Durum: tamamlandi (`2026-07-24`).
 
 ## Kapsam
 
-`D724Catalog 0.5.2`, asagidaki tenant-kapsamli mutation'lari normalize audit zincirine baglar:
+`CareOnCloudCatalog 0.5.2`, asagidaki tenant-kapsamli mutation'lari normalize audit zincirine baglar:
 
 - `catalog.service.created` / `catalog.service.updated`
 - `catalog.offering.created` / `catalog.offering.updated`

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudAudit</Name><Version>0.2.1</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-safe, tamper-evident normalized audit events and NDJSON export for CareOnCloud ESM.</Description>
+    <Description Lang="tr">CareOnCloud ESM icin tenant guvenli, kurcalama kanitli normalize audit olaylari ve NDJSON export.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="careoncloud_audit_head">
+            <Column Name="tenant_id" Required="true" PrimaryKey="true" Size="128" Type="VARCHAR" />
+            <Column Name="last_sequence" Required="true" Type="BIGINT" /><Column Name="last_hash" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" /><Column Name="change_time" Required="true" Type="DATE" />
+        </TableCreate>
+        <TableCreate Name="careoncloud_audit_event">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="sequence_no" Required="true" Type="BIGINT" />
+            <Column Name="event_uuid" Required="true" Size="64" Type="VARCHAR" /><Column Name="event_time" Required="true" Type="DATE" />
+            <Column Name="actor_type" Required="true" Size="30" Type="VARCHAR" /><Column Name="actor_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="action_name" Required="true" Size="100" Type="VARCHAR" /><Column Name="object_type" Required="true" Size="50" Type="VARCHAR" />
+            <Column Name="object_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="correlation_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="dedupe_key" Required="false" Size="128" Type="VARCHAR" />
+            <Column Name="from_state" Required="true" Size="50" Type="VARCHAR" /><Column Name="to_state" Required="true" Size="50" Type="VARCHAR" />
+            <Column Name="outcome" Required="true" Size="20" Type="VARCHAR" /><Column Name="source_ip_hash" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="details_json" Required="true" Size="8000" Type="VARCHAR" />
+            <Column Name="previous_hash" Required="true" Size="64" Type="VARCHAR" /><Column Name="event_hash" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Unique Name="careoncloud_audit_tenant_sequence"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="sequence_no" /></Unique>
+            <Unique Name="careoncloud_audit_event_uuid"><UniqueColumn Name="event_uuid" /></Unique>
+            <Unique Name="careoncloud_audit_dedupe"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="dedupe_key" /></Unique>
+            <Index Name="careoncloud_audit_object"><IndexColumn Name="tenant_id" /><IndexColumn Name="object_type" /><IndexColumn Name="object_id" /><IndexColumn Name="sequence_no" /></Index>
+            <Index Name="careoncloud_audit_action"><IndexColumn Name="tenant_id" /><IndexColumn Name="action_name" /><IndexColumn Name="sequence_no" /></Index>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUpgrade Type="post">
+        <TableAlter Name="careoncloud_audit_event" Version="0.1.1">
+            <ColumnAdd Name="dedupe_key" Required="false" Size="128" Type="VARCHAR" />
+        </TableAlter>
+        <TableAlter Name="careoncloud_audit_event" Version="0.1.2">
+            <UniqueCreate Name="careoncloud_audit_dedupe"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="dedupe_key" /></UniqueCreate>
+        </TableAlter>
+    </DatabaseUpgrade>
+    <DatabaseUninstall Type="pre"><TableDrop Name="careoncloud_audit_event" /><TableDrop Name="careoncloud_audit_head" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/CareOnCloudAudit.xml" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/Audit.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/AuditStatus.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/Audit.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/AuditStatus.t" />
+    </Filelist>
+</careoncloud_package>

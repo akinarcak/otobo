@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudObservability</Name><Version>0.1.0</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Authenticated, bounded-cardinality Prometheus health metrics for CareOnCloud ESM.</Description>
+    <Description Lang="tr">CareOnCloud ESM icin kimlik dogrulamali ve sinirli kardinaliteli Prometheus saglik metrikleri.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.6.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageRequired Version="0.7.1">CareOnCloudAPI</PackageRequired>
+    <PackageRequired Version="0.5.0">CareOnCloudCommitment</PackageRequired>
+    <PackageRequired Version="0.3.0">CareOnCloudWebhook</PackageRequired>
+    <PackageRequired Version="0.7.1">CareOnCloudTicketAudit</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/CareOnCloudObservability.xml" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/Observability.pm" />
+        <File Permission="644" Location="Kernel/Modules/PublicCareOnCloudMetrics.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/ObservabilityStatus.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/Observability.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/ObservabilityTransport.t" />
+    </Filelist>
+</careoncloud_package>

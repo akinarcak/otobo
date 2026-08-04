@@ -7,7 +7,7 @@ Durum: request-boundary ve aktif runtime kapilari tamamlandi (`2026-07-25`).
 CareOnCloud ESM'nun ticket Elasticsearch yolu `Kernel::System::Elasticsearch::TicketSearch`
 ile baslar ve tum index sorgulari ortak
 `Kernel::GenericInterface::Invoker::Elasticsearch::Search::PrepareRequest`
-sinirindan gecer. `D724TicketAudit 0.7.1`, upstream cekirdek dosyayi kopyalamadan
+sinirindan gecer. `CareOnCloudTicketAudit 0.7.1`, upstream cekirdek dosyayi kopyalamadan
 mevcut `Ticket::CustomModule` extension katmaninda iki noktayi birlikte korur:
 
 1. TicketSearch, agent kimligini kalici tenant directory'den veya customer kimligini
@@ -22,15 +22,15 @@ mevcut `Ticket::CustomModule` extension katmaninda iki noktayi birlikte korur:
    `customer`, `customeruser`, `configitem`, `faq` gibi global index aramalari
    fail-closed reddedilir.
 
-Ticket `CustomerID` alani D724'ta aktif tenant anahtaridir. `D724TicketAudit`, ticket
-olustururken ayni degeri immutable `d724_ticket_scope.tenant_id` olarak yazar ve
+Ticket `CustomerID` alani CareOnCloud'ta aktif tenant anahtaridir. `CareOnCloudTicketAudit`, ticket
+olustururken ayni degeri immutable `careoncloud_ticket_scope.tenant_id` olarak yazar ve
 sonraki cross-tenant customer degisimini transaction icinde reddeder. Bu nedenle
 Elasticsearch discriminator'i ile authoritative scope arasindaki esitlik urun
 invariant'idir.
 
 ## Operasyon
 
-`Admin::D724::TicketAuditStatus --json` artik search policy etkinligini, contract
+`Admin::CareOnCloud::TicketAuditStatus --json` artik search policy etkinligini, contract
 surumunu, desteklenen index listesini, tenant field'ini ve direct-unscoped davranisini
 raporlar. Yalniz `ticket` index'i tenant-safe allow-list'tedir; konfigurasyona baska
 bir index eklemek kod seviyesindeki supported-index kapisini asamaz.
@@ -55,11 +55,11 @@ olmustur.
 `SearchPolicy.t`, benzersiz bir agent ve iki tenant ile trusted scope, merkezi action,
 exact final filter, direct bypass reddi, unsafe index reddi ve disabled-policy
 fail-closed davranisini test eder. `Accept-SearchPolicy.pl`, gercek demo agent UserID
-`47` icin CareOnCloud ESM invoker'inin serialize ettigi body'de yalniz `d724-demo` filtresini
+`47` icin CareOnCloud ESM invoker'inin serialize ettigi body'de yalniz `careoncloud-demo` filtresini
 dogrulamistir. `Accept-ElasticsearchRuntime.pl`, aktif index'e ayni full-text degeri
 tasiyan iki gecici tenant dokumani yazmis; CareOnCloud ESM TicketSearch uzerinden yalniz own
 tenant hit'ini almis, explicit cross-tenant istegi reddetmis ve iki fixture'i silmistir.
 
-Hedefli guvenlik regresyonu 5 dosya / 204 test; Elasticsearch aktifken tam D724
+Hedefli guvenlik regresyonu 5 dosya / 204 test; Elasticsearch aktifken tam CareOnCloud
 regresyonu 42 dosya / 859 test ile `PASS` sonucudur. Runtime kabul sonucu
 `cross_tenant_hit_excluded=true` ve `explicit_cross_tenant_denied=true` dondurmustur.

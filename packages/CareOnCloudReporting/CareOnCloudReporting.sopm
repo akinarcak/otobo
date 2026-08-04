@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudReporting</Name><Version>0.4.1</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-safe, privacy-minimized operational ESM reports and CSV/JSON export.</Description>
+    <Description Lang="tr">Tenant guvenli, PII-minimize operasyonel ESM raporlari ve CSV/JSON export.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.5.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.1">CareOnCloudTenantDirectory</PackageRequired>
+    <PackageRequired Version="0.7.0">CareOnCloudCatalog</PackageRequired>
+    <PackageRequired Version="0.4.9">CareOnCloudRequest</PackageRequired>
+    <PackageRequired Version="0.5.0">CareOnCloudCommitment</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="careoncloud_report_definition">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="key_name" Required="true" Size="100" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="description" Required="true" Size="2000" Type="VARCHAR" />
+            <Column Name="owner_user_id" Required="true" Type="INTEGER" />
+            <Column Name="visibility" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="definition_json" Required="true" Size="16000" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="careoncloud_report_definition_tenant_key"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="key_name" /></Unique>
+            <Index Name="careoncloud_report_definition_owner"><IndexColumn Name="tenant_id" /><IndexColumn Name="owner_user_id" /></Index>
+            <ForeignKey ForeignTable="users"><Reference Local="owner_user_id" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="create_by" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="change_by" Foreign="id" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUpgrade Type="post">
+        <TableCreate Name="careoncloud_report_definition" Version="0.4.1">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="key_name" Required="true" Size="100" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="description" Required="true" Size="2000" Type="VARCHAR" />
+            <Column Name="owner_user_id" Required="true" Type="INTEGER" />
+            <Column Name="visibility" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="definition_json" Required="true" Size="16000" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="careoncloud_report_definition_tenant_key"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="key_name" /></Unique>
+            <Index Name="careoncloud_report_definition_owner"><IndexColumn Name="tenant_id" /><IndexColumn Name="owner_user_id" /></Index>
+            <ForeignKey ForeignTable="users"><Reference Local="owner_user_id" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="create_by" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="change_by" Foreign="id" /></ForeignKey>
+        </TableCreate>
+    </DatabaseUpgrade>
+    <DatabaseUninstall Type="pre"><TableDrop Name="careoncloud_report_definition" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Language/tr_CareOnCloudReporting.pm" />
+        <File Permission="644" Location="Kernel/Config/Files/XML/CareOnCloudReporting.xml" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/Reporting.pm" />
+        <File Permission="644" Location="Kernel/Modules/AgentCareOnCloudOperations.pm" />
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentCareOnCloudOperations.tt" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/ReportExport.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/ReportingStatus.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/Reporting.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/ReportingCommand.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/ReportingStatus.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/ReportingFrontend.t" />
+    </Filelist>
+</careoncloud_package>

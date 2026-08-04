@@ -2,7 +2,7 @@
 
 ## Karar
 
-Talep, onay ve fulfillment kayitlari OTOBO icinde GPL-3.0 `D724Request` paketi olarak tutulur. Katalog semasi calisma aninda kopyalanir; sonradan katalog degisse bile acilmis talebin onay ve gorev plani degismez.
+Talep, onay ve fulfillment kayitlari OTOBO icinde GPL-3.0 `CareOnCloudRequest` paketi olarak tutulur. Katalog semasi calisma aninda kopyalanir; sonradan katalog degisse bile acilmis talebin onay ve gorev plani degismez.
 
 ## Durum modeli
 
@@ -13,7 +13,7 @@ Talep, onay ve fulfillment kayitlari OTOBO icinde GPL-3.0 `D724Request` paketi o
 ## Guvenlik ve tutarlilik
 
 - Tenant kimligi musteri oturumundaki `CustomerID` veya agent directory context'inden gelir; form parametresinden guvenilmez.
-- Agent okuma/yazma islemleri `D724TenantGuard` icindeki `case.read` ve `case.update` kararlarindan gecer.
+- Agent okuma/yazma islemleri `CareOnCloudTenantGuard` icindeki `case.read` ve `case.update` kararlarindan gecer.
 - Onayi yalniz workflow'da belirtilen tenant-bazli `tenant_admin` veya `service_owner` rolu verebilir.
 - Form cevaplari katalog semasina gore sunucu tarafinda tip, zorunluluk, uzunluk ve secenek allow-list kontrollerinden gecer.
 - Musteri, requester ve tenant kapsamli idempotency anahtari kullanir. Ayni payload replay edilir; farkli payload `IDEMPOTENCY_CONFLICT` alir.
@@ -22,4 +22,4 @@ Talep, onay ve fulfillment kayitlari OTOBO icinde GPL-3.0 `D724Request` paketi o
 
 ## Dogrulama
 
-Test sunucusunda bes D724 paketinin 14 test dosyasinda 227 test birlikte gecmistir. Oturumlu HTTP kabul testi katalog item formunun tek ve gecerli CSRF token'i urettigini, submit'in `REQ-*` makbuzu dondurdugunu ve kaydin tenant-kapsamli agent workbench'te gorundugunu dogrular.
+Test sunucusunda bes CareOnCloud paketinin 14 test dosyasinda 227 test birlikte gecmistir. Oturumlu HTTP kabul testi katalog item formunun tek ve gecerli CSRF token'i urettigini, submit'in `REQ-*` makbuzu dondurdugunu ve kaydin tenant-kapsamli agent workbench'te gorundugunu dogrular.

@@ -8,7 +8,7 @@ Katalog, portalda gezilebilir üç katmanlı bir yapıya dönüştürülür:
 - **Hizmet sunumu:** Kaynak dokümandaki numaralı yönetilen hizmet bileşeni.
 - **Katalog öğesi:** Onay, uygulama adımları, SLA/OLA bağlantısı ve dinamik talep formu bulunan müşteri talebi.
 
-İçe aktarıcı `development/d724/Seed-CareOnCloudManagedServicesCatalog.pl` tekrar çalıştırılabilir. Varsayılan olarak ana demo tenant'ı ile üç sentetik sektör tenant'ına 51 katalog öğesi ekler. Gerçek müşteri referansı oluşturmaz.
+İçe aktarıcı `development/careoncloud/Seed-CareOnCloudManagedServicesCatalog.pl` tekrar çalıştırılabilir. Varsayılan olarak ana demo tenant'ı ile üç sentetik sektör tenant'ına 51 katalog öğesi ekler. Gerçek müşteri referansı oluşturmaz.
 
 Her talep formu talep türü, iş kritikliği, etkilenen varlık, iş etkisi, hedef tarih ve isteğe bağlı DORA/denetim referansı toplar. İş akışı tenant yöneticisi onayı, risk/kapsam değerlendirmesi ve uygulama/doğrulama adımlarını içerir.
 

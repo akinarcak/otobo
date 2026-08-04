@@ -34,7 +34,7 @@ Bu ayrımı yapmadan verilen her UX yol haritası yanlış işi önceliklendirir
 
 **Seviye 1.5 / 5 — "Çalışan backend, henüz ürünleşmemiş arayüz."**
 
-CareOnCloud'un ayırt edici değeri (katalog, request state machine, commitment/SLA, tenant guard, audit, reporting, API) gerçek koda sahiptir. Ancak bu kabiliyetlerin **kullanıcıya görünen yüzü yoktur veya iskelet düzeydedir**. Somut ölçüt: 18 D724 paketinde toplam **13 frontend modülü ve 10 şablon** vardır; paketlerin hiçbirinde **tek satır CSS veya JS yoktur** (`find packages -name "*.css" -o -name "*.js"` → boş). Yani bütün D724 ekranları CareOnCloud ESM Agent skin'inin varsayılan stiline binmektedir ve kendi görsel dilleri yoktur.
+CareOnCloud'un ayırt edici değeri (katalog, request state machine, commitment/SLA, tenant guard, audit, reporting, API) gerçek koda sahiptir. Ancak bu kabiliyetlerin **kullanıcıya görünen yüzü yoktur veya iskelet düzeydedir**. Somut ölçüt: 18 CareOnCloud paketinde toplam **13 frontend modülü ve 10 şablon** vardır; paketlerin hiçbirinde **tek satır CSS veya JS yoktur** (`find packages -name "*.css" -o -name "*.js"` → boş). Yani bütün CareOnCloud ekranları CareOnCloud ESM Agent skin'inin varsayılan stiline binmektedir ve kendi görsel dilleri yoktur.
 
 Bu, "renkleri değiştirelim" sorunu değildir. Ürünün altı personasından **üçünün (platform yöneticisi, MSP yöneticisi, denetçi) hiç ekranı yoktur.**
 
@@ -44,7 +44,7 @@ Bu, "renkleri değiştirelim" sorunu değildir. Ürünün altı personasından *
 |---|---|---|
 | 1 | **Canlı ortamda ~40 gerçek Türk şirketinin adı demo tenant olarak duruyor** (Anadolu Hayat Emeklilik, İş Bankası Almanya, Milli Reasürans, QNB Finans, Mavi, Setur, BKM, Eczacıbaşı Bilişim…). Master Context §13.4 bunu açıkça yasaklıyor. **Güncel kaynakta bu adlar yoktur** — üç seed script'i de sentetik ad kullanıyor; bu eski DB verisidir ve veri temizliğiyle çözülür. | `OBSERVED_IN_RUNNING_UI` + kaynakta yokluğu doğrulandı |
 | 2 | Müşterinin gördüğü **ilk ekranda** "Your Tickets. Your CareOnCloud ESM." yazıyor ve CareOnCloud ESM'nun varsayılan tavus kuşu görseli var. Kaynakta hardcoded fallback. | `OBSERVED_IN_RUNNING_UI` + `VERIFIED_IN_SOURCE` `Layout.pm:4221` |
-| 3 | **Müşteri açtığı talebi takip edemez.** Müşteri portalında talep listesi/detay/timeline ekranı yok; `CustomerD724Request` yalnızca `Submit` alt-eylemine sahip. | `VERIFIED_IN_SOURCE` |
+| 3 | **Müşteri açtığı talebi takip edemez.** Müşteri portalında talep listesi/detay/timeline ekranı yok; `CustomerCareOnCloudRequest` yalnızca `Submit` alt-eylemine sahip. | `VERIFIED_IN_SOURCE` |
 | 4 | **Tenant/MSP, kimlik, webhook ve audit için hiç arayüz yok.** Platform yöneticisi, MSP yöneticisi ve denetçi personaları ekransız. | `VERIFIED_IN_SOURCE` |
 | 5 | **Türkçe ürün dili yok denecek kadar eksik** ve karışık. Aynı ekranda İngilizce widget başlıkları + Türkçe kolon adları + çevrilmemiş `TOTAL` bir arada. | `OBSERVED_IN_RUNNING_UI` — agent dashboard |
 | 6 | **Marka sözleşme testi yalnızca dosya yolu tarıyor**, ekrana basılan metni taramıyor; bu yüzden 2. madde testlerden geçti. | `VERIFIED_IN_SOURCE` `Test-CareOnCloudBrand.ps1:38-53` |
@@ -102,11 +102,11 @@ Kernel/Language/tr.pm                               (çekirdek TR sözlüğü)
 Kernel/Config/Files/XML/Framework.xml               (nav + dashboard widget'ları)
 Kernel/Config/Files/XML/Ticket.xml                  (agent nav)
 scripts/database/careoncloud-initial_insert.xml     (seed veri)
-development/d724/Test-CareOnCloudBrand.ps1          (marka sözleşme testi)
-packages/D724*/Kernel/Config/Files/XML/*.xml        (17 dosya, frontend kaydı)
-packages/D724*/Kernel/Output/HTML/Templates/...     (10 şablonun tamamı)
-packages/D724*/Kernel/Language/tr_*.pm              (8 dosya)
-packages/D724Request/Kernel/Modules/CustomerD724Request.pm
+development/careoncloud/Test-CareOnCloudBrand.ps1          (marka sözleşme testi)
+packages/CareOnCloud*/Kernel/Config/Files/XML/*.xml        (17 dosya, frontend kaydı)
+packages/CareOnCloud*/Kernel/Output/HTML/Templates/...     (10 şablonun tamamı)
+packages/CareOnCloud*/Kernel/Language/tr_*.pm              (8 dosya)
+packages/CareOnCloudRequest/Kernel/Modules/CustomerCareOnCloudRequest.pm
 ```
 
 ## B.3 Gözlenen canlı yüzeyler
@@ -129,8 +129,8 @@ Kullanıcı `demo.agent` oturumunu **kendisi açtı** (parola girmek benim için
 | Ekran | Rota | Gözlem |
 |---|---|---|
 | Agent dashboard | `index.pl?` | 8 CareOnCloud ESM varsayılan widget'ı; 4 tanesi tamamen boş (`none`) |
-| Operasyon Merkezi | `?Action=AgentD724Operations` | KPI'lar, 3 tablo, tenant seçici |
-| Talepler | `?Action=AgentD724Request` | Tek talep, tenant seçici, SLA satırları |
+| Operasyon Merkezi | `?Action=AgentCareOnCloudOperations` | KPI'lar, 3 tablo, tenant seçici |
+| Talepler | `?Action=AgentCareOnCloudRequest` | Tek talep, tenant seçici, SLA satırları |
 
 ### B.4.1 Agent dashboard — doğrulanan bulgular
 
@@ -143,33 +143,33 @@ Kullanıcı `demo.agent` oturumunu **kendisi açtı** (parola girmek benim için
 - **`YENI` ↔ `YENİ` hatası:** kolon adları CSS `text-transform: uppercase` ile büyütülüyor. `<html lang>` boş olduğu için tarayıcı Türkçe büyük harf kuralını uygulamıyor ve `yeni` → **`YENI`** oluyor (`YENİ` olmalı). **Bu, P0-09'un doğrudan görsel sonucudur** — boş `lang` yalnızca ekran okuyucuyu değil, gözle görülen metni de bozuyor.
 - Ekranın ilk yarısını dört boş tablo kaplıyor; eylem gerektiren içerik yok
 - 961 px genişlikte CareOnCloud ESM **mobil moda** düşüyor: üst menü hamburger'a giriyor, altta manuel `Switch to desktop mode` bağlantısı çıkıyor. Yatay taşma yok, ancak agent iş istasyonu için bu kırılma noktası fazla agresif.
-- Menü tamamen İngilizce ve **D724 modülleri en solda**: `Agent Assistant · Operations Center · Service Portfolio · Change Enablement · D724 Requests · Dashboard · Customers · Calendar · Tickets…` — çekirdek `Dashboard` beşinci sıraya itilmiş
+- Menü tamamen İngilizce ve **CareOnCloud modülleri en solda**: `Agent Assistant · Operations Center · Service Portfolio · Change Enablement · CareOnCloud Requests · Dashboard · Customers · Calendar · Tickets…` — çekirdek `Dashboard` beşinci sıraya itilmiş
 
 ### B.4.2 Operasyon Merkezi — doğrulanan bulgular
 
-- **`D724KPIGrid` çalışma zamanında `display: block`, `grid-template-columns: none`** — kaynak tahmini birebir doğrulandı. Dört KPI alt alta, her biri tam genişlikte widget.
-- **`D724KPI` yazı boyutu 16 px** — KPI rakamı gövde metniyle aynı boyutta. `10`, `24`, `3`, `87.5%` değerleri hiyerarşisiz.
+- **`CareOnCloudKPIGrid` çalışma zamanında `display: block`, `grid-template-columns: none`** — kaynak tahmini birebir doğrulandı. Dört KPI alt alta, her biri tam genişlikte widget.
+- **`CareOnCloudKPI` yazı boyutu 16 px** — KPI rakamı gövde metniyle aynı boyutta. `10`, `24`, `3`, `87.5%` değerleri hiyerarşisiz.
 - Ham makine değerleri ekranda: `awaiting_approval`, `fulfilled`, `in_fulfillment`, `ola`, `resolution`, `breached`, `met`, `paused`
 - `87.5%` — İngiliz ondalık ayracı; TR'de `%87,5` olmalı
-- Tenant seçicide **`onchange` yok** ve adlar görünüyor → bu ekran doğru davranıyor; sorun `AgentD724Request`'e özgü (C-14'teki tutarsızlık tespiti doğrulandı)
+- Tenant seçicide **`onchange` yok** ve adlar görünüyor → bu ekran doğru davranıyor; sorun `AgentCareOnCloudRequest`'e özgü (C-14'teki tutarsızlık tespiti doğrulandı)
 - **"Custom report designer" bölümü canlıda yok** — kaynakta var. A.0'daki "canlı ≠ kaynak" tespitinin ek kanıtı.
 
 ### B.4.3 Talepler ekranı — doğrulanan bulgular
 
-- `<h1>D724 Requests</h1>` — kod adı kullanıcıya görünür
+- `<h1>CareOnCloud Requests</h1>` — kod adı kullanıcıya görünür
 - `<select name="TenantID" onchange="this.form.submit()">` **çalışma zamanında doğrulandı** — WCAG 3.2.2 (A)
-- Tenant seçenekleri **ham slug**: `d724-demo`, `demo-anadolu-hayat-emeklilik`, `demo-i-s-bankasi-almanya`, `demo-i-stanbul-modern-eczacibasi-bilisim` — Türkçe karakterler bozulmuş (`İş` → `i-s`, `İstanbul` → `i-stanbul`)
+- Tenant seçenekleri **ham slug**: `careoncloud-demo`, `demo-anadolu-hayat-emeklilik`, `demo-i-s-bankasi-almanya`, `demo-i-stanbul-modern-eczacibasi-bilisim` — Türkçe karakterler bozulmuş (`İş` → `i-s`, `İstanbul` → `i-stanbul`)
 - **Talep sahibi 64 karakterlik hash olarak gösteriliyor:** `Requester: customer:925bd0322082b6bfa7b0ebf3228daa3d4ee47d3e58b492ca12836edf8473113e` — agent talebi kimin açtığını göremiyor
 - Durumlar ham: `REQ-0000000203 — fulfilled`, `response / first-response: met`, `ola / internal-ola: met`
 - Tarihler ISO: `2026-07-27 08:45:00` — TR'de `27.07.2026 08:45` olmalı
 - Liste yok, filtre yok, sıralama yok, sayfalama yok; eylem yoksa açıklayıcı metin de yok
 
-### B.4.4 Katalog yönetimi (`AdminD724Catalog`) — doğrulanan bulgular
+### B.4.4 Katalog yönetimi (`AdminCareOnCloudCatalog`) — doğrulanan bulgular
 
 Agent hesabı admin yetkisi taşıdığı için bu ekran da gözlendi.
 
-- `<h1>D724 Service Catalog</h1>` — kod adı admin ekranında da görünür
-- **Şablonda sıfır `<label>` var** (`AdminD724Catalog.tt`: 0 `<label>`, 9 `placeholder`). Gözlemde her `input`/`select` için `label` boş döndü. Ekran okuyucu kullanıcısı bu ekranı **kullanamaz** — WCAG 3.3.2 / 4.1.2 (A)
+- `<h1>CareOnCloud Service Catalog</h1>` — kod adı admin ekranında da görünür
+- **Şablonda sıfır `<label>` var** (`AdminCareOnCloudCatalog.tt`: 0 `<label>`, 9 `placeholder`). Gözlemde her `input`/`select` için `label` boş döndü. Ekran okuyucu kullanıcısı bu ekranı **kullanamaz** — WCAG 3.3.2 / 4.1.2 (A)
 - **Ekranda hiç `<table>` yok.** "Liste" aslında üst üste dizilmiş satır-içi formlardan oluşuyor; her satırın kendi `Save` butonu var. Başlık satırı, sıralama, gruplama, toplu işlem yok.
 - 51 offering'in tamamı tek sayfada, hizmete göre gruplanmadan listeleniyor
 - Metin kutuları içeriği kesiyor: `Bulut ve Platform Yönetimi` sığmıyor, açıklamalar ~30 karakterde kırpılıyor
@@ -177,12 +177,12 @@ Agent hesabı admin yetkisi taşıdığı için bu ekran da gözlendi.
 - **Test artefaktı ürün verisinde:** `Atomic Audit Service Update` / `Atomic Audit Service Updated` / `atomic-audit-offering`, `draft` durumunda. Atomiklik testinden kalmış kayıtlar demo kataloğunda duruyor.
 - Türkçe hizmet adları ile İngilizce açıklamalar aynı listede (`Bulut servisleri, modern platf…` ↔ `Devices and workplace servi…`, `Catalog transaction acceptan…`)
 
-### B.4.5 Taahhüt yönetimi (`AdminD724Commitment`) — doğrulanan bulgular
+### B.4.5 Taahhüt yönetimi (`AdminCareOnCloudCommitment`) — doğrulanan bulgular
 
 - **SLA/OLA politikası ham JSON olarak yazdırılıyor.** Yönetici, ürünün en önemli ticari özelliğini ~150 px yüksekliğinde bir `<textarea>` içine elle JSON yazarak tanımlıyor:
   `[{"key":"first-response","type":"response","target_seconds":3600,"warning_percent":75,"start_signal":"request_created","stop_signal":"first_response","escalation_actions":[]}]`
   Alan bazlı form, doğrulama geri bildirimi veya yardım metni yok.
-- `AdminD724Commitment.tt`: **1 `<label>`** (yalnız Tenant seçicisi), 5 `placeholder`. Düzenleme satırındaki `CalendarID` ve `WarningPercent` alanlarının **ne `label`'ı ne `placeholder`'ı var** — ekranda yalnızca `0`, `14400`, `80` görünüyor. Bir yönetici bu sayıların ne anlama geldiğini ekrandan öğrenemez; **birim de yazmıyor** (saniye).
+- `AdminCareOnCloudCommitment.tt`: **1 `<label>`** (yalnız Tenant seçicisi), 5 `placeholder`. Düzenleme satırındaki `CalendarID` ve `WarningPercent` alanlarının **ne `label`'ı ne `placeholder`'ı var** — ekranda yalnızca `0`, `14400`, `80` görünüyor. Bir yönetici bu sayıların ne anlama geldiğini ekrandan öğrenemez; **birim de yazmıyor** (saniye).
 - `onchange="this.form.submit()"` **ikinci kez** burada; tenant seçeneği yine ham `Data.TenantID`
 - `Status` seçeneği çevrilmemiş (`active` / `inactive` sabit metin)
 - **Gerçek hata:** düzenleme satırındaki `Status` seçicisi mevcut değeri ilk seçenek olarak ekleyip ardından `active` ve `inactive`'i de listeliyor → mevcut durum `active` ise açılır listede `active, active, inactive` çıkıyor
@@ -210,17 +210,17 @@ Agent hesabı admin yetkisi taşıdığı için bu ekran da gözlendi.
 
 ## B.7 Müşteri portalı — kaynak kod incelemesi (`VERIFIED_IN_SOURCE`)
 
-Müşteri hesabı olmadığı için portal çalışır hâlde görülmedi. `CustomerD724Catalog.pm`, `CustomerD724Request.pm` ve iki şablon satır satır okundu; aşağıdakiler koddan kesindir:
+Müşteri hesabı olmadığı için portal çalışır hâlde görülmedi. `CustomerCareOnCloudCatalog.pm`, `CustomerCareOnCloudRequest.pm` ve iki şablon satır satır okundu; aşağıdakiler koddan kesindir:
 
 - **Katalog tek sayfada, sayfalama ve arama olmadan basılıyor.** `Run()` içindeki varsayılan dal bütün hizmetleri, her hizmetin bütün offering'lerini ve her offering'in bütün katalog öğelerini iç içe döngüyle render ediyor. 6 alan / 51 offering ölçeğinde bu çok uzun bir sayfa demektir; filtre veya arama kutusu yoktur.
 - **Boş katalog için boş durum yok.** `$Result->{Data}` boşsa döngüler hiç çalışmaz ve kullanıcı yalnızca boş bir seçim formu görür.
 - **Yetki reddi ile "bulunamadı" aynı yanıtı veriyor** (`CustomerNoPermission`). Güvenlik açısından doğru (varlık sızdırmıyor), fakat kullanıcı ne yapması gerektiğini öğrenemiyor.
 - **Dinamik form alanları çevrilemiyor.** `_ItemRender` alanları `FormSchema->{Schema}->{fields}` üzerinden bloklara veriyor; şablon `[% Data.label | html %]` ile **`Translate()` olmadan** basıyor. Katalog içeriği tek dilde kalır (P1-02).
-- **Talep gönderiminden sonra dönüş yok.** `CustomerD724Request.pm` yalnızca `Submit` alt-eylemine sahip; `Run()` içinde başka dal yok. Kullanıcı makbuz sayfasından sonra kataloğa dönmek dışında bir yol bulamaz (P0-05).
-- **Durum ham basılıyor:** `CustomerD724Request.tt` içinde `[% Data.Request.Status | html %]` ve `[% Commitment.ObjectiveType %] / [% Commitment.ObjectiveKey %]` — müşteri `fulfilled`, `ola`, `internal-ola` gibi makine değerleri görür (P0-08).
+- **Talep gönderiminden sonra dönüş yok.** `CustomerCareOnCloudRequest.pm` yalnızca `Submit` alt-eylemine sahip; `Run()` içinde başka dal yok. Kullanıcı makbuz sayfasından sonra kataloğa dönmek dışında bir yol bulamaz (P0-05).
+- **Durum ham basılıyor:** `CustomerCareOnCloudRequest.tt` içinde `[% Data.Request.Status | html %]` ve `[% Commitment.ObjectiveType %] / [% Commitment.ObjectiveKey %]` — müşteri `fulfilled`, `ola`, `internal-ola` gibi makine değerleri görür (P0-08).
 - **Olumlu:** müşteri şablonlarında `<label for>` bağları **doğru** kurulmuş, `required` kullanılmış, `IdempotencyKey` ile çift gönderim engellenmiş. Müşteri tarafı, admin tarafından erişilebilirlik açısından belirgin biçimde daha iyidir.
 
-**Ek uyarı:** Gözlenen ekranlar **eski build**e aittir (bkz. A.0). Bunlar güncel kaynağın değil, canlıdaki önceki sürümün kanıtıdır. Güncel kaynağın runtime kanıtı ancak `careoncloud-v0.1.0` imajı aday portta ayağa kaldırılırsa üretilebilir. Buna rağmen `Layout.pm:4221`, `D724KPIGrid`, `onchange`, ham durum değerleri ve boş `lang` gibi bulgular **güncel kaynakta da** doğrulanmıştır — bunları cutover çözmez.
+**Ek uyarı:** Gözlenen ekranlar **eski build**e aittir (bkz. A.0). Bunlar güncel kaynağın değil, canlıdaki önceki sürümün kanıtıdır. Güncel kaynağın runtime kanıtı ancak `careoncloud-v0.1.0` imajı aday portta ayağa kaldırılırsa üretilebilir. Buna rağmen `Layout.pm:4221`, `CareOnCloudKPIGrid`, `onchange`, ham durum değerleri ve boş `lang` gibi bulgular **güncel kaynakta da** doğrulanmıştır — bunları cutover çözmez.
 
 ## B.6 Varsayımlar
 
@@ -241,19 +241,19 @@ Müşteri hesabı olmadığı için portal çalışır hâlde görülmedi. `Cust
 | # | Alan | Puan | Kanıt / gerekçe |
 |---|---|---|---|
 | 1 | Marka bütünlüğü | **1** | Müşteri giriş ekranında `Your Tickets. Your OTOBO.` (`Layout.pm:4221`) + OTOBO tavus kuşu. `Framework.xml:8726,8763,9267` → otobo.io RSS, otobo.io CDN görseli, `HomePage www.otobo.io`. Canlıda tüm yollar `/otobo/`. Karşı ağırlık: login başlığı ve logo doğru. |
-| 2 | Bilgi mimarisi | **1** | D724 modülleri çekirdek CareOnCloud ESM menüsüne **düz** eklenmiş. Hiyerarşi yok, gruplama yok. `Service Portfolio`, `Operations Center`, `D724 Requests`, `Change Enablement`, `Problem Management`, `Agent Assistant` — altısı da `Type: Menu`, aynı düzeyde, `Prio` 75–87 arası. Kullanıcıya "hizmet" mi "kayıt" mı yönettiği anlatılmıyor. |
-| 3 | Navigasyon | **1** | Çekirdek CareOnCloud ESM menüsü (`PANO`, `BİLETLER`, `TAKVİM`, `Müşteriler`, `Queue view`, `Escalation view`, `Status view`, `Service view`…) ile D724 menüleri yan yana. AccessKey çakışması: `p` hem `Service Portfolio` hem `Problem Management` (`D724CMDB.xml`, `D724Problem.xml`). |
+| 2 | Bilgi mimarisi | **1** | CareOnCloud modülleri çekirdek CareOnCloud ESM menüsüne **düz** eklenmiş. Hiyerarşi yok, gruplama yok. `Service Portfolio`, `Operations Center`, `CareOnCloud Requests`, `Change Enablement`, `Problem Management`, `Agent Assistant` — altısı da `Type: Menu`, aynı düzeyde, `Prio` 75–87 arası. Kullanıcıya "hizmet" mi "kayıt" mı yönettiği anlatılmıyor. |
+| 3 | Navigasyon | **1** | Çekirdek CareOnCloud ESM menüsü (`PANO`, `BİLETLER`, `TAKVİM`, `Müşteriler`, `Queue view`, `Escalation view`, `Status view`, `Service view`…) ile CareOnCloud menüleri yan yana. AccessKey çakışması: `p` hem `Service Portfolio` hem `Problem Management` (`CareOnCloudCMDB.xml`, `CareOnCloudProblem.xml`). |
 | 4 | Görev tamamlama | **2** | Katalogdan talep açma **çalışıyor** ve idempotency korumalı. Ancak müşteri sonrasında talebi göremiyor; agent tarafında liste/filtre/arama yok, sayfalama yok. |
 | 5 | Rol bazlı deneyim | **1** | 6 personadan 3'ünün (admin, MSP, denetçi) hiç ekranı yok. Agent ile hizmet sahibi aynı `Operations Center`'ı paylaşıyor. Müşterinin tek menü öğesi var. |
 | 6 | TR/EN bütünlüğü | **1** | **OBSERVED:** tek ekranda İngilizce widget başlıkları + Türkçe kolon adları + çevrilmemiş `Total`; `Kuyruğa koy` yanlış çeviri; `YENI` bozuk büyük harf; `87.5%` ve `2026-07-27 08:45:00` yerelleştirilmemiş. TR çeviri sayıları: Reporting 40, Catalog 11, Request 7, Assist/CMDB/Change 3'er, **Commitment 1, Problem 1**. Buna karşılık aynı paketlerin XML'lerinde 16 ve 8 `Translatable` metin var. Katalog form etiketleri `[% Data.label %]` ile çevrilmeden basılıyor. Durum değerleri (`in_progress`, `approved`, `rejected`) ham makine değeri olarak ekrana geliyor. |
-| 7 | İçerik / mikro metin | **1** | Menüde `D724 Requests` (kod adı, kullanıcıya görünür). `Service extension` / `Servis uzantısı` — kullanıcı için anlamsız, üstelik kanonik modeldeki `Service Offering` karşılığı değil. `Technical key` alanı son kullanıcı rapor formunda. `AgentD724Request.tt` içinde çevrilmeyen ` — assigned: ` metni. |
-| 8 | Görsel hiyerarşi | **1** | D724 paketlerinde **hiç CSS yok**. `AgentD724Operations.tt:30` `class="D724KPIGrid"` ve `class="D724KPI"` kullanıyor; bu sınıflar **hiçbir yerde tanımlı değil** (repo genelinde yalnızca bu şablonda geçiyor). Yani KPI ızgarası ızgara olarak render olmuyor, alt alta widget'a düşüyor. |
-| 9 | Form kullanılabilirliği | **1** | **Müşteri/agent tarafı ile admin tarafı çok farklı.** Müşteri şablonlarında `<label for>` bağları doğru; `required`, `maxlength`, `ChallengeToken` CSRF ve `ExpectedVersion` optimistic locking var. **Admin tarafında ise `AdminD724Catalog.tt` 0 `<label>` / 9 `placeholder`, `AdminD724Commitment.tt` 1 `<label>` / 5 `placeholder`** içeriyor; `CalendarID` ve `WarningPercent` alanlarının ne etiketi ne placeholder'ı var. SLA politikası ham JSON textarea'sı. Alan bazlı hata mesajı, yardım metni ve geri alınamaz eylemlerde onay adımı hiçbir yerde yok. |
-| 10 | Veri yoğun ekran ergonomisi | **1** | `class="DataTable"` düz tablolar. Sıralama, filtre, sütun seçimi, toplu işlem, kaydedilmiş görünüm, sayfalama **yok**. `D724::CMDB::ListLimit` 1000, `Change/Problem ListLimit` 200 — sayfalama olmadan tek sayfaya basılıyor. |
-| 11 | Responsive kullanım | **2** | Login mobilde temiz (taşma yok, 48px hedef). D724 ekranları için `NEEDS_ACCESS`; ancak sayfalama/kaydırma kabı olmayan geniş tablolar mobilde yatay taşma üretir — kaynaktan öngörülebilir risk. |
-| 12 | WCAG 2.2 AA uyumu | **1** | Doğrulanmış ihlaller: `<html lang="">` boş — **1.3.1/3.1.1 (A)**. `<select onchange="this.form.submit()">` (`AgentD724Request.tt:6`) — **3.2.2 On Input (A)**. AccessKey çakışması — **2.1.1 destekleyici**. Renk kontrastı ve focus görünürlüğü `NEEDS_ACCESS`. |
-| 13 | Hata / boş / yükleme durumları | **0** | 10 D724 şablonunun **hiçbirinde** boş durum metni yok; `[% RenderBlockStart %]` blokları veri yoksa hiçbir şey basmıyor. **OBSERVED:** `AgentD724Request`'te eylem yokken hiçbir açıklama çıkmıyor. Çekirdek CareOnCloud ESM en azından `none` yazıyor — yani D724 ekranları bu konuda **mirastan da geride**. Skeleton/yükleme yok. |
-| 14 | Tenant / MSP bağlam görünürlüğü | **1** | `AgentD724Request.tt:7` tenant seçeneğini **ham `TenantID`** ile basıyor (`>[% Data.TenantID %]<`), oysa `AgentD724Operations.tt` aynı yerde `Data.Name` kullanıyor — tutarsız. Seçim `onchange` ile anında formu gönderiyor; yanlış tenant'a kazara geçiş mümkün. Global bir tenant göstergesi yok. |
+| 7 | İçerik / mikro metin | **1** | Menüde `CareOnCloud Requests` (kod adı, kullanıcıya görünür). `Service extension` / `Servis uzantısı` — kullanıcı için anlamsız, üstelik kanonik modeldeki `Service Offering` karşılığı değil. `Technical key` alanı son kullanıcı rapor formunda. `AgentCareOnCloudRequest.tt` içinde çevrilmeyen ` — assigned: ` metni. |
+| 8 | Görsel hiyerarşi | **1** | CareOnCloud paketlerinde **hiç CSS yok**. `AgentCareOnCloudOperations.tt:30` `class="CareOnCloudKPIGrid"` ve `class="CareOnCloudKPI"` kullanıyor; bu sınıflar **hiçbir yerde tanımlı değil** (repo genelinde yalnızca bu şablonda geçiyor). Yani KPI ızgarası ızgara olarak render olmuyor, alt alta widget'a düşüyor. |
+| 9 | Form kullanılabilirliği | **1** | **Müşteri/agent tarafı ile admin tarafı çok farklı.** Müşteri şablonlarında `<label for>` bağları doğru; `required`, `maxlength`, `ChallengeToken` CSRF ve `ExpectedVersion` optimistic locking var. **Admin tarafında ise `AdminCareOnCloudCatalog.tt` 0 `<label>` / 9 `placeholder`, `AdminCareOnCloudCommitment.tt` 1 `<label>` / 5 `placeholder`** içeriyor; `CalendarID` ve `WarningPercent` alanlarının ne etiketi ne placeholder'ı var. SLA politikası ham JSON textarea'sı. Alan bazlı hata mesajı, yardım metni ve geri alınamaz eylemlerde onay adımı hiçbir yerde yok. |
+| 10 | Veri yoğun ekran ergonomisi | **1** | `class="DataTable"` düz tablolar. Sıralama, filtre, sütun seçimi, toplu işlem, kaydedilmiş görünüm, sayfalama **yok**. `CareOnCloud::CMDB::ListLimit` 1000, `Change/Problem ListLimit` 200 — sayfalama olmadan tek sayfaya basılıyor. |
+| 11 | Responsive kullanım | **2** | Login mobilde temiz (taşma yok, 48px hedef). CareOnCloud ekranları için `NEEDS_ACCESS`; ancak sayfalama/kaydırma kabı olmayan geniş tablolar mobilde yatay taşma üretir — kaynaktan öngörülebilir risk. |
+| 12 | WCAG 2.2 AA uyumu | **1** | Doğrulanmış ihlaller: `<html lang="">` boş — **1.3.1/3.1.1 (A)**. `<select onchange="this.form.submit()">` (`AgentCareOnCloudRequest.tt:6`) — **3.2.2 On Input (A)**. AccessKey çakışması — **2.1.1 destekleyici**. Renk kontrastı ve focus görünürlüğü `NEEDS_ACCESS`. |
+| 13 | Hata / boş / yükleme durumları | **0** | 10 CareOnCloud şablonunun **hiçbirinde** boş durum metni yok; `[% RenderBlockStart %]` blokları veri yoksa hiçbir şey basmıyor. **OBSERVED:** `AgentCareOnCloudRequest`'te eylem yokken hiçbir açıklama çıkmıyor. Çekirdek CareOnCloud ESM en azından `none` yazıyor — yani CareOnCloud ekranları bu konuda **mirastan da geride**. Skeleton/yükleme yok. |
+| 14 | Tenant / MSP bağlam görünürlüğü | **1** | `AgentCareOnCloudRequest.tt:7` tenant seçeneğini **ham `TenantID`** ile basıyor (`>[% Data.TenantID %]<`), oysa `AgentCareOnCloudOperations.tt` aynı yerde `Data.Name` kullanıyor — tutarsız. Seçim `onchange` ile anında formu gönderiyor; yanlış tenant'a kazara geçiş mümkün. Global bir tenant göstergesi yok. |
 | 15 | Güven / kurumsal ürün algısı | **1** | Müşterinin ilk gördüğü ekranda başka bir ürünün adı. Adres çubuğunda `/careoncloud/`. Agent dashboard'unda `Welcome to CareOnCloud ESM!` test kaydı. Bu üçü bir arada satın alma görüşmesinde ürünü "başkasının ürününün üstüne isim yapıştırılmış" konumuna düşürür. |
 
 **Ağırlıksız ortalama: 1.13 / 5**
@@ -271,11 +271,11 @@ Müşteri hesabı olmadığı için portal çalışır hâlde görülmedi. `Cust
 | Ekran / rota | Rol | Kullanıcı amacı | UI teknolojisi | Dil | Marka | UX durumu | Kanıt | Karar |
 |---|---|---|---|---|---|---|---|---|
 | `customer.pl` (login) | Müşteri | Giriş | Core TT + Customer skin | EN, seçici yok | **CareOnCloud ESM sloganı + görseli** | Kritik kusurlu | OBSERVED | **Değiştir** |
-| `CustomerD724Catalog` | Müşteri | Hizmet bul, talep tipi seç | D724 TT, kendi CSS'i yok | TR 11 anahtar | CareOnCloud | Sürtünmeli | VERIFIED_IN_SOURCE | **İyileştir** |
-| `CustomerD724Catalog?Subaction=Item` | Müşteri | Dinamik form doldur | D724 TT | Form etiketleri **çevrilemiyor** | CareOnCloud | Sürtünmeli | VERIFIED_IN_SOURCE | **İyileştir** |
-| `CustomerD724Request` (Submit) | Müşteri | Talep gönder, makbuz gör | D724 TT | Durum ham değer | CareOnCloud | Kritik kusurlu | VERIFIED_IN_SOURCE | **Değiştir** |
+| `CustomerCareOnCloudCatalog` | Müşteri | Hizmet bul, talep tipi seç | CareOnCloud TT, kendi CSS'i yok | TR 11 anahtar | CareOnCloud | Sürtünmeli | VERIFIED_IN_SOURCE | **İyileştir** |
+| `CustomerCareOnCloudCatalog?Subaction=Item` | Müşteri | Dinamik form doldur | CareOnCloud TT | Form etiketleri **çevrilemiyor** | CareOnCloud | Sürtünmeli | VERIFIED_IN_SOURCE | **İyileştir** |
+| `CustomerCareOnCloudRequest` (Submit) | Müşteri | Talep gönder, makbuz gör | CareOnCloud TT | Durum ham değer | CareOnCloud | Kritik kusurlu | VERIFIED_IN_SOURCE | **Değiştir** |
 | **Talep listesi / takip** | Müşteri | Açık talebini izle | — | — | — | **YOK** | VERIFIED_IN_SOURCE | **Yeni yap** |
-| Core `CustomerTicketOverview` | Müşteri | CareOnCloud ESM ticket'ları | Core TT | `BİLETLER` | CareOnCloud ESM terminolojisi | Sürtünmeli, D724 talebiyle **ilişkisiz** | VERIFIED_IN_SOURCE | **Sar / ayrıştır** |
+| Core `CustomerTicketOverview` | Müşteri | CareOnCloud ESM ticket'ları | Core TT | `BİLETLER` | CareOnCloud ESM terminolojisi | Sürtünmeli, CareOnCloud talebiyle **ilişkisiz** | VERIFIED_IN_SOURCE | **Sar / ayrıştır** |
 
 ### Agent yüzeyi
 
@@ -283,20 +283,20 @@ Müşteri hesabı olmadığı için portal çalışır hâlde görülmedi. `Cust
 |---|---|---|---|---|---|---|---|---|
 | `index.pl` (login) | Agent | Giriş | Core TT + Agent skin | EN, seçici yok | CareOnCloud logo ✓ | Sürtünmeli | OBSERVED | **İyileştir** |
 | `AgentDashboard` | Agent | Günü başlat | Core TT | `PANO` | otobo.io RSS widget'ı | Kritik kusurlu | VERIFIED_IN_SOURCE | **Değiştir** |
-| `AgentD724Request` | Agent | Onay, görev, ilk yanıt | D724 TT | Ham durumlar, `assigned:` | `D724 Requests` başlığı | Kritik kusurlu | VERIFIED_IN_SOURCE | **Değiştir** |
-| `AgentD724Operations` | Agent / Hizmet sahibi | KPI, rapor | D724 TT, tanımsız CSS sınıfı | TR 40 anahtar (en iyi paket) | CareOnCloud | Sürtünmeli | VERIFIED_IN_SOURCE | **İyileştir** |
-| `AgentD724ServicePortfolio` | Agent | Hizmet portföyü | D724 TT | TR 3 anahtar | CareOnCloud | Eksik | VERIFIED_IN_SOURCE | **İyileştir** |
-| `AgentD724Change` | Agent | Değişiklik | D724 TT | TR 3 anahtar | CareOnCloud | Prototip | VERIFIED_IN_SOURCE | **Koru (dondur)** |
-| `AgentD724Problem` | Agent | Problem | D724 TT | TR **1** anahtar | CareOnCloud | Prototip | VERIFIED_IN_SOURCE | **Koru (dondur)** |
-| `AgentD724Assist` | Agent | Benzer kayıt önerisi | D724 TT | TR 3 anahtar | `Agent Assistant` | Prototip | VERIFIED_IN_SOURCE | **İyileştir (yeniden adlandır)** |
+| `AgentCareOnCloudRequest` | Agent | Onay, görev, ilk yanıt | CareOnCloud TT | Ham durumlar, `assigned:` | `CareOnCloud Requests` başlığı | Kritik kusurlu | VERIFIED_IN_SOURCE | **Değiştir** |
+| `AgentCareOnCloudOperations` | Agent / Hizmet sahibi | KPI, rapor | CareOnCloud TT, tanımsız CSS sınıfı | TR 40 anahtar (en iyi paket) | CareOnCloud | Sürtünmeli | VERIFIED_IN_SOURCE | **İyileştir** |
+| `AgentCareOnCloudServicePortfolio` | Agent | Hizmet portföyü | CareOnCloud TT | TR 3 anahtar | CareOnCloud | Eksik | VERIFIED_IN_SOURCE | **İyileştir** |
+| `AgentCareOnCloudChange` | Agent | Değişiklik | CareOnCloud TT | TR 3 anahtar | CareOnCloud | Prototip | VERIFIED_IN_SOURCE | **Koru (dondur)** |
+| `AgentCareOnCloudProblem` | Agent | Problem | CareOnCloud TT | TR **1** anahtar | CareOnCloud | Prototip | VERIFIED_IN_SOURCE | **Koru (dondur)** |
+| `AgentCareOnCloudAssist` | Agent | Benzer kayıt önerisi | CareOnCloud TT | TR 3 anahtar | `Agent Assistant` | Prototip | VERIFIED_IN_SOURCE | **İyileştir (yeniden adlandır)** |
 | Core ticket ekranları | Agent | Kayıt işlemek | Core TT | `BİLETLER` | CareOnCloud ESM terminolojisi | Sürtünmeli | NEEDS_ACCESS | **Sar / adapter** |
 
 ### Admin, MSP, denetçi yüzeyi
 
 | Ekran | Rol | Durum | Kanıt |
 |---|---|---|---|
-| `AdminD724Catalog` | Admin | Var; **tablosuz satır-içi form yığını**, 0 `<label>`, 51 offering tek sayfada, test artefaktı görünür | **OBSERVED** + VERIFIED_IN_SOURCE |
-| `AdminD724Commitment` | Admin | Var; **SLA politikası ham JSON textarea**, 1 `<label>`, açıklamasız sayı alanları, yinelenen durum seçeneği | **OBSERVED** + VERIFIED_IN_SOURCE |
+| `AdminCareOnCloudCatalog` | Admin | Var; **tablosuz satır-içi form yığını**, 0 `<label>`, 51 offering tek sayfada, test artefaktı görünür | **OBSERVED** + VERIFIED_IN_SOURCE |
+| `AdminCareOnCloudCommitment` | Admin | Var; **SLA politikası ham JSON textarea**, 1 `<label>`, açıklamasız sayı alanları, yinelenen durum seçeneği | **OBSERVED** + VERIFIED_IN_SOURCE |
 | Tenant Directory yönetimi | Admin / MSP | **YOK** | VERIFIED_IN_SOURCE |
 | TenantGuard politika görünürlüğü | Admin | **YOK** | VERIFIED_IN_SOURCE |
 | Identity / OIDC yönetimi | Admin | **YOK** | VERIFIED_IN_SOURCE |
@@ -311,7 +311,7 @@ Bu tablo A.1'deki "üç persona ekransız" iddiasının kanıtıdır: `packages/
 ## D.2 Mevcut navigasyon ağacı (as-is)
 
 ```
-Agent üst menü (çekirdek + D724 karışık, tek düzey)
+Agent üst menü (çekirdek + CareOnCloud karışık, tek düzey)
 ├── PANO                        ← tr.pm:2967, ALL CAPS
 ├── BİLETLER                    ← tr.pm:3069, ALL CAPS
 │   ├── Queue view / Status view / Escalation view / Service view
@@ -325,7 +325,7 @@ Agent üst menü (çekirdek + D724 karışık, tek düzey)
 ├── Service Portfolio    (Prio 85, AccessKey p)   ← ÇAKIŞMA
 ├── Change Enablement    (Prio 86, AccessKey h)   ← TR adı yok
 ├── Problem Management   (Prio 87, AccessKey p)   ← ÇAKIŞMA
-├── D724 Requests        (AccessKey r)            ← KOD ADI GÖRÜNÜR
+├── CareOnCloud Requests        (AccessKey r)            ← KOD ADI GÖRÜNÜR
 └── Yönetim (Admin)
 
 Müşteri portalı menü
@@ -334,9 +334,9 @@ Müşteri portalı menü
 
 Üç yapısal kusur:
 
-1. **Karışım.** Türkçe ALL-CAPS çekirdek adlar, İngilizce D724 adları ve bir kod adı (`D724`) aynı çubukta.
-2. **Düzlük.** Altı D724 modülü de kök düzeyde. Kullanıcı hangisinin "iş yapma", hangisinin "izleme", hangisinin "yönetim" olduğunu ayırt edemiyor.
-3. **Çift kayıt kavramı.** `BİLETLER` (CareOnCloud ESM ticket) ile `D724 Requests` (D724 request) paralel iki iş nesnesi. `packages/D724Request` içinde `TicketObject` referansı **hiç yok** — yani bu iki dünya kodda da bağlı değil. Agent aynı işi iki yerden takip ediyor.
+1. **Karışım.** Türkçe ALL-CAPS çekirdek adlar, İngilizce CareOnCloud adları ve bir kod adı (`CareOnCloud`) aynı çubukta.
+2. **Düzlük.** Altı CareOnCloud modülü de kök düzeyde. Kullanıcı hangisinin "iş yapma", hangisinin "izleme", hangisinin "yönetim" olduğunu ayırt edemiyor.
+3. **Çift kayıt kavramı.** `BİLETLER` (CareOnCloud ESM ticket) ile `CareOnCloud Requests` (CareOnCloud request) paralel iki iş nesnesi. `packages/CareOnCloudRequest` içinde `TicketObject` referansı **hiç yok** — yani bu iki dünya kodda da bağlı değil. Agent aynı işi iki yerden takip ediyor.
 
 ## D.3 Kritik yolculukların mevcut durumu
 
@@ -344,8 +344,8 @@ Müşteri portalı menü
 |---|---|---|---|
 | 1 | Müşteri katalogdan talep açar | **Çalışıyor** | 3 ardışık `<select>`, arama yok, hizmet açıklaması ancak seçtikten sonra görünüyor |
 | 2 | Müşteri talebini takip eder | **YOK** | Ekran yok. Gönderim sonrası tek makbuz sayfası. |
-| 3 | Agent SLA riskli işi önceliklendirir | **Kısmi** | `AgentD724Request` tüm talepleri sırasız basıyor; sıralama/filtre yok |
-| 4 | Agent kaydı açar, çözer | **Bölünmüş** | D724 request tarafında iletişim/not/ek yok; ticket tarafında SLA/onay yok |
+| 3 | Agent SLA riskli işi önceliklendirir | **Kısmi** | `AgentCareOnCloudRequest` tüm talepleri sırasız basıyor; sıralama/filtre yok |
+| 4 | Agent kaydı açar, çözer | **Bölünmüş** | CareOnCloud request tarafında iletişim/not/ek yok; ticket tarafında SLA/onay yok |
 | 5 | Onaylayıcı onaylar/reddeder | **Çalışıyor, riskli** | Onay ve ret aynı formda yan yana buton, geri dönüşsüz, onay adımı yok |
 | 6 | Hizmet sahibi SLA performansı inceler | **Kısmi** | Operations Center tablo tabanlı, grafik yok, sıfır-veri davranışı tanımsız |
 | 7 | Admin katalog/rol/entegrasyon yapılandırır | **Kısmi** | Katalog ve commitment var; rol, kimlik, entegrasyon ekranı yok |
@@ -365,10 +365,10 @@ Müşteri portalı menü
 | P0-02 | OBSERVED | Hepsi | Tüm rotalar | Canlıda `/careoncloud/index.pl`, `/careoncloud-web/` | Marka ihlali, adres çubuğunda görünür | P0 | Cutover yapılmadı; kaynak zaten doğru | `careoncloud-v0.1.0` imajını aday portta ayağa kaldır, kabul sonrası kes | Rollback provası | `/careoncloud/index.pl` 200; `/careoncloud/*` 404 veya 301 |
 | P0-03 | `Framework.xml:8726,8727,8763,9267` | Agent | Dashboard | otobo.io RSS widget'ı, otobo.io CDN görseli, `HomePage www.otobo.io` | Marka ihlali + müşteri ortamından dışa istek | P0 | Upstream varsayılanları temizlenmemiş | Widget'ları kaldır veya CareOnCloud kaynağına yönlendir | — | Dashboard HTML'inde `otobo.io` geçmez; giden istek yok |
 | P0-04 | `Test-CareOnCloudBrand.ps1:38-53` | — | CI | Marka testi yalnız dosya yolu tarıyor, render metnini taramıyor | P0-01 testlerden geçti | P0 | Test tasarımı eksik | Şablon+Perl string taraması ekle: `Layout.pm`, `*.tt`, `Framework.xml` | — | Test, `Layout.pm:4221` geri konursa **kırmızı** olur |
-| P0-05 | VERIFIED_IN_SOURCE | Müşteri | Talep takibi | `CustomerD724Request` yalnızca `Submit`; liste/detay yok | Müşteri talebini göremiyor → portal kullanılamaz | P0 | Ekran hiç yazılmamış | `Taleplerim` listesi + talep detay/timeline ekranı | Request read API | Müşteri gönderdiği talebi listede görür; durum, sorumlu, hedef süre görünür |
-| P0-06 | `AgentD724Request.tt:6-7` **ve** `AdminD724Commitment.tt:4-5`; ikisi de OBSERVED | Agent / MSP / Admin | Tenant seçimi | Ham `TenantID` + `onchange="this.form.submit()"` — **iki ayrı ekranda** | Yanlış tenant'a kazara geçiş; WCAG 3.2.2 (A) | P0 | Hızlı prototip | Tenant adını göster; açık `Uygula` butonu; global tenant rozeti | TenantDirectory ad alanı | Seçim adla yapılır; otomatik gönderim yok; aktif tenant her ekranda görünür |
-| P0-07 | 8 `tr_*.pm` sayımı | Hepsi | Tüm D724 ekranları | Commitment 1, Problem 1 çeviri; XML'de 16 ve 8 çevrilebilir metin | Türkçe kullanıcı İngilizce ekran görür | P0 | Çeviri tamamlanmamış | Kanonik TR/EN sözlüğü + eksik anahtarları doldur | F.4 sözlüğü | Her D724 ekranı TR'de %100 çeviri; karışık dil yok |
-| P0-08 | `AgentD724Request.tt`, `CustomerD724Request.tt` | Hepsi | Durum gösterimi | `in_progress`, `approved`, `rejected` ham makine değeri | Kullanıcı durumu anlamıyor; iki dil bozuluyor | P0 | `Translate()` uygulanmamış | Durum değerlerini sözlüğe al, `Translate(Data.Status)` kullan | P0-07 | TR'de "Devam ediyor", EN'de "In progress" |
+| P0-05 | VERIFIED_IN_SOURCE | Müşteri | Talep takibi | `CustomerCareOnCloudRequest` yalnızca `Submit`; liste/detay yok | Müşteri talebini göremiyor → portal kullanılamaz | P0 | Ekran hiç yazılmamış | `Taleplerim` listesi + talep detay/timeline ekranı | Request read API | Müşteri gönderdiği talebi listede görür; durum, sorumlu, hedef süre görünür |
+| P0-06 | `AgentCareOnCloudRequest.tt:6-7` **ve** `AdminCareOnCloudCommitment.tt:4-5`; ikisi de OBSERVED | Agent / MSP / Admin | Tenant seçimi | Ham `TenantID` + `onchange="this.form.submit()"` — **iki ayrı ekranda** | Yanlış tenant'a kazara geçiş; WCAG 3.2.2 (A) | P0 | Hızlı prototip | Tenant adını göster; açık `Uygula` butonu; global tenant rozeti | TenantDirectory ad alanı | Seçim adla yapılır; otomatik gönderim yok; aktif tenant her ekranda görünür |
+| P0-07 | 8 `tr_*.pm` sayımı | Hepsi | Tüm CareOnCloud ekranları | Commitment 1, Problem 1 çeviri; XML'de 16 ve 8 çevrilebilir metin | Türkçe kullanıcı İngilizce ekran görür | P0 | Çeviri tamamlanmamış | Kanonik TR/EN sözlüğü + eksik anahtarları doldur | F.4 sözlüğü | Her CareOnCloud ekranı TR'de %100 çeviri; karışık dil yok |
+| P0-08 | `AgentCareOnCloudRequest.tt`, `CustomerCareOnCloudRequest.tt` | Hepsi | Durum gösterimi | `in_progress`, `approved`, `rejected` ham makine değeri | Kullanıcı durumu anlamıyor; iki dil bozuluyor | P0 | `Translate()` uygulanmamış | Durum değerlerini sözlüğe al, `Translate(Data.Status)` kullan | P0-07 | TR'de "Devam ediyor", EN'de "In progress" |
 | P0-09 | OBSERVED | Hepsi | Tüm sayfalar | `<html lang="">` boş | WCAG 2.2 **3.1.1 (A)** ihlali; ekran okuyucu yanlış telaffuz | P0 | Layout `lang` basmıyor | Aktif kullanıcı diline göre `lang` yaz | — | TR oturumda `lang="tr"`, EN'de `lang="en"` |
 | P0-10 | VERIFIED_IN_SOURCE | Denetçi | Audit | Audit inceleme/dışa aktarım ekranı yok | Denetçi personası kullanılamaz; regüle müşteride kapı | P0 | Ekran yazılmamış | Audit tarama + filtre + kanıt paketi ekranı | Audit read API | Denetçi tarih/tenant/aktör filtreler, imzalı paket indirir |
 | **P0-11** | OBSERVED — tenant seçicisi. **Kaynakta yok** (bkz. düzeltme notu) | Hepsi | Demo verisi | **~40 gerçek Türk şirketinin adı canlı ortamda demo tenant olarak kayıtlı** (`demo-anadolu-hayat-emeklilik`, `demo-i-s-bankasi-almanya`, `demo-qnb-finans`, `demo-milli-reasurans`, `demo-mavi`, `demo-setur`, `demo-bkm`, `demo-i-stanbul-modern-eczacibasi-bilisim` …) | Hukuki ve itibari risk; demo sırasında rakip/müşteri adının görünmesi; Master Context §13.4 açık yasağı | **P0** | **Eski canlı DB verisi.** Güncel kaynaktaki üç seed script'i tamamen sentetik ad kullanıyor; bu kayıtlar onlardan üretilmemiş | Canlı DB'deki bu tenant'ları ve bağlı veriyi temizle; güncel sentetik seed'i çalıştır; CI'ya yasaklı isim taraması ekle | Demo DB temizliği | Tenant listesinde hiçbir gerçek kurum adı yok; isim taraması yeşil |
@@ -376,28 +376,28 @@ Müşteri portalı menü
 | **P0-17** | OBSERVED — dil listesi | Hepsi | Tercihler | Dil seçicide **"Türkçe - Turkish (in process)"** yazıyor; ayrıca 50 dil listeleniyor | Ana pazarı Türkiye olan üründe dil seçici Türkçeyi "tamamlanmamış" ilan ediyor; desteklenmeyen 48 dile geçen kullanıcı bozuk ürün görüyor | **P0** | Upstream tamamlanma etiketi + dil listesi kısıtlanmamış | Listeyi `Türkçe` ve `English` ile sınırla; `(in process)` etiketini kaldır | P0-07 çeviri tamamlanması | Dil seçicide yalnız TR ve EN var; hiçbirinde "in process" yazmıyor |
 | **P0-18** | OBSERVED — `AgentPreferences` | Hepsi | Saat dilimi | Varsayılan saat dilimi **UTC**; `Europe/Istanbul` mevcut ama seçili değil | Her yeni kullanıcı yanlış saat görüyor ve P0-14 banner'ını yiyor | **P0** | Varsayılan yapılandırılmamış | Kurulum varsayılanını `Europe/Istanbul` yap; onboarding'de sor | — | Yeni kullanıcıda banner çıkmaz; saatler doğru |
 | P2-07 | OBSERVED — `AgentPreferences` | Hepsi | Avatar | Gravatar'a kullanıcı e-postasıyla dış istek öneriliyor | Kurumsal/regüle müşteride veri çıkışı sorusu | P2 | Upstream varsayılanı | Gravatar'ı kapat veya yerel avatar yükleme sun | Hukuk | Tercihler ekranında dış servise e-posta gönderimi önerilmez |
-| **P0-12** | OBSERVED — `AgentD724Request` | Agent | Talep ekranı | Talep sahibi 64 karakterlik hash olarak gösteriliyor (`customer:925bd03220…`) | Agent talebi kimin açtığını göremiyor → temel görev imkânsız | **P0** | Requester ID çözümlenmiyor | Ad, soyad, organizasyon ve iletişim bilgisi göster; hash yalnız teknik alanda | Customer directory lookup | Ekranda kişi adı görünür; hash görünmez |
+| **P0-12** | OBSERVED — `AgentCareOnCloudRequest` | Agent | Talep ekranı | Talep sahibi 64 karakterlik hash olarak gösteriliyor (`customer:925bd03220…`) | Agent talebi kimin açtığını göremiyor → temel görev imkânsız | **P0** | Requester ID çözümlenmiyor | Ad, soyad, organizasyon ve iletişim bilgisi göster; hash yalnız teknik alanda | Customer directory lookup | Ekranda kişi adı görünür; hash görünmez |
 | **P0-13** | OBSERVED — dashboard | Hepsi | Tüm sayfalar | `yeni` → **`YENI`** (noktasız I). CSS `text-transform: uppercase`, boş `lang` nedeniyle Türkçe kuralı uygulamıyor | Türkçe metin görsel olarak bozuk; kurumsal algı | **P0** | P0-09'un doğrudan sonucu | `lang` düzeltilir; ayrıca menü/kolon `text-transform: uppercase` kuralı kaldırılır | P0-09 | TR oturumda `YENİ` doğru yazılır; ALL-CAPS kaldırılır |
 | P0-14 | OBSERVED — her sayfa | Agent | Global banner | *"Please select a time zone in your preferences…"* İngilizce, kalıcı, her sayfada | İlk izlenimde yabancı dil; kapatılamayan gürültü | P0 | Kullanıcı saat dilimi seçmemiş; uyarı çevrilmemiş/yerelleştirilmemiş | Onboarding'de saat dilimi sor; uyarıyı çevir ve kapatılabilir yap | P0-07 | TR oturumda Türkçe; seçim sonrası kaybolur |
-| **P0-15** | OBSERVED + `AdminD724Catalog.tt` (0 `<label>` / 9 `placeholder`), `AdminD724Commitment.tt` (1 `<label>` / 5 `placeholder`) | Admin | Her iki admin ekranı | Form alanlarının neredeyse tamamında `<label>` yok; bazılarında `placeholder` da yok (`0`, `14400`, `80` açıklamasız) | Ekran okuyucu kullanıcısı ekranı kullanamaz; gören kullanıcı da alanların ne olduğunu bilemez | **P0** | Hızlı prototip; erişilebilirlik hiç ele alınmamış | Her alana `<label for>`, birim ve yardım metni ekle | — | `axe-core` `label` kuralı geçer; her sayısal alanda birim yazar |
-| **P1-10** | OBSERVED — `AdminD724Commitment` | Admin | SLA politikası | SLA/OLA hedefleri ham JSON `<textarea>` içinde elle yazılıyor; doğrulama geri bildirimi yok | Ürünün en önemli ticari özelliği yalnızca JSON yazabilen kişilerce yapılandırılabiliyor; yazım hatası sessizce kabul edilebilir | P1 | Editör yazılmamış | Hedef/uyarı/sinyal alanları için yapılandırılmış form; JSON "gelişmiş" sekmesine | Commitment şeması | Yönetici JSON yazmadan SLA tanımlar; hatalı giriş alan bazlı hata verir |
+| **P0-15** | OBSERVED + `AdminCareOnCloudCatalog.tt` (0 `<label>` / 9 `placeholder`), `AdminCareOnCloudCommitment.tt` (1 `<label>` / 5 `placeholder`) | Admin | Her iki admin ekranı | Form alanlarının neredeyse tamamında `<label>` yok; bazılarında `placeholder` da yok (`0`, `14400`, `80` açıklamasız) | Ekran okuyucu kullanıcısı ekranı kullanamaz; gören kullanıcı da alanların ne olduğunu bilemez | **P0** | Hızlı prototip; erişilebilirlik hiç ele alınmamış | Her alana `<label for>`, birim ve yardım metni ekle | — | `axe-core` `label` kuralı geçer; her sayısal alanda birim yazar |
+| **P1-10** | OBSERVED — `AdminCareOnCloudCommitment` | Admin | SLA politikası | SLA/OLA hedefleri ham JSON `<textarea>` içinde elle yazılıyor; doğrulama geri bildirimi yok | Ürünün en önemli ticari özelliği yalnızca JSON yazabilen kişilerce yapılandırılabiliyor; yazım hatası sessizce kabul edilebilir | P1 | Editör yazılmamış | Hedef/uyarı/sinyal alanları için yapılandırılmış form; JSON "gelişmiş" sekmesine | Commitment şeması | Yönetici JSON yazmadan SLA tanımlar; hatalı giriş alan bazlı hata verir |
 | **P1-11** | OBSERVED — katalog | Hepsi | Demo verisi | Atomiklik testinden kalma kayıtlar ürün kataloğunda (`Atomic Audit Service Update`, `atomic-audit-offering`, `draft`) | Demo sırasında ürün "temizlenmemiş" görünüyor | P1 | Test verisi demo DB'sinden silinmemiş | Test artefaktlarını temizle; test verisi ayrı tenant'ta üretilsin | J6b | Demo kataloğunda test kaydı yok |
-| **P1-12** | `AdminD724Commitment.tt` PolicyRow | Admin | Durum seçici | Mevcut değer ilk seçenek olarak eklenip `active`/`inactive` de listeleniyor → `active, active, inactive` | Yinelenen seçenek; yanlış seçim riski | P1 | Şablon hatası | Mevcut değeri `selected` ile işaretle, tekrar ekleme | — | Açılır listede yinelenen seçenek yok |
-| P1-01 | `CustomerD724Catalog.tt` | Müşteri | Katalog | Etiketler `Service category` / `Servis uzantısı`; kanonik model `Service` / `Service Offering` | Kullanıcı ve ekip farklı kavram konuşuyor | P1 | Master Context §3.2'deki semantik çakışma UI'ya sızmış | Terminolojiyi kanonik modele çek | Katalog veri modeli kararı (K-2) | UI etiketleri = kanonik model; `Servis uzantısı` kalmaz |
-| P1-02 | `CustomerD724Catalog.tt` FormField | Müşteri | Dinamik form | `[% Data.label %]` çevrilmeden basılıyor | Katalog içeriği tek dilde kalıyor | P1 | Form şeması dil taşımıyor | Form şemasına `label_tr` / `label_en` ekle | Katalog şema sürümleme | Aynı katalog öğesi TR ve EN'de doğru etiketle açılır |
+| **P1-12** | `AdminCareOnCloudCommitment.tt` PolicyRow | Admin | Durum seçici | Mevcut değer ilk seçenek olarak eklenip `active`/`inactive` de listeleniyor → `active, active, inactive` | Yinelenen seçenek; yanlış seçim riski | P1 | Şablon hatası | Mevcut değeri `selected` ile işaretle, tekrar ekleme | — | Açılır listede yinelenen seçenek yok |
+| P1-01 | `CustomerCareOnCloudCatalog.tt` | Müşteri | Katalog | Etiketler `Service category` / `Servis uzantısı`; kanonik model `Service` / `Service Offering` | Kullanıcı ve ekip farklı kavram konuşuyor | P1 | Master Context §3.2'deki semantik çakışma UI'ya sızmış | Terminolojiyi kanonik modele çek | Katalog veri modeli kararı (K-2) | UI etiketleri = kanonik model; `Servis uzantısı` kalmaz |
+| P1-02 | `CustomerCareOnCloudCatalog.tt` FormField | Müşteri | Dinamik form | `[% Data.label %]` çevrilmeden basılıyor | Katalog içeriği tek dilde kalıyor | P1 | Form şeması dil taşımıyor | Form şemasına `label_tr` / `label_en` ekle | Katalog şema sürümleme | Aynı katalog öğesi TR ve EN'de doğru etiketle açılır |
 | P1-03 | 10 şablonun tamamı | Hepsi | Tüm listeler | Hiçbir şablonda boş durum yok | Kullanıcı boş beyaz alanı hata sanıyor | P1 | Blok render veri yoksa hiçbir şey basmıyor | Her liste için boş durum bileşeni + eylem önerisi | Tasarım sistemi | Veri yokken açıklayıcı metin + birincil eylem görünür |
-| P1-04 | `AgentD724Operations.tt:30-34` **+ OBSERVED** (`display:block`, `grid-template-columns:none`, `.D724KPI` 16 px) | Agent | Operations Center | `D724KPIGrid` / `D724KPI` sınıfları hiçbir yerde tanımlı değil | KPI'lar ızgara olmuyor, alt alta düşüyor; KPI rakamı gövde metniyle aynı boyutta | P1 | Pakette CSS yok, loader kaydı yok | D724 ortak CSS dosyası + `Loader::Agent::CommonCSS` kaydı | Tasarım sistemi | KPI'lar 4'lü ızgarada; 1280/768/375'te doğru |
-| P1-05 | `D724CMDB.xml`, `D724Problem.xml` | Agent | Navigasyon | AccessKey `p` iki modülde | Klavye kısayolu belirsiz | P1 | Koordinasyonsuz atama | Benzersiz AccessKey matrisi | — | Kaynakta AccessKey tekrarı yok (CI kontrolü) |
-| P1-06 | `AgentD724Request.tt` | Agent | Onay | `Onayla` / `Reddet` yan yana, geri dönüşsüz, onay yok | Yanlış tıklama ile hatalı karar | P1 | Prototip form | Ret için zorunlu gerekçe + onay adımı; butonları görsel olarak ayır | Tasarım sistemi | Ret gerekçesiz gönderilemez; onay adımı var |
-| P1-07 | `AgentD724Request.tt` | Agent | İş listesi | Sıralama, filtre, arama, sayfalama yok | SLA riskli iş görünmüyor | P1 | Liste ekranı yazılmamış | Filtre + kaydedilmiş görünüm + SLA'ya göre sıralama | Request query API | Agent "SLA riski" görünümünü tek tıkla açar |
-| P1-08 | `AgentD724Operations.tt` | Hizmet sahibi | Rapor | `Technical key` alanı son kullanıcıya açık | Teknik sızıntı, hata riski | P1 | Admin alanı son kullanıcı formunda | Otomatik türet veya gelişmiş bölüme al | — | Rapor kaydetmede teknik anahtar sorulmaz |
-| P1-09 | `AgentD724Request.tt` | Agent | Görev satırı | ` — assigned: ` çevrilmemiş sabit metin | Karışık dil | P1 | `Translate()` unutulmuş | Çevrilebilir yap | P0-07 | Kaynakta çevrilmemiş kullanıcı metni yok (CI taraması) |
-| P2-01 | Nav XML'leri | Hepsi | Navigasyon | 6 D724 modülü düz, gruplanmamış | Öğrenilebilirlik düşük | P2 | Gruplama tasarlanmamış | F.1'deki rol bazlı ağaç | IA kararı | Menü en fazla 2 düzey; her öğe bir role ait |
+| P1-04 | `AgentCareOnCloudOperations.tt:30-34` **+ OBSERVED** (`display:block`, `grid-template-columns:none`, `.CareOnCloudKPI` 16 px) | Agent | Operations Center | `CareOnCloudKPIGrid` / `CareOnCloudKPI` sınıfları hiçbir yerde tanımlı değil | KPI'lar ızgara olmuyor, alt alta düşüyor; KPI rakamı gövde metniyle aynı boyutta | P1 | Pakette CSS yok, loader kaydı yok | CareOnCloud ortak CSS dosyası + `Loader::Agent::CommonCSS` kaydı | Tasarım sistemi | KPI'lar 4'lü ızgarada; 1280/768/375'te doğru |
+| P1-05 | `CareOnCloudCMDB.xml`, `CareOnCloudProblem.xml` | Agent | Navigasyon | AccessKey `p` iki modülde | Klavye kısayolu belirsiz | P1 | Koordinasyonsuz atama | Benzersiz AccessKey matrisi | — | Kaynakta AccessKey tekrarı yok (CI kontrolü) |
+| P1-06 | `AgentCareOnCloudRequest.tt` | Agent | Onay | `Onayla` / `Reddet` yan yana, geri dönüşsüz, onay yok | Yanlış tıklama ile hatalı karar | P1 | Prototip form | Ret için zorunlu gerekçe + onay adımı; butonları görsel olarak ayır | Tasarım sistemi | Ret gerekçesiz gönderilemez; onay adımı var |
+| P1-07 | `AgentCareOnCloudRequest.tt` | Agent | İş listesi | Sıralama, filtre, arama, sayfalama yok | SLA riskli iş görünmüyor | P1 | Liste ekranı yazılmamış | Filtre + kaydedilmiş görünüm + SLA'ya göre sıralama | Request query API | Agent "SLA riski" görünümünü tek tıkla açar |
+| P1-08 | `AgentCareOnCloudOperations.tt` | Hizmet sahibi | Rapor | `Technical key` alanı son kullanıcıya açık | Teknik sızıntı, hata riski | P1 | Admin alanı son kullanıcı formunda | Otomatik türet veya gelişmiş bölüme al | — | Rapor kaydetmede teknik anahtar sorulmaz |
+| P1-09 | `AgentCareOnCloudRequest.tt` | Agent | Görev satırı | ` — assigned: ` çevrilmemiş sabit metin | Karışık dil | P1 | `Translate()` unutulmuş | Çevrilebilir yap | P0-07 | Kaynakta çevrilmemiş kullanıcı metni yok (CI taraması) |
+| P2-01 | Nav XML'leri | Hepsi | Navigasyon | 6 CareOnCloud modülü düz, gruplanmamış | Öğrenilebilirlik düşük | P2 | Gruplama tasarlanmamış | F.1'deki rol bazlı ağaç | IA kararı | Menü en fazla 2 düzey; her öğe bir role ait |
 | P2-02 | `tr.pm:156,2967,3069` | Hepsi | Menü | `PANO`, `TAKVİM`, `BİLETLER` ALL CAPS | Bağırıyor, kurumsal algıyı düşürüyor | P2 | Upstream TR sözlüğü | `Pano`→`Ana sayfa`, `TAKVİM`→`Takvim`, `BİLETLER`→`Kayıtlar` | Terim sözlüğü | Menüde ALL-CAPS Türkçe yok |
-| P2-03 | `D724::CMDB::ListLimit` 1000 | Agent | Listeler | Sayfalama yok, 1000 satır tek sayfa | Yavaş sayfa, mobilde kullanılamaz | P2 | Sayfalama yazılmamış | Sayfalama + sunucu tarafı filtre | — | Sayfa başına ≤50 satır; mobilde yatay taşma yok |
+| P2-03 | `CareOnCloud::CMDB::ListLimit` 1000 | Agent | Listeler | Sayfalama yok, 1000 satır tek sayfa | Yavaş sayfa, mobilde kullanılamaz | P2 | Sayfalama yazılmamış | Sayfalama + sunucu tarafı filtre | — | Sayfa başına ≤50 satır; mobilde yatay taşma yok |
 | P2-04 | OBSERVED | Hepsi | Login | Cloudflare Insights beacon, `js/ads.js` | Üçüncü taraf istek, rıza yok; `ads.js` CareOnCloud ESM adblock tespiti | P2 | Upstream + altyapı varsayılanı | `ads.js` kaldır; beacon'ı KVKK açısından değerlendir | Hukuk | Login sayfasında rızasız üçüncü taraf istek yok |
 | P2-05 | Nav XML'leri | Agent | Adlandırma | `Agent Assistant`, `Operations Center`, `Service Portfolio` TR adı yok | Karışık dil | P2 | Çeviri yok | `Destek Asistanı`, `Operasyon Merkezi`, `Hizmet Portföyü` | F.4 | TR oturumda menüde İngilizce ad yok |
-| P2-06 | `D724Request` ↔ ticket | Agent | Kayıt modeli | Request ve ticket kodda bağlantısız | Agent iki yerde çalışıyor | P2 | Tasarım kararı verilmemiş | K-1 kararı sonrası birleştirme veya net ayrım | K-1 | Agent tek çalışma alanından iş yürütür |
+| P2-06 | `CareOnCloudRequest` ↔ ticket | Agent | Kayıt modeli | Request ve ticket kodda bağlantısız | Agent iki yerde çalışıyor | P2 | Tasarım kararı verilmemiş | K-1 kararı sonrası birleştirme veya net ayrım | K-1 | Agent tek çalışma alanından iş yürütür |
 | P3-01 | — | Agent | Klavye | Global komut paleti yok | Uzman verimliliği | P3 | — | `Ctrl+K` hızlı eylem | Yeni kabuk | Agent klavyeden kayıt açar/arar |
 | P3-02 | — | Hizmet sahibi | Rapor | Grafik yok | Trend okunamıyor | P3 | Grafik katmanı yok | Sıfır-veri davranışı tanımlı grafik bileşeni | Tasarım sistemi | Veri yokken grafik "veri yok" durumu gösterir |
 
@@ -409,7 +409,7 @@ Müşteri portalı menü
 
 1. **Rol ana sayfayı belirler.** Aynı `/careoncloud/` altında her rol farklı bir varsayılan ekrana düşer.
 2. **En fazla iki düzey.** Kök menü öğesi sayısı role göre 4–6.
-3. **Teknik kod adı menüde görünmez.** `D724` yalnızca namespace'te kalır.
+3. **Teknik kod adı menüde görünmez.** `CareOnCloud` yalnızca namespace'te kalır.
 4. **Tenant bağlamı menüde değil, global başlıkta durur** ve her sayfada görünür.
 5. **Her kök öğe bir soruya cevap verir:** "Ne yapacağım?" / "Ne durumda?" / "Nasıl ayarlanır?"
 
@@ -492,7 +492,7 @@ Müşteri portalı menü
 | Service | **Hizmet** | Service | UI'da "Hizmet kategorisi" deniyor ❌ |
 | Service Offering | **Hizmet Sunumu** | Service Offering | UI'da "Servis uzantısı" deniyor ❌ |
 | Catalog Item | Katalog Öğesi | Catalog Item | — |
-| Request | **Talep** | Request | Menüde "D724 Requests" ❌ |
+| Request | **Talep** | Request | Menüde "CareOnCloud Requests" ❌ |
 | Incident | Olay | Incident | — |
 | Ticket (miras) | **Kayıt** | Record | `BİLETLER` ❌ |
 | Task | Görev | Task | — |
@@ -733,7 +733,7 @@ Düşük/orta ayrıntı. Örnek içerik gerçekçi Türkçedir. Her ekranda biri
 └──────────────────────────────────┴─────────────────────────────────┘
 ```
 
-**Bugüne göre değişen:** `AgentD724Request.tt` şu an tüm talepleri tek sayfaya, iletişim alanı olmadan basıyor. Burada tek kayıt + iletişim + görev + ilişki bir arada.
+**Bugüne göre değişen:** `AgentCareOnCloudRequest.tt` şu an tüm talepleri tek sayfaya, iletişim alanı olmadan basıyor. Burada tek kayıt + iletişim + görev + ilişki bir arada.
 
 - **Kritik durum:** SLA kalan süre başlıkta sabit; ihlalde kırmızı rozet + metin
 - **Onay eylemi (P1-06):** `Reddet` ikincil stil, **zorunlu gerekçe**, onay adımı
@@ -881,11 +881,11 @@ Düşük/orta ayrıntı. Örnek içerik gerçekçi Türkçedir. Her ekranda biri
 
 ## H.1 Köprüleme stratejisi
 
-Mevcut durum: D724 paketlerinde CSS yok; her şey CareOnCloud ESM Agent/Customer skin'ine biniyor. Tanımsız `D724KPIGrid` sınıfı bunun kanıtı (P1-04).
+Mevcut durum: CareOnCloud paketlerinde CSS yok; her şey CareOnCloud ESM Agent/Customer skin'ine biniyor. Tanımsız `CareOnCloudKPIGrid` sınıfı bunun kanıtı (P1-04).
 
 Üç aşamalı köprü:
 
-1. **Katman ekle.** `packages/D724Foundation/var/httpd/htdocs/careoncloud/css/careoncloud.css` oluştur, `Loader::Agent::CommonCSS###900-CareOnCloud` ve `Loader::Customer::CommonCSS###900-CareOnCloud` ile kaydet. CareOnCloud ESM skin'inden **sonra** yüklenir, üzerine yazar. CareOnCloud ESM CSS'i değiştirilmez.
+1. **Katman ekle.** `packages/CareOnCloudFoundation/var/httpd/htdocs/careoncloud/css/careoncloud.css` oluştur, `Loader::Agent::CommonCSS###900-CareOnCloud` ve `Loader::Customer::CommonCSS###900-CareOnCloud` ile kaydet. CareOnCloud ESM skin'inden **sonra** yüklenir, üzerine yazar. CareOnCloud ESM CSS'i değiştirilmez.
 2. **Token'la izole et.** Tüm değerler CSS custom property. `Layout.pm` zaten `CustomerColorDefinitions`'ı `--col*` değişkenlerine basıyor — aynı mekanizmaya bağlan.
 3. **Ayrıştır.** Yeni kabuk geldiğinde aynı token dosyası taşınır; bileşenler yeniden yazılır, token'lar sabit kalır. Token katmanı CareOnCloud ESM'dan bağımsızdır.
 
@@ -1047,7 +1047,7 @@ Aday portta `careoncloud-v0.1.0`, `/careoncloud/` kabulü, rollback provası, an
 | Kullanıcı sonucu | Müşteri hizmeti arar, talep açar **ve talebini takip eder** |
 | Ekranlar | G.1, G.2, G.3, G.4 |
 | Tasarım işi | Katalog arama düzeni, form adımları, timeline |
-| Frontend işi | Yeni `CustomerD724Requests` liste + detay modülü; katalog arama; token'lı CSS |
+| Frontend işi | Yeni `CustomerCareOnCloudRequests` liste + detay modülü; katalog arama; token'lı CSS |
 | API/domain | **Request read/list sözleşmesi** — CareOnCloud domain üzerinden, CareOnCloud ESM tablosuna doğrudan erişim yok |
 | Veri/permission | Müşteri yalnız kendi + yetkili organizasyon taleplerini görür — negatif test şart |
 | Test | Uçtan uca TR ve EN yolculuk; tenant sızıntı negatif testi; `axe-core` |
@@ -1067,7 +1067,7 @@ Aday portta `careoncloud-v0.1.0`, `/careoncloud/` kabulü, rollback provası, an
 | Veri/permission | TenantGuard her sorguda; kaydedilmiş görünüm tenant'a bağlı |
 | Test | SLA sıralama doğruluğu; toplu işlem yetki testi; klavye gezinme |
 | Telemetri | İlk yanıt süresi, SLA ihlal oranı, ekranlar arası geçiş sayısı |
-| Geri dönüş | Eski `AgentD724Request` korunur, menüden gizlenir |
+| Geri dönüş | Eski `AgentCareOnCloudRequest` korunur, menüden gizlenir |
 | Bağımlılık | K-1 (request/ticket kararı) — **bloklayıcı** |
 
 ### `P2 / Admin ve MSP deneyimi` — 12–24 hafta · Efor **L**
@@ -1076,7 +1076,7 @@ Ekranlar: G.10, G.11, G.12 + kimlik/entegrasyon yönetimi. Bugün **sıfırdan**
 
 ### `P2 / Tasarım sistemi yaygınlaştırma` — 16–28 hafta · Efor **M**
 
-Token + bileşenlerin tüm D724 ekranlarına uygulanması; CareOnCloud ESM skin bağımlılığının azaltılması; screenshot regression.
+Token + bileşenlerin tüm CareOnCloud ekranlarına uygulanması; CareOnCloud ESM skin bağımlılığının azaltılması; screenshot regression.
 
 ### `P3 / CareOnCloud ESM UI bağımsızlığı` — 24+ hafta · Efor **XL**
 
@@ -1146,9 +1146,9 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 
 ### J6. Menü adlarını Türkçeleştir ve AccessKey çakışmasını gider
 
-- **Kapsam:** `Agent Assistant`→`Destek Asistanı`, `Operations Center`→`Operasyon Merkezi`, `Service Portfolio`→`Hizmet Portföyü`, `Change Enablement`→`Değişiklik Yönetimi`, `Problem Management`→`Problem Yönetimi`, `D724 Requests`→**EN'de de** `Requests` / TR `Talepler`. `D724Problem` AccessKey `p`→`b`.
+- **Kapsam:** `Agent Assistant`→`Destek Asistanı`, `Operations Center`→`Operasyon Merkezi`, `Service Portfolio`→`Hizmet Portföyü`, `Change Enablement`→`Değişiklik Yönetimi`, `Problem Management`→`Problem Yönetimi`, `CareOnCloud Requests`→**EN'de de** `Requests` / TR `Talepler`. `CareOnCloudProblem` AccessKey `p`→`b`.
 - **Teknik kabulü:** Kaynakta AccessKey tekrarı yok; CI kontrolü eklenir.
-- **TR/EN kabulü:** TR menüde İngilizce ad yok; **hiçbir menüde `D724` geçmez**.
+- **TR/EN kabulü:** TR menüde İngilizce ad yok; **hiçbir menüde `CareOnCloud` geçmez**.
 - **Kanıt:** İki dilde menü ekran görüntüsü; AccessKey benzersizlik testi.
 - **Bağımlılık:** F.4 sözlüğü onayı. **Geri dönüş:** XML + `tr_*.pm` revert.
 
@@ -1165,7 +1165,7 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 
 ### J6c. Talep sahibini isimle göster *(P0-12)*
 
-- **Kapsam:** `AgentD724Request.tt` — `Requester: customer:<64 hex>` yerine ad, soyad ve organizasyon.
+- **Kapsam:** `AgentCareOnCloudRequest.tt` — `Requester: customer:<64 hex>` yerine ad, soyad ve organizasyon.
 - **Teknik kabulü:** Hash kullanıcıya görünmez; çözümleme yetki sınırına saygı duyar.
 - **Kanıt:** Ekran görüntüsü; yetkisiz tenant'ta kişi bilgisi sızmadığı testi.
 - **Bağımlılık:** Customer directory lookup. **Geri dönüş:** Şablon revert.
@@ -1174,7 +1174,7 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 
 ### J7. Durum değerlerini çevrilebilir yap
 
-- **Kapsam:** F.4 durum tablosundaki 8 değer; `AgentD724Request.tt`, `CustomerD724Request.tt` içinde `Translate(Data.Status)`; `AgentD724Request.tt` içindeki ` — assigned: ` metni.
+- **Kapsam:** F.4 durum tablosundaki 8 değer; `AgentCareOnCloudRequest.tt`, `CustomerCareOnCloudRequest.tt` içinde `Translate(Data.Status)`; `AgentCareOnCloudRequest.tt` içindeki ` — assigned: ` metni.
 - **Teknik kabulü:** Şablonlarda ham makine değeri basılmaz.
 - **TR/EN kabulü:** Aynı kayıt TR'de "Devam ediyor", EN'de "In progress".
 - **Kanıt:** İki dilde ekran görüntüsü; çevrilmemiş string taraması (J2 testine eklenir).
@@ -1183,7 +1183,7 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 ### J8. Tenant seçimini adla ve bilinçli yap
 
 - **Hikâye:** MSP yöneticisi olarak müşteri bağlamını **adıyla** ve kazara değil bilerek değiştirmek istiyorum.
-- **Kapsam:** `AgentD724Request.tt:6-7` — `onchange` kaldırılır, açık `Uygula` butonu; seçenekler tenant **adıyla**; global tenant rozeti.
+- **Kapsam:** `AgentCareOnCloudRequest.tt:6-7` — `onchange` kaldırılır, açık `Uygula` butonu; seçenekler tenant **adıyla**; global tenant rozeti.
 - **Kapsam dışı:** G.10 MSP panosu.
 - **Tasarım kabulü:** Aktif müşteri her sayfada görünür; değişim onay ister.
 - **Teknik kabulü:** Tenant listesi ad alanı `TenantDirectory`'den; yetkisiz tenant listelenmez.
@@ -1194,7 +1194,7 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 ### J9. "Taleplerim" listesi
 
 - **Hikâye:** Müşteri olarak açtığım talepleri tek listede görmek istiyorum ki durumunu sormak için aramayayım.
-- **Kapsam:** Yeni `CustomerD724Requests` modülü + şablonu; müşteri portalı menüsüne `Taleplerim`; durum, sorumlu, hedef süre, açılış tarihi; sayfalama.
+- **Kapsam:** Yeni `CustomerCareOnCloudRequests` modülü + şablonu; müşteri portalı menüsüne `Taleplerim`; durum, sorumlu, hedef süre, açılış tarihi; sayfalama.
 - **Kapsam dışı:** Timeline detayı (J10).
 - **Tasarım kabulü:** G.1'deki liste düzeni; SLA durumu ikon + metin.
 - **Teknik kabulü:** Yalnız kendi/yetkili organizasyon talepleri; CareOnCloud domain sözleşmesi üzerinden — **CareOnCloud ESM tablosuna doğrudan sorgu yok**.
@@ -1215,16 +1215,16 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 ### J10b. Admin formlarını etiketle *(P0-15)*
 
 - **Hikâye:** Platform yöneticisi olarak her alanın ne olduğunu ve biriminin ne olduğunu ekrandan görmek istiyorum.
-- **Kapsam:** `AdminD724Catalog.tt` (9 alan) ve `AdminD724Commitment.tt` (11 alan) — her alana `<label for>`, sayısal alanlara birim (`saniye`, `%`), `CalendarID` ve `WarningPercent` için yardım metni. `Status` seçicisindeki yinelenen seçenek düzeltilir (P1-12). Tenant seçicisinden `onchange` kaldırılır (P0-06 ikinci konum).
+- **Kapsam:** `AdminCareOnCloudCatalog.tt` (9 alan) ve `AdminCareOnCloudCommitment.tt` (11 alan) — her alana `<label for>`, sayısal alanlara birim (`saniye`, `%`), `CalendarID` ve `WarningPercent` için yardım metni. `Status` seçicisindeki yinelenen seçenek düzeltilir (P1-12). Tenant seçicisinden `onchange` kaldırılır (P0-06 ikinci konum).
 - **Kapsam dışı:** SLA JSON editörü (J-sonraki, P1-10).
 - **WCAG kabulü:** `axe-core` `label`, `select-name`, `form-field-multiple-labels` kuralları geçer.
 - **TR/EN kabulü:** Etiketler, birimler ve `active`/`inactive` durumları iki dilde.
 - **Kanıt:** `axe-core` raporu; iki ekranın TR ve EN görüntüsü.
 - **Bağımlılık:** J8 (tenant deseni). **Geri dönüş:** Şablon revert.
 
-### J11. D724 CSS temeli ve KPI ızgarası
+### J11. CareOnCloud CSS temeli ve KPI ızgarası
 
-- **Kapsam:** `careoncloud.css` (H.2 token'ları), `Loader::Agent::CommonCSS###900-CareOnCloud` + Customer eşdeğeri; `D724KPIGrid` / `D724KPI` tanımları.
+- **Kapsam:** `careoncloud.css` (H.2 token'ları), `Loader::Agent::CommonCSS###900-CareOnCloud` + Customer eşdeğeri; `CareOnCloudKPIGrid` / `CareOnCloudKPI` tanımları.
 - **Kapsam dışı:** Tüm ekranların yeniden stillenmesi.
 - **Tasarım kabulü:** KPI'lar 1280'de 4'lü, 768'de 2'li, 375'te tek kolon.
 - **Teknik kabulü:** CareOnCloud ESM skin dosyaları **değişmez**; katman üstte.
@@ -1234,7 +1234,7 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 
 ### J12. Boş durum metinleri
 
-- **Kapsam:** 10 D724 şablonunun tamamına boş durum bloğu + önerilen eylem.
+- **Kapsam:** 10 CareOnCloud şablonunun tamamına boş durum bloğu + önerilen eylem.
 - **Teknik kabulü:** Veri yokken hiçbir ekranda boş beyaz alan kalmaz.
 - **TR/EN kabulü:** Metinler iki dilde.
 - **Kanıt:** Temiz tenant'ta 10 ekranın screenshot'ı.
@@ -1246,7 +1246,7 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 
 | ID | Karar | Seçenekler | Önerim | Gerekçe | Maliyet | Geri dönüş etkisi |
 |---|---|---|---|---|---|---|
-| **K-1** | D724 Request ile CareOnCloud ESM Ticket ilişkisi | (a) Ayrı kalsın (bugünkü) · (b) Request ticket üretsin, ticket iş nesnesi olsun · (c) Request tek iş nesnesi, ticket geri plana çekilsin | **(b) kısa vade, (c) hedef** | Kodda hiç bağ yok; agent iki yerde çalışıyor. (b) mevcut olgun ticket yeteneklerini korur, (c) Master Context §4.2 ayrışma hedefiyle uyumlu ama ticket çekirdeğine dokunmayı gerektirir — o en sona bırakılmalı. | (b) M, (c) XL | (b) adapter katmanında geri alınır; (c) veri modeli değişimi, zor |
+| **K-1** | CareOnCloud Request ile CareOnCloud ESM Ticket ilişkisi | (a) Ayrı kalsın (bugünkü) · (b) Request ticket üretsin, ticket iş nesnesi olsun · (c) Request tek iş nesnesi, ticket geri plana çekilsin | **(b) kısa vade, (c) hedef** | Kodda hiç bağ yok; agent iki yerde çalışıyor. (b) mevcut olgun ticket yeteneklerini korur, (c) Master Context §4.2 ayrışma hedefiyle uyumlu ama ticket çekirdeğine dokunmayı gerektirir — o en sona bırakılmalı. | (b) M, (c) XL | (b) adapter katmanında geri alınır; (c) veri modeli değişimi, zor |
 | **K-2** | Katalog terminolojisi | (a) Bugünkü ("Hizmet kategorisi" = Service, "Servis uzantısı" = Offering) · (b) Master Context kanonik modeli · (c) Basitleştirilmiş 3 düzey | **(b)** | (a) ekiple kullanıcıyı farklı kavramlara mahkûm ediyor ve Master Context §3.2 bunu pilot öncesi çözülmesi gereken risk olarak işaretliyor. (c) 6 alan / 51 sunum verisini kaybettirir. | M — UI metni + migration | Şema sürümleme varsa geri alınabilir; yoksa zor. **Sürümleme K-2'den önce gelmeli.** |
 | **K-3** | "Agent Assistant" ürün adı | (a) `Agent Assistant` / `Destek Asistanı` · (b) `Assist` / `Asistan` · (c) Kaldır, sonuçları arama içine göm | **(b)** | "Agent Assistant" İngilizcede belirsiz (agent'a mı yardım ediyor, agent mı?). Modül Master Context §5'te "AI ürünü değildir, prototip" olarak işaretli — iddialı ad riskli. | S | Yalnız metin |
 | **K-4** | Son kullanıcıda "Bilet" terimi | (a) Koru · (b) `Kayıt` · (c) Bağlama göre `Talep`/`Olay`/`Görev` | **(c), genel ad (b)** | "Bilet" CareOnCloud ESM mirası ve ESM konumlandırmasına aykırı; ürün İK ve tesis taleplerini de yönetiyor. | S — sözlük | Yalnız metin |
@@ -1254,7 +1254,7 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 | **K-6** | Yeni frontend teknolojisi | (a) TT şablonlarını modernize et · (b) Yeni SPA kabuğu, kademeli · (c) Ekran ekran strangler | **(a) + (c)** | 10 şablon küçük; token katmanı ile (a) haftalar içinde görünür değer verir. Yeni portal ekranları (c) ile ayrı gelir. (b) tek başına 6+ ay boyunca hiçbir şey teslim etmez ve Master Context "her şeyi yeniden yazma" kuralına aykırı. | (a) M, (c) L | (a) tamamen geri alınabilir (Loader `Valid=0`); (c) modül bazlı |
 | **K-7** | Cloudflare Insights beacon | (a) Koru · (b) Kaldır · (c) Rıza sonrası yükle | **(b) pilot için** | Login sayfasında rızasız üçüncü taraf istek; regüle müşteri ve KVKK sorusu. Ölçüm ihtiyacı self-hosted çözülebilir. | S | Altyapı ayarı |
 | **K-9** | Canlıdaki gerçek şirket adlı demo tenant'ları | (a) Kalsın · (b) Sil, güncel sentetik seed'i çalıştır · (c) Yerinde anonimleştir | **(b)** | Kod tarafı zaten çözülmüş: güncel seed script'leri sentetik (`Marmara Bank Demo`, `Anadolu Moda Demo`, `Perakende360 Demo`). Yapılacak iş yalnızca eski canlı veriyi temizleyip güncel seed'i çalıştırmak. (c) bağlı talep/audit geçmişini tutarsız bırakır. | S | Demo DB snapshot ile geri alınır. **Karar sahibine tek soru: bu tenant'lara bağlı gösterilmek istenen bir demo senaryosu var mı?** Yoksa karar teknik olarak nettir. |
-| **K-8** | `D724` namespace'inin ömrü | (a) Kalsın · (b) Kullanıcıya görünen her yerden çıksın, kodda kalsın · (c) Tamamen yeniden adlandır | **(b)** | Master Context §1.1 zaten bunu söylüyor. (c) 18 paket, 17 XML, DB şeması — pilot öncesi gereksiz risk. | S (b) / XL (c) | (b) yalnız metin |
+| **K-8** | `CareOnCloud` namespace'inin ömrü | (a) Kalsın · (b) Kullanıcıya görünen her yerden çıksın, kodda kalsın · (c) Tamamen yeniden adlandır | **(b)** | Master Context §1.1 zaten bunu söylüyor. (c) 18 paket, 17 XML, DB şeması — pilot öncesi gereksiz risk. | S (b) / XL (c) | (b) yalnız metin |
 
 ---
 
@@ -1279,23 +1279,23 @@ Bloklayıcılar: **K-1** agent kabuğunu, **K-2** müşteri portalını bloklar.
 
 Bu raporun ilk hâli yalnızca kaynak kod ve kimlik doğrulaması gerektirmeyen yüzeylerle yazıldı. Kullanıcı `demo.agent` oturumunu açtıktan sonra üç agent ekranı doğrudan gözlendi ve rapor güncellendi.
 
-**Kaynaktan öngörülüp çalışma zamanında doğrulanan bulgular:** `D724KPIGrid` ızgara olmuyor · `onchange="this.form.submit()"` tenant değiştiriyor · ham makine durum değerleri ekranda · boş `lang` · `h1` içinde `D724` · ISO tarih biçimi · boş durum metinlerinin yokluğu.
+**Kaynaktan öngörülüp çalışma zamanında doğrulanan bulgular:** `CareOnCloudKPIGrid` ızgara olmuyor · `onchange="this.form.submit()"` tenant değiştiriyor · ham makine durum değerleri ekranda · boş `lang` · `h1` içinde `CareOnCloud` · ISO tarih biçimi · boş durum metinlerinin yokluğu.
 
 **Yalnızca gözlemle ortaya çıkan, kaynaktan görülemeyen bulgular:** `P0-11` gerçek şirket adları · `P0-12` talep sahibinin hash olarak görünmesi · `P0-13` `YENI`/`YENİ` büyük harf bozulması · `P0-14` kalıcı İngilizce saat dilimi banner'ı · `P1-11` katalogda kalmış test artefaktları · 961 px'te menünün hamburger'a düşmesi · tenant slug'larında Türkçe karakter bozulması (`demo-i-s-bankasi-almanya`).
 
-**Üçüncü tur — admin ekranları.** `demo.agent` hesabının admin yetkisi taşıdığı anlaşılınca `AdminD724Catalog` ve `AdminD724Commitment` de gözlendi. Buradan `P0-15` (admin formlarında etiket yokluğu), `P1-10` (SLA politikasının ham JSON olması), `P1-12` (yinelenen durum seçeneği) çıktı ve **skor kartındaki "Form kullanılabilirliği" puanı 2'den 1'e düşürüldü** — ilk değerlendirme yalnızca müşteri/agent şablonlarına bakmıştı ve admin tarafını olduğundan iyi göstermişti.
+**Üçüncü tur — admin ekranları.** `demo.agent` hesabının admin yetkisi taşıdığı anlaşılınca `AdminCareOnCloudCatalog` ve `AdminCareOnCloudCommitment` de gözlendi. Buradan `P0-15` (admin formlarında etiket yokluğu), `P1-10` (SLA politikasının ham JSON olması), `P1-12` (yinelenen durum seçeneği) çıktı ve **skor kartındaki "Form kullanılabilirliği" puanı 2'den 1'e düşürüldü** — ilk değerlendirme yalnızca müşteri/agent şablonlarına bakmıştı ve admin tarafını olduğundan iyi göstermişti.
 
 **Müşteri portalı** müşteri hesabı bulunmadığı için çalışır hâlde görülemedi; B.7'de yalnızca kaynak koddan, `VERIFIED_IN_SOURCE` etiketiyle değerlendirilmiştir.
 
 **Dördüncü tur — tercihler ekranı ve bir düzeltme.** `AgentPreferences` gözlendi; `P0-16` (`translate.otobo.org` bağlantısı), `P0-17` (`Türkçe … (in process)` ve 50 dilin listelenmesi), `P0-18` (varsayılan saat diliminin UTC olması — `P0-14`'ün kök nedeni) ve `P2-07` (Gravatar) çıktı.
 
-**Düzeltme — `P0-11`:** Bu raporun önceki hâli gerçek şirket adlarının kök nedenini *"demo verisi gerçek isimlerden türetilmiş"* diye yazıyordu. Bu yanlıştı. Kaynak tarandığında bu adların **güncel kod tabanında hiç bulunmadığı** görüldü; `Seed-CareOnCloudShowcase.pl` (`Marmara Bank Demo`, `Anadolu Moda Demo`, `Perakende360 Demo`), `Seed-D724Demo.pl` (`D724 Demo Company`) ve `Seed-CareOnCloudManagedServicesCatalog.pl` tamamen sentetik ad kullanıyor; showcase script'inin başlığında *"No named organization is a customer reference"* notu var. Yani ekip bunu kodda zaten çözmüş; canlıdaki kayıtlar **eski DB verisidir**. Bulgunun önemi `P0` olarak kalır (demo öncesi mutlaka temizlenmeli) ama çözümü kod değişikliği değil, **veri temizliği + CI'da isim taraması**tır. `K-9` kararı buna göre daraltılmalıdır.
+**Düzeltme — `P0-11`:** Bu raporun önceki hâli gerçek şirket adlarının kök nedenini *"demo verisi gerçek isimlerden türetilmiş"* diye yazıyordu. Bu yanlıştı. Kaynak tarandığında bu adların **güncel kod tabanında hiç bulunmadığı** görüldü; `Seed-CareOnCloudShowcase.pl` (`Marmara Bank Demo`, `Anadolu Moda Demo`, `Perakende360 Demo`), `Seed-CareOnCloudDemo.pl` (`CareOnCloud Demo Company`) ve `Seed-CareOnCloudManagedServicesCatalog.pl` tamamen sentetik ad kullanıyor; showcase script'inin başlığında *"No named organization is a customer reference"* notu var. Yani ekip bunu kodda zaten çözmüş; canlıdaki kayıtlar **eski DB verisidir**. Bulgunun önemi `P0` olarak kalır (demo öncesi mutlaka temizlenmeli) ama çözümü kod değişikliği değil, **veri temizliği + CI'da isim taraması**tır. `K-9` kararı buna göre daraltılmalıdır.
 
 **Mevcut demo müşteri hesapları — canlıda doğrulandı.** `AdminCustomerUser` üzerinden dört hesabın da mevcut ve `valid` olduğu görüldü:
 
 | Login | Ad | Tenant | Oluşturma |
 |---|---|---|---|
-| `demo.customer` | D724 Demo Customer | `d724-demo` | 25.07.2026 09:07 |
+| `demo.customer` | CareOnCloud Demo Customer | `careoncloud-demo` | 25.07.2026 09:07 |
 | `bank.demo` | Deniz Bankacılık Demo | `showcase-bank` | 25.07.2026 07:43 |
 | `moda.demo` | Ece Moda Demo | `showcase-fashion` | 25.07.2026 07:36 |
 | `retail.demo` | Mert Perakende Demo | `showcase-retail` | 25.07.2026 07:36 |

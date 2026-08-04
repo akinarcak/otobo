@@ -6,7 +6,7 @@ kadar aciktir.
 
 ## Guvenlik sozlesmesi
 
-`D724TenantGuard 0.4.0` policy contract `1.3.0`, bir arka plan isi tenant verisine dokunmadan once
+`CareOnCloudTenantGuard 0.4.0` policy contract `1.3.0`, bir arka plan isi tenant verisine dokunmadan once
 `AutomationAuthorize(TenantID, JobName)` karari ister. Karar:
 
 - dar tenant/job kimlik formatini dogrular;
@@ -20,12 +20,12 @@ zamaninda uretilir. `platform_admin` bypass'i kullanmaz.
 
 ## Baglanan isler
 
-- `D724Commitment::Sweep`: her runnable commitment satiri icin karar alir;
+- `CareOnCloudCommitment::Sweep`: her runnable commitment satiri icin karar alir;
   reddedilen satir state/version veya event uretemez. Basarili olay aktoru
   `automation:commitment-sweep` olur.
-- `D724EscalationDispatcher::Dispatch`: her pending/retry outbox satirini lease
+- `CareOnCloudEscalationDispatcher::Dispatch`: her pending/retry outbox satirini lease
   etmeden once karar alir; reddedilen teslimat pending ve lease'siz kalir.
-- `D724Webhook::Scan`: her aktif subscription icin audit okumadan ve cursor
+- `CareOnCloudWebhook::Scan`: her aktif subscription icin audit okumadan ve cursor
   ilerletmeden once karar alir.
 
 Her is `Denied` ve `Errors` sayaclarini doner; herhangi bir policy reddi daemon

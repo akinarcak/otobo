@@ -30,7 +30,7 @@ release lines and end-of-support dates.
 
 In scope:
 
-- CareOnCloud ESM source, first-party `D724*` packages, release artifacts and
+- CareOnCloud ESM source, first-party `CareOnCloud*` packages, release artifacts and
   official candidate deployments operated by the project.
 - Tenant isolation, authentication/authorization, secrets handling, audit,
   API, web, container and deployment configuration defects.

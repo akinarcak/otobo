@@ -16,7 +16,7 @@ CareOnCloud adı, logosu ve ticari hizmetleri GPL kapsamındaki yazılım lisans
 
 ## Geliştirme
 
-Ürüne özgü yetenekler `packages/D724*` altında sürümlenen CareOnCloud paketleri olarak geliştirilir. Yerel ve test ortamı profili `development/d724` altındadır. Mimari kararlar, güvenlik sınırları ve yayın durumu [docs/esm](docs/esm) dizininde tutulur.
+Ürüne özgü yetenekler `packages/CareOnCloud*` altında sürümlenen CareOnCloud paketleri olarak geliştirilir. Yerel ve test ortamı profili `development/careoncloud` altındadır. Mimari kararlar, güvenlik sınırları ve yayın durumu [docs/esm](docs/esm) dizininde tutulur.
 
 Aktif geliştirme dalı `codex/esm-foundation` dalıdır. Katkılar GPL-3.0-only ile uyumlu olmalı; tenant izolasyonu, audit atomikliği ve çapraz müşteri erişim testlerini korumalıdır.
 

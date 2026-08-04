@@ -126,9 +126,9 @@ Test
 
 # files created by PackagePrep script
 *.pp_backup
-# D724 ESM local development secrets and state.
-development/d724/.env
-development/d724/.runtime/
+# CareOnCloud ESM local development secrets and state.
+development/careoncloud/.env
+development/careoncloud/.runtime/
 
 # Package tests are source files; the upstream generic "Test" rule must not hide them on Windows.
 !packages/*/scripts/test/
@@ -136,4 +136,4 @@ development/d724/.runtime/
 
 # Locally generated CareOnCloud release and package archives.
 careoncloud-deploy-*.tgz
-D724Problem-*-source.tar.gz
+CareOnCloudProblem-*-source.tar.gz

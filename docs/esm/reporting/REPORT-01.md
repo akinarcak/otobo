@@ -4,7 +4,7 @@ Durum: ilk operasyon raporu ve export guvenlik kapisi tamamlandi (`2026-07-25`).
 
 ## Sozlesme
 
-`D724Reporting 0.4.0`, tek tenant ve inclusive tarih araligi icin su aggregate
+`CareOnCloudReporting 0.4.0`, tek tenant ve inclusive tarih araligi icin su aggregate
 verileri uretir:
 
 - request status sayilari;
@@ -31,7 +31,7 @@ sunucudaki allowlist ile doğrulanır; bilinmeyen alanlar fail-closed reddedilir
 koşul olarak taşır. Çoklu SLA hedeflerinin talep sayısını şişirmemesi için talep
 ölçüsü `COUNT(DISTINCT request.id)` semantiğini kullanır.
 
-Arayüz metinleri İngilizce kaynak anahtarları ve `tr_D724Reporting` Türkçe dil
+Arayüz metinleri İngilizce kaynak anahtarları ve `tr_CareOnCloudReporting` Türkçe dil
 modülüyle sunulur. Hücreler HTML-escape edilerek çıktı tablosuna yazılır.
 Seçilen sütun düzeni CSV ve JSON dışa aktarmada korunur. Dışa aktarma ayrıca
 `report.export` kararı gerektirir; CSV hücreleri sabit özette olduğu gibi formül
@@ -39,7 +39,7 @@ enjeksiyonuna karşı nötralize edilir.
 
 ## Kaydedilmiş raporlar
 
-`D724Reporting 0.4.1`, rapor seçimini `d724_report_definition` tablosunda tenant,
+`CareOnCloudReporting 0.4.1`, rapor seçimini `careoncloud_report_definition` tablosunda tenant,
 teknik anahtar, sahip kullanıcı ve görünürlük bilgileriyle saklar. `private`
 tanımlar yalnızca sahibine, `shared` tanımlar aynı tenant içinde `report.read`
 yetkisi olan kullanıcılara görünür. Tanımlar ham SQL değil, doğrulanmış boyut,
@@ -50,7 +50,7 @@ Oluşturma CSRF challenge kontrolü gerektirir. Silme sorgusu tenant, rapor kiml
 ve sahip kullanıcı kimliğini birlikte bağlar; başka bir kullanıcının paylaşılan
 raporu silinemez. Paket yükseltmesi tabloyu `0.4.1` adımında oluşturur.
 
-Basarili policy kararindan sonra summary, `D724::TenantCache` uzerinde 60 saniye
+Basarili policy kararindan sonra summary, `CareOnCloud::TenantCache` uzerinde 60 saniye
 saklanir. Logical key schema surumu ve tarih araligini tasir; fiziksel Type tenant
 kimliginin SHA-256 turevidir. Her hit/miss isteginde authorization yeniden calisir;
 cache bir yetki atlama mekanizmasi degildir. Rapor verisi en fazla 60 saniye gecikmeli
@@ -77,19 +77,19 @@ araligindan guvenli karakterlerle uretilir.
 Konsol kullanimi:
 
 ```text
-bin/careoncloud.Console.pl Admin::D724::ReportExport \
+bin/careoncloud.Console.pl Admin::CareOnCloud::ReportExport \
   --tenant-id TENANT --from YYYY-MM-DD --to YYYY-MM-DD \
   --actor-user-id USER_ID --format csv
 ```
 
 ## Kanit
 
-`development/d724/Accept-Reporting.pl`, demo directory kullanicisi `47` ile
-`d724-demo` raporunu gercek MariaDB uzerinde uretti: 10 request, 24 commitment,
+`development/careoncloud/Accept-Reporting.pl`, demo directory kullanicisi `47` ile
+`careoncloud-demo` raporunu gercek MariaDB uzerinde uretti: 10 request, 24 commitment,
 2 breached commitment. CSV ve JSON'da requester/idempotency material bulunmadi;
 `report-accept-forbidden` tenant export'u `FORBIDDEN` oldu. Unit test katalog
 adini `=Formula Safe` secerek CSV neutralization'i ve baska tenant etiketi ile
 request'inin export edilmedigini dogruladi.
 
 Ilk cagrinin cache miss, ikincinin hit olmasi ve iki tenantin ayni logical key ile
-ayri deger okumasini da kapsayan tam D724 regresyonu 42 dosya ve 859 assertion ile gecti.
+ayri deger okumasini da kapsayan tam CareOnCloud regresyonu 42 dosya ve 859 assertion ile gecti.

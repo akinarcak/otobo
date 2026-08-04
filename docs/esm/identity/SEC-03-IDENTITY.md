@@ -1,6 +1,6 @@
 # SEC-03 Birleşik Kimlik Güven Sınırı
 
-`D724Identity`, CareOnCloud ESM'in OIDC/SAML ve sonraki SCIM adaptörleri için tenant-safe çekirdek sözleşmesidir. Sürüm 0.2.0, CareOnCloud ESM'nun yerleşik JWKS/imza doğrulayıcısını kullanan Authorization Code akış güvenlik katmanını da içerir.
+`CareOnCloudIdentity`, CareOnCloud ESM'in OIDC/SAML ve sonraki SCIM adaptörleri için tenant-safe çekirdek sözleşmesidir. Sürüm 0.2.0, CareOnCloud ESM'nun yerleşik JWKS/imza doğrulayıcısını kullanan Authorization Code akış güvenlik katmanını da içerir.
 
 ## Değişmezler
 

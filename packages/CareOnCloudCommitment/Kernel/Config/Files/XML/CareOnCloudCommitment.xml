@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_config version="2.0" init="Application">
+    <Setting Name="CareOnCloud::Commitment::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables tenant-safe CareOnCloud business-time commitments.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Commitment::ListLimit" Required="1" Valid="1">
+        <Description Translatable="1">Maximum commitments returned by a list operation.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Item ValueType="String" ValueRegex="^(?:[1-9]|[1-9][0-9]|[1-4][0-9]{2}|500)$">200</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Commitment::EscalationDispatchEnabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables reliable delivery of queued CareOnCloud escalation actions.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Commitment::EscalationBatchSize" Required="1" Valid="1">
+        <Description Translatable="1">Maximum escalation actions claimed by one dispatcher run.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Item ValueType="String" ValueRegex="^(?:[1-9]|[1-9][0-9]|100)$">25</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Commitment::EscalationMaxAttempts" Required="1" Valid="1">
+        <Description Translatable="1">Maximum escalation delivery attempts before dead-letter state.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Item ValueType="String" ValueRegex="^(?:[1-9]|10)$">5</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Commitment::NotificationFrom" Required="1" Valid="1">
+        <Description Translatable="1">Sender address for CareOnCloud role escalation notifications.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Item ValueType="String">noreply@localhost</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Commitment::WebhookAllowedHosts" Required="1" Valid="1">
+        <Description Translatable="1">Exact HTTPS hosts allowed for CareOnCloud escalation webhooks.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Array></Array></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Commitment::WebhookEndpoints" Required="1" Valid="1">
+        <Description Translatable="1">Named webhook endpoint fields using endpoint::URL and endpoint::Secret keys. Secrets must be supplied by deployment configuration.</Description>
+        <Navigation>Core::CareOnCloud::Commitment</Navigation><Value><Hash></Hash></Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AdminCareOnCloudCommitment" Required="0" Valid="1">
+        <Description Translatable="1">Tenant-authorized CareOnCloud commitment policy management.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value><Item ValueType="FrontendRegistration"><Hash>
+            <Item Key="Group"><Array></Array></Item><Item Key="GroupRo"><Array></Array></Item>
+            <Item Key="Description" Translatable="1">Manage business-time targets, warnings, calendars, and pause rules.</Item>
+            <Item Key="Title" Translatable="1">CareOnCloud Commitments</Item><Item Key="NavBarName">Admin</Item>
+        </Hash></Item></Value>
+    </Setting>
+    <Setting Name="Frontend::NavigationModule###AdminCareOnCloudCommitment" Required="0" Valid="1">
+        <Description Translatable="1">CareOnCloud commitment policy navigation in the admin overview.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value><Hash>
+            <Item Key="Group"><Array></Array></Item><Item Key="GroupRo"><Array></Array></Item>
+            <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item><Item Key="Name" Translatable="1">CareOnCloud Commitments</Item>
+            <Item Key="Block">CareOnCloud ESM</Item><Item Key="Description" Translatable="1">Manage tenant SLA and OLA policies.</Item>
+            <Item Key="IconBig">fa-clock-o</Item><Item Key="IconSmall"></Item>
+        </Hash></Value>
+    </Setting>
+    <Setting Name="Daemon::SchedulerCronTaskManager::Task###CareOnCloudCommitmentSweep" Required="0" Valid="1">
+        <Description Translatable="1">Evaluate active CareOnCloud commitments for warning and breach every minute.</Description>
+        <Navigation>Daemon::SchedulerCronTaskManager::Task</Navigation>
+        <Value><Hash>
+            <Item Key="TaskName">CareOnCloudCommitmentSweep</Item><Item Key="Schedule">* * * * *</Item>
+            <Item Key="Module">Kernel::System::CareOnCloud::Commitment</Item><Item Key="Function">Sweep</Item>
+            <Item Key="MaximumParallelInstances">1</Item><Item Key="Params"><Array></Array></Item>
+        </Hash></Value>
+    </Setting>
+    <Setting Name="Daemon::SchedulerCronTaskManager::Task###CareOnCloudEscalationDispatch" Required="0" Valid="1">
+        <Description Translatable="1">Deliver queued CareOnCloud escalation actions every minute.</Description>
+        <Navigation>Daemon::SchedulerCronTaskManager::Task</Navigation>
+        <Value><Hash>
+            <Item Key="TaskName">CareOnCloudEscalationDispatch</Item><Item Key="Schedule">* * * * *</Item>
+            <Item Key="Module">Kernel::System::CareOnCloud::EscalationDispatcher</Item><Item Key="Function">Dispatch</Item>
+            <Item Key="MaximumParallelInstances">2</Item><Item Key="Params"><Array></Array></Item>
+        </Hash></Value>
+    </Setting>
+</careoncloud_config>

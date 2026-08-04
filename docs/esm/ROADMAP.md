@@ -7,8 +7,8 @@
 - [x] `CAT-03`: DD-YHE-02-R1 kaynaklı 6 alan/51 hizmetlik yönetilen hizmet kataloğu, DORA iz alanları ve dört demo tenant'ına idempotent kurulum (`2026-07-25`).
 - [x] `FOUND-01`: kaynak koddan Docker image, Compose gelistirme profili, statik smoke testi ve GitHub Actions kalite kapisi (`2026-07-24`).
 - [x] Ozel test sunucusunda izole temel kurulum: MariaDB, Redis, CareOnCloud ESM web ve daemon; HTTP ve konsol smoke testleri (`2026-07-24`).
-- [x] `FOUND-02`: kurulabilir `D724Foundation 0.1.0` paketi, SysConfig, JSON tanilama komutu ve 15 paket testi (`2026-07-24`).
-- [x] `SEC-01a`: tenant threat modeli, varsayilan-reddet `D724TenantGuard 0.1.1`, karar/scope API'leri ve 78 negatif-pozitif test (`2026-07-24`).
+- [x] `FOUND-02`: kurulabilir `CareOnCloudFoundation 0.1.0` paketi, SysConfig, JSON tanilama komutu ve 15 paket testi (`2026-07-24`).
+- [x] `SEC-01a`: tenant threat modeli, varsayilan-reddet `CareOnCloudTenantGuard 0.1.1`, karar/scope API'leri ve 78 negatif-pozitif test (`2026-07-24`).
 - [x] `CAT-01`: tenant-guarded Service/Offering/CatalogItem semasi ve repository API'si; 30 MariaDB entegrasyon testi (`2026-07-24`).
 - [x] `CAT-02a`: authenticated customer portal katalog listeleme, item detayi ve validated dinamik form render'i (`2026-07-24`).
 - [x] `SEC-02`: kalici tenant/agent directory, tenant-bazli role bindings, tek-seferlik bootstrap ve lockout korumalari (`2026-07-24`).

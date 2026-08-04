@@ -9,7 +9,7 @@ distinguishes those route-specific results from remaining daemon coverage.
 `Kernel/GenericInterface/Operation/Ticket/TicketCreate.pm` calls the core
 `TicketCreate` method, and `TicketUpdate.pm` calls the standard ticket setters:
 queue, lock, type, pending time, state, service, SLA, customer, priority,
-owner, and responsible. The `D724TicketAudit` method wrappers therefore apply
+owner, and responsible. The `CareOnCloudTicketAudit` method wrappers therefore apply
 their tenant-scope and per-mutation audit transaction contract to those calls.
 
 `TicketCreate` and `TicketUpdate` are wrapped at the operation `Run` boundary
@@ -49,7 +49,7 @@ audit-disabled updates and deletes roll the database mutation and scope version
 back, then verifies the recovered lifecycle path.
 
 The `Invalid` fallback backend deliberately rejects article create/update, but
-has its own unknown-channel metadata delete route. `D724TicketAudit 0.8.15`
+has its own unknown-channel metadata delete route. `CareOnCloudTicketAudit 0.8.15`
 wraps that delete in a scope/audit transaction and records
 `ticket.unknown_channel_article.deleted`; candidate runtime regression remains
 required before it is accepted.
@@ -66,17 +66,17 @@ their individual ticket-field mutations enter the current method wrappers.
 
 `VERIFIED_IN_CODE` / `RISK`: database-backed GenericAgent
 work is executed by `SchedulerTaskWorker::GenericAgent` as `UserID => 1`.
-`D724TicketAudit 0.8.14` now wraps `GenericAgent::JobRun`, enumerates active
+`CareOnCloudTicketAudit 0.8.14` now wraps `GenericAgent::JobRun`, enumerates active
 tenants, and runs the original job once per tenant in
-`D724::TicketPolicy->AutomationScopeRun`. The existing `TicketSearch` wrapper
+`CareOnCloud::TicketPolicy->AutomationScopeRun`. The existing `TicketSearch` wrapper
 then supplies that automation context's tenant `CustomerID` filter before the
 job can select tickets; for example, `AutoPriorityIncrease` subsequently uses
 the wrapped `TicketPrioritySet` mutation. This is source-level coverage only:
 it is not yet tenant-isolation, atomic-request, or daemon-regression acceptance.
 A clean candidate cross-tenant GenericAgent acceptance is still required.
 
-The `8db2629` source snapshot compiled `D724AuditCustom` and
-`D724::TicketAudit` in an isolated container using the test server's available
+The `8db2629` source snapshot compiled `CareOnCloudAuditCustom` and
+`CareOnCloud::TicketAudit` in an isolated container using the test server's available
 Perl runtime. This is syntax-only evidence; it does not exercise the scheduler,
 tenant filter, MariaDB transaction, or failure rollback.
 

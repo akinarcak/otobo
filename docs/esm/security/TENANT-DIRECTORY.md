@@ -1,6 +1,6 @@
 # Tenant Directory and Role Bindings
 
-`D724TenantDirectory` is the authoritative mapping between CareOnCloud ESM agent IDs and D724 tenants. It replaces configuration-based or request-provided tenant selection with persistent, audited memberships.
+`CareOnCloudTenantDirectory` is the authoritative mapping between CareOnCloud ESM agent IDs and CareOnCloud tenants. It replaces configuration-based or request-provided tenant selection with persistent, audited memberships.
 
 ## Authorization model
 
@@ -18,8 +18,8 @@
 
 ## Bootstrap
 
-`Admin::D724::TenantBootstrap` works only while the directory contains zero tenants and requires `--confirm-bootstrap`. It creates the first tenant and one `tenant_admin` membership for an existing CareOnCloud ESM agent. Later grants use `Admin::D724::TenantMembershipGrant`, which derives and checks the actor context before writing.
+`Admin::CareOnCloud::TenantBootstrap` works only while the directory contains zero tenants and requires `--confirm-bootstrap`. It creates the first tenant and one `tenant_admin` membership for an existing CareOnCloud ESM agent. Later grants use `Admin::CareOnCloud::TenantMembershipGrant`, which derives and checks the actor context before writing.
 
 ## Transaction and audit evidence
 
-`D724TenantDirectory 0.2.1` uses production-style transactions and a tenant-row `FOR UPDATE` lock. The package test suite injects audit failure into real grant and revoke calls: failed grants leave no membership row, failed revokes preserve `active/version=1`, and successful retries produce exactly one grant and one revoke event in a valid tenant hash chain. A clustered multi-process last-admin race acceptance test remains a release-hardening item even though the repository locking invariant is implemented.
+`CareOnCloudTenantDirectory 0.2.1` uses production-style transactions and a tenant-row `FOR UPDATE` lock. The package test suite injects audit failure into real grant and revoke calls: failed grants leave no membership row, failed revokes preserve `active/version=1`, and successful retries produce exactly one grant and one revoke event in a valid tenant hash chain. A clustered multi-process last-admin race acceptance test remains a release-hardening item even though the repository locking invariant is implemented.

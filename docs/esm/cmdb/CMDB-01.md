@@ -1,6 +1,6 @@
 # CMDB-01 — Service context and configuration graph
 
-Status: implemented in `D724CMDB` 0.4.1.
+Status: implemented in `CareOnCloudCMDB` 0.4.1.
 
 ## Product model
 
@@ -9,7 +9,7 @@ CareOnCloud uses the following service-context chain:
 `Service Category → Service → Service Instance → Configuration Item`
 
 - A Service Category groups portfolio services.
-- A Service remains the tenant-owned catalog service from `D724Catalog`.
+- A Service remains the tenant-owned catalog service from `CareOnCloudCatalog`.
 - A Service Instance represents the concrete, customer-specific delivery of a service. Its support team, commercial service model, lifecycle state, and criticality are fields of that instance.
 - Configuration Items have tenant-defined types and validated attribute schemas.
 - Service Instances bind to CIs; CIs form a bounded directed graph.
@@ -18,7 +18,7 @@ This distinction is intentional: support team is not a hierarchy level, and prev
 
 ## Repository boundary
 
-The package owns seven tables: service categories, service-category assignments, service instances, CI types, CIs, CI relations, and service-instance/CI bindings. Every parent relation carries `tenant_id` and is protected by a composite foreign key. The application layer also authorizes every operation through `D724TenantGuard`.
+The package owns seven tables: service categories, service-category assignments, service instances, CI types, CIs, CI relations, and service-instance/CI bindings. Every parent relation carries `tenant_id` and is protected by a composite foreign key. The application layer also authorizes every operation through `CareOnCloudTenantGuard`.
 
 Mutations require an agent `UserID`, emit normalized tamper-evident audit events, and use optimistic versions for updates and retirement. Dependency relations reject cycles and graph traversal is limited to 500 nodes.
 
@@ -49,9 +49,9 @@ The default-deny policy version is 1.8.0.
 
 ## Verification
 
-- `D724/CMDB.t`: category, service instance, schema validation, CI lifecycle, binding, graph, audit, concurrency, tenant isolation, and cycle rejection.
-- `D724/CMDBConstraint.t`: all eight composite tenant constraints and a direct cross-tenant database attack.
-- `Admin::D724::CMDBStatus --json`: package state, seven tables, and constraint health.
-- `Admin::D724::CMDBWorkbookInspect --file /absolute/path/catalog.xlsx`: performs a read-only XLSX structure, header, commercial-model, required-field, normalization, and count validation. It never creates tenants or claims that workbook brands are CareOnCloud customers.
-- `Admin::D724::CMDBWorkbookImport --file /absolute/path/catalog.xlsx --actor-user-id 1 --demo-data --confirm`: writes only to `demo-*` tenants whose display names start with `[DEMO]`, grants the actor tenant-admin membership, creates prefixed support groups, and idempotently creates categories, services, category links, and service instances. A rerun resumes safely after any interrupted item and creates no duplicates.
-- `AgentD724ServicePortfolio`: tenant-authorized agent portfolio with customer switching, category/service summary, instance model, criticality, support-team ownership and status. All repository reads are guarded by `cmdb.read`; requested tenant IDs are intersected with the authenticated subject before rendering.
+- `CareOnCloud/CMDB.t`: category, service instance, schema validation, CI lifecycle, binding, graph, audit, concurrency, tenant isolation, and cycle rejection.
+- `CareOnCloud/CMDBConstraint.t`: all eight composite tenant constraints and a direct cross-tenant database attack.
+- `Admin::CareOnCloud::CMDBStatus --json`: package state, seven tables, and constraint health.
+- `Admin::CareOnCloud::CMDBWorkbookInspect --file /absolute/path/catalog.xlsx`: performs a read-only XLSX structure, header, commercial-model, required-field, normalization, and count validation. It never creates tenants or claims that workbook brands are CareOnCloud customers.
+- `Admin::CareOnCloud::CMDBWorkbookImport --file /absolute/path/catalog.xlsx --actor-user-id 1 --demo-data --confirm`: writes only to `demo-*` tenants whose display names start with `[DEMO]`, grants the actor tenant-admin membership, creates prefixed support groups, and idempotently creates categories, services, category links, and service instances. A rerun resumes safely after any interrupted item and creates no duplicates.
+- `AgentCareOnCloudServicePortfolio`: tenant-authorized agent portfolio with customer switching, category/service summary, instance model, criticality, support-team ownership and status. All repository reads are guarded by `cmdb.read`; requested tenant IDs are intersected with the authenticated subject before rendering.

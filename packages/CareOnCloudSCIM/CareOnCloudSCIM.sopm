@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudSCIM</Name><Version>0.2.0</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-isolated SCIM 2.0 provisioning for CareOnCloud ESM.</Description>
+    <Description Lang="tr">CareOnCloud ESM icin tenant-izole SCIM 2.0 provizyonu.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.9.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudAudit</PackageRequired>
+    <PackageRequired Version="0.7.1">CareOnCloudAPI</PackageRequired>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="careoncloud_scim_user">
+            <Column Name="scim_id" Required="true" PrimaryKey="true" Size="64" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="external_id" Required="false" Size="255" Type="VARCHAR" />
+            <Column Name="surface" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="user_name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="email" Required="true" Size="255" Type="VARCHAR" />
+            <Column Name="given_name" Required="true" Size="100" Type="VARCHAR" />
+            <Column Name="family_name" Required="true" Size="100" Type="VARCHAR" />
+            <Column Name="active" Required="true" Default="1" Type="SMALLINT" />
+            <Column Name="native_user_id" Required="false" Type="INTEGER" />
+            <Column Name="customer_login" Required="false" Size="200" Type="VARCHAR" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" />
+            <Unique Name="careoncloud_scim_user_tenant_name"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="user_name" /></Unique>
+            <Unique Name="careoncloud_scim_user_tenant_external"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="external_id" /></Unique>
+            <Index Name="careoncloud_scim_user_tenant_active"><IndexColumn Name="tenant_id" /><IndexColumn Name="active" /></Index>
+            <ForeignKey ForeignTable="careoncloud_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_scim_group">
+            <Column Name="scim_id" Required="true" PrimaryKey="true" Size="64" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="external_id" Required="false" Size="255" Type="VARCHAR" />
+            <Column Name="display_name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="role_name" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" />
+            <Unique Name="careoncloud_scim_group_tenant_name"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="display_name" /></Unique>
+            <Unique Name="careoncloud_scim_group_tenant_external"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="external_id" /></Unique>
+            <ForeignKey ForeignTable="careoncloud_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_scim_group_member">
+            <Column Name="group_id" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="user_id" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Unique Name="careoncloud_scim_group_member_pair"><UniqueColumn Name="group_id" /><UniqueColumn Name="user_id" /></Unique>
+            <Index Name="careoncloud_scim_group_member_tenant"><IndexColumn Name="tenant_id" /><IndexColumn Name="user_id" /></Index>
+            <ForeignKey ForeignTable="careoncloud_scim_group"><Reference Local="group_id" Foreign="scim_id" /></ForeignKey>
+            <ForeignKey ForeignTable="careoncloud_scim_user"><Reference Local="user_id" Foreign="scim_id" /></ForeignKey>
+            <ForeignKey ForeignTable="careoncloud_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <CodeInstall Type="post"><![CDATA[$Kernel::OM->Get('Kernel::System::CareOnCloud::SCIMBrandMigration')->Ensure()->{Success} || die "CareOnCloud SCIM schema branding could not be installed";]]></CodeInstall>
+    <CodeUpgrade Type="post" Version="0.2.0"><![CDATA[$Kernel::OM->Get('Kernel::System::CareOnCloud::SCIMBrandMigration')->Ensure()->{Success} || die "CareOnCloud SCIM schema branding could not be upgraded";]]></CodeUpgrade>
+    <DatabaseUninstall Type="pre"><TableDrop Name="careoncloud_scim_group_member" /><TableDrop Name="careoncloud_scim_group" /><TableDrop Name="careoncloud_scim_user" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/CareOnCloudSCIM.xml" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/SCIM.pm" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/SCIMBrandMigration.pm" />
+        <File Permission="644" Location="Kernel/Modules/PublicCareOnCloudSCIM.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/SCIMStatus.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/SCIMContract.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/SCIMBrandMigration.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/SCIM.t" />
+    </Filelist>
+</careoncloud_package>

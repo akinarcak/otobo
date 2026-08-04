@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_config version="2.0" init="Application">
+    <Setting Name="CareOnCloud::TicketAudit::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Requires immutable tenant binding and transaction-atomic audit for covered CareOnCloud ESM ticket mutations.</Description>
+        <Navigation>Core::CareOnCloud::Audit</Navigation>
+        <Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::TicketPolicy::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Fail-closed tenant filtering for CareOnCloud ESM ticket search and read adapters.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation>
+        <Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::SearchPolicy::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Requires a trusted tenant context and mandatory filter for every CareOnCloud Elasticsearch query.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation>
+        <Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::SearchPolicy::TenantSafeIndexes" Required="1" Valid="1">
+        <Description Translatable="1">Elasticsearch indexes whose documents and final query filter carry the CareOnCloud tenant discriminator.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation>
+        <Value><Array><Item>ticket</Item></Array></Value>
+    </Setting>
+    <Setting Name="Ticket::CustomModule###724-CareOnCloudTicketAudit" Required="1" Valid="1">
+        <Description Translatable="1">Loads the CareOnCloud transaction and audit wrapper for CareOnCloud ESM ticket repository mutations.</Description>
+        <Navigation>Core::Ticket</Navigation>
+        <Value><Item ValueType="String">Kernel::System::Ticket::CareOnCloudAuditCustom</Item></Value>
+    </Setting>
+</careoncloud_config>

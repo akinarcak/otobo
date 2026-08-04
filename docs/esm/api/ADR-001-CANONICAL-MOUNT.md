@@ -2,7 +2,7 @@
 
 - Status: accepted
 - Date: 2026-07-24
-- Decision owners: D724 ESM maintainers
+- Decision owners: CareOnCloud ESM maintainers
 
 ## Context
 
@@ -14,7 +14,7 @@ stable resource-oriented `/api/v1` contract.
 ## Decision
 
 The fork adds one routing adapter in `bin/psgi-bin/careoncloud.psgi`. The adapter maps
-only these exact paths to the package-owned `PublicD724API` module:
+only these exact paths to the package-owned `PublicCareOnCloudAPI` module:
 
 - `/api/v1/oauth/token`
 - `/api/v1/tickets` and `/api/v1/tickets/{positive_integer}`
@@ -22,12 +22,12 @@ only these exact paths to the package-owned `PublicD724API` module:
 - `/api/v1/openapi.json`
 
 Authentication, validation, authorization, rate limiting, serialization, and
-domain behavior remain in the independently versioned GPL-3.0 `D724API` package.
+domain behavior remain in the independently versioned GPL-3.0 `CareOnCloudAPI` package.
 Unknown paths map to a JSON `404`. The existing Public-interface availability,
 HTTPS redirect, performance logging, object lifecycle, exception, and request
 size middleware remain in force.
 
-`Admin::D724::APIStatus` fails closed unless both the canonical mount and the
+`Admin::CareOnCloud::APIStatus` fails closed unless both the canonical mount and the
 parseable OpenAPI 3.1 artifact are installed. This prevents a package-only
 upgrade from being reported healthy when the fork routing adapter is absent.
 

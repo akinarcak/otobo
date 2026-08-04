@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudRequest</Name><Version>0.4.9</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-safe request, approval, and fulfillment orchestration for CareOnCloud ESM.</Description>
+    <Description Lang="tr">CareOnCloud ESM icin tenant guvenli talep, onay ve fulfillment orkestrasyonu.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.1">CareOnCloudTenantDirectory</PackageRequired>
+    <PackageRequired Version="0.7.0">CareOnCloudCatalog</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudAudit</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="careoncloud_request">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="request_number" Required="true" Size="40" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="catalog_item_id" Required="true" Type="BIGINT" />
+            <Column Name="requester_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="idempotency_key" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="payload_hash" Required="true" Size="64" Type="VARCHAR" />
+            <Column Name="answers_json" Required="true" Size="16000" Type="VARCHAR" />
+            <Column Name="workflow_json" Required="true" Size="16000" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Size="128" Type="VARCHAR" />
+            <Unique Name="careoncloud_request_number"><UniqueColumn Name="request_number" /></Unique>
+            <Unique Name="careoncloud_request_idempotency"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="requester_id" /><UniqueColumn Name="idempotency_key" /></Unique>
+            <Unique Name="careoncloud_request_tenant_id"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="id" /></Unique>
+            <Index Name="careoncloud_request_tenant_status"><IndexColumn Name="tenant_id" /><IndexColumn Name="status" /></Index>
+            <ForeignKey ForeignTable="careoncloud_catalog_item"><Reference Local="tenant_id" Foreign="tenant_id" /><Reference Local="catalog_item_id" Foreign="id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_request_approval">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="request_id" Required="true" Type="BIGINT" />
+            <Column Name="sequence_no" Required="true" Type="INTEGER" /><Column Name="approver_role" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" /><Column Name="decision_comment" Required="true" Size="4000" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" /><Column Name="decision_time" Required="false" Type="DATE" />
+            <Column Name="decision_by" Required="false" Size="128" Type="VARCHAR" /><Column Name="create_time" Required="true" Type="DATE" />
+            <Unique Name="careoncloud_request_approval_sequence"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="request_id" /><UniqueColumn Name="sequence_no" /></Unique>
+            <ForeignKey ForeignTable="careoncloud_request"><Reference Local="tenant_id" Foreign="tenant_id" /><Reference Local="request_id" Foreign="id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_request_task">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="request_id" Required="true" Type="BIGINT" />
+            <Column Name="key_name" Required="true" Size="64" Type="VARCHAR" /><Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="task_type" Required="true" Size="30" Type="VARCHAR" /><Column Name="status" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="assigned_group" Required="true" Default="" Size="128" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" /><Column Name="result_comment" Required="true" Size="4000" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Size="128" Type="VARCHAR" />
+            <Unique Name="careoncloud_request_task_key"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="request_id" /><UniqueColumn Name="key_name" /></Unique>
+            <ForeignKey ForeignTable="careoncloud_request"><Reference Local="tenant_id" Foreign="tenant_id" /><Reference Local="request_id" Foreign="id" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUpgrade Type="post"><TableAlter Name="careoncloud_request_task" Version="0.2.1"><ColumnAdd Name="assigned_group" Required="true" Default="" Size="128" Type="VARCHAR" /></TableAlter></DatabaseUpgrade>
+    <DatabaseUninstall Type="pre"><TableDrop Name="careoncloud_request_task" /><TableDrop Name="careoncloud_request_approval" /><TableDrop Name="careoncloud_request" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Language/tr_CareOnCloudRequest.pm" />
+        <File Permission="644" Location="Kernel/Config/Files/XML/CareOnCloudRequest.xml" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/Request.pm" />
+        <File Permission="644" Location="Kernel/Modules/CustomerCareOnCloudRequest.pm" />
+        <File Permission="644" Location="Kernel/Modules/AgentCareOnCloudRequest.pm" />
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/CustomerCareOnCloudRequest.tt" />
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentCareOnCloudRequest.tt" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/RequestStatus.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/Request.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/RequestStatus.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/RequestFrontend.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/RequestTransaction.t" />
+    </Filelist>
+</careoncloud_package>

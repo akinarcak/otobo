@@ -44,8 +44,8 @@ kırılmaya yol açtı ve geri alındı:
 
 | Dosya | Neden |
 |---|---|
-| `development/d724/Test-CareOnCloudBrand.ps1` | Yasaklı dize listesi kasıtlı olarak eski adları taşır; dönüştürülürse test tersini iddia eder |
-| `development/d724/migrate-careoncloud-brand.sh` | `OldDatabase='otobo'` varsayılanı; dönüştürülürse yanlış veritabanından göç eder |
+| `development/careoncloud/Test-CareOnCloudBrand.ps1` | Yasaklı dize listesi kasıtlı olarak eski adları taşır; dönüştürülürse test tersini iddia eder |
+| `development/careoncloud/migrate-careoncloud-brand.sh` | `OldDatabase='otobo'` varsayılanı; dönüştürülürse yanlış veritabanından göç eder |
 | `docs/esm/branding/**` | Göç sürecini eski adlarla anlatır |
 | `codepolicy/bin/otobo.CodePolicy.pl` | Dış `RotherOSS/codepolicy` deposunda, adı gerçekten böyle |
 | Çevirmen e-postaları, `translate.otobo.org` | Gerçek kişi ve proje atfı |
@@ -105,19 +105,48 @@ Yalnızca yapısal denetimden geçti. İlk çalıştırma kopya bir veritabanın
 Dockerfile, `bin/docker/entrypoint.sh` ve iş akışları **birlikte** değişmelidir; aksi halde imaj
 derlemesi kırılır. Değişiklikten sonra imaj yeniden derlenip aday etiketiyle doğrulanmalıdır.
 
-## Faz 6 — d724 → CareOnCloud
+## Faz 6 — d724 → CareOnCloud (depo tarafı tamamlandı, veri göçü bekliyor)
 
-`packages/D724*` (18 paket), `development/d724/`, `.github/workflows/d724-foundation.yml`,
-`D724Problem-*-source.tar.gz`.
+259 yol ve 2826 satır çevrildi: `packages/D724*` → `packages/CareOnCloud*` (18 paket),
+`development/d724/` → `development/careoncloud/`, `.github/workflows/d724-foundation.yml`,
+Perl ad alanları (`Kernel/System/D724/` → `Kernel/System/CareOnCloud/`,
+`AdminD724Catalog` → `AdminCareOnCloudCatalog`), `.sopm` paket adları, 39 tablo adı ve
+62 SysConfig ayar anahtarı.
 
-Paket adı kurulu sistemlerde veritabanına yazılıdır; dizin ve `.sopm` adını değiştirmek tek
-başına yetmez, paket yeniden adlandırma/göç adımı gerekir. Perl ad alanları ayrı bir adımda
-ele alınmalıdır.
+### Veri göçü zorunludur
+
+d724 yalnızca kodda değil, **veritabanında** da yaşıyor:
+
+| Nerede | Adet |
+|---|---|
+| `d724_*` tabloları (dolu: 3680 denetim olayı, 860 hizmet, 212 katalog kalemi …) | 39 |
+| `D724::` önekli SysConfig ayarları | 62 |
+| `package_repository` içindeki paket kayıtları ve gömülü `.sopm` içeriği | 18 |
+
+OTOBO'da paket yeniden adlandırma diye bir işlem yoktur; kaldır-kur yapılırsa
+`DatabaseUninstall` tabloları **düşürür ve veriyi yok eder**. Bu yüzden göç komutu paketi
+hiç kaldırmaz, satırları yerinde çevirir ve tabloları `RENAME TABLE` ile taşır:
+
+```bash
+bin/careoncloud.Console.pl Maint::CareOnCloud::MigratePackageNamespace            # kuru çalışma
+bin/careoncloud.Console.pl Maint::CareOnCloud::MigratePackageNamespace --execute
+bin/careoncloud.Console.pl Maint::Config::Rebuild
+```
+
+Hedef tablo zaten varsa komut çalışmayı reddeder; sessizce gölgelenmiş veri riskini almaz.
+Web ve daemon durdurulmuşken çalıştırılmalıdır.
+
+### Compose proje adı değişti
+
+`development/careoncloud/compose.yml` artık `name: careoncloud-esm`. Canlı yığın hâlâ
+`d724-esm` projesinde ve verisi `d724-esm_careoncloud-app` / `d724-esm_careoncloud-update`
+volume'lerinde. Yeni adla compose çalıştırmak **boş yeni bir yığın** açar; eski veriyi
+`migrate-careoncloud-brand.sh` ile kopyalamadan eski projeyi kaldırmayın.
 
 ## Her fazdan sonra
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File development\d724\Test-CareOnCloudBrand.ps1
+powershell -ExecutionPolicy Bypass -File development\careoncloud\Test-CareOnCloudBrand.ps1
 ```
 
 Testin yasaklı yol ve yasaklı dize listesi, o fazda temizlenen kalemlerle genişletilmelidir;

@@ -32,12 +32,12 @@ CareOnCloud ESM, GPL-3.0 kapsamında RotherOSS/otobo kaynak kodundan türetilmi�
 
 ## Canlı veri göçü
 
-`development/d724/migrate-careoncloud-brand.sh` eski veritabanı ve Docker volume'larını silmeden kopyalar. Betik varsayılan olarak yalnızca planı gösterir; `--execute` için eski volume adı ve yeni veritabanı parolası açıkça verilmelidir.
+`development/careoncloud/migrate-careoncloud-brand.sh` eski veritabanı ve Docker volume'larını silmeden kopyalar. Betik varsayılan olarak yalnızca planı gösterir; `--execute` için eski volume adı ve yeni veritabanı parolası açıkça verilmelidir.
 
 Örnek ön izleme:
 
 ```bash
-development/d724/migrate-careoncloud-brand.sh \
+development/careoncloud/migrate-careoncloud-brand.sh \
   --old-app-volume mevcut_otobo_app \
   --old-update-volume mevcut_otobo_update
 ```

@@ -56,7 +56,7 @@ GHCR'a iterken, 1.43 GB'in 1.03 GB'i gitmisken iptal edildi. Bitmesine muhtemele
 ### Bagimsiz corroborating kanit
 
 Ayni gun, ayni tip runner'da gecen foundation run [30817232194](https://github.com/akinarcak/otobo/actions/runs/30817232194)
-icindeki `Accept clean D724 package lifecycle` adimi **8dk15sn** surdu, `careoncloud.web.dockerfile`'i
+icindeki `Accept clean CareOnCloud package lifecycle` adimi **8dk15sn** surdu, `careoncloud.web.dockerfile`'i
 **basariyla build etti** ve bir sonraki adim ("Scan built CareOnCloud image") o image'i tarayip gecti.
 
 Yani Dockerfile'in GitHub Actions runner'inda tek uzun adim olarak ~8 dakikada sorunsuz
@@ -192,7 +192,7 @@ bir regression guard tasiyor.
 ## 8. Uretim dokunulmadi
 
 Bu calismada yalnizca `workflow_dispatch` ile aday (`probe`) tag'leri kullanildi.
-Uretim servisleri, canli cutover, `d724-esm-*` container/volume'lari ve Yetka verileri
+Uretim servisleri, canli cutover, `careoncloud-esm-*` container/volume'lari ve Yetka verileri
 degistirilmedi. GHCR'a yalnizca `v0.0.0-probe*` etiketli aday image'lar itildi.
 
 ---
@@ -267,7 +267,7 @@ Kanitlanan sey **release mekanizmasidir**, bir release degil.
 
 ### 9.4 Uretim durumu
 
-Bu calismada uretim servisleri, `d724-esm-*` container/volume'lari ve Yetka verileri
+Bu calismada uretim servisleri, `careoncloud-esm-*` container/volume'lari ve Yetka verileri
 degistirilmedi. GHCR'a yalnizca `v0.0.0-probe*` etiketli aday imajlar itildi. Bunlar
 temizlenebilir; kalici bir release degildirler.
 
@@ -315,25 +315,25 @@ kismi dagitim gecikmesidir (cutover cozer), bir kismi guncel kaynakta durur
 - `Kernel/Config/Files/XML/Framework.xml:8726,8727,8763,9267` — otobo.io RSS,
   otobo.io CDN gorseli ve `HomePage www.otobo.io`
 - `Kernel/Language/tr.pm:156,2967,3069` — `TAKVIM`, `PANO`, `BILETLER` ALL CAPS
-- `AdminD724Catalog.tt` 0 `<label>` / 9 `placeholder`;
-  `AdminD724Commitment.tt` 1 `<label>` / 5 `placeholder`; SLA politikasi ham JSON
+- `AdminCareOnCloudCatalog.tt` 0 `<label>` / 9 `placeholder`;
+  `AdminCareOnCloudCommitment.tt` 1 `<label>` / 5 `placeholder`; SLA politikasi ham JSON
   textarea'sinda yazdiriliyor
-- `AgentD724Request.tt` ve `AdminD724Commitment.tt` — `onchange="this.form.submit()"`
+- `AgentCareOnCloudRequest.tt` ve `AdminCareOnCloudCommitment.tt` — `onchange="this.form.submit()"`
   ile tenant degistiriliyor, secenekler ham `TenantID`
-- D724 paketlerinde hic CSS/JS yok; `D724KPIGrid`/`D724KPI` siniflari tanimsiz
+- CareOnCloud paketlerinde hic CSS/JS yok; `CareOnCloudKPIGrid`/`CareOnCloudKPI` siniflari tanimsiz
   (calisma zamaninda `display:block` olarak dogrulandi)
 - `<html lang>` bos — WCAG 3.1.1 (A) ihlali. Gorunur sonucu da var: kolon basliklari
   CSS `text-transform: uppercase` ile buyutuluyor, ancak `lang` bos oldugu icin
   tarayici Turkce buyuk harf kuralini uygulamiyor. Kaynak metin "yeni" olan baslik
   ekranda noktasiz I ile cikiyor; Turkce kuralda noktali buyuk I olmasi gerekir.
   Yani bos `lang` yalniz ekran okuyucuyu degil, gozle gorulen metni de bozuyor.
-- `CustomerD724Request.pm` yalniz `Submit` alt-eylemine sahip; musteri actigi talebi
+- `CustomerCareOnCloudRequest.pm` yalniz `Submit` alt-eylemine sahip; musteri actigi talebi
   takip edebilecegi bir ekran yok
-- D724 AccessKey `p` cakismasi: CMDB Service Portfolio ve Problem Management
+- CareOnCloud AccessKey `p` cakismasi: CMDB Service Portfolio ve Problem Management
 
 ### 10.4 Test bosluğu
 
-`development/d724/Test-CareOnCloudBrand.ps1` yalniz dosya yolu tarar (14 yasakli
+`development/careoncloud/Test-CareOnCloudBrand.ps1` yalniz dosya yolu tarar (14 yasakli
 yol) ve iki icerik kontrolu yapar. Ekrana basilan metni taramaz. `Layout.pm:4221`
 bu yuzden marka kapisindan gecmistir. Sablon (`*.tt`), `Layout.pm` ve
 `Framework.xml` icin string taramasi eklenmelidir; allow-list README, NOTICE,
@@ -344,13 +344,13 @@ UPSTREAM.md, LICENSE, telif basliklari ve `Kernel/Language/*.pm` olmalidir.
 Canlida ~40 gercek Turk sirketi adina kayitli demo tenant var. Master Context
 §13.4 bunu yasak davranis sayar. Ancak kaynak tarandi: bu adlar guncel kod
 tabaninda yoktur. `Seed-CareOnCloudShowcase.pl` (`Marmara Bank Demo`,
-`Anadolu Moda Demo`, `Perakende360 Demo`), `Seed-D724Demo.pl`
-(`D724 Demo Company`) ve `Seed-CareOnCloudManagedServicesCatalog.pl` tamamen
+`Anadolu Moda Demo`, `Perakende360 Demo`), `Seed-CareOnCloudDemo.pl`
+(`CareOnCloud Demo Company`) ve `Seed-CareOnCloudManagedServicesCatalog.pl` tamamen
 sentetik ad uretir. Yani eski canli DB verisidir; cozum veri temizligi ve CI'a
 yasakli isim taramasi eklemektir.
 
 Canlida dogrulanan demo musteri hesaplari (hepsi `valid`): `demo.customer`
-(`d724-demo`), `bank.demo` (`showcase-bank`), `moda.demo` (`showcase-fashion`),
+(`careoncloud-demo`), `bank.demo` (`showcase-bank`), `moda.demo` (`showcase-fashion`),
 `retail.demo` (`showcase-retail`). Paralolar seed sirasinda
 `CAREONCLOUD_DEMO_PASSWORD` ile atanmistir. Yeni hesap olusturulmadi.
 

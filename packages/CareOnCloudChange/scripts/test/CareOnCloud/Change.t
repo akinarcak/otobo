@@ -1,0 +1,21 @@
+use v5.24;use strict;use warnings;use Test2::V0;use Kernel::System::UnitTest::RegisterOM;
+$Kernel::OM->ObjectParamAdd('Kernel::System::UnitTest::Helper'=>{RestoreDatabase=>1});
+my$H=$Kernel::OM->Get('Kernel::System::UnitTest::Helper');
+$H->ConfigSettingChange(Key=>'CareOnCloud::Change::Enabled',Value=>1);$H->ConfigSettingChange(Key=>'CareOnCloud::Audit::Enabled',Value=>1);
+my$S=lc$H->GetRandomID();my$TA="change-a-$S";my$TB="change-b-$S";my$DB=$Kernel::OM->Get('Kernel::System::DB');
+for my$T($TA,$TB){my@V=($T,"Change $T",1,1);my@B=map{\$_}@V;ok($DB->Do(SQL=>q{INSERT INTO careoncloud_tenant (key_name,name,status,version,create_time,create_by,change_time,change_by) VALUES (?,?,'active',1,current_timestamp,?,current_timestamp,?)},Bind=>\@B),'tenant')}
+my$Admin={ID=>'admin',TenantIDs=>[$TA],RoleBindings=>{$TA=>['tenant_admin']}};my$Agent={ID=>'agent',TenantIDs=>[$TA],RoleBindings=>{$TA=>['agent']}};my$Other={ID=>'other',TenantIDs=>[$TB],RoleBindings=>{$TB=>['tenant_admin']}};
+my$C=$Kernel::OM->Get('Kernel::System::CareOnCloud::Change');
+is($C->RiskAssess(Impact=>'critical',Likelihood=>'high')->{Data},{Score=>12,Level=>'high',CABRequired=>1},'risk matrix');
+my%B=(Subject=>$Agent,TenantID=>$TA,UserID=>1,Title=>'Firewall upgrade',Description=>'Upgrade edge firewall',ChangeType=>'normal',Impact=>'critical',Likelihood=>'high',ImplementationPlan=>'Apply signed image',TestPlan=>'Validate traffic',BackoutPlan=>'Restore prior image');
+my$R=$C->Create(%B);ok($R->{Success},'agent creates change');like($R->{Data}->{ChangeNumber},qr{\ACHG-},'number');is($R->{Data}->{RiskLevel},'high','risk persisted');my$I=$R->{Data}->{ChangeID};
+my$Sub=$C->Submit(Subject=>$Agent,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedVersion=>1);is($Sub->{Data}->{Status},'awaiting_approval','high risk requires CAB');
+is($C->Decide(Subject=>$Agent,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedVersion=>2,Decision=>'approved')->{Error},'FORBIDDEN','agent cannot approve CAB');
+my$Ap=$C->Decide(Subject=>$Admin,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedVersion=>2,Decision=>'approved',Comment=>'CAB approved');is($Ap->{Data}->{Status},'scheduled','CAB schedules');
+my$Run=$C->Transition(Subject=>$Agent,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedVersion=>3,ToStatus=>'implementing');is($Run->{Data}->{Status},'implementing','implementation starts');
+is($C->Transition(Subject=>$Agent,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedVersion=>4,ToStatus=>'completed')->{Data}->{Status},'completed','change completed');
+is($C->Get(Subject=>$Other,TenantID=>$TA,UserID=>1,ChangeID=>$I)->{Error},'FORBIDDEN','cross tenant denied');
+is($C->Transition(Subject=>$Agent,TenantID=>$TA,UserID=>1,ChangeID=>$I,ExpectedVersion=>4,ToStatus=>'failed')->{Error},'VERSION_CONFLICT','stale transition denied');
+my$Audit=$Kernel::OM->Get('Kernel::System::CareOnCloud::Audit')->List(Subject=>$Admin,TenantID=>$TA,Limit=>50);ok(scalar(grep{$_->{ObjectType}eq'change'}@{$Audit->{Data}}),'change audit exists');
+my$Second=$C->Create(%B,Title=>'Second change');ok($Second->{Success},'second change created');my$Many=$C->List(Subject=>$Agent,TenantID=>$TA,UserID=>1);is(scalar@{$Many->{Data}},2,'list preserves all rows while loading details');
+done_testing;

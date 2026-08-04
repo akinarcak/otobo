@@ -40,7 +40,7 @@ Slogan:
 
 > **Hizmet Bulutta, Kontrol Sizde.**
 
-Geçmiş geliştirme kod adlarında ve paket adlarında `D724` kullanılmaktadır. Bu ad teknik namespace olarak bir süre daha kalabilir; son kullanıcı markası CareOnCloud ESM'dir.
+Geçmiş geliştirme kod adlarında ve paket adlarında `CareOnCloud` kullanılmaktadır. Bu ad teknik namespace olarak bir süre daha kalabilir; son kullanıcı markası CareOnCloud ESM'dir.
 
 ## 1.2 Ürünün kökeni
 
@@ -289,7 +289,7 @@ Müşteri Portalı / Agent UI / Admin UI
                   |
           Sürümlü API ve Web Katmanı
                   |
-       CareOnCloud ESM tabanlı çekirdek + D724 paketleri
+       CareOnCloud ESM tabanlı çekirdek + CareOnCloud paketleri
           |           |             |
        MariaDB     Redis Cache    Event/Outbox
           |                         |
@@ -367,24 +367,24 @@ Aşağıdaki paketler kaynak snapshot'ında bulunmaktadır.
 
 | Modül | Mevcut seviye | Ticari değerlendirme |
 |---|---|---|
-| `D724Foundation` | Çalışır temel paket, sağlık ve tanılama | Temel tamam; release doğrulaması gerekli |
-| `D724TenantDirectory` | Tenant ve rol üyeliği altyapısı | MVP çekirdeği mevcut |
-| `D724TenantGuard` | Varsayılan-ret tenant/RBAC politikası | Gerçek çekirdek; tam ABAC ve bütün yollar eksik |
-| `D724Catalog` | Hizmet, offering, katalog öğesi, form ve portal/admin ekranları | Güçlü MVP; veri terminolojisi sabitlenmeli |
-| `D724Request` | Request, onay, fulfillment durum makinesi | Gerçek çekirdek; uçtan uca rollback kanıtı gerekli |
-| `D724Commitment` | SLA/OLA, takvim, pause/resume, warning/breach | Gerçek çekirdek; operasyon UX ve audit genişlemeli |
-| `D724Audit` | Normalize olaylar, SHA-256 zinciri, export | Kurcalama tespiti sağlar; WORM değildir |
-| `D724TicketAudit` | Bazı çekirdek ticket işlemlerinde audit ve tenant policy | Kısmi; önemli adapter'lar eksik |
-| `D724Reporting` | Boyut/metrik seçimi, kayıtlı rapor, CSV/JSON | Kullanılabilir operasyonel raporlama MVP'si |
-| `D724API` | `/api/v1`, client credentials, digest token, rate limit | Gerçek API temeli; transaction sorunu düzeltilmeli |
-| `D724Webhook` | HMAC, retry, dead-letter, lifecycle olayları | Gerçek çekirdek; operasyon araçları genişlemeli |
-| `D724Identity` | OIDC state/nonce, PKCE, agent/customer adapter | Kod temeli var; gerçek dış IdP testi şart |
-| `D724SCIM` | User/group CRUD, ETag, If-Match, role reconciliation | İyi prototip; gerçek sağlayıcı testi gerekli |
-| `D724Observability` | Prometheus health ve metrik endpoint'i | Temel tamam; alarm, trace ve runbook eksik |
-| `D724CMDB` | Temel CI/asset/portfolio modeli ve import | Prototip; discovery ve reconciliation yok |
-| `D724Problem` | İlk paket, agent ekranı, demo | Prototip; ticari modül sayılmaz |
-| `D724Change` | İlk paket ve agent ekranı | Prototip; CAB/risk/uygulama deneyimi eksik |
-| `D724Assist` | İnsan onaylı yardımcı çerçeve | AI ürünü değildir; başlangıç prototipi |
+| `CareOnCloudFoundation` | Çalışır temel paket, sağlık ve tanılama | Temel tamam; release doğrulaması gerekli |
+| `CareOnCloudTenantDirectory` | Tenant ve rol üyeliği altyapısı | MVP çekirdeği mevcut |
+| `CareOnCloudTenantGuard` | Varsayılan-ret tenant/RBAC politikası | Gerçek çekirdek; tam ABAC ve bütün yollar eksik |
+| `CareOnCloudCatalog` | Hizmet, offering, katalog öğesi, form ve portal/admin ekranları | Güçlü MVP; veri terminolojisi sabitlenmeli |
+| `CareOnCloudRequest` | Request, onay, fulfillment durum makinesi | Gerçek çekirdek; uçtan uca rollback kanıtı gerekli |
+| `CareOnCloudCommitment` | SLA/OLA, takvim, pause/resume, warning/breach | Gerçek çekirdek; operasyon UX ve audit genişlemeli |
+| `CareOnCloudAudit` | Normalize olaylar, SHA-256 zinciri, export | Kurcalama tespiti sağlar; WORM değildir |
+| `CareOnCloudTicketAudit` | Bazı çekirdek ticket işlemlerinde audit ve tenant policy | Kısmi; önemli adapter'lar eksik |
+| `CareOnCloudReporting` | Boyut/metrik seçimi, kayıtlı rapor, CSV/JSON | Kullanılabilir operasyonel raporlama MVP'si |
+| `CareOnCloudAPI` | `/api/v1`, client credentials, digest token, rate limit | Gerçek API temeli; transaction sorunu düzeltilmeli |
+| `CareOnCloudWebhook` | HMAC, retry, dead-letter, lifecycle olayları | Gerçek çekirdek; operasyon araçları genişlemeli |
+| `CareOnCloudIdentity` | OIDC state/nonce, PKCE, agent/customer adapter | Kod temeli var; gerçek dış IdP testi şart |
+| `CareOnCloudSCIM` | User/group CRUD, ETag, If-Match, role reconciliation | İyi prototip; gerçek sağlayıcı testi gerekli |
+| `CareOnCloudObservability` | Prometheus health ve metrik endpoint'i | Temel tamam; alarm, trace ve runbook eksik |
+| `CareOnCloudCMDB` | Temel CI/asset/portfolio modeli ve import | Prototip; discovery ve reconciliation yok |
+| `CareOnCloudProblem` | İlk paket, agent ekranı, demo | Prototip; ticari modül sayılmaz |
+| `CareOnCloudChange` | İlk paket ve agent ekranı | Prototip; CAB/risk/uygulama deneyimi eksik |
+| `CareOnCloudAssist` | İnsan onaylı yardımcı çerçeve | AI ürünü değildir; başlangıç prototipi |
 
 ## 5.1 “Tamamlandı” sayılabilecek çekirdekler
 
@@ -467,7 +467,7 @@ Bir AI, `TEST_EXISTS_NOT_RERUN` olan özelliği “başarıyla test edildi” di
 
 ## 7.1 API transaction sahipliği — P0
 
-`D724API` içindeki transaction yönetiminde, modülün kendisine ait olmayan üst transaction'ı commit veya rollback etme riski bulunmuştur.
+`CareOnCloudAPI` içindeki transaction yönetiminde, modülün kendisine ait olmayan üst transaction'ı commit veya rollback etme riski bulunmuştur.
 
 Kural:
 
@@ -593,7 +593,7 @@ CareOnCloud için ayrı politika gereklidir:
 
 ## 7.6 CI kapsamı — P0
 
-CI bütün `D724*` paketlerini kapsamalıdır.
+CI bütün `CareOnCloud*` paketlerini kapsamalıdır.
 
 Zorunlu kapılar:
 
@@ -731,7 +731,7 @@ Secret ve parola bu dosyada saklanmaz.
 
 - Dış adres HTTP 200 dönüyordu.
 - Canlı web/daemon eski çalışma kümesi olabilirdi.
-- Yeni image: `d724/esm:dev`
+- Yeni image: `careoncloud/esm:dev`
 - Yeni `careoncloud_esm` DB hazırlanmıştı.
 - Yeni CareOnCloud volume'ları oluşturulmuştu.
 - Eski DB/image/volume rollback için korunuyordu.
@@ -749,7 +749,7 @@ Bu bilgi güncel kabul edilmemeli; işlem öncesi yeniden doğrulanmalıdır.
 3. Yeni image'ı farklı container adı ve alternatif portta başlat.
 4. Yeni CareOnCloud DB ve volume'larını kullan.
 5. `/careoncloud/index.pl`, health, login, statik dosya, cookie ve header'ı test et.
-6. D724 paket install/upgrade durumunu doğrula.
+6. CareOnCloud paket install/upgrade durumunu doğrula.
 7. Katalog, request, reporting ve tenant kısa kabul paketini çalıştır.
 8. Runtime marka taraması yap.
 9. Backup/restore kontrolünü doğrula.
@@ -892,7 +892,7 @@ Yapılacaklar:
 
 ## P0.4 — Release ve operasyon
 
-- D724 CI matrisi
+- CareOnCloud CI matrisi
 - Install/upgrade/uninstall
 - Backup/restore
 - RPO/RTO ölçümü

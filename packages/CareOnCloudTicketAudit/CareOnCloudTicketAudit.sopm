@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudTicketAudit</Name><Version>0.8.19</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-safe CareOnCloud ESM ticket search and Generic Interface reads with transaction-atomic mutation audit.</Description>
+    <Description Lang="tr">Tenant-guvenli CareOnCloud ESM ticket arama ve Generic Interface okumalari ile transaction-atomic mutasyon auditi.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.7.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.1">CareOnCloudTenantDirectory</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudAudit</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="careoncloud_ticket_scope">
+            <Column Name="ticket_id" Required="true" PrimaryKey="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
+            <Column Name="status" Required="true" Default="active" Size="20" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Type="INTEGER" />
+            <Index Name="careoncloud_ticket_scope_tenant"><IndexColumn Name="tenant_id" /><IndexColumn Name="ticket_id" /></Index>
+            <ForeignKey ForeignTable="careoncloud_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUninstall Type="pre"><TableDrop Name="careoncloud_ticket_scope" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/CareOnCloudTicketAudit.xml" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/TicketAudit.pm" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/TicketPolicy.pm" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/SearchPolicy.pm" />
+        <File Permission="644" Location="Kernel/System/Ticket/CareOnCloudAuditCustom.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/TicketAuditStatus.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/TicketScopeBackfill.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/TicketScopeAssign.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/TicketAudit.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/TicketAuditStatus.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/TicketPolicy.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/SearchPolicy.t" />
+    </Filelist>
+</careoncloud_package>

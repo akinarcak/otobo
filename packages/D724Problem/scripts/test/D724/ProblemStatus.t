@@ -1,1 +1,0 @@
-use v5.24;use strict;use warnings;use Test2::V0;use Kernel::System::UnitTest::RegisterOM;my$R=$Kernel::OM->Get('Kernel::System::Console::Command::Admin::D724::ProblemStatus')->StatusData();ok($R->{Success},'problem status healthy');is($R->{Version},'0.2.2','version');done_testing;

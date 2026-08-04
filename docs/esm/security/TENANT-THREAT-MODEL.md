@@ -4,7 +4,7 @@ Durum: policy cekirdegi ve CareOnCloud ESM ticket write-scope cekirdegi uyguland
 
 ## Guvenlik siniri
 
-Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozlesmeleri, bilgi makalelerini, otomasyonlari ve audit olaylarini kapsayan en ust veri siniridir. CareOnCloud ESM `CustomerID`, kuyruk ve grup yetkileri operasyonel erisim mekanizmalaridir; tek baslarina D724 tenant siniri sayilmazlar. D724 kodu bir kaynagi okumadan veya degistirmeden once merkezi `D724TenantGuard` kararini almak zorundadir.
+Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozlesmeleri, bilgi makalelerini, otomasyonlari ve audit olaylarini kapsayan en ust veri siniridir. CareOnCloud ESM `CustomerID`, kuyruk ve grup yetkileri operasyonel erisim mekanizmalaridir; tek baslarina CareOnCloud tenant siniri sayilmazlar. CareOnCloud kodu bir kaynagi okumadan veya degistirmeden once merkezi `CareOnCloudTenantGuard` kararini almak zorundadir.
 
 ## Degismezler
 
@@ -30,7 +30,7 @@ Bir tenant; organizasyonlari, kisileri, talepleri, hizmetleri, varliklari, sozle
 | Arka plan sizintisi | daemon job'unun tenantsiz calismasi | aktif TenantID + tenant-bound `automation:<job>` subject + merkezi `automation.execute` | commitment sweep/webhook scan/dispatcher negatif entegrasyon testleri (`SEC-01b-daemon`) |
 | Cache karismasi | tenant anahtari olmayan cache key | aktif tenant + policy kontrolu, hash'li tenant Type ve izole invalidation | `TenantCache.t`, `TenantCacheStatus.t`, `Accept-TenantCache.pl` |
 | Arama sizintisi | global Elasticsearch sonucu | trusted context + `search.read` + final invoker'da zorunlu tenant filter; unsafe index deny | `SearchPolicy.t`, `Accept-SearchPolicy.pl`, `Accept-ElasticsearchRuntime.pl` |
-| Export sizintisi | raporun tum kayitlari indirmesi | her SQL'de tenant+tarih predicate, `report.read`/`report.export`, aggregate-only schema | D724Reporting cross-tenant/PII/CSV negatif testleri ve demo kabulü (`SEC-01b-report`) |
+| Export sizintisi | raporun tum kayitlari indirmesi | her SQL'de tenant+tarih predicate, `report.read`/`report.export`, aggregate-only schema | CareOnCloudReporting cross-tenant/PII/CSV negatif testleri ve demo kabulü (`SEC-01b-report`) |
 | Global admin kotuye kullanimi | tek rolle tum tenant'lara giris | iki anahtarli opt-in, audit ve acil durum runbook'u | platform admin config testleri |
 | Kimlik karmasasi | bosluk/case ile benzer tenant ID | dar kimlik regex'i ve exact match | invalid/case-sensitive testler |
 

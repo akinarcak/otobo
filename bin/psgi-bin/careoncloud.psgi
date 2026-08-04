@@ -705,7 +705,7 @@ my $CareOnCloudApp = builder {
         )->to_app;
     };
 
-    # D724 ESM canonical API mount. The implementation remains package-owned;
+    # CareOnCloud ESM canonical API mount. The implementation remains package-owned;
     # this fork-level adapter only maps stable resource paths to CareOnCloud ESM's
     # supported Public frontend extension point.
     mount '/api/v1' => builder {
@@ -762,14 +762,14 @@ my $CareOnCloudApp = builder {
 
             my $OriginalQuery = $APIEnv{QUERY_STRING} // q{};
             $APIEnv{QUERY_STRING} = join '&', grep { length }
-                'Action=PublicD724API', "Route=$Route", $PathQuery // q{}, $OriginalQuery;
+                'Action=PublicCareOnCloudAPI', "Route=$Route", $PathQuery // q{}, $OriginalQuery;
             $APIEnv{PATH_INFO} = q{};
             return $PublicAPIApp->(\%APIEnv);
         };
     };
 
     # CareOnCloud SCIM 2.0 canonical mount. Authentication, tenant isolation,
-    # validation and lifecycle behavior remain package-owned by D724SCIM.
+    # validation and lifecycle behavior remain package-owned by CareOnCloudSCIM.
     mount '/scim/v2' => builder {
 
         enable $RedirectToHTTPS;
@@ -799,7 +799,7 @@ my $CareOnCloudApp = builder {
 
             my $OriginalQuery = $SCIMEnv{QUERY_STRING} // q{};
             $SCIMEnv{QUERY_STRING} = join '&', grep { length }
-                'Action=PublicD724SCIM', "Route=$Route", defined $ID ? "id=$ID" : q{}, $OriginalQuery;
+                'Action=PublicCareOnCloudSCIM', "Route=$Route", defined $ID ? "id=$ID" : q{}, $OriginalQuery;
             $SCIMEnv{PATH_INFO} = q{};
             return $PublicSCIMApp->(\%SCIMEnv);
         };

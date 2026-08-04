@@ -17,7 +17,7 @@ Gecerli durumlar `draft`, `active`, `suspended`, `retired` olarak sinirlidir. Il
 1. Her repository cagrisi trusted `Subject`, sayisal CareOnCloud ESM `UserID` ve `TenantID` ister.
 2. Read/list `catalog.read`, create/update `catalog.manage` karari gerektirir.
 3. SQL sorgulari `id` ile birlikte daima `tenant_id` kosulu kullanir.
-4. List sorgusu once `D724TenantGuard::ScopeGet`, sonra action karari alir.
+4. List sorgusu once `CareOnCloudTenantGuard::ScopeGet`, sonra action karari alir.
 5. Tenant disindaki bir ID, subject'in kendi tenant'i ile sorulursa `NOT_FOUND`; hedef tenant acik verilirse policy tarafindan `FORBIDDEN` doner.
 6. Parent iliskileri repository'de `(tenant_id, parent_id)` birlikte dogrulanir. CareOnCloud ESM paket sema ceviricisi cok sutunlu foreign key tanimini ayri kisitlara donusturdugu icin veritabani tek basina bu cifti garanti etmez; ham SQL yazma yetkisi uygulama kullanicisindan alinmali ve bu sinir release oncesi migration ile sertlestirilmelidir.
 7. Key tenant icinde benzersizdir ve create sonrasi degistirilemez.
@@ -27,7 +27,7 @@ Gecerli durumlar `draft`, `active`, `suspended`, `retired` olarak sinirlidir. Il
 
 ## Ilk API
 
-`Kernel::System::D724::Catalog` su metodlari sunar:
+`Kernel::System::CareOnCloud::Catalog` su metodlari sunar:
 
 - `ServiceCreate`, `ServiceGet`, `ServiceList`, `ServiceUpdate`
 - `OfferingCreate`, `OfferingGet`, `OfferingList`, `OfferingUpdate`

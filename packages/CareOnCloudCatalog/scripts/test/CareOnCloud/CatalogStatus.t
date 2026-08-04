@@ -1,0 +1,36 @@
+# --
+# CareOnCloud ESM enterprise service management platform.
+# Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
+# SPDX-License-Identifier: GPL-3.0-only
+# --
+
+use v5.24;
+use strict;
+use warnings;
+use utf8;
+
+use Capture::Tiny qw(capture);
+use Test2::V0;
+use Kernel::System::UnitTest::RegisterOM;
+
+my $CommandObject = $Kernel::OM->Get(
+    'Kernel::System::Console::Command::Admin::CareOnCloud::CatalogStatus'
+);
+my ( $JSONString, undef, $ExitCode ) = capture {
+    return $CommandObject->Execute('--json');
+};
+
+is( $ExitCode, 0, 'catalog status command succeeds' );
+my $Status = $Kernel::OM->Get('Kernel::System::JSON')->Decode( Data => $JSONString );
+ok( $Status->{Success}, 'catalog repository is healthy' );
+is( $Status->{Package}, 'CareOnCloudCatalog', 'status identifies package' );
+is( $Status->{Version}, '0.7.0', 'status identifies version' );
+ok( $Status->{TenantConstraints}->{Success}, 'status requires tenant-paired database constraints' );
+is(
+    [ sort keys %{ $Status->{Tables} } ],
+    [qw(careoncloud_catalog_item careoncloud_catalog_item_schema careoncloud_service careoncloud_service_offering)],
+    'all catalog tables are reported',
+);
+ok( !( grep { !$_ } values %{ $Status->{Tables} } ), 'all catalog tables exist' );
+
+done_testing;

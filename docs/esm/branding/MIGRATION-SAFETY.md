@@ -1,6 +1,6 @@
 # Copy Migration Safety Contract
 
-`development/d724/migrate-careoncloud-brand.sh` is a copy migration tool, not
+`development/careoncloud/migrate-careoncloud-brand.sh` is a copy migration tool, not
 a production cutover command. Its execute mode is fail-closed:
 
 - `--compose-project` is mandatory, so a Compose file's implicit project name

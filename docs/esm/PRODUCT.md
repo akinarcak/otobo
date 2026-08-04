@@ -2,7 +2,7 @@
 
 ## Konumlandirma
 
-D724 ESM, kurumsal hizmetleri tek katalog ve tek sorumluluk modeli uzerinde yoneten, MSP kullanimi icin de uygun, acik kaynak bir Enterprise Service Management platformudur. Hedef; ServiceNow'un genisligini veya 4me'nin olgunlugunu ilk gunden kopyalamak degil, en sik kullanilan isleri daha hizli kurulan ve daha seffaf bir urunde birlestirmektir.
+CareOnCloud ESM, kurumsal hizmetleri tek katalog ve tek sorumluluk modeli uzerinde yoneten, MSP kullanimi icin de uygun, acik kaynak bir Enterprise Service Management platformudur. Hedef; ServiceNow'un genisligini veya 4me'nin olgunlugunu ilk gunden kopyalamak degil, en sik kullanilan isleri daha hizli kurulan ve daha seffaf bir urunde birlestirmektir.
 
 ## Birincil kullanicilar
 

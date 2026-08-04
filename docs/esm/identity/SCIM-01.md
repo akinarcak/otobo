@@ -7,7 +7,7 @@ CareOnCloud ESM exposes SCIM 2.0 at `/careoncloud/scim/v2`. Every request requir
 - an API client with the `tenant_admin` role, which is the only role granted
   the `scim.provision` policy action
 
-The API client is created and rotated by the existing D724 API client tooling.
+The API client is created and rotated by the existing CareOnCloud API client tooling.
 SCIM does not introduce a second secret store. Client secrets are bcrypt
 protected, access tokens are stored only as SHA-256 digests, and tokens cannot
 be used against another tenant.

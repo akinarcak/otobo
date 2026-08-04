@@ -3,9 +3,9 @@
 **Status:** `VERIFIED_IN_CODE` on 2026-08-02. This is an implementation
 inventory, not a current full-regression result.
 
-## Covered by the D724TicketAudit custom module
+## Covered by the CareOnCloudTicketAudit custom module
 
-`packages/D724TicketAudit/Kernel/System/Ticket/D724AuditCustom.pm` intercepts
+`packages/CareOnCloudTicketAudit/Kernel/System/Ticket/CareOnCloudAuditCustom.pm` intercepts
 the following core writes and sends them through the transaction-aware
 `TicketAudit` service:
 
@@ -20,7 +20,7 @@ the following core writes and sends them through the transaction-aware
 
 The corresponding tests cover create, state/title/customer mutations, article
 creation, audit failure rollback, no-op behavior, and tenant-chain validation
-in `packages/D724TicketAudit/scripts/test/D724/TicketAudit.t`.
+in `packages/CareOnCloudTicketAudit/scripts/test/CareOnCloud/TicketAudit.t`.
 
 ## Direct ticket mutator inventory
 
@@ -41,7 +41,7 @@ cleanup.
 `TicketUnlockTimeoutUpdate` writes the core ticket `timeout` field directly and
 is now wrapped by the generic mutation contract. `TicketLockSet`, MIMEBase, and
 Chat article creation also call it inside their audited parent transaction
-without checking its return value, so `D724TicketAudit 0.8.19` uses an explicit,
+without checking its return value, so `CareOnCloudTicketAudit 0.8.19` uses an explicit,
 parent-linked nested-mutation failure context. Any inner mutation failure makes
 the parent operation fail closed and roll back. After a successful inner timeout
 audit, the parent re-locks the scope and uses the current version for its own
@@ -82,7 +82,7 @@ candidate run Elasticsearch reported a delete version conflict after the DB
 rollback path, so full cross-system atomicity is not claimed.
 
 The separate Chat backend has its own create/update/delete wrappers and
-candidate regression coverage. `D724TicketAudit 0.8.15` also wraps the fallback
+candidate regression coverage. `CareOnCloudTicketAudit 0.8.15` also wraps the fallback
 `Invalid` backend's unknown-channel metadata delete route in its own
 scope/audit transaction. Its candidate regression is still required before the
 route is accepted. Generic Interface write adapters and scheduler/daemon

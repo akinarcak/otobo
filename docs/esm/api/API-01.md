@@ -1,6 +1,6 @@
 # API-01 - Tenant-safe integration API
 
-## Implemented contract (`D724API 0.7.2`)
+## Implemented contract (`CareOnCloudAPI 0.7.2`)
 
 The API is a GPL-3.0 package and uses OTOBO's supported public frontend
 registration. Its canonical versioned base URL is:
@@ -9,7 +9,7 @@ registration. Its canonical versioned base URL is:
 
 The legacy compatibility transport remains available at:
 
-`/careoncloud/public.pl?Action=PublicD724API`
+`/careoncloud/public.pl?Action=PublicCareOnCloudAPI`
 
 All responses are JSON, carry `Cache-Control: no-store` and
 `X-Content-Type-Options: nosniff`, and use a stable envelope:
@@ -49,7 +49,7 @@ current optimistic version is mandatory, and `--confirm` makes the disruptive
 token invalidation explicit:
 
 ```text
-bin/careoncloud.Console.pl Admin::D724::APIClientRotate \
+bin/careoncloud.Console.pl Admin::CareOnCloud::APIClientRotate \
   --tenant-id TENANT --client-id CLIENT --expected-version VERSION \
   --actor-user-id USER_ID --confirm
 ```
@@ -66,7 +66,7 @@ soon as a successful rotation commits.
 - `GET /careoncloud/api/v1/tickets/9`
 
 The bearer token's tenant is the sole tenant selector; the caller cannot supply
-or override it. Reads join the immutable `d724_ticket_scope` predicate before
+or override it. Reads join the immutable `careoncloud_ticket_scope` predicate before
 returning data. The projection is deliberately small: ID, number, title, queue,
 state, priority, tenant ID, and timestamps. Article bodies and other PII are not
 part of this contract. Pagination is stable by ticket ID, with a maximum page of
@@ -118,7 +118,7 @@ The token role must pass `case.update`; an approval additionally requires the
 role configured on the pending approval. Consequently, a requester integration
 cannot approve a tenant-admin step even when it knows the request ID. The
 token-derived `integration:<client-id>` subject is validated as single-tenant,
-passed through `D724TenantGuard`, reused by commitment synchronization, and
+passed through `CareOnCloudTenantGuard`, reused by commitment synchronization, and
 recorded as actor type `integration`. No synthetic agent ID or audit-free
 mutation path exists.
 
@@ -141,7 +141,7 @@ receiver verification are specified in `WEBHOOK-01.md`.
 
 ## Security invariants
 
-- Default-deny `D724TenantGuard` authorization runs before rate consumption and data access.
+- Default-deny `CareOnCloudTenantGuard` authorization runs before rate consumption and data access.
 - Client identity, role, rate limit, TTL, and token are bound to exactly one active tenant.
 - SQL values use bind parameters; limits and cursors are range/format validated before query execution.
 - List filtering occurs in SQL, not as an application post-filter.
@@ -154,7 +154,7 @@ receiver verification are specified in `WEBHOOK-01.md`.
 
 ## Retention and operational metrics
 
-`Admin::D724::APIStatus --json` reports active/revoked/expired clients and
+`Admin::CareOnCloud::APIStatus --json` reports active/revoked/expired clients and
 tokens, current-minute request volume, total/stale rate and metric windows,
 five-minute request/error counts, route series, average/maximum latency, stale
 token digests, invalid hashes/tenant references, retention validity, canonical
@@ -174,7 +174,7 @@ hours, and API metric windows for 168 hours. A scheduler may run this confirmed
 maintenance command daily:
 
 ```text
-bin/careoncloud.Console.pl Maint::D724::APIRetentionCleanup --confirm
+bin/careoncloud.Console.pl Maint::CareOnCloud::APIRetentionCleanup --confirm
 ```
 
 Only expired or revoked token digests and completed rate windows older than the
@@ -183,12 +183,12 @@ are retained.
 
 ## Verified acceptance (`2026-07-25`)
 
-`development/d724/Accept-API.pl` created a short-lived requester client for
-`d724-demo`, exercised the real HTTP endpoint, and revoked the client. Evidence:
+`development/careoncloud/Accept-API.pl` created a short-lived requester client for
+`careoncloud-demo`, exercised the real HTTP endpoint, and revoked the client. Evidence:
 
 - token `200`, list `200`, same-tenant get `200`;
 - unknown/cross-scope get `404`;
-- every listed object had `tenant_id=d724-demo`;
+- every listed object had `tenant_id=careoncloud-demo`;
 - the same token returned `401` immediately after client revocation;
 - canonical OpenAPI returned `200` and parsed as version `3.1.0`;
 - request create/replay/conflict/get returned `201/200/409/200` for request `187`;
@@ -208,7 +208,7 @@ are retained.
   label was stored;
 - `Accept-APIMetricConcurrency.pl` ran 12 independent database writers against
   one minute series and obtained exactly one row with count/sum/max `12/78/12`;
-- all 42 D724 test files and 859 assertions passed together.
+- all 42 CareOnCloud test files and 859 assertions passed together.
 
 ## Remaining API-01 work
 

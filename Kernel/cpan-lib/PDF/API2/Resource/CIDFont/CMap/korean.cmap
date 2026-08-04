@@ -18072,7 +18072,7 @@ $cmap->{korean}={
         0xD721, # G+18061  U+D721  uniD721,  HANGUL SYLLABLE-D721
         0xD722, # G+18062  U+D722  uniD722,  HANGUL SYLLABLE-D722
         0xD723, # G+18063  U+D723  uniD723,  HANGUL SYLLABLE-D723
-        0xD724, # G+18064  U+D724  uniD724,  HANGUL SYLLABLE-D724
+        0xCareOnCloud, # G+18064  U+CareOnCloud  uniCareOnCloud,  HANGUL SYLLABLE-CareOnCloud
         0xD725, # G+18065  U+D725  uniD725,  HANGUL SYLLABLE-D725
         0xD726, # G+18066  U+D726  uniD726,  HANGUL SYLLABLE-D726
         0xD727, # G+18067  U+D727  uniD727,  HANGUL SYLLABLE-D727
@@ -35161,7 +35161,7 @@ $cmap->{korean}={
         '55073' => '18061'            , # G+18061  U+D721  uniD721,  HANGUL SYLLABLE-D721
         '55074' => '18062'            , # G+18062  U+D722  uniD722,  HANGUL SYLLABLE-D722
         '55075' => '18063'            , # G+18063  U+D723  uniD723,  HANGUL SYLLABLE-D723
-        '55076' => '18064'            , # G+18064  U+D724  uniD724,  HANGUL SYLLABLE-D724
+        '55076' => '18064'            , # G+18064  U+CareOnCloud  uniCareOnCloud,  HANGUL SYLLABLE-CareOnCloud
         '55077' => '18065'            , # G+18065  U+D725  uniD725,  HANGUL SYLLABLE-D725
         '55078' => '18066'            , # G+18066  U+D726  uniD726,  HANGUL SYLLABLE-D726
         '55079' => '18067'            , # G+18067  U+D727  uniD727,  HANGUL SYLLABLE-D727

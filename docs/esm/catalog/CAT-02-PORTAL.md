@@ -3,7 +3,7 @@
 ## Delivered contract
 
 - The authenticated CareOnCloud ESM customer company ID is the tenant boundary for the portal request.
-- The browser cannot select or override `TenantID`; `CustomerD724Catalog` derives it from the authenticated session.
+- The browser cannot select or override `TenantID`; `CustomerCareOnCloudCatalog` derives it from the authenticated session.
 - Customer login identifiers are SHA-256 normalized before becoming TenantGuard subject identifiers, so email-style logins remain valid without exposing them in policy decisions.
 - Only active services, offerings, and catalog items are listed.
 - Customers explicitly select a service category, service extension, and request type before the dynamic request form opens.
@@ -16,8 +16,8 @@
 
 ## Submission boundary
 
-`D724Request` owns CSRF validation, server-side answer validation, idempotency, audit events, commitments and workflow routing. `D724Catalog` owns the tenant-safe three-level selection and dynamic form definition. The submitted service and extension identifiers are checked against the selected catalog item before request orchestration starts.
+`CareOnCloudRequest` owns CSRF validation, server-side answer validation, idempotency, audit events, commitments and workflow routing. `CareOnCloudCatalog` owns the tenant-safe three-level selection and dynamic form definition. The submitted service and extension identifiers are checked against the selected catalog item before request orchestration starts.
 
 ## Test-server evidence
 
-`D724Catalog 0.2.4` was upgraded from the installed 0.1/0.2 lineage, including the new schema table. Package tests cover repository isolation, form validation, parent availability, immutable hierarchy links, HTML escaping, and template rendering. An authenticated demo customer session rendered both the catalog overview and dynamic form detail over HTTP on the private test endpoint.
+`CareOnCloudCatalog 0.2.4` was upgraded from the installed 0.1/0.2 lineage, including the new schema table. Package tests cover repository isolation, form validation, parent availability, immutable hierarchy links, HTML escaping, and template rendering. An authenticated demo customer session rendered both the catalog overview and dynamic form detail over HTTP on the private test endpoint.

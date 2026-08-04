@@ -48,14 +48,14 @@ Bu yaklaşım hukuki görüş değildir; ilk ticari dağıtımdan önce açık k
 
 ## 3. Mimari yaklaşım
 
-İlk sürümlerde mikroservis dönüşümü yapılmamıştır. Türetilen çekirdek; ticket/workflow, zamanlama, kimlik, paket yönetimi, Generic Interface ve arama için sistem-of-record olarak kalır. Yeni kabiliyetler `D724*` adlı GPL-3.0 paketler şeklinde eklenmiştir.
+İlk sürümlerde mikroservis dönüşümü yapılmamıştır. Türetilen çekirdek; ticket/workflow, zamanlama, kimlik, paket yönetimi, Generic Interface ve arama için sistem-of-record olarak kalır. Yeni kabiliyetler `CareOnCloud*` adlı GPL-3.0 paketler şeklinde eklenmiştir.
 
 ```text
 Müşteri Portalı / Agent UI / Admin UI
                   |
           Sürümlü API ve Web Katmanı
                   |
-       CareOnCloud çekirdeği + D724 paketleri
+       CareOnCloud çekirdeği + CareOnCloud paketleri
           |           |             |
        MariaDB     Redis Cache    Event/Outbox
           |                         |
@@ -84,24 +84,24 @@ Hedef kanonik adlar:
 
 | Modül | Amaç | Mevcut durumun özeti |
 |---|---|---|
-| `D724Foundation` | Ürün/edition ayarları, temel sağlık ve paket doğrulama | Çalışır temel paket ve tanılama komutları |
-| `D724TenantDirectory` | Tenant ve kullanıcı/rol üyelikleri | Kalıcı directory, bootstrap, üyelik verme/geri alma |
-| `D724TenantGuard` | Merkezi tenant ve rol politikası | Varsayılan-ret, cross-tenant engeli, report/search/cache/automation aksiyonları |
-| `D724Catalog` | Hizmet, sunum/uzantı, katalog öğesi ve dinamik form | Müşteri ve yönetici ekranları; kategori → uzantı → talep tipi doğrulaması; Türkçe metinler |
-| `D724Request` | Talep, onay ve fulfillment durum makinesi | İdempotent oluşturma, optimistic version, agent/müşteri akışı, katalog bağlam doğrulaması |
-| `D724Commitment` | SLA/OLA hedefleri ve eskalasyon | Takvim, pause/resume, warning/breach, dispatcher, retry/dead-letter |
-| `D724Audit` | Normalize ve eklemeli audit olayları | SHA-256 zinciri, cursor/NDJSON export ve bazı domainlerde atomik yazım |
-| `D724TicketAudit` | Çekirdek ticket işlemlerini audit ve tenant politikasına bağlama | Ticket create ve temel alan/article işlemlerinde kapsam; kalan adapterlar var |
-| `D724Reporting` | Operasyon ve özelleştirilebilir raporlar | Boyut/metrik seçimi, CSV/JSON, private/shared kayıtlı raporlar, tenant/date/status doğrulaması, Türkçe UI |
-| `D724API` | `/api/v1` REST sözleşmesi | Client credentials, digest token, rate limit, request read/create/lifecycle ve OpenAPI 3.1 |
-| `D724Webhook` | İmzalı olay teslimi | Abonelik CRUD, HMAC, retry/dead-letter ve lifecycle olayları |
-| `D724Identity` | OIDC kimlik doğrulama | Issuer/audience route, state/nonce, PKCE S256 ve agent/customer adapter temeli |
-| `D724SCIM` | SCIM 2.0 kullanıcı/grup yaşam döngüsü | User/group CRUD, ETag/If-Match, rol uzlaştırma, tenant-safe HTTP yüzeyi |
-| `D724Observability` | Prometheus sağlık/metrikleri | Sabit etiketli, PII içermeyen metrikler ve Bearer korumalı endpoint |
-| `D724CMDB` | CI/varlık ve servis portföyü bağlamı | Temel model, workbook import ve portföy görünümü |
-| `D724Problem` | Problem yönetimi | İlk paket, agent ekranı ve demo verisi; olgunlaştırılmalı |
-| `D724Change` | Change enablement | İlk paket ve agent ekranı; CAB/risk/uygulama deneyimi tamamlanmalı |
-| `D724Assist` | İnsan onaylı yardımcı yetenekleri için çerçeve | Başlangıç paketi; üretim AI gateway'i değildir |
+| `CareOnCloudFoundation` | Ürün/edition ayarları, temel sağlık ve paket doğrulama | Çalışır temel paket ve tanılama komutları |
+| `CareOnCloudTenantDirectory` | Tenant ve kullanıcı/rol üyelikleri | Kalıcı directory, bootstrap, üyelik verme/geri alma |
+| `CareOnCloudTenantGuard` | Merkezi tenant ve rol politikası | Varsayılan-ret, cross-tenant engeli, report/search/cache/automation aksiyonları |
+| `CareOnCloudCatalog` | Hizmet, sunum/uzantı, katalog öğesi ve dinamik form | Müşteri ve yönetici ekranları; kategori → uzantı → talep tipi doğrulaması; Türkçe metinler |
+| `CareOnCloudRequest` | Talep, onay ve fulfillment durum makinesi | İdempotent oluşturma, optimistic version, agent/müşteri akışı, katalog bağlam doğrulaması |
+| `CareOnCloudCommitment` | SLA/OLA hedefleri ve eskalasyon | Takvim, pause/resume, warning/breach, dispatcher, retry/dead-letter |
+| `CareOnCloudAudit` | Normalize ve eklemeli audit olayları | SHA-256 zinciri, cursor/NDJSON export ve bazı domainlerde atomik yazım |
+| `CareOnCloudTicketAudit` | Çekirdek ticket işlemlerini audit ve tenant politikasına bağlama | Ticket create ve temel alan/article işlemlerinde kapsam; kalan adapterlar var |
+| `CareOnCloudReporting` | Operasyon ve özelleştirilebilir raporlar | Boyut/metrik seçimi, CSV/JSON, private/shared kayıtlı raporlar, tenant/date/status doğrulaması, Türkçe UI |
+| `CareOnCloudAPI` | `/api/v1` REST sözleşmesi | Client credentials, digest token, rate limit, request read/create/lifecycle ve OpenAPI 3.1 |
+| `CareOnCloudWebhook` | İmzalı olay teslimi | Abonelik CRUD, HMAC, retry/dead-letter ve lifecycle olayları |
+| `CareOnCloudIdentity` | OIDC kimlik doğrulama | Issuer/audience route, state/nonce, PKCE S256 ve agent/customer adapter temeli |
+| `CareOnCloudSCIM` | SCIM 2.0 kullanıcı/grup yaşam döngüsü | User/group CRUD, ETag/If-Match, rol uzlaştırma, tenant-safe HTTP yüzeyi |
+| `CareOnCloudObservability` | Prometheus sağlık/metrikleri | Sabit etiketli, PII içermeyen metrikler ve Bearer korumalı endpoint |
+| `CareOnCloudCMDB` | CI/varlık ve servis portföyü bağlamı | Temel model, workbook import ve portföy görünümü |
+| `CareOnCloudProblem` | Problem yönetimi | İlk paket, agent ekranı ve demo verisi; olgunlaştırılmalı |
+| `CareOnCloudChange` | Change enablement | İlk paket ve agent ekranı; CAB/risk/uygulama deneyimi tamamlanmalı |
+| `CareOnCloudAssist` | İnsan onaylı yardımcı yetenekleri için çerçeve | Başlangıç paketi; üretim AI gateway'i değildir |
 
 Paketler birbirlerinin tablolarına doğrudan yazmak yerine yayınlanan Perl API'leri ve sözleşmeleri kullanma hedefi taşır. Dış isteklerde tenant bağlamı, yetki, idempotency ve audit temel kalite kapılarıdır.
 
@@ -203,7 +203,7 @@ Bu nedenle marka/veri geçişi “hazırlandı fakat canlı kesim tamamlanmadı�
 1. Mevcut `esm.arcak.net` ve eski web/daemon sağlığını tekrar doğrula.
 2. Yeni imajı farklı konteyner adı ve alternatif yerel portla, yeni CareOnCloud volume ve `careoncloud_esm` DB üzerinde başlat.
 3. `/careoncloud/index.pl`, health, login, header/cookie ve statik varlıkları doğrula.
-4. Kurulu D724 paket sürümlerini incele; gerekli paket build/upgrade işlemlerini aday üzerinde yap.
+4. Kurulu CareOnCloud paket sürümlerini incele; gerekli paket build/upgrade işlemlerini aday üzerinde yap.
 5. Katalog, request, raporlama, tenant izolasyonu ve demo için kısa kabul paketi çalıştır.
 6. UI/API/header/cookie/DB/volume/yol taramasında eski marka adının yalnızca NOTICE/README/telif izin listesinde kaldığını doğrula.
 7. Kısa bakım penceresinde eski web/daemon'u durdurup aynı origin portunda yeni kümeyi aç.
@@ -249,7 +249,7 @@ Bu nedenle marka/veri geçişi “hazırlandı fakat canlı kesim tamamlanmadı�
 
 ## 11. Depo ve çalışma durumu
 
-- Çalışma dizini: `D724 ESM` deposu.
+- Çalışma dizini: `CareOnCloud ESM` deposu.
 - Geliştirme dalı: `codex/esm-foundation`.
 - Çalışma ağacı son devir kontrolünde temizdir; güncel dal `codex/esm-foundation`, son commit `bc157ccde4` (`docs(esm): record static P0 gate rerun`). Kullanıcı değişikliklerini silen toplu reset/checkout yine yapılmamalıdır.
 - Marka geçişi; silinen eski adlı dosyalar ve eklenen yeni adlı dosyalar nedeniyle özellikle geniş diff üretmektedir.
@@ -265,7 +265,7 @@ Başlıca referanslar:
 - `docs/esm/GPL-COMMERCIAL.md` — GPL ticari yaklaşımı.
 - `docs/esm/branding/BRAND-01.md` — marka ve altyapı geçişi.
 - `docs/esm/demo/SHOWCASE.md` — sentetik demo yaklaşımı.
-- `development/d724/README.md` — geliştirme runtime ve operasyon notları.
+- `development/careoncloud/README.md` — geliştirme runtime ve operasyon notları.
 
 ## 12. Değerlendiren yapay zekâ için önerilen sorular
 

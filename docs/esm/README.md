@@ -1,6 +1,6 @@
-# D724 ESM Foundation
+# CareOnCloud ESM Foundation
 
-Bu dizin, CareOnCloud ESM `rel-11_1` tabani uzerinde gelistirilecek ticari ESM urununun karar kaydidir. `D724 ESM` gelistirme kod adidir; genel kullanima acilmadan once marka arastirmasi yapilarak kalici urun adi secilmelidir.
+Bu dizin, CareOnCloud ESM `rel-11_1` tabani uzerinde gelistirilecek ticari ESM urununun karar kaydidir. `CareOnCloud ESM` gelistirme kod adidir; genel kullanima acilmadan once marka arastirmasi yapilarak kalici urun adi secilmelidir.
 
 ## Urun ilkeleri
 

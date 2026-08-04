@@ -4,7 +4,7 @@ Durum: tamamlandi (`2026-07-24`).
 
 ## Kapsam
 
-`D724TenantDirectory 0.2.1` su tenant-kapsamli mutation'lari normalize audit zincirine baglar:
+`CareOnCloudTenantDirectory 0.2.1` su tenant-kapsamli mutation'lari normalize audit zincirine baglar:
 
 - `tenant.created`
 - `tenant.updated`
@@ -26,7 +26,7 @@ Audit temel paketi directory'ye statik olarak bagli degildir. Hazir bir `Subject
 ## Kanit
 
 - Directory paketi: 4 dosya / 57 test `PASS`.
-- Tum D724 regresyonu: 23 dosya / 402 test `PASS`.
+- Tum CareOnCloud regresyonu: 23 dosya / 402 test `PASS`.
 - MariaDB upgrade'i mevcut membership satirlarina `version=1` geri doldurdu.
 - Production-style audit fault injection:
   - grant hatasi `AUDIT_WRITE_FAILED`, membership row sayisi `0`;

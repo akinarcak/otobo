@@ -93,14 +93,14 @@ Her ekran için şu alanları içeren bir envanter oluştur:
 | Kullanıcı amacı | Kullanıcının tamamlamaya çalıştığı iş |
 | Mevcut UI teknolojisi | Template, skin, JavaScript veya yeni frontend katmanı |
 | Dil durumu | TR, EN, karışık veya çevrilemez sabit metin |
-| Marka durumu | CareOnCloud, CareOnCloud ESM, D724 veya karışık |
+| Marka durumu | CareOnCloud, CareOnCloud ESM, CareOnCloud veya karışık |
 | UX durumu | Çalışır, sürtünmeli, kritik kusurlu, eksik |
 | Kanıt | Rota, ekran görüntüsü veya kaynak dosya |
 | Yeniden kullanım kararı | Koru, iyileştir, sar/adapter kullan, değiştir |
 
 #### 4.2 Bilgi mimarisi ve navigasyon
 
-Mevcut üst menü, yan menü, modül adları ve sayfa hiyerarşisini incele. “Agent Assistant”, “Operations Center”, “Service Portfolio”, “Change Enablement”, “D724 Requests”, “PANO”, “Müşteriler”, “TAKVİM”, “BİLETLER” gibi karışık adların kullanıcı zihinsel modeliyle uyumunu değerlendir.
+Mevcut üst menü, yan menü, modül adları ve sayfa hiyerarşisini incele. “Agent Assistant”, “Operations Center”, “Service Portfolio”, “Change Enablement”, “CareOnCloud Requests”, “PANO”, “Müşteriler”, “TAKVİM”, “BİLETLER” gibi karışık adların kullanıcı zihinsel modeliyle uyumunu değerlendir.
 
 Şunları üret:
 
@@ -186,7 +186,7 @@ Türkçe ve İngilizceyi aynı önemde ele al. Aşağıdakileri incele:
 
 #### 4.6 Mevcut teknik yapıyla uygulanabilirlik
 
-Kaynakta görülen CareOnCloud ESM Template Toolkit şablonları, Agent/Customer skin CSS yapısı, frontend modül kayıtları, D724 paket ekranları ve mevcut JavaScript bağımlılıklarını incele. Şu üç yaklaşımı karşılaştır:
+Kaynakta görülen CareOnCloud ESM Template Toolkit şablonları, Agent/Customer skin CSS yapısı, frontend modül kayıtları, CareOnCloud paket ekranları ve mevcut JavaScript bağımlılıklarını incele. Şu üç yaklaşımı karşılaştır:
 
 1. Eski şablon ve skin'leri kontrollü biçimde modernize etmek
 2. Yeni CareOnCloud uygulama kabuğunu mevcut backend/API üzerine kademeli eklemek
@@ -223,7 +223,7 @@ Kullanıcının paylaştığı agent dashboard ekran görüntüsünde aşağıda
 - Boş tabloların ve sıfır değerli grafiğin geniş alan kaplaması
 - Küçük yazı, zayıf görsel hiyerarşi ve eski tablo sunumu
 - Türkçe başlıklarla İngilizce kolon/yan panel adlarının karışması
-- Teknik/kod adı niteliğindeki `D724` ve belirsiz `PANO` adlarının görünmesi
+- Teknik/kod adı niteliğindeki `CareOnCloud` ve belirsiz `PANO` adlarının görünmesi
 - Eski test kayıtlarının ürün deneyiminde görünmesi
 - Rol bazlı odak ve eylem önceliğinin anlaşılmaması
 
@@ -361,7 +361,7 @@ Ayrıca işleri iki uygulama sınıfına ayır:
 - Bağımlılıklar
 - Geri dönüş yolu
 
-İlk sprint yalnız kozmetik makyaj olmasın. Kullanıcıya görünen `/careoncloud/`, CareOnCloud ESM/D724 kalıntıları, karışık dil, saat dilimi uyarısı, eski fixture/veri, navigasyon tutarsızlığı ve kritik rol ana sayfaları P0 değerlendirmesine alınmalıdır.
+İlk sprint yalnız kozmetik makyaj olmasın. Kullanıcıya görünen `/careoncloud/`, CareOnCloud ESM/CareOnCloud kalıntıları, karışık dil, saat dilimi uyarısı, eski fixture/veri, navigasyon tutarsızlığı ve kritik rol ana sayfaları P0 değerlendirmesine alınmalıdır.
 
 #### K. Karar günlüğü
 
