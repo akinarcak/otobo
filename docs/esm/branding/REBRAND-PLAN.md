@@ -153,12 +153,29 @@ Doğrulanmış sıra:
 6. `Maint::Config::Rebuild --cleanup --deploy-acls --deploy-processes`.
 7. Önbellekleri temizle, servisleri başlat, doğrula.
 
+### Yeniden üretilebilir imaj
+
+Canlı yığın artık `careoncloud/esm:candidate-42db7ab98` imajını kullanıyor; bu imaj
+`careoncloud.web.dockerfile` içindeki `careoncloud-web` hedefinden markalı kaynak ağacıyla
+derlendi. Öncesinde kod yalnızca uygulama hacminde duruyordu ve çalışan sürümün karşılığı
+olan bir imaj yoktu.
+
+Paketler imaja girmez (`.dockerignore` `packages/` dizinini dışarıda bırakır, bu upstream'den
+gelen davranıştır); temiz kurulumda `Build-Package.pl` + `Admin::Package::Install` adımı ayrıca
+çalıştırılmalıdır.
+
 ### Compose proje adı değişti
 
 `development/careoncloud/compose.yml` artık `name: careoncloud-esm`. Canlı yığın hâlâ
 `d724-esm` projesinde ve verisi `d724-esm_careoncloud-app` / `d724-esm_careoncloud-update`
 volume'lerinde. Yeni adla compose çalıştırmak **boş yeni bir yığın** açar; eski veriyi
 `migrate-careoncloud-brand.sh` ile kopyalamadan eski projeyi kaldırmayın.
+
+Temiz bir geçiş ucuz değildir: `mariadb-data` (600 MB) ve `elasticsearch-data` proje
+kapsamlıdır, yani yeni proje adıyla boş olarak yaratılırlar. Hacimleri `external` bırakmak
+adlarını `d724-esm_*` olarak koruyacağı için kazanç sağlamaz. Proje adı yalnızca Docker
+düzeyinde bir etikettir ve üründe hiçbir yerde görünmez; bu nedenle planlı bir bakım
+penceresinde, kopyalama aracıyla yapılması önerilir.
 
 ## Her fazdan sonra
 
