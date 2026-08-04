@@ -238,6 +238,10 @@ Kapsam disi biraktim cunku paylasilan Dockerfile'a dokunuyor.
 `.github/workflows/careoncloud-release.yml` icindeki adim `Generate SPDX SBOM` adini
 tasiyor ama `format: cyclonedx-json` ile CycloneDX uretiyor ve dosyayi `.cdx.json` olarak
 yaziyor. Cikti dogru, ad yaniltici. Uyumluluk dokumantasyonunda "SPDX SBOM uretiliyor"
+
+**Durum (4 Agustos 2026):** Workflow adimi `Generate CycloneDX SBOM` olarak yeniden
+adlandirildi; `format: cyclonedx-json` ile uyumlu isimlendirme commit `02a8de71c` ile
+push edildi. Cikti formatinda degisiklik yoktur.
 denmesi riskini tasir. Adi duzeltmek yeterli.
 
 ### 9.3 Hala acik olan release kapilari
