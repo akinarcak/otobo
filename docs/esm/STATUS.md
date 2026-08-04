@@ -590,6 +590,12 @@ Bir sonraki ürün kapısı `SEC-03b-idp/SEC-03c` ve `OBS-01b`: gerçek dış Id
 - `DONE_AND_VERIFIED`: The current cache footprint is well below the repository's 10 GiB Actions cache limit; no eviction or pressure signal was observed, so no `mode=min` or registry-cache migration is justified by current evidence.
 - `RISK`: GitHub cache eviction is policy-driven and can change with future workflow runs; remeasure before a release if the active footprint approaches the limit.
 
+## 2026-08-04 - Post-label/SBOM probe release
+
+- `VERIFIED_BY_CURRENT_TEST`: Workflow dispatch run `30886247537` on commit `2123426a0` completed successfully with current label and CycloneDX naming changes. Build/push completed from cache in 9s; CycloneDX SBOM generation completed in 60s; upload, Cosign install and keyless signature all passed.
+- `VERIFIED_BY_CURRENT_TEST`: Probe image `ghcr.io/akinarcak/otobo/careoncloud:v0.0.0-probe.2123426a0` resolved to digest `sha256:7c999567722ca3847f1cd5104c015173dbb1584b51106075cacc8d0e16c664d9`; SBOM artifact upload completed (1,287,358 bytes); Rekor tlog index `2339281679` was recorded.
+- `SCOPE`: Probe tag only; no `careoncloud-v*` production release, live cutover, rollback or production acceptance was performed.
+
 ## 2026-08-04 - Cache fix verified: tag changes no longer rebuild the CPAN layer
 
 - `VERIFIED_BY_CURRENT_TEST`: After commit `41fc6a9b1` removed the `DOCKER_TAG` build-arg, run `30883159985` (tag `probe3`) repopulated the cache under the new key in 4m50s, and run `30883550612` (tag `probe4`) completed its build and push in **9 seconds** with `#11 [base 7/7] RUN` reported `CACHED` and zero `Successfully installed` lines. `carton install` did not execute at all.

@@ -270,3 +270,11 @@ Kanitlanan sey **release mekanizmasidir**, bir release degil.
 Bu calismada uretim servisleri, `d724-esm-*` container/volume'lari ve Yetka verileri
 degistirilmedi. GHCR'a yalnizca `v0.0.0-probe*` etiketli aday imajlar itildi. Bunlar
 temizlenebilir; kalici bir release degildirler.
+
+### 9.5 Guncel probe (4 Agustos 2026)
+
+Run `30886247537` (commit `2123426a0`) guncel image label ve CycloneDX SBOM
+adlandirmasi ile basarili oldu. Build/push 9 saniye cache hit, SBOM 60 saniye,
+artifact upload ve Cosign keyless imza basariliydi. Probe image digest'i
+`sha256:7c999567722ca3847f1cd5104c015173dbb1584b51106075cacc8d0e16c664d9`, Rekor
+index `2339281679`. Bu probe tag'idir; gercek release veya canli cutover degildir.
