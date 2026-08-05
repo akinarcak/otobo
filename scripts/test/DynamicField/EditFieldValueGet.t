@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,9 +24,9 @@ use utf8;
 use HTTP::Request::Common qw(POST);
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::System::Web::Request;
+use Kernel::System::Web::Request  ();
 use Kernel::System::VariableCheck qw(:all);
 
 # get helper object
@@ -43,6 +43,7 @@ my $ConfigObject          = $Kernel::OM->Get('Kernel::Config');
 my $CustomerCompanyObject = $Kernel::OM->Get('Kernel::System::CustomerCompany');
 my $CustomerUserObject    = $Kernel::OM->Get('Kernel::System::CustomerUser');
 my $DFBackendObject       = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
+my $DynamicFieldObject    = $Kernel::OM->Get('Kernel::System::DynamicField');
 my $ParamObject           = $Kernel::OM->Get('Kernel::System::Web::Request');
 my $TicketObject          = $Kernel::OM->Get('Kernel::System::Ticket');
 my $UserObject            = $Kernel::OM->Get('Kernel::System::User');
@@ -163,7 +164,84 @@ my $SecondReferenceTicketID = $TicketObject->TicketCreate(
 );
 ok($SecondReferenceTicketID);
 
-# theres is not really needed to add the dynamic fields for this test, we can define a static
+# prepare dynamic fields to include in set
+my @IncludeDFConfigs = (
+
+    # Fields to include in SetOfAgentsAndTexts
+    {
+        Name         => 'Text5' . $RandomID,
+        Label        => 'Text5',
+        LabelEscaped => 'Text5',
+        FieldOrder   => 123,
+        FieldType    => 'Text',
+        ObjectType   => 'Ticket',
+        Config       => {
+            MultiValue => 0,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name         => 'Text6' . $RandomID,
+        Label        => 'Text6',
+        LabelEscaped => 'Text6',
+        FieldOrder   => 123,
+        FieldType    => 'Text',
+        ObjectType   => 'Ticket',
+        Config       => {
+            MultiValue => 1,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name         => 'Agent1' . $RandomID,
+        Label        => 'Agent1',
+        LabelEscaped => 'Agent1',
+        FieldOrder   => 123,
+        FieldType    => 'Agent',
+        ObjectType   => 'Ticket',
+        Config       => {
+            PossibleNone => 1,
+            Multiselect  => 0,
+            MultiValue   => 0,
+            GroupFilter  => [],
+            Tooltip      => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name         => 'Agent2' . $RandomID,
+        Label        => 'Agent2',
+        LabelEscaped => 'Agent2',
+        FieldOrder   => 123,
+        FieldType    => 'Agent',
+        ObjectType   => 'Ticket',
+        Config       => {
+            PossibleNone => 1,
+            Multiselect  => 0,
+            MultiValue   => 1,
+            GroupFilter  => [],
+            Tooltip      => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+);
+
+for my $IncludeDFConfig (@IncludeDFConfigs) {
+
+    my $Success = $DynamicFieldObject->DynamicFieldAdd(
+        $IncludeDFConfig->%*,
+    );
+
+    ok( $Success, 'Creation of set-included dynamic field ' . $IncludeDFConfig->{Name} );
+}
+
+# there is not really needed to add the dynamic fields for this test, we can define a static
 # set of configurations
 my %DynamicFieldConfigs = (
     Text => {
@@ -452,7 +530,7 @@ my %DynamicFieldConfigs = (
         Name          => 'TicketRef',
         Label         => 'TicketRef',
         FieldOrder    => 123,
-        FieldType     => 'TicketReference',
+        FieldType     => 'Ticket',
         ObjectType    => 'Ticket',
         Config        => {
             EditFieldMode        => 'Dropdown',
@@ -474,7 +552,7 @@ my %DynamicFieldConfigs = (
         Name          => 'TicketRefMS',
         Label         => 'TicketRefMS',
         FieldOrder    => 123,
-        FieldType     => 'TicketReference',
+        FieldType     => 'Ticket',
         ObjectType    => 'Ticket',
         Config        => {
             EditFieldMode        => 'Dropdown',
@@ -496,7 +574,7 @@ my %DynamicFieldConfigs = (
         Name          => 'TicketRefMV',
         Label         => 'TicketRefMV',
         FieldOrder    => 123,
-        FieldType     => 'TicketReference',
+        FieldType     => 'Ticket',
         ObjectType    => 'Ticket',
         Config        => {
             EditFieldMode        => 'Dropdown',
@@ -506,6 +584,29 @@ my %DynamicFieldConfigs = (
             ReferenceFilterList  => [],
             ReferencedObjectType => 'Ticket',
             Tooltip              => '',
+        },
+        ValidID    => 1,
+        UserID     => $UserID,
+        CreateTime => '2023-02-08 15:08:00',
+        ChangeTime => '2023-06-11 17:22:00',
+    },
+    SetOfAgentsAndTexts => {
+        ID            => 123,
+        InternalField => 0,
+        Name          => 'SetOfAgentsAndTexts',
+        Label         => 'Set of agents and texts',
+        FieldOrder    => 123,
+        FieldType     => 'Set',
+        ObjectType    => 'Ticket',
+        Config        => {
+            MultiValue => 0,
+            Tooltip    => '',
+            Include    => [
+                { DF => 'Text5' . $RandomID },
+                { DF => 'Text6' . $RandomID },
+                { DF => 'Agent1' . $RandomID },
+                { DF => 'Agent2' . $RandomID },
+            ],
         },
         ValidID    => 1,
         UserID     => $UserID,
@@ -956,7 +1057,7 @@ my @Tests = (
     },
 
     # Dynamic Field Checkbox
-    # In the case of success, he retured value is 0|1. This depends on whether the input is true or false.
+    # In the case of success, the returned value is 0|1. This depends on whether the input is true or false.
     {
         Name   => 'Checkbox: Empty template and no ParamObject (Normal)',
         Config => {
@@ -1015,7 +1116,7 @@ my @Tests = (
         ExpectedResults => 1,
     },
     {
-        # The retured value is 0|1, depending on whether the input is true or false.
+        # The returned value is 0|1, depending on whether the input is true or false.
         Name   => 'Checkbox: wrong template and UTF8 ParamObject (Normal)',
         Config => {
             DynamicFieldConfig => $DynamicFieldConfigs{Checkbox},
@@ -3056,7 +3157,7 @@ my @Tests = (
             ReturnTemplateStructure => 1,
         },
         ExpectedResults => {
-            DynamicField_Agent => [],
+            DynamicField_Agent => [''],
         },
         Success => 1,
     },
@@ -3130,7 +3231,7 @@ my @Tests = (
             ReturnTemplateStructure => 1,
         },
         ExpectedResults => {
-            DynamicField_AgentMS => [],
+            DynamicField_AgentMS => [''],
         },
         Success => 1,
     },
@@ -3281,6 +3382,46 @@ my @Tests = (
         Success => 1,
     },
 
+    # testing handling of trailing empty values, see GitHub Issue #4790
+    {
+        Name   => 'Agent MultiValue: Value array ref with value inbetween and template value',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{AgentMV},
+            Template           => {},
+            ParamObject        => $ParamObject,
+            CGIParam           => {
+                DynamicField_AgentMV => [ undef, $FirstUserID, undef, undef ],
+            },
+            TransformDates          => 0,
+            ReturnValueStructure    => 0,
+            ReturnTemplateStructure => 1,
+        },
+        ExpectedResults => {
+            DynamicField_AgentMV => [ '', $FirstUserID, '' ],
+        },
+        Success => 1,
+    },
+
+    # testing handling of multiple empty values, see GitHub Issue #4790
+    {
+        Name   => 'Agent MultiValue: Value array ref with multiple empty strings and template value',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{AgentMV},
+            Template           => {},
+            ParamObject        => $ParamObject,
+            CGIParam           => {
+                DynamicField_AgentMV => [ undef, undef, undef, undef ],
+            },
+            TransformDates          => 0,
+            ReturnValueStructure    => 0,
+            ReturnTemplateStructure => 1,
+        },
+        ExpectedResults => {
+            DynamicField_AgentMV => [ '', '', '' ],
+        },
+        Success => 1,
+    },
+
     # Dynamic Field CustomerCompany
     # CustomerCompany SingleSelect
     {
@@ -3376,7 +3517,7 @@ my @Tests = (
             ReturnTemplateStructure => 1,
         },
         ExpectedResults => {
-            DynamicField_CustomerUser => [],
+            DynamicField_CustomerUser => [''],
         },
         Success => 1,
     },
@@ -3543,7 +3684,7 @@ my @Tests = (
             ReturnTemplateStructure => 1,
         },
         ExpectedResults => {
-            DynamicField_TicketRef => [],
+            DynamicField_TicketRef => [''],
         },
         Success => 1,
     },
@@ -3617,7 +3758,7 @@ my @Tests = (
             ReturnTemplateStructure => 1,
         },
         ExpectedResults => {
-            DynamicField_TicketRefMS => [],
+            DynamicField_TicketRefMS => [''],
         },
         Success => 1,
     },
@@ -3767,6 +3908,62 @@ my @Tests = (
         },
         Success => 1,
     },
+
+    # Set
+    {
+        Name   => 'Set: Correct value structure',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{SetOfAgentsAndTexts},
+            Template           => {},
+            ParamObject        => $ParamObject,
+            CGIParam           => {
+                SetIndex_SetOfAgentsAndTexts => [
+                    [],
+                ],
+                'DynamicField_Text5' . $RandomID . '_0' => 'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                'DynamicField_Text6' . $RandomID . '_0' => [
+                    'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                    'Text4: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                    undef,
+
+                ],
+                'DynamicField_Agent1' . $RandomID . '_0' => $FirstUserID,
+                'DynamicField_Agent2' . $RandomID . '_0' => [
+                    $FirstUserID,
+                    $SecondUserID,
+                    undef,
+                ],
+            },
+            TransformDates          => 0,
+            ReturnValueStructure    => 0,
+            ReturnTemplateStructure => 1,
+        },
+        ExpectedResults => {
+            "DynamicField_SetOfAgentsAndTexts" => [
+                {
+                    "Text5$RandomID" => {
+                        'DynamicField_Text5' . $RandomID . '_0' => 'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN'
+                    },
+                    "Text6$RandomID" => {
+                        'DynamicField_Text6' . $RandomID . '_0' => [
+                            'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                            'Text4: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                        ],
+                    },
+                    "Agent1$RandomID" => {
+                        'DynamicField_Agent1' . $RandomID . '_0' => [$FirstUserID],
+                    },
+                    "Agent2$RandomID" => {
+                        'DynamicField_Agent2' . $RandomID . '_0' => [
+                            $FirstUserID,
+                            $SecondUserID,
+                        ],
+                    },
+                },
+            ],
+        },
+        Success => 1,
+    },
 );
 
 # execute tests
@@ -3779,7 +3976,7 @@ for my $Test (@Tests) {
 
     # When CGI parameters are given,
     # then create a new CGI object to simulate a web request.
-    # CGI parametes overrides ParamObject.
+    # CGI parameter overrides ParamObject.
     if ( IsHashRefWithData( $Test->{Config}->{CGIParam} ) ) {
         $Config{ParamObject} = Kernel::System::Web::Request->new(
             HTTPRequest => POST( '/', [ $Test->{Config}->{CGIParam}->%* ] ),

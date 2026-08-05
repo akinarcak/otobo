@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -59,6 +59,8 @@ for my $Key ( sort keys %UserData ) {
     next KEY if $Key =~ m/PageShown$/smx;
     next KEY if $Key =~ m/NextMask$/smx;
     next KEY if $Key =~ m/RefreshTime$/smx;
+    next KEY if $Key =~ m/MarkTicketSeenRedirectURL$/smx;
+    next KEY if $Key =~ m/MarkTicketUnseenRedirectURL$/smx;
 
     # These are actually user preferences.
     next KEY if $Key =~ m/UserEmail$/smx;

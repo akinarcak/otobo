@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -41,8 +41,8 @@ sub Run {
 
     $Self->{Subaction} = $ParamObject->GetParam( Param => 'Subaction' ) || '';
 
-    my $ActivityDialogID = $ParamObject->GetParam( Param => 'ID' )       || '';
-    my $EntityID         = $ParamObject->GetParam( Param => 'EntityID' ) || '';
+    my $ActivityDialogID = $ParamObject->GetParam( Param => 'ID' )              || '';
+    my $ProcessEntityID  = $ParamObject->GetParam( Param => 'ProcessEntityID' ) || '';
 
     my %SessionData = $Kernel::OM->Get('Kernel::System::AuthSession')->GetSessionIDData(
         SessionID => $Self->{SessionID},
@@ -110,9 +110,17 @@ sub Run {
     # ------------------------------------------------------------ #
     if ( $Self->{Subaction} eq 'ActivityDialogNew' ) {
 
+        # check for ProcessEntityID
+        if ( !$ProcessEntityID ) {
+            return $LayoutObject->ErrorScreen(
+                Message => Translatable('Need ProcessEntityID!'),
+            );
+        }
+
         return $Self->_ShowEdit(
             %Param,
-            Action => 'New',
+            ProcessEntityID => $ProcessEntityID,
+            Action          => 'New',
         );
     }
 
@@ -132,7 +140,9 @@ sub Run {
 
         # set new confguration
         $ActivityDialogData->{Name}                           = $GetParam->{Name};
+        $ActivityDialogData->{Namespace}                      = $GetParam->{Namespace};
         $ActivityDialogData->{EntityID}                       = $GetParam->{EntityID};
+        $ActivityDialogData->{Global}                         = $GetParam->{Global};
         $ActivityDialogData->{Config}->{Interface}            = $GetParam->{Interface};
         $ActivityDialogData->{Config}->{DescriptionShort}     = $GetParam->{DescriptionShort};
         $ActivityDialogData->{Config}->{DescriptionLong}      = $GetParam->{DescriptionLong};
@@ -141,6 +151,7 @@ sub Run {
         $ActivityDialogData->{Config}->{SubmitAdviceText}     = $GetParam->{SubmitAdviceText};
         $ActivityDialogData->{Config}->{SubmitButtonText}     = $GetParam->{SubmitButtonText};
         $ActivityDialogData->{Config}->{InputFieldDefinition} = $GetParam->{InputFieldDefinition};
+        $ActivityDialogData->{Config}->{DirectSubmit}         = $GetParam->{DirectSubmit} || 0;
         $ActivityDialogData->{Config}->{Fields}               = {};
         $ActivityDialogData->{Config}->{FieldOrder}           = [];
 
@@ -224,6 +235,7 @@ sub Run {
             return $Self->_ShowEdit(
                 %Error,
                 %Param,
+                ProcessEntityID    => $ProcessEntityID,
                 ActivityDialogData => $ActivityDialogData,
                 Action             => 'New',
             );
@@ -244,10 +256,12 @@ sub Run {
 
         # otherwise save configuration and return process screen
         my $ActivityDialogID = $ActivityDialogObject->ActivityDialogAdd(
-            Name     => $ActivityDialogData->{Name},
-            EntityID => $EntityID,
-            Config   => $ActivityDialogData->{Config},
-            UserID   => $Self->{UserID},
+            Name            => $ActivityDialogData->{Name},
+            Namespace       => $ActivityDialogData->{Namespace},
+            EntityID        => $EntityID,
+            Config          => $ActivityDialogData->{Config},
+            UserID          => $Self->{UserID},
+            ProcessEntityID => $ActivityDialogData->{Global} ? undef : $ProcessEntityID,
         );
 
         # show error if can't create
@@ -289,9 +303,10 @@ sub Run {
         if ( $Redirect && $Redirect eq '1' ) {
 
             $Self->_PushSessionScreen(
-                ID        => $ActivityDialogID,
-                EntityID  => $ActivityDialogData->{EntityID},
-                Subaction => 'ActivityDialogEdit'               # always use edit screen
+                ID              => $ActivityDialogID,
+                EntityID        => $ActivityDialogData->{EntityID},
+                ProcessEntityID => $ProcessEntityID,
+                Subaction       => 'ActivityDialogEdit'               # always use edit screen
             );
 
             my $RedirectField = $ParamObject->GetParam( Param => 'PopupRedirectID' ) || '';
@@ -338,10 +353,10 @@ sub Run {
     # ------------------------------------------------------------ #
     elsif ( $Self->{Subaction} eq 'ActivityDialogEdit' ) {
 
-        # check for ActivityDialogID
-        if ( !$ActivityDialogID ) {
+        # check for ActivityDialogID and ProcessEntityID
+        if ( !$ActivityDialogID || !$ProcessEntityID ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable("Need ActivityDialogID!"),
+                Message => Translatable("Need ActivityDialogID and ProcessEntityID!"),
             );
         }
 
@@ -364,10 +379,23 @@ sub Run {
             );
         }
 
+        # check if Activity Dialog is part of the current Process
+        if ( $ActivityDialogData->{ProcessEntityID} && $ActivityDialogData->{ProcessEntityID} ne $ProcessEntityID ) {
+            return $LayoutObject->ErrorScreen(
+                Message => Translatable('This Activity Dialog is not available to the current Process!'),
+            );
+        }
+
+        # preserve Global if ProcessEntityID already exists in db
+        if ( !$ActivityDialogData->{ProcessEntityID} ) {
+            $ActivityDialogData->{Global} = 'checked';
+        }
+
         return $Self->_ShowEdit(
             %Param,
             ActivityDialogID   => $ActivityDialogID,
             ActivityDialogData => $ActivityDialogData,
+            ProcessEntityID    => $ProcessEntityID,
             Action             => 'Edit',
         );
     }
@@ -388,7 +416,9 @@ sub Run {
 
         # set new confguration
         $ActivityDialogData->{Name}                           = $GetParam->{Name};
+        $ActivityDialogData->{Namespace}                      = $GetParam->{Namespace};
         $ActivityDialogData->{EntityID}                       = $GetParam->{EntityID};
+        $ActivityDialogData->{Global}                         = $GetParam->{Global};
         $ActivityDialogData->{Config}->{Interface}            = $GetParam->{Interface};
         $ActivityDialogData->{Config}->{DescriptionShort}     = $GetParam->{DescriptionShort};
         $ActivityDialogData->{Config}->{DescriptionLong}      = $GetParam->{DescriptionLong};
@@ -397,6 +427,7 @@ sub Run {
         $ActivityDialogData->{Config}->{SubmitAdviceText}     = $GetParam->{SubmitAdviceText};
         $ActivityDialogData->{Config}->{SubmitButtonText}     = $GetParam->{SubmitButtonText};
         $ActivityDialogData->{Config}->{InputFieldDefinition} = $GetParam->{InputFieldDefinition};
+        $ActivityDialogData->{Config}->{DirectSubmit}         = $GetParam->{DirectSubmit} || 0;
         $ActivityDialogData->{Config}->{Fields}               = {};
         $ActivityDialogData->{Config}->{FieldOrder}           = [];
 
@@ -484,11 +515,50 @@ sub Run {
             $Error{RequiredLockServerError} = 'ServerError';
         }
 
+        # prevent updating to non-global if necessary
+        if ( !$ActivityDialogData->{Global} ) {
+
+            my $AffectedActivities = $ActivityDialogObject->ActivityDialogUsage(
+                EntityID => $ActivityDialogData->{EntityID},
+            );
+
+            my $ActivityObject = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Activity');
+
+            for my $AffectedActivityEntityID ( sort keys %{$AffectedActivities} ) {
+
+                my $ActivityData = $ActivityObject->ActivityGet(
+                    EntityID => $AffectedActivityEntityID,
+                    UserID   => $Self->{UserID},
+                );
+
+                if ( !$ActivityData->{ProcessEntityID} ) {
+
+                    $Error{GlobalServerError}        = 'ServerError';
+                    $Error{GlobalServerErrorMessage} = Translatable(
+                        'ActivityDialogs currently used in gobal '
+                            . 'Activities may not be set to non-global!'
+                    );
+                }
+                else {
+
+                    if ( $ActivityData->{ProcessEntityID} ne $ProcessEntityID ) {
+
+                        $Error{GlobalServerError}        = 'ServerError';
+                        $Error{GlobalServerErrorMessage} = Translatable(
+                            'ActivityDialogs currently used in non-gobal Activities '
+                                . 'of other Processes may not be set to non-global!'
+                        );
+                    }
+                }
+            }
+        }
+
         # if there is an error return to edit screen
         if ( IsHashRefWithData( \%Error ) ) {
             return $Self->_ShowEdit(
                 %Error,
                 %Param,
+                ProcessEntityID    => $ProcessEntityID,
                 ActivityDialogData => $ActivityDialogData,
                 Action             => 'Edit',
             );
@@ -496,11 +566,13 @@ sub Run {
 
         # otherwise save configuration and return to overview screen
         my $Success = $ActivityDialogObject->ActivityDialogUpdate(
-            ID       => $ActivityDialogID,
-            Name     => $ActivityDialogData->{Name},
-            EntityID => $ActivityDialogData->{EntityID},
-            Config   => $ActivityDialogData->{Config},
-            UserID   => $Self->{UserID},
+            ID              => $ActivityDialogID,
+            Name            => $ActivityDialogData->{Name},
+            Namespace       => $ActivityDialogData->{Namespace},
+            EntityID        => $ActivityDialogData->{EntityID},
+            Config          => $ActivityDialogData->{Config},
+            UserID          => $Self->{UserID},
+            ProcessEntityID => $ActivityDialogData->{Global} ? undef : $ProcessEntityID,
         );
 
         # show error if can't update
@@ -542,9 +614,10 @@ sub Run {
         if ( $Redirect && $Redirect eq '1' ) {
 
             $Self->_PushSessionScreen(
-                ID        => $ActivityDialogID,
-                EntityID  => $ActivityDialogData->{EntityID},
-                Subaction => 'ActivityDialogEdit'               # always use edit screen
+                ID              => $ActivityDialogID,
+                EntityID        => $ActivityDialogData->{EntityID},
+                ProcessEntityID => $ProcessEntityID,
+                Subaction       => 'ActivityDialogEdit'               # always use edit screen
             );
 
             my $RedirectField = $ParamObject->GetParam( Param => 'PopupRedirectID' ) || '';
@@ -630,7 +703,8 @@ sub _ShowEdit {
     # get Activity Dialog information
     my $ActivityDialogData = $Param{ActivityDialogData} || {};
 
-    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $LayoutObject         = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $ActivityDialogObject = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::ActivityDialog');
 
     # check if last screen action is main screen
     if ( $Self->{ScreensPath}->[-1]->{Action} eq 'AdminProcessManagement' ) {
@@ -647,10 +721,11 @@ sub _ShowEdit {
         $LayoutObject->Block(
             Name => 'GoBack',
             Data => {
-                Action    => $Self->{ScreensPath}->[-1]->{Action}    || '',
-                Subaction => $Self->{ScreensPath}->[-1]->{Subaction} || '',
-                ID        => $Self->{ScreensPath}->[-1]->{ID}        || '',
-                EntityID  => $Self->{ScreensPath}->[-1]->{EntityID}  || '',
+                Action          => $Self->{ScreensPath}->[-1]->{Action}          || '',
+                Subaction       => $Self->{ScreensPath}->[-1]->{Subaction}       || '',
+                ID              => $Self->{ScreensPath}->[-1]->{ID}              || '',
+                EntityID        => $Self->{ScreensPath}->[-1]->{EntityID}        || '',
+                ProcessEntityID => $Self->{ScreensPath}->[-1]->{ProcessEntityID} || '',
             },
         );
     }
@@ -769,16 +844,16 @@ sub _ShowEdit {
         }
 
         # display other affected processes by editing this activity (if applicable)
-        my $AffectedActivities = $Self->_CheckActivityDialogUsage(
+        my $AffectedActivities = $ActivityDialogObject->ActivityDialogUsage(
             EntityID => $ActivityDialogData->{EntityID},
         );
 
-        if ( @{$AffectedActivities} ) {
+        if ( values %{$AffectedActivities} ) {
 
             $LayoutObject->Block(
                 Name => 'EditWarning',
                 Data => {
-                    ActivityList => join( ', ', @{$AffectedActivities} ),
+                    ActivityList => join( ', ', values %{$AffectedActivities} ),
                 }
             );
         }
@@ -813,6 +888,33 @@ sub _ShowEdit {
         }
 
         $Param{Title} = Translatable('Create New Activity Dialog');
+        $ActivityDialogData->{Global} = 0;
+    }
+
+    # get available namespaces
+    my @ProcessNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'ProcessManagement',
+    );
+
+    # create namespace selection
+    if (@ProcessNamespaces) {
+        my $NamespaceSelectionHTML = $LayoutObject->BuildSelection(
+            Data         => \@ProcessNamespaces,
+            Name         => 'Namespace',
+            ID           => 'Namespace',
+            SelectedID   => $ActivityDialogData->{Namespace} || '',
+            Sort         => 'AlphanumericKey',
+            Translation  => 0,
+            PossibleNone => 1,
+            Class        => 'Modernize',
+        );
+
+        $LayoutObject->Block(
+            Name => 'NamespaceSelection',
+            Data => {
+                NamespaceSelectionHTML => $NamespaceSelectionHTML,
+            },
+        );
     }
 
     # get interface infos
@@ -933,12 +1035,25 @@ sub _ShowEdit {
         );
     }
 
+    $LayoutObject->Block(
+        Name => 'StandardTemplatesContainer',
+    );
+
     # extract parameters from config
     $Param{DescriptionShort}     = $Param{ActivityDialogData}->{Config}->{DescriptionShort};
     $Param{DescriptionLong}      = $Param{ActivityDialogData}->{Config}->{DescriptionLong};
     $Param{SubmitAdviceText}     = $Param{ActivityDialogData}->{Config}->{SubmitAdviceText};
     $Param{SubmitButtonText}     = $Param{ActivityDialogData}->{Config}->{SubmitButtonText};
     $Param{InputFieldDefinition} = $Param{ActivityDialogData}->{Config}->{InputFieldDefinition};
+    $Param{DirectSubmit}         = $Param{ActivityDialogData}->{Config}->{DirectSubmit} ? ' checked' : '';
+
+    # Add code mirror language mode.
+    if ( $LayoutObject->{BrowserRichText} ) {
+        $LayoutObject->AddJSData(
+            Key   => 'EditorLanguageMode',
+            Value => 'text/x-yaml',
+        );
+    }
 
     my $Output = $LayoutObject->Header(
         Value => $Param{Title},
@@ -949,6 +1064,7 @@ sub _ShowEdit {
         Data         => {
             %Param,
             %{$ActivityDialogData},
+            ProcessEntityID => $Param{ProcessEntityID},
         },
     );
 
@@ -965,8 +1081,8 @@ sub _GetParams {
 
     # get parameters from web browser
     for my $ParamName (
-        qw( Name EntityID Interface DescriptionShort DescriptionLong Permission RequiredLock SubmitAdviceText
-        SubmitButtonText InputFieldDefinition )
+        qw( Name Namespace EntityID Interface DescriptionShort DescriptionLong Permission RequiredLock
+        SubmitAdviceText SubmitButtonText InputFieldDefinition DirectSubmit Global )
         )
     {
         $GetParam->{$ParamName} = $ParamObject->GetParam( Param => $ParamName ) || '';
@@ -1019,7 +1135,7 @@ sub _PopSessionScreen {
     }
 
     # convert screens path to string (JSON)
-    my $JSONScreensPath = my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->JSONEncode(
+    my $JSONScreensPath = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->JSONEncode(
         Data => $Self->{ScreensPath},
     );
 
@@ -1038,14 +1154,15 @@ sub _PushSessionScreen {
 
     # add screen to the screen path
     push @{ $Self->{ScreensPath} }, {
-        Action    => $Self->{Action} || '',
-        Subaction => $Param{Subaction},
-        ID        => $Param{ID},
-        EntityID  => $Param{EntityID},
+        Action          => $Self->{Action} || '',
+        Subaction       => $Param{Subaction},
+        ID              => $Param{ID},
+        EntityID        => $Param{EntityID},
+        ProcessEntityID => $Param{ProcessEntityID},
     };
 
     # convert screens path to string (JSON)
-    my $JSONScreensPath = my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->JSONEncode(
+    my $JSONScreensPath = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->JSONEncode(
         Data => $Self->{ScreensPath},
     );
 
@@ -1094,33 +1211,6 @@ sub _PopupResponse {
     $Output .= $LayoutObject->Footer( Type => 'Small' );
 
     return $Output;
-}
-
-sub _CheckActivityDialogUsage {
-    my ( $Self, %Param ) = @_;
-
-    # get a list of parents with all the details
-    my $List = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Activity')->ActivityListGet(
-        UserID => 1,
-    );
-
-    my @Usage;
-
-    # search entity id in all parents
-    PARENT:
-    for my $ParentData ( @{$List} ) {
-        next PARENT if !$ParentData;
-        next PARENT if !$ParentData->{ActivityDialogs};
-        ENTITY:
-        for my $EntityID ( @{ $ParentData->{ActivityDialogs} } ) {
-            if ( $EntityID eq $Param{EntityID} ) {
-                push @Usage, $ParentData->{Name};
-                last ENTITY;
-            }
-        }
-    }
-
-    return \@Usage;
 }
 
 1;

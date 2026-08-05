@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ time_stamp=$(date +'%F-%H%M%S')
 git_branch=$(cat git-branch.txt 2>/dev/null)
 log_file="prove_${otobo_version}_${time_stamp}_${git_branch:-unknown_branch}.out"
 
-# print out the relevant information about this OTOBO installation
+# print out the relevant information about this CareOnCloud ESM installation
 # Never mind when any of these files are missing
 more RELEASE git-*.txt >$log_file 2>/dev/null
 
@@ -33,4 +33,4 @@ more RELEASE git-*.txt >$log_file 2>/dev/null
 echo >>$log_file
 
 # run the test suite
-bin/otobo.Console.pl Dev::UnitTest::Run --verbose --merge >>$log_file 2>&1
+bin/careoncloud.Console.pl Dev::UnitTest::Run --verbose --merge >>$log_file 2>&1

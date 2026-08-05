@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ use warnings;
 our $ObjectManagerDisabled = 1;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 sub new {
     my ( $Type, %Param ) = @_;
@@ -30,6 +30,15 @@ sub new {
     # allocate new hash for object
     my $Self = {%Param};
     bless( $Self, $Type );
+
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
 
     return $Self;
 }
@@ -40,6 +49,18 @@ sub Run {
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     $Self->{Subaction} = $ParamObject->GetParam( Param => 'Subaction' ) || '';
+    $Param{IncludeInvalid} = $ParamObject->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $Param{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $Param{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $Param{IncludeInvalid};
+    }
+    $Param{ObjectType} = $ParamObject->GetParam( Param => 'ObjectType' ) || 'Ticket';
 
     my $ACLID = $ParamObject->GetParam( Param => 'ID' ) || '';
 
@@ -72,7 +93,6 @@ sub Run {
         # challenge token check for write action
         $LayoutObject->ChallengeTokenCheck();
 
-        my $FormID      = $ParamObject->GetParam( Param => 'FormID' ) || '';
         my %UploadStuff = $ParamObject->GetUploadAll(
             Param  => 'FileUpload',
             Source => 'string',
@@ -89,7 +109,7 @@ sub Run {
         if ( !$ACLImport->{Success} ) {
             my $Message = $ACLImport->{Message}
                 || Translatable(
-                    'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information'
+                    'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information'
                 );
             return $LayoutObject->ErrorScreen(
                 Message => $Message,
@@ -166,7 +186,7 @@ sub Run {
         # get parameter from web browser
         my $GetParam = $Self->_GetParams();
 
-        # set new confguration
+        # set new configuration
         $ACLData->{Name}           = $GetParam->{Name};
         $ACLData->{Comment}        = $GetParam->{Comment};
         $ACLData->{Description}    = $GetParam->{Description};
@@ -207,6 +227,7 @@ sub Run {
             StopAfterMatch => $ACLData->{StopAfterMatch},
             ValidID        => $ACLData->{ValidID},
             UserID         => $Self->{UserID},
+            ObjectType     => $Param{ObjectType},
         );
 
         # show error if can't create
@@ -217,7 +238,7 @@ sub Run {
         }
 
         # redirect to edit screen
-        return $LayoutObject->Redirect( OP => "Action=$Self->{Action};Subaction=ACLEdit;ID=$ACLID" );
+        return $LayoutObject->Redirect( OP => "Action=$Self->{Action};Subaction=ACLEdit;ID=$ACLID;ObjectType=$Param{ObjectType}" );
     }
 
     # ------------------------------------------------------------ #
@@ -275,13 +296,13 @@ sub Run {
         # challenge token check for write action
         $LayoutObject->ChallengeTokenCheck();
 
-        # get webserice configuration
+        # get webservice configuration
         my $ACLData;
 
         # get parameter from web browser
         my $GetParam = $Self->_GetParams();
 
-        # set new confguration
+        # set new configuration
         $ACLData->{Name}           = $GetParam->{Name};
         $ACLData->{Comment}        = $GetParam->{Comment};
         $ACLData->{Description}    = $GetParam->{Description};
@@ -289,6 +310,7 @@ sub Run {
         $ACLData->{ValidID}        = $GetParam->{ValidID};
         $ACLData->{ConfigMatch}    = $GetParam->{ConfigMatch}  || '';
         $ACLData->{ConfigChange}   = $GetParam->{ConfigChange} || '';
+        $ACLData->{ObjectType}     = $GetParam->{ObjectType}   || 'Ticket';
 
         # check required parameters
         my %Error;
@@ -327,6 +349,7 @@ sub Run {
             ConfigMatch    => $ACLData->{ConfigMatch}  || '',
             ConfigChange   => $ACLData->{ConfigChange} || '',
             UserID         => $Self->{UserID},
+            ObjectType     => $Param{ObjectType},
         );
 
         # show error if can't update
@@ -345,13 +368,13 @@ sub Run {
             # if the user would like to continue editing the ACL, just redirect to the edit screen
             return $LayoutObject->Redirect(
                 OP =>
-                    "Action=AdminACL;Subaction=ACLEdit;ID=$ACLID"
+                    "Action=AdminACL;Subaction=ACLEdit;ID=$ACLID;ObjectType=$Param{ObjectType}"
             );
         }
         else {
 
             # otherwise return to overview
-            return $LayoutObject->Redirect( OP => "Action=$Self->{Action}" );
+            return $LayoutObject->Redirect( OP => "Action=$Self->{Action};ObjectType=$Param{ObjectType}" );
         }
     }
 
@@ -366,6 +389,7 @@ sub Run {
             ResultType => 'FILE',
             Location   => $Location,
             UserID     => $Self->{UserID},
+            ObjectType => $Param{ObjectType},
         );
 
         if ($ACLDumpSuccess) {
@@ -375,12 +399,12 @@ sub Run {
             # remove preselection cache TODO: rebuild the cache properly (a simple $FieldRestrictionsObject->SetACLPreselectionCache(); uses the old ACLs)
             my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
             $CacheObject->Delete(
-                Type => 'TicketACL',      # only [a-zA-Z0-9_] chars usable
+                Type => $Param{ObjectType} . 'ACL',    # only [a-zA-Z0-9_] chars usable
                 Key  => 'Preselection',
             );
 
             if ($Success) {
-                return $LayoutObject->Redirect( OP => "Action=$Self->{Action}" );
+                return $LayoutObject->Redirect( OP => "Action=$Self->{Action};ObjectType=$Param{ObjectType}" );
             }
             else {
 
@@ -421,7 +445,8 @@ sub Run {
             );
 
             my %DeleteResult = (
-                Success => $Success,
+                Success    => $Success,
+                ObjectType => $Param{ObjectType},
             );
 
             if ( !$Success ) {
@@ -462,7 +487,7 @@ sub Run {
         my $ACLID = $ParamObject->GetParam( Param => 'ID' ) || '';
         my $ACLData;
         my $ACLSingleData;
-        my $Filename = 'Export_ACL.yml';
+        my $Filename = 'Export_' . $Param{ObjectType} . '_ACL.yml';
 
         if ($ACLID) {
 
@@ -480,7 +505,7 @@ sub Run {
             my $ACLName = $ACLSingleData->{Name};
             $ACLName =~ s{[^a-zA-Z0-9-_]}{_}xmsg;    # cleanup name for saving
 
-            $Filename = 'Export_ACL_' . $ACLName . '.yml';
+            $Filename = 'Export_' . $Param{ObjectType} . '_ACL_' . $ACLName . '.yml';
             $ACLData  = [$ACLSingleData];
         }
         else {
@@ -491,8 +516,9 @@ sub Run {
             my @ValidListIDs = grep { $ValidList{$_} } sort keys %ValidList;
 
             $ACLData = $ACLObject->ACLListGet(
-                UserID   => 1,
-                ValidIDs => \@ValidListIDs,
+                UserID      => 1,
+                ValidIDs    => \@ValidListIDs,
+                ObjectTypes => [ $Param{ObjectType} ],
             );
         }
 
@@ -553,6 +579,7 @@ sub Run {
             StopAfterMatch => $ACLData->{StopAfterMatch} || 0,
             ValidID        => $ACLData->{ValidID},
             UserID         => $Self->{UserID},
+            ObjectType     => $Param{ObjectType},
         );
 
         # show error if can't create
@@ -563,7 +590,7 @@ sub Run {
         }
 
         # return to overview
-        return $LayoutObject->Redirect( OP => "Action=$Self->{Action}" );
+        return $LayoutObject->Redirect( OP => "Action=$Self->{Action};ObjectType=$Param{ObjectType}" );
     }
 
     # ------------------------------------------------------------ #
@@ -586,7 +613,7 @@ sub _ShowOverview {
 
     if ( $Self->{UserID} == 1 ) {
 
-        # show error notfy, don't work with user id 1
+        # show error notify, don't work with user id 1
         $Output .= $LayoutObject->Notify(
             Priority => 'Error',
             Info     =>
@@ -603,8 +630,36 @@ sub _ShowOverview {
         }
     }
 
+    # restrict valid state if needed
+    my %ValidList   = $Kernel::OM->Get('Kernel::System::Valid')->ValidList();
+    my %ValidLookup = reverse %ValidList;
+    my @ValidIDs    = ( $ValidLookup{'valid'}, $ValidLookup{'invalid-temporarily'} );
+    if ( $Self->{IncludeInvalid} ) {
+        push @ValidIDs, $ValidLookup{'invalid'};
+    }
+
+    my %ObjectTypes = (
+        Ticket => 'Ticket',
+    );
+    if ( $Kernel::OM->Get('Kernel::System::Package')->PackageIsInstalled( Name => 'ITSMConfigurationManagement' ) ) {
+        $ObjectTypes{ConfigItem} = 'ITSM ConfigItem';
+    }
+
+    $Param{ObjectTypeSelectionStrg} = $LayoutObject->BuildSelection(
+        Name          => 'ObjectType',
+        Data          => \%ObjectTypes,
+        PossibleNone  => 0,
+        Translation   => 0,
+        SelectedValue => $Param{ObjectType} || 'Ticket',
+        Class         => 'Modernize W75pc',
+    );
+
     # get ACL list
-    my $ACLList = $ACLObject->ACLList( UserID => $Self->{UserID} );
+    my $ACLList = $ACLObject->ACLList(
+        UserID      => $Self->{UserID},
+        ValidIDs    => \@ValidIDs,
+        ObjectTypes => [ $Param{ObjectType} ],
+    );
 
     if ( IsHashRefWithData($ACLList) ) {
 
@@ -640,6 +695,8 @@ sub _ShowOverview {
         );
     }
 
+    $Param{IncludeInvalidChecked} = $Self->{IncludeInvalid} ? 'checked' : '';
+
     $Output .= $LayoutObject->Output(
         TemplateFile => 'AdminACL',
         Data         => \%Param,
@@ -669,16 +726,19 @@ sub _ShowEdit {
     }
 
     # get valid list
-    my %ValidList = $Kernel::OM->Get('Kernel::System::Valid')->ValidList();
+    my %ValidList   = $Kernel::OM->Get('Kernel::System::Valid')->ValidList();
+    my %ValidLookup = reverse %ValidList;
 
     $Param{ValidOption} = $LayoutObject->BuildSelection(
         Data       => \%ValidList,
         Name       => 'ValidID',
-        SelectedID => $ACLData->{ValidID} || $ValidList{valid},
+        SelectedID => $ACLData->{ValidID} || $ValidLookup{'invalid-temporarily'},
         Class      => 'Modernize Validate_Required ' . ( $Param{Errors}->{'ValidIDInvalid'} || '' ),
     );
 
-    my $ACLKeysLevel1Match = $ConfigObject->Get('ACLKeysLevel1Match') || {};
+    my $ConfigPrefix = $Param{ObjectType} eq 'ConfigItem' ? 'ITSMConfigItem' : '';
+
+    my $ACLKeysLevel1Match = $ConfigObject->Get( $ConfigPrefix . 'ACLKeysLevel1Match' ) || {};
     $Param{ACLKeysLevel1Match} = $LayoutObject->BuildSelection(
         Data         => $ACLKeysLevel1Match,
         Name         => 'ItemAdd',
@@ -689,7 +749,7 @@ sub _ShowEdit {
         Translation  => 0,
     );
 
-    my $ACLKeysLevel1Change = $ConfigObject->Get('ACLKeysLevel1Change') || {};
+    my $ACLKeysLevel1Change = $ConfigObject->Get( $ConfigPrefix . 'ACLKeysLevel1Change' ) || {};
     $Param{ACLKeysLevel1Change} = $LayoutObject->BuildSelection(
         Data         => $ACLKeysLevel1Change,
         Name         => 'ItemAdd',
@@ -700,7 +760,7 @@ sub _ShowEdit {
         Translation  => 0,
     );
 
-    my $ACLKeysLevel2Possible = $ConfigObject->Get('ACLKeysLevel2::Possible') || {};
+    my $ACLKeysLevel2Possible = $ConfigObject->Get( $ConfigPrefix . 'ACLKeysLevel2::Possible' ) || {};
     $Param{ACLKeysLevel2Possible} = $LayoutObject->BuildSelection(
         Data         => $ACLKeysLevel2Possible,
         Name         => 'ItemAdd',
@@ -710,7 +770,7 @@ sub _ShowEdit {
         PossibleNone => 1,
     );
 
-    my $ACLKeysLevel2PossibleAdd = $ConfigObject->Get('ACLKeysLevel2::PossibleAdd') || {};
+    my $ACLKeysLevel2PossibleAdd = $ConfigObject->Get( $ConfigPrefix . 'ACLKeysLevel2::PossibleAdd' ) || {};
     $Param{ACLKeysLevel2PossibleAdd} = $LayoutObject->BuildSelection(
         Data         => $ACLKeysLevel2PossibleAdd,
         Name         => 'ItemAdd',
@@ -720,7 +780,7 @@ sub _ShowEdit {
         PossibleNone => 1,
     );
 
-    my $ACLKeysLevel2PossibleNot = $ConfigObject->Get('ACLKeysLevel2::PossibleNot') || {};
+    my $ACLKeysLevel2PossibleNot = $ConfigObject->Get( $ConfigPrefix . 'ACLKeysLevel2::PossibleNot' ) || {};
     $Param{ACLKeysLevel2PossibleNot} = $LayoutObject->BuildSelection(
         Data         => $ACLKeysLevel2PossibleNot,
         Name         => 'ItemAdd',
@@ -730,7 +790,7 @@ sub _ShowEdit {
         PossibleNone => 1,
     );
 
-    my $ACLKeysLevel2Properties = $ConfigObject->Get('ACLKeysLevel2::Properties') || {};
+    my $ACLKeysLevel2Properties = $ConfigObject->Get( $ConfigPrefix . 'ACLKeysLevel2::Properties' ) || {};
     $Param{ACLKeysLevel2Properties} = $LayoutObject->BuildSelection(
         Data         => $ACLKeysLevel2Properties,
         Name         => 'ItemAdd',
@@ -740,7 +800,7 @@ sub _ShowEdit {
         PossibleNone => 1,
     );
 
-    my $ACLKeysLevel2PropertiesDatabase = $ConfigObject->Get('ACLKeysLevel2::PropertiesDatabase') || {};
+    my $ACLKeysLevel2PropertiesDatabase = $ConfigObject->Get( $ConfigPrefix . 'ACLKeysLevel2::PropertiesDatabase' ) || {};
     $Param{ACLKeysLevel2PropertiesDatabase} = $LayoutObject->BuildSelection(
         Data         => $ACLKeysLevel2PropertiesDatabase,
         Name         => 'ItemAdd',
@@ -770,7 +830,7 @@ sub _ShowEdit {
 
     # get list of all possible dynamic fields
     my $DynamicFieldList = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldList(
-        ObjectType => 'Ticket',
+        ObjectType => $Param{ObjectType},
         ResultType => 'HASH',
     );
     my %DynamicFieldNames = reverse %{$DynamicFieldList};
@@ -789,7 +849,7 @@ sub _ShowEdit {
 
     # get list of all possible actions
     my @PossibleActionsList;
-    my $ACLKeysLevel3Actions = $ConfigObject->Get('ACLKeysLevel3::Actions') || [];
+    my $ACLKeysLevel3Actions = $ConfigObject->Get('ACLKeysLevel3::Actions') || {};
 
     for my $Key ( sort keys %{$ACLKeysLevel3Actions} ) {
         push @PossibleActionsList, @{ $ACLKeysLevel3Actions->{$Key} };
@@ -859,7 +919,7 @@ sub _GetParams {
 
     # get parameters from web browser
     for my $ParamName (
-        qw( Name EntityID Comment Description StopAfterMatch ValidID ConfigMatch ConfigChange )
+        qw( Name ObjectType EntityID Comment Description StopAfterMatch ValidID ConfigMatch ConfigChange )
         )
     {
         $GetParam->{$ParamName} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => $ParamName )

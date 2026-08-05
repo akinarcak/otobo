@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,14 +27,14 @@ our $Self;
 my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
-# get OTOBO Version
-my $OTOBOVersion = $ConfigObject->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloudVersion = $ConfigObject->Get('Version');
 
 # leave only major and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 # find out if it is an developer installation with files
 # from the version control system.
@@ -54,24 +54,24 @@ if ( !$DeveloperSystem ) {
 
     # install package normally
     my $String = '<?xml version="1.0" encoding="utf-8" ?>
-    <otobo_package version="1.0">
+    <careoncloud_package version="1.0">
       <Name>Test</Name>
       <Version>0.0.1</Version>
       <Vendor>Rother OSS GmbH</Vendor>
-      <URL>https://otobo.de/</URL>
+      <URL>https://otobo.io/</URL>
       <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
       <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
       <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
       <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
       <ModuleRequired Version="1.112">Encode</ModuleRequired>
-      <Framework>' . $OTOBOVersion . '</Framework>
+      <Framework>' . $CareOnCloudVersion . '</Framework>
       <BuildDate>2005-11-10 21:17:16</BuildDate>
       <BuildHost>yourhost.example.com</BuildHost>
       <Filelist>
         <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
         <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
       </Filelist>
-    </otobo_package>
+    </careoncloud_package>
     ';
     my $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -94,25 +94,25 @@ if ( !$DeveloperSystem ) {
     # will be uninstalled, the not framework files will be removed and the framework files will
     # remain
     $String = '<?xml version="1.0" encoding="utf-8" ?>
-    <otobo_package version="1.0">
+    <careoncloud_package version="1.0">
       <Name>Test</Name>
       <Version>0.0.1</Version>
       <Vendor>Rother OSS GmbH</Vendor>
-      <URL>https://otobo.de/</URL>
+      <URL>https://otobo.io/</URL>
       <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
       <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
       <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
       <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
       <ModuleRequired Version="1.112">Encode</ModuleRequired>
-      <Framework>' . $OTOBOVersion . '</Framework>
+      <Framework>' . $CareOnCloudVersion . '</Framework>
       <BuildDate>2005-11-10 21:17:16</BuildDate>
       <BuildHost>yourhost.example.com</BuildHost>
       <Filelist>
         <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
         <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
-        <File Location="bin/otobo.CheckSum.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
+        <File Location="bin/careoncloud.CheckSum.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
       </Filelist>
-    </otobo_package>
+    </careoncloud_package>
     ';
     my $PackageName = 'Test';
 
@@ -130,14 +130,14 @@ if ( !$DeveloperSystem ) {
 
     # now create an .save file for the framework file, content doesn't matter as it will be deleted
     my $Write = $Kernel::OM->Get('Kernel::System::Main')->FileWrite(
-        Location   => $Home . '/bin/otobo.CheckSum.pl.save',
+        Location   => $Home . '/bin/careoncloud.CheckSum.pl.save',
         Content    => \$Content,
         Mode       => 'binmode',
         Permission => '644',
     );
     $Self->True(
         $Write,
-        '#FileWrite() - bin/otobo.CheckSum.pl.save',
+        '#FileWrite() - bin/careoncloud.CheckSum.pl.save',
     );
 
     # create PackageObject again to make sure cache is cleared
@@ -152,7 +152,7 @@ if ( !$DeveloperSystem ) {
 
     # check that the original files from the package does not exist anymore
     # these files are suppose to be old files that are not required anymore by the merged package
-    for my $File (qw( Test var/Test bin/otobo.CheckSum.pl.save )) {
+    for my $File (qw( Test var/Test bin/careoncloud.CheckSum.pl.save )) {
         my $RealFile = $Home . '/' . $File;
         $RealFile =~ s/\/\//\//g;
         $Self->False(
@@ -162,7 +162,7 @@ if ( !$DeveloperSystem ) {
     }
 
     # check that the framework file still exists
-    for my $File (qw( bin/otobo.CheckSum.pl )) {
+    for my $File (qw( bin/careoncloud.CheckSum.pl )) {
         my $RealFile = $Home . '/' . $File;
         $RealFile =~ s/\/\//\//g;
         $Self->True(

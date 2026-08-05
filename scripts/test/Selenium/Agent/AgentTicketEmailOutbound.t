@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 our $Self;
 
 # get selenium object
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -187,11 +187,11 @@ $Selenium->RunTest(
             State => 'open',
         );
 
-        # check update form with JS for dynamic field
+        # check update form with JS for state id
         $Self->Is(
-            $Selenium->execute_script("return \$('#AJAXLoaderDynamicField_$DFName').length"),
+            $Selenium->execute_script("return \$('#AJAXLoaderComposeStateID').length"),
             0,
-            "AJAX Loader for '$DFName' does not exist",
+            "AJAX Loader for 'ComposeStateID' does not exist",
         );
         $Selenium->InputFieldValueSet(
             Element => '#ComposeStateID',
@@ -200,12 +200,12 @@ $Selenium->RunTest(
 
         # wait for appearance of ajax update field
         $Selenium->WaitFor(
-            JavaScript => "return typeof(\$) === 'function' && \$('#AJAXLoaderDynamicField_$DFName').length"
+            JavaScript => "return typeof(\$) === 'function' && \$('#AJAXLoaderComposeStateID').length"
         );
         $Self->Is(
-            $Selenium->execute_script("return \$('#AJAXLoaderDynamicField_$DFName').length"),
+            $Selenium->execute_script("return \$('#AJAXLoaderComposeStateID').length"),
             1,
-            "AJAX Loader for '$DFName' exists - JS function was run",
+            "AJAX Loader for 'ComposeStateID' exists - JS function was run",
         );
 
         # fill in customer

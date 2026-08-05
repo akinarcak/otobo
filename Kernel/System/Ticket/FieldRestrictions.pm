@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,18 +16,26 @@
 
 package Kernel::System::Ticket::FieldRestrictions;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+use utf8;
 
-use List::Util qw(any);
+# core modules
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::Cache',
     'Kernel::System::DynamicField',
+    'Kernel::System::DynamicField::Backend',
     'Kernel::System::Log',
+    'Kernel::System::Ticket',
     'Kernel::System::User',
 );
 
@@ -60,11 +68,6 @@ sub new {
 
     $Self->{CacheObject} = $Kernel::OM->Get('Kernel::System::Cache');
 
-    # TODO: probably needs completion for all frontends
-    $Self->{Uniformity} = {
-        Dest => 'Queue',
-    };
-
     return $Self;
 }
 
@@ -91,7 +94,8 @@ Returns possible values, selected values, and visibility of fields
         LoopProtection            => \$LoopProtection,              # restricts number of recursive calls; passing a reference to 'undef' will lead to a warning
         Autoselect                => {},                            # optional; default: undef; {Field => 0,1,2, ...}
         ACLPreselection           => 0|1,                           # optional
-        InitialRun                => 1,                             # optional; evaluate script fields without AJAX Trigger once
+        PossibleValuesOnly        => 1,                             # optional; assume all fields are visible e.g. for sets
+        CachedVisibility          => \%CachedVisibility,            # optional; use the provided visibility and do not store the cache at the end
     );
 
 Returns:
@@ -151,34 +155,50 @@ sub GetFieldStates {
     }
 
     # get the current visibility
-    my $CachedVisibility = $Param{ACLPreselection}
-        ? $Self->{CacheObject}->Get(
-            Type => 'HiddenFields',
-            Key  => $Param{FormID},
-        )
-        : undef;
+    my $CachedVisibility;
+    if ( $Param{ACLPreselection} ) {
 
-    # don't skip any fields initially or if ACLPreselction is disabled
+        # in some occasions (e.g. dynamic field set) we do not use the cache
+        $CachedVisibility = exists $Param{CachedVisibility}
+            ? $Param{CachedVisibility}
+            : $Self->{CacheObject}->Get(
+                Type => 'HiddenFields',
+                Key  => $Param{FormID},
+            );
+    }
+
+    # don't skip any fields initially or if ACLPreselection is disabled
     my $CompleteRun = $CachedVisibility ? 0 : 1;
 
     # shortcut
     my $DFParam = $Param{GetParam}{DynamicField};
 
     # TODO: needed, because TicketAcl tampers with the DynamicField reference, if TicketID is given (~line 1181)
-    for my $Key ( map { 'DynamicField_' . $_->{Name} } @{ $Param{DynamicFields} } ) {
-        $Param{GetParam}{DynamicField}{$Key} //= $Param{GetParam}{DynamicField}{$Key};    # all keys have to exist
+    for my $Name ( keys $Param{DynamicFields}->%* ) {
+        $Param{GetParam}{DynamicField}{ 'DynamicField_' . $Name } //= $Param{GetParam}{DynamicField}{ 'DynamicField_' . $Name };    # all keys have to exist
     }
 
     # transform dynamic field data into DFName => DFName pair
-    my %DynamicFieldAcl = map { $_->{Name} => $_->{Name} } @{ $Param{DynamicFields} };
+    my %DynamicFieldAcl = map { $_ => $_ } keys $Param{DynamicFields}->%*;
 
-    my %UserPreferences = ();
+    my %UserPreferences;
     my %Visibility;
     my $VisCheck = 1;
-    my $Queue;
 
-    # whether to use ACLPreselection
-    if ( !$CompleteRun ) {
+    # in the special case of assuming visible fields we still want to know whether we do a $CompleteRun
+    # but we discard all visibility checks
+    # TODO: Discard if only used in Sets
+    if ( $Param{PossibleValuesOnly} ) {
+        $VisCheck = 0;
+
+        # treat all fields as always visible
+        $CachedVisibility = {
+            map { 'DynamicField_' . $_ => 1 } keys $Param{DynamicFields}->%*
+        };
+    }
+
+    # in the standard case and if we use ACL-Preselection only vis check if necessary
+    elsif ( !$CompleteRun ) {
         $VisCheck = 0;
 
         # check whether form-ACLs are affected by any of the changed elements
@@ -216,14 +236,14 @@ sub GetFieldStates {
         );
 
         if ($ACLResult) {
-            %Visibility = map { 'DynamicField_' . $_->{Name} => 0 } @{ $Param{DynamicFields} };
+            %Visibility = map { 'DynamicField_' . $_ => 0 } keys $Param{DynamicFields}->%*;
             my %AclData = $Param{TicketObject}->TicketAclData();
             for my $Field ( sort keys %AclData ) {
                 $Visibility{ 'DynamicField_' . $Field } = 1;
             }
         }
         else {
-            %Visibility = map { 'DynamicField_' . $_->{Name} => 1 } @{ $Param{DynamicFields} };
+            %Visibility = map { 'DynamicField_' . $_ => 1 } keys $Param{DynamicFields}->%*;
         }
 
         # get user preferences for possible user default values
@@ -237,119 +257,79 @@ sub GetFieldStates {
         %Visibility = %{$CachedVisibility};
     }
 
-    my ( %Fields, %NewValues );
-    my $i = -1;
+    my ( %Fields, %NewValues, %Sets );
     DYNAMICFIELD:
-    for my $DynamicFieldConfig ( @{ $Param{DynamicFields} } ) {
-        $i++;
+    for my $DynamicFieldConfig ( values $Param{DynamicFields}->%* ) {
+        next DYNAMICFIELD unless IsHashRefWithData($DynamicFieldConfig);
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
-        next DYNAMICFIELD if $DynamicFieldConfig->{Readonly};
 
-        # evaluate script fields if triggered
-        if (
-            $Param{DynamicFieldBackendObject}->HasBehavior(
-                DynamicFieldConfig => $DynamicFieldConfig,
-                Behavior           => 'IsScriptField',
-            )
-            )
-        {
-            $Queue //= defined $Param{GetParam}{Queue}
-                ? $Param{GetParam}{Queue}
-                : $Param{GetParam}{Dest} && $Param{GetParam}{Dest} =~ /\|\|(.+)$/ ? $1
-                :                                                                   undef;
-
-            my %GetParam = (
-                Queue => $Queue,
-                $Param{GetParam}->%*,
-            );
-
-            # the required args have to be present
-            for my $Required ( @{ $DynamicFieldConfig->{Config}{RequiredArgs} // [] } ) {
-                my $Value = $GetParam{DynamicField}{$Required} // $GetParam{$Required};
-
-                next DYNAMICFIELD if !$Value || ( ref $Value && !IsArrayRefWithData($Value) );
-            }
-
-            my %ChangedElements = map { $Self->{Uniformity}{$_} // $_ => 1 } keys $Param{ChangedElements}->%*;
-            delete $ChangedElements{ 'DynamicField_' . $DynamicFieldConfig->{Name} };
-
-            # skip if it's only a rerun due to self change
-            next DYNAMICFIELD if !%ChangedElements && !$Param{InitialRun};
-
-            # if specific AJAX triggers are defined only update on changes to them...
-            if ( IsArrayRefWithData( $DynamicFieldConfig->{Config}{AJAXTriggers} ) ) {
-                next DYNAMICFIELD if !any { $ChangedElements{$_} } $DynamicFieldConfig->{Config}{AJAXTriggers}->@*;
-            }
-
-            # ...if not, only check in the first run
-            elsif ( !$Param{InitialRun} ) {
-                next DYNAMICFIELD;
-            }
-
-            next DYNAMICFIELD if IsArrayRefWithData( $DynamicFieldConfig->{Config}{AJAXTriggers} )
-                && !$Param{InitialRun}
-                && !any { $ChangedElements{ $Self->{Uniformity}{$_} // $_ } }
-            $DynamicFieldConfig->{Config}{AJAXTriggers}->@*;
-
-            my $NewValue = $Param{DynamicFieldBackendObject}->Evaluate(
-                DynamicFieldConfig => $DynamicFieldConfig,
-                Object             => {
-                    CustomerUserID => $Param{CustomerUser},
-                    TicketID       => $Param{TicketID},
-                    %GetParam,
-                },
-            );
-
-            # do nothing if nothing changed
-            next DYNAMICFIELD if !$Param{DynamicFieldBackendObject}->ValueIsDifferent(
-                DynamicFieldConfig => $DynamicFieldConfig,
-                Value1             => $GetParam{DynamicField}{"DynamicField_$DynamicFieldConfig->{Name}"},
-                Value2             => $NewValue,
-            );
-
-            $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = $NewValue;
-
-            $Fields{$i} = {
-                Name            => 'DynamicField_' . $DynamicFieldConfig->{Name},
-                PossibleValues  => undef,
-                NotACLReducible => 1,
-            };
-
-            next DYNAMICFIELD;
-        }
-
+        my $DFName         = $DynamicFieldConfig->{Name};
         my $IsACLReducible = $Param{DynamicFieldBackendObject}->HasBehavior(
             DynamicFieldConfig => $DynamicFieldConfig,
             Behavior           => 'IsACLReducible',
         );
 
-        # values of invisible fields are deleted
-        if ( %Visibility && $Visibility{"DynamicField_$DynamicFieldConfig->{Name}"} == 0 ) {
+        # 1. handle hidden fields
+        if ( %Visibility && $Visibility{"DynamicField_$DFName"} == 0 ) {
 
-            my $NotEmpty = !defined $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} ? 0 :
-                ref( $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} )
+            next DYNAMICFIELD if ( $CachedVisibility && $CachedVisibility->{"DynamicField_$DFName"} == 0 );
+
+            # values of visible fields turning invisible are deleted or set to values of ticket data if present
+            my $UpdateRequired = !defined $DFParam->{"DynamicField_$DFName"} ? 0 :
+                ref( $DFParam->{"DynamicField_$DFName"} )
                 ?
-                ( IsArrayRefWithData( $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} ) ? 1 : 0 )
+                ( IsArrayRefWithData( $DFParam->{"DynamicField_$DFName"} ) ? 1 : 0 )
                 :
-                $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} =~ /^-?$/ ? 0 : 1;
+                $DFParam->{"DynamicField_$DFName"} =~ m/^-?$/ ? 0 : 1;
 
-            # if values are present, Fieldrestrictions have to be checked again for the newly changed elements
-            if ($NotEmpty) {
+            my %TicketData;
+            if ( !$Param{NoDefaultValue} ) {
+
+                if ( $Param{TicketID} ) {
+                    %TicketData = $Kernel::OM->Get('Kernel::System::Ticket')->TicketGet(
+                        TicketID      => $Param{TicketID},
+                        UserID        => $Param{UserID},
+                        DynamicFields => 1,
+                    );
+
+                    if ( defined $TicketData{"DynamicField_$DFName"} ) {
+
+                        my $ValueIsDifferent = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->ValueIsDifferent(
+                            DynamicFieldConfig => $DynamicFieldConfig,
+                            Value1             => $DFParam->{"DynamicField_$DFName"},
+                            Value2             => $TicketData{"DynamicField_$DFName"},
+                        );
+
+                        if ($ValueIsDifferent) {
+                            $UpdateRequired = 1;
+                        }
+                        else {
+                            $UpdateRequired = 0;
+                        }
+                    }
+                }
+            }
+
+            # if values are present, FieldRestrictions have to be checked again for the newly changed elements
+            if ($UpdateRequired) {
 
                 # delete entry and remember change
-                $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = ref( $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} ) ? [] : '';
+                $NewValues{"DynamicField_$DFName"} = ref( $DFParam->{"DynamicField_$DFName"} ) ? [] : '';
+
+                # check if we have a ticket data value and use them, if so
+                if ( defined $TicketData{"DynamicField_$DFName"} && !$Param{NoDefaultValue} ) {
+                    $NewValues{"DynamicField_$DFName"} = $TicketData{"DynamicField_$DFName"};
+                }
 
                 # fields have to be added to correctly remove all content
                 if ( !$IsACLReducible ) {
-                    $Fields{$i} = {
-                        Name            => 'DynamicField_' . $DynamicFieldConfig->{Name},
+                    $Fields{$DFName} = {
                         PossibleValues  => undef,
                         NotACLReducible => 1,
                     };
                 }
                 else {
-                    $Fields{$i} = {
-                        Name           => 'DynamicField_' . $DynamicFieldConfig->{Name},
+                    $Fields{$DFName} = {
                         PossibleValues => {},
                     };
                 }
@@ -358,124 +338,122 @@ sub GetFieldStates {
             next DYNAMICFIELD;
         }
 
-        # reset lenses with their current values when their reference changes or they reappear
+        # 2. handle fields which set their dynamic content themselves
         if (
-            $DynamicFieldConfig->{FieldType} eq 'Lens'
-            &&
-            (
-                $Param{ChangedElements}{ $DynamicFieldConfig->{Config}{ReferenceDFName} }
-                ||
-                ( $CachedVisibility && $CachedVisibility->{"DynamicField_$DynamicFieldConfig->{Name}"} == 0 )
+            $Param{DynamicFieldBackendObject}->HasBehavior(
+                DynamicFieldConfig => $DynamicFieldConfig,
+                Behavior           => 'SetsDynamicContent',
             )
             )
         {
-            my $AttributeFieldValue;
-            my $PossibleValues;
+            # pass a uniform ObjectID to GetFieldState() call
+            # there are supposed to be more cases in the future, and having
+            # a uniform ObjectID should reduce conditional complexity
+            # in the DF drivers where not needed
+            my $ObjectID = $Param{ConfigItemID} // $Param{TicketID};
 
-            # get the current value of the referenced attribute field if an object is referenced
-            if ( $DFParam->{ $DynamicFieldConfig->{Config}{ReferenceDFName} } ) {
-                $AttributeFieldValue = $Param{DynamicFieldBackendObject}->ValueGet(
-                    DynamicFieldConfig => $DynamicFieldConfig,
+            my %Content = $Param{DynamicFieldBackendObject}->GetFieldState(
+                %Param,
+                ObjectID                => $ObjectID,
+                CachedVisibility        => $CachedVisibility,
+                DynamicFieldConfig      => $DynamicFieldConfig,
+                FieldRestrictionsObject => $Self,
+            );
 
-                    # TODO: Instead we could just send $DFParam->{ $DynamicFieldConfig->{Config}{ReferenceDFName} } as ObjectID
-                    # but we would need to interpret it later (from ConfigItemID to LastVersionID, e.g.)
-                    # TODO: Validate the Reference ObjectID here, or earlier, to prevent data leaks!
-                    ObjectID              => 1,    # will not be used;
-                    UseReferenceEditField => 1,
+            # check if autoselection is activated and field changed in any way
+            if ( $Content{PossibleValues} && $Param{Autoselect} && $Param{Autoselect}{DynamicField}{$DFName} ) {
+
+                my $Selected = exists $Content{NewValue} ? $Content{NewValue} : $DFParam->{"DynamicField_$DFName"};
+
+                my $Autoselected = $Self->Autoselect(
+                    Current        => $Selected,
+                    PossibleValues => $Content{PossibleValues},
                 );
-            }
 
-            # set the new value if it differs
-            if (
-                $Param{DynamicFieldBackendObject}->ValueIsDifferent(
-                    DynamicFieldConfig => $DynamicFieldConfig,
-                    Value1             => $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"},
-                    Value2             => $AttributeFieldValue,
-                )
-                )
-            {
-                $DFParam->{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = $AttributeFieldValue;
-                $NewValues{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = $AttributeFieldValue;
-
-                # if this field is non ACL reducible, set the field values
-                if ( !$IsACLReducible ) {
-                    $Fields{$i} = {
-                        Name            => 'DynamicField_' . $DynamicFieldConfig->{Name},
-                        PossibleValues  => undef,
-                        NotACLReducible => 1,
-                    };
+                if ( defined $Autoselected ) {
+                    $Content{NewValue} = $Autoselected;
                 }
             }
 
-            next DYNAMICFIELD if !$IsACLReducible;
-
-            # if we are ACL reducible make sure to also get the possible values
-            $Param{ACLPreselection}{Rules}{Ticket}{ $DynamicFieldConfig->{Config}{ReferenceDFName} }{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = 1;
-        }
-
-        # restrict options of reference fields as configured
-        if ( $DynamicFieldConfig->{FieldType} =~ /Reference/ ) {
-
-            # skip validation if no filter is defined for any of the changed elements
-            next DYNAMICFIELD if !IsArrayRefWithData( $DynamicFieldConfig->{Config}{ReferenceFilterList} );
-
-            # TODO think of good way to handle this (maybe a mapping or so)
-            # $Param{ChangedElements}->{Queue} = $Param{ChangedElements}->{Dest} ? 1 : undef;
-            next DYNAMICFIELD if !any {
-
-                # check Attribute itself and AttributeID to match e.q. Queue to QueueID
-                # TODO use lc check to ignore capitalization?
-                $Param{ChangedElements}->{ $_->{EqualsObjectAttribute} // '' } || $Param{ChangedElements}->{ ( $_->{EqualsObjectAttribute} // '' ) . 'ID' }
-            }
-            $DynamicFieldConfig->{Config}{ReferenceFilterList}->@*;
-
-            if ( $DynamicFieldConfig->{Config}{EditFieldMode} eq 'AutoComplete' ) {
-
-                # TODO empty field if it doesn't validate
-                next DYNAMICFIELD;
+            # set new value if necessary
+            if ( exists $Content{NewValue} ) {
+                $NewValues{"DynamicField_$DFName"} = $Content{NewValue};
+                $DFParam->{"DynamicField_$DFName"} = $Content{NewValue};
             }
 
-            # fetch possible values for dynamic field
-            my $PossibleValues = $Param{DynamicFieldBackendObject}->PossibleValuesGet(
-                DynamicFieldConfig => $DynamicFieldConfig,
-                Object             => {
-                    $Param{GetParam}->%*,
-                    CustomerUserID => $Param{GetParam}->{CustomerUser},
-                    CustomerID     => $Param{GetParam}->{CustomerID},
-                },
-            );
+            if ( exists $Content{PossibleValues} ) {
+                $Fields{$DFName} = {
+                    PossibleValues => $Content{PossibleValues},
+                };
+            }
+            elsif ( exists $Content{Sets} ) {
+                %Sets = (
+                    %Sets,
+                    $Content{Sets}->%*,
+                );
+            }
+            elsif ( exists $Content{NewValue} ) {
+                $Fields{$DFName} = {
+                    PossibleValues  => undef,
+                    NotACLReducible => 1,
+                };
+            }
 
-            $Fields{$i} = {
-                Name           => 'DynamicField_' . $DynamicFieldConfig->{Name},
-                PossibleValues => $PossibleValues,
-            };
-
-            if ( $DFParam->{ 'DynamicField_' . $DynamicFieldConfig->{Name} } && !$PossibleValues->{ $DFParam->{ 'DynamicField_' . $DynamicFieldConfig->{Name} } } ) {
-                $DFParam->{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = undef;
-                $NewValues{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = undef;
-
+            if ( $Content{Visibility} ) {
+                %Visibility = (
+                    %Visibility,
+                    $Content{Visibility}->%*,
+                );
             }
 
             next DYNAMICFIELD;
         }
 
-        # skip non ACL reducible fields...
+        next DYNAMICFIELD if $DynamicFieldConfig->{Readonly};
+
+        # 3. skip non ACL reducible fields...
         if ( !$IsACLReducible ) {
 
-            # ...but get default values of reappearing fields first
-            if ( $CachedVisibility && $CachedVisibility->{"DynamicField_$DynamicFieldConfig->{Name}"} == 0 ) {
-                if ( defined $UserPreferences{"UserDynamicField_$DynamicFieldConfig->{Name}"} ) {
-                    $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = $UserPreferences{"UserDynamicField_$DynamicFieldConfig->{Name}"};
-                    $Fields{$i} = {
-                        Name            => 'DynamicField_' . $DynamicFieldConfig->{Name},
+            # ...but set actual or default values of reappearing fields first
+            if ( $CachedVisibility && $CachedVisibility->{"DynamicField_$DFName"} == 0 ) {
+
+                if ( $Param{TicketID} ) {
+                    my %TicketData = $Kernel::OM->Get('Kernel::System::Ticket')->TicketGet(
+                        TicketID      => $Param{TicketID},
+                        UserID        => $Param{UserID},
+                        DynamicFields => 1,
+                    );
+
+                    if ( $Param{NoDefaultValue} ) {
+
+                        $Fields{"$DFName"} = {
+                            PossibleValues  => undef,
+                            NotACLReducible => 1,
+                        };
+
+                        next DYNAMICFIELD;
+                    }
+                    elsif ( defined $TicketData{"DynamicField_$DFName"} ) {
+
+                        $NewValues{"DynamicField_$DFName"} = $TicketData{"DynamicField_$DFName"};
+                        $Fields{$DFName} = {
+                            PossibleValues  => undef,
+                            NotACLReducible => 1,
+                        };
+                        next DYNAMICFIELD;
+                    }
+                }
+
+                if ( defined $UserPreferences{"UserDynamicField_$DFName"} ) {
+                    $NewValues{"DynamicField_$DFName"} = $UserPreferences{"UserDynamicField_$DFName"};
+                    $Fields{$DFName} = {
                         PossibleValues  => undef,
                         NotACLReducible => 1,
                     };
                 }
                 elsif ( defined $DynamicFieldConfig->{Config}{DefaultValue} ) {
-                    $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = $DynamicFieldConfig->{Config}{DefaultValue};
-                    $Fields{$i} = {
-                        Name            => 'DynamicField_' . $DynamicFieldConfig->{Name},
+                    $NewValues{"DynamicField_$DFName"} = $DynamicFieldConfig->{Config}{DefaultValue};
+                    $Fields{$DFName} = {
                         PossibleValues  => undef,
                         NotACLReducible => 1,
                     };
@@ -487,14 +465,15 @@ sub GetFieldStates {
 
         my $CheckACLs = 1;
 
+        # 4. handle all standard ACL reducible fields
         # evaluate preselection
         if ( !$CompleteRun ) {
-            if ( !$Param{ACLPreselection}{Fields}{ 'DynamicField_' . $DynamicFieldConfig->{Name} } ) {
+            if ( !$Param{ACLPreselection}{Fields}{ 'DynamicField_' . $DFName } ) {
 
                 # no way to tell if there are acls which connect the changed element to the affected field
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
                     Priority => 'error',
-                    Message  => "DynamicField_$DynamicFieldConfig->{Name} not defined in TicketACL preselection rules!"
+                    Message  => "DynamicField_$DFName not defined in TicketACL preselection rules!"
                 );
             }
             else {
@@ -502,27 +481,39 @@ sub GetFieldStates {
 
                 # check acls if...
                 # ...a field reappears: possible values have to be recalculated;
-                if ( $CachedVisibility->{"DynamicField_$DynamicFieldConfig->{Name}"} == 0 ) {
+                if ( $CachedVisibility && $CachedVisibility->{"DynamicField_$DFName"} == 0 ) {
                     $CheckACLs = 1;
 
-                    # take the default value and put it also into NewValues; in the unlikely case that they will be deleted again, this will just cause a redundant second run
-                    if ( defined $UserPreferences{"UserDynamicField_$DynamicFieldConfig->{Name}"} ) {
-                        $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} = $UserPreferences{"UserDynamicField_$DynamicFieldConfig->{Name}"};
-                        $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = $UserPreferences{"UserDynamicField_$DynamicFieldConfig->{Name}"};
+                    my %TicketData;
+                    if ( $Param{TicketID} ) {
+                        %TicketData = $Kernel::OM->Get('Kernel::System::Ticket')->TicketGet(
+                            TicketID      => $Param{TicketID},
+                            UserID        => $Param{UserID},
+                            DynamicFields => 1,
+                        );
+                    }
+
+                    # take the ticket or default value and put it also into NewValues
+                    # in the unlikely case that they will be deleted again, this will just cause a redundant second run
+                    if ( defined $TicketData{"DynamicField_$DFName"} ) {
+                        $DFParam->{"DynamicField_$DFName"} = $TicketData{"DynamicField_$DFName"};
+                        $NewValues{"DynamicField_$DFName"} = $TicketData{"DynamicField_$DFName"};
+                    }
+                    elsif ( defined $UserPreferences{"UserDynamicField_$DFName"} ) {
+                        $DFParam->{"DynamicField_$DFName"} = $UserPreferences{"UserDynamicField_$DFName"};
+                        $NewValues{"DynamicField_$DFName"} = $UserPreferences{"UserDynamicField_$DFName"};
                     }
                     elsif ( defined $DynamicFieldConfig->{Config}{DefaultValue} ) {
-                        $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} = $DynamicFieldConfig->{Config}{DefaultValue};
-                        $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = $DynamicFieldConfig->{Config}{DefaultValue};
+                        $DFParam->{"DynamicField_$DFName"} = $DynamicFieldConfig->{Config}{DefaultValue};
+                        $NewValues{"DynamicField_$DFName"} = $DynamicFieldConfig->{Config}{DefaultValue};
                     }
                 }
 
                 # ...autoselect is turned on for the changed field (refill a field emptied by hand)
                 elsif (
                     $Param{Autoselect}
-                    && $Param{Autoselect}{DynamicField}{ $DynamicFieldConfig->{Name} }
-                    &&
-                    $Param{ChangedElements}{"DynamicField_$DynamicFieldConfig->{Name}"}
-                    && ( !%Visibility || $Visibility{"DynamicField_$DynamicFieldConfig->{Name}"} )
+                    && $Param{Autoselect}{DynamicField}{$DFName}
+                    && $Param{ChangedElements}{"DynamicField_$DFName"}
                     )
                 {
                     $CheckACLs = 1;
@@ -535,7 +526,7 @@ sub GetFieldStates {
                         # ...the changed element affects the current field
                         if (
                             $Param{ACLPreselection}{Rules}{Ticket}{$Element}
-                            { 'DynamicField_' . $DynamicFieldConfig->{Name} }
+                            { 'DynamicField_' . $DFName }
                             )
                         {
                             $CheckACLs = 1;
@@ -557,7 +548,7 @@ sub GetFieldStates {
         }
 
         # if nothing changed, omit this field
-        next DYNAMICFIELD if !$CheckACLs;
+        next DYNAMICFIELD unless $CheckACLs;
 
         # else check ACLs
         my $PossibleValues = $Param{DynamicFieldBackendObject}->PossibleValuesGet(
@@ -576,7 +567,7 @@ sub GetFieldStates {
             UserID         => $Param{UserID},
             CustomerUserID => $Param{CustomerUser} || '',
             ReturnType     => 'Ticket',
-            ReturnSubType  => 'DynamicField_' . $DynamicFieldConfig->{Name},
+            ReturnSubType  => 'DynamicField_' . $DFName,
             Data           => \%AclData,
         );
         if ($ACL) {
@@ -586,31 +577,42 @@ sub GetFieldStates {
             %{$PossibleValues} = map { $_ => $PossibleValues->{$_} } keys %Filter;
         }
 
-        $Fields{$i} = {
-            Name           => 'DynamicField_' . $DynamicFieldConfig->{Name},
+        $Fields{$DFName} = {
             PossibleValues => $PossibleValues,
         };
 
         # check whether all selected entries are still valid
         if (
-            defined $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"}
+            defined $DFParam->{"DynamicField_$DFName"}
             &&
             (
-                $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"}
-                || $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} eq '0'
+                $DFParam->{"DynamicField_$DFName"}
+                || $DFParam->{"DynamicField_$DFName"} eq '0'
             )
             )
         {
 
-            # multiselect fields
-            if ( ref( $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} ) ) {
+            # multiselect and -value fields
+            if ( ref( $DFParam->{"DynamicField_$DFName"} ) ) {
                 SELECTED:
-                for my $Selected ( @{ $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} } ) {
+                for my $Selected ( @{ $DFParam->{"DynamicField_$DFName"} } ) {
+
+                    # skip empty values (possible only for multivalue)
+                    next SELECTED if !defined $Selected;
 
                     # if a selected value is not possible anymore
                     if ( !defined $PossibleValues->{$Selected} ) {
-                        $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = grep { defined $PossibleValues->{$Selected} }
-                            @{ $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} };
+                        if ( $DynamicFieldConfig->{Config}{MultiValue} ) {
+                            $NewValues{"DynamicField_$DFName"} = [
+                                map { defined $_ && !defined $PossibleValues->{$_} ? undef : $_ } $DFParam->{"DynamicField_$DFName"}->@*
+                            ];
+                        }
+                        else {
+                            $NewValues{"DynamicField_$DFName"} = [
+                                grep { defined $PossibleValues->{$Selected} } $DFParam->{"DynamicField_$DFName"}->@*
+                            ];
+                        }
+
                         last SELECTED;
                     }
                 }
@@ -618,22 +620,17 @@ sub GetFieldStates {
 
             # singleselect fields
             else {
-                if ( !defined $PossibleValues->{ $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} } ) {
-                    $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = '';
+                if ( !defined $PossibleValues->{ $DFParam->{"DynamicField_$DFName"} } ) {
+                    $NewValues{"DynamicField_$DFName"} = '';
                 }
             }
         }
 
-        # check if autoselection is activated and field changed in any way
-        my $DoAutoselect = ( !$Param{Autoselect} || !$Param{Autoselect}{DynamicField}{ $DynamicFieldConfig->{Name} } )
-            ? 0
-            :
-            ( %Visibility && $Visibility{"DynamicField_$DynamicFieldConfig->{Name}"} ) ? 1 : 0;
+        # autoselect if applicable
+        if ( $Param{Autoselect} && $Param{Autoselect}{DynamicField}{$DFName} ) {
 
-        if ($DoAutoselect) {
-
-            my $Selected = $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"}
-                // $DFParam->{"DynamicField_$DynamicFieldConfig->{Name}"} // '';
+            my $Selected = $NewValues{"DynamicField_$DFName"}
+                // $DFParam->{"DynamicField_$DFName"} // '';
 
             my $Autoselected = $Self->Autoselect(
                 Current        => $Selected,
@@ -641,19 +638,23 @@ sub GetFieldStates {
             );
 
             if ( defined $Autoselected ) {
-                $NewValues{"DynamicField_$DynamicFieldConfig->{Name}"} = $Autoselected;
+                $NewValues{"DynamicField_$DFName"} = $Autoselected;
             }
         }
     }
 
     # cache the new visibility
-    if ( $Param{ACLPreselection} && $VisCheck ) {
+    if ( $Param{ACLPreselection} && $VisCheck && !exists $Param{CachedVisibility} ) {
         $Self->{CacheObject}->Set(
             Type  => 'HiddenFields',
             Key   => $Param{FormID},
             Value => {%Visibility},
             TTL   => 60 * 20,          # 20 min
         );
+    }
+
+    elsif ( $VisCheck && exists $Param{CachedVisibility} ) {
+        $Param{CachedVisibility} = \%Visibility;
     }
 
     # if additional elements are changed by the routine, recursively call GetFieldStates, until all dependencies are worked through
@@ -671,9 +672,12 @@ sub GetFieldStates {
             ChangedElements => { map { $_ => 1 } keys %NewValues },
         );
 
-        # always take the innermost visibility
+        # combine the visibility, inner values take precedence
         if ( IsHashRefWithData( $Recu{Visibility} ) ) {
-            %Visibility = %{ $Recu{Visibility} };
+            %Visibility = (
+                %Visibility,
+                %{ $Recu{Visibility} },
+            );
         }
 
         # combine the field info, inner values take precedence
@@ -691,12 +695,21 @@ sub GetFieldStates {
                 %{ $Recu{NewValues} },
             );
         }
+
+        # finally take care of set information
+        if ( IsHashRefWithData( $Recu{Sets} ) ) {
+            %Sets = (
+                %Sets,
+                %{ $Recu{Sets} },
+            );
+        }
     }
 
     return (
         Fields     => \%Fields,
         Visibility => \%Visibility,
         NewValues  => \%NewValues,
+        Sets       => \%Sets,
     );
 }
 
@@ -785,6 +798,8 @@ sub SetACLPreselectionCache {
         SLA              => 'SLAID',
         StandardTemplate => 'StandardTemplateID',
         CustomerUser     => 'ServiceID',            # for some unknown reason the changed element upon customer user change is always ServiceID
+        CustomerUserID   => 'CustomerUserID',
+        CustomerID       => 'CustomerID',
     );
 
     # dynamic fields
@@ -804,7 +819,7 @@ sub SetACLPreselectionCache {
         for my $PropertiesHash (qw(Properties PropertiesDatabase)) {
             if ( $ACL->{$PropertiesHash}{Ticket} ) {
                 NAME:
-                for my $Name ( sort keys %{ $ACL->{$PropertiesHash}->{Ticket} } ) {
+                for my $Name ( sort keys %{ $ACL->{$PropertiesHash}{Ticket} } ) {
                     if ( !$Fields{$Name} ) {
                         $Kernel::OM->Get('Kernel::System::Log')->Log(
                             Priority => 'info',
@@ -817,7 +832,7 @@ sub SetACLPreselectionCache {
             }
             if ( $ACL->{$PropertiesHash}{DynamicField} ) {
                 NAME:
-                for my $Name ( sort keys %{ $ACL->{$PropertiesHash}->{DynamicField} } ) {
+                for my $Name ( sort keys %{ $ACL->{$PropertiesHash}{DynamicField} } ) {
                     if ( !$Fields{$Name} ) {
                         $Kernel::OM->Get('Kernel::System::Log')->Log(
                             Priority => 'info',
@@ -840,9 +855,9 @@ sub SetACLPreselectionCache {
         for my $Impact (qw(Possible PossibleAdd PossibleNot)) {
 
             # Ticket Rules
-            if ( $ACL->{$Impact}->{Ticket} ) {
+            if ( $ACL->{$Impact}{Ticket} ) {
                 AFFECTED:
-                for my $Affected ( sort keys %{ $ACL->{$Impact}->{Ticket} } ) {
+                for my $Affected ( sort keys %{ $ACL->{$Impact}{Ticket} } ) {
                     if ( !$Fields{$Affected} ) {
                         $Kernel::OM->Get('Kernel::System::Log')->Log(
                             Priority => 'info',

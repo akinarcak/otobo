@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -67,17 +67,17 @@ my %User = $Kernel::OM->Get('Kernel::System::User')->GetUserData(
 
 my @Tests = (
     {
-        Name      => 'Test supported tags -  <OTOBO_CURRENT_UserFirstname> and <OTOBO_CURRENT_UserLastname>',
-        Signature => "Your OTOBO-Team
+        Name      => 'Test supported tags -  <CareOnCloud_CURRENT_UserFirstname> and <CareOnCloud_CURRENT_UserLastname>',
+        Signature => "Your CareOnCloud ESM-Team
 
-    <OTOBO_CURRENT_UserFirstname> <OTOBO_CURRENT_UserLastname>
+    <CareOnCloud_CURRENT_UserFirstname> <CareOnCloud_CURRENT_UserLastname>
 
     --
     Super Support Company Inc. - Waterford Business Park
     5201 Blue Lagoon Drive - 8th Floor & 9th Floor - Miami, 33126 USA
     Email: hot\@florida.com - Web: http://hot.florida.com/
     --",
-        ExpectedResult => "Your OTOBO-Team
+        ExpectedResult => "Your CareOnCloud ESM-Team
 
     $User{UserFirstname} $User{UserLastname}
 
@@ -89,19 +89,19 @@ my @Tests = (
     },
     {
         Name           => 'Test unsupported tags',
-        Signature      => 'Test: <OTOBO_AGENT_SUBJECT> <OTOBO_AGENT_BODY> <OTOBO_CUSTOMER_BODY> <OTOBO_CUSTOMER_SUBJECT>',
+        Signature      => 'Test: <CareOnCloud_AGENT_SUBJECT> <CareOnCloud_AGENT_BODY> <CareOnCloud_CUSTOMER_BODY> <CareOnCloud_CUSTOMER_SUBJECT>',
         ExpectedResult => 'Test: - - - -',
     },
     {
-        Name      => 'Test supported tags - <OTOBO_TICKET_*> without TicketID',
+        Name      => 'Test supported tags - <CareOnCloud_TICKET_*> without TicketID',
         Signature =>
-            'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_State>)',
+            'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_State>)',
         ExpectedResult => 'Options of the ticket data (e. g. -, -, -)',
     },
     {
-        Name      => 'Test supported tags - <OTOBO_TICKET_*>  with TicketID',
+        Name      => 'Test supported tags - <CareOnCloud_TICKET_*>  with TicketID',
         Signature =>
-            'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_State>)',
+            'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_State>)',
     },
 );
 
@@ -120,7 +120,7 @@ for my $Test (@Tests) {
     # add signature
     my $SignatureID = $SignatureObject->SignatureAdd(
         Name => $Helper->GetRandomID() . '-Signature',
-        ,
+
         Text        => $Test->{Signature},
         ContentType => 'text/plain; charset=iso-8859-1',
         Comment     => 'some comment',

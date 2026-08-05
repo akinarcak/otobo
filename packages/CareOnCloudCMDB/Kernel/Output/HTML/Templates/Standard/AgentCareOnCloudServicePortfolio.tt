@@ -1,0 +1,18 @@
+<div class="MainBox ARIARoleMain">
+    <h1>[% Translate("CareOnCloud Service Portfolio") | html %]</h1>
+    <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Customer scope") | html %]</h2></div><div class="Content">
+        <form action="[% Env("CGIHandle") %]" method="get"><input type="hidden" name="Action" value="AgentCareOnCloudServicePortfolio"/>
+            <label for="CareOnCloudTenant">[% Translate("Customer") | html %]</label>
+            <select id="CareOnCloudTenant" name="TenantID" onchange="this.form.submit()">
+[% RenderBlockStart("TenantOption") %]<option value="[% Data.TenantID | html %]" [% Data.Selected | html %]>[% Data.Name | html %]</option>[% RenderBlockEnd("TenantOption") %]
+            </select>
+        </form>
+        <p>[% Data.ServiceCount | html %] [% Translate("services") | html %] · [% Data.InstanceCount | html %] [% Translate("service instances") | html %]</p>
+    </div></div>
+    <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Services") | html %]</h2></div><div class="Content"><table class="DataTable"><thead><tr><th>[% Translate("Category") | html %]</th><th>[% Translate("Service") | html %]</th><th>[% Translate("Status") | html %]</th><th></th></tr></thead><tbody>
+[% RenderBlockStart("ServiceRow") %]<tr><td>[% Data.CategoryName | html %]</td><td><strong>[% Data.ServiceName | html %]</strong><br/><span class="Description">[% Data.ServiceDescription | html %]</span></td><td>[% Data.ServiceStatus | html %]</td><td><a class="Button Small" href="[% Env("Baselink") %]Action=AgentCareOnCloudServicePortfolio;TenantID=[% Data.TenantID | uri %];ServiceID=[% Data.ServiceID | uri %]">[% Translate("Details") | html %]</a></td></tr>[% RenderBlockEnd("ServiceRow") %]
+    </tbody></table></div></div>
+[% IF Data.ServiceID %]<div class="WidgetSimple"><div class="Header"><h2>[% Translate("Service instances") | html %]</h2></div><div class="Content"><table class="DataTable"><thead><tr><th>[% Translate("Instance") | html %]</th><th>[% Translate("Model") | html %]</th><th>[% Translate("Criticality") | html %]</th><th>[% Translate("Support team") | html %]</th><th>[% Translate("Status") | html %]</th></tr></thead><tbody>
+[% RenderBlockStart("InstanceRow") %]<tr><td>[% Data.InstanceName | html %]</td><td>[% Data.ServiceModel | html %]</td><td>[% Data.Criticality | html %]</td><td>[% Data.SupportGroupName | html %]</td><td>[% Data.InstanceStatus | html %]</td></tr>[% RenderBlockEnd("InstanceRow") %]
+    </tbody></table></div></div>[% END %]
+</div>

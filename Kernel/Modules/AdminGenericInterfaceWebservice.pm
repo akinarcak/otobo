@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -29,6 +29,15 @@ sub new {
 
     my $Self = {%Param};
     bless( $Self, $Type );
+
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
 
     return $Self;
 }
@@ -43,6 +52,18 @@ sub Run {
     my $LayoutObject     = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     my $WebserviceObject = $Kernel::OM->Get('Kernel::System::GenericInterface::Webservice');
     my $YAMLObject       = $Kernel::OM->Get('Kernel::System::YAML');
+
+    $Param{IncludeInvalid} = $ParamObject->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $Param{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $Param{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $Param{IncludeInvalid};
+    }
 
     # ------------------------------------------------------------ #
     # sub-action Change: load web service and show edit screen
@@ -353,7 +374,13 @@ sub Run {
         }
 
         # Dump configuration into a YAML structure.
-        my $YAMLContent = $YAMLObject->Dump( Data => $WebserviceData->{Config} );
+        # export webservice name to be flexible regarding filename
+        my $YAMLContent = $YAMLObject->Dump(
+            Data => {
+                $WebserviceData->{Config}->%*,
+                Name => $WebserviceData->{Name},
+            },
+        );
 
         # Return YAML to download.
         my $YAMLFile = $WebserviceData->{Name};
@@ -581,11 +608,11 @@ sub Run {
             }
         }
 
-        # Display any YAML error message as a normal otobo error message.
+        # Display any YAML error message as a normal careoncloud error message.
         if ( !IsHashRefWithData($ImportedConfig) ) {
             return $LayoutObject->ErrorScreen(
                 Message =>
-                    Translatable('The imported file has not valid YAML content! Please check OTOBO log for details'),
+                    Translatable('The imported file has not valid YAML content! Please check CareOnCloud ESM log for details'),
             );
         }
 
@@ -755,6 +782,13 @@ sub _ShowOverview {
         Data => \%Param,
     );
 
+    $LayoutObject->Block(
+        Name => 'IncludeInvalid',
+        Data => {
+            IncludeInvalid        => $Self->{IncludeInvalid},
+            IncludeInvalidChecked => $Self->{IncludeInvalid} ? 'checked' : '',
+        },
+    );
     $LayoutObject->Block( Name => 'ActionList' );
     $LayoutObject->Block( Name => 'ActionAdd' );
     $LayoutObject->Block( Name => 'OverviewHeader' );
@@ -764,7 +798,7 @@ sub _ShowOverview {
 
     # Get web services list.
     my $WebserviceList = $WebserviceObject->WebserviceList(
-        Valid => 0,
+        Valid => $Self->{IncludeInvalid} ? 0 : 1,
     );
 
     # Check if no web services are registered.
@@ -793,7 +827,7 @@ sub _ShowOverview {
 
             if ( !$Webservice->{Config} || !IsHashRefWithData( $Webservice->{Config} ) ) {
 
-                # Write an error message to the OTOBO log.
+                # Write an error message to the CareOnCloud ESM log.
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
                     Priority => 'error',
                     Message  => "Configuration of WebserviceID $WebserviceID is invalid!",
@@ -1058,7 +1092,7 @@ sub _ShowEdit {
     # Meta configuration for output blocks.
     my %CommTypeConfig = (
         Provider => {
-            Title                 => Translatable('OTOBO as provider'),
+            Title                 => Translatable('CareOnCloud ESM as provider'),
             SelectedTransport     => $ProviderData->{Transport}->{Type},
             ActionType            => 'Operation',
             ActionsTitle          => Translatable('Operations'),
@@ -1068,7 +1102,7 @@ sub _ShowEdit {
             ErrorHandlingPriority => $ErrorHandlingPriorityProvider,
         },
         Requester => {
-            Title                 => Translatable('OTOBO as requester'),
+            Title                 => Translatable('CareOnCloud ESM as requester'),
             SelectedTransport     => $RequesterData->{Transport}->{Type},
             ActionType            => 'Invoker',
             ActionsTitle          => Translatable('Invokers'),
@@ -1417,8 +1451,8 @@ sub _UpdateConfiguration {
 
     my $Configuration = $Param{Configuration};
 
-    # This function needs to be extended for further otobo versions
-    #   it could be that newer otobo versions has different configuration options
+    # This function needs to be extended for further careoncloud versions
+    #   it could be that newer careoncloud versions has different configuration options
     #   migration from previous version should be automatic and needs to be done here
     return $Configuration;
 }

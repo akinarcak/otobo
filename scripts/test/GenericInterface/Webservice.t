@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -857,13 +857,13 @@ my @Tests = (
     # TODO: it's not clear whether any updating is actually performed.
     # See https://github.com/RotherOSS/otobo/issues/362
     {
-        Name          => 'test 27 - Upgrade configuration scheme for Migration from OTRS 6 to OTOBO 10',
+        Name          => 'test 27 - Upgrade configuration scheme for Migration from OTRS 6 to CareOnCloud ESM 10',
         SuccessAdd    => 1,
         SuccessUpdate => 1,
         HistoryCount  => 2,
         Add           => {
             Config => {
-                Description => 'Test for auto-update OTRS 6 -> OTOBO 10.',
+                Description => 'Test for auto-update OTRS 6 -> CareOnCloud ESM 10.',
                 Debugger    => {
                     DebugThreshold => 'debug',
                 },
@@ -891,9 +891,9 @@ my @Tests = (
                             SOAPAction           => 'Yes',
                             SOAPActionSeparator  => '/',
                             SSL                  => {
-                                SSLCADir          => '/opt/otobo/scripts/test/sample/SSL/',
-                                SSLCAFile         => '/opt/otobo/scripts/test/sample/SSL/ca-certificate.pem',
-                                SSLP12Certificate => '/opt/otobo/scripts/test/sample/SSL/certificate.pem',
+                                SSLCADir          => '/opt/careoncloud/scripts/test/sample/SSL/',
+                                SSLCAFile         => '/opt/careoncloud/scripts/test/sample/SSL/ca-certificate.pem',
+                                SSLP12Certificate => '/opt/careoncloud/scripts/test/sample/SSL/certificate.pem',
                                 SSLP12Password    => 'certificate password',
                                 SSLProxy          => 'https://proxy-host:1234/',
                                 SSLProxyPassword  => 'proxy password',
@@ -907,7 +907,7 @@ my @Tests = (
             ValidID        => 1,
             UserID         => 1,
             ExpectedConfig => {
-                Description => 'Test for auto-update OTRS 6 -> OTOBO 10.',
+                Description => 'Test for auto-update OTRS 6 -> CareOnCloud ESM 10.',
                 Debugger    => {
                     DebugThreshold => 'debug',
                 },
@@ -943,9 +943,9 @@ my @Tests = (
                             SOAPActionScheme     => 'NameSpaceSeparatorOperation',
                             SOAPActionSeparator  => '/',
                             SSL                  => {
-                                SSLCADir       => '/opt/otobo/scripts/test/sample/SSL/',
-                                SSLCAFile      => '/opt/otobo/scripts/test/sample/SSL/ca-certificate.pem',
-                                SSLCertificate => '/opt/otobo/scripts/test/sample/SSL/certificate.pem',
+                                SSLCADir       => '/opt/careoncloud/scripts/test/sample/SSL/',
+                                SSLCAFile      => '/opt/careoncloud/scripts/test/sample/SSL/ca-certificate.pem',
+                                SSLCertificate => '/opt/careoncloud/scripts/test/sample/SSL/certificate.pem',
                                 SSLPassword    => 'certificate password',
                                 UseSSL         => 'Yes',
                             },
@@ -957,7 +957,7 @@ my @Tests = (
         },
         Update => {
             Config => {
-                Description => 'Test for auto-update OTRS 6 -> OTOBO 10.',
+                Description => 'Test for auto-update OTRS 6 -> CareOnCloud ESM 10.',
                 Debugger    => {
                     DebugThreshold => 'debug',
                 },
@@ -978,9 +978,9 @@ my @Tests = (
                             DefaultCommand => 'POST',
                             Host           => 'http://somehost/someuri',
                             X509           => {
-                                X509CAFile   => '/opt/otobo/scripts/test/sample/SSL/ca-certificate.pem',
-                                X509CertFile => '/opt/otobo/scripts/test/sample/SSL/certificate.pem',
-                                X509KeyFile  => '/opt/otobo/scripts/test/sample/SSL/certificate.key.pem',
+                                X509CAFile   => '/opt/careoncloud/scripts/test/sample/SSL/ca-certificate.pem',
+                                X509CertFile => '/opt/careoncloud/scripts/test/sample/SSL/certificate.pem',
+                                X509KeyFile  => '/opt/careoncloud/scripts/test/sample/SSL/certificate.key.pem',
                                 UseX509      => 'Yes',
                             },
                         },
@@ -990,7 +990,7 @@ my @Tests = (
             ValidID        => 1,
             UserID         => 1,
             ExpectedConfig => {
-                Description => 'Test for auto-update OTRS 6 -> OTOBO 10.',
+                Description => 'Test for auto-update OTRS 6 -> CareOnCloud ESM 10.',
                 Debugger    => {
                     DebugThreshold => 'debug',
                 },
@@ -1014,9 +1014,9 @@ my @Tests = (
                                 UseProxy => 'No',
                             },
                             SSL => {
-                                SSLCAFile      => '/opt/otobo/scripts/test/sample/SSL/ca-certificate.pem',
-                                SSLCertificate => '/opt/otobo/scripts/test/sample/SSL/certificate.pem',
-                                SSLKey         => '/opt/otobo/scripts/test/sample/SSL/certificate.key.pem',
+                                SSLCAFile      => '/opt/careoncloud/scripts/test/sample/SSL/ca-certificate.pem',
+                                SSLCertificate => '/opt/careoncloud/scripts/test/sample/SSL/certificate.pem',
+                                SSLKey         => '/opt/careoncloud/scripts/test/sample/SSL/certificate.key.pem',
                                 UseSSL         => 'Yes',
                             },
                             Timeout => 300,

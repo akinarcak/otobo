@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,19 +16,29 @@
 
 package Kernel::Modules::AdminDynamicFieldScript;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+use utf8;
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(:all);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
-
-use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
 
 sub new {
     my ( $Type, %Param ) = @_;
 
-    my $Self = {%Param};
-    bless( $Self, $Type );
+    my $Self = bless {%Param}, $Type;
+
+    # Some setup
+    $Self->{TemplateFile} = 'AdminDynamicFieldScript';
 
     return $Self;
 }
@@ -48,7 +58,47 @@ sub Run {
 
     my $FieldType  = $Param{FieldType}  || $ParamObject->GetParam( Param => 'FieldType' );
     my $ObjectType = $Param{ObjectType} || $ParamObject->GetParam( Param => 'ObjectType' );
-    my $Config     = $FieldType ? $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Driver')->{$FieldType} : {};
+
+    # check if we clone from an existing field
+    my $CloneFieldID = $ParamObject->GetParam( Param => "CloneFieldID" );
+    if ($CloneFieldID) {
+        my $FieldConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+            ID => $CloneFieldID,
+        );
+
+        # if we found a field config, copy its content for usage in _ShowScreen
+        if ( IsHashRefWithData($FieldConfig) ) {
+
+            # copy standard stuff
+            for my $Key (qw(ObjectType FieldType Label Name ValidID)) {
+                $Param{$Key} = $FieldConfig->{$Key};
+            }
+
+            # iterate over special stuff and copy in-depth content as flat list
+            CONFIGKEY:
+            for my $ConfigKey ( keys $FieldConfig->{Config}->%* ) {
+                next CONFIGKEY if $ConfigKey eq 'PartOfSet';
+
+                my $DFDetails = $FieldConfig->{Config};
+                if ( IsHashRefWithData( $DFDetails->{$ConfigKey} ) ) {
+                    my $ConfigContent = $DFDetails->{$ConfigKey};
+                    for my $ContentKey ( keys $ConfigContent->%* ) {
+                        $Param{$ContentKey} = $ConfigContent->{$ContentKey};
+                    }
+                }
+                else {
+                    $Param{$ConfigKey} = $DFDetails->{$ConfigKey};
+                }
+            }
+
+            # when cloning, FieldType and ObjectType are expected to be empty, so overwrite them
+            $FieldType  //= $Param{FieldType};
+            $ObjectType //= $Param{ObjectType};
+        }
+        $Param{CloneFieldID} = $CloneFieldID;
+    }
+
+    my $Config = $FieldType ? $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Driver')->{$FieldType} : {};
 
     # Check module validity
     if ( !$Config->{Module} || !$Kernel::OM->Get('Kernel::System::Main')->Require( $Config->{Module} ) ) {
@@ -92,7 +142,7 @@ sub Run {
             DriverObject => $DriverObject,
         );
     }
-    if ( $Self->{Subaction} eq 'Change' ) {
+    elsif ( $Self->{Subaction} eq 'Change' ) {
         return $Self->_Change(
             %Param,
             %ConditionHashes,
@@ -109,6 +159,7 @@ sub Run {
             DriverObject => $DriverObject,
         );
     }
+
     return $LayoutObject->ErrorScreen(
         Message => Translatable('Undefined subaction.'),
     );
@@ -121,8 +172,13 @@ sub _Add {
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     my %GetParam;
+
     for my $Needed (qw(ObjectType FieldType FieldOrder)) {
-        $GetParam{$Needed} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => $Needed );
+        $GetParam{$Needed} //= $ParamObject->GetParam( Param => $Needed );
+
+        # in clone case, params are received via %Param
+        $GetParam{$Needed} //= $Param{$Needed};
+
         if ( !$GetParam{$Needed} ) {
             return $LayoutObject->ErrorScreen(
                 Message => $LayoutObject->{LanguageObject}->Translate( 'Need %s', $Needed ),
@@ -130,21 +186,22 @@ sub _Add {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # get the object type and field type display name
     my $ConfigObject   = $Kernel::OM->Get('Kernel::Config');
-    my $ObjectTypeName = $ConfigObject->Get('DynamicFields::ObjectType')->{ $GetParam{ObjectType} }->{DisplayName}
-        || '';
-    my $FieldTypeName = $ConfigObject->Get('DynamicFields::Driver')->{ $GetParam{FieldType} }->{DisplayName} || '';
+    my $ObjectTypeName = $ConfigObject->Get('DynamicFields::ObjectType')->{ $GetParam{ObjectType} }->{DisplayName} || '';
+    my $FieldTypeName  = $ConfigObject->Get('DynamicFields::Driver')->{ $GetParam{FieldType} }->{DisplayName}      || '';
 
     # check namespace validity
-    my $Namespaces = $ConfigObject->Get('DynamicField::Namespaces');
-    my $Namespace  = '';
-    if ( IsArrayRefWithData($Namespaces) && $GetParam{NamespaceFilter} ) {
-        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } $Namespaces->@* ) ? $GetParam{NamespaceFilter} : '';
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
+    my $Namespace = '';
+    if ( @DFNamespaces && $GetParam{NamespaceFilter} ) {
+        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } @DFNamespaces ) ? $GetParam{NamespaceFilter} : '';
     }
 
     return $Self->_ShowScreen(
@@ -161,10 +218,10 @@ sub _Add {
 sub _AddAction {
     my ( $Self, %Param ) = @_;
 
-    my %Errors;
-    my %GetParam;
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
 
+    my %Errors;
+    my %GetParam;
     for my $Needed (qw(Name Label FieldOrder)) {
         $GetParam{$Needed} = $ParamObject->GetParam( Param => $Needed );
         if ( !$GetParam{$Needed} ) {
@@ -187,14 +244,23 @@ sub _AddAction {
     }
 
     for my $ConfigParam (
-        qw(ObjectType ObjectTypeName FieldType FieldTypeName ValidID Tooltip Link LinkPreview Expression MultiValue Namespace)
+        qw(ObjectType ObjectTypeName FieldType FieldTypeName ValidID Tooltip Link LinkPreview Expression Namespace)
         )
     {
         $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
+    }
+
+    # extract field type specific parameters, e.g. MultiValue
+    my $FieldType = $GetParam{FieldType};
+    if ( $Self->{FieldTypeSettings}->{$FieldType} ) {
+        for my $Setting ( $Self->{FieldTypeSettings}->{$FieldType}->@* ) {
+            my $Name = $Setting->{ConfigParamName};
+            $GetParam{$Name} = $ParamObject->GetParam( Param => $Name );
+        }
     }
 
     if ( $GetParam{Name} ) {
@@ -232,8 +298,16 @@ sub _AddAction {
         qw(RequiredArgs AJAXTriggers UpdateEvents)
         )
     {
-        $GetParam{$ConfigParam} = [ $ParamObject->GetArray( Param => $ConfigParam ) ];
+        my @Params = $ParamObject->GetArray( Param => $ConfigParam );
+        $GetParam{$ConfigParam} = [ grep {$_} @Params ];
     }
+
+    $GetParam{RegExCounter} = $ParamObject->GetParam( Param => 'RegExCounter' ) || 0;
+
+    my @RegExList = $Self->GetParamRegexList(
+        GetParam => \%GetParam,
+        Errors   => \%Errors,
+    );
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
@@ -246,21 +320,21 @@ sub _AddAction {
     for my $Arg ( $GetParam{RequiredArgs}->@* ) {
         if ( !$Param{PossibleArgs}{$Arg} ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('Bad value in RequiredArgs.'),
+                Message => Translatable('Erroneous value in RequiredArgs.'),
             );
         }
     }
     for my $Trigger ( $GetParam{AJAXTriggers}->@* ) {
         if ( !$Param{PossibleAJAXTriggers}{$Trigger} ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('Bad value in AJAXTriggers.'),
+                Message => Translatable('Erroneous value in PreviewTriggers.'),
             );
         }
     }
     for my $Event ( $GetParam{UpdateEvents}->@* ) {
         if ( !$Param{PossibleUpdateEvents}{$Event} ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('Bad value in UpdateEvents.'),
+                Message => Translatable('Erroneous value in StorageTriggers.'),
             );
         }
     }
@@ -277,8 +351,18 @@ sub _AddAction {
 
     # set specific config
     my %FieldConfig = (
-        map { $_ => $GetParam{$_} } qw(Tooltip Link LinkPreview Expression RequiredArgs AJAXTriggers UpdateEvents MultiValue),
+        map { $_ => $GetParam{$_} } qw(Tooltip Link LinkPreview Expression RequiredArgs AJAXTriggers UpdateEvents),
     );
+
+    # extract field type specific parameters, e.g. MultiValue
+    if ( $Self->{FieldTypeSettings}->{$FieldType} ) {
+        for my $Setting ( $Self->{FieldTypeSettings}->{$FieldType}->@* ) {
+            my $Name = $Setting->{ConfigParamName};
+            $FieldConfig{$Name} = $GetParam{$Name};
+        }
+    }
+
+    $FieldConfig{RegExList} = \@RegExList;
 
     # create a new field
     my $FieldID = $DynamicFieldObject->DynamicFieldAdd(
@@ -335,8 +419,8 @@ sub _Change {
 
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my %GetParam;
 
+    my %GetParam;
     for my $Needed (qw(ObjectType FieldType)) {
         $GetParam{$Needed} = $ParamObject->GetParam( Param => $Needed );
         if ( !$GetParam{$Needed} ) {
@@ -346,18 +430,16 @@ sub _Change {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # get the object type and field type display name
     my $ConfigObject   = $Kernel::OM->Get('Kernel::Config');
-    my $ObjectTypeName = $ConfigObject->Get('DynamicFields::ObjectType')->{ $GetParam{ObjectType} }->{DisplayName}
-        || '';
-    my $FieldTypeName = $ConfigObject->Get('DynamicFields::Driver')->{ $GetParam{FieldType} }->{DisplayName} || '';
+    my $ObjectTypeName = $ConfigObject->Get('DynamicFields::ObjectType')->{ $GetParam{ObjectType} }->{DisplayName} || '';
+    my $FieldTypeName  = $ConfigObject->Get('DynamicFields::Driver')->{ $GetParam{FieldType} }->{DisplayName}      || '';
 
     my $FieldID = $ParamObject->GetParam( Param => 'ID' );
-
     if ( !$FieldID ) {
         return $LayoutObject->ErrorScreen(
             Message => Translatable('Need ID'),
@@ -377,17 +459,17 @@ sub _Change {
         );
     }
 
-    my %Config = ();
+    my %Config;
 
     # extract configuration
     if ( IsHashRefWithData( $DynamicFieldData->{Config} ) ) {
-        %Config = %{ $DynamicFieldData->{Config} };
+        %Config = $DynamicFieldData->{Config}->%*;
     }
 
     return $Self->_ShowScreen(
         %Param,
         %GetParam,
-        %${DynamicFieldData},
+        $DynamicFieldData->%*,
         %Config,
         ID             => $FieldID,
         Mode           => 'Change',
@@ -400,10 +482,11 @@ sub _Change {
 sub _ChangeAction {
     my ( $Self, %Param ) = @_;
 
+    my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+
     my %Errors;
     my %GetParam;
-    my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
-
     for my $Needed (qw(Name Label FieldOrder)) {
         $GetParam{$Needed} = $ParamObject->GetParam( Param => $Needed );
         if ( !$GetParam{$Needed} ) {
@@ -412,8 +495,7 @@ sub _ChangeAction {
         }
     }
 
-    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $FieldID      = $ParamObject->GetParam( Param => 'ID' );
+    my $FieldID = $ParamObject->GetParam( Param => 'ID' );
     if ( !$FieldID ) {
         return $LayoutObject->ErrorScreen(
             Message => Translatable('Need ID'),
@@ -447,14 +529,30 @@ sub _ChangeAction {
     }
 
     for my $ConfigParam (
-        qw(ObjectType ObjectTypeName FieldType FieldTypeName ValidID Tooltip Link LinkPreview Interpreter Expression MultiValue Namespace)
+        qw(ObjectType ObjectTypeName FieldType FieldTypeName ValidID Tooltip Link LinkPreview Interpreter Expression Namespace)
         )
     {
         $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    $GetParam{RegExCounter} = $ParamObject->GetParam( Param => 'RegExCounter' ) || 0;
+
+    my @RegExList = $Self->GetParamRegexList(
+        GetParam => \%GetParam,
+        Errors   => \%Errors,
+    );
+
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
+    }
+
+    # extract field type specific parameters, e.g. MultiValue
+    my $FieldType = $GetParam{FieldType};
+    if ( $Self->{FieldTypeSettings}->{$FieldType} ) {
+        for my $Setting ( $Self->{FieldTypeSettings}->{$FieldType}->@* ) {
+            my $Name = $Setting->{ConfigParamName};
+            $GetParam{$Name} = $ParamObject->GetParam( Param => $Name );
+        }
     }
 
     if ( $GetParam{Name} ) {
@@ -509,7 +607,8 @@ sub _ChangeAction {
         qw(RequiredArgs AJAXTriggers UpdateEvents)
         )
     {
-        $GetParam{$ConfigParam} = [ $ParamObject->GetArray( Param => $ConfigParam ) ];
+        my @Params = $ParamObject->GetArray( Param => $ConfigParam );
+        $GetParam{$ConfigParam} = [ grep {$_} @Params ];
     }
 
     # uncorrectable errors
@@ -521,31 +620,30 @@ sub _ChangeAction {
     for my $Arg ( $GetParam{RequiredArgs}->@* ) {
         if ( !$Param{PossibleArgs}{$Arg} ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('Bad value in RequiredArgs.'),
+                Message => Translatable('Erroneous value in RequiredArgs.'),
             );
         }
     }
     for my $Trigger ( $GetParam{AJAXTriggers}->@* ) {
         if ( !$Param{PossibleAJAXTriggers}{$Trigger} ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('Bad value in AJAXTriggers.'),
+                Message => Translatable('Erroneous value in PreviewTriggers.'),
             );
         }
     }
     for my $Event ( $GetParam{UpdateEvents}->@* ) {
         if ( !$Param{PossibleUpdateEvents}{$Event} ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('Bad value in UpdateEvents.'),
+                Message => Translatable('Erroneous value in StorageTriggers.'),
             );
         }
     }
 
     # Check if dynamic field is present in SysConfig setting
-    my $UpdateEntity        = $ParamObject->GetParam( Param => 'UpdateEntity' ) || '';
-    my $SysConfigObject     = $Kernel::OM->Get('Kernel::System::SysConfig');
-    my %DynamicFieldOldData = %{$DynamicFieldData};
-    my @IsDynamicFieldInSysConfig;
-    @IsDynamicFieldInSysConfig = $SysConfigObject->ConfigurationEntityCheck(
+    my $UpdateEntity              = $ParamObject->GetParam( Param => 'UpdateEntity' ) || '';
+    my $SysConfigObject           = $Kernel::OM->Get('Kernel::System::SysConfig');
+    my %DynamicFieldOldData       = %{$DynamicFieldData};
+    my @IsDynamicFieldInSysConfig = $SysConfigObject->ConfigurationEntityCheck(
         EntityType => 'DynamicField',
         EntityName => $DynamicFieldData->{Name},
     );
@@ -561,7 +659,7 @@ sub _ChangeAction {
             $Errors{ValidOptionServerError} = 'InSetting';
         }
 
-        # In case changing name an authorization (UpdateEntity) should be send
+        # In case changing name an authorization (UpdateEntity) should be sent
         elsif ( $DynamicFieldData->{Name} ne $GetParam{Name} && !$UpdateEntity ) {
             $Errors{NameInvalid}              = 'ServerError';
             $Errors{InSettingNameServerError} = 1;
@@ -581,8 +679,18 @@ sub _ChangeAction {
 
     # set specific config
     my %FieldConfig = (
-        map { $_ => $GetParam{$_} } qw(Tooltip Link LinkPreview Interpreter Expression RequiredArgs AJAXTriggers UpdateEvents MultiValue),
+        map { $_ => $GetParam{$_} } qw(Tooltip Link LinkPreview Interpreter Expression RequiredArgs AJAXTriggers UpdateEvents),
     );
+
+    # extract field type specific parameters, e.g. MultiValue
+    if ( $Self->{FieldTypeSettings}->{$FieldType} ) {
+        for my $Setting ( $Self->{FieldTypeSettings}->{$FieldType}->@* ) {
+            my $Name = $Setting->{ConfigParamName};
+            $FieldConfig{$Name} = $ParamObject->GetParam( Param => $Name );
+        }
+    }
+
+    $FieldConfig{RegExList} = \@RegExList;
 
     # update dynamic field (FieldType and ObjectType cannot be changed; use old values)
     my $UpdateSuccess = $DynamicFieldObject->DynamicFieldUpdate(
@@ -695,8 +803,11 @@ sub _ShowScreen {
     $Param{DisplayFieldName} = 'New';
 
     if ( $Param{Mode} eq 'Change' || $Param{Name} ) {
-        $Param{ShowWarning}      = 'ShowWarning';
-        $Param{DisplayFieldName} = $Param{Name};
+
+        if ( !$Param{CloneFieldID} ) {
+            $Param{ShowWarning}      = 'ShowWarning';
+            $Param{DisplayFieldName} = $Param{Name};
+        }
 
         # check for namespace
         if ( $Param{Name} =~ /(.*)-(.*)/ ) {
@@ -711,8 +822,9 @@ sub _ShowScreen {
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
     # header
-    my $Output = $LayoutObject->Header();
-    $Output .= $LayoutObject->NavigationBar();
+    my $Output = join '',
+        $LayoutObject->Header,
+        $LayoutObject->NavigationBar;
 
     my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
 
@@ -762,23 +874,38 @@ sub _ShowScreen {
         Class         => 'Modernize W75pc Validate_Number',
     );
 
-    my $MultiValue = $Param{MultiValue} || '0';
+    # Selections may be set up in a declarative way
+    my $FieldType = $Param{FieldType};
+    if ( $Self->{FieldTypeSettings}->{$FieldType} ) {
+        for my $Setting ( $Self->{FieldTypeSettings}->{$FieldType}->@* ) {
+            if ( $Setting->{InputType} eq 'Selection' ) {
+                my $Name      = $Setting->{ConfigParamName};
+                my $FieldStrg = $LayoutObject->BuildSelection(
+                    Name       => $Name,
+                    Data       => $Setting->{SelectionData},
+                    SelectedID => $Param{$Name} || '0',
+                    Class      => 'Modernize W50pc' . ( $Param{ $Name . 'ServerError' } ? ' ServerError' : '' ),
+                );
+                $LayoutObject->Block(
+                    Name => 'ConfigParamRow',
+                    Data => {
+                        ConfigParamName    => $Name,
+                        Label              => $Setting->{Label},
+                        FieldStrg          => $FieldStrg,
+                        Explanation        => $Setting->{Explanation},
+                        ServerErrorMessage => $Param{ $Name . 'ServerErrorMessage' },
+                    },
+                );
+            }
+        }
+    }
 
-    # create translatable values option list
-    my $MultiValueStrg = $LayoutObject->BuildSelection(
-        Data => {
-            0 => Translatable('No'),
-            1 => Translatable('Yes'),
-        },
-        Name       => 'MultiValue',
-        SelectedID => $MultiValue,
-        Class      => 'Modernize W50pc',
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
     );
-
-    my $NamespaceList = $Kernel::OM->Get('Kernel::Config')->Get('DynamicField::Namespaces');
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    if (@DFNamespaces) {
         my $NamespaceStrg = $LayoutObject->BuildSelection(
-            Data          => $NamespaceList,
+            Data          => \@DFNamespaces,
             Name          => 'Namespace',
             SelectedValue => $Namespace || '',
             PossibleNone  => 1,
@@ -911,9 +1038,8 @@ sub _ShowScreen {
         },
     );
 
-    my $ReadonlyInternalField = '';
-
     # Internal fields can not be deleted and name should not change.
+    my $ReadonlyInternalField = '';
     if ( $Param{InternalField} ) {
         $LayoutObject->Block(
             Name => 'InternalField',
@@ -925,7 +1051,7 @@ sub _ShowScreen {
     # get the field id
     my $FieldID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ID' );
 
-    # only if the dymamic field exists and should be edited,
+    # only if the dynamic field exists and should be edited,
     # not if the field is added for the first time
     if ($FieldID) {
 
@@ -934,6 +1060,59 @@ sub _ShowScreen {
         );
 
         my $FieldConfig = $DynamicField->{Config};
+
+        if ( !$Param{RegExCounter} ) {
+
+            my $RegExCounter = 0;
+            for my $RegEx ( @{ $FieldConfig->{RegExList} } ) {
+
+                $RegExCounter++;
+                $Param{ 'RegEx_' . $RegExCounter }                     = $RegEx->{Value};
+                $Param{ 'CustomerRegExErrorMessage_' . $RegExCounter } = $RegEx->{ErrorMessage};
+            }
+
+            $Param{RegExCounter} = $RegExCounter;
+        }
+
+        # NOTE check is necessary because previous block potentially alters $Param{RegExCounter}
+        if ( $Param{RegExCounter} ) {
+
+            REGEXENTRY:
+            for my $CurrentRegExEntryID ( 1 .. $Param{RegExCounter} ) {
+
+                # check existing regex
+                next REGEXENTRY if !$Param{ 'RegEx_' . $CurrentRegExEntryID };
+
+                $LayoutObject->Block(
+                    Name => 'RegExRow',
+                    Data => {
+                        EntryCounter     => $CurrentRegExEntryID,
+                        RegEx            => $Param{ 'RegEx_' . $CurrentRegExEntryID },
+                        RegExServerError =>
+                            $Param{ 'RegEx_' . $CurrentRegExEntryID . 'ServerError' }
+                            || '',
+                        RegExServerErrorMessage =>
+                            $Param{ 'RegEx_' . $CurrentRegExEntryID . 'ServerErrorMessage' } || '',
+                        CustomerRegExErrorMessage =>
+                            $Param{ 'CustomerRegExErrorMessage_' . $CurrentRegExEntryID },
+                        CustomerRegExErrorMessageServerError =>
+                            $Param{
+                                'CustomerRegExErrorMessage_'
+                                . $CurrentRegExEntryID
+                                . 'ServerError'
+                            }
+                            || '',
+                        CustomerRegExErrorMessageServerErrorMessage =>
+                            $Param{
+                                'CustomerRegExErrorMessage_'
+                                . $CurrentRegExEntryID
+                                . 'ServerErrorMessage'
+                            }
+                            || '',
+                    }
+                );
+            }
+        }
 
         my $DynamicFieldName = $DynamicField->{Name};
 
@@ -976,7 +1155,7 @@ sub _ShowScreen {
         if ($IsDirtyConfig) {
             $LayoutObject->Block(
                 Name => 'DynamicFieldInSysConfigDirty',
-                ,
+
             );
         }
 
@@ -992,7 +1171,7 @@ sub _ShowScreen {
         );
     }
 
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    if (@DFNamespaces) {
         if ( IsStringWithData( $Param{NamespaceFilter} ) ) {
             $FilterStrg .= ";NamespaceFilter=" . $LayoutObject->Output(
                 Template => '[% Data.Filter | uri %]',
@@ -1011,7 +1190,6 @@ sub _ShowScreen {
             FilterStrg            => $FilterStrg,
             ValidityStrg          => $ValidityStrg,
             DynamicFieldOrderStrg => $DynamicFieldOrderStrg,
-            MultiValueStrg        => $MultiValueStrg,
             ReadonlyInternalField => $ReadonlyInternalField,
             Link                  => $Link,
             LinkPreview           => $LinkPreview,
@@ -1022,6 +1200,75 @@ sub _ShowScreen {
     $Output .= $LayoutObject->Footer();
 
     return $Output;
+}
+
+sub GetParamRegexList {
+    my ( $Self, %Param ) = @_;
+
+    my $GetParam = $Param{GetParam};
+    my $Errors   = $Param{Errors};
+    my @RegExList;
+
+    # Check regex list
+    if ( $GetParam->{RegExCounter} && $GetParam->{RegExCounter} =~ m{\A\d+\z}xms ) {
+
+        my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
+
+        REGEXENTRY:
+        for my $CurrentRegExEntryID ( 1 .. $GetParam->{RegExCounter} ) {
+
+            # check existing regex
+            $GetParam->{ 'RegEx_' . $CurrentRegExEntryID } = $ParamObject->GetParam( Param => 'RegEx_' . $CurrentRegExEntryID );
+
+            next REGEXENTRY if !$GetParam->{ 'RegEx_' . $CurrentRegExEntryID };
+
+            $GetParam->{ 'CustomerRegExErrorMessage_' . $CurrentRegExEntryID } = $ParamObject->GetParam( Param => 'CustomerRegExErrorMessage_' . $CurrentRegExEntryID );
+
+            my $RegEx                     = $GetParam->{ 'RegEx_' . $CurrentRegExEntryID };
+            my $CustomerRegExErrorMessage = $GetParam->{ 'CustomerRegExErrorMessage_' . $CurrentRegExEntryID };
+
+            # is the regex valid?
+            eval {
+                qr{$RegEx}xms;
+            };
+
+            my $CurrentEntryErrors = 0;
+            if ($@) {
+                $Errors->{ 'RegEx_' . $CurrentRegExEntryID . 'ServerError' } = 'ServerError';
+
+                # cut last part of regex error
+                # 'Invalid regular expression (Unmatched [ in regex; marked by
+                # <-- HERE in m/aaa[ <-- HERE / at
+                # /opt/careoncloud/bin/cgi-bin/../../Kernel/Modules/AdminDynamicFieldText.pm line 452..
+                my $ServerErrorMessage = $@;
+                $ServerErrorMessage =~ s{ (in \s regex); .*$ }{ $1 }xms;
+                $Errors->{ 'RegEx_' . $CurrentRegExEntryID . 'ServerErrorMessage' } = $ServerErrorMessage;
+
+                $CurrentEntryErrors = 1;
+            }
+
+            # check required error message for regex
+            if ( !$CustomerRegExErrorMessage ) {
+                $Errors->{ 'CustomerRegExErrorMessage_' . $CurrentRegExEntryID . 'ServerError' } = 'ServerError';
+                $Errors->{
+                    'CustomerRegExErrorMessage_'
+                        . $CurrentRegExEntryID
+                        . 'ServerErrorMessage'
+                } = Translatable('This field is required.');
+
+                $CurrentEntryErrors = 1;
+            }
+
+            next REGEXENTRY if $CurrentEntryErrors;
+
+            push @RegExList, {
+                'Value'        => $RegEx,
+                'ErrorMessage' => $CustomerRegExErrorMessage,
+            };
+        }
+    }
+
+    return @RegExList;
 }
 
 1;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,15 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::System::PostMaster ();
 
 our $Self;
-
-use Kernel::System::PostMaster;
 
 # get needed objects
 my $AutoResponseObject = $Kernel::OM->Get('Kernel::System::AutoResponse');
@@ -131,7 +134,7 @@ my $SetPreferences = $UserObject->SetPreferences(
 my $NotificationName = 'Notification' . $RandomID;
 my $NotificationID   = $Kernel::OM->Get('Kernel::System::NotificationEvent')->NotificationAdd(
     Name    => $NotificationName,
-    Comment => 'Unit Test Notification <OTOBO_CUSTOMER_BODY> tag',
+    Comment => 'Unit Test Notification <CareOnCloud_CUSTOMER_BODY> tag',
     Data    => {
         Transports => ['Email'],
         Events     => ['NotificationNewTicket'],
@@ -140,7 +143,7 @@ my $NotificationID   = $Kernel::OM->Get('Kernel::System::NotificationEvent')->No
     Message => {
         en => {
             Subject     => 'Notification subject',
-            Body        => 'OTOBO_CUSTOMER_BODY tag: <OTOBO_CUSTOMER_BODY>',
+            Body        => 'CareOnCloud_CUSTOMER_BODY tag: <CareOnCloud_CUSTOMER_BODY>',
             ContentType => 'text/plain',
         },
     },
@@ -201,7 +204,7 @@ my $Emails       = $EmailBackend->EmailsGet();
 
 # check if any notification email as the tag
 my $Found = 0;
-my $Match = 'OTOBO_CUSTOMER_BODY tag: ' . $EmailData{Body};
+my $Match = 'CareOnCloud_CUSTOMER_BODY tag: ' . $EmailData{Body};
 EMAIL:
 for my $Email ( @{$Emails} ) {
     $Found = ( ${ $Email->{Body} } =~ m/$Match/ ? 1 : 0 );
@@ -210,7 +213,7 @@ for my $Email ( @{$Emails} ) {
 
 $Self->True(
     $Found,
-    'OTOBO_CUSTOMER_BODY found and translated in the notification!'
+    'CareOnCloud_CUSTOMER_BODY found and translated in the notification!'
 );
 
 $Self->DoneTesting();

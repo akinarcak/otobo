@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -227,7 +227,7 @@
                     <ul class="Tabs">
 [% RenderBlockStart("CommunicationNavBarFilterItem") %]
                         <li [% IF Data.Selected %] class="Active" [% END %]>
-                            <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];Filter=[% Data.Filter | uri %];SortBy=[% Data.SortBy %];OrderBy=[% Data.OrderBy %];StartHit=1;Expand=1;StartTime=[% Data.StartTime | uri %]">[% Translate(Data.Name) | html %] ([% Data.Count %])</a>
+                            <a name="OverviewControl" href="[% Env("Baselink") %]Action=[% Env("Action") %];Filter=[% Data.Filter | uri %];SortBy=[% Data.SortBy | uri %];OrderBy=[% Data.OrderBy | uri %];StartHit=1;Expand=1;StartTime=[% Data.StartTime | uri %]">[% Translate(Data.Name) | html %] ([% Data.Count %])</a>
                         </li>
 [% RenderBlockEnd("CommunicationNavBarFilterItem") %]
                     </ul>

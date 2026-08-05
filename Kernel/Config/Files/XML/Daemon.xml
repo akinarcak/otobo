@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="Frontend::Module###AgentDaemonInfo" Required="0" Valid="1">
         <Description Translatable="1">Frontend module registration for the agent interface.</Description>
         <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
@@ -16,14 +16,14 @@
                         </Array>
                     </Item>
                     <Item Key="Description">Admin</Item>
-                    <Item Key="Title" Translatable="1">Shows information on how to start OTOBO Daemon</Item>
+                    <Item Key="Title" Translatable="1">Shows information on how to start CareOnCloud ESM Daemon</Item>
                     <Item Key="NavBarName"></Item>
                 </Hash>
             </Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::NotifyModule###8000-Daemon-Check" Required="0" Valid="1">
-        <Description Translatable="1">Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.</Description>
+        <Description Translatable="1">Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.</Description>
         <Navigation>Frontend::Agent::FrontendNotification</Navigation>
         <Value>
             <Hash>
@@ -50,20 +50,20 @@
         </Value>
     </Setting>
     <Setting Name="Daemon::Log::RotationType" Required="1" Valid="1">
-        <Description Translatable="1">Type of daemon log rotation to use: Choose 'OTOBO' to let OTOBO system to handle the file rotation, or choose 'External' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.</Description>
+        <Description Translatable="1">Type of daemon log rotation to use: choose CareOnCloud ESM for application-managed rotation, or External for a third-party mechanism such as logrotate.</Description>
         <Navigation>Daemon::Log</Navigation>
         <Value>
-            <Item ValueType="Select" SelectedID="otobo"><!-- default OTOBO -->
-                <Item ValueType="Option" Value="otobo" Translatable="1">OTOBO</Item>
+            <Item ValueType="Select" SelectedID="careoncloud"><!-- default CareOnCloud ESM -->
+                <Item ValueType="Option" Value="careoncloud" Translatable="1">CareOnCloud ESM</Item>
                 <Item ValueType="Option" Value="external" Translatable="1">External</Item>
             </Item>
         </Value>
     </Setting>
     <Setting Name="Daemon::PID::Path" Required="0" Valid="0">
-        <Description Translatable="1">If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if &lt;$OTOBOHome&gt;/var/run/ can not be used.</Description>
+        <Description Translatable="1">If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if &lt;$CareOnCloudHome&gt;/var/run/ can not be used.</Description>
         <Navigation>Daemon</Navigation>
         <Value>
-            <Item ValueRegex="" ValueType="Directory">/opt/otobo/var/run/</Item>
+            <Item ValueRegex="" ValueType="Directory">/opt/careoncloud/var/run/</Item>
         </Value>
     </Setting>
     <Setting Name="Daemon::Log::DaysToKeep" Required="0" Valid="0">
@@ -202,6 +202,23 @@
                 <Item Key="Schedule">46 * * * *</Item> <!-- default every hour -->
                 <Item Key="Module">Kernel::System::Web::UploadCache</Item>
                 <Item Key="Function">FormIDCleanUp</Item>
+                <Item Key="MaximumParallelInstances">1</Item>
+                <Item Key="Params">
+                    <Array>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Daemon::SchedulerCronTaskManager::Task###FormCacheCleanup" Required="0" Valid="1" ConfigLevel="100">
+        <Description Translatable="1">Delete expired form cache hourly.</Description>
+        <Navigation>Daemon::SchedulerCronTaskManager::Task</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="TaskName">FormCacheCleanup</Item>
+                <Item Key="Schedule">52 * * * *</Item> <!-- default every hour -->
+                <Item Key="Module">Kernel::System::Web::FormCache</Item>
+                <Item Key="Function">CleanUpExpired</Item>
                 <Item Key="MaximumParallelInstances">1</Item>
                 <Item Key="Params">
                     <Array>
@@ -863,4 +880,4 @@
             </Hash>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

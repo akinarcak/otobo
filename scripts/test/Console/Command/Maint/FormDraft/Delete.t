@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 
 my $CommandObject = $Kernel::OM->Get('Kernel::System::Console::Command::Maint::FormDraft::Delete');
 
@@ -33,7 +36,7 @@ my $HelperObject = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $ExitCode = $CommandObject->Execute();
 
 # just check exit code
-$Self->Is(
+is(
     $ExitCode,
     1,
     "Maint::FormDraft::Delete exit code - without any options",
@@ -43,17 +46,17 @@ $Self->Is(
 $ExitCode = $CommandObject->Execute('expired');
 
 # just check exit code
-$Self->Is(
+is(
     $ExitCode,
     1,
     "Maint::FormDraft::Delete exit code - with --expired option",
 );
 
-# try to execute command with --object-type option without velue
+# try to execute command with --object-type option without value
 $ExitCode = $CommandObject->Execute('--object-type');
 
 # just check exit code
-$Self->Is(
+is(
     $ExitCode,
     1,
     "Maint::FormDraft::Delete exit code - with ----object-type option without value",
@@ -75,7 +78,7 @@ my $TicketID = $Kernel::OM->Get('Kernel::System::Ticket')->TicketCreate(
     UserID       => 1,
 );
 
-$Self->True(
+ok(
     $TicketID,
     "Ticket is created - $TicketID"
 );
@@ -105,8 +108,8 @@ for ( 1 .. 3 ) {
         UserID        => 1,
     );
 
-    $Self->True(
-        $TicketID,
+    ok(
+        $FormDraftAdd,
         "FormDraft is created"
     );
 
@@ -131,11 +134,11 @@ FixedTimeSet(
     )->ToEpoch()
 );
 
-# execute command with --object-type option with velue ticket and --expired option
+# execute command with --object-type option with value ticket and --expired option
 $ExitCode = $CommandObject->Execute( '--object-type', 'Ticket', '--expired' );
 
 # just check exit code
-$Self->Is(
+is(
     $ExitCode,
     0,
     "Maint::FormDraft::Delete exit code - with ----object-type option with 'Ticket' value and --expired option",
@@ -145,23 +148,22 @@ my $FormDraftList = $FormDraftObject->FormDraftListGet(
     ObjectType => 'Ticket',
     ObjectID   => $TicketID,
     Action     => 'AgentTicketNote',
-    UserID     => 1,
 );
 
-$Self->Is(
+is(
     scalar @{$FormDraftList},
     1,
     "Expired FormDraft is deleted"
 );
 
-# execute command with --object-type option with velue Ticket
+# execute command with --object-type option with value Ticket
 $ExitCode = $CommandObject->Execute( '--object-type', 'Ticket' );
 
 # just check exit code
-$Self->Is(
+is(
     $ExitCode,
     0,
     "Maint::FormDraft::Delete exit code - with ----object-type option with 'Ticket' value",
 );
 
-$Self->DoneTesting();
+done_testing;

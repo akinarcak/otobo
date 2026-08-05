@@ -1,0 +1,39 @@
+<div class="MainBox ARIARoleMain">
+ <h1>[% Translate("CareOnCloud Operations Center") | html %]</h1>
+ <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Report scope") | html %]</h2></div><div class="Content"><form action="[% Env("CGIHandle") %]" method="get"><input type="hidden" name="Action" value="AgentCareOnCloudOperations"/><label for="CareOnCloudOpsTenant">[% Translate("Customer") | html %]</label><select id="CareOnCloudOpsTenant" name="TenantID">[% RenderBlockStart("TenantOption") %]<option value="[% Data.TenantID | html %]" [% Data.Selected | html %]>[% Data.Name | html %]</option>[% RenderBlockEnd("TenantOption") %]</select><label for="CareOnCloudOpsFrom">[% Translate("From") | html %]</label><input id="CareOnCloudOpsFrom" type="date" name="From" value="[% Data.From | html %]"/><label for="CareOnCloudOpsTo">[% Translate("To") | html %]</label><input id="CareOnCloudOpsTo" type="date" name="To" value="[% Data.To | html %]"/><button class="Button" type="submit">[% Translate("Refresh") | html %]</button></form></div></div>
+ <div class="WidgetSimple">
+  <div class="Header"><h2>[% Translate("Custom report designer") | html %]</h2></div>
+  <div class="Content">
+[% IF Data.SavedNotice %]<p class="Success">[% Translate("Report definition saved.") | html %]</p>[% END %]
+   <form action="[% Env("CGIHandle") %]" method="get">
+    <input type="hidden" name="Action" value="AgentCareOnCloudOperations"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="From" value="[% Data.From | html %]"/><input type="hidden" name="To" value="[% Data.To | html %]"/>
+    <label for="CareOnCloudSavedReport">[% Translate("Saved reports") | html %]</label>
+    <select id="CareOnCloudSavedReport" name="ReportID"><option value="">[% Translate("Please select") | html %]</option>[% RenderBlockStart("SavedReportOption") %]<option value="[% Data.ReportID | html %]" [% Data.Selected | html %]>[% Data.Name | html %] ([% Translate(Data.Visibility) | html %])</option>[% RenderBlockEnd("SavedReportOption") %]</select>
+    <button class="Button" type="submit" name="Subaction" value="LoadSaved">[% Translate("Load report") | html %]</button>
+   </form>
+   <form action="[% Env("CGIHandle") %]" method="post">
+    <input type="hidden" name="Action" value="AgentCareOnCloudOperations"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="From" value="[% Data.From | html %]"/><input type="hidden" name="To" value="[% Data.To | html %]"/>
+    <input type="hidden" name="ChallengeToken" value=[% Env("UserChallengeToken") | JSON %]>
+    <label for="CareOnCloudReportDimensions">[% Translate("Group by") | html %]</label>
+    <select id="CareOnCloudReportDimensions" name="Dimensions" multiple size="5" required>[% RenderBlockStart("DimensionOption") %]<option value="[% Data.Key | html %]" [% Data.Selected | html %]>[% Translate(Data.Label) | html %]</option>[% RenderBlockEnd("DimensionOption") %]</select>
+    <label for="CareOnCloudReportMetrics">[% Translate("Metrics") | html %]</label>
+    <select id="CareOnCloudReportMetrics" name="Metrics" multiple size="4" required>[% RenderBlockStart("MetricOption") %]<option value="[% Data.Key | html %]" [% Data.Selected | html %]>[% Translate(Data.Label) | html %]</option>[% RenderBlockEnd("MetricOption") %]</select>
+    <label for="CareOnCloudReportStatus">[% Translate("Status filter") | html %]</label><input id="CareOnCloudReportStatus" name="Status" value="[% Data.Status | html %]" maxlength="32"/>
+    <button class="Primary CallForAction" type="submit"><span>[% Translate("Run report") | html %]</span></button>
+    <button class="Button" type="submit" name="Subaction" value="ExportCustom"><span>[% Translate("Export custom report") | html %]</span></button>
+    <input type="hidden" name="Format" value="csv"/>
+    <fieldset><legend>[% Translate("Save report definition") | html %]</legend><label for="CareOnCloudReportKey">[% Translate("Technical key") | html %]</label><input id="CareOnCloudReportKey" name="ReportKey" pattern="[a-z][a-z0-9_-]{1,99}" maxlength="100"/><label for="CareOnCloudReportName">[% Translate("Report name") | html %]</label><input id="CareOnCloudReportName" name="ReportName" maxlength="200"/><label for="CareOnCloudReportDescription">[% Translate("Description") | html %]</label><input id="CareOnCloudReportDescription" name="ReportDescription" maxlength="2000"/><label for="CareOnCloudReportVisibility">[% Translate("Visibility") | html %]</label><select id="CareOnCloudReportVisibility" name="ReportVisibility"><option value="private">[% Translate("private") | html %]</option><option value="shared">[% Translate("shared") | html %]</option></select><button class="Button" type="submit" name="Subaction" value="SaveReport">[% Translate("Save report") | html %]</button></fieldset>
+   </form>
+   <table class="DataTable"><thead><tr>[% FOREACH Column IN Data.CustomColumns %]<th>[% Translate(Column) | html %]</th>[% END %]</tr></thead><tbody>[% FOREACH Row IN Data.CustomRows %]<tr>[% FOREACH Value IN Row.Values %]<td>[% Value | html %]</td>[% END %]</tr>[% END %]</tbody></table>
+  </div>
+ </div>
+ <div class="CareOnCloudKPIGrid">
+  <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Requests") | html %]</h2></div><div class="Content"><strong class="CareOnCloudKPI">[% Data.Requests | html %]</strong></div></div>
+  <div class="WidgetSimple"><div class="Header"><h2>[% Translate("SLA objectives") | html %]</h2></div><div class="Content"><strong class="CareOnCloudKPI">[% Data.Commitments | html %]</strong></div></div>
+  <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Breaches") | html %]</h2></div><div class="Content"><strong class="CareOnCloudKPI">[% Data.BreachedCommitments | html %]</strong></div></div>
+  <div class="WidgetSimple"><div class="Header"><h2>[% Translate("SLA compliance") | html %]</h2></div><div class="Content"><strong class="CareOnCloudKPI">[% Data.Compliance | html %]%</strong></div></div>
+ </div>
+ <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Request status") | html %]</h2></div><div class="Content"><table class="DataTable"><thead><tr><th>[% Translate("Status") | html %]</th><th>[% Translate("Count") | html %]</th></tr></thead><tbody>[% RenderBlockStart("RequestStatusRow") %]<tr><td>[% Data.Status | html %]</td><td>[% Data.Count | html %]</td></tr>[% RenderBlockEnd("RequestStatusRow") %]</tbody></table></div></div>
+ <div class="WidgetSimple"><div class="Header"><h2>[% Translate("Demand by catalog item") | html %]</h2></div><div class="Content"><table class="DataTable"><thead><tr><th>[% Translate("Catalog item") | html %]</th><th>[% Translate("Count") | html %]</th></tr></thead><tbody>[% RenderBlockStart("CatalogItemRow") %]<tr><td>[% Data.Name | html %]</td><td>[% Data.Count | html %]</td></tr>[% RenderBlockEnd("CatalogItemRow") %]</tbody></table></div></div>
+ <div class="WidgetSimple"><div class="Header"><h2>[% Translate("SLA health") | html %]</h2></div><div class="Content"><table class="DataTable"><thead><tr><th>[% Translate("Objective") | html %]</th><th>[% Translate("Status") | html %]</th><th>[% Translate("Count") | html %]</th></tr></thead><tbody>[% RenderBlockStart("CommitmentRow") %]<tr><td>[% Data.ObjectiveType | html %]</td><td>[% Data.Status | html %]</td><td>[% Data.Count | html %]</td></tr>[% RenderBlockEnd("CommitmentRow") %]</tbody></table></div></div>
+</div>

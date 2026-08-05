@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,6 +16,7 @@
 
 package Kernel::System::VariableCheck;
 
+use v5.24;
 use strict;
 use warnings;
 
@@ -24,7 +25,7 @@ use Exporter qw(import);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 # set up the exported symbols
 our %EXPORT_TAGS = (    ## no critic qw(OTOBO::RequireCamelCase)
@@ -118,7 +119,8 @@ The functions can be grouped as follows:
 
 test supplied data to determine if it is a string - an empty string is valid
 
-returns 1 if data matches criteria or undef otherwise
+Returns undef when no or when more than one argument is passed.
+Returns 1 if data matches criteria or undef otherwise.
 
     my $Result = IsString(
         'abc', # data to be tested
@@ -131,9 +133,9 @@ returns 1 if data matches criteria or undef otherwise
 sub IsString {
     my $TestData = $_[0];
 
-    return if scalar @_ ne 1;
+    return if scalar @_ != 1;
     return if ref $TestData;
-    return if !defined $TestData;
+    return unless defined $TestData;
 
     return 1;
 }
@@ -161,9 +163,10 @@ sub IsStringWithData {
 
 =head2 IsArrayRefWithData()
 
-test supplied data to determine if it is an array reference and contains at least one key
+tests the supplied data to determine if it is an array reference and contains at least one item.
 
-returns 1 if data matches criteria or undef otherwise
+Returns undef when no or when more than one argument is passed.
+Returns 1 if data matches criteria or undef otherwise.
 
     my $Result = IsArrayRefWithData(
         [ # data to be tested
@@ -177,7 +180,7 @@ returns 1 if data matches criteria or undef otherwise
 sub IsArrayRefWithData {
     my $TestData = $_[0];
 
-    return if scalar @_ ne 1;
+    return if scalar @_ != 1;
     return if ref $TestData ne 'ARRAY';
     return if !@{$TestData};
 
@@ -186,9 +189,10 @@ sub IsArrayRefWithData {
 
 =head2 IsHashRefWithData()
 
-test supplied data to determine if it is a hash reference and contains at least one key/value pair
+tests supplied data to determine if it is a hash reference and contains at least one key/value pair.
 
-returns 1 if data matches criteria or undef otherwise
+Returns undef when no or when more than one argument is passed.
+Returns 1 if data matches criteria or undef otherwise.
 
     my $Result = IsHashRefWithData(
         { # data to be tested
@@ -202,7 +206,7 @@ returns 1 if data matches criteria or undef otherwise
 sub IsHashRefWithData {
     my $TestData = $_[0];
 
-    return if scalar @_ ne 1;
+    return if scalar @_ != 1;
     return if ref $TestData ne 'HASH';
     return if !%{$TestData};
 
@@ -228,7 +232,7 @@ sub IsNumber {
     return if !IsStringWithData(@_);
     return if $TestData !~ m{
         \A [-]? (?: \d+ | \d* [.] \d+ | (?: \d+ [.]? \d* | \d* [.] \d+ ) [eE] [-+]? \d* ) \z
-    }xms;
+    }axms;
 
     return 1;
 }
@@ -249,7 +253,7 @@ sub IsInteger {
     my $TestData = $_[0];
 
     return if !IsStringWithData(@_);
-    return if $TestData !~ m{ \A [-]? (?: 0 | [1-9] \d* ) \z }xms;
+    return if $TestData !~ m{ \A [-]? (?: 0 | [1-9] \d* ) \z }axms;
 
     return 1;
 }
@@ -270,7 +274,7 @@ sub IsPositiveInteger {
     my $TestData = $_[0];
 
     return if !IsStringWithData(@_);
-    return if $TestData !~ m{ \A [1-9] \d* \z }xms;
+    return if $TestData !~ m{ \A [1-9] \d* \z }axms;
 
     return 1;
 }
@@ -291,19 +295,19 @@ sub IsIPv4Address {
     my $TestData = $_[0];
 
     return unless IsStringWithData(@_);
-    return unless $TestData =~ m{ \A [\d\.]+ \z }xms;
+    return unless $TestData =~ m{ \A [\d\.]+ \z }axms;
 
-    my @Part = split /\./, $TestData;
+    my @Parts = split /\./, $TestData;
 
     # four parts delimited by '.' needed
-    return unless scalar @Part eq 4;
+    return unless @Parts == 4;
 
-    for my $Part (@Part) {
+    for my $Part (@Parts) {
 
         # allow numbers 0 to 255, no leading zeroes
         return unless $Part =~ m{
             \A (?: \d | [1-9] \d | [1] \d{2} | [2][0-4]\d | [2][5][0-5] ) \z
-        }xms;
+        }axms;
     }
 
     return 1;
@@ -329,7 +333,7 @@ sub IsIPv6Address {
     return unless IsStringWithData(@_);
 
     # only hex characters (0-9,A-Z) plus separator ':' allowed
-    return unless $TestData =~ m{ \A [\da-f:]+ \z }xmsi;
+    return unless $TestData =~ m{ \A [\da-f:]+ \z }axmsi;
 
     # special case - equals only zeroes
     return 1 if $TestData eq '::';
@@ -351,34 +355,34 @@ sub IsIPv6Address {
         $TestData .= 'X';
         $SkipLast = 1;
     }
-    my @Part = split /:/, $TestData;
+    my @Parts = split /:/, $TestData;
     if ($SkipFirst) {
-        shift @Part;
+        shift @Parts;
     }
     if ($SkipLast) {
-        delete $Part[-1];
+        pop @Parts;
     }
-    return if scalar @Part < 2 || scalar @Part > 8;
-    return if scalar @Part ne 8 && $TestData !~ m{ :: }xms;
+    return if scalar @Parts < 2 || scalar @Parts > 8;
+    return if scalar @Parts != 8 && $TestData !~ m{ :: }xms;
 
     # handle full addreses
-    if ( scalar @Part eq 8 ) {
+    if ( @Parts == 8 ) {
         my $EmptyPart;
         PART:
-        for my $Part (@Part) {
+        for my $Part (@Parts) {
             if ( $Part eq '' ) {
                 return if $EmptyPart;
                 $EmptyPart = 1;
                 next PART;
             }
-            return if $Part !~ m{ \A [\da-f]{1,4} \z }xmsi;
+            return if $Part !~ m{ \A [\da-f]{1,4} \z }axmsi;
         }
     }
 
     # handle shorthand addresses
     my $ShortHandUsed;
     PART:
-    for my $Part (@Part) {
+    for my $Part (@Parts) {
         next PART if $Part eq 'X';
 
         # empty part means shorthand - do we already have more than one consecutive empty parts?
@@ -387,7 +391,7 @@ sub IsIPv6Address {
             $ShortHandUsed = 1;
             next PART;
         }
-        return if $Part !~ m{ \A [\da-f]{1,4} \z }xmsi;
+        return if $Part !~ m{ \A [\da-f]{1,4} \z }axmsi;
     }
 
     return 1;
@@ -409,7 +413,7 @@ sub IsMD5Sum {
     my $TestData = $_[0];
 
     return if !IsStringWithData(@_);
-    return if $TestData !~ m{ \A [\da-f]{32} \z }xmsi;
+    return if $TestData !~ m{ \A [\da-f]{32} \z }axmsi;
 
     return 1;
 }
@@ -530,7 +534,7 @@ sub DataIsDifferent {
         my @B = @{ $Param{Data2} };
 
         # check if the count is different
-        return 1 if $#A ne $#B;
+        return 1 if $#A != $#B;
 
         # compare array
         COUNT:

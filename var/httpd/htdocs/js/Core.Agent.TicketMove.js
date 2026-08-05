@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -37,55 +37,23 @@ Core.Agent.TicketMove = (function (TargetNS) {
      */
     TargetNS.Init = function () {
 
-        var DynamicFieldNames = Core.Config.Get('DynamicFieldNames'),
-            Fields = ['NewUserID', 'DestQueueID', 'NewStateID', 'NewPriorityID'],
-            ModifiedFields;
-
         // Bind event to Owner get all button
         $('#OwnerSelectionGetAll').on('click', function () {
             $('#OwnerAll').val('1');
-            Core.AJAX.FormUpdate($('#MoveTicketToQueue'), 'AJAXUpdate', 'OwnerAll', ['NewUserID'], function() {
+            Core.AJAX.FormUpdate($('#MoveTicketToQueue'), 'AJAXUpdate', 'OwnerAll', function() {
                 $('#NewUserID').focus();
             });
             return false;
         });
 
-        // Bind events to specific fields
-        $.each(Fields, function(Index, Value) {
-            ModifiedFields = Core.Data.CopyObject(Fields).concat(DynamicFieldNames);
-            ModifiedFields.splice(Index, 1);
-
-            if (Value !== 'DestQueueID') {
-                ModifiedFields.push('StandardTemplateID');
-            }
-
-            FieldUpdate(Value, ModifiedFields);
-        });
-
         // Bind event to StandardTemplate field
         $('#StandardTemplateID').on('change', function () {
             Core.Agent.TicketAction.ConfirmTemplateOverwrite('RichText', $(this), function () {
-                Core.AJAX.FormUpdate($('#MoveTicketToQueue'), 'AJAXUpdate', 'StandardTemplateID', ['RichTextField']);
+                Core.AJAX.FormUpdate($('#MoveTicketToQueue'), 'AJAXUpdate', 'StandardTemplateID');
             });
             return false;
         });
     };
-
-    /**
-     * @private
-     * @name FieldUpdate
-     * @memberof Core.Agent.TicketMove
-     * @function
-     * @param {String} Value - FieldID
-     * @param {Array} ModifiedFields - Fields
-     * @description
-     *      Create on change event handler
-     */
-    function FieldUpdate (Value, ModifiedFields) {
-        $('#' + Value).on('change', function () {
-            Core.AJAX.FormUpdate($('#MoveTicketToQueue'), 'AJAXUpdate', Value, ModifiedFields);
-        });
-    }
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,16 +14,20 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
+use List::Util qw(any);
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
@@ -33,42 +37,39 @@ $Kernel::OM->ObjectParamAdd(
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 # get needed objects
-my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
+my $ConfigObject       = $Kernel::OM->Get('Kernel::Config');
+my $MainObject         = $Kernel::OM->Get('Kernel::System::Main');
+my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
 
 # ensure that the appropriate X-Headers are available in the config
-my %NeededXHeaders = (
-    'X-OTOBO-AttachmentExists' => 1,
-    'X-OTOBO-AttachmentCount'  => 1,
-);
-
-my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
-my @PostmasterXHeader = @{$XHeaders};
-
-HEADER:
-for my $Header ( sort keys %NeededXHeaders ) {
-
-    my $IsInConfig = 0;
-
-    # Verify header is already part of the config
-    $IsInConfig = 1 if ( grep { $_ eq $Header } @PostmasterXHeader );
-
-    $Self->True(
-        $IsInConfig,
-        "Headermight be in config already: $Header.",
+{
+    my %NeededXHeaders = (
+        'X-CareOnCloud-AttachmentExists' => 1,
+        'X-CareOnCloud-AttachmentCount'  => 1,
     );
+
+    my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
+    my @PostmasterXHeader = @{$XHeaders};
+
+    HEADER:
+    for my $Header ( sort keys %NeededXHeaders ) {
+
+        # Verify header is already part of the config
+        my $IsInConfig = any { $_ eq $Header } @PostmasterXHeader;
+
+        ok( $IsInConfig, "Header '$Header' is in config" );
+    }
 }
 
 my @DynamicfieldIDs;
 my @DynamicFieldUpdate;
-
 my %NeededDynamicfields = (
     TicketFreeText1 => 1,
     TicketFreeText2 => 1,
 );
 
 # list available dynamic fields
-my $DynamicFields = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldList(
+my $DynamicFields = $DynamicFieldObject->DynamicFieldList(
     Valid      => 0,
     ResultType => 'HASH',
 );
@@ -79,7 +80,7 @@ for my $FieldName ( sort keys %NeededDynamicfields ) {
     if ( !$DynamicFields->{$FieldName} ) {
 
         # create a dynamic field
-        my $FieldID = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldAdd(
+        my $FieldID = $DynamicFieldObject->DynamicFieldAdd(
             Name       => $FieldName,
             Label      => $FieldName . "_test",
             FieldOrder => 9991,
@@ -93,31 +94,25 @@ for my $FieldName ( sort keys %NeededDynamicfields ) {
         );
 
         # verify dynamic field creation
-        $Self->True(
-            $FieldID,
-            "DynamicFieldAdd() successful for Field $FieldName",
-        );
+        ok( $FieldID, "DynamicFieldAdd() successful for Field $FieldName" );
 
         push @DynamicfieldIDs, $FieldID;
     }
     else {
-        my $DynamicField = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet( ID => $DynamicFields->{$FieldName} );
+        my $DynamicField = $DynamicFieldObject->DynamicFieldGet( ID => $DynamicFields->{$FieldName} );
 
         if ( $DynamicField->{ValidID} > 1 ) {
             push @DynamicFieldUpdate, $DynamicField;
             $DynamicField->{ValidID} = 1;
-            my $SuccessUpdate = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldUpdate(
+            my $SuccessUpdate = $DynamicFieldObject->DynamicFieldUpdate(
                 %{$DynamicField},
                 Reorder => 0,
                 UserID  => 1,
                 ValidID => 1,
             );
 
-            # verify dynamic field creation
-            $Self->True(
-                $SuccessUpdate,
-                "DynamicFieldUpdate() successful update for Field $DynamicField->{Name}",
-            );
+            # verify dynamic field update
+            ok( $SuccessUpdate, "DynamicFieldUpdate() successful for Field $DynamicField->{Name}" );
         }
     }
 }
@@ -125,6 +120,15 @@ for my $FieldName ( sort keys %NeededDynamicfields ) {
 # disable not needed event module
 $ConfigObject->Set(
     Key => 'Ticket::EventModulePost###9600-TicketDynamicFieldDefault',
+);
+
+# enable the Post master filter DetectAttachment. This filter is inactive per default,
+# see  https://github.com/RotherOSS/otobo/issues/3419
+$ConfigObject->Set(
+    Key   => 'PostMaster::PreFilterModule###000-DetectAttachment',
+    Value => {
+        Module => 'Kernel::System::PostMaster::Filter::DetectAttachment',
+    },
 );
 
 # Read email content (from a file).
@@ -142,29 +146,30 @@ my $EmailInlineImage = $MainObject->FileRead(
 );
 
 # Workaround due used email have not a From value
-unshift @{$EmailAttachment}, 'From: Sender <sender@example.com>';
+unshift $EmailAttachment->@*, 'From: Sender <sender@example.com>' . "\n";
 
 # filter test
 my @Tests = (
     {
-        Name  => '#1 - No attachments',
-        Match => [
+        Name    => 'Mail without attachments',
+        ValidID => 1,
+        Match   => [
             {
-                Key   => 'X-OTOBO-AttachmentExists',
+                Key   => 'X-CareOnCloud-AttachmentExists',
                 Value => 'no',
             },
             {
-                Key   => 'X-OTOBO-AttachmentCount',
+                Key   => 'X-CareOnCloud-AttachmentCount',
                 Value => 0,
             }
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => 'No Attachments in mail',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => 'CeroAttachments',
             },
         ],
@@ -172,35 +177,37 @@ my @Tests = (
             DynamicField_TicketFreeText1 => 'No Attachments in mail',
             DynamicField_TicketFreeText2 => 'CeroAttachments',
         },
-        Email => 'From: Sender <sender@example.com>
-    To: Some Name <recipient@example.com>
-    Subject: Server: example.tld
+        Email => <<'END_EMAIL',
+From: Sender <sender@example.com>
+To: Some Name <recipient@example.com>
+Subject: Server: example.tld
 
-    This is a multiline
-    email for server: example.tld
+This is a multiline
+email for server: example.tld
 
-    The IP address: 192.168.0.1
-    '
+The IP address: 192.168.0.1
+END_EMAIL
     },
     {
-        Name  => '#2 - With Attachment',
-        Match => [
+        Name    => 'Mail with attachments',
+        ValidID => 1,
+        Match   => [
             {
-                Key   => 'X-OTOBO-AttachmentExists',
+                Key   => 'X-CareOnCloud-AttachmentExists',
                 Value => 'yes',
             },
             {
-                Key   => 'X-OTOBO-AttachmentCount',
+                Key   => 'X-CareOnCloud-AttachmentCount',
                 Value => 1,
             }
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => 'A normal SMIME email',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => 'AtLeastOneAttachment',
             },
         ],
@@ -211,24 +218,25 @@ my @Tests = (
         Email => $EmailAttachment,
     },
     {
-        Name  => '#3 - With Inline Images',
-        Match => [
+        Name    => 'Mail with inline images',
+        ValidID => 1,
+        Match   => [
             {
-                Key   => 'X-OTOBO-AttachmentExists',
+                Key   => 'X-CareOnCloud-AttachmentExists',
                 Value => 'yes',
             },
             {
-                Key   => 'X-OTOBO-AttachmentCount',
+                Key   => 'X-CareOnCloud-AttachmentCount',
                 Value => 1,
             }
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => 'This should not be set',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => 'This should not be set',
             },
         ],
@@ -241,84 +249,79 @@ my @Tests = (
 );
 
 $Kernel::OM->ObjectsDiscard( Objects => ['Kernel::System::PostMaster::Filter'] );
-my $PostMasterFilter = $Kernel::OM->Get('Kernel::System::PostMaster::Filter');
+my $PostMasterFilterObject = $Kernel::OM->Get('Kernel::System::PostMaster::Filter');
 
 for my $Test (@Tests) {
-    $PostMasterFilter->FilterAdd(
-        Name           => $Test->{Name},
-        StopAfterMatch => 0,
-        %{$Test},
-    );
-
-    my $Email = $Test->{Email};
-
-    my @Return;
-    {
-        my $CommunicationLogObject = $Kernel::OM->Create(
-            'Kernel::System::CommunicationLog',
-            ObjectParams => {
-                Transport => 'Email',
-                Direction => 'Incoming',
-            },
-        );
-        $CommunicationLogObject->ObjectLogStart( ObjectLogType => 'Message' );
-
-        my $PostMasterObject = Kernel::System::PostMaster->new(
-            CommunicationLogObject => $CommunicationLogObject,
-            Email                  => $Email,
+    subtest $Test->{Name} => sub {
+        $PostMasterFilterObject->FilterAdd(
+            Name           => $Test->{Name},
+            ValidID        => $Test->{ValidID},
+            StopAfterMatch => 0,
+            $Test->%*,
         );
 
-        @Return = $PostMasterObject->Run();
+        my $Email = $Test->{Email};
 
-        $CommunicationLogObject->ObjectLogStop(
-            ObjectLogType => 'Message',
-            Status        => 'Successful',
+        my @Return;
+        {
+            my $CommunicationLogObject = $Kernel::OM->Create(
+                'Kernel::System::CommunicationLog',
+                ObjectParams => {
+                    Transport => 'Email',
+                    Direction => 'Incoming',
+                },
+            );
+            $CommunicationLogObject->ObjectLogStart( ObjectLogType => 'Message' );
+
+            my $PostMasterObject = Kernel::System::PostMaster->new(
+                CommunicationLogObject => $CommunicationLogObject,
+                Email                  => $Email,
+            );
+
+            @Return = $PostMasterObject->Run();
+
+            $CommunicationLogObject->ObjectLogStop(
+                ObjectLogType => 'Message',
+                Status        => 'Successful',
+            );
+            $CommunicationLogObject->CommunicationStop(
+                Status => 'Successful',
+            );
+        }
+        is(
+            $Return[0],
+            1,
+            "Filter Run() - NewTicket",
         );
-        $CommunicationLogObject->CommunicationStop(
-            Status => 'Successful',
+        ok( $Return[1] || 0, "Filter Run() - NewTicket/TicketID" );
+
+        # new/clear ticket object
+        $Kernel::OM->ObjectsDiscard( Objects => ['Kernel::System::Ticket'] );
+        my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+
+        my %Ticket = $TicketObject->TicketGet(
+            TicketID      => $Return[1],
+            DynamicFields => 1,
         );
-    }
-    $Self->Is(
-        $Return[0] || 0,
-        1,
-        "#Filter Run() - NewTicket",
-    );
-    $Self->True(
-        $Return[1] || 0,
-        "#Filter Run() - NewTicket/TicketID",
-    );
 
-    # new/clear ticket object
-    $Kernel::OM->ObjectsDiscard( Objects => ['Kernel::System::Ticket'] );
-    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+        for my $Key ( sort keys %{ $Test->{Check} } ) {
+            is(
+                $Ticket{$Key},
+                $Test->{Check}->{$Key},
+                "check the dynamic field $Key",
+            );
+        }
 
-    my %Ticket = $TicketObject->TicketGet(
-        TicketID      => $Return[1],
-        DynamicFields => 1,
-    );
-
-    for my $Key ( sort keys %{ $Test->{Check} } ) {
-        $Self->Is(
-            $Ticket{$Key},
-            $Test->{Check}->{$Key},
-            "#Filter Run('$Test->{Name}') - $Key",
+        # delete ticket
+        my $Delete = $TicketObject->TicketDelete(
+            TicketID => $Return[1],
+            UserID   => 1,
         );
-    }
+        ok( $Delete || 0, "Filter TicketDelete()" );
 
-    # delete ticket
-    my $Delete = $TicketObject->TicketDelete(
-        TicketID => $Return[1],
-        UserID   => 1,
-    );
-    $Self->True(
-        $Delete || 0,
-        "#Filter TicketDelete()",
-    );
-
-    # remove filter
-    $PostMasterFilter->FilterDelete( Name => $Test->{Name} );
+        # remove filter
+        $PostMasterFilterObject->FilterDelete( Name => $Test->{Name} );
+    };
 }
 
-# cleanup is done by RestoreDatabase
-
-$Self->DoneTesting();
+done_testing;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -13,15 +13,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
+
+use v5.24;
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -38,7 +43,7 @@ $Helper->ConfigSettingChange(
 );
 
 $Kernel::OM->Get('Kernel::Config')->Set(
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloudTimeZone',
     Value => 'UTC',
 );
 
@@ -105,16 +110,16 @@ for my $Test (@Tests) {
         CommunicationLogObject => $CommunicationLogObject,
     );
 
-    $Self->True(
+    ok(
         $SentResult->{Success},
         sprintf( 'Bounce %s queued.', $Test->{Name}, ),
     );
 
-    $Self->Is(
+    is(
         $SentResult->{Data}->{Header} . "\n" . $SentResult->{Data}->{Body},
         $Test->{Result},
         "$Test->{Name} Bounce()",
     );
 }
 
-$Self->DoneTesting();
+done_testing;

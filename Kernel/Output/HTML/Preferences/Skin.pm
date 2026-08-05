@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -48,16 +48,18 @@ sub Param {
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $PossibleSkins = $ConfigObject->Get('Loader::Agent::Skin') || {};
+    my $PossibleSkins = $Param{Customer} ? $ConfigObject->Get('Loader::Customer::Skin') : $ConfigObject->Get('Loader::Agent::Skin') || {};
     my $Home          = $ConfigObject->Get('Home');
     my %ActiveSkins;
 
     # prepare the list of active skins
     for my $PossibleSkin ( values %{$PossibleSkins} ) {
+        my $SkinType = $Param{Customer} ? 'Customer' : 'Agent';
+
         if (
             $Kernel::OM->Get('Kernel::Output::HTML::Layout')->SkinValidate(
                 Skin     => $PossibleSkin->{InternalName},
-                SkinType => 'Agent'
+                SkinType => $SkinType
             )
             )
         {
@@ -66,6 +68,7 @@ sub Param {
     }
 
     my @Params;
+    my $DefaultSkin = $Param{Customer} ? $ConfigObject->Get('Loader::Customer::SelectedSkin') : $ConfigObject->Get('Loader::Agent::DefaultSelectedSkin');
     push(
         @Params,
         {
@@ -75,7 +78,7 @@ sub Param {
             HTMLQuote  => 0,
             SelectedID => $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'UserSkin' )
                 || $Param{UserData}->{UserSkin}
-                || $ConfigObject->Get('Loader::Agent::DefaultSelectedSkin'),
+                || $DefaultSkin,
             Block => 'Option',
             Max   => 100,
         },

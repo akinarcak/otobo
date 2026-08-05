@@ -12,9 +12,9 @@ use CPAN::Audit::Discover;
 use CPAN::Audit::Filter;
 use CPAN::Audit::Version;
 use CPAN::Audit::Query;
-use CPAN::Audit::DB;
+use CPANSA::DB;
 
-our $VERSION = '20230826.001';
+our $VERSION = '20260622.001';
 
 sub new {
 	my( $class, %params ) = @_;
@@ -26,13 +26,46 @@ sub new {
 
 	$self->_handle_exclude_file if $self->{exclude_file};
 
-	$self->{db}     //= CPAN::Audit::DB->db;
+	$self->{db} //= $self->_get_db(%args);
 
 	$self->{filter}   = CPAN::Audit::Filter->new( exclude => $args{exclude} );
 	$self->{query}    = CPAN::Audit::Query->new( db => $self->{db} );
 	$self->{discover} = CPAN::Audit::Discover->new( db => $self->{db} );
 
 	return $self;
+}
+
+sub _get_db {
+	my( $self, %params ) = @_;
+
+	if ( $params{'json_db'} ) {
+		my $data = do {
+			local $/;
+			open my($fh), '<:raw', $params{'json_db'}
+				or die "could not read file <$params{json_db}>\n";
+			<$fh>;
+		};
+		state $rc = require JSON;
+
+		my $decoded = eval { JSON::decode_json($data) };
+		die "could not decode JSON from <$params{json_db}>: @_\n" unless defined $decoded;
+		return $decoded;
+	}
+
+	my $rc = eval { require CPANSA::DB };
+	if ( $rc ) {
+		return CPANSA::DB->db;
+	}
+
+	$rc = eval {
+		warn "CPAN::Audit::DB is deprecated. Use CPANSA::DB instead. CPAN::Audit::DB will be removed in January 2027.\n";
+		require CPAN::Audit::DB
+		};
+	if ( $rc ) {
+		return CPAN::Audit::DB->db;
+	}
+
+	die "could not find a CPANSA database in CPANSA::DB or CPAN::Audit::DB\n";
 }
 
 sub _handle_exclude_file {
@@ -166,7 +199,7 @@ sub command_installed {
 		  || $self->{db}->{module2dist}->{ $dep->{module} };
 		next unless $dist;
 
-		$dists->{ $dep->{dist} } = $dep->{version};
+		$dists->{ $dep->{dist} } = '==' . $dep->{version};
 	}
 
 	return;
@@ -190,7 +223,10 @@ sub command {
 		meta => {
 			command          => $command,
 			args             => [ @args ],
-			cpan_audit       => { version => $VERSION },
+			cpan_audit       => {
+				version => $VERSION,
+				db      => $CPANSA::DB::VERSION,
+			},
 			total_advisories => 0,
 		},
 		errors => [],
@@ -297,8 +333,19 @@ CPAN::Audit - Audit CPAN distributions for known vulnerabilities
 
 =head1 DESCRIPTION
 
-CPAN::Audit is a module and a database at the same time. It is used by
-L<cpan-audit> command line application to query for vulnerabilities.
+CPAN::Audit uses the CPAN Security Advisory database to connect vulnerability
+reports to installed CPAN modules. It is used by L<cpan-audit> command-line
+application to query for vulnerabilities.
+
+This used to come with its own version of the database, C<CPAN::Audit::DB>, but
+this was moved to its own distribution and is now deprecated in favor of
+L<CPANSA::DB>.
+
+This module will try to load L<CPANSA::DB>, and if it can't, will try the
+deprecated C<CPAN::Audit::DB> (with a warning). Eventually, C<CPAN::Audit::DB>
+support will be completely removed. If you've been updating your own version of
+C<CPAN::Audit::DB>, change its package to  L<CPANSA::DB>. The modules are the
+same otherwise.
 
 =head1 LICENSE
 

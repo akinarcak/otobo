@@ -1,8 +1,8 @@
 #!/bin/sh
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,7 @@
 # This script works just like /docker-entrypoint.d/20-envsubst-on-templates.sh in the Nginx base Docker image.
 # A template file for /etc/krb5.conf is set up in /etc/nginx/templates/kerberos/krb5.conf.template.
 # The command envsubst replaces environment variables in the template and writes the output to /etc/krb6.conf.
-supported_envs='${OTOBO_NGINX_KERBEROS_REALM} ${OTOBO_NGINX_KERBEROS_KDC} ${OTOBO_NGINX_KERBEROS_ADMIN_SERVER} ${OTOBO_NGINX_KERBEROS_DEFAULT_DOMAIN}'
+supported_envs='${CAREONCLOUD_NGINX_KERBEROS_REALM} ${CAREONCLOUD_NGINX_KERBEROS_KDC} ${CAREONCLOUD_NGINX_KERBEROS_ADMIN_SERVER} ${CAREONCLOUD_NGINX_KERBEROS_DEFAULT_DOMAIN}'
 template_dir="${NGINX_ENVSUBST_TEMPLATE_DIR:-/etc/nginx/config/template-custom}"
 
 envsubst "$supported_envs" < "$template_dir/../../kerberos/templates/krb5.conf.template" > /etc/krb5.conf

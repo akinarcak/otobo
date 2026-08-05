@@ -10,13 +10,13 @@ Content-Disposition: inline
 X-Operating-System: SuSE Linux 2.4.18-4GB i686
 X-Uptime: 9:28pm  up 11:07,  6 users,  load average: 0.07, 0.05, 0.07
 X-Mailer: Muttis Mailer / Mutt 1.3.27i (2002-01-22)
-NotUsedX-OTOBO-State: closed successful
-X-OTOBO-ArticleKey1: Key1
-X-OTOBO-ArticleValue1: Value1
-X-OTOBO-ArticleKey2: Key2
-X-OTOBO-ArticleValue2: Value2
-X-OTOBO-ArticleKey3: Key3
-X-OTOBO-ArticleValue3: Value3
+NotUsedX-CareOnCloud-State: closed successful
+X-CareOnCloud-ArticleKey1: Key1
+X-CareOnCloud-ArticleValue1: Value1
+X-CareOnCloud-ArticleKey2: Key2
+X-CareOnCloud-ArticleValue2: Value2
+X-CareOnCloud-ArticleKey3: Key3
+X-CareOnCloud-ArticleValue3: Value3
 Content-Length: 160750
 Lines: 2217
 

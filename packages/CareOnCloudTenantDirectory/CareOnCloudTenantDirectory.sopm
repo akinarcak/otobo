@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudTenantDirectory</Name>
+    <Version>0.2.1</Version>
+    <Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor>
+    <URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Persistent tenant and tenant-bound agent role directory for CareOnCloud ESM.</Description>
+    <Description Lang="tr">CareOnCloud ESM icin kalici tenant ve tenant-bazli agent rol dizini.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudAudit</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable>
+    <PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="careoncloud_tenant">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="key_name" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="version" Required="true" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="careoncloud_tenant_key"><UniqueColumn Name="key_name" /></Unique>
+            <Index Name="careoncloud_tenant_status"><IndexColumn Name="status" /></Index>
+            <ForeignKey ForeignTable="users"><Reference Local="create_by" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="change_by" Foreign="id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_tenant_agent_role">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="user_id" Required="true" Type="INTEGER" />
+            <Column Name="role_name" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" />
+            <Column Name="change_by" Required="true" Type="INTEGER" />
+            <Unique Name="careoncloud_tenant_agent_role_key">
+                <UniqueColumn Name="tenant_id" /><UniqueColumn Name="user_id" /><UniqueColumn Name="role_name" />
+            </Unique>
+            <Index Name="careoncloud_tenant_agent_active"><IndexColumn Name="user_id" /><IndexColumn Name="status" /></Index>
+            <ForeignKey ForeignTable="careoncloud_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="user_id" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="create_by" Foreign="id" /></ForeignKey>
+            <ForeignKey ForeignTable="users"><Reference Local="change_by" Foreign="id" /></ForeignKey>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUpgrade Type="post">
+        <TableAlter Name="careoncloud_tenant_agent_role" Version="0.2.0">
+            <ColumnAdd Name="version" Required="true" Default="1" Type="INTEGER" />
+        </TableAlter>
+    </DatabaseUpgrade>
+    <DatabaseUninstall Type="pre">
+        <TableDrop Name="careoncloud_tenant_agent_role" />
+        <TableDrop Name="careoncloud_tenant" />
+    </DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/System/CareOnCloud/TenantDirectory.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/TenantDirectoryStatus.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/TenantBootstrap.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/TenantMembershipGrant.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/TenantDirectory.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/TenantDirectoryAuditRollback.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/TenantDirectoryStatus.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/TenantDirectoryTransaction.t" />
+    </Filelist>
+</careoncloud_package>

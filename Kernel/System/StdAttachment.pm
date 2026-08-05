@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,16 +16,23 @@
 
 package Kernel::System::StdAttachment;
 
+use v5.24;
 use strict;
 use warnings;
 
-use MIME::Base64;
+# core modules
+use MIME::Base64 qw(decode_base64 encode_base64);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::System::Cache',
     'Kernel::System::DB',
     'Kernel::System::Encode',
     'Kernel::System::Log',
+    'Kernel::System::Queue',
     'Kernel::System::Valid',
 );
 
@@ -93,13 +100,20 @@ sub StdAttachmentAdd {
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     # encode attachment if it's a postgresql backend!!!
-    if ( !$DBObject->GetDatabaseFunction('DirectBlob') ) {
+    my %ExtraDoParams;
+    if ( $DBObject->GetDatabaseFunction('DirectBlob') ) {
+
+        # Make sure that the content is passed as a byte array and is bound as binary
+        $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Param{Content} );
+        $ExtraDoParams{BindAsBinary} = [ 0, 0, 1, 0, 0, 0, 0, 0, ];
+    }
+    else {
         $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Param{Content} );
         $Param{Content} = encode_base64( $Param{Content} );
     }
 
     # insert attachment
-    return if !$DBObject->Do(
+    return unless $DBObject->Do(
         SQL => 'INSERT INTO standard_attachment '
             . ' (name, content_type, content, filename, valid_id, comments, '
             . ' create_time, create_by, change_time, change_by) VALUES '
@@ -108,6 +122,7 @@ sub StdAttachmentAdd {
             \$Param{Name},    \$Param{ContentType}, \$Param{Content}, \$Param{Filename},
             \$Param{ValidID}, \$Param{Comment},     \$Param{UserID},  \$Param{UserID},
         ],
+        %ExtraDoParams,
     );
 
     # get the id
@@ -252,17 +267,25 @@ sub StdAttachmentUpdate {
     if ( $Param{Content} ) {
 
         # encode attachment if it's a postgresql backend!!!
-        if ( !$DBObject->GetDatabaseFunction('DirectBlob') ) {
+        my %ExtraDoParams;
+        if ( $DBObject->GetDatabaseFunction('DirectBlob') ) {
+
+            # Make sure that the content is passed as a byte array and is bound as binary
+            $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Param{Content} );
+            $ExtraDoParams{BindAsBinary} = [ 1, 0, 0, 0 ];
+        }
+        else {
             $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Param{Content} );
             $Param{Content} = encode_base64( $Param{Content} );
         }
 
-        return if !$DBObject->Do(
+        return unless $DBObject->Do(
             SQL => 'UPDATE standard_attachment SET content = ?, content_type = ?, '
                 . ' filename = ? WHERE id = ?',
             Bind => [
                 \$Param{Content}, \$Param{ContentType}, \$Param{Filename}, \$Param{ID},
             ],
+            %ExtraDoParams,
         );
     }
 
@@ -652,6 +675,69 @@ sub StdAttachmentStandardTemplateMemberList {
     );
 
     return %Data;
+}
+
+=for stopwords ro rw
+
+=head2 StdAttachmentStandardTemplatePermission()
+
+Get the lowest permission level of all linked queues (attachment->template->queue).
+Returns nothing if the user has no 'ro' on at least one linked queue, 'ro' if the user has no 'rw' on
+at least one linked queue and 'rw' if the user has full permission on all queues or no link exists at all.
+
+    my $Permission = $StdAttachmentObject->StdAttachmentStandardTemplatePermission(
+        ID      => $AttachmentID,
+        UserID  => $Param{UserID},
+        Default => 'ro',            # (optional) lowest permission level
+    );
+
+=cut
+
+sub StdAttachmentStandardTemplatePermission {
+    my ( $Self, %Param ) = @_;
+
+    # Check needed stuff.
+    for my $Needed (qw(ID UserID)) {
+        if ( !$Param{$Needed} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Needed!",
+            );
+            return;
+        }
+    }
+
+    my $QueueObject = $Kernel::OM->Get('Kernel::System::Queue');
+
+    # Get all linked templates.
+    my %TemplateList = $Self->StdAttachmentStandardTemplateMemberList( AttachmentID => $Param{ID} );
+
+    # 'rw' is the default permission on not linked attachments.
+    return 'rw' if !%TemplateList;
+
+    my $Permission;
+
+    for my $TemplateID ( keys %TemplateList ) {
+
+        # Get all queues linked with the template.
+        my %Queues             = $QueueObject->QueueStandardTemplateMemberList( StandardTemplateID => $TemplateID );
+        my $TemplatePermission = $QueueObject->QueueListPermission(
+            QueueIDs => [ keys %Queues ],
+            UserID   => $Param{UserID},
+            Default  => 'rw',
+        );
+
+        if ( !defined $Permission ) {
+            $Permission = $TemplatePermission // '';
+
+            return 'ro' if $Permission eq 'ro';
+        }
+        elsif ( $Permission ne $TemplatePermission ) {
+            return 'ro';
+        }
+    }
+
+    return $Permission;
 }
 
 1;

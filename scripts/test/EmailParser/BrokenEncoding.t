@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,16 +14,19 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::EmailParser;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # set up $Kernel::OM
+use Kernel::System::EmailParser ();
 
 # This test should verify that an email with an unknown encoding not cause a "die".
 
@@ -31,11 +34,8 @@ use Kernel::System::EmailParser;
 my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
 # test for bug#1970
-my @Array;
 open my $IN, '<', "$Home/scripts/test/sample/EmailParser/BrokenEncoding.box";    ## no critic qw(OTOBO::ProhibitOpen)
-while (<$IN>) {
-    push @Array, $_;
-}
+my @Array = <$IN>;
 close $IN;
 
 # create local object
@@ -43,17 +43,17 @@ my $EmailParserObject = Kernel::System::EmailParser->new(
     Email => \@Array,
 );
 
-$Self->True(
+ok(
     $EmailParserObject->GetMessageBody(),
     'Body found',
 );
 
 my @Attachments = $EmailParserObject->GetAttachments();
 
-$Self->Is(
+is(
     scalar @Attachments,
     1,
     "Found files",
 );
 
-$Self->DoneTesting();
+done_testing;

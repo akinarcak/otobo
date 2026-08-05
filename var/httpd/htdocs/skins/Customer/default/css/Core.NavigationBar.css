@@ -1,7 +1,7 @@
-/* OTOBO is a web-based ticketing system for service organisations.
+/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -67,15 +67,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         max-width: 268px;
     }
 
-    #oooUser .oooLogout > a {
+    #oooUser .oooNavBarAvatarDesc > a {
         display: inline-block;
     }
 
-    #oooUser .oooLogout > #oooPrefDesc {
+    #oooUser .oooNavBarAvatarDesc > #oooNavBarAvatarDescSecondary {
         left: 12px;
     }
 
-    #oooPrefDesc span {
+    #oooNavBarAvatarDescSecondary span {
         margin-right: 12px;
         color: #fff !important;
         opacity: 0.4 !important;
@@ -117,7 +117,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         left: 36px;
     }
 
-    #oooPrefDesc span {
+    #oooNavBarAvatarDescSecondary span {
         display: none;
     }
 }
@@ -181,12 +181,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     background-size: cover;
 }
 
-#oooPreferences > svg {
+#oooNavBarAvatarSecondary > svg {
     width: 24px;
     height: 24px;
+    transform: scale(0.8);
+    transform-origin: center;
 } 
 
-#oooPreferences,
+#oooNavBarAvatarSecondary,
 #oooNoPref {
     display: block;
     position: relative;
@@ -203,7 +205,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     border-radius: 12px;
 }
 
-#oooUser:hover #oooPreferences {
+#oooUser:hover #oooNavBarAvatarSecondary {
     top: 22px;
     left: 22px;
 -webkit-transition: top 0.6s ease, left 1s ease;
@@ -212,7 +214,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         transition: top 0.6s ease, left 1s ease;
 }
 
-#oooLogoutIcon {
+#oooNavBarAvatarPrimaryIcon {
     display: block;
     position: relative;
     top: -20px;
@@ -224,14 +226,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     border-radius: 12px;
 }
 
-#oooLogoutIcon > svg {
+#oooNavBarAvatarPrimaryIcon > svg {
     position: relative;
     top: 2px;
     left 2px;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
 	fill: #fef235;
     fill: var(--colHighlight);
+}
+
+#oooNavBarAvatarPrimaryIcon > svg#oooNavBarAvatarIconShowPreferences {
+    top: 0px;
 }
 
 #oooAvatar {
@@ -266,7 +272,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     border-radius: 16px;
 }
 
-#oooUser > .oooLogout {
+#oooUser > .oooNavBarAvatarDesc {
 	width: 0px;
     max-height: 32px;
 -webkit-transition: width 0.3s ease;
@@ -274,11 +280,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
      -o-transition: width 0.3s ease;
         transition: width 0.3s ease;
 }
-#oooNavigation.oooExpanded > #oooNavBarIcons > #oooUser > .oooLogout {
+#oooNavigation.oooExpanded > #oooNavBarIcons > #oooUser > .oooNavBarAvatarDesc {
 	width: 188px;
 }
 
-#oooPrefDesc {
+#oooNavBarAvatarDescSecondary {
     position: relative;
     left: 8px;
 }
@@ -395,13 +401,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 }
 
 /* Text and svg colors */
-#oooUser > .oooLogout h3 {
+#oooUser > .oooNavBarAvatarDesc h3 {
     opacity: 0.8;
 }
 
 #oooNavBarModuleIcons > a > .oooNavBarDescription > h3,
 #oooUser h3,
-#oooPrefDesc > p {
+#oooNavBarAvatarDescSecondary > p {
     display: none;
     color: #fff;
     opacity: 0.4;
@@ -415,7 +421,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 #oooNavBarModuleIcons > a:hover > .oooNavBarDescription > h3,
 #oooUser a:hover > h3,
 #oooUser a:hover > p,
-#oooUser > .oooLogout .Highlight {
+#oooUser > .oooNavBarAvatarDesc .Highlight {
 	opacity: 1;
     color: #fef235;
     color: var(--colHighlight);
@@ -465,7 +471,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         -ms-grid-row-align: center;
     }
 
-    #oooUser .oooLogout {
+    #oooUser .oooNavBarAvatarDesc {
         -ms-grid-column: 3;
         -ms-grid-row-align: center;
     }

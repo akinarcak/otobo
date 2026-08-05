@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,6 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
@@ -21,14 +22,25 @@ use utf8;
 # core modules
 
 # CPAN modules
-use HTTP::Request::Common qw(POST);
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::RegisterDriver;
-use Kernel::System::VariableCheck qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # set up $Kernel::OM
+use Kernel::System::VariableCheck qw(IsHashRefWithData);
 
-our $Self;
+=head1 NAME
+
+ValueSetGet.t - test the method ValueSet() and ValueGet() for different dynamic field types
+
+=head1 SYNOPSIS
+
+    bin/careoncloud.Console.pl Dev::UnitTest::Run --verbose --merge scripts/test/DynamicField/ValueSetGet.t
+
+=head1 DESCRIPTION
+
+Set and get dynamic field values that are attached to a ticket.
+
+=cut
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -37,10 +49,9 @@ $Kernel::OM->ObjectParamAdd(
         UseTmpArticleDir => 1,
     },
 );
-my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
-
-# Create random test variable.
-my $RandomID = $Helper->GetRandomID();
+my $Helper   = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
+my $RandomID = $Helper->GetRandomID;
+diag "RandomID is $RandomID";
 
 # get needed objects
 my $ConfigObject              = $Kernel::OM->Get('Kernel::Config');
@@ -56,7 +67,7 @@ $ConfigObject->Set(
     Value => 0,
 );
 
-my $UserID = 1;
+my $UserID = 1;    # root
 
 # create agents
 my $FirstUserID = $UserObject->UserAdd(
@@ -68,7 +79,7 @@ my $FirstUserID = $UserObject->UserAdd(
     ValidID       => 1,
     ChangeUserID  => 1,
 );
-$Self->True( $FirstUserID, 'Creation of first agent' );
+ok( $FirstUserID, 'Creation of first agent' );
 
 my $SecondUserID = $UserObject->UserAdd(
     UserFirstname => 'Test',
@@ -79,7 +90,7 @@ my $SecondUserID = $UserObject->UserAdd(
     ValidID       => 1,
     ChangeUserID  => 1,
 );
-$Self->True( $SecondUserID, 'Creation of second agent' );
+ok( $SecondUserID, 'Creation of second agent' );
 
 # create customer companies
 my $FirstCustomerCompanyID = $CustomerCompanyObject->CustomerCompanyAdd(
@@ -88,7 +99,7 @@ my $FirstCustomerCompanyID = $CustomerCompanyObject->CustomerCompanyAdd(
     ValidID             => 1,
     UserID              => $UserID,
 );
-$Self->True( $FirstCustomerCompanyID, 'Creation of first customer company' );
+ok( $FirstCustomerCompanyID, 'Creation of first customer company' );
 
 my $SecondCustomerCompanyID = $CustomerCompanyObject->CustomerCompanyAdd(
     CustomerID          => 'TestCustomerCompany2' . $RandomID,
@@ -96,7 +107,7 @@ my $SecondCustomerCompanyID = $CustomerCompanyObject->CustomerCompanyAdd(
     ValidID             => 1,
     UserID              => $UserID,
 );
-$Self->True( $SecondCustomerCompanyID, 'Creation of second customer company' );
+ok( $SecondCustomerCompanyID, 'Creation of second customer company' );
 
 # create customer users
 my $FirstCustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
@@ -109,7 +120,7 @@ my $FirstCustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
     ValidID        => 1,
     UserID         => $UserID,
 );
-$Self->True( $FirstCustomerUserLogin, 'Creation of first customer user' );
+ok( $FirstCustomerUserLogin, 'Creation of first customer user' );
 
 my $SecondCustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
     Source         => 'CustomerUser',
@@ -121,11 +132,11 @@ my $SecondCustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
     ValidID        => 1,
     UserID         => $UserID,
 );
-$Self->True( $SecondCustomerUserLogin, 'Creation of second customer user' );
+ok( $SecondCustomerUserLogin, 'Creation of second customer user' );
 
 # create a source ticket
 my $SourceTicketID = $TicketObject->TicketCreate(
-    Title        => 'Some Ticket Title',
+    Title        => 'SourceTicket',
     Queue        => 'Raw',
     Lock         => 'unlock',
     Priority     => '3 normal',
@@ -135,11 +146,11 @@ my $SourceTicketID = $TicketObject->TicketCreate(
     OwnerID      => 1,
     UserID       => $UserID,
 );
-$Self->True( $SourceTicketID, 'Creation of source ticket' );
+ok( $SourceTicketID, 'Creation of source ticket' );
 
 # create tickets for referencing
 my $FirstReferenceTicketID = $TicketObject->TicketCreate(
-    Title        => 'Some Ticket Title',
+    Title        => 'FirstReferenceTicket',
     Queue        => 'Raw',
     Lock         => 'unlock',
     Priority     => '3 normal',
@@ -149,10 +160,10 @@ my $FirstReferenceTicketID = $TicketObject->TicketCreate(
     OwnerID      => 1,
     UserID       => $UserID,
 );
-$Self->True( $FirstReferenceTicketID, 'Creation of first reference ticket' );
+ok( $FirstReferenceTicketID, 'Creation of first reference ticket' );
 
 my $SecondReferenceTicketID = $TicketObject->TicketCreate(
-    Title        => 'Some Ticket Title',
+    Title        => 'SecondReferenceTicket',
     Queue        => 'Raw',
     Lock         => 'unlock',
     Priority     => '3 normal',
@@ -162,10 +173,13 @@ my $SecondReferenceTicketID = $TicketObject->TicketCreate(
     OwnerID      => 1,
     UserID       => $UserID,
 );
-$Self->True( $SecondReferenceTicketID, 'Creation of second reference ticket' );
+ok( $SecondReferenceTicketID, 'Creation of second reference ticket' );
 
 # set of dynamic field configurations to be created
+# sorted alphabetically by FieldType
 my @CreateDynamicFieldConfigs = (
+
+    # Agent
     {
         Name       => 'Agent',
         Label      => 'Agent',
@@ -179,10 +193,8 @@ my @CreateDynamicFieldConfigs = (
             GroupFilter  => [],
             Tooltip      => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
     {
         Name       => 'AgentMS',
@@ -197,10 +209,8 @@ my @CreateDynamicFieldConfigs = (
             GroupFilter  => [],
             Tooltip      => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
     {
         Name       => 'AgentMV',
@@ -215,11 +225,11 @@ my @CreateDynamicFieldConfigs = (
             GroupFilter  => [],
             Tooltip      => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
+
+    # CustomerCompany
     {
         Name       => 'CustomerCompany',
         Label      => 'CustomerCompany',
@@ -232,10 +242,8 @@ my @CreateDynamicFieldConfigs = (
             MultiValue   => 0,
             Tooltip      => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
     {
         Name       => 'CustomerCompanyMS',
@@ -249,10 +257,8 @@ my @CreateDynamicFieldConfigs = (
             MultiValue   => 0,
             Tooltip      => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
     {
         Name       => 'CustomerCompanyMV',
@@ -266,11 +272,11 @@ my @CreateDynamicFieldConfigs = (
             MultiValue   => 1,
             Tooltip      => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
+
+    # CustomerUser
     {
         Name       => 'CustomerUser',
         Label      => 'CustomerUser',
@@ -281,10 +287,8 @@ my @CreateDynamicFieldConfigs = (
             MultiValue => 0,
             Tooltip    => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
     {
         Name       => 'CustomerUserMV',
@@ -296,16 +300,172 @@ my @CreateDynamicFieldConfigs = (
             MultiValue => 1,
             Tooltip    => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
+
+    # Text
+    {
+        Name       => 'Text1',
+        Label      => 'Text1',
+        FieldOrder => 123,
+        FieldType  => 'Text',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 0,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name       => 'Text2',
+        Label      => 'Text2',
+        FieldOrder => 123,
+        FieldType  => 'Text',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 0,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+
+    # Fields to include in SetOfTexts
+    {
+        Name       => 'Text3',
+        Label      => 'Text3',
+        FieldOrder => 123,
+        FieldType  => 'Text',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 0,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name       => 'Text4',
+        Label      => 'Text4',
+        FieldOrder => 123,
+        FieldType  => 'Text',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 1,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+
+    # Fields to include in SetOfAgentsAndTexts
+    {
+        Name       => 'Text5',
+        Label      => 'Text5',
+        FieldOrder => 123,
+        FieldType  => 'Text',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 0,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name       => 'Text6',
+        Label      => 'Text6',
+        FieldOrder => 123,
+        FieldType  => 'Text',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 1,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name       => 'Agent1',
+        Label      => 'Agent1',
+        FieldOrder => 123,
+        FieldType  => 'Agent',
+        ObjectType => 'Ticket',
+        Config     => {
+            PossibleNone => 1,
+            Multiselect  => 0,
+            MultiValue   => 0,
+            GroupFilter  => [],
+            Tooltip      => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name       => 'Agent2',
+        Label      => 'Agent2',
+        FieldOrder => 123,
+        FieldType  => 'Agent',
+        ObjectType => 'Ticket',
+        Config     => {
+            PossibleNone => 1,
+            Multiselect  => 0,
+            MultiValue   => 1,
+            GroupFilter  => [],
+            Tooltip      => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+
+    # Set, using the previously created Text3 and Text4 dynamic fields
+    {
+        Name       => 'SetOfTexts',
+        Label      => 'set of texts',
+        FieldOrder => 123,
+        FieldType  => 'Set',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 0,
+            Tooltip    => '',
+            Include    => [
+                { DF => 'Text3' . $RandomID },
+                { DF => 'Text4' . $RandomID },
+            ],
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+
+    # Set, using the previously created Text5 and Text6 and agent fields
+    {
+        Name       => 'SetOfAgentsAndTexts',
+        Label      => 'set of agents and texts',
+        FieldOrder => 123,
+        FieldType  => 'Set',
+        ObjectType => 'Ticket',
+        Config     => {
+            MultiValue => 0,
+            Tooltip    => '',
+            Include    => [
+                { DF => 'Text5' . $RandomID },
+                { DF => 'Text6' . $RandomID },
+                { DF => 'Agent1' . $RandomID },
+                { DF => 'Agent2' . $RandomID },
+            ],
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+
+    # TicketReference
     {
         Name       => 'TicketRef',
         Label      => 'TicketRef',
         FieldOrder => 123,
-        FieldType  => 'TicketReference',
+        FieldType  => 'Ticket',
         ObjectType => 'Ticket',
         Config     => {
             EditFieldMode        => 'Dropdown',
@@ -316,16 +476,14 @@ my @CreateDynamicFieldConfigs = (
             ReferencedObjectType => 'Ticket',
             Tooltip              => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
     {
         Name       => 'TicketRefMS',
         Label      => 'TicketRefMS',
         FieldOrder => 123,
-        FieldType  => 'TicketReference',
+        FieldType  => 'Ticket',
         ObjectType => 'Ticket',
         Config     => {
             EditFieldMode        => 'Dropdown',
@@ -336,16 +494,14 @@ my @CreateDynamicFieldConfigs = (
             ReferencedObjectType => 'Ticket',
             Tooltip              => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
     {
         Name       => 'TicketRefMV',
         Label      => 'TicketRefMV',
         FieldOrder => 123,
-        FieldType  => 'TicketReference',
+        FieldType  => 'Ticket',
         ObjectType => 'Ticket',
         Config     => {
             EditFieldMode        => 'Dropdown',
@@ -356,10 +512,8 @@ my @CreateDynamicFieldConfigs = (
             ReferencedObjectType => 'Ticket',
             Tooltip              => '',
         },
-        ValidID    => 1,
-        UserID     => $UserID,
-        CreateTime => '2023-02-08 15:08:00',
-        ChangeTime => '2023-06-11 17:22:00',
+        ValidID => 1,
+        UserID  => $UserID,
     },
 );
 
@@ -367,16 +521,25 @@ my @CreateDynamicFieldConfigs = (
 my %DynamicFieldConfigs;
 for my $CreateDFConfig (@CreateDynamicFieldConfigs) {
 
+    my $ShortName = $CreateDFConfig->{Name};
+    $CreateDFConfig->{Name} .= $RandomID;
     my $DynamicFieldID = $DynamicFieldObject->DynamicFieldAdd(
         $CreateDFConfig->%*,
     );
-    $Self->True( $DynamicFieldID, 'Creation of dynamic field ' . $CreateDFConfig->{Name} );
+    ok( $DynamicFieldID, 'Creation of dynamic field ' . $CreateDFConfig->{Name} );
 
     # Get the test dynamic field
     my $DynamicFieldConfig = $DynamicFieldObject->DynamicFieldGet(
         ID => $DynamicFieldID,
     );
-    $DynamicFieldConfigs{ $DynamicFieldConfig->{Name} } = $DynamicFieldConfig;
+
+    # test the roundtrip
+    is(
+        $DynamicFieldConfig->{Config},
+        $CreateDFConfig->{Config},
+        "config for $CreateDFConfig->{Name}"
+    );
+    $DynamicFieldConfigs{$ShortName} = $DynamicFieldConfig;
 }
 
 # define tests
@@ -566,6 +729,7 @@ my @Tests = (
     },
 
     # Dynamic Field CustomerCompany
+
     # CustomerCompany SingleSelect
     {
         Name   => 'CustomerCompany: Value one plain customer company id',
@@ -606,6 +770,7 @@ my @Tests = (
     },
 
     # Dynamic Field CustomerUser
+
     # CustomerUser SingleSelect
     {
         Name   => 'CustomerUser: Value undef',
@@ -731,7 +896,119 @@ my @Tests = (
         Success         => 1,
     },
 
+    # Dynamic Field Text
+    {
+        Name   => 'Text1',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{Text1},
+            Value              => '⛄ - U+026C4 - SNOWMAN WITHOUT SNOW',
+            ObjectID           => $SourceTicketID,
+            UserID             => $UserID,
+        },
+        ExpectedResults => '⛄ - U+026C4 - SNOWMAN WITHOUT SNOW',
+        Success         => 1,
+    },
+    {
+        Name   => 'Text2',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{Text1},
+            Value              => '🌨 - U+1F328 - CLOUD WITH SNOW',
+            ObjectID           => $SourceTicketID,
+            UserID             => $UserID,
+        },
+        ExpectedResults => '🌨 - U+1F328 - CLOUD WITH SNOW',
+        Success         => 1,
+    },
+
+    # Dynamic Field Set
+    {
+        Name   => 'SetOfTexts',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{SetOfTexts},
+            Value              =>
+
+                # a list of Set values
+                [
+
+                    # actually only on Set value in the list
+                    {
+                        # value for the first dynamic field in the set
+                        "Text3$RandomID" => 'Text1: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+
+                        # value for the second dynamic field in the set
+                        "Text4$RandomID" => [
+                            'Text1: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                            'Text2: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                        ],
+                    },
+                ],
+            ObjectID => $SourceTicketID,
+            UserID   => $UserID,
+        },
+        ExpectedResults => [
+            {
+                "Text3$RandomID" => 'Text1: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                "Text4$RandomID" => [
+                    'Text1: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                    'Text2: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                ],
+            },
+        ],
+        Success => 1,
+    },
+    {
+        Name   => 'SetOfAgentsAndTexts',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{SetOfAgentsAndTexts},
+            Value              =>
+
+                # a list of Set values
+                [
+
+                    # actually only on Set value in the list
+                    {
+
+                        # value for the first dynamic field in the set
+                        "Text5$RandomID" => 'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+
+                        # value for the second dynamic field in the set
+                        "Text6$RandomID" => [
+                            'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                            'Text4: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                        ],
+
+                        # value for the third dynamic field in the set
+                        "Agent1$RandomID" => [$FirstUserID],
+
+                        # value for the fourth dynamic field in the set
+                        "Agent2$RandomID" => [
+                            $FirstUserID,
+                            $SecondUserID,
+                        ],
+                    },
+                ],
+            ObjectID => $SourceTicketID,
+            UserID   => $UserID,
+        },
+        ExpectedResults => [
+            {
+                "Text5$RandomID" => 'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                "Text6$RandomID" => [
+                    'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                    'Text4: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                ],
+                "Agent1$RandomID" => [$FirstUserID],
+                "Agent2$RandomID" => [
+                    $FirstUserID,
+                    $SecondUserID,
+                ],
+            },
+        ],
+        Success => 1,
+    },
+
     # Dynamic Field TicketRef
+
     # TicketRef SingleSelect
     {
         Name   => 'TicketRef: Value undef',
@@ -923,23 +1200,27 @@ for my $Test (@Tests) {
 
     my %Config = $Test->{Config}->%*;
 
-    # set value for dynamic field config
-    my $Success = $DynamicFieldBackendObject->ValueSet(%Config);
+    subtest $Test->{Name} => sub {
 
-    # check successful value set
-    if ( $Test->{Success} ) {
-        $Self->True( $Success, "$Test->{Name} | ValueSet" );
-    }
+        # set value for dynamic field config
+        my $Success = $DynamicFieldBackendObject->ValueSet(%Config);
 
-    # retrieve value again
-    my $Value = $DynamicFieldBackendObject->ValueGet(%Config);
+        # check successful value set
+        if ( $Test->{Success} ) {
+            ok( $Success, 'ValueSet() successfull' );
+        }
+        else {
+            ok( !$Success, 'ValueSet() expected to fail' );
+        }
 
-    # check if value aligns with original input
-    if ( $Test->{Success} ) {
-        $Self->IsDeeply( $Value, $Test->{ExpectedResults}, "$Test->{Name} | ValueGet" );
-    }
+        # retrieve value again
+        my $Value = $DynamicFieldBackendObject->ValueGet(%Config);
+
+        # check if value aligns with original input
+        if ( $Test->{Success} ) {
+            is( $Value, $Test->{ExpectedResults}, "ValueGet()" );
+        }
+    };
 }
 
-# cleanup is done by RestoreDatabase
-
-$Self->DoneTesting();
+done_testing;

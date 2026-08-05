@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,8 +30,8 @@ use parent qw(Kernel::System::DynamicField::Driver::BaseText);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -125,8 +125,11 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
     }
 
@@ -139,7 +142,7 @@ sub EditFieldRender {
     $FieldClass .= ' Validate_MaxLength';
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     # create field HTML
@@ -261,36 +264,41 @@ sub EditFieldValueValidate {
         $Value = [$Value];
     }
 
+    my $ValueItemsPresent = 0;
+    VALUEITEM:
     for my $ValueItem ( @{$Value} ) {
 
         # perform necessary validations
-        if ( $Param{Mandatory} && $ValueItem eq '' ) {
-            $ServerError = 1;
-        }
-        elsif ( length $ValueItem > $Self->{MaxLength} ) {
-            $ServerError  = 1;
-            $ErrorMessage = "The field content is too long! Maximum size is $Self->{MaxLength} characters.";
-        }
-        elsif (
-            IsArrayRefWithData( $Param{DynamicFieldConfig}->{Config}->{RegExList} )
-            && ( $Param{Mandatory} || ( !$Param{Mandatory} && $ValueItem ne '' ) )
-            )
-        {
+        if ( $ValueItem ne '' ) {
+            $ValueItemsPresent++;
 
-            # check regular expressions
-            my @RegExList = @{ $Param{DynamicFieldConfig}->{Config}->{RegExList} };
+            if ( length $ValueItem > $Self->{MaxLength} ) {
+                $ServerError  = 1;
+                $ErrorMessage = "The field content is too long! Maximum size is $Self->{MaxLength} characters.";
+                last VALUEITEM;
+            }
 
-            REGEXENTRY:
-            for my $RegEx (@RegExList) {
+            if ( IsArrayRefWithData( $Param{DynamicFieldConfig}->{Config}->{RegExList} ) ) {
 
-                if ( $ValueItem !~ $RegEx->{Value} ) {
-                    $ServerError  = 1;
-                    $ErrorMessage = $RegEx->{ErrorMessage};
+                # check regular expressions
+                my @RegExList = @{ $Param{DynamicFieldConfig}->{Config}->{RegExList} };
 
-                    last REGEXENTRY;
+                for my $RegEx (@RegExList) {
+
+                    if ( $ValueItem !~ $RegEx->{Value} ) {
+                        $ServerError  = 1;
+                        $ErrorMessage = $RegEx->{ErrorMessage};
+                        last VALUEITEM;
+                    }
                 }
             }
         }
+    }
+
+    if ( $Param{Mandatory} && $ValueItemsPresent == 0 ) {
+
+        $ServerError  = 1;
+        $ErrorMessage = 'The field content is invalid';
     }
 
     # return resulting structure
@@ -325,8 +333,9 @@ sub DisplayValueRender {
         # HTML Output transformation
         if ($HTMLOutput) {
             $ValueItem = $Param{LayoutObject}->Ascii2Html(
-                Text => $ValueItem,
-                Max  => $Param{ValueMaxChars},
+                Text           => $ValueItem,
+                HTMLResultMode => 1,
+                Max            => $Param{ValueMaxChars},
             );
         }
         else {
@@ -371,9 +380,8 @@ sub SearchFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
-    my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName   = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
+    my $FieldName  = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
+    my $FieldLabel = $Param{DynamicFieldConfig}->{Label};
 
     # set the field value
     my $Value = ( defined $Param{DefaultValue} ? $Param{DefaultValue} : '' );
@@ -399,7 +407,7 @@ sub SearchFieldRender {
     );
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     my $HTMLString = <<"EOF";

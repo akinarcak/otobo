@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,12 +21,12 @@ use strict;
 use warnings;
 
 # core modules
-use File::Basename;
+use File::Basename qw(dirname);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::WebUserAgent;
+# CareOnCloud ESM modules
+use Kernel::System::WebUserAgent ();
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -88,19 +88,19 @@ otherwise
         Result  => [
             {
                 Identifier  => 'Kernel::System::SupportDataCollector::OTOBO::Version',
-                DisplayPath => 'OTOBO',
+                DisplayPath => 'CareOnCloud ESM',
                 Status      => $StatusOK,
-                Label       => 'OTOBO Version'
+                Label       => 'CareOnCloud ESM Version'
                 Value       => '3.3.2',
                 Message     => '',
             },
             {
                 Identifier  => 'Kernel::System::SupportDataCollector::Apache::mod_perl',
-                DisplayPath => 'OTOBO',
+                DisplayPath => 'CareOnCloud ESM',
                 Status      => $StatusProblem,
                 Label       => 'mod_perl usage'
                 Value       => '0',
-                Message     => 'Please enable mod_perl to speed up OTOBO.',
+                Message     => 'Please enable mod_perl to speed up CareOnCloud ESM.',
             },
             {
                 Identifier       => 'Some::Identifier',

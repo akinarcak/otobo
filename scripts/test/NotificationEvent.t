@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -1024,119 +1024,119 @@ my $NotificationYAML = <<'YAML';
   ID: '1'
   Message:
     de:
-      Body: 'Hallo <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname> <OTOBO_NOTIFICATION_RECIPIENT_UserLastname>,
+      Body: 'Hallo <CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname> <CareOnCloud_NOTIFICATION_RECIPIENT_UserLastname>,
 
 
-        das Ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>]
-        wurde in der Queue <OTOBO_TICKET_Queue> erstellt.
+        das Ticket [<CareOnCloud_CONFIG_Ticket::Hook><CareOnCloud_CONFIG_Ticket::HookDivider><CareOnCloud_TICKET_TicketNumber>]
+        wurde in der Queue <CareOnCloud_TICKET_Queue> erstellt.
 
 
-        <OTOBO_CUSTOMER_REALNAME> schrieb:
+        <CareOnCloud_CUSTOMER_REALNAME> schrieb:
 
-        <OTOBO_CUSTOMER_BODY[30]>
-
-
-        <OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>
+        <CareOnCloud_CUSTOMER_BODY[30]>
 
 
-        -- <OTOBO_CONFIG_NotificationSenderName>'
+        <CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<CareOnCloud_TICKET_TicketID>
+
+
+        -- <CareOnCloud_CONFIG_NotificationSenderName>'
       ContentType: text/plain
-      Subject: 'Ticket erstellt: <OTOBO_TICKET_Title>'
+      Subject: 'Ticket erstellt: <CareOnCloud_TICKET_Title>'
     en:
-      Body: 'Hi <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,
+      Body: 'Hi <CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname>,
 
 
-        ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>]
-        has been created in queue <OTOBO_TICKET_Queue>.
+        ticket [<CareOnCloud_CONFIG_Ticket::Hook><CareOnCloud_CONFIG_Ticket::HookDivider><CareOnCloud_TICKET_TicketNumber>]
+        has been created in queue <CareOnCloud_TICKET_Queue>.
 
 
-        <OTOBO_CUSTOMER_REALNAME> wrote:
+        <CareOnCloud_CUSTOMER_REALNAME> wrote:
 
-        <OTOBO_CUSTOMER_BODY[30]>
-
-
-        <OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>
+        <CareOnCloud_CUSTOMER_BODY[30]>
 
 
-        -- <OTOBO_CONFIG_NotificationSenderName>'
+        <CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<CareOnCloud_TICKET_TicketID>
+
+
+        -- <CareOnCloud_CONFIG_NotificationSenderName>'
       ContentType: text/plain
-      Subject: 'Ticket Created: <OTOBO_TICKET_Title>'
+      Subject: 'Ticket Created: <CareOnCloud_TICKET_Title>'
     es_MX:
-      Body: 'Hola <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,
+      Body: 'Hola <CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname>,
 
 
-        el ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>]
-        se ha creado en la fila <OTOBO_TICKET_Queue>.
+        el ticket [<CareOnCloud_CONFIG_Ticket::Hook><CareOnCloud_CONFIG_Ticket::HookDivider><CareOnCloud_TICKET_TicketNumber>]
+        se ha creado en la fila <CareOnCloud_TICKET_Queue>.
 
 
-        <OTOBO_CUSTOMER_REALNAME> escribió:
+        <CareOnCloud_CUSTOMER_REALNAME> escribió:
 
-        <OTOBO_CUSTOMER_BODY[30]>
-
-
-        <OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>
+        <CareOnCloud_CUSTOMER_BODY[30]>
 
 
-        -- <OTOBO_CONFIG_NotificationSenderName>'
+        <CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<CareOnCloud_TICKET_TicketID>
+
+
+        -- <CareOnCloud_CONFIG_NotificationSenderName>'
       ContentType: text/plain
-      Subject: 'Se ha creado un ticket: <OTOBO_TICKET_Title>'
+      Subject: 'Se ha creado un ticket: <CareOnCloud_TICKET_Title>'
     hu:
-      Body: 'Kedves <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>!
+      Body: 'Kedves <CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname>!
 
 
-        A(z) [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>]
-        jegy létrejött a következő várólistában: <OTOBO_TICKET_Queue>.
+        A(z) [<CareOnCloud_CONFIG_Ticket::Hook><CareOnCloud_CONFIG_Ticket::HookDivider><CareOnCloud_TICKET_TicketNumber>]
+        jegy létrejött a következő várólistában: <CareOnCloud_TICKET_Queue>.
 
 
-        <OTOBO_CUSTOMER_REALNAME> ezt írta:
+        <CareOnCloud_CUSTOMER_REALNAME> ezt írta:
 
-        <OTOBO_CUSTOMER_BODY[30]>
-
-
-        <OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>
+        <CareOnCloud_CUSTOMER_BODY[30]>
 
 
-        -- <OTOBO_CONFIG_NotificationSenderName>'
+        <CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<CareOnCloud_TICKET_TicketID>
+
+
+        -- <CareOnCloud_CONFIG_NotificationSenderName>'
       ContentType: text/plain
-      Subject: 'Jegy létrehozva: <OTOBO_TICKET_Title>'
+      Subject: 'Jegy létrehozva: <CareOnCloud_TICKET_Title>'
     pt_BR:
-      Body: 'Oi <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,
+      Body: 'Oi <CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname>,
 
 
-        o ticket [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>]
-        foi criado na fila <OTOBO_TICKET_Queue>.
+        o ticket [<CareOnCloud_CONFIG_Ticket::Hook><CareOnCloud_CONFIG_Ticket::HookDivider><CareOnCloud_TICKET_TicketNumber>]
+        foi criado na fila <CareOnCloud_TICKET_Queue>.
 
 
-        <OTOBO_CUSTOMER_REALNAME> escreveu:
+        <CareOnCloud_CUSTOMER_REALNAME> escreveu:
 
-        <OTOBO_CUSTOMER_BODY[30]>
-
-
-        <OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>
+        <CareOnCloud_CUSTOMER_BODY[30]>
 
 
-        -- <OTOBO_CONFIG_NotificationSenderName>'
+        <CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<CareOnCloud_TICKET_TicketID>
+
+
+        -- <CareOnCloud_CONFIG_NotificationSenderName>'
       ContentType: text/plain
-      Subject: 'Ticket criado: <OTOBO_TICKET_Title>'
+      Subject: 'Ticket criado: <CareOnCloud_TICKET_Title>'
     zh_CN:
-      Body: '您好 <OTOBO_NOTIFICATION_RECIPIENT_UserFirstname>,
+      Body: '您好 <CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname>,
 
 
-        票据工单 [<OTOBO_CONFIG_Ticket::Hook><OTOBO_CONFIG_Ticket::HookDivider><OTOBO_TICKET_TicketNumber>]
-        已在等待队列 已在队列<OTOBO_TICKET_Queue> 中被编制完成。中被创建完成
+        票据工单 [<CareOnCloud_CONFIG_Ticket::Hook><CareOnCloud_CONFIG_Ticket::HookDivider><CareOnCloud_TICKET_TicketNumber>]
+        已在等待队列 已在队列<CareOnCloud_TICKET_Queue> 中被编制完成。中被创建完成
 
 
-        <OTOBO_CUSTOMER_REALNAME> 写道：
+        <CareOnCloud_CUSTOMER_REALNAME> 写道：
 
-        <OTOBO_CUSTOMER_BODY[30]>
-
-
-        <OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<OTOBO_TICKET_TicketID>
+        <CareOnCloud_CUSTOMER_BODY[30]>
 
 
-        -- <OTOBO_CONFIG_NotificationSenderName>'
+        <CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl?Action=AgentTicketZoom;TicketID=<CareOnCloud_TICKET_TicketID>
+
+
+        -- <CareOnCloud_CONFIG_NotificationSenderName>'
       ContentType: text/plain
-      Subject: 票据编制 工单已创建：<OTOBO_TICKET_Title>
+      Subject: 票据编制 工单已创建：<CareOnCloud_TICKET_Title>
   Name: Ticket create notification
   ValidID: '1'
 YAML

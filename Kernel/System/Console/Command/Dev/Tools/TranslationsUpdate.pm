@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,13 +21,17 @@ use warnings;
 
 use parent qw(Kernel::System::Console::BaseCommand);
 
-use File::Basename;
-use File::Copy;
-use Lingua::Translit;
-use Pod::Strip;
+# core modules
+use File::Basename qw(basename);
+use File::Copy     qw(copy);
 
-use Kernel::Language;
-use Kernel::System::VariableCheck qw(DataIsDifferent);
+# CPAN modules
+use Lingua::Translit ();
+use Pod::Strip       ();
+
+# CareOnCloud ESM modules
+use Kernel::Language              ();
+use Kernel::System::VariableCheck qw(DataIsDifferent IsArrayRefWithData IsHashRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -36,12 +40,13 @@ our @ObjectDependencies = (
     'Kernel::System::Main',
     'Kernel::System::Storable',
     'Kernel::System::SysConfig',
+    'Kernel::System::YAML',
 );
 
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Update the OTOBO translation files.');
+    $Self->Description('Update the CareOnCloud ESM translation files.');
     $Self->AddOption(
         Name        => 'language',
         Description => "Which language to use, omit to update all languages.",
@@ -51,7 +56,7 @@ sub Configure {
     );
     $Self->AddOption(
         Name        => 'module-directory',
-        Description => "Translate the OTOBO module in the given directory.",
+        Description => "Translate the CareOnCloud ESM module in the given directory.",
         Required    => 0,
         HasValue    => 1,
         ValueRegex  => qr/.*/smx,
@@ -75,17 +80,17 @@ sub Configure {
 
     $Self->AdditionalHelp(<<"EOF");
 
-<yellow>Translating OTOBO</yellow>
+<yellow>Translating CareOnCloud ESM</yellow>
 
 Make sure that you have a clean system with a current configuration. No modules may be installed or linked into the system!
 
-    <green>otobo.Console.pl $Name --language ...</green>
+    <green>careoncloud.Console.pl $Name --language ...</green>
 
 <yellow>Translating Extension Modules</yellow>
 
 Make sure that you have a clean system with a current configuration. The module that needs to be translated has to be installed or linked into the system, but only this one!
 
-    <green>otobo.Console.pl $Name --language ... --module-directory ...</green>
+    <green>careoncloud.Console.pl $Name --language ... --module-directory ...</green>
 EOF
 
     return;
@@ -179,8 +184,8 @@ sub HandleLanguage {
     if ( !$Module ) {
         $LanguageFile  = "$Home/Kernel/Language/$Language.pm";
         $TargetFile    = "$Home/Kernel/Language/$Language.pm";
-        $TargetPOTFile = "$Home/i18n/otobo/otobo.pot";
-        $TargetPOFile  = "$Home/i18n/otobo/otobo.$WeblateLanguage.po";
+        $TargetPOTFile = "$Home/i18n/careoncloud/careoncloud.pot";
+        $TargetPOFile  = "$Home/i18n/careoncloud/careoncloud.$WeblateLanguage.po";
     }
     else {
         $IsSubTranslation = 1;
@@ -197,6 +202,9 @@ sub HandleLanguage {
         # remove underscores and/or version numbers and following from module name
         # i.e. FAQ_2_0 or FAQ20
         $Module =~ s/((_|\-)?(\d+))+$//gix;
+
+        # remove dashes from module name
+        $Module =~ s/-//g;
 
         # save module directory in target file
         $TargetFile = "$ModuleDirectory/Kernel/Language/${Language}_$Module.pm";
@@ -469,7 +477,7 @@ sub HandleLanguage {
             );
         }
         else {
-            @DBXMLFiles = "$Home/scripts/database/otobo-initial_insert.xml";
+            @DBXMLFiles = "$Home/scripts/database/careoncloud-initial_insert.xml";
         }
 
         FILE:
@@ -540,7 +548,7 @@ sub HandleLanguage {
 
             # skip thirdparty files without custom markers
             if ( $File =~ m{\/js\/thirdparty\/}xmsg ) {
-                next FILE if ( $Content !~ m{\/\/\s*OTOBO}xmsg );
+                next FILE if ( $Content !~ m{\/\/\s*CareOnCloud ESM}xmsg );
             }
 
             $File =~ s{^.*/(.+?)\.js}{$1}smx;
@@ -593,6 +601,15 @@ sub HandleLanguage {
                 Source   => $String,
             };
         }
+
+        # add translatable strings in ITSMConfigurationManagement ready to adopt classes
+        if ( $IsSubTranslation && -d "$ModuleDirectory/var/itsm/configitemclasses" ) {
+            $Self->ExtractCMDBClassStrings(
+                Directory                  => "$ModuleDirectory/var/itsm/configitemclasses",
+                OriginalTranslationStrings => \@OriginalTranslationStrings,
+                UsedWords                  => \%UsedWords
+            );
+        }
     }
 
     if ($IsSubTranslation) {
@@ -606,7 +623,7 @@ sub HandleLanguage {
         );
     }
 
-    # Language file, which only contains the OTOBO core translations
+    # Language file, which only contains the CareOnCloud ESM core translations
     my $LanguageCoreObject = Kernel::Language->new(
         UserLanguage    => $Language,
         TranslationFile => 1,
@@ -628,7 +645,7 @@ sub HandleLanguage {
         },
     );
     if ( $TranslitLanguagesMap{$Language} ) {
-        $TranslitObject             = new Lingua::Translit( $TranslitLanguagesMap{$Language}->{TranslitTable} );    ## no critic qw(Objects::ProhibitIndirectSyntax)
+        $TranslitObject             = Lingua::Translit->new( $TranslitLanguagesMap{$Language}->{TranslitTable} );
         $TranslitLanguageCoreObject = Kernel::Language->new(
             UserLanguage    => $TranslitLanguagesMap{$Language}->{SourceLanguage},
             TranslationFile => 1,
@@ -750,7 +767,7 @@ sub WritePOFile {
     $Kernel::OM->Get('Kernel::System::Main')->Require('Locale::PO') || die "Could not load Locale::PO";
 
     if ( !-e $Param{TargetPOFile} ) {
-        File::Copy::copy( $Param{TargetPOTFile}, $Param{TargetPOFile} )
+        copy( $Param{TargetPOTFile}, $Param{TargetPOFile} )
             || die "Could not copy $Param{TargetPOTFile} to $Param{TargetPOFile}: $!";
     }
 
@@ -807,7 +824,7 @@ sub WritePOTFile {
 
     $Kernel::OM->Get('Kernel::System::Main')->Require('Locale::PO') || die "Could not load Locale::PO";
 
-    my $Package = $Param{Module} // 'OTOBO';
+    my $Package = $Param{Module} // 'CareOnCloud ESM';
 
     # build creation date, only YEAR-MO-DA HO:MI is needed without seconds
     my $CreationDate = $Kernel::OM->Create('Kernel::System::DateTime')->Format(
@@ -948,10 +965,10 @@ sub WritePerlLanguageFile {
 
         $NewOut = <<"EOF";
 $Separator
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 $Separator
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2021 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 $Separator
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -984,6 +1001,7 @@ EOF
     else {
 
         open( my $In, '<', $Param{LanguageFile} ) || die "Can't open: $Param{LanguageFile}\n";    ## no critic qw(InputOutput::RequireBriefOpen OTOBO::ProhibitOpen)
+                                                                                                  # TODO: it is not obvious why both $Line and $_ are used in this block
         while (<$In>) {
             my $Line = $_;
             $Kernel::OM->Get('Kernel::System::Encode')->EncodeInput( \$Line );
@@ -1054,6 +1072,108 @@ EOF
         Content  => \$NewOut,
         Mode     => 'utf8',        # binmode|utf8
     );
+
+    return 1;
+}
+
+sub ExtractCMDBClassStrings {
+    my ( $Self, %Param ) = @_;
+
+    my @ReadyToAdoptClasses = $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
+        Directory => $Param{Directory},
+        Filter    => '*.yml',
+        Recursive => 0,
+    );
+
+    CLASS:
+    for my $File (@ReadyToAdoptClasses) {
+
+        my $ContentRef = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
+            Location => $File,
+            Mode     => 'utf8',
+        );
+
+        if ( !ref $ContentRef ) {
+            die "Can't open $File: $!";
+        }
+
+        my $YAMLObject = $Kernel::OM->Get('Kernel::System::YAML');
+        my $CIClasses  = $YAMLObject->Load( Data => ${$ContentRef} );
+
+        if ( !IsArrayRefWithData($CIClasses) ) {
+            die "$File must contain a valid yaml-array!";
+        }
+
+        my @OriginalTranslationStrings;
+        $File =~ s{^.*/(.+?)\.yml}{$1}smx;
+
+        CLASS:
+        for my $Class ( $CIClasses->@* ) {
+            next CLASS if !$Class->{Definition};
+
+            my $Definition = $YAMLObject->Load( Data => $Class->{Definition} );
+
+            if ( IsArrayRefWithData( $Definition->{Pages} ) ) {
+                for my $Page ( $Definition->{Pages}->@* ) {
+                    my $Word = $Page->{Name};
+
+                    if ( $Word && !$Param{UsedWords}{$Word}++ ) {
+                        push @OriginalTranslationStrings, {
+                            Location => "Ready to adopt classes: $File",
+                            Source   => $Word,
+                        };
+                    }
+                }
+            }
+
+            if ( IsHashRefWithData( $Definition->{Sections} ) ) {
+                for my $Section ( values $Definition->{Sections}->%* ) {
+                    if ( IsHashRefWithData($Section) && IsArrayRefWithData( $Section->{Content} ) ) {
+                        my @Headers = grep { $_->{Header} } $Section->{Content}->@*;
+
+                        for my $Header (@Headers) {
+                            my $Word = $Header->{Header};
+
+                            if ( $Word && !$Param{UsedWords}{$Word}++ ) {
+                                push @OriginalTranslationStrings, {
+                                    Location => "Ready to adopt classes: $File",
+                                    Source   => $Word,
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+
+            if ( IsHashRefWithData( $Class->{DynamicFields} ) ) {
+                for my $Field ( values $Class->{DynamicFields}->%* ) {
+                    my $Word = $Field->{Label};
+
+                    if ( $Word && !$Param{UsedWords}{$Word}++ ) {
+                        push @OriginalTranslationStrings, {
+                            Location => "Ready to adopt classes: $File",
+                            Source   => $Word,
+                        };
+                    }
+
+                    if ( $Field->{Config}{TranslatableValues} && IsHashRefWithData( $Field->{Config}{PossibleValues} ) ) {
+                        for my $ValWord ( values $Field->{Config}{PossibleValues}->%* ) {
+                            if ( $ValWord && !$Param{UsedWords}{$ValWord}++ ) {
+                                push @OriginalTranslationStrings, {
+                                    Location => "Ready to adopt classes: $File",
+                                    Source   => $ValWord,
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for my $StringData ( sort { $a->{Source} cmp $b->{Source} } @OriginalTranslationStrings ) {
+            push $Param{OriginalTranslationStrings}->@*, $StringData;
+        }
+    }
 
     return 1;
 }

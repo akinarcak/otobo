@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,19 +14,19 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
 
 # CPAN modules
 use Test2::V0;
+use Test2::Tools::Explain;
 
-use Kernel::System::UnitTest::MockTime qw(:all);
-
-# OTOBO modules
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeAddSeconds FixedTimeSet);
 use Kernel::System::UnitTest::RegisterDriver;    # set up $Self and $Kernel::OM
 use Kernel::System::VariableCheck qw(:all);
 
@@ -553,6 +553,7 @@ for my $Test (@Test) {
             Direction => $Test->{Create}->{Direction},
             Status    => $Test->{Stop}->{Status},
         );
+        diag explain( $Test, $CommunicationListAfterStop );
 
         $Existing = IsArrayRefWithData($CommunicationListAfterStop);
 

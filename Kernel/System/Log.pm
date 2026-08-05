@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,10 +28,10 @@ use Carp ();
 use Try::Tiny;
 
 # CPAN modules
-use DateTime 1.08;
-use DateTime::Locale;
+use DateTime 1.08 ();
+use DateTime::Locale ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 # Inform the object manager about the hard dependencies.
 # This module must be discarded when one of the hard dependencies has been discarded.
@@ -92,9 +92,9 @@ sub new {
     # extract some values from the config
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    # Needed for determining the log time. Trust that the OTOBO time zone is set to a sensible value.
+    # Needed for determining the log time. Trust that the CareOnCloud ESM time zone is set to a sensible value.
     # The default, both here and in Framework.xml, is UTC.
-    $Self->{OTOBOTimeZone} = $ConfigObject->Get('OTOBOTimeZone') || 'UTC';
+    $Self->{CareOnCloudTimeZone} = $ConfigObject->Get('CareOnCloudTimeZone') || 'UTC';
 
     # get system id
     my $SystemID = $ConfigObject->Get('SystemID');
@@ -247,12 +247,12 @@ sub Log {
         Line      => $Line1,
     );
 
-    # Get current timestamp while honoring the OTOBO time zone.
+    # Get current timestamp while honoring the CareOnCloud ESM time zone.
     # The reason why Kernel::System::DateTime is not used here, is that there were infinite loops
     # during global destruction.
     # See https://github.com/RotherOSS/otobo/issues/1099
     my $LogTime;
-    if ( $Self->{OTOBOTimeZone} eq 'UTC' ) {
+    if ( $Self->{CareOnCloudTimeZone} eq 'UTC' ) {
 
         # This is the regular case. The value is always in English and not locale dependent.
         # E.g. 'Sat Jul 17 09:25:15 2021'
@@ -260,11 +260,11 @@ sub Log {
     }
     else {
 
-        # honor the non-UTC OTOBO time zone
+        # honor the non-UTC CareOnCloud ESM time zone
 
         # It is not obvious why we can't simply use something like:
         #{
-        #    local $ENV{TZ} = $Self->{OTOBOTimeZone};
+        #    local $ENV{TZ} = $Self->{CareOnCloudTimeZone};
         #    # calling POSIX::tzset() only necessary up to Perl 5.8.9, https://perldoc.perl.org/5.8.9/perldelta
         #    $LogTime = localtime;
         #}
@@ -279,7 +279,7 @@ sub Log {
         # Create object with current date/time and format it.
         $LogTime = try {
             DateTime->now(
-                time_zone => $Self->{OTOBOTimeZone},
+                time_zone => $Self->{CareOnCloudTimeZone},
                 locale    => $Locale,
             )->strftime($Format);
         }
@@ -294,8 +294,12 @@ sub Log {
     # if error, write it to STDERR
     if ( $Priority =~ m/^error/i ) {
 
-        my $Error = sprintf "ERROR: $Self->{LogPrefix} Perl: %vd OS: $^O Time: "
-            . $LogTime . "\n\n", $^V;
+        my $Error = sprintf 'ERROR: %s Perl: %vd OS: %s Time: %s',
+            $Self->{LogPrefix},    # from constructor argument
+            $^V,                   # $PERL_VERSION, the Perl version object
+            $^O,                   # $OSNAME, the operating system
+            $LogTime;              # a string with the current date and time
+        $Error .= "\n\n";
         $Error .= " Message: $Message\n\n";
 
         # More info when we are in a web context.

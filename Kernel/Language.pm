@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,21 +16,30 @@
 
 package Kernel::Language;
 
+use v5.24;
 use strict;
 use warnings;
 
-use Exporter qw(import);
+# use namespace::autoclean; no yet activated as there might be unwanted side effects
+use utf8;
+
+# core modules
+use Exporter    qw(import);
+use File::stat  qw(stat);
+use Digest::MD5 qw(md5_hex);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::DateTime qw(CareOnCloudTimeZoneGet);
+
 our @EXPORT_OK = qw(Translatable);    ## no critic qw(OTOBO::RequireCamelCase)
 
-use File::stat;
-use Digest::MD5;
-
-use Kernel::System::DateTime;
-
-our @ObjectDependencies = (
-    'Kernel::Config',
-    'Kernel::System::Log',
-    'Kernel::System::Main',
+our @ObjectDependencies = qw(
+    Kernel::Config
+    Kernel::System::Log
+    Kernel::System::Main
+    Kernel::System::ReferenceData
 );
 
 =head1 NAME
@@ -48,6 +57,7 @@ All language functions.
 create a language object. Do not use it directly, instead use:
 
     use Kernel::System::ObjectManager;
+
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         'Kernel::Language' => {
             UserLanguage => 'de',
@@ -61,8 +71,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
+    my $Self = bless {%Param}, $Type;
 
     # 0=off; 1=on; 2=get all not translated words; 3=get all requests
     $Self->{Debug} = 0;
@@ -83,7 +92,10 @@ sub new {
     }
 
     # take time zone
-    $Self->{TimeZone} = $Param{UserTimeZone} || $Param{TimeZone} || Kernel::System::DateTime->OTOBOTimeZoneGet();
+    $Self->{TimeZone} = $Param{UserTimeZone} || $Param{TimeZone} || CareOnCloudTimeZoneGet();
+
+    # fetch localization setting
+    $Self->{TimeShowLocalization} = $ConfigObject->Get('TimeShowLocalization') || 0;
 
     # Debug
     if ( $Self->{Debug} > 0 ) {
@@ -233,11 +245,6 @@ sub new {
         }
     }
 
-    # if no return charset is given, use recommended return charset
-    if ( !$Self->{ReturnCharset} ) {
-        $Self->{ReturnCharset} = $Self->GetRecommendedCharset();
-    }
-
     # get source file charset
     # what charset should I use (take it from translation file)!
     if ( $Self->{Charset} && ref $Self->{Charset} eq 'ARRAY' ) {
@@ -250,6 +257,8 @@ sub new {
 =head2 Translatable()
 
 this is a no-op to mark a text as translatable in the Perl code.
+
+Returns the first parameter.
 
 =cut
 
@@ -361,11 +370,12 @@ sub FormatTimeString {
         $ReturnString
             =~ s{(\%B)}{$Self->Translate($MonthAbbr);}egx;
 
-        # output time zone only if it differs from OTOBO' time zone
+        # output time zone only if it differs from CareOnCloud ESM' time zone
         if (
-            $Config ne 'DateFormatShort'
+            $Self->{'TimeShowLocalization'}
+            && $Config ne 'DateFormatShort'
             && $Self->{TimeZone}
-            && $Self->{TimeZone} ne Kernel::System::DateTime->OTOBOTimeZoneGet()
+            && $Self->{TimeZone} ne CareOnCloudTimeZoneGet()
             )
         {
             return $ReturnString . " ($Self->{TimeZone})";
@@ -384,23 +394,6 @@ sub FormatTimeString {
 
     return $String;
 
-}
-
-=head2 GetRecommendedCharset()
-
-DEPRECATED. Don't use this function any more, 'utf-8' is always the internal charset.
-
-Returns the recommended charset for frontend (based on translation
-file or utf-8).
-
-    my $Charset = $LanguageObject->GetRecommendedCharset().
-
-=cut
-
-sub GetRecommendedCharset {
-    my $Self = shift;
-
-    return 'utf-8';
 }
 
 =head2 GetPossibleCharsets()
@@ -567,7 +560,87 @@ sub LanguageChecksum {
         $LanguageString .= $File . $Stat->mtime;
     }
 
-    return Digest::MD5::md5_hex($LanguageString);
+    return md5_hex($LanguageString);
+}
+
+=head2 LanguageList()
+
+This function returns a hash mapping language codes to a label. The label contains the native language name
+and the translation into the user language. This hash is intended for language selection.
+
+    my %Languages = $LanguageObject->LanguageList(
+        WithInProcessIndicator => 1, # 0|1, optional, default is 0, whether (in process) is displayed for sparsely translated languages
+    );
+
+=cut
+
+sub LanguageList {
+    my ( $Self, %Param ) = @_;
+
+    my %Languages;
+    my $ConfigObject        = $Kernel::OM->Get('Kernel::Config');
+    my $ReferenceDataObject = $Kernel::OM->Get('Kernel::System::ReferenceData');
+
+    # get names of languages in English
+    my %DefaultUsedLanguages = ( $ConfigObject->Get('DefaultUsedLanguages') || {} )->%*;
+
+    # get native names of languages
+    my %DefaultUsedLanguagesNative = ( $ConfigObject->Get('DefaultUsedLanguagesNative') || {} )->%*;
+
+    my $InProcessText = $Self->Translate('(in process)');
+
+    LANGUAGEID:
+    for my $LanguageID ( sort keys %DefaultUsedLanguages ) {
+
+        # next language if there is not set any name for current language
+        if ( !$DefaultUsedLanguages{$LanguageID} && !$DefaultUsedLanguagesNative{$LanguageID} ) {
+            next LANGUAGEID;
+        }
+
+        # get texts in native and default language
+        my $Text        = $DefaultUsedLanguagesNative{$LanguageID} || '';
+        my $TextEnglish = $DefaultUsedLanguages{$LanguageID}       || '';
+
+        # translate to current user's language
+        my $TextTranslated;
+        if ( $ConfigObject->Get('ReferenceData::TranslatedLanguageNames') ) {
+            $TextTranslated = $ReferenceDataObject->LanguageCode2Name(
+                LanguageCode => $LanguageID,
+                Language     => $Self->{UserLanguage},
+            );
+        }
+
+        # fall back to the default translation
+        $TextTranslated //= $Self->Translate($TextEnglish);
+
+        if ( $TextTranslated && $TextTranslated ne $Text ) {
+            $Text .= ' - ' . $TextTranslated;
+        }
+
+        # next language if there is neither English nor native name of language set.
+        next LANGUAGEID unless $Text;
+
+        # add the (in process) message if requested
+        if ( $Param{WithInProcessIndicator} ) {
+            my $LanguageObject = Kernel::Language->new(
+                UserLanguage => $LanguageID,
+            );
+
+            next LANGUAGEID unless $LanguageObject;
+
+            my $Completeness = $LanguageObject->{Completeness};
+
+            # mark all languages with < 25% coverage as "in process" (not for en_ variants).
+            if ( defined $Completeness && $Completeness < 0.25 && $LanguageID !~ m{^en_}smx ) {
+                $Text .= ' ' . $InProcessText;
+            }
+        }
+
+        # This will be used in the selection
+        $Languages{$LanguageID} = $Text;
+    }
+
+    return %Languages;
 }
 
 1;

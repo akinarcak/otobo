@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -42,11 +42,35 @@
                     [% Item.StandardResponsesStrg %]
                 </form>
             </li>
+        [% ELSIF Item.DropdownType == 'Version' %]
+            <li>
+                <form title="[% Translate(Item.Name) | html %]" action="[% Env("CGIHandle") %]" method="get" id="[% Item.FormID | html %]">
+                    <input type="hidden" name="Action" value="[% Item.Action | html %]"/>
+                    <input type="hidden" name="TicketID" value="[% Data.TicketID | html %]"/>
+                    <input type="hidden" name="ArticleID" value="[% Data.ArticleID | html %]"/>
+                    [% Item.ArticleVersionStrg %]
+                </form>
+            </li>
         [% END %]
 
     [% ELSIF Item.ItemType == 'Link' %]
         <li>
             <a href="[% IF Item.Link.match('^(?!(mailto)|(http(s)?):)') %][% Env("Baselink") %][% END %][% Item.Link %]" class="[% Item.Class | html %]" [% Item.LinkParam %] title="[% Translate(Item.Description) | html %]">[% Translate(Item.Name) | html %]</a>
+        </li>
+
+    [% ELSIF Item.ItemType == 'FormPost' %]
+        <li>
+            [% # using a form here is necessary to enable the backend to perform a challenge token check on an article action %]
+            <form class="ArticleActionForm" title="[% Translatable(Item.Name) | html %]" action="[% Env("CGIHandle") %]" method="post" id="[% Item.FormID | html %]" enctype="multipart/form-data" class="PreventMultipleSubmits" id="[% Item.FormID | html %]">
+                <input type="hidden" name="Action" value="[% Item.Action | html %]">
+        [% IF Item.Subaction %]
+                <input type="hidden" name="Subaction" value="[% Item.Subaction | html %]">
+        [% END %]
+                <input type="hidden" name="TicketID" value="[% Item.TicketID | html %]">
+                <input type="hidden" name="ArticleID" value="[% Item.ArticleID | html %]">
+
+                <a href="#" class="[% Item.Class | html %]" title="[% Translate(Item.Description) | html %]">[% Translate(Item.Name) | html %]</a>
+            </form>
         </li>
     [% END %]
 

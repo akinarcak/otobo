@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -97,15 +97,15 @@ sub _ReplaceTicketAttributes {
     for my $Attribute ( sort keys %{ $Param{Config} } ) {
 
         # Replace ticket attributes such as
-        # <OTOBO_Ticket_DynamicField_Name1> or <OTOBO_TICKET_DynamicField_Name1>
+        # <CareOnCloud_Ticket_DynamicField_Name1> or <CareOnCloud_TICKET_DynamicField_Name1>
         # or
-        # <OTOBO_TICKET_DynamicField_Name1_Value> or <OTOBO_Ticket_DynamicField_Name1_Value>.
-        # <OTOBO_Ticket_*> is deprecated and should be removed in further versions of OTOBO.
+        # <CareOnCloud_TICKET_DynamicField_Name1_Value> or <CareOnCloud_Ticket_DynamicField_Name1_Value>.
+        # <CareOnCloud_Ticket_*> is deprecated and should be removed in further versions of CareOnCloud ESM.
         my $Count = 0;
         REPLACEMENT:
         while (
             $Param{Config}->{$Attribute}
-            && $Param{Config}->{$Attribute} =~ m{<OTOBO_TICKET_([A-Za-z0-9_]+)>}msxi
+            && $Param{Config}->{$Attribute} =~ m{<CareOnCloud_TICKET_([A-Za-z0-9_\-]+)>}msxi
             && $Count++ < 1000
             )
         {
@@ -131,7 +131,7 @@ sub _ReplaceTicketAttributes {
                 );
 
                 $Param{Config}->{$Attribute}
-                    =~ s{<OTOBO_TICKET_$TicketAttribute>}{$DisplayValueStrg->{Value} // ''}ige;
+                    =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$DisplayValueStrg->{Value} // ''}ige;
 
                 next REPLACEMENT;
             }
@@ -139,6 +139,8 @@ sub _ReplaceTicketAttributes {
                 my $DynamicFieldName = $1;
 
                 $Param{Config}->{$Attribute} = $Param{Ticket}->{"DynamicField_$DynamicFieldName"};
+
+                next REPLACEMENT;
             }
             elsif ( $TicketAttribute =~ m{DynamicField_(\S+)} ) {
                 my $DynamicFieldName = $1;
@@ -155,16 +157,16 @@ sub _ReplaceTicketAttributes {
                 );
 
                 $Param{Config}->{$Attribute}
-                    =~ s{<OTOBO_TICKET_$TicketAttribute>}{$ValueStrg->{Value} // ''}ige;
+                    =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$ValueStrg->{Value} // ''}ige;
 
                 next REPLACEMENT;
             }
 
             # if ticket value is scalar substitute all instances (as strings)
-            # this will allow replacements for "<OTOBO_TICKET_Title> <OTOBO_TICKET_Queue>"
+            # this will allow replacements for "<CareOnCloud_TICKET_Title> <CareOnCloud_TICKET_Queue>"
             if ( !ref $Param{Ticket}->{$TicketAttribute} ) {
                 $Param{Config}->{$Attribute}
-                    =~ s{<OTOBO_TICKET_$TicketAttribute>}{$Param{Ticket}->{$TicketAttribute} // ''}ige;
+                    =~ s{<CareOnCloud_TICKET_$TicketAttribute>}{$Param{Ticket}->{$TicketAttribute} // ''}ige;
             }
             else {
 
@@ -308,12 +310,12 @@ sub _ReplaceAdditionalAttributes {
 
     my $TemplateGeneratorObject = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
 
-    # start replacing of OTOBO smart tags
+    # start replacing of CareOnCloud ESM smart tags
     for my $Attribute ( sort keys %{ $Param{Config} } ) {
 
         my $ConfigValue = $Param{Config}->{$Attribute};
 
-        if ( $ConfigValue && $ConfigValue =~ m{<OTOBO_[A-Za-z0-9_]+(?:\[(?:.+?)\])?>}smxi ) {
+        if ( $ConfigValue && $ConfigValue =~ m{<CareOnCloud_[A-Za-z0-9_]+(?:\[(?:.+?)\])?>}smxi ) {
 
             if ($RichText) {
                 $ConfigValue = $HTMLUtilsObject->ToHTML(
@@ -336,11 +338,10 @@ sub _ReplaceAdditionalAttributes {
                     String => $ConfigValue,
                 );
 
-                # For body, create a completed html doc for correct displaying.
+                # For body, create a completed HTML doc for correct displaying.
                 if ( $Attribute eq 'Body' ) {
                     $ConfigValue = $HTMLUtilsObject->DocumentComplete(
-                        String  => $ConfigValue,
-                        Charset => 'utf-8',
+                        String => $ConfigValue,
                     );
                 }
             }

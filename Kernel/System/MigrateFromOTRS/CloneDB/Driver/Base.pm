@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,20 +16,19 @@
 
 package Kernel::System::MigrateFromOTRS::CloneDB::Driver::Base;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use namespace::autoclean;
 
 # core modules
-use Encode;
-use MIME::Base64;
-use List::Util qw(any none);
-use Fcntl qw(:flock);
+use MIME::Base64 qw(decode_base64 encode_base64);
+use List::Util   qw(any none);
+use Fcntl        qw(:flock);                        ## no perlimports
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -133,7 +132,8 @@ sub SanityChecks {
 
     # check whether the source database type is supported and whether the DBD module can be loaded
     my %DBDModule = (
-        mysql      => 'DBD::mysql',
+        mariadb    => 'DBD::MariaDB',
+        mysql      => 'DBD::MariaDB',
         postgresql => 'DBD::Pg',
         oracle     => 'DBD::Oracle',
     );
@@ -295,7 +295,7 @@ sub RowCount {
 
     my ($NumRows) = $Param{DBObject}->FetchrowArray();
 
-    # Log info to apache error log and OTOBO log (syslog or file)
+    # Log info to apache error log and CareOnCloud ESM log (syslog or file)
     $MigrationBaseObject->MigrationLog(
         String   => "Count of entries in Table $Param{Table}: $NumRows.",
         Priority => "debug",
@@ -350,7 +350,7 @@ sub DataTransfer {
     my ( $Self, %Param ) = @_;    # $Self is  the source db backend
 
     # check needed parameters
-    for my $Needed (qw(OTRSDBObject OTOBODBObject OTOBODBBackend DBInfo)) {
+    for my $Needed (qw(OTRSDBObject CareOnCloudDBObject CareOnCloudDBBackend DBInfo)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -367,7 +367,7 @@ sub DataTransfer {
 
     # Use a locking table for avoiding concurrent migrations.
     # Open for writing as the file usually does not exist yet.
-    # This approach assumes that the the webserver processes are running on a single machine.
+    # This approach assumes that the webserver processes are running on a single machine.
     my $LockFile = join '/', $ConfigObject->Get('Home'), 'var/tmp/migrate_from_otrs.lock';
 
     ## no critic qw(OTOBO::ProhibitLowPrecedenceOps OTOBO::ProhibitOpen InputOutput::RequireBriefOpen)
@@ -397,7 +397,7 @@ sub DataTransfer {
 
     # extract params needed in the first and the following loops
     my $SourceDBObject = $Param{OTRSDBObject};
-    my $TargetDBObject = $Param{OTOBODBObject};
+    my $TargetDBObject = $Param{CareOnCloudDBObject};
 
     # get setup
     my %RenameTables = $MigrationBaseObject->DBRenameTables->%*;
@@ -420,7 +420,7 @@ sub DataTransfer {
             # skip the tables that should not be copied
             if ( $TableIsSkipped{$SourceTable} ) {
 
-                # Log info to apache error log and OTOBO log (syslog or file)
+                # Log info to apache error log and CareOnCloud ESM log (syslog or file)
                 $MigrationBaseObject->MigrationLog(
                     String   => "Skipping table $SourceTable, because it is defined in SkipTables config...",
                     Priority => 'notice',
@@ -435,9 +435,9 @@ sub DataTransfer {
             # Do not migrate tables that are not needed on the target
             if ( !$TargetTableExists{$TargetTable} ) {
 
-                # Log info to apache error log and OTOBO log (syslog or file)
+                # Log info to apache error log and CareOnCloud ESM log (syslog or file)
                 $MigrationBaseObject->MigrationLog(
-                    String   => "Table $SourceTable does not exist in OTOBO.",
+                    String   => "Table $SourceTable does not exist in CareOnCloud ESM.",
                     Priority => 'notice',
                 );
 
@@ -451,20 +451,19 @@ sub DataTransfer {
 
     # Keep track of table attributes which must be base64 encoded or decoded.
     # This conversion of BLOBs is only relevant when DirectBlob settings are different.
+    my $DirectBlobIsDifferent = ( $TargetDBObject->GetDatabaseFunction('DirectBlob') != $SourceDBObject->GetDatabaseFunction('DirectBlob') ) ? 1 : 0;
     my %BlobConversionNeeded;
     my %IsDirectBlobColumn;
-    if ( $TargetDBObject->GetDatabaseFunction('DirectBlob') != $SourceDBObject->GetDatabaseFunction('DirectBlob') ) {
-        for my $Setup ( $MigrationBaseObject->DBDirectBlobColumns ) {
-            $IsDirectBlobColumn{ lc $Setup->{Table} } //= {};
-            $IsDirectBlobColumn{ lc $Setup->{Table} }->{ lc $Setup->{Column} } = 1;
-        }
+    for my $Setup ( $MigrationBaseObject->DBDirectBlobColumns ) {
+        $IsDirectBlobColumn{ lc $Setup->{Table} } //= {};
+        $IsDirectBlobColumn{ lc $Setup->{Table} }->{ lc $Setup->{Column} } = 1;
     }
 
     # extract params needed in the second and the following loops
     my $SourceDBName    = $Param{DBInfo}->{DBName};
-    my $TargetDBBackend = $Param{OTOBODBBackend};
+    my $TargetDBBackend = $Param{CareOnCloudDBBackend};
 
-    # Handle the OTOBO table columns which must be shortened.
+    # Handle the CareOnCloud ESM table columns which must be shortened.
     # Usually because of InnodB max key size in MySQL 5.6 or earlier.
     # Use a driver dependent SUBSTRING function because Oracle is not really conforming to the ANSI SQL standard.
     my $SubstringFunction         = $SourceDBObject->GetDatabaseFunction('Substring');
@@ -535,7 +534,7 @@ sub DataTransfer {
                     next SOURCE_COLUMN;
                 }
 
-                # Get target (OTOBO) column infos
+                # Get target (CareOnCloud ESM) column infos
                 my $TargetColumnInfos = $TargetDBBackend->GetColumnInfos(
                     Table    => $TargetTable,
                     DBName   => $ConfigObject->Get('Database'),
@@ -570,7 +569,7 @@ sub DataTransfer {
                 # We need to shorten that column in that table to 191 chars.
                 $DoShorten = 1;
 
-                # Log info to apache error log and OTOBO log (syslog or file)
+                # Log info to apache error log and CareOnCloud ESM log (syslog or file)
                 $MigrationBaseObject->MigrationLog(
                     String   => "Column $SourceTable.$SourceColumn is shortened to $MaxLengthShortenedColumns chars",
                     Priority => 'notice',
@@ -605,9 +604,9 @@ sub DataTransfer {
         # only relevant when the DirectBlob settings are different and when there are any
         # DirectBlob fields for this table
         $BlobConversionNeeded{$SourceTable} = {};
-        if ( $IsDirectBlobColumn{$SourceTable} ) {
+        if ( $DirectBlobIsDifferent && $IsDirectBlobColumn{$SourceTable} ) {
 
-            # get LONGBLOB fields of the source table as only those are candidates for base63 conversion o
+            # get LONGBLOB fields of the source table as only those are candidates for base64 conversion o
             my $BlobColumnsList = $Self->BlobColumnsList(
                 Table    => $SourceTable,
                 DBName   => $SourceDBName,
@@ -622,7 +621,6 @@ sub DataTransfer {
                 $BlobConversionNeeded{$SourceTable}->{$Column} = 1;
             }
         }
-
     }
 
     # needed for the progress messages emitted by the last two loops
@@ -645,13 +643,13 @@ sub DataTransfer {
                 Type  => 'OTRSMigration',
                 Key   => 'MigrationState',
                 Value => {
-                    Task      => 'OTOBODatabaseMigrate',
+                    Task      => 'CareOnCloudDatabaseMigrate',
                     SubTask   => $ProgressMessage,
                     StartTime => $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch(),
                 },
             );
 
-            # Log info to apache error log and OTOBO log (syslog or file)
+            # Log info to apache error log and CareOnCloud ESM log (syslog or file)
             $MigrationBaseObject->MigrationLog(
                 String   => $ProgressMessage,
                 Priority => 'notice',
@@ -680,13 +678,13 @@ sub DataTransfer {
                     Type  => 'OTRSMigration',
                     Key   => 'MigrationState',
                     Value => {
-                        Task      => 'OTOBODatabaseMigrate',
+                        Task      => 'CareOnCloudDatabaseMigrate',
                         SubTask   => $Message,
                         StartTime => $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch(),
                     },
                 );
 
-                # Log info to apache error log and OTOBO log (syslog or file)
+                # Log info to apache error log and CareOnCloud ESM log (syslog or file)
                 $MigrationBaseObject->MigrationLog(
                     String   => $Message,
                     Priority => 'error',
@@ -741,13 +739,13 @@ sub DataTransfer {
             Type  => 'OTRSMigration',
             Key   => 'MigrationState',
             Value => {
-                Task      => 'OTOBODatabaseMigrate',
+                Task      => 'CareOnCloudDatabaseMigrate',
                 SubTask   => $ProgressMessage,
                 StartTime => $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch(),
             },
         );
 
-        # Log info to apache error log and OTOBO log (syslog or file)
+        # Log info to apache error log and CareOnCloud ESM log (syslog or file)
         $MigrationBaseObject->MigrationLog(
             String   => $ProgressMessage,
             Priority => 'notice',
@@ -769,13 +767,16 @@ sub DataTransfer {
             @SourceColumns = $SourceColumnRef->@*;
         }
 
-        # List of columns for generating INSERT statements.
-        # The $TargetColumnsString is simply the list of the column names.
-        # Source and target columns can be different when there is column shortening.
-        # In this case some source columns are wrapped in SUBSTRING calls.
-        my $TargetColumnsString = join ', ', @SourceColumns;
+        # Declare LONGBLOB colums a binary.
+        # More precisely, only the LONGBLOB columns that do not hold UTF-8 data.
+        my @BindAsBinary;
+        if ( $IsDirectBlobColumn{$SourceTable} ) {
+            @BindAsBinary =
+                map { $IsDirectBlobColumn{ lc $SourceTable }->{ lc $_ } ? 1 : 0 }
+                @SourceColumns;
+        }
 
-        # If we have extra columns in OTRS table we need to add the column to OTOBO.
+        # If we have extra columns in OTRS table we need to add the column to CareOnCloud ESM.
         {
             my $TargetColumnRef = $TargetDBBackend->ColumnsList(
                 Table    => $TargetTable,
@@ -813,6 +814,12 @@ sub DataTransfer {
             # assemble the relevant SQL
             my ( $SelectSQL, $InsertSQL );
             {
+                # List of columns for generating INSERT statements.
+                # The $TargetColumnsString is simply the list of the column names.
+                # Source and target columns can be of different size when there is column shortening.
+                # In this case some source columns are wrapped in SUBSTRING calls.
+                my $TargetColumnsString = join ', ', @SourceColumns;
+
                 my $BindString = join ', ', map {'?'} @SourceColumns;
                 $InsertSQL = "INSERT INTO $TargetTable ($TargetColumnsString) VALUES ($BindString)";
 
@@ -864,14 +871,25 @@ sub DataTransfer {
                     }
                 }
 
+                # turn off UTF-8 flag for the LONGBLOB columns
+                if ( $TargetDBObject->GetDatabaseFunction('DirectBlob') ) {
+                    COLUMN_COUNTER:
+                    for my $ColumnCounter ( 1 .. $#SourceColumns ) {
+                        next COLUMN_COUNTER unless $BindAsBinary[$ColumnCounter];
+
+                        $EncodeObject->EncodeOutput( \$Row[$ColumnCounter] );
+                    }
+                }
+
                 my $Success = $TargetDBObject->Do(
-                    SQL  => $InsertSQL,
-                    Bind => [ \(@Row) ],    # reference to an array of references
+                    SQL          => $InsertSQL,
+                    Bind         => [ \(@Row) ],      # reference to an array of references
+                    BindAsBinary => \@BindAsBinary,
                 );
 
                 if ( !$Success ) {
 
-                    # Log info to apache error log and OTOBO log (syslog or file)
+                    # Log info to apache error log and CareOnCloud ESM log (syslog or file)
                     my $Message = "Could not insert data: Table: $SourceTable - id:$Row[0].";
                     $MigrationBaseObject->MigrationLog(
                         String   => $Message,

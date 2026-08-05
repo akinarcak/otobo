@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -37,8 +37,6 @@ sub new {
 
 sub Run {
     my ( $Self, %Param ) = @_;
-
-    my $Output;
 
     # get param object
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
@@ -1027,7 +1025,7 @@ sub Run {
                 $Param{PluginData}->{$PluginKey} = [];
                 for my $LinkID ( sort keys %{$LinkList} ) {
                     push @{ $Param{PluginData}->{$PluginKey} }, $LinkList->{$LinkID};
-                    push @LinkArray, $LinkList->{$LinkID}->{LinkID};
+                    push @LinkArray,                            $LinkList->{$LinkID}->{LinkID};
                 }
 
                 $Param{PluginList}->{$PluginKey}->{LinkList} = $LayoutObject->JSONEncode(
@@ -1083,6 +1081,7 @@ sub Run {
             },
             AJAX => 1,
         );
+
         return $LayoutObject->Attachment(
             NoCache     => 1,
             ContentType => 'text/html',
@@ -1234,7 +1233,7 @@ sub Run {
                     },
                 );
                 if ( $Self->{UserTimeZone} ) {
-                    $StartTimeObject->ToOTOBOTimeZone();
+                    $StartTimeObject->ToCareOnCloudTimeZone();
                 }
                 $GetParam{StartTime} = $StartTimeObject->ToString();
             }
@@ -1265,7 +1264,7 @@ sub Run {
                     },
                 );
                 if ( $Self->{UserTimeZone} ) {
-                    $EndTimeObject->ToOTOBOTimeZone();
+                    $EndTimeObject->ToCareOnCloudTimeZone();
                 }
 
                 # Get already calculated local start time.
@@ -1442,7 +1441,7 @@ sub Run {
                 );
 
                 if ( $Self->{UserTimeZone} ) {
-                    $NotificationCustomDateTimeObject->ToOTOBOTimeZone();
+                    $NotificationCustomDateTimeObject->ToCareOnCloudTimeZone();
                 }
 
                 $GetParam{NotificationCustomDateTime} = $NotificationCustomDateTimeObject->ToString();

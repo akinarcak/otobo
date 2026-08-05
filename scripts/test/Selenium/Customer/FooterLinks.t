@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # set up $Self and $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
@@ -43,8 +43,8 @@ $Selenium->RunTest(
         my $ScriptAlias = $Kernel::OM->Get('Kernel::Config')->Get('ScriptAlias');
 
         my @ExpectedLinks = (
-            q{https://otobo.de},    # powered by Rother OSS © 2019-2020
-            q{https://otobo.de},    # OTOBO logo
+            q{https://otobo.io},    # powered by Rother OSS © 2019-2020
+            q{https://otobo.io},    # OTOBO logo
         );
 
         # look for the footer links in the customer and in the public interface
@@ -58,7 +58,7 @@ $Selenium->RunTest(
             # Looks like execute_script() can't return data structure, so join the links for now.
             # NOTE: The map would be nicer with JS arrow functions.
             # Use 🎋 - U+1F38B - TANABATA TREE as seperator just because why not.
-            my $LinksStr = $Selenium->execute_script( <<'END_JS' );
+            my $LinksStr = $Selenium->execute_script(<<'END_JS');
     return $('#oooFooter a').map(
         function() {
             return $(this).attr('href');

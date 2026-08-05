@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -61,12 +61,12 @@ sub Run {
     if ( $TemplateName =~ m {ProcessManagement} ) {
 
         # Define SysConfig key to store the dynamic field names
-        my $ConfigKey = "OTOBOCommunity::DynamicFieldDB::$Self->{SessionID}::ProcessManagement";
+        my $ConfigKey = "CareOnCloudCommunity::DynamicFieldDB::$Self->{SessionID}::ProcessManagement";
 
         if ( $TemplateName eq 'ProcessManagement/DynamicField' ) {
 
             # Extract dynamic field name from the HTML DOM (use array form with RegEx capturing groups)
-            my ($DynamicFieldName) = ${ $Param{Data} } =~ m{\s+ <div [ ] class="Row [ ] Row_DynamicField_([a-zA-Z\d]+)">}msx;
+            my ($DynamicFieldName) = ${ $Param{Data} } =~ m{\s+ <div [ ] class="Row [ ] Row_DynamicField_([a-zA-Z\d\-]+)">}msx;
 
             if ($DynamicFieldName) {
 
@@ -131,10 +131,10 @@ sub Run {
 
     # Add a hidden input containing DynamicField names.
     my $Search  = '(\s+<input type="hidden" name="Action")';
-    my $Replace = << "END";
-\n<!--Start OTOBOCommunity-->
+    my $Replace = <<"END";
+\n<!--Start CareOnCloudCommunity-->
 <input type="hidden" name="DynamicFieldNamesStrg" id="DynamicFieldNamesStrg" value="$DynamicFieldNamesStrg" />
-<!--End OTOBOCommunity-->
+<!--End CareOnCloudCommunity-->
 END
 
     # For process management we need to add the hidden input before the closure of the field set.

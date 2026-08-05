@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
-    <Setting Name="Ticket::EventModulePost###9900-GenericInterface" Required="0" Valid="1">
+<careoncloud_config version="2.0" init="Application">
+    <Setting Name="Ticket::EventModulePost###8000-GenericInterface" Required="0" Valid="1">
         <Description Translatable="1">Performs the configured action for each event (as an Invoker) for each configured web service.</Description>
         <Navigation>Core::Event::Ticket</Navigation>
         <Value>
@@ -11,7 +11,7 @@
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="Package::EventModulePost###9900-GenericInterface" Required="0" Valid="1">
+    <Setting Name="Package::EventModulePost###8000-GenericInterface" Required="0" Valid="1">
         <Description Translatable="1">Performs the configured action for each event (as an Invoker) for each configured web service.</Description>
         <Navigation>Core::Event::Package</Navigation>
         <Value>
@@ -22,7 +22,7 @@
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="LinkObject::EventModulePost###9900-GenericInterface" Required="0" Valid="1">
+    <Setting Name="LinkObject::EventModulePost###8000-GenericInterface" Required="0" Valid="1">
         <Description Translatable="1">Performs the configured action for each event (as an Invoker) for each configured web service.</Description>
         <Navigation>Core::Event::LinkObject</Navigation>
         <Value>
@@ -33,7 +33,7 @@
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="CustomerCompany::EventModulePost###9900-GenericInterface" Required="0" Valid="1">
+    <Setting Name="CustomerCompany::EventModulePost###8000-GenericInterface" Required="0" Valid="1">
         <Description Translatable="1">Performs the configured action for each event (as an Invoker) for each configured web service.</Description>
         <Navigation>Core::Event::CustomerCompany</Navigation>
         <Value>
@@ -44,7 +44,7 @@
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="CustomerUser::EventModulePost###9900-GenericInterface" Required="0" Valid="1">
+    <Setting Name="CustomerUser::EventModulePost###8000-GenericInterface" Required="0" Valid="1">
         <Description Translatable="1">Performs the configured action for each event (as an Invoker) for each configured web service.</Description>
         <Navigation>Core::Event::CustomerUser</Navigation>
         <Value>
@@ -55,7 +55,7 @@
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="Queue::EventModulePost###9900-GenericInterface" Required="0" Valid="1">
+    <Setting Name="Queue::EventModulePost###8000-GenericInterface" Required="0" Valid="1">
         <Description Translatable="1">Performs the configured action for each event (as an Invoker) for each configured web service.</Description>
         <Navigation>Core::Event::Queue</Navigation>
         <Value>
@@ -66,7 +66,7 @@
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="DynamicField::EventModulePost###9900-GenericInterface" Required="0" Valid="1">
+    <Setting Name="DynamicField::EventModulePost###8000-GenericInterface" Required="0" Valid="1">
         <Description Translatable="1">Performs the configured action for each event (as an Invoker) for each configured web service.</Description>
         <Navigation>Core::Event::DynamicField</Navigation>
         <Value>
@@ -610,11 +610,46 @@
                 <Item Key="CSS">
                     <Array>
                         <Item>Core.Agent.Admin.GenericInterface.css</Item>
+                        <Item>Core.CodeMirrorEditor.css</Item>
+                        <Item>thirdparty/codemirror-5.65.20/lib/codemirror.css</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/hint/show-hint.css</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/foldgutter.css</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/dialog/dialog.css</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/display/fullscreen.css</Item>
                     </Array>
                 </Item>
                 <Item Key="JavaScript">
                     <Array>
                         <Item>Core.Agent.Admin.GenericInterfaceMappingXSLT.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/lib/codemirror.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/hint/xml-hint.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/mode/htmlmixed/htmlmixed.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/hint/show-hint.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/xml-fold.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/edit/matchtags.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/edit/matchbrackets.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/edit/closetag.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/edit/closebrackets.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/search/searchcursor.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/search/search.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/foldcode.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/edit/trailingspace.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/selection/selection-pointer.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/mode/javascript/javascript.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/mode/css/css.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/mode/xml/xml.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/foldgutter.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/brace-fold.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/xml-fold.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/indent-fold.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/fold/comment-fold.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/comment/comment.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/comment/continuecomment.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/dialog/dialog.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/search/jump-to-line.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/hint/html-hint.js</Item>
+                        <Item>thirdparty/codemirror-5.65.20/addon/display/fullscreen.js</Item>
+                        <Item>Core.UI.CodeMirrorEditor.js</Item>
                     </Array>
                 </Item>
             </Hash>
@@ -767,6 +802,13 @@
         <Navigation>GenericInterface::Operation::TicketUpdate</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">auto follow up</Item>
+        </Value>
+    </Setting>
+    <Setting Name="GenericInterface::Operation::TicketUpdate###ExternalIdentifierDynamicField" Required="0" Valid="0">
+        <Description Translatable="1">Defines the dynamic field to identify tickets by for this operation. Please put in the field name only without the 'DynamicField_' prefix.</Description>
+        <Navigation>GenericInterface::Operation::TicketUpdate</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex=""></Item>
         </Value>
     </Setting>
     <Setting Name="GenericInterface::Operation::TicketSearch###SearchLimit" Required="1" Valid="1">
@@ -992,7 +1034,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">GenericInterface Invoker GUI</Item>
                     <Item Key="NavBarName"></Item>
                 </Hash>
@@ -1155,4 +1197,4 @@
             </Hash>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

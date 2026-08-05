@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -38,7 +38,7 @@ Core.Form = (function (Namespace) {
             $TestForm.append('<select id="ObjectEight" name="ObjectEight"><option value="1">EightOne</option><option value="2">EightTwo</option></select>');
             $TestForm.append('<button value="ObjectNine" type="submit" id="ObjectNine">ObjectNine</button>');
             $TestForm.append('<button value="ObjectTen" type="button" id="ObjectTen">ObjectTen</button>');
-            $TestForm.append('<button value="ObjectTen" type="button" disabled="disabled" data-initially-disabled="disabled" id="ObjectTen">ObjectTen</button>');
+            $TestForm.append('<button value="ObjectTen" type="button" disabled data-initially-disabled="disabled" id="ObjectTen">ObjectTen</button>');
             $TestForm.append('<input type="checkbox" name="ItemsSelected" id="SelectAllItemsSelected"  value="" />');
             $TestForm.append('<input type="checkbox" name="ItemsSelected" id="CheckboxOne" value="CheckboxOne" />');
             $TestForm.append('<input type="checkbox" name="ItemsSelected" id="CheckboxTwo" value="CheckboxTwo" />');

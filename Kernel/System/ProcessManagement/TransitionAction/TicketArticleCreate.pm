@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -309,7 +309,7 @@ sub Run {
 
     # Convert DynamicField value to HTML string, see bug#14229.
     my $HTMLUtilsObject = $Kernel::OM->Get('Kernel::System::HTMLUtils');
-    if ( $Param{Config}->{Body} =~ /OTOBO_TICKET_DynamicField_/ ) {
+    if ( $Param{Config}->{Body} =~ /CareOnCloud_TICKET_DynamicField_/ ) {
         MATCH:
         for my $Match ( sort keys %{ $Param{Ticket} } ) {
             if ( $Match =~ m/DynamicField_(.*)/ && $Param{Ticket}->{$Match} ) {
@@ -324,7 +324,7 @@ sub Run {
                     Behavior           => 'IsHTMLContent',
                 );
 
-                # Avoid duble conversion to HTML for dynamic fields with HTML content.
+                # Avoid double conversion to HTML for dynamic fields with HTML content.
                 next MATCH if $IsHTMLContent;
                 $Param{Ticket}->{$Match} = $HTMLUtilsObject->ToHTML(
                     String => $Param{Ticket}->{$Match},

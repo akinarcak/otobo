@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,14 +28,14 @@ my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
 my $DBObject      = $Kernel::OM->Get('Kernel::System::DB');
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
-# get OTOBO Version
-my $OTOBOVersion = $ConfigObject->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloudVersion = $ConfigObject->Get('Version');
 
 # leave only major and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $Home = $ConfigObject->Get('Home');
 
@@ -44,17 +44,17 @@ my $TmpDir = $ConfigObject->Get('TempDir');
 
 # install package normally
 my $MergeOne = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>MergeOne</Name>
   <Version>2.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2012-04-28 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
   <ModuleRequired Version="1.112">Encode</ModuleRequired>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2012-05-02 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
@@ -62,7 +62,7 @@ my $MergeOne = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="DeleteMe" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install package using package manager API
@@ -95,23 +95,23 @@ for my $File (qw( Test var/Test DeleteMe)) {
 }
 
 my $MainPackageOne = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>TestMainPackage</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
-    <URL>https://otobo.de/</URL>
+    <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
     <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
     <ModuleRequired Version="1.112">Encode</ModuleRequired>
-    <Framework>' . $OTOBOVersion . '</Framework>
+    <Framework>' . $CareOnCloudVersion . '</Framework>
     <BuildDate>2005-11-10 21:17:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
-    <File Location="bin/otobo.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
+    <File Location="bin/careoncloud.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
     </Filelist>
     <PackageMerge Name="MergeOne" TargetVersion="2.0.0">
       <DatabaseUpgrade Type="merge">
@@ -121,7 +121,7 @@ my $MainPackageOne = '<?xml version="1.0" encoding="utf-8" ?>
           </TableCreate>
       </DatabaseUpgrade>
     </PackageMerge>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install main package where the Test package was merged
@@ -148,23 +148,23 @@ $Self->True(
 );
 
 my $MainPackageTwo = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>TestMainPackage</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
-    <URL>https://otobo.de/</URL>
+    <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
     <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
     <ModuleRequired Version="1.112">Encode</ModuleRequired>
-    <Framework>' . $OTOBOVersion . '</Framework>
+    <Framework>' . $CareOnCloudVersion . '</Framework>
     <BuildDate>2005-11-10 21:17:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
-    <File Location="bin/otobo.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
+    <File Location="bin/careoncloud.CheckDB.pl" Permission="755" Encode="Base64">aGVsbG8K</File>
     </Filelist>
     <PackageMerge Name="MergeOne" TargetVersion="2.0.1">
       <DatabaseUpgrade Type="merge" Version="2.0.2">
@@ -208,7 +208,7 @@ my $MainPackageTwo = '<?xml version="1.0" encoding="utf-8" ?>
     <DatabaseUninstall Type="post">
       <TableDrop Name="merge_package"/>
     </DatabaseUninstall>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install main package where the Test package was merged
@@ -244,7 +244,7 @@ for my $File (qw( Delete DeleteMe )) {
 }
 
 # check that the framework file still exists including the .save file
-for my $File (qw( bin/otobo.CheckDB.pl )) {
+for my $File (qw( bin/careoncloud.CheckDB.pl )) {
     my $RealFile = $Home . '/' . $File;
     $RealFile =~ s/\/\//\//g;
     $Self->True(
@@ -366,32 +366,32 @@ $PackageObject->PackageUninstall( String => $MainPackageThree );
 
 # define package for merging
 my $MergeThree = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>MergeThree</Name>
   <Version>3.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2014-05-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>
     <File Location="DeleteMePlease" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $MainPackageFour = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
     <Name>TestMainPackageFour</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
-    <URL>https://otobo.de/</URL>
+    <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
     <ChangeLog>2014-04-28 New package (some test &lt; &gt; &amp;).</ChangeLog>
     <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
-    <Framework>' . $OTOBOVersion . '</Framework>
+    <Framework>' . $CareOnCloudVersion . '</Framework>
     <BuildDate>2014-04-28 16:16:16</BuildDate>
     <BuildHost>yourhost.example.com</BuildHost>
     <Filelist>
@@ -425,7 +425,7 @@ my $MainPackageFour = '<?xml version="1.0" encoding="utf-8" ?>
             Content  => \$Content,
         );
     ]]></CodeInstall>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageMergeSection = '<PackageMerge Name="MergeThree" TargetVersion="3.0.2"></PackageMerge>';
@@ -649,20 +649,20 @@ for my $Test (@Tests) {
 
 # define initial package
 my $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>PackageFour</Name>
   <Version>4.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2014-05-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>
     <File Location="DeleteMePlease" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # install predefined package
@@ -693,14 +693,14 @@ $Self->True(
 );
 
 $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>PackageFour</Name>
   <Version>4.0.2</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">The third test package.</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2014-09-02 17:59:59</BuildDate>
   <BuildHost>myhost.example.com</BuildHost>
   <Filelist>
@@ -728,7 +728,7 @@ $PackageFour = '<?xml version="1.0" encoding="utf-8" ?>
             Content  => \$Content,
         );
   ]]></CodeUpgrade>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageUpgrade = $PackageObject->PackageUpgrade( String => $PackageFour );

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,13 +18,20 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+use Digest::MD5 qw(md5_hex);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(
+    FixedTimeAddSeconds
+    FixedTimeSet
+    FixedTimeUnset
+);
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 
 our $Self;
-
-use Digest::MD5 qw(md5_hex);
 
 # get needed objects
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -71,7 +78,6 @@ for my $Module (qw(DB FS)) {
     my $Content = ${$ContentRef};
     $EncodeObject->EncodeOutput( \$Content );
 
-    my $MD5         = md5_hex($Content);
     my $ContentID   = undef;
     my $Disposition = 'attachment';
 
@@ -103,14 +109,14 @@ for my $Module (qw(DB FS)) {
 
     $Self->True(
         scalar @Data,
-        "#$Module - FormIDGetAllFilesData() check if formid is present",
+        "#$Module - FormIDGetAllFilesData() check if form id is present",
     );
 
     @Data = $UploadCacheObject->FormIDGetAllFilesMeta( FormID => $FormID );
 
     $Self->True(
         scalar @Data,
-        "#$Module - FormIDGetAllFilesMeta() check if formid is present",
+        "#$Module - FormIDGetAllFilesMeta() check if form id is present",
     );
 
     # set fixed time
@@ -133,7 +139,7 @@ for my $Module (qw(DB FS)) {
 
     $Self->False(
         scalar @Data,
-        "#$Module - FormIDGetAllFilesData() check if formid is absent",
+        "#$Module - FormIDGetAllFilesData() check if form id is absent",
     );
 
     @Data = $UploadCacheObject->FormIDGetAllFilesMeta(
@@ -142,7 +148,7 @@ for my $Module (qw(DB FS)) {
 
     $Self->False(
         scalar @Data,
-        "#$Module - FormIDGetAllFilesMeta() check if formid is absent",
+        "#$Module - FormIDGetAllFilesMeta() check if form id is absent",
     );
 
     # unset fixed time

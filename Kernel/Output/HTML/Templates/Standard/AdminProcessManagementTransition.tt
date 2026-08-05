@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@
 [% RenderBlockEnd("ClosePopup") %]
 [% RenderBlockStart("GoBack") %]
         <p>
-            <a class="GoBack" href="[% Env("Baselink") %]Action=[% Data.Action | uri %];Subaction=[% Data.Subaction | uri %];ID=[% Data.ID | uri %];EntityID=[% Data.EntityID | uri %];StartActivityID=[% Data.StartActivityID | uri %]">[% Translate("Go Back") | html %]</a>
+            <a class="GoBack" href="[% Env("Baselink") %]Action=[% Data.Action | uri %];Subaction=[% Data.Subaction | uri %];ID=[% Data.ID | uri %];EntityID=[% Data.EntityID | uri %];ProcessEntityID=[% Data.ProcessEntityID | uri %];StartActivityID=[% Data.StartActivityID | uri %]">[% Translate("Go Back") | html %]</a>
         </p>
 [% RenderBlockEnd("GoBack") %]
     </div>
@@ -35,15 +35,17 @@
                 <input type="hidden" name="Subaction" value="Transition[% Data.Action | html %]Action"/>
                 <input type="hidden" name="EntityID" value="[% Data.EntityID | html %]"/>
                 <input type="hidden" name="ID" value="[% Data.ID | html %]"/>
+                <input type="hidden" name="ProcessEntityID" value="[% Data.ProcessEntityID | html %]"/>
                 <input type="hidden" name="ActivityDialogs" value=""/>
                 <input type="hidden" name="ConditionConfig" value=""/>
                 <input type="hidden" name="PopupRedirect" value="" id="PopupRedirect"/>
                 <input type="hidden" name="PopupRedirectID" value="" id="PopupRedirectID"/>
                 <input type="hidden" name="PopupRedirectEntityID" value="" id="PopupRedirectEntityID"/>
+                <input type="hidden" name="PopupRedirectProcessEntityID" value="" id="PopupRedirectProcessEntityID"/>
 
 [% RenderBlockStart("EditWarning") %]
                 <div class="WidgetSimple Expanded WidgetNotice">
-                    <div class="Content">[% Translate("Please note that changing this transition will affect the following processes") | html %]: [% Data.ProcessList | html %]</div>
+                    <div class="Content">[% Translate("Please note that changing this transition will affect the following processes:") | html %] [% Data.ProcessList | html %]</div>
                 </div>
 [% RenderBlockEnd("EditWarning") %]
 
@@ -64,6 +66,23 @@
                                 </div>
                                 <div id="NameServerError" class="TooltipErrorMessage">
                                     <p>[% Translate("This field is required.") | html %]</p>
+                                </div>
+                            </div>
+                            <div class="Clear"></div>
+
+[% RenderBlockStart("NamespaceSelection") %]
+                            <label for="Namespace">[% Translate("Namespace") | html %]:</label>
+                            <div class="Field">
+                                [% Data.NamespaceSelectionHTML %]
+                            </div>
+                            <div class="Clear"></div>
+[% RenderBlockEnd("NamespaceSelection") %]
+
+                            <label for="Global">[% Translate("Global") | html %]:</label>
+                            <div class="Field">
+                                <input type="checkbox" name="Global" id="Global" value="1" class="[% Data.GlobalServerError | html %]" [% Data.Global | html %] />
+                                <div id="GlobalServerError" class="TooltipErrorMessage">
+                                    <p>[% Data.GlobalServerErrorMessage | html %]</p>
                                 </div>
                             </div>
                             <div class="Clear"></div>
@@ -292,7 +311,126 @@
                 </fieldset>
             </div>
         </div>
-    </div>
+        <div class="WidgetSimple Collapsed">
+            <div class="Header">
+                <div class="WidgetAction Toggle">
+                    <a href="#" title="[% Translate("Toggle this widget") | html %]">
+                        <i class="fa fa-caret-right"></i>
+                        <i class="fa fa-caret-down"></i>
+                    </a>
+                </div>
+
+                <h2>
+                    [% Translate('Transition Reference for "Fields" Settings') | html %]
+                </h2>
+            </div>
+
+            <div class="Content">
+                <dl>
+
+                    <dt>[% Translate("Name") | html %]:</dt>
+                    <dd>
+                        [% Translate('Name of the ticket attribute that should be used for validation. In general, all attributes returned by the TicketGet function can be used.') | html %]
+                    </dd>
+
+                    <dt>[% Translate("Type") | html %]:</dt>
+                    <dd>
+
+                        <p>
+                            [% Translate('There are several possibilities to validate whether this transition is valid.') | html %]
+                        </p>
+
+                        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+                            <tr>
+                                <td style="width:200px; vertical-align:top; padding:6px 12px 6px 0;">
+                                    <strong>"[% Translate('Exact match') | html %]"</strong>
+                                </td>
+                                <td style="padding:6px 0;">
+                                    [% Translate('Value must exactly match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must exactly match the string specified in "Value".') | html %]
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="vertical-align:top; padding:6px 12px 6px 0;">
+                                    <strong>"[% Translate('Exact match - all') | html %]"</strong>
+                                </td>
+                                <td style="padding:6px 0;">
+                                    [% Translate('In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must exactly match the string specified in "Value".') | html %]
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="vertical-align:top; padding:6px 12px 6px 0;">
+                                    <strong>"[% Translate('Exact match - negated') | html %]"</strong>
+                                </td>
+                                <td style="padding:6px 0;">
+                                    [% Translate('Value must not match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the string specified in "Value".') | html %]
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="vertical-align:top; padding:6px 12px 6px 0;">
+                                    <strong>"[% Translate('Regular Expression') | html %]"</strong>
+                                </td>
+                                <td style="padding:6px 0;">
+                                    [% Translate('Value must contain a matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must match the regular expression specified in "Value".') | html %]
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="vertical-align:top; padding:6px 12px 6px 0;">
+                                    <strong>"[% Translate('Regular Expression - all') | html %]"</strong>
+                                </td>
+                                <td style="padding:6px 0;">
+                                    [% Translate('In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must match the regular expression specified in "Value".') | html %]
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="vertical-align:top; padding:6px 12px 6px 0;">
+                                    <strong>"[% Translate('Regular Expression - negated') | html %]"</strong>
+                                </td>
+                                <td style="padding:6px 0;">
+                                    [% Translate('Value must contain a non-matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the regular expression specified in "Value".') | html %]
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="vertical-align:top; padding:6px 12px 6px 0;">
+                                    <strong>"[% Translate('Transition validation module') | html %]"</strong>
+                                </td>
+                                <td style="padding:6px 0;">
+                                    [% Translate('"Name" is currently irrelevant, "Value" must contain the path to the module, usually Kernel::System::Process::Transition::<TA_Name>.') | html %]
+                                </td>
+                            </tr>
+                        </table>
+
+                    </dd>
+
+                    <dt>[% Translate("Value") | html %]:</dt>
+                    <dd>
+                        [% Translate("Value must always contain a string or a regular expression used for comparison.") | html %]
+                    </dd>
+
+                    <dt>[% Translate("Examples") | html %]:</dt>
+                    <dd>
+                        <table style="width:100%; border-collapse:collapse; margin-top:1px;">
+                            <tr>
+                                <td style="padding:6px 0;">
+                                    [% Translate('The process ticket should move to the next process step as soon as a status containing "closed" in its name is set. Therefore, configure Name="State", Type="Regular Expression" and Value="closed" (or the long form "^.*closed.*$").') | html %]
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 0;">
+                                    [% Translate('If a dynamic field should be used, configure Name="DynamicField_<FieldName>". To access a field inside a dynamic field of type "Set", the following syntax can be used: ') | html %] <strong>"DynamicField_&lt;FieldNameSet&gt;::&lt;DynamicFieldName&gt;"</strong>.
+                                </td>
+                            </tr>
+                        </table>
+                    </dd>
+
+                </dl>
+            </div>
+        </div>
     <div class="Footer">
         <button class="Primary CallForAction" id="Submit" title="[% Translate("Save") | html %]" type="submit" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
     </div>

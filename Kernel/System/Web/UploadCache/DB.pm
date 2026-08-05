@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,13 +16,21 @@
 
 package Kernel::System::Web::UploadCache::DB;
 
+use v5.24;
 use strict;
 use warnings;
 
-use MIME::Base64;
+# core modules
+use List::Util   qw(sum);
+use MIME::Base64 qw(decode_base64 encode_base64);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
+    'Kernel::Output::HTML::Layout',
     'Kernel::System::DB',
     'Kernel::System::Encode',
     'Kernel::System::Log',
@@ -39,13 +47,6 @@ sub new {
     return $Self;
 }
 
-sub FormIDCreate {
-    my ( $Self, %Param ) = @_;
-
-    # return requested form id
-    return time() . '.' . rand(12341241);
-}
-
 sub FormIDRemove {
     my ( $Self, %Param ) = @_;
 
@@ -59,11 +60,15 @@ sub FormIDRemove {
         }
     }
 
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $SessionID    = $LayoutObject->{SessionID};
+    my $FormID       = $Param{FormID} . '.' . $SessionID;
+
     return if !$Kernel::OM->Get('Kernel::System::DB')->Do(
         SQL => '
             DELETE FROM web_upload_cache
             WHERE form_id = ?',
-        Bind => [ \$Param{FormID} ],
+        Bind => [ \$FormID ],
     );
 
     return 1;
@@ -82,19 +87,51 @@ sub FormIDAddFile {
         }
     }
 
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $SessionID    = $LayoutObject->{SessionID};
+    my $FormID       = $Param{FormID} . '.' . $SessionID;
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
     $Param{Content} = '' if !defined( $Param{Content} );
 
     # get file size
     $Param{Filesize} = bytes::length( $Param{Content} );
 
+    # perform file size check
+    {
+        my $WebMaxFileUpload = $ConfigObject->Get('WebMaxFileUpload');
+
+        # get size of already uploaded file
+        my $Data = $Self->FormIDGetAllFilesMeta(
+            FormID => $Param{FormID},
+        ) || ();
+
+        # calculate space used within this form
+        my $SpaceTaken = ( sum( map { $_->{Filesize} } $Data->@* ) ) // 0;
+
+        if ( ( $SpaceTaken + $Param{Filesize} ) > $WebMaxFileUpload ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Upload of file $Param{Filename} exceeds WebMaxFileUpload limit!"
+            );
+            return;
+        }
+    }
+
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     # encode attachment if it's a postgresql backend!!!
-    if ( !$DBObject->GetDatabaseFunction('DirectBlob') ) {
+    my %ExtraDoParams;
+    if ( $DBObject->GetDatabaseFunction('DirectBlob') ) {
 
+        # Make sure that the content is passed as a byte array and is bound as binary
         $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Param{Content} );
-
+        $ExtraDoParams{BindAsBinary} = [ 0, 0, 0, 0, 1, 0, 0, 0 ];
+    }
+    else {
+        $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Param{Content} );
         $Param{Content} = encode_base64( $Param{Content} );
     }
 
@@ -104,7 +141,7 @@ sub FormIDAddFile {
     if ( !$ContentID && lc $Disposition eq 'inline' ) {
 
         my $Random = rand 999999;
-        my $FQDN   = $Kernel::OM->Get('Kernel::Config')->Get('FQDN');
+        my $FQDN   = $ConfigObject->Get('FQDN');
 
         $ContentID = "$Disposition$Random.$Param{FormID}\@$FQDN";
     }
@@ -112,15 +149,16 @@ sub FormIDAddFile {
     # write attachment to db
     my $Time = time();
 
-    return if !$DBObject->Do(
+    return unless $DBObject->Do(
         SQL => '
             INSERT INTO web_upload_cache (form_id, filename, content_type, content_size, content,
                 create_time_unix, content_id, disposition)
             VALUES  (?, ?, ?, ?, ?, ?, ?, ?)',
         Bind => [
-            \$Param{FormID},  \$Param{Filename}, \$Param{ContentType}, \$Param{Filesize},
+            \$FormID,         \$Param{Filename}, \$Param{ContentType}, \$Param{Filesize},
             \$Param{Content}, \$Time,            \$ContentID,          \$Param{Disposition}
         ],
+        %ExtraDoParams,
     );
 
     return 1;
@@ -139,6 +177,10 @@ sub FormIDRemoveFile {
         }
     }
 
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $SessionID    = $LayoutObject->{SessionID};
+    my $FormID       = $Param{FormID} . '.' . $SessionID;
+
     my @Index = @{ $Self->FormIDGetAllFilesMeta(%Param) };
 
     # finish if files have been already removed by other process
@@ -152,7 +194,7 @@ sub FormIDRemoveFile {
             DELETE FROM web_upload_cache
             WHERE form_id = ?
                 AND filename = ?',
-        Bind => [ \$Param{FormID}, \$Param{Filename} ],
+        Bind => [ \$FormID, \$Param{Filename} ],
     );
 
     return 1;
@@ -173,6 +215,10 @@ sub FormIDGetAllFilesData {
         }
     }
 
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $SessionID    = $LayoutObject->{SessionID};
+    my $FormID       = $Param{FormID} . '.' . $SessionID;
+
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
@@ -182,7 +228,7 @@ sub FormIDGetAllFilesData {
             FROM web_upload_cache
             WHERE form_id = ?
             ORDER BY create_time_unix',
-        Bind   => [ \$Param{FormID} ],
+        Bind   => [ \$FormID ],
         Encode => [ 1, 1, 1, 0, 1, 1 ],
     );
 
@@ -227,6 +273,10 @@ sub FormIDGetAllFilesMeta {
         }
     }
 
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $SessionID    = $LayoutObject->{SessionID};
+    my $FormID       = $Param{FormID} . '.' . $SessionID;
+
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
@@ -236,7 +286,7 @@ sub FormIDGetAllFilesMeta {
             FROM web_upload_cache
             WHERE form_id = ?
             ORDER BY create_time_unix',
-        Bind => [ \$Param{FormID} ],
+        Bind => [ \$FormID ],
     );
 
     while ( my @Row = $DBObject->FetchrowArray() ) {

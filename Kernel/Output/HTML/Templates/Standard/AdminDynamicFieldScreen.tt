@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2012-2020 Znuny GmbH, http://znuny.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -32,6 +32,14 @@
             <div class="Header">
                 <h2>[% Translate("Actions") | html %]</h2>
             </div>
+[% RenderBlockStart("DynamicFieldObjectType") %]
+            <div class="Content">
+                [% Data.DynamicFieldObjectTypeStrg %]
+                <div class="FieldExplanation">
+                    <p>[% Translate("Filter by object type") | html %]</p>
+                </div>
+            </div>
+[% RenderBlockEnd("DynamicFieldObjectType") %]
             <div class="Content">
                 <ul class="ActionList">
                     <li>
@@ -79,7 +87,7 @@
                         <li class="FilterMessage Hidden">[% Translate("No matches found.") | html %]</li>
 [% RenderBlockStart("NoDataFoundMsg") %]
                         <li>
-                            [% Translate("No data found.") | html %] <a href="[% Env("Baselink") %]Action=AdminDynamicField" >[% Translate("Add DynamicField") | html %]</a>
+                            [% Translate("No data found.") | html %] <a href="[% Env("Baselink") %]Action=AdminDynamicField" >[% Translate("Add Dynamic Field") | html %]</a>
                         </li>
 [% RenderBlockEnd("NoDataFoundMsg") %]
 [% RenderBlockStart("DynamicFieldOverviewRow") %]

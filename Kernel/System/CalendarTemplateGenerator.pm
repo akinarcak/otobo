@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,11 +16,17 @@
 
 package Kernel::System::CalendarTemplateGenerator;
 
+use v5.24;
 use strict;
 use warnings;
 
-use Kernel::Language;
+# core modules
 
+# CPAN modules
+use URI::Escape qw(uri_escape_utf8 uri_unescape);    ## no perlimports, methods are used in a substution
+
+# CareOnCloud ESM modules
+use Kernel::Language              ();
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -60,8 +66,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     $Self->{RichText} = $Kernel::OM->Get('Kernel::Config')->Get('Frontend::RichText');
 
@@ -70,7 +75,7 @@ sub new {
 
 =head2 NotificationEvent()
 
-replace all OTOBO smart tags in the notification body and subject
+replace all CareOnCloud ESM smart tags in the notification body and subject
 
     my %NotificationEvent = $CalendarTemplateGeneratorObject->NotificationEvent(
         AppointmentID => 123,
@@ -85,6 +90,7 @@ sub NotificationEvent {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
+    # UserID is required, but not actually used
     for my $Needed (qw(Notification Recipient UserID)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
@@ -172,7 +178,6 @@ sub NotificationEvent {
         Recipient     => $Param{Recipient},
         AppointmentID => $Param{AppointmentID},
         CalendarID    => $Param{CalendarID},
-        UserID        => $Param{UserID},
         Language      => $Language,
     );
 
@@ -182,7 +187,6 @@ sub NotificationEvent {
         Recipient     => $Param{Recipient},
         AppointmentID => $Param{AppointmentID},
         CalendarID    => $Param{CalendarID},
-        UserID        => $Param{UserID},
         Language      => $Language,
     );
 
@@ -205,7 +209,7 @@ sub _Replace {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(Text RichText UserID)) {
+    for (qw(Text RichText)) {
         if ( !defined $Param{$_} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -234,7 +238,7 @@ sub _Replace {
             my $SubjectOrBodyContent = $2;
             my $SubjectOrBodySuffix  = $3;
 
-            my $SubjectOrBodyContentUnescaped = URI::Escape::uri_unescape $SubjectOrBodyContent;
+            my $SubjectOrBodyContentUnescaped = uri_unescape $SubjectOrBodyContent;
 
             my $SubjectOrBodyContentReplaced = $Self->_Replace(
                 %Param,
@@ -242,7 +246,7 @@ sub _Replace {
                 RichText => 0,
             );
 
-            my $SubjectOrBodyContentEscaped = URI::Escape::uri_escape_utf8 $SubjectOrBodyContentReplaced;
+            my $SubjectOrBodyContentEscaped = uri_escape_utf8 $SubjectOrBodyContentReplaced;
 
             $SubjectOrBodyPrefix . $SubjectOrBodyContentEscaped . $SubjectOrBodySuffix;
         }egx;
@@ -298,12 +302,12 @@ sub _Replace {
     # replace the secret config options before the normal config options
     for my $SecretConfigOption (@SecretConfigOptions) {
 
-        my $Tag = $Start . 'OTOBO_CONFIG_' . $SecretConfigOption . $End;
+        my $Tag = $Start . 'CareOnCloud_CONFIG_' . $SecretConfigOption . $End;
         $Param{Text} =~ s{$Tag}{xxx}gx;
     }
 
     # replace config options
-    my $Tag = $Start . 'OTOBO_CONFIG_';
+    my $Tag = $Start . 'CareOnCloud_CONFIG_';
     $Param{Text} =~ s{$Tag(.+?)$End}{$ConfigObject->Get($1) // ''}egx;
 
     # cleanup
@@ -353,7 +357,7 @@ sub _Replace {
     # ------------------------------------------------------------ #
 
     # replace config options
-    $Tag = $Start . 'OTOBO_APPOINTMENT_';
+    $Tag = $Start . 'CareOnCloud_APPOINTMENT_';
 
     # replace appointment tags
     ATTRIBUTE:
@@ -446,7 +450,7 @@ sub _Replace {
             # get a list of available (readable) teams
             my %TeamList = $TeamObject->TeamList(
                 Valid  => 0,
-                UserID => $Self->{UserID},
+                UserID => $Self->{UserID},    # TODO: $Self->{UserID} isn't set anywhere
             );
 
             next ATTRIBUTE if !IsHashRefWithData( \%TeamList );
@@ -466,7 +470,7 @@ sub _Replace {
 
             next ATTRIBUTE if !IsArrayRefWithData( \@TeamNames );
 
-            # replace team ids with a comma seperated list of team names
+            # replace team ids with a comma separated list of team names
             $Replacement = join ', ', @TeamNames;
         }
 
@@ -493,7 +497,7 @@ sub _Replace {
 
             next ATTRIBUTE if !IsArrayRefWithData( \@UserNames );
 
-            # replace resource ids with a comma seperated list of team names
+            # replace resource ids with a comma separated list of team names
             $Replacement = join ', ', @UserNames;
         }
 
@@ -549,7 +553,7 @@ sub _Replace {
     # ------------------------------------------------------------ #
 
     # replace config options
-    $Tag = $Start . 'OTOBO_CALENDAR_';
+    $Tag = $Start . 'CareOnCloud_CALENDAR_';
 
     # replace appointment tags
     ATTRIBUTE:
@@ -631,7 +635,7 @@ sub _Replace {
         my $Keys = join '|', map {quotemeta} grep { defined $H{$_} } keys %H;
 
         # Add all keys also as lowercase to be able to match case insensitive,
-        #   e. g. <OTOBO_CUSTOMER_From> and <OTOBO_CUSTOMER_FROM>.
+        #   e. g. <CareOnCloud_CUSTOMER_From> and <CareOnCloud_CUSTOMER_FROM>.
         for my $Key ( sort keys %H ) {
             $H{ lc $Key } = $H{$Key};
         }
@@ -639,11 +643,11 @@ sub _Replace {
         $Param{Text} =~ s/(?:$Tag)($Keys)$End/$H{ lc $1 }/ieg;
     };
 
-    # get recipient data and replace it with <OTOBO_...
-    $Tag = $Start . 'OTOBO_';
+    # get recipient data and replace it with <CareOnCloud_...
+    $Tag = $Start . 'CareOnCloud_';
 
-    # include more readable tag <OTOBO_NOTIFICATION_RECIPIENT
-    my $RecipientTag = $Start . 'OTOBO_NOTIFICATION_RECIPIENT_';
+    # include more readable tag <CareOnCloud_NOTIFICATION_RECIPIENT
+    my $RecipientTag = $Start . 'CareOnCloud_NOTIFICATION_RECIPIENT_';
 
     if (%Recipient) {
 

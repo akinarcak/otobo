@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_package version="1.0">
+    <Name>CareOnCloudAPI</Name><Version>0.7.2</Version><Framework>11.1.x</Framework>
+    <Vendor>Data Market Bilgi Hizmetleri A.S.</Vendor><URL>https://esm.arcak.net</URL>
+    <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
+    <Description Lang="en">Tenant-bound OAuth client credentials, opaque access tokens and atomic API rate limits for CareOnCloud ESM.</Description>
+    <Description Lang="tr">CareOnCloud ESM icin tenant-bazli OAuth client credentials, opaque access token ve atomik API rate limit.</Description>
+    <PackageRequired Version="0.1.0">CareOnCloudFoundation</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudTenantGuard</PackageRequired>
+    <PackageRequired Version="0.2.1">CareOnCloudTenantDirectory</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudAudit</PackageRequired>
+    <PackageRequired Version="0.4.7">CareOnCloudRequest</PackageRequired>
+    <PackageRequired Version="0.2.0">CareOnCloudWebhook</PackageRequired>
+    <PackageIsDownloadable>1</PackageIsDownloadable><PackageIsVisible>1</PackageIsVisible>
+    <DatabaseInstall Type="post">
+        <TableCreate Name="careoncloud_api_client">
+            <Column Name="client_id" Required="true" PrimaryKey="true" Size="128" Type="VARCHAR" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="name" Required="true" Size="200" Type="VARCHAR" />
+            <Column Name="secret_hash" Required="true" Size="255" Type="VARCHAR" />
+            <Column Name="role_name" Required="true" Size="30" Type="VARCHAR" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="token_ttl" Required="true" Type="INTEGER" />
+            <Column Name="rate_limit" Required="true" Type="INTEGER" />
+            <Column Name="version" Required="true" Default="1" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="create_by" Required="true" Type="INTEGER" />
+            <Column Name="change_time" Required="true" Type="DATE" /><Column Name="change_by" Required="true" Type="INTEGER" />
+            <Index Name="careoncloud_api_client_tenant"><IndexColumn Name="tenant_id" /><IndexColumn Name="status" /></Index>
+            <ForeignKey ForeignTable="careoncloud_tenant"><Reference Local="tenant_id" Foreign="key_name" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_api_token">
+            <Column Name="token_hash" Required="true" PrimaryKey="true" Size="64" Type="VARCHAR" />
+            <Column Name="client_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="expires_at" Required="true" Type="DATE" />
+            <Column Name="status" Required="true" Size="20" Type="VARCHAR" />
+            <Column Name="create_time" Required="true" Type="DATE" />
+            <Column Name="last_used_time" Required="false" Type="DATE" />
+            <Index Name="careoncloud_api_token_client"><IndexColumn Name="client_id" /><IndexColumn Name="status" /><IndexColumn Name="expires_at" /></Index>
+            <ForeignKey ForeignTable="careoncloud_api_client"><Reference Local="client_id" Foreign="client_id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_api_rate">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="client_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="window_start" Required="true" Type="DATE" />
+            <Column Name="request_count" Required="true" Default="0" Type="INTEGER" />
+            <Unique Name="careoncloud_api_rate_window"><UniqueColumn Name="client_id" /><UniqueColumn Name="window_start" /></Unique>
+            <ForeignKey ForeignTable="careoncloud_api_client"><Reference Local="client_id" Foreign="client_id" /></ForeignKey>
+        </TableCreate>
+        <TableCreate Name="careoncloud_api_metric">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" />
+            <Column Name="window_start" Required="true" Type="DATE" />
+            <Column Name="route_key" Required="true" Size="50" Type="VARCHAR" />
+            <Column Name="method_name" Required="true" Size="10" Type="VARCHAR" />
+            <Column Name="status_code" Required="true" Type="INTEGER" />
+            <Column Name="error_code" Required="true" Default="" Size="64" Type="VARCHAR" />
+            <Column Name="request_count" Required="true" Default="0" Type="INTEGER" />
+            <Column Name="duration_sum_ms" Required="true" Default="0" Type="BIGINT" />
+            <Column Name="duration_max_ms" Required="true" Default="0" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" />
+            <Unique Name="careoncloud_api_metric_series"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="window_start" /><UniqueColumn Name="route_key" /><UniqueColumn Name="method_name" /><UniqueColumn Name="status_code" /><UniqueColumn Name="error_code" /></Unique>
+            <Index Name="careoncloud_api_metric_window"><IndexColumn Name="window_start" /><IndexColumn Name="route_key" /></Index>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseUpgrade Type="post">
+        <TableCreate Name="careoncloud_api_metric" Version="0.7.1">
+            <Column Name="id" Required="true" PrimaryKey="true" AutoIncrement="true" Type="BIGINT" />
+            <Column Name="tenant_id" Required="true" Size="128" Type="VARCHAR" /><Column Name="window_start" Required="true" Type="DATE" />
+            <Column Name="route_key" Required="true" Size="50" Type="VARCHAR" /><Column Name="method_name" Required="true" Size="10" Type="VARCHAR" />
+            <Column Name="status_code" Required="true" Type="INTEGER" /><Column Name="error_code" Required="true" Default="" Size="64" Type="VARCHAR" />
+            <Column Name="request_count" Required="true" Default="0" Type="INTEGER" /><Column Name="duration_sum_ms" Required="true" Default="0" Type="BIGINT" /><Column Name="duration_max_ms" Required="true" Default="0" Type="INTEGER" />
+            <Column Name="create_time" Required="true" Type="DATE" /><Column Name="change_time" Required="true" Type="DATE" />
+            <Unique Name="careoncloud_api_metric_series"><UniqueColumn Name="tenant_id" /><UniqueColumn Name="window_start" /><UniqueColumn Name="route_key" /><UniqueColumn Name="method_name" /><UniqueColumn Name="status_code" /><UniqueColumn Name="error_code" /></Unique>
+            <Index Name="careoncloud_api_metric_window"><IndexColumn Name="window_start" /><IndexColumn Name="route_key" /></Index>
+        </TableCreate>
+    </DatabaseUpgrade>
+    <DatabaseUninstall Type="pre"><TableDrop Name="careoncloud_api_metric" /><TableDrop Name="careoncloud_api_rate" /><TableDrop Name="careoncloud_api_token" /><TableDrop Name="careoncloud_api_client" /></DatabaseUninstall>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/XML/CareOnCloudAPI.xml" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/APIAuth.pm" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/API.pm" />
+        <File Permission="644" Location="Kernel/System/CareOnCloud/APIMetric.pm" />
+        <File Permission="644" Location="Kernel/Modules/PublicCareOnCloudAPI.pm" />
+        <File Permission="644" Location="var/httpd/htdocs/careoncloud/api/openapi-v1.json" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/APIClientCreate.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/APIClientRotate.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Admin/CareOnCloud/APIStatus.pm" />
+        <File Permission="644" Location="Kernel/System/Console/Command/Maint/CareOnCloud/APIRetentionCleanup.pm" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/APIAuth.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/API.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/APIContract.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/APIStatus.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/APIMetric.t" />
+        <File Permission="644" Location="scripts/test/CareOnCloud/APIRetentionCleanup.t" />
+    </Filelist>
+</careoncloud_package>

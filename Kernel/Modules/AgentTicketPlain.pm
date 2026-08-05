@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -118,23 +118,23 @@ sub Run {
         =~ s/^((X-Mailer|User-Agent|X-OS):.*(Mozilla|Win?|Outlook|Microsoft|Internet Mail Service).*)/<span class="Error">$1<\/span>/gmi;
     $Plain =~ s/^((Resent-.*):.*)/<span class="Error">$1<\/span>/gmi;
     $Plain =~ s/^(From .*)/<span class="Error">$1<\/span>/gm;
-    $Plain =~ s/^(X-OTOBO.*)/<span class="Error">$1<\/span>/gmi;
+    $Plain =~ s/^(X-CareOnCloud ESM.*)/<span class="Error">$1<\/span>/gmi;
 
-    my $Output = $LayoutObject->Header(
-        Type => 'Small',
-    );
-    $Output .= $LayoutObject->Output(
-        TemplateFile => 'AgentTicketPlain',
-        Data         => {
-            Text => $Plain,
-            %Ticket,
-            %Article,
-        },
-    );
-    $Output .= $LayoutObject->Footer(
-        Type => 'Small',
-    );
-    return $Output;
+    return join '',
+        $LayoutObject->Header(
+            Type => 'Small',
+        ),
+        $LayoutObject->Output(
+            TemplateFile => 'AgentTicketPlain',
+            Data         => {
+                Text => $Plain,
+                %Ticket,
+                %Article,
+            },
+        ),
+        $LayoutObject->Footer(
+            Type => 'Small',
+        );
 }
 
 1;

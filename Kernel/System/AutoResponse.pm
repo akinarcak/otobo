@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -262,17 +262,17 @@ Return example:
 
     %QueueAddressData(
         #Auto Response Data
-        'Text'            => 'Your OTOBO TeamOTOBO! answered by a human asap.',
-        'Subject'         => 'New ticket has been created! (RE: <OTOBO_CUSTOMER_SUBJECT[24]>)',
+        'Text'            => 'Your CareOnCloud ESM TeamCareOnCloud! answered by a human asap.',
+        'Subject'         => 'New ticket has been created! (RE: <CareOnCloud_CUSTOMER_SUBJECT[24]>)',
         'ContentType'     => 'text/plain',
         'SystemAddressID' => '1',
         'AutoResponseID'  => '1'
 
         #System Address Data
         'ID'              => '1',
-        'Name'            => 'otobo@localhost',
-        'Address'         => 'otobo@localhost',  # Compatibility with OTRS 2.1
-        'Realname'        => 'OTOBO System',
+        'Name'            => 'careoncloud@localhost',
+        'Address'         => 'careoncloud@localhost',  # Compatibility with OTRS 2.1
+        'Realname'        => 'CareOnCloud ESM System',
         'Comment'         => 'Standard Address.',
         'ValidID'         => '1',
         'QueueID'         => '1',

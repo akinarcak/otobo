@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,8 +25,9 @@ use utf8;
 # core modules
 
 # CPAN modules
+use Try::Tiny;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::System::Cache',
@@ -120,9 +121,15 @@ sub TemplateList {
 
 =head2 TemplateGet()
 
-Get a import export template
+Get a import export template as a hashref.
 
-Return
+    my $TemplateData = $ImportExportObject->TemplateGet(
+        TemplateID => 3,
+        UserID     => 1,
+    );
+
+Returns:
+
     $TemplateData{TemplateID}
     $TemplateData{Number}
     $TemplateData{Object}
@@ -134,11 +141,6 @@ Return
     $TemplateData{CreateBy}
     $TemplateData{ChangeTime}
     $TemplateData{ChangeBy}
-
-    my $TemplateDataRef = $ImportExportObject->TemplateGet(
-        TemplateID => 3,
-        UserID     => 1,
-    );
 
 =cut
 
@@ -184,7 +186,7 @@ sub TemplateGet {
     $TemplateData{ChangeTime} = $Row[8];
     $TemplateData{ChangeBy}   = $Row[9];
 
-    $TemplateData{Number} = sprintf "%06d", $TemplateData{TemplateID};
+    $TemplateData{Number} = sprintf '%06d', $TemplateData{TemplateID};
 
     # cache the result
     $Self->{Cache}->{TemplateGet}->{ $Param{TemplateID} } = \%TemplateData;
@@ -517,7 +519,7 @@ Return an empty list when there is no, or an incorrect, setting in the SysConfig
 sub ObjectList {
     my ($Self) = @_;
 
-    # get the backend registrations which have been added by other OTOBO packages
+    # get the backend registrations which have been added by other CareOnCloud ESM packages
     my $ModuleList = $Kernel::OM->Get('Kernel::Config')->Get('ImportExport::ObjectBackendRegistration');
 
     return unless $ModuleList;
@@ -784,6 +786,68 @@ sub FormatList {
     return \%Key2Name;
 }
 
+=head2 FormatterCanHandleReferences()
+
+Inform the caller whether the formatter backend needs help with references.
+
+    my $FormatterCanHandleReferences = $ImportExportObject->FormatterCanHandleReferences(
+        TemplateID => 123,
+        UserID     => 1,
+    );
+
+=cut
+
+sub FormatterCanHandleReferences {
+    my ( $Self, %Param ) = @_;
+
+    # get log object
+    my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+
+    # check needed stuff
+    for my $Argument (qw(TemplateID UserID)) {
+        if ( !$Param{$Argument} ) {
+            $LogObject->Log(
+                Priority => 'error',
+                Message  => "Need $Argument!",
+            );
+
+            return;
+        }
+    }
+
+    # get template data
+    my $TemplateData = $Self->TemplateGet(
+        TemplateID => $Param{TemplateID},
+        UserID     => $Param{UserID},
+    );
+
+    # check template data
+    if ( !$TemplateData || !$TemplateData->{Format} ) {
+        $LogObject->Log(
+            Priority => 'error',
+            Message  => "Template with ID $Param{TemplateID} is incomplete!",
+        );
+
+        return;
+    }
+
+    # load backend
+    my $FormatBackend = try {
+        $Kernel::OM->Get( 'Kernel::System::ImportExport::FormatBackend::' . $TemplateData->{Format} );
+    }
+    catch {
+        # ignore exception
+        undef;
+    };
+
+    return unless $FormatBackend;
+
+    # delegate to the formatter backend
+    return $FormatBackend->CanHandleReferences(
+        UserID => $Param{UserID},
+    );
+}
+
 =head2 FormatAttributesGet()
 
 Get the attributes of a format backend as array/hash reference
@@ -836,12 +900,10 @@ sub FormatAttributesGet {
 
     return unless $Backend;
 
-    # get an attribute list of the format
-    my $Attributes = $Backend->FormatAttributesGet(
+    # delegate to the formatter backend
+    return $Backend->FormatAttributesGet(
         UserID => $Param{UserID},
     );
-
-    return $Attributes;
 }
 
 =head2 FormatDataGet()
@@ -1015,7 +1077,7 @@ sub FormatDataDelete {
 
 =head2 MappingList()
 
-Return a list of mapping ids sorted by position as array reference
+Return a list of mapping IDs sorted by position as array reference
 
     my $MappingIDs = $ImportExportObject->MappingList(
         TemplateID => 123,
@@ -2096,6 +2158,7 @@ Export function
     my $ResultRef = $ImportExportObject->Export(
         TemplateID => 123,
         UserID     => 1,
+        ChunkSize  => 1_000, # optional, for chunked export
     );
 
 returns something like
@@ -2108,6 +2171,8 @@ returns something like
             [ 'Attr_2a', 'Attr_2b', 'Attr_3c', ],
         ],
     };
+
+This method will be called several times when the export is meant to be in chunks.
 
 =cut
 
@@ -2160,7 +2225,11 @@ sub Export {
     return unless $FormatBackend;
 
     # get export data
+    # Only the current chunk, when ChunkSize is passed
+    # passing the template ID gives the backend access to the mapping list
+    # and to the export format.
     my $ExportData = $ObjectBackend->ExportDataGet(
+        ChunkSize  => $Param{ChunkSize},
         TemplateID => $Param{TemplateID},
         UserID     => $Param{UserID},
     );
@@ -2206,13 +2275,22 @@ sub Export {
         }
 
         # add column headers as first row
-        unshift @{$ExportData}, \@ColumnNames;
+        unshift $ExportData->@*, \@ColumnNames;
+    }
+
+    # Backends with support for chunking must provide the method IsExportComplete().
+    # Backends without support for chunking do not have to provide that method. An undefined
+    # value for ChunkingFinished indicates no support for chunking.
+    my $ChunkingFinished;
+    if ( $ObjectBackend->can('IsExportComplete') ) {
+        $ChunkingFinished = $ObjectBackend->IsExportComplete;
     }
 
     my %Result = (
         Success            => 0,
         Failed             => 0,
         DestinationContent => [],
+        ChunkingFinished   => $ChunkingFinished,
     );
 
     EXPORTDATAROW:
@@ -2227,12 +2305,18 @@ sub Export {
 
         if ( !defined $DestinationContentRow ) {
             $Result{Failed}++;
+
             next EXPORTDATAROW;
         }
 
         # add row to destination content
         push @{ $Result{DestinationContent} }, $DestinationContentRow;
         $Result{Success}++;
+    }
+
+    # writing the header line does not count as success
+    if ( $FormatData->{IncludeColumnHeaders} ) {
+        $Result{Success}--;
     }
 
     # log result
@@ -2265,7 +2349,11 @@ sub Import {
 
     my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
 
-    # Disable the cache for faster import.
+    # Get the current cache configurations before import.
+    my $PrevConfigCacheInMemory  = $CacheObject->{CacheInMemory};
+    my $PrevConfigCacheInBackend = $CacheObject->{CacheInBackend};
+
+    # Temporarily disable the cache configurations for faster import.
     $CacheObject->Configure(
         CacheInMemory  => 0,
         CacheInBackend => 0,
@@ -2302,7 +2390,7 @@ sub Import {
         return;
     }
 
-    # load object backend
+    # load object backend, instance variables are kept
     my $ObjectBackend = $Kernel::OM->Get(
         'Kernel::System::ImportExport::ObjectBackend::' . $TemplateData->{Object}
     );
@@ -2370,6 +2458,12 @@ sub Import {
             $Result{Success}++;
         }
     }
+
+    # Re-configure the cache after import.
+    $CacheObject->Configure(
+        CacheInMemory  => $PrevConfigCacheInMemory,
+        CacheInBackend => $PrevConfigCacheInBackend,
+    );
 
     # log result
     $LogObject->Log(

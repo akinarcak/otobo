@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,16 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+use Storable qw(dclone);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::System::VariableCheck qw(:all);
 
 our $Self;
-
-use Kernel::System::VariableCheck qw(:all);
 
 my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 my $ModuleObject = $Kernel::OM->Get('Kernel::System::ProcessManagement::TransitionAction::TicketCustomerSet');
@@ -209,7 +213,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerUserID => '<OTOBO_TICKET_Queue>',
+                CustomerUserID => '<CareOnCloud_TICKET_Queue>',
             },
         },
         Success => 1,
@@ -220,7 +224,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerUserID => '<OTOBO_TICKET_NotExisting>',
+                CustomerUserID => '<CareOnCloud_TICKET_NotExisting>',
             },
         },
         Success => 0,
@@ -243,7 +247,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerID => '<OTOBO_CURRENT_UserLogin>',
+                CustomerID => '<CareOnCloud_CURRENT_UserLogin>',
             },
         },
         ExpectedCustomerID => $TestUserLogin,
@@ -255,7 +259,7 @@ my @Tests = (
             UserID => $UserID,
             Ticket => \%Ticket,
             Config => {
-                CustomerUserID => '<OTOBO_CURRENT_UserLogin>',
+                CustomerUserID => '<CareOnCloud_CURRENT_UserLogin>',
             },
         },
         ExpectedCustomerUserID => $TestUserLogin,
@@ -266,7 +270,7 @@ my @Tests = (
 for my $Test (@Tests) {
 
     # Make a deep copy to avoid changing the definition.
-    my $OrigTest = Storable::dclone($Test);
+    my $OrigTest = dclone($Test);
 
     my $Success = $ModuleObject->Run(
         %{ $Test->{Config} },
@@ -292,7 +296,7 @@ for my $Test (@Tests) {
             $Self->Is(
                 $TestUserLogin,
                 $Ticket{CustomerUserID},
-                "CustomerUserID is successfully replaced by OTOBO_CURRENT_ tag",
+                "CustomerUserID is successfully replaced by CareOnCloud_CURRENT_ tag",
             );
         }
 
@@ -300,7 +304,7 @@ for my $Test (@Tests) {
             $Self->Is(
                 $TestUserLogin,
                 $Ticket{CustomerID},
-                "CustomerID is successfully replaced by OTOBO_CURRENT_ tag",
+                "CustomerID is successfully replaced by CareOnCloud_CURRENT_ tag",
             );
         }
 
@@ -320,7 +324,7 @@ for my $Test (@Tests) {
             my $ExpectedValue = $Test->{Config}->{Config}->{$Attribute};
             if (
                 $OrigTest->{Config}->{Config}->{$Attribute}
-                =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+                =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
                 )
             {
                 $ExpectedValue = $Ticket{$1} // '';

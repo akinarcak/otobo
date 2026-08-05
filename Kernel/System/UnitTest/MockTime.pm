@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package Kernel::System::UnitTest::MockTime;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::Time)
 
 use v5.24;
@@ -28,7 +29,7 @@ use Exporter qw(import);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our %EXPORT_TAGS = (    ## no critic qw(OTOBO::RequireCamelCase)
     all => [qw(FixedTimeSet FixedTimeGet FixedTimeUnset FixedTimeAddSeconds)],
@@ -69,7 +70,7 @@ To be used in test scripts for mocking time.
 # This time, seconds since 1970, will be used by 'time' when set.
 my $FixedTime;
 
-# override the core functions
+# override the core functions during the lifetime of the current process
 BEGIN {
 
     *CORE::GLOBAL::time = sub {

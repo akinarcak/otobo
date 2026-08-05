@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2012-2020 Znuny GmbH, http://znuny.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,6 +19,14 @@ package Kernel::Modules::AdminDynamicFieldImportExport;
 use strict;
 use warnings;
 
+# core modules
+use List::Util qw(any);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(:all);
+
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::Output::HTML::Layout',
@@ -31,8 +39,6 @@ our @ObjectDependencies = (
     'Kernel::System::ZnunyHelper',
     'Kernel::System::DateTime',
 );
-
-use Kernel::System::VariableCheck qw(:all);
 
 sub new {
     my ( $Type, %Param ) = @_;
@@ -138,7 +144,12 @@ sub Run {
 
             my @DynamicFieldsImport;
             DYNAMICFIELD:
-            for my $DynamicField ( sort keys %{ $ImportData->{DynamicFields} } ) {
+            for my $DynamicField (
+                sort {
+                    ( $ImportData->{DynamicFields}{$a}{FieldOrder} || 0 ) <=> ( $ImportData->{DynamicFields}{$b}{FieldOrder} || 0 )
+                } keys %{ $ImportData->{DynamicFields} }
+                )
+            {
 
                 my $Selected = grep { $ImportData->{DynamicFields}->{$DynamicField}->{Name} eq $_ } @DynamicFieldsSelected;
                 next DYNAMICFIELD if !$Selected;
@@ -160,11 +171,19 @@ sub Run {
                 push @DynamicFieldsImport, $ImportData->{DynamicFields}->{$DynamicField};
             }
 
+            my $Success;
             if ($OverwriteExistingEntities) {
-                $ZnunyHelperObject->_DynamicFieldsCreate(@DynamicFieldsImport);
+                $Success = $ZnunyHelperObject->_DynamicFieldsCreate(@DynamicFieldsImport);
             }
             else {
-                $ZnunyHelperObject->_DynamicFieldsCreateIfNotExists(@DynamicFieldsImport);
+                $Success = $ZnunyHelperObject->_DynamicFieldsCreateIfNotExists(@DynamicFieldsImport);
+            }
+
+            if ( !$Success ) {
+                return $LayoutObject->ErrorScreen(
+                    Message => 'Something went wrong during dynamic field import.',
+                    Comment => 'Please review the logs.',
+                );
             }
         }
 
@@ -291,8 +310,6 @@ sub _Mask {
     my ( $Self, %Param ) = @_;
 
     my $LayoutObject       = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $ConfigObject       = $Kernel::OM->Get('Kernel::Config');
-    my $LogObject          = $Kernel::OM->Get('Kernel::System::Log');
     my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
 
     $LayoutObject->Block( Name => 'ActionOverview' );
@@ -354,7 +371,7 @@ sub _DynamicFieldShow {
         my @DynamicFieldsAlreadyUsed;
 
         DYNAMICFIELD:
-        for my $DynamicField ( sort keys %{ $Param{Data}->{DynamicFields} } ) {
+        for my $DynamicField ( sort keys $Param{Data}{DynamicFields}->%* ) {
 
             push @DynamicFieldsAlreadyUsed, $DynamicField;
 
@@ -446,10 +463,8 @@ sub _DynamicFieldShow {
         DYNAMICFIELDSCREEN:
         for my $DynamicField ( sort keys %{ $Param{Data}->{DynamicFieldsScreens} } ) {
 
-            next DYNAMICFIELDSCREEN if grep { $DynamicField eq $_ } @DynamicFieldsAlreadyUsed;
+            next DYNAMICFIELDSCREEN if any { $DynamicField eq $_ } @DynamicFieldsAlreadyUsed;
             next DYNAMICFIELDSCREEN if !IsHashRefWithData( $Param{Data}->{DynamicFieldsScreens}->{$DynamicField} );
-
-            my $DynamicFieldsScreensData = $Param{Data}->{DynamicFieldsScreens}->{$DynamicField};
 
             my %DynamicFieldData = (
                 Name  => $DynamicField,

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,13 +16,17 @@
 
 package Kernel::Modules::AdminSupportDataCollector;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 
-use Kernel::System::SupportDataCollector::PluginBase;
+# core modules
 
-use Kernel::System::VariableCheck qw(:all);
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::SupportDataCollector::PluginBase ();
+use Kernel::System::VariableCheck                    qw(:all);
 
 our $ObjectManagerDisabled = 1;
 
@@ -275,15 +279,14 @@ sub _SupportDataCollectorView {
         $Param{SenderAddress} = '';
     }
 
-    my $Output = $LayoutObject->Header();
-    $Output .= $LayoutObject->NavigationBar();
-    $Output .= $LayoutObject->Output(
-        TemplateFile => 'AdminSupportDataCollector',
-        Data         => \%Param,
-    );
-    $Output .= $LayoutObject->Footer();
-
-    return $Output;
+    return join '',
+        $LayoutObject->Header,
+        $LayoutObject->NavigationBar,
+        $LayoutObject->Output(
+            TemplateFile => 'AdminSupportDataCollector',
+            Data         => \%Param,
+        ),
+        $LayoutObject->Footer;
 }
 
 sub _GenerateSupportBundle {
@@ -529,13 +532,13 @@ sub _SendSupportBundle {
 
             my $Result = $Kernel::OM->Get('Kernel::System::Email')->Send(
                 From          => $SenderAddress,
-                To            => 'supportbundle@otobo.de',
+                To            => 'supportbundle@otobo.io',
                 Subject       => 'Support::Bundle::Email',
                 Type          => 'text/plain',
                 Charset       => 'utf-8',
                 Body          => $Body,
                 CustomHeaders => {
-                    'X-OTOBO-RegistrationKey' => $Data{'RegistrationKey'} || 'Not registered',
+                    'X-CareOnCloud-RegistrationKey' => $Data{'RegistrationKey'} || 'Not registered',
                 },
                 Attachment => [
                     {

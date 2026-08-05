@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,12 +23,12 @@ use utf8;
 
 # CPAN modules
 use Test2::V0;
-use HTTP::Request;
+use HTTP::Request ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::GenericInterface::Debugger;
-use Kernel::GenericInterface::Transport;
+use Kernel::GenericInterface::Debugger  ();
+use Kernel::GenericInterface::Transport ();
 
 # get encode object
 my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
@@ -101,10 +101,26 @@ for my $Fail ( 0 .. 1 ) {
             ResultSuccess => 1,
         },
         {
+            Name      => "TransportObject RequesterPerformRequest() array data",
+            Operation => 'test_operation',
+            Data      => [
+                {
+                    A => 'C',
+                    b => 'd',
+                },
+                {
+                    A => 'A',
+                    b => 'b',
+                },
+            ],
+            ResultData    => 'A=C&b=d',
+            ResultSuccess => 1,
+        },
+        {
             Name      => "TransportObject RequesterPerformRequest() UTF-8 data",
             Operation => 'test_operation',
             Data      => {
-                A                    => 'A',
+                A        => 'A',
                 '使用下列语言' => 'معلومات',
             },
             ResultData =>
@@ -132,10 +148,10 @@ for my $Fail ( 0 .. 1 ) {
             ResultSuccess => 0,
         },
         {
-            Name          => "TransportObject RequesterPerformRequest() wrong data listref",
+            Name          => "TransportObject RequesterPerformRequest() array data listref",
             Operation     => 'test_operation',
             Data          => ['testdata'],
-            ResultSuccess => 0,
+            ResultSuccess => 1,
         },
     );
 
@@ -198,7 +214,7 @@ for my $Fail ( 0 .. 1 ) {
             Name           => "TransportObject ProviderProcessRequest() UTF-8 data",
             RequestContent => 'A=A&使用下列语言=معلومات',
             ResultData     => {
-                A                    => 'A',
+                A        => 'A',
                 '使用下列语言' => 'معلومات',
             },
             Operation     => 'test_operation',
@@ -273,7 +289,7 @@ for my $Fail ( 0 .. 1 ) {
         {
             Name => "TransportObject ProviderGenerateResponse() UTF-8 data",
             Data => {
-                A                    => 'A',
+                A        => 'A',
                 '使用下列语言' => 'معلومات',
             },
             ResultData =>
@@ -291,9 +307,9 @@ for my $Fail ( 0 .. 1 ) {
             ResultSuccess => 0,
         },
         {
-            Name          => "TransportObject ProviderGenerateResponse() wrong data listref",
+            Name          => "TransportObject ProviderGenerateResponse() array data listref",
             Data          => ['testdata'],
-            ResultSuccess => 0,
+            ResultSuccess => 1,
         },
     );
 

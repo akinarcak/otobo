@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,14 @@ package Kernel::System::SysConfig::DB;
 
 use strict;
 use warnings;
-
-use MIME::Base64;
-use Time::HiRes();
 use utf8;
 
+# core modules
+use Time::HiRes ();
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw( :all );
 
 our @ObjectDependencies = (
@@ -55,8 +58,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     $Self->{CacheTTL} = 24 * 3600 * 30;    # 1 month
 
@@ -1221,7 +1223,7 @@ Get default setting list with complete data.
         UserPreferencesGroup     => 'Some Group',
         Navigation               => 'ASimple::Path::Structure',
         Locked                   => 1, # check for locked settings
-        Category                 => 'OTOBO',                             # optional (requires CategoryFiles)
+        Category                 => 'CareOnCloud',                             # optional (requires CategoryFiles)
         CategoryFiles            => ['Framework.xml', 'Ticket.xml', ],  # optional (requires Category)
         NoCache                  => 0,                                  # (optional) Default 0. If set, system will not generate cache.
     );
@@ -3840,7 +3842,9 @@ Returns:
         UserModificationActive => 0,         # 1 or 0
         EffectiveValue         => "Product 6",
         CreateTime             => "2016-05-29 11:04:04",
+        CreateBy               => 1,
         ChangeTime             => "2016-05-29 11:04:04",
+        ChangeBy               => 1,
     );
 
 =cut
@@ -3877,7 +3881,7 @@ sub ModifiedSettingVersionGet {
             SELECT smv.id, smv.sysconfig_default_version_id, sdv.sysconfig_default_id, sm.id,
                 smv.name, smv.user_id,
                 smv.is_valid, smv.reset_to_default, smv.user_modification_active, smv.effective_value,
-                smv.create_time, smv.change_time
+                smv.create_time, smv.create_by, smv.change_time, smv.change_by
             FROM sysconfig_modified_version smv
             LEFT JOIN sysconfig_default_version sdv
                 ON smv.sysconfig_default_version_id = sdv.id
@@ -3908,7 +3912,9 @@ sub ModifiedSettingVersionGet {
             EffectiveValue         => $EffectiveValue,
             DeploymentTimeStamp    => $Data[10],
             CreateTime             => $Data[10],
-            ChangeTime             => $Data[11],
+            CreateBy               => $Data[11],
+            ChangeTime             => $Data[12],
+            ChangeBy               => $Data[13],
         );
     }
 
@@ -4479,7 +4485,7 @@ sub DeploymentAdd {
         }
     }
 
-    my $UID = 'OTOBOInvalid-' . $Self->_GetUID();
+    my $UID = 'CareOnCloudInvalid-' . $Self->_GetUID();
 
     # Create a deployment record without the real comments.
     return if !$DBObject->Do(
@@ -5353,7 +5359,7 @@ sub DeploymentListCleanup {
             SELECT id, create_time
             FROM sysconfig_deployment
             WHERE effective_value LIKE \'Invalid%\'
-                OR comments LIKE \'OTOBOInvalid-%\'
+                OR comments LIKE \'CareOnCloudInvalid-%\'
             ORDER BY id DESC',
     );
 

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 // --
 
-/*eslint-disable no-window*/
+/*eslint-disable careoncloud/no-window*/
 
 "use strict";
 
@@ -336,7 +336,7 @@ var Core = Core || {};
             .find('form')
             .find('input:not(:checkbox):not(:file):not([name=SettingName]):not(.Key):not(.InputField_Search),' +
                 ' textarea, select, div.Array, div.Hash, .AddArrayItem, .AddHashKey, div.WorkingHoursItem input')
-            .filter(':not([disabled=disabled])')
+            .filter(':not([disabled])')
             .each(function () {
 
             var FullName = $(this).attr('id'),
@@ -389,7 +389,7 @@ var Core = Core || {};
                     }
 
                     FullName = SettingName + $(this).attr("data-suffix");
-                    FullName = FullName.substr(0, FullName.lastIndexOf("_Array"));
+                    FullName = FullName.substring(0, FullName.lastIndexOf("_Array"));
                 }
                 else {
                     // Array is not empty.
@@ -401,7 +401,7 @@ var Core = Core || {};
                 if ($(this).closest(".Hash").find("> .HashItem > .SettingContent").length == 0) {
                     Value = {};
                     FullName = SettingName + $(this).attr("data-suffix");
-                    FullName = FullName.substr(0, FullName.lastIndexOf("_Hash"));
+                    FullName = FullName.substring(0, FullName.lastIndexOf("_Hash"));
                 }
                 else {
                     // Hash is not empty.
@@ -429,7 +429,7 @@ var Core = Core || {};
                 // some value types, e.g. Day, need to be rewritten
                 // note that in those situations using '###' in the key breaks this
                 if ( Key.indexOf('###') === -1 ) {
-                    FullName = FullName.substr(0, FullName.lastIndexOf("###"));
+                    FullName = FullName.substring(0, FullName.lastIndexOf("###"));
                     FullName += "###" + Key;
                 }
             }
@@ -496,11 +496,6 @@ var Core = Core || {};
                 TargetNS.SettingRender(Response, $Widget);
 
                 if (Response.Data.SettingData.IsDirty) {
-                    // The untyped comparison with '==' works when SessionUseCookie is either the string '0' or the number 0.
-                    if ( ( Core.Config.Get('SessionUseCookie') ?? 'not configured' ) == '0') {
-                        LinkURL += ';' + Core.Config.Get('SessionName') + '=' + Core.Config.Get('SessionID');
-                    }
-
                     Core.UI.ShowNotification(
                         Core.Language.Translate('You have undeployed settings, would you like to deploy them?'),
                         'Notice',
@@ -1106,11 +1101,6 @@ var Core = Core || {};
                         );
                     }
                     else {
-                        // The untyped comparison with '==' works when SessionUseCookie is either the string '0' or the number 0.
-                        if ( ( Core.Config.Get('SessionUseCookie') ?? 'not configured' ) == '0') {
-                            LinkURL += ';' + Core.Config.Get('SessionName') + '=' + Core.Config.Get('SessionID');
-                        }
-
                         Core.UI.ShowNotification(
                             Core.Language.Translate('You have undeployed settings, would you like to deploy them?'),
                             'Notice',
@@ -1436,7 +1426,7 @@ var Core = Core || {};
      * @function
      * @param {jQueryObject} $Object - jQueryObject
      * @description
-     *      Go through all items that are used for EffectiveValue calcutation,
+     *      Go through all items that are used for EffectiveValue calculation,
      *      and update their IDs according to the latest changes(array position
      *      or renamed hash key).
      */
@@ -1721,12 +1711,11 @@ var Core = Core || {};
                         Counter++;
                     },
                 });
+
+                Core.Agent.Admin.SystemConfiguration.InitFavourites();
+
             }, 'html'
         );
-
-        window.setTimeout(function() {
-            Core.Agent.Admin.SystemConfiguration.InitFavourites();
-        }, 1000);
     }
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');

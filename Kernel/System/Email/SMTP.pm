@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,10 +16,24 @@
 
 package Kernel::System::Email::SMTP;
 
+use v5.24;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
 use Net::SMTP;
+
+# CareOnCloud ESM modules
+use Kernel::System::OpenIDConnect::OAuth2MailExtensions;
+
+no warnings('once');    ## no critic qw(TestingAndDebugging::ProhibitNoWarnings)
+
+# monkey patch support for XOAUTH2/OAUTHBEARER into Net::Cmd
+*Net::Cmd::CareOnCloud_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::NetCmdOAuth2;
+
+use warnings('once');
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -27,14 +41,14 @@ our @ObjectDependencies = (
     'Kernel::System::Encode',
     'Kernel::System::Log',
     'Kernel::System::CommunicationLog',
+    'Kernel::System::OpenIDConnect::TokenProvider',
 );
 
 sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
+    my $Self = bless {%Param}, $Type;
 
     # debug
     $Self->{Debug} = $Param{Debug} || 0;
@@ -44,7 +58,7 @@ sub new {
         $Self->{SMTPDebug} = 1;
     }
 
-    ( $Self->{SMTPType} ) = ( $Type =~ m/::Email::(.*)$/i );
+    ( $Self->{SMTPType} ) = $Type =~ m/::Email::(.*)$/i;
 
     return $Self;
 }
@@ -79,6 +93,7 @@ sub Check {
     $Self->{SMTPPort} = $ConfigObject->Get('SendmailModule::Port');
     $Self->{User}     = $ConfigObject->Get('SendmailModule::AuthUser');
     $Self->{Password} = $ConfigObject->Get('SendmailModule::AuthPassword');
+    $Self->{Auth}     = $ConfigObject->Get('SendmailModule::OAuth2Method');
 
     $Param{CommunicationLogObject}->ObjectLog(
         ObjectLogType => 'Connection',
@@ -162,7 +177,69 @@ sub Check {
     );
 
     # use smtp auth if configured
-    if ( $Self->{User} && $Self->{Password} ) {
+
+    if ( $Self->{Auth} eq 'XOAUTH2' || $Self->{Auth} eq 'OAUTHBEARER' ) {
+
+        my $AccountName = $ConfigObject->Get('SendmailModule::OAuth2FunctionalAccount');
+
+        if ( !$AccountName ) {
+            return $ReturnError->(
+                ErrorMessage => "SMTP authentication failed: missing AccountName!",
+                Code         => '0',
+            );
+        }
+
+        $Param{CommunicationLogObject}->ObjectLog(
+            ObjectLogType => 'Connection',
+            Priority      => 'Debug',
+            Key           => 'Kernel::System::Email::SMTP',
+            Value         => "Using SMTP authentication with XOAuth account $AccountName using '$Self->{Auth}'.",
+        );
+
+        my $TokenProviderObject = $Kernel::OM->Get('Kernel::System::OpenIDConnect::TokenProvider');
+
+        my $Token = $TokenProviderObject->Fetch(
+            AccountName => $AccountName,
+        );
+
+        if ( !$Token->{Success} ) {
+
+            $SMTPWrapper->( 'quit', );
+
+            $Param{CommunicationLogObject}->ObjectLog(
+                ObjectLogType => 'Connection',
+                Priority      => 'Error',
+                Key           => 'Kernel::System::Email::SMTP',
+                Value         => "SMTP authentication via XOauth2 failed invalid Token (ErrorMessage: " . $Token->{Error} . ").",
+            );
+
+            return $ReturnError->(
+                ErrorMessage => "SMTP authentication failed: " . $Token->{Error} . "!",
+                Code         => '0',
+            );
+        }
+
+        if ( !$SMTPWrapper->( 'CareOnCloud_OAuth2', $Self->{Auth}, $Self->{User}, $Token->{Token}, $Self->{MailHost}, $Self->{SMTPPort} ) ) {
+
+            my $Code  = $SMTPWrapper->( 'code', );
+            my $Error = $Code . ', ' . $SMTPWrapper->( 'message', );
+
+            $SMTPWrapper->( 'quit', );
+
+            $Param{CommunicationLogObject}->ObjectLog(
+                ObjectLogType => 'Connection',
+                Priority      => 'Error',
+                Key           => 'Kernel::System::Email::SMTP',
+                Value         => "SMTP authentication vis XOauth2 failed (SMTP code: $Code, ErrorMessage: $Error).",
+            );
+
+            return $ReturnError->(
+                ErrorMessage => "SMTP authentication failed: $Error!",
+                Code         => $Code,
+            );
+        }
+    }
+    elsif ( $Self->{User} && $Self->{Password} ) {
 
         $Param{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Connection',

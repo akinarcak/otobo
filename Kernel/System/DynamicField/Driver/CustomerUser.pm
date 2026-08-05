@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,36 +24,35 @@ use warnings;
 use namespace::autoclean;
 use utf8;
 
-use parent qw(Kernel::System::DynamicField::Driver::BaseEntity);
+use parent qw(Kernel::System::DynamicField::Driver::BaseReference);
 
 # core modules
+use List::Util qw(any);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(IsArrayRefWithData IsHashRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::CustomerUser',
-    'Kernel::System::DynamicFieldValue',
+    'Kernel::System::DynamicField',
+    'Kernel::System::DynamicField::Backend',
+    'Kernel::System::Group',
     'Kernel::System::Log',
-    'Kernel::System::Main',
 );
 
 =head1 NAME
 
-Kernel::System::DynamicField::Driver::CustomerUser - driver for the CustomerUser dynamic field
+Kernel::System::DynamicField::Driver::CustomerUser - backend for the CustomerUser dynamic field
 
 =head1 DESCRIPTION
 
-DynamicFields CustomerUser Driver delegate.
+Driver for the CustomerUser dynamic field class. Based on C<BaseReference>.
 
 =head1 PUBLIC INTERFACE
-
-This dynamic field driver module implements the public interface of L<Kernel::System::DynamicField::Backend>.
-Please look there for a detailed reference of the functions.
 
 =head2 new()
 
@@ -69,52 +68,29 @@ sub new {
     # allocate new hash for object
     my $Self = bless {}, $Type;
 
+    # Some reference dynamic fields are stored in the database table attribute dynamic_field_value.value_text.
+    $Self->{ValueType}      = 'Text';
+    $Self->{ValueKey}       = 'ValueText';
+    $Self->{TableAttribute} = 'value_text';
+
+    # Used for declaring CSS classes
+    $Self->{FieldCSSClass} = 'DynamicFieldReference';
+
     # set field behaviors
     $Self->{Behaviors} = {
         'IsACLReducible'               => 0,
         'IsNotificationEventCondition' => 0,
-        'IsSortable'                   => 0,
-        'IsFiltrable'                  => 0,
+        'IsSortable'                   => 1,
+        'IsFiltrable'                  => 1,
         'IsStatsCondition'             => 0,
-        'IsCustomerInterfaceCapable'   => 0,
-        'IsLikeOperatorCapable'        => 1,
-        'IsSetCapable'                 => 0,
+        'IsCustomerInterfaceCapable'   => 1,
+        'IsHiddenInTicketInformation'  => 0,
+        'IsReferenceField'             => 1,
+        'IsSetCapable'                 => 1,
+        'SetsDynamicContent'           => 1,
     };
 
-    # get the Dynamic Field Backend custom extensions
-    my $DynamicFieldDriverExtensions = $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Extension::Driver::CustomerUser');
-
-    EXTENSION:
-    for my $ExtensionKey ( sort keys %{$DynamicFieldDriverExtensions} ) {
-
-        # skip invalid extensions
-        next EXTENSION if !IsHashRefWithData( $DynamicFieldDriverExtensions->{$ExtensionKey} );
-
-        # create a extension config shortcut
-        my $Extension = $DynamicFieldDriverExtensions->{$ExtensionKey};
-
-        # check if extension has a new module
-        if ( $Extension->{Module} ) {
-
-            # check if module can be loaded
-            if (
-                !$Kernel::OM->Get('Kernel::System::Main')->RequireBaseClass( $Extension->{Module} )
-                )
-            {
-                die "Can't load dynamic fields backend module"
-                    . " $Extension->{Module}! $@";
-            }
-        }
-
-        # check if extension contains more behaviors
-        if ( IsHashRefWithData( $Extension->{Behaviors} ) ) {
-
-            %{ $Self->{Behaviors} } = (
-                %{ $Self->{Behaviors} },
-                %{ $Extension->{Behaviors} }
-            );
-        }
-    }
+    $Self->{ReferencedObjectType} = 'CustomerUser';
 
     return $Self;
 }
@@ -126,14 +102,14 @@ sub FieldValueValidate {
     if ( !defined $Param{Value} ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
-            Message  => "Need Value in CustomerUser DynamicField!",
+            Message  => "Need Value in $Param{DynamicFieldConfig}->{FieldType} DynamicField!",
         );
+
         return;
     }
 
-    my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
-
-    # Check if value parameter exists in possible values config.
+    # validate values via SearchObjects
+    #   driver prevents usage of PossibleValuesGet on purpose for performance reasons
     if ( length $Param{Value} ) {
         my @Values;
         if ( ref $Param{Value} eq 'ARRAY' ) {
@@ -143,429 +119,46 @@ sub FieldValueValidate {
             push @Values, $Param{Value};
         }
 
-        for my $Value (@Values) {
-            return if !defined $CustomerUserObject->CustomerUserDataGet(
-                User => $Value,
+        if ( $Param{ExternalSource} && $Param{DynamicFieldConfig}{Config}{ImportSearchAttribute} ) {
+            my $TransformedValues = $Self->_TransformExternalSource(
+                DynamicFieldConfig => $Param{DynamicFieldConfig},
+                ValueArray         => \@Values,
+                UserID             => $Param{UserID},
             );
+            VALUE:
+            for my $Value ( $TransformedValues->@* ) {
+
+                # empty values are considered valid
+                next VALUE unless $Value;
+
+                my @SearchResult = $Self->SearchObjects(
+                    DynamicFieldConfig => $Param{DynamicFieldConfig},
+                    ObjectID           => $Value,
+                    UserID             => $Param{UserID},
+                );
+
+                return unless @SearchResult;
+            }
+        }
+        else {
+            VALUE:
+            for my $Value (@Values) {
+
+                # empty values are considered valid
+                next VALUE unless $Value;
+
+                my @SearchResult = $Self->SearchObjects(
+                    DynamicFieldConfig => $Param{DynamicFieldConfig},
+                    ObjectID           => $Value,
+                    UserID             => $Param{UserID},
+                );
+
+                return unless @SearchResult;
+            }
         }
     }
 
     return 1;
-}
-
-sub EditFieldRender {
-    my ( $Self, %Param ) = @_;
-
-    # take config from field config
-    my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName   = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
-
-    my $Value = $Param{Value} // '';
-
-    # Extract the dynamic field value from the web request and set it if present. Do this after
-    #   stored value is retrieved and processed, so it can be overridden if form has refreshed for
-    #   some reasons (i.e. attachment has been uploaded). See bug#12453 for more information.
-    my $FieldValue = $Self->EditFieldValueGet(
-        %Param,
-    );
-
-    # set values from ParamObject if present
-    if ( defined $FieldValue && $FieldValue && $FieldValue->@* ) {
-        $Value = $FieldValue;
-    }
-
-    if ( !ref $Value ) {
-        $Value = [$Value];
-    }
-    elsif ( !$Value->@* ) {
-        $Value = [undef];
-    }
-
-    # check and set class if necessary
-    my $FieldClass = 'DynamicFieldText DynamicFieldCustomerUser Modernize';
-    if ( defined $Param{Class} && $Param{Class} ne '' ) {
-        $FieldClass .= ' ' . $Param{Class};
-    }
-
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
-        $FieldClass .= ' Validate_Required';
-    }
-
-    # set error css class
-    if ( $Param{ServerError} ) {
-        $FieldClass .= ' ServerError';
-    }
-
-    my %FieldTemplateData = (
-        FieldClass => $FieldClass,
-        FieldName  => $FieldName,
-        Readonly   => $Param{DynamicFieldConfig}->{Readonly},
-    );
-
-    my $FieldTemplateFile = 'DynamicField/Agent/CustomerUser';
-
-    my %Error = (
-        ServerError => $Param{ServerError},
-        Mandatory   => $Param{Mandatory},
-    );
-
-    my @ResultHTML;
-    for my $ValueIndex ( 0 .. $#{$Value} ) {
-        my $FieldID = $FieldConfig->{MultiValue} ? $FieldName . '_' . $ValueIndex : $FieldName;
-
-        if ( !$ValueIndex ) {
-            if ( $Error{ServerError} ) {
-                $Error{DivIDServerError} = "${FieldID}ServerError";
-                $Error{ErrorMessage}     = Translatable( $Param{ErrorMessage} || 'This field is required.' );
-            }
-            if ( $Error{Mandatory} ) {
-                $Error{DivIDMandatory}       = "${FieldID}Error";
-                $Error{FieldRequiredMessage} = Translatable('This field is required.');
-            }
-        }
-
-        # There is no distinction between visible value and actual value.
-        # Thus the template does not need a the data item 'VisibleValue'.
-
-        push @ResultHTML, $Param{LayoutObject}->Output(
-            TemplateFile => $FieldTemplateFile,
-            Data         => {
-                %FieldTemplateData,
-                FieldID => $FieldID,
-                %Error,
-                Value => ( $Value->[$ValueIndex] // '' ),
-            },
-        );
-    }
-
-    my $TemplateHTML;
-    if ( $FieldConfig->{MultiValue} && !$Param{Readonly} ) {
-        $TemplateHTML = $Param{LayoutObject}->Output(
-            TemplateFile => $FieldTemplateFile,
-            Data         => {
-                %FieldTemplateData,
-                FieldID => "${FieldName}_Template",
-            },
-        );
-    }
-
-    if ( $Param{AJAXUpdate} ) {
-
-        my $FieldSelector = '#' . $FieldName;
-
-        my $FieldsToUpdate = '';
-        if ( IsArrayRefWithData( $Param{UpdatableFields} ) ) {
-
-            # Remove current field from updatable fields list
-            my @FieldsToUpdate = grep { $_ ne $FieldName } @{ $Param{UpdatableFields} };
-
-            # quote all fields, put commas in between them
-            $FieldsToUpdate = join( ', ', map {"'$_'"} @FieldsToUpdate );
-        }
-
-        # add js to call FormUpdate()
-        $Param{LayoutObject}->AddJSOnDocumentComplete( Code => <<"EOF");
-\$('$FieldSelector').bind('change', function (Event) {
-    Core.AJAX.FormUpdate(\$(this).parents('form'), 'AJAXUpdate', '$FieldName', [ $FieldsToUpdate ]);
-});
-EOF
-    }
-
-    # call EditLabelRender on the common Driver
-    my $LabelString = $Self->EditLabelRender(
-        %Param,
-        Mandatory => $Param{Mandatory} || '0',
-        FieldName => $FieldConfig->{MultiValue} ? "${FieldName}_0" : $FieldName,
-    );
-
-    my %Data = (
-        Label => $LabelString,
-    );
-
-    # decide which structure to return
-    if ( $FieldConfig->{MultiValue} ) {
-        $Data{MultiValue}         = \@ResultHTML;
-        $Data{MultiValueTemplate} = $TemplateHTML;
-    }
-    else {
-        $Data{Field} = $ResultHTML[0];
-    }
-
-    return \%Data;
-}
-
-sub EditFieldValueValidate {
-    my ( $Self, %Param ) = @_;
-
-    # get the field value from the http request
-    my $Value = $Self->EditFieldValueGet(
-        DynamicFieldConfig => $Param{DynamicFieldConfig},
-        ParamObject        => $Param{ParamObject},
-
-        # not necessary for this Driver but place it for consistency reasons
-        ReturnValueStructure => 1,
-    );
-
-    my $ServerError;
-    my $ErrorMessage;
-
-    # ref comparison because EditFieldValuetet returns an arrayref except when using template value
-    if ( !ref $Value eq 'ARRAY' ) {
-        $Value = [$Value];
-    }
-
-    # value constellation [undef] is caught by mandatory check in for loop below
-    if ( $Param{Mandatory} && !$Value->@* ) {
-        return {
-            ServerError => 1,
-        };
-    }
-
-    my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
-
-    for my $ValueItem ( @{$Value} ) {
-
-        # perform necessary validations
-        if ( $Param{Mandatory} && !$ValueItem ) {
-            return {
-                ServerError => 1,
-            };
-        }
-        else {
-            # validate if value is in possible values list (but let pass empty values)
-            if ( $ValueItem && !defined $CustomerUserObject->CustomerUserDataGet( User => $ValueItem ) ) {
-                $ServerError  = 1;
-                $ErrorMessage = 'The field content is invalid';
-            }
-        }
-    }
-
-    # return resulting structure
-    return {
-        ServerError  => $ServerError,
-        ErrorMessage => $ErrorMessage,
-    };
-}
-
-sub DisplayValueRender {
-    my ( $Self, %Param ) = @_;
-
-    # activate HTMLOutput when it wasn't specified
-    my $HTMLOutput = $Param{HTMLOutput} // 1;
-
-    # get raw Value strings from field value
-    my @Values = !ref $Param{Value}
-        ? ( $Param{Value} )
-        : scalar $Param{Value}->@* ? $Param{Value}->@*
-        :                            ('');
-
-    $Param{ValueMaxChars} ||= '';
-
-    my @ReadableValues;
-    my @ReadableTitles;
-    for my $ValueItem (@Values) {
-        $ValueItem //= '';
-
-        # replace customer user login with full name
-        if ($ValueItem) {
-            $ValueItem = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerName(
-                UserLogin => $ValueItem,
-            );
-        }
-
-        # set title as value after update and before limit
-        push @ReadableTitles, $ValueItem;
-
-        # HTML Output transformation
-        if ($HTMLOutput) {
-            $ValueItem = $Param{LayoutObject}->Ascii2Html(
-                Text => $ValueItem,
-                Max  => $Param{ValueMaxChars},
-            );
-        }
-        else {
-            if ( $Param{ValueMaxChars} && length($ValueItem) > $Param{ValueMaxChars} ) {
-                $ValueItem = substr( $ValueItem, 0, $Param{ValueMaxChars} ) . '...';
-            }
-        }
-
-        push @ReadableValues, $ValueItem;
-    }
-
-    my $ValueSeparator;
-    my $Title = join( ', ', @ReadableTitles );
-
-    # HTMLOutput transformations
-    if ($HTMLOutput) {
-        $Title = $Param{LayoutObject}->Ascii2Html(
-            Text => $Title,
-            Max  => $Param{TitleMaxChars} || '',
-        );
-        $ValueSeparator = '<br/>';
-    }
-    else {
-        if ( $Param{TitleMaxChars} && length($Title) > $Param{TitleMaxChars} ) {
-            $Title = substr( $Title, 0, $Param{TitleMaxChars} ) . '...';
-        }
-        $ValueSeparator = "\n";
-    }
-
-    # this field type does not support the Link Feature
-    my $Link;
-
-    # return a data structure
-    return {
-        Value => '' . join( $ValueSeparator, @ReadableValues ),
-        Title => '' . $Title,
-        Link  => $Link,
-    };
-}
-
-sub SearchFieldParameterBuild {
-    my ( $Self, %Param ) = @_;
-
-    # get field value
-    my $Value = $Self->SearchFieldValueGet(%Param);
-
-    my $DisplayValue;
-
-    if ( defined $Value && !$Value ) {
-        $DisplayValue = '';
-    }
-
-    if ($Value) {
-        my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
-
-        if ( ref $Value eq 'ARRAY' ) {
-
-            my @DisplayItemList;
-            for my $Item ( @{$Value} ) {
-
-                # set the display value
-                my $DisplayItem = $CustomerUserObject->CustomerName(
-                    UserLogin => $Item,
-                ) || $Item;
-
-                push @DisplayItemList, $DisplayItem;
-            }
-
-            # combine different values into one string
-            $DisplayValue = join ' + ', @DisplayItemList;
-        }
-        else {
-
-            # set the display value
-            $DisplayValue = $CustomerUserObject->CustomerName(
-                UserLogin => $Value,
-            );
-        }
-    }
-
-    # return search parameter structure
-    return {
-        Parameter => {
-            Equals => $Value,
-        },
-        Display => $DisplayValue,
-    };
-}
-
-sub StatsFieldParameterBuild {
-    my ( $Self, %Param ) = @_;
-
-    # function needs to be overwritten to make sure that the call doesn't reach StatsFieldParameterBuild in BaseEntity
-    $Kernel::OM->Get('Kernel::System::Log')->Log(
-        Prioritiy => 'error',
-        Message   => 'Method StatsFieldParameterBuild is not implemented for CustomerUser dynamic fields and should never be called.',
-    );
-    return;
-}
-
-sub ReadableValueRender {
-    my ( $Self, %Param ) = @_;
-
-    # set Value and Title variables
-    my $Value = '';
-    my $Title = '';
-
-    # check value
-    my @Values;
-    if ( ref $Param{Value} eq 'ARRAY' ) {
-        @Values = @{ $Param{Value} };
-    }
-    else {
-        @Values = ( $Param{Value} );
-    }
-
-    my @ReadableValues;
-
-    for my $Item (@Values) {
-        $Item //= '';
-
-        # replace customer user login with full name
-        if ($Item) {
-            $Item = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerName(
-                UserLogin => $Item,
-            );
-        }
-
-        push @ReadableValues, $Item || '';
-    }
-
-    # set new line separator
-    my $ItemSeparator = ', ';
-
-    # Output transformations
-    $Value = join( $ItemSeparator, @ReadableValues );
-    $Title = $Value;
-
-    # prepare title
-    $Title = $Value;
-
-    if ( $Param{TitleMaxChars} && length $Title > $Param{TitleMaxChars} ) {
-        $Title = substr( $Title, 0, $Param{TitleMaxChars} ) . '...';
-    }
-
-    # return a data structure
-    return {
-        Value => $Value,
-        Title => $Title,
-    };
-}
-
-sub ValueLookup {
-    my ( $Self, %Param ) = @_;
-
-    my $Value = $Param{Key} // '';
-
-    my @Keys;
-    if ( ref $Param{Key} eq 'ARRAY' ) {
-        @Keys = @{ $Param{Key} };
-    }
-    else {
-        @Keys = ( $Param{Key} );
-    }
-
-    # to store final values
-    my @Values;
-
-    my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
-
-    KEYITEM:
-    for my $Item (@Keys) {
-        next KEYITEM if !$Item;
-
-        # try to convert key to real value or set value as key
-        $Value = $CustomerUserObject->CustomerName(
-            UserLogin => $Item,
-        ) || $Item;
-
-        push @Values, $Value;
-    }
-
-    return \@Values;
 }
 
 sub PossibleValuesGet {
@@ -573,9 +166,375 @@ sub PossibleValuesGet {
     # this field makes no use of PossibleValuesGet for performance purpose - instead, values are checked via CustomerUserDataGet
     # nevertheless, function needs to be overwritten to make sure that the call doesn't reach PossibleValuesGet in BaseSelect
     $Kernel::OM->Get('Kernel::System::Log')->Log(
-        Prioritiy => 'error',
-        Message   => 'Method PossibleValuesGet is per design not implemented for CustomerUser dynamic fields and should never be called.',
+        Priority => 'error',
+        Message  => 'Method PossibleValuesGet is per design not implemented for CustomerUser dynamic fields and should never be called.',
     );
+
+    return;
+}
+
+=head2 GetFieldTypeSettings()
+
+Get field type settings that are specific to the referenced object type CustomerUser.
+
+=cut
+
+sub GetFieldTypeSettings {
+    my ( $Self, %Param ) = @_;
+
+    # setting independent from the referenced object
+    my @FieldTypeSettings;
+
+    # For reference dynamic fields we want to display the referenced object type,
+    # but the user should not be able to easily change that.
+    # The select field can't be simply disabled as this would prevent that the info
+    # is passed to the backend. Therefore we set up a list with a single element.
+    {
+        push @FieldTypeSettings,
+            {
+                ConfigParamName => 'ReferencedObjectType',
+                Label           => Translatable('Referenced object type'),
+                Explanation     => Translatable('Select the type of the referenced object.'),
+                InputType       => 'Selection',
+                SelectionData   => { $Self->{ReferencedObjectType} => $Self->{ReferencedObjectType} },
+                PossibleNone    => 0,
+                Mandatory       => 1,
+            };
+    }
+
+    # set up the edit field mode selection
+    {
+        push @FieldTypeSettings,
+            {
+                ConfigParamName => 'EditFieldMode',
+                Label           => Translatable('Input mode of edit field'),
+                Explanation     => Translatable('Select the input mode for the edit field.'),
+                InputType       => 'Selection',
+                SelectionData   => {
+                    'AutoComplete' => 'AutoComplete',
+                },
+                PossibleNone => 0,
+            };
+    }
+
+    # Support configurable import search attribute
+    push @FieldTypeSettings,
+        {
+            ConfigParamName => 'ImportSearchAttribute',
+            Label           => Translatable('External source key'),
+            Explanation     => Translatable('When set via an external source (e.g. web service or import / export), the value will be interpreted as this attribute.'),
+            InputType       => 'Selection',
+            SelectionData   => {
+                'UserLogin'        => 'Login',
+                'PostMasterSearch' => 'E-Mail',
+            },
+            PossibleNone => 1,
+            Multiple     => 0,
+        };
+
+    # This dynamic field support multiple values.
+    {
+        my %MultiValueSelectionData = (
+            0 => Translatable('No'),
+            1 => Translatable('Yes'),
+        );
+
+        push @FieldTypeSettings,
+            {
+                ConfigParamName => 'MultiValue',
+                Label           => Translatable('Multiple Values'),
+                Explanation     => Translatable('Activate this option to allow multiple values for this field.'),
+                InputType       => 'Selection',
+                SelectionData   => \%MultiValueSelectionData,
+                PossibleNone    => 0,
+            };
+    }
+
+    return @FieldTypeSettings;
+}
+
+=head2 ObjectPermission()
+
+checks read permission for a given object and UserID.
+
+    $Permission = $BackendObject->ObjectPermission(
+        Key     => 123,
+        UserID  => 1,
+    );
+
+=cut
+
+sub ObjectPermission {
+    my ( $Self, %Param ) = @_;
+
+    # check needed stuff
+    for my $Argument (qw(Key UserID)) {
+        if ( !$Param{$Argument} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Argument!",
+            );
+
+            return;
+        }
+    }
+
+    # TODO how should permissions for customeruser be handled?
+    return 1;
+}
+
+=head2 ObjectDescriptionGet()
+
+return a hash of object descriptions.
+
+    my %Description = $BackendObject->ObjectDescriptionGet(
+        ObjectID => 123,
+        UserID   => 1,
+    );
+
+Return
+
+    %Description = (
+        Normal => "Ticket# 1234455",
+        Long   => "Ticket# 1234455: Need a sample ticket title",
+    );
+
+=cut
+
+sub ObjectDescriptionGet {
+    my ( $Self, %Param ) = @_;
+
+    # check needed stuff
+    for my $Argument (qw(ObjectID)) {
+        if ( !$Param{$Argument} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Argument!",
+            );
+
+            return;
+        }
+    }
+
+    my %CustomerUserData = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserDataGet(
+        User => $Param{ObjectID},
+    );
+
+    return unless %CustomerUserData;
+
+    my $Link;
+
+    # Add Link to CustomerUser
+    if ( $Param{LayoutObject}{SessionSource} && $Param{LayoutObject}{SessionSource} eq 'AgentInterface' ) {
+
+        # TODO: Why is the UserID not transferred here? I think UserID should be mandatory.
+        # TODO: Does it make sense to get the UserID from the LayoutObject if it is not passed in $Param?
+        my $FrontendModule = 'AgentCustomerUserInformationCenter';
+        my $UserID         = $Param{LayoutObject}{UserID} || 1;
+
+        $Link = $Self->_GetHTTPLink(
+            FrontendModule => $FrontendModule,
+            ObjectID       => $Param{LayoutObject}->LinkEncode( $CustomerUserData{UserLogin} ),
+            UserID         => $UserID,
+        );
+    }
+
+    # create description
+    return (
+        Normal => $CustomerUserData{UserMailString},
+        Long   => $CustomerUserData{UserMailString},
+        Link   => $Link,
+    );
+}
+
+=head2 SearchObjects()
+
+This is used in auto completion when searching for possible object IDs.
+
+    my @ObjectIDs = $BackendObject->SearchObjects(
+        DynamicFieldConfig => $DynamicFieldConfig,
+        ObjectID           => $ObjectID,                # (optional) if given, takes precedence over Term
+        Term               => $Term,                    # (optional) defaults to wildcard search with empty string
+        MaxResults         => $MaxResults,
+        UserID             => 1,
+        Object             => {
+            %Data,
+        },
+        ParamObject        => $ParamObject,
+    );
+
+=cut
+
+sub SearchObjects {
+    my ( $Self, %Param ) = @_;
+
+    $Param{Term} //= '';
+
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+    my %SearchParams;
+
+    if ( $Param{ObjectID} ) {
+
+        # use customer user data to check against restrictions
+        my %CustomerUserData = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserDataGet(
+            User => $Param{ObjectID},
+        );
+
+        return () unless %CustomerUserData;
+
+        # check if customer user matches search params
+        for my $ParamName ( keys %SearchParams ) {
+
+            # value is either scalar, array ref or hash ref with Equals => 'Value'
+            my $ParamValue;
+            if ( ref $SearchParams{$ParamName} eq 'HASH' ) {
+                $ParamValue = $SearchParams{$ParamName}{Equals};
+            }
+            else {
+                $ParamValue = $SearchParams{$ParamName};
+            }
+
+            if ( ref $ParamValue eq 'ARRAY' ) {
+                for my $Element ( $ParamValue->@* ) {
+                    if ( ref $CustomerUserData{$ParamName} eq 'ARRAY' ) {
+                        return () unless any { $_ eq $Element } $CustomerUserData{$ParamName}->@*;
+                    }
+                    else {
+                        return () unless $CustomerUserData{$ParamName} eq $Element;
+                    }
+                }
+            }
+            else {
+                if ( ref $CustomerUserData{$ParamName} eq 'ARRAY' ) {
+                    return () unless any { $_ eq $ParamValue } $CustomerUserData{$ParamName}->@*;
+                }
+                else {
+                    return () unless $CustomerUserData{$ParamName} eq $ParamValue;
+                }
+            }
+        }
+        return ( $CustomerUserData{UserLogin} );
+    }
+    elsif ( $Param{ExternalSource} ) {
+        my $SearchAttribute = $DynamicFieldConfig->{Config}{ImportSearchAttribute} || 'UserLogin';
+
+        $SearchParams{$SearchAttribute} = $Param{Term};
+    }
+    else {
+        $SearchParams{Search} = $Param{Term};
+    }
+
+    # return a list of customeruser IDs
+    my %Result = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerSearch(
+        Limit  => $Param{MaxResults},
+        Result => 'ARRAY',
+        Valid  => 1,
+        %SearchParams,
+    );
+
+    return keys %Result;
+}
+
+=head2 _GetHTTPLink()
+
+Returns a HTTP link to the customer user edit mask, if permission is given.
+
+    my $Link = $BackendObject->_GetHTTPLink(
+        FrontendModule => $FrontendModule,
+        ObjectID       => $EncodedUserLogin,
+        UserID         => $UserID,
+    );
+
+Return
+
+    $Link = 'index.pl?Action=AdminCustomerUser;Subaction=Change;ID=$customerid'
+
+=cut
+
+sub _GetHTTPLink {
+    my ( $Self, %Param ) = @_;
+
+    # check needed stuff
+    for my $Argument (qw(UserID FrontendModule ObjectID)) {
+        if ( !$Param{$Argument} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Argument!",
+            );
+
+            return;
+        }
+    }
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    my $ModuleReg = $ConfigObject->Get('Frontend::Module')->{ $Param{FrontendModule} };
+    my $Link;
+
+    # module permission check for action
+    my $AccessRo;
+    my $AccessRw;
+    if (
+        ref $ModuleReg->{GroupRo} eq 'ARRAY'
+        && !scalar @{ $ModuleReg->{GroupRo} }
+        && ref $ModuleReg->{Group} eq 'ARRAY'
+        && !scalar @{ $ModuleReg->{Group} }
+        )
+    {
+        $AccessRo = 1;
+        $AccessRw = 1;
+    }
+    else {
+        my $GroupObject = $Kernel::OM->Get('Kernel::System::Group');
+
+        PERMISSION:
+        for my $Permission (qw(GroupRo Group)) {
+            my $AccessOk = 0;
+            my $Group    = $ModuleReg->{$Permission};
+            next PERMISSION if !$Group;
+            if ( ref $Group eq 'ARRAY' ) {
+                INNER:
+                for my $GroupName ( @{$Group} ) {
+                    next INNER if !$GroupName;
+                    next INNER if !$GroupObject->PermissionCheck(
+                        UserID    => $Param{UserID},
+                        GroupName => $GroupName,
+                        Type      => $Permission eq 'GroupRo' ? 'ro' : 'rw',
+
+                    );
+                    $AccessOk = 1;
+                    last INNER;
+                }
+            }
+            else {
+                my $HasPermission = $GroupObject->PermissionCheck(
+                    UserID    => $Param{UserID},
+                    GroupName => $Group,
+                    Type      => $Permission eq 'GroupRo' ? 'ro' : 'rw',
+
+                );
+                if ($HasPermission) {
+                    $AccessOk = 1;
+                }
+            }
+            if ( $Permission eq 'Group' && $AccessOk ) {
+                $AccessRo = 1;
+                $AccessRw = 1;
+            }
+            elsif ( $Permission eq 'GroupRo' && $AccessOk ) {
+                $AccessRo = 1;
+            }
+        }
+    }
+
+    if ( $AccessRo || $AccessRw ) {
+
+        $Link = 'index.pl?Action=' . $Param{FrontendModule} . ';';
+        $Link .= 'CustomerUserID=' . $Param{ObjectID};
+        return $Link;
+    }
+
+    # both GroupRo nor Group are empty arrayrefs
     return;
 }
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,11 +22,11 @@ use warnings;
 
 # core modules
 use MIME::Base64 qw(encode_base64);
-use Encode qw(encode);
 
 # CPAN modules
+use URI::Escape qw(uri_unescape);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our $ObjectManagerDisabled = 1;
@@ -804,7 +804,7 @@ sub AssessResponse {
         $ResponseError = $ErrorMessage;
     }
 
-    if ( $ResponseCode !~ m{ \A 20 \d \z }xms ) {
+    if ( $ResponseCode !~ m{ \A 20 [0-9] \z }xms ) {
         $ResponseError = $ErrorMessage . " Response code '$ResponseCode'.";
     }
 
@@ -858,12 +858,12 @@ sub HandleResponse {
 
         # unescape URI strings in query parameters
         for my $Param ( sort keys %QueryParams ) {
-            $QueryParams{$Param} = URI::Escape::uri_unescape( $QueryParams{$Param} );
+            $QueryParams{$Param} = uri_unescape( $QueryParams{$Param} );
         }
 
         # fix ExecutionTime param
         if ( $QueryParams{ExecutionTime} ) {
-            $QueryParams{ExecutionTime} =~ s{(\d+)\+(\d+)}{$1 $2};
+            $QueryParams{ExecutionTime} =~ s{([0-9]+)\+([0-9]+)}{$1 $2};
         }
 
         return {
@@ -885,7 +885,7 @@ sub HandleResponse {
         my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
 
         # create the ticket
-        my ($TicketID) = $Param{Data}->{error}->{reason} =~ m/ \Q[_doc][\E (\d+) \Q]:\E \s /x;    # e.g. "[_doc][5]: "
+        my ($TicketID) = $Param{Data}->{error}->{reason} =~ m/ \Q[_doc][\E ([0-9]+) \Q]:\E \s /x;    # e.g. "[_doc][5]: "
         my $Errors = 0;
         if ( !$ESObject->TicketCreate( TicketID => $TicketID ) ) {
             $Errors++;

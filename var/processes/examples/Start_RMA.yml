@@ -112,12 +112,12 @@ ActivityDialogs:
           DescriptionShort: ''
           Display: '2'
         DynamicField_PreProcGatheringInformation:
-          DefaultValue: otobo5s-waiting
+          DefaultValue: careoncloud5s-waiting
           DescriptionLong: ''
           DescriptionShort: ''
           Display: '0'
         DynamicField_PreProcRMA:
-          DefaultValue: otobo5s-no
+          DefaultValue: careoncloud5s-no
           DescriptionLong: ''
           DescriptionShort: ''
           Display: '2'
@@ -286,7 +286,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcRMA:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
           Type: and
       ConditionLinking: and
@@ -301,7 +301,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcRMA:
-              Match: otobo5s-no
+              Match: careoncloud5s-no
               Type: String
           Type: and
       ConditionLinking: and
@@ -316,10 +316,10 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcGatheringInformation:
-              Match: otobo5s-approved
+              Match: careoncloud5s-approved
               Type: String
             DynamicField_PreProcRMA:
-              Match: otobo5s-yes
+              Match: careoncloud5s-yes
               Type: String
           Type: and
       ConditionLinking: and

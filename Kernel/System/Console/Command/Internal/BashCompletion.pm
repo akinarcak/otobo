@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,9 +19,14 @@ package Kernel::System::Console::Command::Internal::BashCompletion;
 use strict;
 use warnings;
 
-use Kernel::System::Console::InterfaceConsole;
-
 use parent qw(Kernel::System::Console::BaseCommand Kernel::System::Console::Command::List);
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::Console::InterfaceConsole;    ## no perlimports
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -61,7 +66,7 @@ sub Run {
     my $PreviousWord = $Self->GetArgument('previous-word');
 
     # We are looking for the command name
-    if ( $PreviousWord =~ m/otobo\.Console\.pl/xms ) {
+    if ( $PreviousWord =~ m/careoncloud\.Console\.pl/xms ) {
 
         # Get all matching commands
         my @CommandList = map {s/^Kernel::System::Console::Command:://xmsr} $Self->ListAllCommands();
@@ -75,10 +80,10 @@ sub Run {
     else {
         # We need to extract the command name from the command line if present.
         my $CompLine = $ENV{COMP_LINE};
-        if ( !$CompLine || $CompLine !~ m/otobo\.Console\.pl/ ) {
+        if ( !$CompLine || $CompLine !~ m/careoncloud\.Console\.pl/ ) {
             $Self->ExitCodeError();
         }
-        $CompLine =~ s/.*otobo\.Console\.pl\s*//xms;
+        $CompLine =~ s/.*careoncloud\.Console\.pl\s*//xms;
 
         # Try to create the command object to get its options
         my ($CommandName) = split /\s+/, $CompLine;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,9 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
@@ -25,10 +25,10 @@ use Scalar::Util qw(weaken);
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::MockTime qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::Output::HTML::Layout;
+use Kernel::Output::HTML::Layout ();
 
 # get needed objects
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -302,6 +302,8 @@ b1
 b1
 ',
     },
+
+    # testing AddJSOnDocumentComplete()
     {
         Name     => 'JSOnDocumentComplete 1',
         Template => '
@@ -351,7 +353,73 @@ console.log(22);
 ',
     },
 
+    # testing AddJSOnDocumentCompleteIfNotExists()
     {
+        Name                               => 'AddJSOnDocumentCompleteIfNotExists 1',
+        Template                           => 'kèk-zafèr',
+        AddJSOnDocumentCompleteIfNotExists =>
+            {
+                Key  => 'IfNotExistsKey1',
+                Code => "console.log(31);\n",
+            },
+        Result => 'kèk-zafèr',
+    },
+    {
+        Name                               => 'AddJSOnDocumentCompleteIfNotExists 2',
+        Template                           => 'kèk-zafèr',
+        AddJSOnDocumentCompleteIfNotExists =>
+            {
+                Key  => 'IfNotExistsKey2',
+                Code => "console.log(32);\n",
+            },
+        Result => 'kèk-zafèr',
+    },
+    {
+        Name                               => 'AddJSOnDocumentCompleteIfNotExists 3',
+        Template                           => 'kèk-zafèr',
+        AddJSOnDocumentCompleteIfNotExists =>
+            {
+                Key  => 'IfNotExistsKey1',      # key already exists
+                Code => "console.log(33);\n",
+            },
+        Result => 'kèk-zafèr',
+    },
+    {
+        Name                               => 'AddJSOnDocumentCompleteIfNotExists 4',
+        Template                           => 'kèk-zafèr',
+        AddJSOnDocumentCompleteIfNotExists =>
+            {
+                Key  => "IfNotExistsKey4\nalert('Bonjou');",    # a line break sneaked in
+                Code => "console.log(34);\n",
+            },
+        Result => 'kèk-zafèr',
+    },
+    {
+        Name     => 'AddJSOnDocumentCompleteIfNotExists, view dump',
+        Template => '
+[% PROCESS "JSOnDocumentCompleteInsert" -%]',
+        Result => '
+// Key: IfNotExistsKey1
+console.log(31);
+
+// Key: IfNotExistsKey2
+console.log(32);
+
+// Key: IfNotExistsKey4
+alert(\'Bonjou\');
+console.log(34);
+',
+    },
+    {
+        Name     => 'AddJSOnDocumentCompleteIfNotExists, no data',
+        Template => '
+[% PROCESS "JSOnDocumentCompleteInsert" -%]',
+        Result => qq{\n},
+    },
+
+    # testing JSDataInsert
+    {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
         Name     => 'JSData 1',
         Template => '
 [% PROCESS JSData
@@ -360,13 +428,14 @@ console.log(22);
 %]
 [% PROCESS JSData
     Key   = "Config.Test2"
-    Value = [1, 2, { test => "test"}]
+    Value = [1, 2, -1.234567, { test => "test"}]
 %]',
         Result => '
 
 ',
     },
     {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
         Name      => 'JSData 2 with AddJSData()',
         Template  => '',
         AddJSData => {
@@ -376,32 +445,134 @@ console.log(22);
         Result => '',
     },
     {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
         Name      => 'JSData 3 with AddJSData()',
         Template  => '',
         AddJSData => {
             Key   => 'JS.String',
-            Value => { String => '</script></script>' }
+            Value => { String => "</script><script>" }
         },
         Result => '',
     },
     {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
         Name      => 'JSData 4 with AddJSData()',
         Template  => '',
         AddJSData => {
             Key   => 'JS.String.CaseInsensitive',
-            Value => { String => '</ScRiPt></ScRiPt>' },
+            Value => { String => "</ScRiPt><ScRiPt>" },
         },
         Result => '',
     },
     {
-        Name     => 'JSDataInsert',
-        Template => '
-[% PROCESS "JSDataInsert" -%]',
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
+        Name         => 'Boolean: integer 1',
+        Template     => '',
+        AddJSBoolean => {
+            Key   => 'Bool1',
+            Value => 1,
+        },
+        Result => '',
+    },
+    {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
+        Name         => 'Boolean number 0',
+        Template     => '',
+        AddJSBoolean => {
+            Key   => 'Bool2',
+            Value => 0,
+        },
+        Result => '',
+    },
+    {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
+        Name         => 'Boolean string q{1}',
+        Template     => '',
+        AddJSBoolean => {
+            Key   => 'Bool3',
+            Value => '1',
+        },
+        Result => '',
+    },
+    {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
+        Name         => 'Boolean string q{0]',
+        Template     => '',
+        AddJSBoolean => {
+            Key   => 'Bool4',
+            Value => '0',
+        },
+        Result => '',
+    },
+    {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
+        Name         => 'Boolean string q{0.0], true',
+        Template     => '',
+        AddJSBoolean => {
+            Key   => 'Bool5',
+            Value => '0.0',
+        },
+        Result => '',
+    },
+    {
+        # the accumulated config will be dumped in the test case 'JSDataInsert'
+        Name     => 'Process JSBoolean',
+        Template => <<'END_TEMPLATE',
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean1"
+    Value = 'true',
+%]
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean2"
+    Value = 'false',
+%]
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean3"
+    Value = 0,
+%]
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean4"
+    Value = 0.0,
+%]
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean5"
+    Value = "0",
+%]
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean6"
+    Value = "0.0",
+%]
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean7"
+    Value = 1 > 0,
+%]
+[% PROCESS JSBoolean
+    Key   = "ProcessJSBoolean8"
+    Value = 1 < 0,
+%]
+END_TEMPLATE
         Result => '
-Core.Config.AddConfig({"Config.Test":123,"Config.Test2":[1,2,{"test":"test"}],"JS.String":{"String":"<\/script><\/script>"},"JS.String.CaseInsensitive":{"String":"<\/ScRiPt><\/ScRiPt>"},"Perl.Code":{"Perl":"Data"}});
+
+
+
+
+
+
+
 ',
     },
     {
+        # Dump the Core.Config data that was collected in the preceeding test cases
+        Name     => 'JSDataInsert',
+        Template => '
+[% PROCESS "JSDataInsert" -%]',
+
+        Result => '
+Core.Config.AddConfig({"Bool1":true,"Bool2":false,"Bool3":true,"Bool4":false,"Bool5":true,"Config.Test":"123","Config.Test2":["1","2","-1.234567",{"test":"test"}],"JS.String":{"String":"\\u003C/script>\\u003Cscript>"},"JS.String.CaseInsensitive":{"String":"\\u003C/ScRiPt>\\u003CScRiPt>"},"Perl.Code":{"Perl":"Data"},"ProcessJSBoolean1":true,"ProcessJSBoolean2":true,"ProcessJSBoolean3":false,"ProcessJSBoolean4":false,"ProcessJSBoolean5":false,"ProcessJSBoolean6":true,"ProcessJSBoolean7":true,"ProcessJSBoolean8":false});
+',
+    },
+    {
+        # no more config is dumped as the accumulator was emptied in the 'JSDataInsert' test case
         Name     => 'JSDataInsert, no data',
         Template => '[% PROCESS "JSDataInsert" -%]',
         Result   => '',
@@ -425,20 +596,19 @@ Core.Config.AddConfig({"Config.Test":123,"Config.Test2":[1,2,{"test":"test"}],"J
         },
     },
     {
-        Name     => 'Form with SessionID (no cookie) and ChallengeToken',
+        Name     => 'Form with SessionID and ChallengeToken, SessionID is no longer a form parameter',
         Template => '
 <form action="#"></form>',
         Result => '
-<form action="#"><input type="hidden" name="ChallengeToken" value="TestToken"/><input type="hidden" name="SID" value="123"/></form>',
+<form action="#"><input type="hidden" name="ChallengeToken" value="TestToken"/></form>',
         Env => {
             UserChallengeToken => 'TestToken',
             SessionID          => '123',
             SessionName        => 'SID',
-            SessionIDCookie    => 0,
         },
     },
     {
-        Name     => 'Form with SessionID (with cookie) and ChallengeToken',
+        Name     => 'Form with SessionID and ChallengeToken',
         Template => '
 <form action="#"></form>',
         Result => '
@@ -447,24 +617,22 @@ Core.Config.AddConfig({"Config.Test":123,"Config.Test2":[1,2,{"test":"test"}],"J
             UserChallengeToken => 'TestToken',
             SessionID          => '123',
             SessionName        => 'Session',
-            SessionIDCookie    => 1,
         },
     },
     {
-        Name     => 'Link with SessionID (no cookie)',
+        Name     => 'Link with SessionID, SessionID is no longer a form parameter',
         Template => '
 <a href="index.pl?Action=Test">link</a>',
         Result => '
-<a href="index.pl?Action=Test;SID=123">link</a>',
+<a href="index.pl?Action=Test">link</a>',
         Env => {
             UserChallengeToken => 'TestToken',
             SessionID          => '123',
             SessionName        => 'SID',
-            SessionIDCookie    => 0,
         },
     },
     {
-        Name     => 'Link with SessionID (with cookie)',
+        Name     => 'Link with SessionID',
         Template => '
 <a href="index.pl?Action=Test">link</a>',
         Result => '
@@ -473,7 +641,6 @@ Core.Config.AddConfig({"Config.Test":123,"Config.Test2":[1,2,{"test":"test"}],"J
             UserChallengeToken => 'TestToken',
             SessionID          => '123',
             SessionName        => 'Session',
-            SessionIDCookie    => 1,
         },
     },
     {
@@ -548,9 +715,21 @@ for my $Test (@Tests) {
         );
     }
 
+    if ( $Test->{AddJSOnDocumentCompleteIfNotExists} ) {
+        $LayoutObject->AddJSOnDocumentCompleteIfNotExists(
+            $Test->{AddJSOnDocumentCompleteIfNotExists}->%*,
+        );
+    }
+
     if ( $Test->{AddJSData} ) {
         $LayoutObject->AddJSData(
-            %{ $Test->{AddJSData} },
+            $Test->{AddJSData}->%*,
+        );
+    }
+
+    if ( $Test->{AddJSBoolean} ) {
+        $LayoutObject->AddJSBoolean(
+            $Test->{AddJSBoolean}->%*,
         );
     }
 
@@ -575,10 +754,6 @@ weaken($TemplateObject);
 
 undef $LayoutObject;
 
-is(
-    $TemplateObject,
-    undef,
-    'TemplateObject must be correctly destroyed (no ring references)',
-);
+ok( !defined $TemplateObject, 'TemplateObject must be correctly destroyed (no ring references)' );
 
-done_testing();
+done_testing;

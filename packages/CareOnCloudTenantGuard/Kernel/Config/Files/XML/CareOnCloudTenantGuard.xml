@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_config version="2.0" init="Application">
+    <Setting Name="CareOnCloud::TenantGuard::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables default-deny tenant authorization for CareOnCloud services.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    <Setting Name="CareOnCloud::TenantGuard::AllowPlatformAdmin" Required="1" Valid="1">
+        <Description Translatable="1">Allows platform administrators to cross tenant boundaries. Keep disabled except for controlled emergency access.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+    <Setting Name="CareOnCloud::TenantGuard::PolicyVersion" Required="1" Valid="1">
+        <Description Translatable="1">Identifies the active tenant policy contract for audit records.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^\d+\.\d+\.\d+$">1.8.0</Item>
+        </Value>
+    </Setting>
+    <Setting Name="CareOnCloud::TenantCache::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables policy-bound tenant namespace cache operations.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::TenantCache::MaximumTTLSeconds" Required="1" Valid="1">
+        <Description Translatable="1">Maximum TTL accepted by the tenant cache adapter.</Description>
+        <Navigation>Core::CareOnCloud::Security</Navigation><Value><Item ValueType="String" ValueRegex="^[1-9][0-9]{0,5}$">86400</Item></Value>
+    </Setting>
+</careoncloud_config>

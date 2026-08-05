@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,15 +18,17 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Test2::V0;
-use Kernel::System::UnitTest::RegisterDriver;
-
-our $Self;
-
+# core modules
 use File::Path qw(mkpath rmtree);
+use JSON;
 
-use Kernel::System::PostMaster;
+# CPAN modules
+use Test2::V0;
+use Path::Class qw(file);
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -81,12 +83,12 @@ $Kernel::OM->Get('Kernel::Config')->Set(
 my $TestBackendObject = $Kernel::OM->Get('Kernel::System::Email::Test');
 
 my $Success = $TestBackendObject->CleanUp();
-$Self->True(
+ok(
     $Success,
     'Initial cleanup',
 );
 
-$Self->IsDeeply(
+is(
     $TestBackendObject->EmailsGet(),
     [],
     'Test backend empty after initial cleanup',
@@ -111,52 +113,28 @@ if ( !$SMIMEObject ) {
     diag "NOTICE: No SMIME support!";
 
     if ( !-e $OpenSSLBin ) {
-        $Self->False(
-            1,
-            "No such $OpenSSLBin!",
-        );
+        fail("No such $OpenSSLBin!");
     }
     elsif ( !-x $OpenSSLBin ) {
-        $Self->False(
-            1,
-            "$OpenSSLBin not executable!",
-        );
+        fail("$OpenSSLBin not executable!");
     }
     elsif ( !-e $CertPath ) {
-        $Self->False(
-            1,
-            "No such $CertPath!",
-        );
+        fail("No such $CertPath!");
     }
     elsif ( !-d $CertPath ) {
-        $Self->False(
-            1,
-            "No such $CertPath directory!",
-        );
+        fail("No such $CertPath directory!");
     }
     elsif ( !-w $CertPath ) {
-        $Self->False(
-            1,
-            "$CertPath not writable!",
-        );
+        fail("$CertPath not writable!");
     }
     elsif ( !-e $PrivatePath ) {
-        $Self->False(
-            1,
-            "No such $PrivatePath!",
-        );
+        fail("No such $PrivatePath!");
     }
-    elsif ( !-d $Self->{PrivatePath} ) {
-        $Self->False(
-            1,
-            "No such $PrivatePath directory!",
-        );
+    elsif ( !-d $PrivatePath ) {
+        fail("No such $PrivatePath directory!");
     }
     elsif ( !-w $PrivatePath ) {
-        $Self->False(
-            1,
-            "$PrivatePath not writable!",
-        );
+        fail("$PrivatePath not writable!");
     }
 
     done_testing();
@@ -168,15 +146,14 @@ if ( !$SMIMEObject ) {
 # Setup environment
 #
 
-# OpenSSL 1.0.0 hashes
-my $Check1Hash = 'f62a2257';
-my $Check2Hash = '35c7d865';
+my $TestConfigJSON = file("$HomeDir/scripts/test/sample/SMIME/smime_test.json")->slurp;
+my $TestConfig     = decode_json($TestConfigJSON);
 
 # certificates
 my @Certificates = (
     {
         CertificateName       => 'Check1',
-        CertificateHash       => $Check1Hash,
+        CertificateHash       => $TestConfig->{"1"}->{Hash},
         CertificateFileName   => 'SMIMECertificate-1.asc',
         PrivateKeyFileName    => 'SMIMEPrivateKey-1.asc',
         PrivateSecretFileName => 'SMIMEPrivateKeyPass-1.asc',
@@ -195,7 +172,7 @@ for my $Certificate (@Certificates) {
         Filename  => $Certificate->{CertificateFileName},
     );
     my %Result = $SMIMEObject->CertificateAdd( Certificate => ${$CertString} );
-    $Self->True(
+    ok(
         $Result{Successful} || '',
         "#$Certificate->{CertificateName} CertificateAdd() - $Result{Message}",
     );
@@ -213,7 +190,7 @@ for my $Certificate (@Certificates) {
         Private => ${$KeyString},
         Secret  => ${$Secret},
     );
-    $Self->True(
+    ok(
         $Result{Successful} || '',
         "#$Certificate->{CertificateName} PrivateAdd()",
     );
@@ -224,16 +201,17 @@ my $FilterRand1      = 'filter' . $Helper->GetRandomID();
 
 $PostMasterFilter->FilterAdd(
     Name           => $FilterRand1,
+    ValidID        => 1,
     StopAfterMatch => 0,
     Match          => [
         {
-            Key   => 'X-OTOBO-BodyDecrypted',
+            Key   => 'X-CareOnCloud-BodyDecrypted',
             Value => 'Hi',
         },
     ],
     Set => [
         {
-            Key   => 'X-OTOBO-Queue',
+            Key   => 'X-CareOnCloud-Queue',
             Value => 'Junk',
         },
     ],
@@ -285,13 +263,13 @@ my $PostMasterObject = Kernel::System::PostMaster->new(
 
 my @Return = $PostMasterObject->Run( Queue => '' );
 
-$Self->Is(
+is(
     $Return[0] || 0,
     1,
     "Create new ticket",
 );
 
-$Self->True(
+ok(
     $Return[1] || 0,
     "Create new ticket (TicketID)",
 );
@@ -322,7 +300,7 @@ my @ArticleIndex         = $ArticleObject->ArticleList(
 
 my %FirstArticle = $ArticleBackendObject->ArticleGet( %{ $ArticleIndex[0] } );
 
-$Self->Is(
+is(
     $Ticket{Queue},
     'Junk',
     "Ticket created in $Ticket{Queue}",
@@ -331,7 +309,7 @@ $Self->Is(
 my $GetBody = $FirstArticle{Body};
 chomp($GetBody);
 
-$Self->Is(
+is(
     $GetBody,
     'Hi',
     "Body decrypted $FirstArticle{Body}",
@@ -340,12 +318,10 @@ $Self->Is(
 # Delete needed test directories.
 for my $Directory ( $CertPath, $PrivatePath ) {
     my $Success = rmtree( [$Directory] );
-    $Self->True(
+    ok(
         $Success,
         "Directory deleted - '$Directory'",
     );
 }
 
-# Cleanup is done by RestoreDatabase.
-
-done_testing();
+done_testing;

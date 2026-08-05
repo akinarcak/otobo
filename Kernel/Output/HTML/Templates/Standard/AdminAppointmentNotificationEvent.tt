@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -40,6 +40,17 @@
 
     <div class="Clear"></div>
     <div class="SidebarColumn">
+[% RenderBlockStart("IncludeInvalid") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include invalid appointment notifications") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include invalid appointment notifications") | html %]</label>
+            </div>
+        </div>
+[% RenderBlockEnd("IncludeInvalid") %]
 [% RenderBlockStart("ActionList") %]
         <div class="WidgetSimple">
             <div class="Header">
@@ -418,7 +429,7 @@
 [% RenderBlockEnd("TransportRowDisabled") %]
 #[% RenderBlockStart("TransportRowRecommendation") %]  # Svencheck
 #                        <div class="Field Info">
-#                            <a href="[% Env("Baselink") %]Action=AdminOTOBOCommunity" class="Button"><i class="fa fa-angle-double-up"></i> [% Translate("Upgrade to %s") | html | ReplacePlaceholders(OTOBOCommunityLabel) %]</a>
+#                            <a href="[% Env("Baselink") %]Action=AdminCareOnCloudCommunity" class="Button"><i class="fa fa-angle-double-up"></i> [% Translate("Upgrade to %s") | html | ReplacePlaceholders(CareOnCloudCommunityLabel) %]</a>
 #                        </div>
 #[% RenderBlockEnd("TransportRowRecommendation") %]
 [% RenderBlockStart("TransportRowNotActive") %]
@@ -613,33 +624,33 @@
                 <p>[% Translate("You can use the following tags") | html %]:</p>
 
                 <dl>
-                    <dt><code>&lt;OTOBO_APPOINTMENT_TITLE[20]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_APPOINTMENT_TITLE[20]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 20 character of the appointment title.") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_APPOINTMENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_APPOINTMENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("To get the appointment attribute") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_APPOINTMENT_APPOINTMENTID&gt;, &lt;OTOBO_APPOINTMENT_STARTTIME&gt;, &lt;OTOBO_APPOINTMENT_DESCRIPTION&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_APPOINTMENT_APPOINTMENTID&gt;, &lt;CareOnCloud_APPOINTMENT_STARTTIME&gt;, &lt;CareOnCloud_APPOINTMENT_DESCRIPTION&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CALENDAR_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CALENDAR_*&gt;</code></dt>
                     <dd>
                         [% Translate("To get the calendar attribute") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CALENDAR_CALENDARID&gt;, &lt;OTOBO_CALENDAR_CALENDARNAME&gt;, &lt;OTOBO_CALENDAR_COLOR&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CALENDAR_CALENDARID&gt;, &lt;CareOnCloud_CALENDAR_CALENDARNAME&gt;, &lt;CareOnCloud_CALENDAR_COLOR&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_*&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_NOTIFICATION_RECIPIENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_*&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_NOTIFICATION_RECIPIENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("Attributes of the recipient user for the notification") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_UserFullname&gt;</code> [% Translate("or") | html %] <code>&lt;OTOBO_NOTIFICATION_RECIPIENT_UserFullname&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_UserFullname&gt;</code> [% Translate("or") | html %] <code>&lt;CareOnCloud_NOTIFICATION_RECIPIENT_UserFullname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CONFIG_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CONFIG_*&gt;</code></dt>
                     <dd>
                         [% Translate("Config options") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_CONFIG_HttpType&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_CONFIG_HttpType&gt;</code>).
                     </dd>
                 </dl>
 
@@ -647,26 +658,26 @@
                     [% Translate("Example notification") | html %]:
                 </p>
                 <label for="SubjectExample">[% Translate("Subject") | html %]</label>:
-                <input type="text" name="SubjectExample" id="SubjectExample" value="Reminder: &lt;OTOBO_APPOINTMENT_TITLE&gt;" size="80" maxlength="80" readonly />
+                <input type="text" name="SubjectExample" id="SubjectExample" value="Reminder: &lt;CareOnCloud_APPOINTMENT_TITLE&gt;" size="80" maxlength="80" readonly />
                 <br/>
                 <label for="ResponseExample">[% Translate("Text") | html %]</label>:
                 <br/>
                 <textarea rows="12" cols="70" name="ResponseExample" id="ResponseExample" readonly>
-Hi &lt;OTOBO_NOTIFICATION_RECIPIENT_UserFirstname&gt;,
+Hi &lt;CareOnCloud_NOTIFICATION_RECIPIENT_UserFirstname&gt;,
 
-appointment &quot;&lt;OTOBO_APPOINTMENT_TITLE&gt;&quot; has reached its notification time.
+appointment &quot;&lt;CareOnCloud_APPOINTMENT_TITLE&gt;&quot; has reached its notification time.
 
-Description: &lt;OTOBO_APPOINTMENT_DESCRIPTION&gt;
-Location: &lt;OTOBO_APPOINTMENT_LOCATION&gt;
-Calendar: &lt;OTOBO_CALENDAR_CALENDARNAME&gt;
-Start date: &lt;OTOBO_APPOINTMENT_STARTTIME&gt;
-End date: &lt;OTOBO_APPOINTMENT_ENDTIME&gt;
-All-day: &lt;OTOBO_APPOINTMENT_ALLDAY&gt;
-Repeat: &lt;OTOBO_APPOINTMENT_RECURRING&gt;
+Description: &lt;CareOnCloud_APPOINTMENT_DESCRIPTION&gt;
+Location: &lt;CareOnCloud_APPOINTMENT_LOCATION&gt;
+Calendar: &lt;CareOnCloud_CALENDAR_CALENDARNAME&gt;
+Start date: &lt;CareOnCloud_APPOINTMENT_STARTTIME&gt;
+End date: &lt;CareOnCloud_APPOINTMENT_ENDTIME&gt;
+All-day: &lt;CareOnCloud_APPOINTMENT_ALLDAY&gt;
+Repeat: &lt;CareOnCloud_APPOINTMENT_RECURRING&gt;
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;index.pl?Action=AgentAppointmentCalendarOverview;AppointmentID=&lt;OTOBO_APPOINTMENT_APPOINTMENTID&gt;
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;index.pl?Action=AgentAppointmentCalendarOverview;AppointmentID=&lt;CareOnCloud_APPOINTMENT_APPOINTMENTID&gt;
 
--- &lt;OTOBO_CONFIG_NotificationSenderName&gt;
+-- &lt;CareOnCloud_CONFIG_NotificationSenderName&gt;
                 </textarea>
             </div>
         </div>

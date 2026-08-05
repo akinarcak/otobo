@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,13 @@ package Kernel::System::StandardTemplate;
 
 use strict;
 use warnings;
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsArrayRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::System::Cache',
@@ -60,6 +67,7 @@ add new standard template
 
     my $ID = $StandardTemplateObject->StandardTemplateAdd(
         Name         => 'New Standard Template',
+        Comment      => 'Some comment.',
         Template     => 'Thank you for your email.',
         ContentType  => 'text/plain; charset=utf-8',
         TemplateType => 'Answer',                     # or 'Forward' or 'Create'
@@ -136,17 +144,18 @@ get standard template attributes
 Returns:
 
     %StandardTemplate = (
-        ID                  => '123',
-        Name                => 'Simple remplate',
-        Comment             => 'Some comment',
-        Template            => 'Template content',
-        ContentType         => 'text/plain',
-        TemplateType        => 'Answer',
-        ValidID             => '1',
-        CreateTime          => '2010-04-07 15:41:15',
-        CreateBy            => '321',
-        ChangeTime          => '2010-04-07 15:59:45',
-        ChangeBy            => '223',
+        ID                       => '123',
+        Name                     => 'Simple remplate',
+        Comment                  => 'Some comment',
+        Template                 => 'Template content',
+        ContentType              => 'text/plain',
+        TemplateType             => 'Answer',
+        PreSelectedTicketStateID => '2',
+        ValidID                  => '1',
+        CreateTime               => '2010-04-07 15:41:15',
+        CreateBy                 => '321',
+        ChangeTime               => '2010-04-07 15:59:45',
+        ChangeBy                 => '223',
     );
 
 =cut
@@ -169,8 +178,8 @@ sub StandardTemplateGet {
     # sql
     return if !$DBObject->Prepare(
         SQL => '
-            SELECT name, valid_id, comments, text, content_type, create_time, create_by,
-                change_time, change_by ,template_type
+            SELECT name, valid_id, preselected_ticket_state_id, comments, text, content_type,
+                create_time, create_by, change_time, change_by ,template_type
             FROM standard_template
             WHERE id = ?',
         Bind => [ \$Param{ID} ],
@@ -179,17 +188,18 @@ sub StandardTemplateGet {
     my %Data;
     while ( my @Data = $DBObject->FetchrowArray() ) {
         %Data = (
-            ID           => $Param{ID},
-            Name         => $Data[0],
-            Comment      => $Data[2],
-            Template     => $Data[3],
-            ContentType  => $Data[4] || 'text/plain',
-            ValidID      => $Data[1],
-            CreateTime   => $Data[5],
-            CreateBy     => $Data[6],
-            ChangeTime   => $Data[7],
-            ChangeBy     => $Data[8],
-            TemplateType => $Data[9],
+            ID                       => $Param{ID},
+            Name                     => $Data[0],
+            Comment                  => $Data[3],
+            Template                 => $Data[4],
+            ContentType              => $Data[5] || 'text/plain',
+            PreSelectedTicketStateID => $Data[2],
+            ValidID                  => $Data[1],
+            CreateTime               => $Data[6],
+            CreateBy                 => $Data[7],
+            ChangeTime               => $Data[8],
+            ChangeBy                 => $Data[9],
+            TemplateType             => $Data[10],
         );
     }
 
@@ -252,13 +262,15 @@ sub StandardTemplateDelete {
 update standard template attributes
 
     $StandardTemplateObject->StandardTemplateUpdate(
-        ID           => 123,
-        Name         => 'New Standard Template',
-        Template     => 'Thank you for your email.',
-        ContentType  => 'text/plain; charset=utf-8',
-        TemplateType => 'Answer',
-        ValidID      => 1,
-        UserID       => 123,
+        ID                       => 123,
+        Name                     => 'New Standard Template',
+        Comment                  => 'Some comment.',
+        Template                 => 'Thank you for your email.',
+        ContentType              => 'text/plain; charset=utf-8',
+        TemplateType             => 'Answer',
+        PreSelectedTicketStateID => 2, (optional, will be set to null otherwise)
+        ValidID                  => 1,
+        UserID                   => 123,
     );
 
 =cut
@@ -267,14 +279,18 @@ sub StandardTemplateUpdate {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(ID Name ValidID TemplateType ContentType UserID TemplateType)) {
-        if ( !defined( $Param{$_} ) ) {
+    for my $Needed (qw(ID Name ValidID TemplateType ContentType UserID TemplateType)) {
+        if ( !defined( $Param{$Needed} ) ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
             return;
         }
+    }
+
+    if ( !$Param{PreSelectedTicketStateID} ) {
+        $Param{PreSelectedTicketStateID} = undef;
     }
 
     # check if a standard template with this name already exists
@@ -296,12 +312,12 @@ sub StandardTemplateUpdate {
     return if !$Kernel::OM->Get('Kernel::System::DB')->Do(
         SQL => '
             UPDATE standard_template
-            SET name = ?, text = ?, content_type = ?, comments = ?, valid_id = ?,
+            SET name = ?, text = ?, content_type = ?, comments = ?, valid_id = ?, preselected_ticket_state_id = ?,
                 change_time = current_timestamp, change_by = ? ,template_type = ?
             WHERE id = ?',
         Bind => [
-            \$Param{Name},    \$Param{Template}, \$Param{ContentType},  \$Param{Comment},
-            \$Param{ValidID}, \$Param{UserID},   \$Param{TemplateType}, \$Param{ID},
+            \$Param{Name}, \$Param{Template}, \$Param{ContentType}, \$Param{Comment}, \$Param{ValidID},
+            \$Param{PreSelectedTicketStateID}, \$Param{UserID}, \$Param{TemplateType}, \$Param{ID},
         ],
     );
 
@@ -507,6 +523,145 @@ sub NameExistsCheck {
         return 1;
     }
     return 0;
+}
+
+=head2 ExportTemplates()
+
+Returns data structures ready for export for each template. Optionally filterable by giving a list of desired templates.
+
+    my $ExportData = $StandardTemplateObject->ExportTemplates(
+        Templates => [          # (optional) restrict templates to given ones
+            'TemplateName01',
+            'TemplateName02'
+        ],
+    );
+
+=cut
+
+sub ExportTemplates {
+    my ( $Self, %Param ) = @_;
+
+    my %TemplateFilter;
+    if ( IsArrayRefWithData( $Param{Templates} ) ) {
+        %TemplateFilter = map { $_ => 1 } $Param{Templates}->@*;
+    }
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %TemplateList = $Self->StandardTemplateList(
+        Valid => 0,
+    );
+
+    my %ExportData;
+    TEMPLATEID:
+    for my $TemplateID ( sort keys %TemplateList ) {
+
+        my %TemplateData = $Self->StandardTemplateGet(
+            ID => $TemplateID,
+        );
+
+        if (%TemplateFilter) {
+            next TEMPLATEID unless $TemplateFilter{ $TemplateData{Name} };
+        }
+
+        # translate IDs into names or name-like identifiers
+        ATTRIBUTE:
+        for my $Attribute ( keys %TemplateData ) {
+
+            next ATTRIBUTE unless $Attribute =~ /ID/;
+
+            if ( $Attribute eq 'ValidID' ) {
+                my $Valid = $ValidObject->ValidLookup(
+                    ValidID => $TemplateData{ValidID},
+                );
+                $TemplateData{Valid} = $Valid;
+                delete $TemplateData{ValidID};
+            }
+        }
+
+        # delete unneeded attributes to avoid bloating the export
+        delete $TemplateData{ChangeBy};
+        delete $TemplateData{ChangeTime};
+        delete $TemplateData{CreateBy};
+        delete $TemplateData{CreateTime};
+        delete $TemplateData{ID};
+
+        $ExportData{ $TemplateData{Name} } = \%TemplateData;
+    }
+
+    return \%ExportData;
+}
+
+=head2 ImportTemplates()
+
+Imports new templates and optionally updates existing ones.
+
+    my $Success = $StandardTemplateObject->ImportTemplates(
+        Templates             => {
+            'TemplateName01' => {
+                # Template data
+            },
+            'TemplateName02' => {
+                # Template data
+            },
+        },
+        OverwriteExistingEntities => (0|1),
+        UserID                    => 1,
+    );
+
+=cut
+
+sub ImportTemplates {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %TemplateList = $Self->StandardTemplateList(
+        Valid => 0,
+    );
+    my %TemplateLookup = reverse %TemplateList;
+
+    TEMPLATENAME:
+    for my $TemplateName ( keys $Param{Templates}->%* ) {
+        my $TemplateData = $Param{Templates}{$TemplateName};
+
+        my $TemplateID = $TemplateLookup{ $TemplateData->{Name} };
+
+        # skip if template with same name exists and overwrite is not set
+        next TEMPLATENAME if ( !$Param{OverwriteExistingEntities} && $TemplateID );
+
+        # translate named data back to IDs
+        $TemplateData->{ValidID} = $ValidObject->ValidLookup(
+            Valid => $TemplateData->{Valid},
+        );
+
+        # update
+        if ($TemplateID) {
+            my $Success = $Self->StandardTemplateUpdate(
+                $TemplateData->%*,
+                ID     => $TemplateID,
+                UserID => $UserID,
+            );
+            return unless $Success;
+        }
+
+        # create
+        else {
+            my $TemplateID = $Self->StandardTemplateAdd(
+                $TemplateData->%*,
+                UserID => $UserID,
+            );
+            return unless $TemplateID;
+        }
+    }
+
+    return 1;
 }
 
 1;

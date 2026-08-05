@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -127,58 +127,58 @@ my $ExecuteXMLDBString = sub {
     return 1;
 };
 
-# get OTOBO Version
-my $OTOBOVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloudVersion = $Kernel::OM->Get('Kernel::Config')->Get('Version');
 
 # leave only major and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $RandomID = $Helper->GetRandomID();
 
 my %Packages = (
-    'Package1' => << "EOF",
+    'Package1' => <<"EOF",
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.1">
+<careoncloud_package version="1.1">
     <Name>Package1$RandomID</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
-    <URL>https://otobo.de/</URL>
+    <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
-    <Description Lang="en">OTOBO Community Edition. For more information, please have a look at the official documentation at https://doc.otobo.org/doc/manual/otobo-business-solution/6.0/en/html/.</Description>
-    <Framework>$OTOBOVersion</Framework>
+    <Description Lang="en">Yet another CareOnCloud ESM package that is only used as a test case in IfNotPackage.t.</Description>
+    <Framework>$CareOnCloudVersion</Framework>
     <PackageIsVisible>1</PackageIsVisible>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsRemovable>1</PackageIsRemovable>
     <BuildDate>2016-03-04 18:02:26</BuildDate>
-    <BuildHost>otobo.master.mandalore.com</BuildHost>
+    <BuildHost>careoncloud.master.mandalore.com</BuildHost>
     <DatabaseInstall Type="post" IfNotPackage="Package2$RandomID">
         <TableCreate Type="post" Name="$RandomID">
             <Column AutoIncrement="true" Name="id" PrimaryKey="true" Required="true" Type="BIGINT"></Column>
             <Column Name="name" Required="true" Size="200" Type="VARCHAR"></Column>
         </TableCreate>
     </DatabaseInstall>
-</otobo_package>
+</careoncloud_package>
 EOF
 
-    'Package2' => << "EOF",
+    'Package2' => <<"EOF",
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.1">
+<careoncloud_package version="1.1">
     <Name>Package2$RandomID</Name>
     <Version>1.0.1</Version>
     <Vendor>Rother OSS GmbH</Vendor>
-    <URL>https://otobo.de/</URL>
+    <URL>https://otobo.io/</URL>
     <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
-    <Description Lang="en">OTOBO Community Edition. For more information, please have a look at the official documentation at https://doc.otobo.org/doc/manual/otobo-business-solution/6.0/en/html/.</Description>
-    <Framework>$OTOBOVersion</Framework>
+    <Description Lang="en">Yet another CareOnCloud ESM package that is only used as a test case in IfNotPackage.t.</Description>
+    <Framework>$CareOnCloudVersion</Framework>
     <PackageIsVisible>1</PackageIsVisible>
     <PackageIsDownloadable>1</PackageIsDownloadable>
     <PackageIsRemovable>1</PackageIsRemovable>
     <BuildDate>2016-03-04 18:02:26</BuildDate>
-    <BuildHost>otobo.master.mandalore.com</BuildHost>
-</otobo_package>
+    <BuildHost>careoncloud.master.mandalore.com</BuildHost>
+</careoncloud_package>
 EOF
 );
 

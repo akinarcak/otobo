@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,26 +14,25 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::UnitTest::MockTime qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeAddSeconds FixedTimeSet);
 use Kernel::System::UnitTest::RegisterDriver;    # set up $Self and $Kernel::OM
 use Kernel::System::VariableCheck qw(:all);
 
 our $Self;
 
 # get needed singletons
-my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-my $ACLObject    = $Kernel::OM->Get('Kernel::System::ACL::DB::ACL');
-my $CacheObject  = $Kernel::OM->Get('Kernel::System::Cache');
+my $ACLObject   = $Kernel::OM->Get('Kernel::System::ACL::DB::ACL');
+my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
         RestoreDatabase => 1,
@@ -107,6 +106,7 @@ my @Tests = (
         Name   => 'ACLAdd Test 8: Valid data',
         Config => {
             Name           => "ACL-$RandomID",
+            ObjectType     => 'Ticket',
             UserID         => $UserID,
             Comment        => 'Comment',
             StopAfterMatch => 1,
@@ -357,6 +357,7 @@ for my $Test (@Tests) {
             ID           => 1,
             Name         => "ACL-$RandomID",
             Comment      => 'Comment',
+            ObjectType   => 'Ticket',
             ValidID      => 1,
             ConfigMatch  => { 'Possible' => {} },
             ConfigChange => undef,
@@ -385,6 +386,7 @@ for my $Test (@Tests) {
             ID             => $AddedACLList[0],
             Name           => "ACL-$RandomID -U",
             Comment        => 'Comment234',
+            ObjectType     => 'Ticket',
             Description    => '',
             ValidID        => 2,
             ConfigMatch    => { 'Properties' => {} },
@@ -724,7 +726,7 @@ $Self->IsDeeply(
 );
 
 # check cache
-my $CacheKey = 'ACLListGet::ValidIDs::ALL';
+my $CacheKey = 'ACLListGet::ValidIDs::ALL::ObjectTypes::ALL';
 
 my $Cache = $CacheObject->Get(
     Type => 'ACLEditor_ACL',

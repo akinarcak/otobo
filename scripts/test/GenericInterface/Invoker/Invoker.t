@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,13 +18,16 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::GenericInterface::Debugger ();
+use Kernel::GenericInterface::Invoker  ();
 
 our $Self;
-
-use Kernel::GenericInterface::Debugger;
-use Kernel::GenericInterface::Invoker;
 
 # create a Debugger instance
 my $DebuggerObject = Kernel::GenericInterface::Debugger->new(
@@ -255,7 +258,7 @@ $Self->Is(
     'HandleResponse call response failure error message (array as response)',
 );
 
-# HandleResponse with array ref as response.
+# HandleResponse with simple array ref as response.
 $ReturnData = $InvokerObject->HandleResponse(
     ResponseSuccess      => '0',
     ResponseErrorMessage => 'Just an error message',
@@ -269,6 +272,27 @@ $Self->Is(
     $ReturnData->{ErrorMessage},
     'Just an error message',
     'HandleResponse call response failure error message (array ref as response)',
+);
+
+# HandleResponse with array ref of hash refs as response.
+$ReturnData = $InvokerObject->HandleResponse(
+    ResponseSuccess => '1',
+    Data            => [ { key => 'value1' }, { key => 'value2' } ],
+);
+
+$Self->True(
+    $ReturnData->{Success},
+    'HandleResponse response failure success (array ref as response)',
+);
+$Self->Is(
+    $ReturnData->{Data}->[0]->{key},
+    'value1',
+    'Array structure returned value1 properly'
+);
+$Self->Is(
+    $ReturnData->{Data}->[1]->{key},
+    'value2',
+    'Array structure returned value2 properly'
 );
 
 $Self->DoneTesting();

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # get needed objects
@@ -59,12 +59,12 @@ my $UserObject = $Kernel::OM->Get('Kernel::System::User');
 
 # add SystemAddress
 my $SystemAddressEmail    = $Helper->GetRandomID() . '@example.com';
-my $SystemAddressRealname = "OTOBO-Team";
+my $SystemAddressRealname = "CareOnCloud ESM-Team";
 
 my $SystemAddressObject = $Kernel::OM->Get('Kernel::System::SystemAddress');
 
 my $SystemAddressID = $SystemAddressObject->SystemAddressAdd(
-    Name     => $SystemAddressEmail,
+    Name     => $SystemAddressEmail,      # 'Name' indicates the address, e.g. q{123@example.com}
     Realname => $SystemAddressRealname,
     Comment  => 'some comment',
     QueueID  => 1,
@@ -93,80 +93,197 @@ my $QueueID   = $Kernel::OM->Get('Kernel::System::Queue')->QueueAdd(
 
 my @Tests = (
     {
-        Name              => 'Simple replace',
-        AgentFirstname    => 'John',
-        AgentLastname     => 'Doe',
-        SystemAddressName => 'Test',
-        Result            => {
-            SystemAddressName          => "Test <$SystemAddressEmail>",
-            AgentNameSystemAddressName => "John Doe via Test <$SystemAddressEmail>",
-            AgentName                  => "John Doe <$SystemAddressEmail>",
+        Line                  => __LINE__,
+        Name                  => 'Simple replace',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'Test',
+        Result                => {
+            SystemAddressName          => qq|Test <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via Test" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
         },
 
     },
     {
-        Name              => 'Company with dot, requires escaping',
-        AgentFirstname    => 'John',
-        AgentLastname     => 'Doe',
-        SystemAddressName => 'company.com',
-        Result            => {
-            SystemAddressName          => qq|"company.com" <$SystemAddressEmail>|,
-            AgentNameSystemAddressName => qq|"John Doe via company.com" <$SystemAddressEmail>|,
-            AgentName                  => "John Doe <$SystemAddressEmail>",
+        Line                  => __LINE__,
+        Name                  => 'system address real name with four words',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'four words real name',
+        Result                => {
+            SystemAddressName          => qq|"four words real name" <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via four words real name" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
+        },
+
+    },
+    {
+        # white space is not collapsed within the phrase
+        Line                  => __LINE__,
+        Name                  => 'system address real name with commas and extra spaces comma',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => ' real, name ,  with,commas',
+        Result                => {
+            SystemAddressName          => qq|" real, name ,  with,commas" <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via  real, name ,  with,commas" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
         },
     },
     {
-        Name              => 'Username with special character, requires escaping',
-        AgentFirstname    => 'Jack (the)',
-        AgentLastname     => 'Ripper',
-        SystemAddressName => 'Test',
-        Result            => {
-            SystemAddressName          => "Test <$SystemAddressEmail>",
+        Line                  => __LINE__,
+        Name                  => 'Company with dot, requires escaping',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'company.com',
+        Result                => {
+            SystemAddressName          => qq|"company.com" <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via company.com" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'Username with opening and closing parenthesis, requires escaping',
+        AgentFirstname        => 'Jack (the)',
+        AgentLastname         => 'Ripper',
+        SystemAddressRealname => 'Test',
+        Result                => {
+            SystemAddressName          => qq|Test <$SystemAddressEmail>|,
             AgentNameSystemAddressName => qq|"Jack (the) Ripper via Test" <$SystemAddressEmail>|,
             AgentName                  => qq|"Jack (the) Ripper" <$SystemAddressEmail>|,
         },
     },
     {
-        Name              => 'SystemAddressName with special character, requires escaping',
-        AgentFirstname    => 'John',
-        AgentLastname     => 'Doe',
-        SystemAddressName => 'Foo[Bar]',
-        Result            => {
+        Line                  => __LINE__,
+        Name                  => 'Username with closing and opening parenthesis, requires escaping',
+        AgentFirstname        => 'Jack )the(',
+        AgentLastname         => 'Ripper',
+        SystemAddressRealname => 'Test',
+        Result                => {
+            SystemAddressName          => qq|Test <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"Jack )the( Ripper via Test" <$SystemAddressEmail>|,
+            AgentName                  => qq|"Jack )the( Ripper" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'Username with opening parenthesis, requires escaping',
+        AgentFirstname        => 'Jack (the(',
+        AgentLastname         => 'Ripper',
+        SystemAddressRealname => 'Test',
+        Result                => {
+            SystemAddressName          => qq|Test <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"Jack (the( Ripper via Test" <$SystemAddressEmail>|,
+            AgentName                  => qq|"Jack (the( Ripper" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'Username with closing parenthesis, requires escaping',
+        AgentFirstname        => 'Jack )the)',
+        AgentLastname         => 'Ripper',
+        SystemAddressRealname => 'Test',
+        Result                => {
+            SystemAddressName          => qq|Test <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"Jack )the) Ripper via Test" <$SystemAddressEmail>|,
+            AgentName                  => qq|"Jack )the) Ripper" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'System address real name with square brackets, requires escaping',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'Foo[Bar]',
+        Result                => {
             SystemAddressName          => qq|"Foo[Bar]" <$SystemAddressEmail>|,
             AgentNameSystemAddressName => qq|"John Doe via Foo[Bar]" <$SystemAddressEmail>|,
-            AgentName                  => qq|John Doe <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
         },
     },
     {
-        Name              => 'SystemAddressName with escaped double quotes',
-        AgentFirstname    => 'John',
-        AgentLastname     => 'Doe',
-        SystemAddressName => 'Foo\\"Bar\\"',
-        Result            => {
+        Line                  => __LINE__,
+        Name                  => 'System address real name with a colon, requires escaping',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'Foo:Bar',
+        Result                => {
+            SystemAddressName          => qq|"Foo:Bar" <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via Foo:Bar" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'system address real name with unescaped double quotes',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'Foo"Bar"',
+        Result                => {
             SystemAddressName          => qq|"Foo\\"Bar\\"" <$SystemAddressEmail>|,
             AgentNameSystemAddressName => qq|"John Doe via Foo\\"Bar\\"" <$SystemAddressEmail>|,
-            AgentName                  => qq|John Doe <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
         },
     },
     {
-        Name              => 'SystemAddressName with emoji',
-        AgentFirstname    => 'John',
-        AgentLastname     => 'Doe',
-        SystemAddressName => 'Chocolate Bar 🍫',
-        Result            => {
+        # This looks broken
+        Line                  => __LINE__,
+        Name                  => 'system address real name with comma and unescaped double quotes',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'F,oo"Bar"',
+        Result                => {
+            SystemAddressName          => qq|"F,oo\\"Bar\\"" <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via F,oo\\"Bar\\"" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'system address real name with escaped double quotes',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'Foo\\"Bar\\"',
+        Result                => {
+            SystemAddressName          => qq|"Foo\\\\\\"Bar\\\\\\"" <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via Foo\\\\\\"Bar\\\\\\"" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'system address real name with comma and escaped double quotes',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'F,oo\\"Bar\\"',
+        Result                => {
+            SystemAddressName          => qq|"F,oo\\\\\\"Bar\\\\\\"" <$SystemAddressEmail>|,
+            AgentNameSystemAddressName => qq|"John Doe via F,oo\\\\\\"Bar\\\\\\"" <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
+        },
+    },
+    {
+        Line                  => __LINE__,
+        Name                  => 'system address real name with emoji',
+        AgentFirstname        => 'John',
+        AgentLastname         => 'Doe',
+        SystemAddressRealname => 'Chocolate Bar 🍫',
+        Result                => {
             SystemAddressName          => qq|"Chocolate Bar 🍫" <$SystemAddressEmail>|,
             AgentNameSystemAddressName => qq|"John Doe via Chocolate Bar 🍫" <$SystemAddressEmail>|,
-            AgentName                  => qq|John Doe <$SystemAddressEmail>|,
+            AgentName                  => qq|"John Doe" <$SystemAddressEmail>|,
         },
     },
 );
 
 for my $Test (@Tests) {
-    subtest $Test->{Name} => sub {
+    subtest "$Test->{Name} (line $Test->{Line})" => sub {
 
         $SystemAddressObject->SystemAddressUpdate(
             %SystemAddressData,
-            Realname => $Test->{SystemAddressName},
+            Realname => $Test->{SystemAddressRealname},
             UserID   => 1,
         );
         $UserObject->UserUpdate(
@@ -191,10 +308,10 @@ for my $Test (@Tests) {
             is(
                 $Result,
                 $Test->{Result}->{$DefineEmailFrom},
-                "$DefineEmailFrom - Sender()",
+                "DefineEmailFrom: $DefineEmailFrom",
             );
         }
     };
 }
 
-done_testing();
+done_testing;

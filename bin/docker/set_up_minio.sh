@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,11 +16,11 @@
 # --
 
 # Set up MinIO starting from a virgin state. It is expected that the executable mc is
-# in the path and that the MinIO alias otobo_minio is set up.
+# in the path and that the MinIO alias careoncloud_minio is set up.
 
 # settings
 config_file=$( dirname -- "${BASH_SOURCE[0]}" )/../../Kernel/Config.pm.docker.dist
-alias=otobo_minio
+alias=careoncloud_minio
 
 # sanity check
 which mc

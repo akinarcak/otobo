@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,13 @@ use strict;
 use warnings;
 use namespace::autoclean;
 use utf8;
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsArrayRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -491,6 +498,145 @@ sub NameExistsCheck {
     }
 
     return $Flag ? 1 : 0;
+}
+
+=head2 ExportTypes()
+
+Returns data structures ready for export for each type. Optionally filterable by giving a list of desired types.
+
+    my $ExportData = $TypeObject->ExportTypes(
+        Types => [          # (optional) restrict types to given ones
+            'TypeName01',
+            'TypeName02'
+        ],
+    );
+
+=cut
+
+sub ExportTypes {
+    my ( $Self, %Param ) = @_;
+
+    my %TypeFilter;
+    if ( IsArrayRefWithData( $Param{Types} ) ) {
+        %TypeFilter = map { $_ => 1 } $Param{Types}->@*;
+    }
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %TypeList = $Self->TypeList(
+        Valid => 0,
+    );
+
+    my %ExportData;
+    TYPEID:
+    for my $TypeID ( sort keys %TypeList ) {
+
+        my %TypeData = $Self->TypeGet(
+            ID => $TypeID,
+        );
+
+        if (%TypeFilter) {
+            next TYPEID unless $TypeFilter{ $TypeData{Name} };
+        }
+
+        # translate IDs into names or name-like identifiers
+        ATTRIBUTE:
+        for my $Attribute ( keys %TypeData ) {
+
+            next ATTRIBUTE unless $Attribute =~ /ID/;
+
+            if ( $Attribute eq 'ValidID' ) {
+                my $Valid = $ValidObject->ValidLookup(
+                    ValidID => $TypeData{ValidID},
+                );
+                $TypeData{Valid} = $Valid;
+                delete $TypeData{ValidID};
+            }
+        }
+
+        # delete unneeded attributes to avoid bloating the export
+        delete $TypeData{ChangeBy};
+        delete $TypeData{ChangeTime};
+        delete $TypeData{CreateBy};
+        delete $TypeData{CreateTime};
+        delete $TypeData{ID};
+
+        $ExportData{ $TypeData{Name} } = \%TypeData;
+    }
+
+    return \%ExportData;
+}
+
+=head2 ImportTypes()
+
+Imports new types and optionally updates existing ones.
+
+    my $Success = $TypeObject->ImportTypes(
+        Types             => {
+            'TypeName01' => {
+                # Type data
+            },
+            'TypeName02' => {
+                # Type data
+            },
+        },
+        OverwriteExistingEntities => (0|1),
+        UserID                    => 1,
+    );
+
+=cut
+
+sub ImportTypes {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %TypeList = $Self->TypeList(
+        Valid => 0,
+    );
+    my %TypeLookup = reverse %TypeList;
+
+    TYPENAME:
+    for my $TypeName ( keys $Param{Types}->%* ) {
+        my $TypeData = $Param{Types}{$TypeName};
+
+        my $TypeID = $TypeLookup{ $TypeData->{Name} };
+
+        # skip if type with same name exists and overwrite is not set
+        next TYPENAME if ( !$Param{OverwriteExistingEntities} && $TypeID );
+
+        # translate named data back to IDs
+        $TypeData->{ValidID} = $ValidObject->ValidLookup(
+            Valid => $TypeData->{Valid},
+        );
+
+        # update
+        if ($TypeID) {
+            my $Success = $Self->TypeUpdate(
+                $TypeData->%*,
+                ID     => $TypeID,
+                UserID => $UserID,
+            );
+            return unless $Success;
+        }
+
+        # create
+        else {
+            my $TypeID = $Self->TypeAdd(
+                $TypeData->%*,
+                UserID => $UserID,
+            );
+            return unless $TypeID;
+        }
+    }
+
+    return 1;
 }
 
 1;

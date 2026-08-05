@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,15 +20,14 @@ use warnings;
 use utf8;
 
 # core modules
-use File::Basename;
 use Time::HiRes ();
 
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::System::SupportDataCollector::PluginBase;
+use Kernel::System::SupportDataCollector::PluginBase ();
 
 # get needed objects
 my $CacheObject                = $Kernel::OM->Get('Kernel::System::Cache');
@@ -41,14 +40,14 @@ $Helper->ConfigSettingChange(
     Valid => 1,
     Key   => 'SupportDataCollector::DisablePlugins',
     Value => [
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment',
     ],
 );
 $Helper->ConfigSettingChange(
     Valid => 1,
     Key   => 'SupportDataCollector::IdentifierFilterBlacklist',
     Value => [
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::TimeSettings::UserDefaultTimeZone',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::TimeSettings::UserDefaultTimeZone',
     ],
 );
 
@@ -142,9 +141,9 @@ for my $ResultEntry ( @{ $Result{Result} || [] } ) {
 # Check if the identifier from the disabled plugions are not present.
 subtest 'SupportDataCollector::DisablePlugins disabled plugins should not be present' => sub {
     for my $DisabledPluginsIdentifier (
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment',
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment::Verification',
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment::FrameworkVersion',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment::Verification',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment::FrameworkVersion',
         )
     {
         ok( !$SeenIdentifier{$DisabledPluginsIdentifier}, "$DisabledPluginsIdentifier not present" );
@@ -153,8 +152,8 @@ subtest 'SupportDataCollector::DisablePlugins disabled plugins should not be pre
 
 # Check if the identifiers from the identifier filter blacklist are not present.
 ok(
-    !$SeenIdentifier{'Kernel::System::SupportDataCollector::Plugin::OTOBO::TimeSettings::UserDefaultTimeZone'},
-    "Collect() - SupportDataCollector::IdentifierFilterBlacklist - Kernel::System::SupportDataCollector::Plugin::OTOBO::TimeSettings::UserDefaultTimeZone should not be present"
+    !$SeenIdentifier{'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::TimeSettings::UserDefaultTimeZone'},
+    "Collect() - SupportDataCollector::IdentifierFilterBlacklist - Kernel::System::SupportDataCollector::Plugin::CareOnCloud::TimeSettings::UserDefaultTimeZone should not be present"
 );
 
 # cache tests

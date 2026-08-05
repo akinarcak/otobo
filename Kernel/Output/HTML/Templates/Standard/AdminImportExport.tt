@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -188,6 +188,7 @@
                             </div>
 
                         </div>
+                        <div class="Clear"></div>
 [% RenderBlockEnd("NewObjectFormat") %]
 [% RenderBlockStart("EditObjectFormat") %]
                         <label>[% Translate("Object") | html %]:</label>
@@ -265,6 +266,7 @@
                                 <p>[% Translate(Data.ErrorMessage) | html %]</p>
                             </div>
                         </div>
+                        <div class="Clear"></div>
 [% RenderBlockEnd("TemplateEdit2Element") %]
                         <div class="Field SpacingTop">
                             <button class="Back CallForAction" type="button" name="Back" ><span>[% Translate("Back") | html %]</span></button>
@@ -313,6 +315,7 @@
                             </div>
 [% RenderBlockEnd("TemplateEdit3ElementRequired") %]
                         </div>
+                        <div class="Clear"></div>
 [% RenderBlockEnd("TemplateEdit3Element") %]
                         <div class="Field SpacingTop">
                             <button class="Back CallForAction" type="button" name="Back" ><span>[% Translate("Back") | html %]</span></button>
@@ -390,7 +393,7 @@
                                     <button class="ArrowUp"type="submit" name="MappingUp::[% Data.MappingID | html %]" value="[% Translate("Up") | html %]"> [% Translate("Up") | html %] </button>
 [% RenderBlockEnd("TemplateEdit4UpButton") %]
 [% RenderBlockStart("TemplateEdit4NoUpButton") %]
-                                    <button class="ArrowUp" type="submit" disabled="disabled"> [% Translate("Up") | html %]</button>
+                                    <button class="ArrowUp" type="submit" disabled> [% Translate("Up") | html %]</button>
 [% RenderBlockEnd("TemplateEdit4NoUpButton") %]
                                 </td>
                                 <td class="Center">
@@ -398,7 +401,7 @@
                                     <button class="ArrowDown" type="submit" name="MappingDown::[% Data.MappingID | html %]" value="[% Translate("Down") | html %]"> [% Translate("Down") | html %]</button>
 [% RenderBlockEnd("TemplateEdit4DownButton") %]
 [% RenderBlockStart("TemplateEdit4NoDownButton") %]
-                                    <button class="ArrowDown" type="submit" disabled="disabled"> [% Translate("Down") | html %]</button>
+                                    <button class="ArrowDown" type="submit" disabled> [% Translate("Down") | html %]</button>
 [% RenderBlockEnd("TemplateEdit4NoDownButton") %]
                                 </td>
 

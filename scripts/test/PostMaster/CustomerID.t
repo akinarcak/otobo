@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # Get needed objects.
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -63,7 +65,7 @@ my $CustomerID   = $Kernel::OM->Get('Kernel::System::CustomerCompany')->Customer
     ValidID                => 1,
     UserID                 => 1,
 );
-$Self->True(
+ok(
     $CustomerID,
     "CustomerID $CustomerID is created",
 );
@@ -82,7 +84,7 @@ my $CustomerUserLogin        = $Kernel::OM->Get('Kernel::System::CustomerUser')-
     ValidID        => 1,
     UserID         => 1,
 );
-$Self->True(
+ok(
     $CustomerUserLogin,
     "CustomerUser '$CustomerUserLogin' is created",
 );
@@ -160,12 +162,12 @@ for my $Test (@Tests) {
         );
     }
 
-    $Self->Is(
+    is(
         $Return[0],
         1,
         "New ticket is created",
     );
-    $Self->True(
+    ok(
         $Return[1],
         "New created ticket ID is $Return[1]",
     );
@@ -174,18 +176,16 @@ for my $Test (@Tests) {
         TicketID => $Return[1],
     );
 
-    $Self->Is(
+    is(
         $Ticket{CustomerID} // '',
         $Test->{Result}->{CustomerID},
         "Ticket customer ID is expected",
     );
-    $Self->Is(
+    is(
         $Ticket{CustomerUserID} // '',
         $Test->{Result}->{CustomerUserID},
         "Ticket customer user ID is expected",
     );
 }
 
-# Cleanup is done by RestoreDatabase.
-
-$Self->DoneTesting();
+done_testing;

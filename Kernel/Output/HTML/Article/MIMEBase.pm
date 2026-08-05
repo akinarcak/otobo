@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,9 +21,12 @@ use warnings;
 
 use parent 'Kernel::Output::HTML::Article::Base';
 
-use Mail::Address;
+# core modules
 
-use Kernel::Language qw(Translatable);
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -36,6 +39,7 @@ our @ObjectDependencies = (
     'Kernel::System::Main',
     'Kernel::System::Ticket',
     'Kernel::System::Ticket::Article',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
@@ -296,15 +300,34 @@ sub ArticlePreview {
 
         if ($HTMLBodyAttachmentID) {
 
+            my %Data;
+            $Param{ArticleStorage} ||= '';
+
             # Preview doesn't include inline images...
-            my %Data = $ArticleBackendObject->ArticleAttachment(
-                ArticleID => $Param{ArticleID},
-                FileID    => $HTMLBodyAttachmentID,
-            );
+            if ( $Article{ArticleDeleted} && $Param{ArticleStorage} ne 'Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleStorageFS' ) {
+                if ( $Param{DeletedVersionID} ) {
+                    %Data = $ArticleBackendObject->ArticleAttachment(
+                        ArticleID       => $Param{DeletedVersionID},
+                        FileID          => $HTMLBodyAttachmentID,
+                        VersionView     => 1,
+                        SourceArticleID => $Param{ArticleID}
+                    );
+                }
+            }
+            else {
+                %Data = $ArticleBackendObject->ArticleAttachment(
+                    ArticleID       => $Param{ArticleID},
+                    FileID          => $HTMLBodyAttachmentID,
+                    VersionView     => $Param{VersionView},
+                    SourceArticleID => $Param{SourceArticleID}
+                );
+            }
 
             # Get the charset directly from the attachment hash and convert content to the internal charset (utf-8).
             #   Please see bug#13367 for more information.
             my $Charset;
+            $Data{ContentType} ||= '';
+
             if ( $Data{ContentType} =~ m/.+?charset=("|'|)(?<Charset>.+)/ig ) {
                 $Charset = $+{Charset};
                 $Charset =~ s/"|'//g;
@@ -355,11 +378,21 @@ sub HTMLBodyAttachmentIDGet {
     }
 
     my $ArticleBackendObject = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForArticle(%Param);
+    $Param{ArticleStorage} ||= '';
+
+    if ( $Param{DeletedVersionID} && $Param{ArticleStorage} ne 'Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleStorageFS' ) {
+        $Param{VersionView}     = 1;
+        $Param{SourceArticleID} = $Param{ArticleID};
+        $Param{ArticleID}       = $Param{DeletedVersionID};
+    }
 
     # Get a HTML attachment.
     my %AttachmentIndexHTMLBody = $ArticleBackendObject->ArticleAttachmentIndex(
-        ArticleID    => $Param{ArticleID},
-        OnlyHTMLBody => 1,
+        ArticleID           => $Param{ArticleID},
+        SourceArticleID     => $Param{SourceArticleID},
+        OnlyHTMLBody        => 1,
+        VersionView         => $Param{VersionView},
+        ShowDeletedArticles => 1
     );
 
     my ($HTMLBodyAttachmentID) = sort keys %AttachmentIndexHTMLBody;
@@ -417,19 +450,20 @@ sub ArticleCustomerRecipientsGet {
 
     my $CheckItemObject    = $Kernel::OM->Get('Kernel::System::CheckItem');
     my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
-
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
     my @CustomerUserIDs;
 
     EMAIL:
-    for my $Email ( Mail::Address->parse($RecipientEmail) ) {
-        next EMAIL if !$CheckItemObject->CheckEmail( Address => $Email->address() );
+    for my $Email ( $EmailAddressObject->ParseAddressLine( Line => $RecipientEmail ) ) {
+        next EMAIL unless $CheckItemObject->CheckEmail( AddressObject => $Email );
 
         # Get single customer user from customer backend based on the email address.
         my %CustomerSearch = $CustomerUserObject->CustomerSearch(
-            PostMasterSearch => $Email->address(),
+            PostMasterSearch => $EmailAddressObject->GetAddress( AddressObject => $Email ),
             Limit            => 1,
         );
-        next EMAIL if !%CustomerSearch;
+
+        next EMAIL unless %CustomerSearch;
 
         # Save customer user ID if not already present in the list.
         for my $CustomerUserID ( sort keys %CustomerSearch ) {

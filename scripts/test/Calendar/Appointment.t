@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -157,8 +157,8 @@ my $NotificationID  = $Kernel::OM->Get('Kernel::System::NotificationEvent')->Not
     ValidID => 1,
     Message => {
         en => {
-            Body        => 'appointment "&lt;OTOBO_APPOINTMENT_TITLE&gt;" has reached its notification time.',
-            Subject     => 'Reminder: <OTOBO_APPOINTMENT_TITLE> DELETE',
+            Body        => 'appointment "&lt;CareOnCloud_APPOINTMENT_TITLE&gt;" has reached its notification time.',
+            Subject     => 'Reminder: <CareOnCloud_APPOINTMENT_TITLE> DELETE',
             ContentType => 'text/html'
         }
     },

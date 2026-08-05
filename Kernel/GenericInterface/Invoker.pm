@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,10 +19,12 @@ package Kernel::GenericInterface::Invoker;
 use strict;
 use warnings;
 
-use Kernel::System::VariableCheck qw(IsStringWithData);
+# core modules
 
-# Prevent 'Used once' warning for Kernel::OM.
-use Kernel::System::ObjectManager;
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsStringWithData);
 
 our $ObjectManagerDisabled = 1;
 
@@ -82,8 +84,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # Allocate new hash for object.
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # Check needed params.
     for my $Needed (qw( DebuggerObject Invoker InvokerType WebserviceID )) {
@@ -107,6 +108,7 @@ sub new {
 
     # Load backend module.
     my $GenericModule = 'Kernel::GenericInterface::Invoker::' . $Param{InvokerType};
+    $Kernel::OM = $Kernel::OM;    # avoid 'once' warning
     if ( !$Kernel::OM->Get('Kernel::System::Main')->Require($GenericModule) ) {
 
         return $Self->{DebuggerObject}->Error( Summary => "Can't load invoker backend module!" );

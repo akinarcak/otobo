@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,10 +25,9 @@ use utf8;
 use HTTP::Request::Common qw(POST);
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::Output::HTML::Layout;
-use Kernel::System::Web::Request;
+use Kernel::System::Web::Request ();
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -128,20 +127,20 @@ my @Tests = (
     {
         Config => {
             Type          => 'Date',
-            OTOBOTimeZone => 'UTC',
+            CareOnCloudTimeZone => 'UTC',
             UserTimeZone  => 'Europe/Berlin',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{Date},
             },
             EditFieldRender => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value => {
                     Value       => '2013-10-01 23:30:00',
                     ParamObject => $ParamObject,
                 },
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 WebRequest => {
                     CGIParam => {
                         'DynamicField_DFDate' . $RandomID . 'Used'  => 1,
@@ -187,20 +186,20 @@ my @Tests = (
     {
         Config => {
             Type          => 'Date',
-            OTOBOTimeZone => 'Europe/Berlin',
+            CareOnCloudTimeZone => 'Europe/Berlin',
             UserTimeZone  => 'America/New_York',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{Date},
             },
             EditFieldRender => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value => {
                     Value       => '2013-10-01 23:30:00',
                     ParamObject => $ParamObject,
                 },
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 WebRequest => {
                     CGIParam => {
                         'DynamicField_DFDate' . $RandomID . 'Used'  => 1,
@@ -250,14 +249,14 @@ my @Tests = (
     {
         Config => {
             Type          => 'DateTime',
-            OTOBOTimeZone => 'UTC',
+            CareOnCloudTimeZone => 'UTC',
             UserTimeZone  => 'Europe/Berlin',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{DateTime},
             },
             EditFieldRender => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value => {
                     Value       => '2013-09-30 23:01:00',
                     ParamObject => $ParamObject,
@@ -289,7 +288,7 @@ my @Tests = (
             },
             ValueSetGet => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value    => '2013-09-30 23:01:00',
                 ObjectID => $TicketID,
                 UserID   => 1,
@@ -317,24 +316,24 @@ my @Tests = (
                 },
             },
 
-            # in OTOBO time zone
+            # in CareOnCloud ESM time zone
             EditFieldValueGet => '2013-09-30 21:01:00',
 
-            # in OTOBO time zone
+            # in CareOnCloud ESM time zone
             ValueSetGet => '2013-09-30 23:01:00',
         },
     },
     {
         Config => {
             Type          => 'DateTime',
-            OTOBOTimeZone => 'Europe/Berlin',
+            CareOnCloudTimeZone => 'Europe/Berlin',
             UserTimeZone  => 'America/New_York',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{DateTime},
             },
             EditFieldRender => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value => {
                     Value       => '2013-10-01 03:01:00',
                     ParamObject => $ParamObject,
@@ -366,7 +365,7 @@ my @Tests = (
             },
             ValueSetGet => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value    => '2013-10-01 03:01:00',
                 ObjectID => $TicketID,
                 UserID   => 1,
@@ -394,24 +393,24 @@ my @Tests = (
                 },
             },
 
-            # in OTOBO time zone
+            # in CareOnCloud ESM time zone
             EditFieldValueGet => '2013-10-01 09:01:00',
 
-            # in OTOBO time zone
+            # in CareOnCloud ESM time zone
             ValueSetGet => '2013-10-01 03:01:00',
         },
     },
     {
         Config => {
             Type          => 'DateTime',
-            OTOBOTimeZone => 'Europe/Berlin',
+            CareOnCloudTimeZone => 'Europe/Berlin',
             UserTimeZone  => 'Europe/Berlin',
             Common        => {
                 DynamicFieldConfig => $DynamicFieldConfigsByType{DateTime},
             },
             EditFieldRender => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value => {
                     Value       => '2013-10-01 03:01:00',
                     ParamObject => $ParamObject,
@@ -443,7 +442,7 @@ my @Tests = (
             },
             ValueSetGet => {
 
-                # in OTOBO time zone
+                # in CareOnCloud ESM time zone
                 Value    => '2013-10-01 03:01:00',
                 ObjectID => $TicketID,
                 UserID   => 1,
@@ -471,10 +470,10 @@ my @Tests = (
                 },
             },
 
-            # in OTOBO time zone
+            # in CareOnCloud ESM time zone
             EditFieldValueGet => '2013-10-01 03:01:00',
 
-            # in OTOBO time zone
+            # in CareOnCloud ESM time zone
             ValueSetGet => '2013-10-01 03:01:00',
         },
     },
@@ -484,13 +483,13 @@ my @Tests = (
 for my $Test (@Tests) {
 
     my $UserTimeZone  = $Test->{Config}->{UserTimeZone}  || 'no user time zone';
-    my $OTOBOTimeZone = $Test->{Config}->{OTOBOTimeZone} || 'no OTOBO time zone';
-    my $SubtestDesc   = "Field type $Test->{Config}->{Type}, User time zone: $UserTimeZone, OTOBO time zone $OTOBOTimeZone";
+    my $CareOnCloudTimeZone = $Test->{Config}->{CareOnCloudTimeZone} || 'no CareOnCloud ESM time zone';
+    my $SubtestDesc   = "Field type $Test->{Config}->{Type}, User time zone: $UserTimeZone, CareOnCloud ESM time zone $CareOnCloudTimeZone";
 
     subtest $SubtestDesc => sub {
         $ConfigObject->Set(
-            Key   => 'OTOBOTimeZone',
-            Value => $Test->{Config}->{OTOBOTimeZone},
+            Key   => 'CareOnCloudTimeZone',
+            Value => $Test->{Config}->{CareOnCloudTimeZone},
         );
 
         # get Layout object with correct user time zone
@@ -539,14 +538,14 @@ for my $Test (@Tests) {
 
             # extract the date from rendered HTML
             my %HTMLResult;
-            ( $HTMLResult{Day} )   = $FieldHTML->{Field} =~ m{title="Day"   [^s]+ selected="selected">([^<]+)</option>}msx;
-            ( $HTMLResult{Month} ) = $FieldHTML->{Field} =~ m{title="Month" [^s]+ selected="selected">([^<]+)</option>}msx;
-            ( $HTMLResult{Year} )  = $FieldHTML->{Field} =~ m{title="Year"  [^s]+ selected="selected">([^<]+)</option>}msx;
+            ( $HTMLResult{Day} )   = $FieldHTML->{Field} =~ m{title="Day"   [^s]+ selected>([^<]+)</option>}msx;
+            ( $HTMLResult{Month} ) = $FieldHTML->{Field} =~ m{title="Month" [^s]+ selected>([^<]+)</option>}msx;
+            ( $HTMLResult{Year} )  = $FieldHTML->{Field} =~ m{title="Year"  [^s]+ selected>([^<]+)</option>}msx;
 
             # also get Hour and Minute for DateTime fields
             if ( $Test->{Config}->{Type} eq 'DateTime' ) {
-                ( $HTMLResult{Hour} )   = $FieldHTML->{Field} =~ m{title="Hours" [^s]+ selected="selected">([^<]+)</option>}msx;
-                ( $HTMLResult{Minute} ) = $FieldHTML->{Field} =~ m{title="Minutes" [^s]+ selected="selected">([^<]+)</option>}msx;
+                ( $HTMLResult{Hour} )   = $FieldHTML->{Field} =~ m{title="Hours" [^s]+ selected>([^<]+)</option>}msx;
+                ( $HTMLResult{Minute} ) = $FieldHTML->{Field} =~ m{title="Minutes" [^s]+ selected>([^<]+)</option>}msx;
             }
 
             is(

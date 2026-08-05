@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -41,7 +41,7 @@ Core.Language = (function (Namespace) {
             Core.Language.Load(LanguageMetaData, TranslationData);
             Assert.equal(Core.Language.Translate('yes'), 'ja');
             Assert.equal(Core.Language.Translate('no'), 'nein');
-            Assert.equal(Core.Language.Translate('This is %s', 'OTOBO'), 'Das ist OTOBO');
+            Assert.equal(Core.Language.Translate('This is %s', 'CareOnCloud ESM'), 'Das ist CareOnCloud ESM');
             Assert.equal(Core.Language.Translate('This is %s', 'yes'), 'Das ist yes');
             Assert.equal(Core.Language.Translate('Complex %s with %s arguments', 'Text', 'vielen'), 'Komplexer Text mit vielen Argumenten');
         });

@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,10 +22,17 @@ use utf8;
 
 # CPAN modules
 use Test2::V0;
-use Test::Compile::Internal;
+use Test::Compile::Internal ();
+use Test::Strict;    # imports all_perl_files_ok();
 
-# OTBOO modules
+# CareOnCloud ESM modules
 use Kernel::Config;
+
+# Setting up Test::Strict. We want to enforce strictures and warnings,
+# but the compile check is done by Test::Compile::Internal.
+$Test::Strict::TEST_SYNTAX   = 0;
+$Test::Strict::TEST_STRICT   = 1;
+$Test::Strict::TEST_WARNINGS = 1;
 
 # When there are extra arguments, then limit the checks to the passed files.
 # Is useful for github actions.
@@ -35,8 +42,14 @@ my %FileIsChanged         = map { $_ => 1 } @ARGV;
 # make sure that there is at least one test
 pass('checking only the files passed via @ARGV') if $CheckOnlyChangedFiles;
 
-# limit the checks to specific dirs
-my @Dirs = qw(Kernel Custom scripts bin);
+# Limit the checks to specific dirs.
+# Test::Compile::Interanal should also check Kernel/cpan-lib. Test::Strict should not.
+my @CompileDirs = qw(Kernel Custom scripts bin);
+my @StrictDirs  = grep { $_ !~ m/cpan-lib/ } grep {-d} glob('Kernel/*');
+push @StrictDirs, qw(Custom scripts bin );
+
+# Check whether strictures and warnings are enabled.
+all_perl_files_ok(@StrictDirs);
 
 # List of files that are know to have compile issues.
 # NOTE: Please create an issue when adding to this list
@@ -44,13 +57,12 @@ my @Dirs = qw(Kernel Custom scripts bin);
 my %FailureIsAccepted = (
     'Kernel/System/Auth/Radius.pm'               => 'Authen::Radius is not required',
     'Kernel/System/CustomerAuth/Radius.pm'       => 'Authen::Radius is not required',
-    'Kernel/cpan-lib/Devel/REPL/Plugin/OTOBO.pm' => 'Devel::REPL::Plugin is not required',
+    'Kernel/cpan-lib/Devel/REPL/Plugin/CareOnCloud.pm' => 'Devel::REPL::Plugin is not required',
     'Kernel/cpan-lib/Font/TTF/Win32.pm'          => 'Win32::Registry is not available, but never mind as Win32 is not supported',
-    'Kernel/cpan-lib/LWP/Protocol/GHTTP.pm'      => 'HTTP::GHTTP is not required',
     'Kernel/cpan-lib/PDF/API2/Win32.pm'          => 'Win32::TieRegistry is not available, but never mind as Win32 is not supported',
     'Kernel/cpan-lib/SOAP/Lite.pm'               => 'some strangeness concerning SOAP::Constants',
     'Kernel/cpan-lib/URI/urn/isbn.pm'            => 'Business::ISBN is not required',
-    'scripts/apache2-perl-preload_otobo_psgi.pl' => 'Apache2::ServerUtil::restart_count() only available when running under mod_perl',
+    'scripts/apache2-perl-preload_careoncloud_psgi.pl' => 'Apache2::ServerUtil::restart_count() only available when running under mod_perl',
 );
 
 # some modules are only expected to compile when the S3 backend is active
@@ -71,19 +83,22 @@ my %FailureIsAccepted = (
 }
 
 # object for doing the actual check
-my $Internal = Test::Compile::Internal->new();
+my $Internal = Test::Compile::Internal->new;
+
+# Sometimes it is useful to see the complete output
+#$Internal->verbose(1);
 
 note('check syntax of the Perl modules');
 {
     FILE:
-    for my $File ( $Internal->all_pm_files(@Dirs) ) {
+    for my $File ( $Internal->all_pm_files(@CompileDirs) ) {
 
         # check only files that were passed via the command line
         next FILE if $CheckOnlyChangedFiles && !$FileIsChanged{$File};
 
         # Kernel/TidyAll is usually a symlink to the corresponding dir in the CodePolicy.
         # The CodePolicy scripts and modules expect 'Kernel' to be in @INC, but that isn't the case
-        # in proper OTOBO. Therefore the modules in Kernel/TidyAll are skipped here.
+        # in proper CareOnCloud ESM. Therefore the modules in Kernel/TidyAll are skipped here.
         next FILE if $File =~ m{^Kernel/TidyAll/};
 
         my $ToDo = $FailureIsAccepted{$File} ? todo( $FailureIsAccepted{$File} ) : undef;
@@ -95,7 +110,7 @@ note('check syntax of the Perl modules');
 note('check syntax of the Perl scripts');
 {
     FILE:
-    for my $File ( $Internal->all_pl_files(@Dirs) ) {
+    for my $File ( $Internal->all_pl_files(@CompileDirs) ) {
 
         # check only files that were passed via the command line
         next FILE if $CheckOnlyChangedFiles && !$FileIsChanged{$File};
@@ -109,7 +124,7 @@ note('check syntax of the Perl scripts');
 note('look at Perl code with an unusual extension');
 {
     my @Files = (
-        'bin/psgi-bin/otobo.psgi',
+        'bin/psgi-bin/careoncloud.psgi',
     );
 
     FILE:
@@ -129,7 +144,7 @@ note('check syntax of some shell scripts');
     # grab scripts in bin/docker and bin/devel
     my @ShellScripts = glob 'bin/*/*.sh';
 
-    if ( !$ENV{OTOBO_RUNS_UNDER_DOCKER} ) {
+    if ( !$ENV{CareOnCloud_RUNS_UNDER_DOCKER} ) {
         push @ShellScripts, 'bin/Cron.sh';
     }
 
@@ -160,4 +175,4 @@ SKIP: {
     }
 }
 
-done_testing();
+done_testing;

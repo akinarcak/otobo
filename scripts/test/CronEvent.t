@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ our $Self;
 
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 $ConfigObject->Set(
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloudTimeZone',
     Value => 'UTC',
 );
 
@@ -276,7 +276,7 @@ for my $Test (@TestsNextEventGet) {
 
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => $Test->{Config}->{TimeZone},
         );
     }
@@ -308,10 +308,10 @@ for my $Test (@TestsNextEventGet) {
         );
     }
 
-    # Reset back OTOBOTimeZone if it was changed.
+    # Reset back CareOnCloudTimeZone if it was changed.
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => 'UTC',
         );
     }
@@ -492,7 +492,7 @@ for my $Test (@TestsNextEventList) {
 
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => $Test->{Config}->{TimeZone},
         );
     }
@@ -532,10 +532,10 @@ for my $Test (@TestsNextEventList) {
         );
     }
 
-    # Reset back OTOBOTimeZone if it was changed.
+    # Reset back CareOnCloudTimeZone if it was changed.
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => 'UTC',
         );
     }
@@ -699,7 +699,7 @@ for my $Test (@TestsPreviousEventList) {
 
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => $Test->{Config}->{TimeZone},
         );
     }
@@ -731,10 +731,10 @@ for my $Test (@TestsPreviousEventList) {
         );
     }
 
-    # Reset back OTOBOTimeZone if it was changed.
+    # Reset back CareOnCloudTimeZone if it was changed.
     if ( $Test->{Config}->{TimeZone} ) {
         $ConfigObject->Set(
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => 'UTC',
         );
     }
@@ -864,9 +864,9 @@ my @TestsGenericAgentSchedule2CronTab = (
     {
         Name   => 'Wrong ScheduleHours lower limit',
         Config => {
-            ScheduleMinutes => [5],
+            ScheduleMinutes => [ 5],
             ScheduleHours   => [-1],
-            ScheduleDays    => [6],
+            ScheduleDays    => [ 6],
         },
         Success => 0,
     },

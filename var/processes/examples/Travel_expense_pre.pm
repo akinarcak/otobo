@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package var::processes::examples::Travel_expense_pre;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::PerlCritic)
 
 use strict;
@@ -58,8 +59,8 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-No'  => 'No',
-                    'otobo5s-Yes' => 'Yes',
+                    'careoncloud5s-No'  => 'No',
+                    'careoncloud5s-Yes' => 'Yes',
                 },
                 TranslatableValues => 0,
             },
@@ -73,11 +74,11 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-BackToSpecifiedRecording'             => 'Hand Over from Approval',
-                    'otobo5s-Detailed Travel Information Recorded' => 'Detailed Travel Information Recorded',
-                    'otobo5s-General Travel Information Recorded'  => 'General Travel Information Recorded',
-                    'otobo5s-Travel Information Approved'          => 'Travel information Approved',
-                    'otobo5s-Travel information Not Approved'      => 'Travel information Not Approved',
+                    'careoncloud5s-BackToSpecifiedRecording'             => 'Hand Over from Approval',
+                    'careoncloud5s-Detailed Travel Information Recorded' => 'Detailed Travel Information Recorded',
+                    'careoncloud5s-General Travel Information Recorded'  => 'General Travel Information Recorded',
+                    'careoncloud5s-Travel Information Approved'          => 'Travel information Approved',
+                    'careoncloud5s-Travel information Not Approved'      => 'Travel information Not Approved',
                 },
                 TranslatableValues => 0,
             },
@@ -92,9 +93,9 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-Back' => 'Back to specification recording',
-                    'otobo5s-No'   => 'Deny expenses and end process',
-                    'otobo5s-Yes'  => 'Approve expenses and end process',
+                    'careoncloud5s-Back' => 'Back to specification recording',
+                    'careoncloud5s-No'   => 'Deny expenses and end process',
+                    'careoncloud5s-Yes'  => 'Approve expenses and end process',
                 },
                 TranslatableValues => 0,
             },
@@ -109,8 +110,8 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-Business' => 'Business',
-                    'otobo5s-Economy'  => 'Economy',
+                    'careoncloud5s-Business' => 'Business',
+                    'careoncloud5s-Economy'  => 'Economy',
                 },
                 TranslatableValues => 0,
             },
@@ -226,8 +227,8 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-No'  => 'No',
-                    'otobo5s-Yes' => 'Yes',
+                    'careoncloud5s-No'  => 'No',
+                    'careoncloud5s-Yes' => 'Yes',
                 },
                 TranslatableValues => 0,
             },

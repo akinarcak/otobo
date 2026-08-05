@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,9 +19,14 @@ package Kernel::System::Console::Command::List;
 use strict;
 use warnings;
 
-use Kernel::System::Console::InterfaceConsole;
-
 use parent qw(Kernel::System::Console::BaseCommand);
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::Console::InterfaceConsole;    ## no perlimports
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -44,7 +49,7 @@ sub Run {
 
     my $UsageText = "<green>$ProductName</green> (<yellow>$ProductVersion</yellow>)\n\n";
     $UsageText .= "<yellow>Usage:</yellow>\n";
-    $UsageText .= " otobo.Console.pl command [options] [arguments]\n";
+    $UsageText .= " careoncloud.Console.pl command [options] [arguments]\n";
     $UsageText .= "\n<yellow>Options:</yellow>\n";
     GLOBALOPTION:
     for my $Option ( @{ $Self->{_GlobalOptions} // [] } ) {

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -48,8 +48,8 @@ my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            OTOBO => {
-                DisplayName => 'OTOBO',
+            CareOnCloud => {
+                DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',         'CloudServices.xml',     'Daemon.xml', 'Framework.xml',
                     'GenericInterface.xml', 'ProcessManagement.xml', 'Ticket.xml',
@@ -201,20 +201,20 @@ $Kernel::OM->ObjectsDiscard(
 my $SysConfigDBObject = $Kernel::OM->Get('Kernel::System::SysConfig::DB');
 
 my $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestPackage1</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
-    <File Location="Kernel/Config/Files/XML/TestPackage1.xml" Permission="644" Encode="Base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiID8+DQo8b3RvYm9fY29uZmlnIHZlcnNpb249IjIuMCIgaW5pdD0iQXBwbGljYXRpb24iPg0KICAgIDxTZXR0aW5nIE5hbWU9IlRlc3RQYWNrYWdlMTo6U2V0dGluZzEiIFJlcXVpcmVkPSIwIiBWYWxpZD0iMSI+DQogICAgICAgIDxEZXNjcmlwdGlvbiBUcmFuc2xhdGFibGU9IjEiPlRlc3QgU2V0dGluZy48L0Rlc2NyaXB0aW9uPg0KICAgICAgICA8TmF2aWdhdGlvbj5Db3JlOjpUZXN0UGFja2FnZTwvTmF2aWdhdGlvbj4NCiAgICAgICAgPFZhbHVlPg0KICAgICAgICAgICAgPEl0ZW0gVmFsdWVUeXBlPSJTdHJpbmciPjwvSXRlbT4NCiAgICAgICAgPC9WYWx1ZT4NCiAgICA8L1NldHRpbmc+DQogICAgPFNldHRpbmcgTmFtZT0iVGVzdFBhY2thZ2UxOjpTZXR0aW5nMiIgUmVxdWlyZWQ9IjAiIFZhbGlkPSIxIj4NCiAgICAgICAgPERlc2NyaXB0aW9uIFRyYW5zbGF0YWJsZT0iMSI+VGVzdCBTZXR0aW5nLjwvRGVzY3JpcHRpb24+DQogICAgICAgIDxOYXZpZ2F0aW9uPkNvcmU6OlRlc3RQYWNrYWdlOjpPdGhlcjwvTmF2aWdhdGlvbj4NCiAgICAgICAgPFZhbHVlPg0KICAgICAgICAgICAgPEl0ZW0gVmFsdWVUeXBlPSJTdHJpbmciPjwvSXRlbT4NCiAgICAgICAgPC9WYWx1ZT4NCiAgICA8L1NldHRpbmc+DQogICAgPFNldHRpbmcgTmFtZT0iVGVzdFBhY2thZ2UxOjpTZXR0aW5nMyIgUmVxdWlyZWQ9IjEiIFZhbGlkPSIwIj4NCiAgICAgICAgPERlc2NyaXB0aW9uIFRyYW5zbGF0YWJsZT0iMSI+VGVzdCBTZXR0aW5nLjwvRGVzY3JpcHRpb24+DQogICAgICAgIDxOYXZpZ2F0aW9uPkNvcmU6OlRlc3RQYWNrYWdlOjpPdGhlcjwvTmF2aWdhdGlvbj4NCiAgICAgICAgPFZhbHVlPg0KICAgICAgICAgICAgPEl0ZW0gVmFsdWVUeXBlPSJFbnRpdHkiIFZhbHVlRW50aXR5VHlwZT0iVHlwZSIgVHJhbnNsYXRhYmxlPSIxIj5VbmNsYXNzaWZpZWQ8L0l0ZW0+DQogICAgICAgIDwvVmFsdWU+DQogICAgPC9TZXR0aW5nPg0KPC9vdG9ib19jb25maWc+DQo=</File>
+    <File Location="Kernel/Config/Files/XML/TestPackage1.xml" Permission="644" Encode="Base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiID8+DQo8Y2FyZW9uY2xvdWRfY29uZmlnIHZlcnNpb249IjIuMCIgaW5pdD0iQXBwbGljYXRpb24iPg0KICAgIDxTZXR0aW5nIE5hbWU9IlRlc3RQYWNrYWdlMTo6U2V0dGluZzEiIFJlcXVpcmVkPSIwIiBWYWxpZD0iMSI+DQogICAgICAgIDxEZXNjcmlwdGlvbiBUcmFuc2xhdGFibGU9IjEiPlRlc3QgU2V0dGluZy48L0Rlc2NyaXB0aW9uPg0KICAgICAgICA8TmF2aWdhdGlvbj5Db3JlOjpUZXN0UGFja2FnZTwvTmF2aWdhdGlvbj4NCiAgICAgICAgPFZhbHVlPg0KICAgICAgICAgICAgPEl0ZW0gVmFsdWVUeXBlPSJTdHJpbmciPjwvSXRlbT4NCiAgICAgICAgPC9WYWx1ZT4NCiAgICA8L1NldHRpbmc+DQogICAgPFNldHRpbmcgTmFtZT0iVGVzdFBhY2thZ2UxOjpTZXR0aW5nMiIgUmVxdWlyZWQ9IjAiIFZhbGlkPSIxIj4NCiAgICAgICAgPERlc2NyaXB0aW9uIFRyYW5zbGF0YWJsZT0iMSI+VGVzdCBTZXR0aW5nLjwvRGVzY3JpcHRpb24+DQogICAgICAgIDxOYXZpZ2F0aW9uPkNvcmU6OlRlc3RQYWNrYWdlOjpPdGhlcjwvTmF2aWdhdGlvbj4NCiAgICAgICAgPFZhbHVlPg0KICAgICAgICAgICAgPEl0ZW0gVmFsdWVUeXBlPSJTdHJpbmciPjwvSXRlbT4NCiAgICAgICAgPC9WYWx1ZT4NCiAgICA8L1NldHRpbmc+DQogICAgPFNldHRpbmcgTmFtZT0iVGVzdFBhY2thZ2UxOjpTZXR0aW5nMyIgUmVxdWlyZWQ9IjEiIFZhbGlkPSIwIj4NCiAgICAgICAgPERlc2NyaXB0aW9uIFRyYW5zbGF0YWJsZT0iMSI+VGVzdCBTZXR0aW5nLjwvRGVzY3JpcHRpb24+DQogICAgICAgIDxOYXZpZ2F0aW9uPkNvcmU6OlRlc3RQYWNrYWdlOjpPdGhlcjwvTmF2aWdhdGlvbj4NCiAgICAgICAgPFZhbHVlPg0KICAgICAgICAgICAgPEl0ZW0gVmFsdWVUeXBlPSJFbnRpdHkiIFZhbHVlRW50aXR5VHlwZT0iVHlwZSIgVHJhbnNsYXRhYmxlPSIxIj5VbmNsYXNzaWZpZWQ8L0l0ZW0+DQogICAgICAgIDwvVmFsdWU+DQogICAgPC9TZXR0aW5nPg0KPC9jYXJlb25jbG91ZF9jb25maWc+DQo=</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');

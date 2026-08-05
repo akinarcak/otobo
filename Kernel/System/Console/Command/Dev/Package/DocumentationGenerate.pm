@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -34,7 +34,7 @@ sub Configure {
     $Self->AddOption(
         Name        => 'module-directory',
         Description =>
-            "Specify the directory containing the module sources (otherwise the OTOBO home directory will be used).",
+            "Specify the directory containing the module sources (otherwise the CareOnCloud ESM home directory will be used).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,
@@ -47,7 +47,7 @@ sub Configure {
     );
     $Self->AddArgument(
         Name        => 'source-path',
-        Description => "Specify the path to an OTOBO package source (sopm) file that should be built.",
+        Description => "Specify the path to a CareOnCloud ESM package source (sopm) file that should be built.",
         Required    => 1,
         ValueRegex  => qr/.*/smx,
     );
@@ -157,9 +157,11 @@ sub Run {
     );
 
     my $Success = $MainObject->FileWrite(
-        Location => "$Home/doc/content/index.rst",
-        Content  => \$RST,
-        Mode     => 'utf8',
+        Directory => "$Home/doc/content",
+        Filename  => 'index.rst',
+        Content   => \$RST,
+        Mode      => 'utf8',
+        MakePath  => 1,
     );
 
     if ( !$Success ) {
@@ -215,7 +217,7 @@ System requirements
 
 Framework
 ---------
-OTOBO $Param{Structure}{Framework}[0]{Content}
+CareOnCloud ESM $Param{Structure}{Framework}[0]{Content}
 
 Packages
 --------
@@ -258,7 +260,7 @@ sub ConfigReference {
             "$NavEntry\n" .
             "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n";
 
-        for my $Setting ( sort $Navigation{$NavEntry}->@* ) {
+        for my $Setting ( sort { $a->{Name} cmp $b->{Name} } $Navigation{$NavEntry}->@* ) {
             $ConfigReference .=
                 "$Setting->{Name}\n" .
                 '""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""' .
@@ -279,8 +281,8 @@ About
 Contact
 -------
 | Rother OSS GmbH
-| Email: hello@otobo.de
-| Web: https://otobo.de
+| Email: hello@otobo.io
+| Web: https://otobo.io
 
 Version
 -------

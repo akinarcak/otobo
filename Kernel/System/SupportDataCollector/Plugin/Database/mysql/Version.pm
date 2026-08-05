@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,11 +16,20 @@
 
 package Kernel::System::SupportDataCollector::Plugin::Database::mysql::Version;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+use utf8;
 
 use parent qw(Kernel::System::SupportDataCollector::PluginBase);
 
+# core modules
+
+# CPAN modules
+use DBI::Const::GetInfoType ();    # set up %DBI::Const::GetInfoType::GetInfoType
+
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
 
 our @ObjectDependencies = (
@@ -37,9 +46,7 @@ sub Run {
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
-    if ( $DBObject->GetDatabaseFunction('Type') ne 'mysql' ) {
-        return $Self->GetResults();
-    }
+    return $Self->GetResults unless $DBObject->GetDatabaseFunction('Type') eq 'mysql';
 
     # version check
     my $Version = $DBObject->Version();
@@ -67,7 +74,29 @@ sub Run {
         );
     }
 
-    return $Self->GetResults();
+    my $DBHandle = $DBObject->{dbh};
+
+    # The client info is just for information. Sadly there is no clear information
+    # on whether we have libmysqlclient of libmariadb.
+    # For what it worth, libmariadb.so.3 was reported as 3.3.17 in 2025.
+    my $ClientInfo = $DBObject->{dbh}->{mariadb_clientinfo} || $DBObject->{dbh}->{mysql_clientinfo} || 'no client info';
+    $Self->AddResultInformation(
+        Identifier => 'ClientInfo',
+        Label      => Translatable('Client Info'),
+        Value      => $ClientInfo,
+    );
+
+    # The Perl database driver is also interesting
+    my $PerlDriverName    = $DBHandle->get_info( $DBI::Const::GetInfoType::GetInfoType{SQL_DRIVER_NAME} ) || '';
+    my $PerlDriverVersion = $DBHandle->get_info( $DBI::Const::GetInfoType::GetInfoType{SQL_DRIVER_VER} )  || '';
+    my $PerlClientInfo    = join ' ', $PerlDriverName, $PerlDriverVersion;
+    $Self->AddResultInformation(
+        Identifier => 'PerlClientInfo',
+        Label      => Translatable('Perl Client Info'),
+        Value      => $PerlClientInfo,
+    );
+
+    return $Self->GetResults;
 }
 
 1;

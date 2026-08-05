@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,6 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -54,6 +55,11 @@ sub CreateSessionID {
     my $User;
     my %UserData;
     my $UserType;
+
+    # special case for session creation based on OAuth Bearer token
+    if ( $Param{Data}->{BearerToken} ) {
+        return $Self->_CreateSessionIDFromBearerToken(%Param);
+    }
 
     # get params
     my $PostPw = $Param{Data}->{Password} || '';
@@ -103,6 +109,40 @@ sub CreateSessionID {
     );
 
     return $NewSessionID if ($NewSessionID);
+
+    return;
+}
+
+sub _CreateSessionIDFromBearerToken {
+    my ( $Self, %Param ) = @_;
+
+    my $Authenticator = $Kernel::OM->Get('Kernel::System::OpenIDConnect::Authenticator');
+    my $Result        = $Authenticator->Authenticate(
+        Token => $Param{Data}->{BearerToken},
+    );
+
+    if ( $Result->{Success} ) {
+
+        # report success!
+        $Param{DebuggerObject}->Debug(
+            Summary => 'Bearer Token decoded:',
+            Data    => $Result->{TokenData},
+        );
+
+        # create new session id
+        my $NewSessionID = $Kernel::OM->Get('Kernel::System::AuthSession')->CreateSessionID(
+            $Result->{UserData}->%*,
+            UserLastRequest => $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch(),
+            UserType        => 'User',
+            SessionSource   => 'GenericInterface',
+        );
+
+        # if we have a valis session, we are done.
+        return $NewSessionID if ($NewSessionID);
+
+        # otherwise try next account
+        next ACCOUNTNAME;
+    }
 
     return;
 }

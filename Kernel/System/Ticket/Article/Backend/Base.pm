@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ use parent 'Kernel::System::EventHandler';
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -511,6 +511,8 @@ Get article meta data.
     my %Article = $Self->_MetaArticleGet(
         ArticleID => 42,
         TicketID  => 23,
+        ShowDeletedArticles => 1, # (optional) To get deleted articles.
+        VersionView   => 1,       # (optional) To get edited version info.
     );
 
 Returns:
@@ -546,8 +548,10 @@ sub _MetaArticleGet {
 
     # Use ArticleList() internally to benefit from its ticket-level cache.
     my ($FirstMetaArticle) = $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList(
-        TicketID  => $Param{TicketID},
-        ArticleID => $Param{ArticleID},
+        TicketID            => $Param{TicketID},
+        ArticleID           => $Param{ArticleID},
+        ShowDeletedArticles => $Param{ShowDeletedArticles} || 0,
+        VersionView         => $Param{VersionView}
     );
 
     return %{ $FirstMetaArticle // {} };

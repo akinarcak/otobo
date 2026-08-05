@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -37,27 +37,10 @@ Core.Agent.TicketActionCommon = (function (TargetNS) {
      */
     TargetNS.Init = function () {
 
-        var DynamicFieldNames = Core.Config.Get('DynamicFieldNames'),
-            Fields = ['TypeID', 'ServiceID', 'SLAID', 'NewOwnerID', 'NewResponsibleID', 'NewStateID', 'NewPriorityID'],
-            ModifiedFields;
-
-        // Bind events to specific fields
-        $.each(Fields, function(Index, Value) {
-            ModifiedFields = Core.Data.CopyObject(Fields).concat(DynamicFieldNames);
-            ModifiedFields.splice(Index, 1);
-
-            FieldUpdate(Value, ModifiedFields);
-        });
-
-        // Bind event to Queue field.
-        $('#NewQueueID').on('change', function () {
-            Core.AJAX.FormUpdate($('#Compose'), 'AJAXUpdate', 'NewQueueID', ['TypeID', 'ServiceID', 'NewOwnerID', 'NewResponsibleID', 'NewStateID', 'NewPriorityID', 'StandardTemplateID'].concat(DynamicFieldNames));
-        });
-
         // Bind event to StandardTemplate field.
         $('#StandardTemplateID').on('change', function () {
             Core.Agent.TicketAction.ConfirmTemplateOverwrite('RichText', $(this), function () {
-                Core.AJAX.FormUpdate($('#Compose'), 'AJAXUpdate', 'StandardTemplateID', ['RichTextField']);
+                Core.AJAX.FormUpdate($('#Compose'), 'AJAXUpdate', 'StandardTemplateID');
             });
             return false;
         });
@@ -87,22 +70,6 @@ Core.Agent.TicketActionCommon = (function (TargetNS) {
             });
         });
     };
-
-    /**
-     * @private
-     * @name FieldUpdate
-     * @memberof Core.Agent.TicketActionCommon
-     * @function
-     * @param {String} Value - FieldID
-     * @param {Array} ModifiedFields - Fields
-     * @description
-     *      Create on change event handler
-     */
-    function FieldUpdate (Value, ModifiedFields) {
-        $('#' + Value).on('change', function () {
-            Core.AJAX.FormUpdate($('#Compose'), 'AJAXUpdate', Value, ModifiedFields);
-        });
-    }
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');
 

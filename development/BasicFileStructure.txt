@@ -155,9 +155,9 @@ Basic file structure
  - scripts/DBUpdate-to-6.pl
     * Changed. Include SysConfig Migration methods
 
-- scripts/database/otobo-schema.xml
+- scripts/database/careoncloud-schema.xml
     * Changed. Include new SysConfig tables
-- scripts/database/update/otobo-upgrade-to-6.xml
+- scripts/database/update/careoncloud-upgrade-to-6.xml
     * Changed. Include new SysConfig tables
 
  - Kernel/Console/Command/Dev/Migrate/XMLStructure.pm

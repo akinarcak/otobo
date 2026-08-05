@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,8 +30,8 @@ use parent qw(Kernel::System::DynamicField::Driver::BaseSelect);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -76,6 +76,7 @@ sub new {
         'IsStatsCondition'             => 1,
         'IsCustomerInterfaceCapable'   => 1,
         'IsLikeOperatorCapable'        => 1,
+        'IsSetCapable'                 => 1,
     };
 
     # get the Dynamic Field Backend custom extensions
@@ -132,7 +133,13 @@ sub ValueGet {
     # extract real values
     my @ReturnData;
     for my $Item ( @{$DFValue} ) {
-        push @ReturnData, $Item->{ValueText};
+        if ( $Param{Set} ) {
+            $ReturnData[ $Item->{IndexSet} ] //= [];
+            push $ReturnData[ $Item->{IndexSet} ]->@*, $Item->{ValueText};
+        }
+        else {
+            push @ReturnData, $Item->{ValueText};
+        }
     }
 
     return \@ReturnData;
@@ -163,32 +170,42 @@ sub ValueSet {
     my $DynamicFieldValueObject = $Kernel::OM->Get('Kernel::System::DynamicFieldValue');
 
     my $Success;
-    if ( IsArrayRefWithData( \@Values ) ) {
-
-        # if there is at least one value to set, this means one or more values are selected,
-        #    set those values!
+    if ( $Param{Set} ) {
         my @ValueText;
-        for my $Item (@Values) {
-            push @ValueText, { ValueText => $Item };
-        }
+        for my $ValueIndex ( 0 .. $#Values ) {
+            my @ValueItems = $Values[$ValueIndex]->@*;
 
+            # if there is at least one value to set, this means one or more values are selected,
+            #    set those values!
+            for my $Item (@ValueItems) {
+                push @ValueText, {
+                    ValueText => $Item,
+                    IndexSet  => $ValueIndex,
+                };
+            }
+        }
         $Success = $DynamicFieldValueObject->ValueSet(
             FieldID  => $Param{DynamicFieldConfig}->{ID},
             ObjectID => $Param{ObjectID},
             Value    => \@ValueText,
             UserID   => $Param{UserID},
         );
+        return $Success;
     }
-    else {
 
-        # otherwise no value was selected, then in fact this means that any value there should be
-        # deleted
-        $Success = $DynamicFieldValueObject->ValueDelete(
-            FieldID  => $Param{DynamicFieldConfig}->{ID},
-            ObjectID => $Param{ObjectID},
-            UserID   => $Param{UserID},
-        );
+    # if there is at least one value to set, this means one or more values are selected,
+    #    set those values!
+    my @ValueText;
+    for my $Item (@Values) {
+        push @ValueText, { ValueText => $Item };
     }
+
+    $Success = $DynamicFieldValueObject->ValueSet(
+        FieldID  => $Param{DynamicFieldConfig}->{ID},
+        ObjectID => $Param{ObjectID},
+        Value    => \@ValueText,
+        UserID   => $Param{UserID},
+    );
 
     return $Success;
 }
@@ -297,7 +314,6 @@ sub EditFieldRender {
     # take config from field config
     my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
     my $FieldName   = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
 
     my $Value;
 
@@ -333,9 +349,17 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
+    }
+
+    # set ajaxupdate class
+    if ( $Param{AJAXUpdate} ) {
+        $FieldClass .= ' FormUpdate';
     }
 
     # set error css class
@@ -415,23 +439,8 @@ sub EditFieldRender {
 
     if ( $Param{AJAXUpdate} ) {
 
-        my $FieldSelector = '#' . $FieldName;
-
-        my $FieldsToUpdate = '';
-        if ( IsArrayRefWithData( $Param{UpdatableFields} ) ) {
-
-            # Remove current field from updatable fields list
-            my @FieldsToUpdate = grep { $_ ne $FieldName } @{ $Param{UpdatableFields} };
-
-            # quote all fields, put commas in between them
-            $FieldsToUpdate = join( ', ', map {"'$_'"} @FieldsToUpdate );
-        }
-
-        # add js to call FormUpdate()
-        $Param{LayoutObject}->AddJSOnDocumentComplete( Code => <<"EOF");
-\$('$FieldSelector').bind('change', function (Event) {
-    Core.AJAX.FormUpdate(\$(this).parents('form'), 'AJAXUpdate', '$FieldName', [ $FieldsToUpdate ]);
-});
+        # add js to bind TreeSelection event
+        $Param{LayoutObject}->AddJSOnDocumentComplete( Code => <<"EOF" );
 Core.App.Subscribe('Event.AJAX.FormUpdate.Callback', function(Data) {
     var FieldName = '$FieldName';
     if (Data[FieldName] && \$('#' + FieldName).hasClass('DynamicFieldWithTreeView')) {
@@ -551,9 +560,6 @@ sub DisplayValueRender {
 
     # activate HTMLOutput when it wasn't specified
     my $HTMLOutput = $Param{HTMLOutput} // 1;
-
-    my $ValueMaxChars = $Param{ValueMaxChars} || '';
-    my $TitleMaxChars = $Param{TitleMaxChars} || '';
 
     # check value
     my @Values;

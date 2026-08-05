@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,7 +27,7 @@ use List::Util qw(first);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -72,7 +72,6 @@ creates the field HTML to be used in edit masks for multiple dynamic fields.
     my $Success = $DynamicFieldMaskObject->EditSectionRender(
         Content               => \@Content,
         DynamicFields         => \%DynamicFieldConfigs,
-        UpdatableFields       => $Self->_GetFieldsToUpdate(),
         LayoutObject          => $LayoutObject,
         ParamObject           => $ParamObject,
         DynamicFieldValues    => {                  # optional - else taken from ParamObject
@@ -91,6 +90,7 @@ creates the field HTML to be used in edit masks for multiple dynamic fields.
         },
         AJAXUpdate            => (1|0),             # optional render dynamic fields with or without AJAXUpdate, defaults to 1
         CustomerInterface     => 1,                 # optional indicates which templates are needed, defaults to 0 (Agent interface)
+        Object                => \%Object,          # optional data needed for evaluating script fields and fetching reference field possible values
     );
 
 =cut
@@ -100,10 +100,15 @@ sub EditSectionRender {
 
     my $TemplateFile = $Param{CustomerInterface} ? 'DynamicField/CustomerEditField' : 'DynamicField/AgentEditField';
 
-    if ( !$Param{Content} ) {
-        return $Param{LayoutObject}->Output(
-            TemplateFile => $TemplateFile,
+    $Param{Content} ||= [];
+
+    if ( ref $Param{Content} ne 'ARRAY' ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error',
+            Message  => "Invalid content!",
         );
+
+        return;
     }
 
     # check needed params
@@ -118,15 +123,6 @@ sub EditSectionRender {
         }
     }
 
-    if ( !IsArrayRefWithData( $Param{Content} ) ) {
-        $Kernel::OM->Get('Kernel::System::Log')->Log(
-            Priority => 'error',
-            Message  => "Invalid content!",
-        );
-
-        return;
-    }
-
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
     $Param{DynamicFieldValues}   ||= {};
@@ -137,11 +133,7 @@ sub EditSectionRender {
         my %Row = @_;
 
         # prepare row block
-        my $RowReadonly;
         {
-            # set complete row read only, if one element is
-            $RowReadonly = ( first { $_->{Readonly} } $Row{Fields}->@* ) ? 1 : 0;
-
             # special treatment for separate dynamic fields based on first field TODO: maybe discard?
             my $RowBlockName = $Param{SeparateDynamicFields} && $Param{SeparateDynamicFields}->{ $Row{Fields}[0]{DF} }
                 ? 'Row_DynamicField_' . $Row{Fields}[0]{DF} : 'Row_DynamicField';
@@ -165,20 +157,6 @@ sub EditSectionRender {
             );
         }
 
-        # in case of multirow and multivalue, get the largest multi value size
-        my $MultiValueMaxCount = 0;
-        if ( $Row{Columns} > 1 && first { $Param{DynamicFields}{ $_->{DF} }{Config}{MultiValue} } $Row{Fields}->@* ) {
-            for my $Field ( $Row{Fields}->@* ) {
-                my $DFName = "DynamicField_$Field->{DF}";
-                if ( !ref $Param{DynamicFieldValues}{$DFName} ) {
-                    $MultiValueMaxCount ||= $Param{DynamicFieldValues}{$DFName} ? 1 : 0;
-                }
-                elsif ( scalar $Param{DynamicFieldValues}{$DFName}->@* > $MultiValueMaxCount ) {
-                    $MultiValueMaxCount = scalar $Param{DynamicFieldValues}{$DFName}->@*;
-                }
-            }
-        }
-
         # prepare dynamic field HTML and positioning
         my @ValueGrid;
         my @MultiValueTemplates;
@@ -196,20 +174,27 @@ sub EditSectionRender {
 
             my $DynamicField = $Param{DynamicFields}{ $Field->{DF} };
             my $DFName       = "DynamicField_$Field->{DF}";
+            my $FieldClasses = 'Field' . ( $DynamicField->{FieldType} eq 'RichText' ? ' RichTextField' : '' );
 
             # don't set a default value for hidden fields
             my %InvisibleNoDefault;
             if (
                 $Param{Visibility}
                 && !$Param{Visibility}{$DFName}
-                && $DynamicField->{FieldType} ne 'Date'
-                && $DynamicField->{FieldType} ne 'DateTime'
                 )
             {
                 %InvisibleNoDefault = (
-                    UseDefaultValue      => 0,
-                    OverridePossibleNone => 1,
+                    ACLHidden => 1,
                 );
+
+                if (
+                    $DynamicField->{FieldType} ne 'Date'
+                    && $DynamicField->{FieldType} ne 'DateTime'
+                    )
+                {
+                    $InvisibleNoDefault{UseDefaultValue}      = 0;
+                    $InvisibleNoDefault{OverridePossibleNone} = 1;
+                }
             }
 
             # set errors if present
@@ -218,20 +203,10 @@ sub EditSectionRender {
                 %Error = $Param{Errors}{ $Field->{DF} }->%*;
             }
 
-            # fill dynamic field values with empty strings until it matches the maximum value count
-            if ( $MultiValueMaxCount && $DynamicField->{Config}{MultiValue} ) {
-                if ( !defined $Param{DynamicFieldValues}{$DFName} ) {
-                    $Param{DynamicFieldValues}{$DFName} = [];
-                }
-                elsif ( !ref $Param{DynamicFieldValues}{$DFName} ) {
-                    $Param{DynamicFieldValues}{$DFName} = [ $Param{DynamicFieldValues}{$DFName} ];
-                }
-
-                if ( scalar $Param{DynamicFieldValues}{$DFName}->@* < $MultiValueMaxCount ) {
-
-                    # TODO: Respect default values here and in the template
-                    push $Param{DynamicFieldValues}{$DFName}->@*, ('') x ( $MultiValueMaxCount - scalar $Param{DynamicFieldValues}{$DFName}->@* );
-                }
+            # catch template case
+            my $Class = '';
+            if ( $DynamicField->{Name} =~ /_Template$/ ) {
+                $Class = 'ValidationIgnore';
             }
 
             # get field html
@@ -242,11 +217,12 @@ sub EditSectionRender {
                 LayoutObject         => $Param{LayoutObject},
                 ParamObject          => $Param{ParamObject},
                 AJAXUpdate           => $Param{AJAXUpdate} // 1,
-                UpdatableFields      => $Param{UpdatableFields},
                 Mandatory            => $Field->{Mandatory},
                 Readonly             => $Field->{Readonly},
                 CustomerInterface    => $Param{CustomerInterface},
                 Object               => $Param{Object},
+                Class                => $Class,
+                Visibility           => $Param{Visibility},
                 %Error,
                 %InvisibleNoDefault,
             );
@@ -256,11 +232,6 @@ sub EditSectionRender {
             # hide fields
             if ( $Param{Visibility} && !$Param{Visibility}{$DFName} ) {
                 $CellClassString .= ' oooACLHidden';
-
-                # ACL hidden fields cannot be mandatory
-                if ( $Field->{Mandatory} ) {
-                    $DynamicFieldHTML =~ s/(class=.+?Validate_Required)/$1_IfVisible/g;
-                }
             }
 
             # column placement
@@ -282,8 +253,8 @@ sub EditSectionRender {
                 CellStyle   => $CellStyle,
                 Tooltip     => $DynamicField->{Config}{Tooltip},
                 MultiValue  => $DynamicField->{Config}{MultiValue},
-                RowReadonly => $RowReadonly,
                 CellClasses => $CellClassString,
+                Readonly    => $Field->{Readonly},
             );
 
             # multi value
@@ -294,10 +265,11 @@ sub EditSectionRender {
                         Name => $ColBlockName,
                         Data => {
                             %CellBlockData,
-                            Label       => $DynamicFieldHTML->{Label},                           # TODO: fix the numbering of 'id' and 'for'
-                            Field       => $DynamicFieldHTML->{MultiValue}[$ValueRowIndex],
-                            Index       => $ValueRowIndex,
-                            CellClasses => $CellClassString . ' MultiValue_' . $ValueRowIndex,
+                            Label        => $DynamicFieldHTML->{Label},                           # TODO: fix the numbering of 'id' and 'for'
+                            Field        => $DynamicFieldHTML->{MultiValue}[$ValueRowIndex],
+                            FieldClasses => $FieldClasses,
+                            Index        => $ValueRowIndex,
+                            CellClasses  => $CellClassString . ' MultiValue_' . $ValueRowIndex,
                         },
                     };
                 }
@@ -306,8 +278,9 @@ sub EditSectionRender {
                     Name => 'Template' . $ColBlockName,
                     Data => {
                         %CellBlockData,
-                        Label => $DynamicFieldHTML->{Label},                # TODO: fix the numbering of 'id' and 'for'
-                        Field => $DynamicFieldHTML->{MultiValueTemplate},
+                        Label        => $DynamicFieldHTML->{Label},                # TODO: fix the numbering of 'id' and 'for'
+                        Field        => $DynamicFieldHTML->{MultiValueTemplate},
+                        FieldClasses => $FieldClasses,
                     }
                 };
             }
@@ -318,9 +291,10 @@ sub EditSectionRender {
                     Name => $ColBlockName,
                     Data => {
                         %CellBlockData,
-                        Field => $DynamicFieldHTML->{Field},
-                        Label => $DynamicFieldHTML->{Label},
-                        Index => 0,
+                        Field        => $DynamicFieldHTML->{Field},
+                        FieldClasses => $FieldClasses,
+                        Label        => $DynamicFieldHTML->{Label},
+                        Index        => 0,
                     },
                 };
             }

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,20 +27,24 @@ use utf8;
 use parent qw(Kernel::System::DynamicField::Driver::Base);
 
 # core modules
+use List::Util qw(none);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
+    'Kernel::Output::HTML::Layout',
+    'Kernel::System::Cache',
     'Kernel::System::DB',
     'Kernel::System::DynamicFieldValue',
-    'Kernel::System::Log',
-    'Kernel::System::Cache',
     'Kernel::System::DynamicField',
     'Kernel::System::Event',
+    'Kernel::System::Log',
+    'Kernel::System::Web::FormCache',
+    'Kernel::System::Web::Request',
 );
 
 =head1 NAME
@@ -71,6 +75,13 @@ sub new {
         'IsCustomerInterfaceCapable'   => 1,
         'IsLikeOperatorCapable'        => 1,
         'IsScriptField'                => 1,
+        'SetsDynamicContent'           => 1,
+        'IsSetCapable'                 => 1,
+    };
+
+    # TODO: probably needs completion for all frontends
+    $Self->{Uniformity} = {
+        Dest => 'Queue',
     };
 
     return $Self;
@@ -127,13 +138,46 @@ sub ValueValidate {
         @Values = ( { ValueText => $Param{Values} } );
     }
 
+    # get dynamic field value object
+    my $DynamicFieldValueObject = $Kernel::OM->Get('Kernel::System::DynamicFieldValue');
+
+    my $CheckRegex = 1;
+    if (
+        !IsArrayRefWithData( $Param{DynamicFieldConfig}->{Config}->{RegExList} )
+        || ( defined $Param{NoValidateRegex} && $Param{NoValidateRegex} )
+        )
+    {
+        $CheckRegex = 0;
+    }
+
     my $Success;
     for my $Item (@Values) {
-        $Success = $Kernel::OM->Get('Kernel::System::DynamicFieldValue')->ValueValidate(
+        $Success = $DynamicFieldValueObject->ValueValidate(
             Value  => $Item,
             UserID => $Param{UserID}
         );
         return if !$Success;
+
+        if ( $CheckRegex && IsStringWithData( $Item->{ValueText} ) ) {
+
+            # check regular expressions
+            my @RegExList = @{ $Param{DynamicFieldConfig}->{Config}->{RegExList} };
+
+            REGEXENTRY:
+            for my $RegEx (@RegExList) {
+
+                if ( $Item->{ValueText} !~ $RegEx->{Value} ) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'error',
+                        Message  => "The value '$Item->{ValueText}' is not matching /"
+                            . $RegEx->{Value} . "/ ("
+                            . $RegEx->{ErrorMessage} . ")!",
+                    );
+
+                    return;
+                }
+            }
+        }
     }
 
     return $Success;
@@ -222,8 +266,11 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
     }
 
@@ -233,7 +280,7 @@ sub EditFieldRender {
     }
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     my %FieldTemplateData = (
@@ -248,20 +295,37 @@ sub EditFieldRender {
         ? 'DynamicField/Customer/BaseScript'
         : 'DynamicField/Agent/BaseScript';
 
+    my %Error = (
+        ServerError => $Param{ServerError},
+        Mandatory   => $Param{Mandatory},
+    );
     my @ResultHTML;
     for my $ValueIndex ( 0 .. $#{$Value} ) {
         $FieldTemplateData{FieldID} = $FieldConfig->{MultiValue} ? $FieldName . '_' . $ValueIndex : $FieldName;
+
+        if ( !$ValueIndex ) {
+            if ( $Error{ServerError} ) {
+                $Error{DivIDServerError} = $FieldTemplateData{FieldID} . 'ServerError';
+                $Error{ErrorMessage}     = Translatable( $Param{ErrorMessage} || 'This field is required.' );
+            }
+            if ( $Error{Mandatory} ) {
+                $Error{DivIDMandatory}       = $FieldTemplateData{FieldID} . 'Error';
+                $Error{FieldRequiredMessage} = Translatable('This field is required.');
+            }
+        }
 
         my $ValueItem    = $Value->[$ValueIndex];
         my $ValueEscaped = $Param{LayoutObject}->Ascii2Html(
             Text => $ValueItem,
         );
 
-        $FieldTemplateData{ValueEscaped} = $ValueEscaped;
-
         push @ResultHTML, $Param{LayoutObject}->Output(
             TemplateFile => $FieldTemplateFile,
-            Data         => \%FieldTemplateData,
+            Data         => {
+                %FieldTemplateData,
+                %Error,
+                ValueEscaped => $ValueEscaped,
+            },
         );
     }
 
@@ -275,6 +339,15 @@ sub EditFieldRender {
             Data         => {
                 %FieldTemplateData,
             },
+        );
+    }
+
+    # write rendered value to FormCache for later usage in EditFieldValueValidate
+    if ( $Value && !$Param{ServerError} ) {
+        $Kernel::OM->Get('Kernel::System::Web::FormCache')->SetFormData(
+            LayoutObject => $Param{LayoutObject},
+            Key          => 'RenderedValue_DynamicField_' . $Param{DynamicFieldConfig}{Name},
+            Value        => $Value,
         );
     }
 
@@ -319,7 +392,6 @@ sub EditFieldValueGet {
         && ref $Param{ParamObject} eq 'Kernel::System::Web::Request'
         )
     {
-        $Value = $Param{ParamObject}->GetParam( Param => $FieldName );
         if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
             my @DataAll = $Param{ParamObject}->GetArray( Param => $FieldName );
             my @Data;
@@ -346,35 +418,103 @@ sub EditFieldValueGet {
         };
     }
 
-    # for this field the normal return an the ReturnValueStructure are the same
+    # for this field the normal return and the ReturnValueStructure are the same
     return $Value;
 }
 
 sub EditFieldValueValidate {
     my ( $Self, %Param ) = @_;
 
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+
+    if ( !$Param{Mandatory} && !IsArrayRefWithData( $DynamicFieldConfig->{Config}{RegExList} ) ) {
+        return {
+            ServerError  => undef,
+            ErrorMessage => undef
+        };
+    }
+
     # get the field value from the http request
-    my $Value = $Self->EditFieldValueGet(
-        DynamicFieldConfig => $Param{DynamicFieldConfig},
+    my $EditFieldValue = $Self->EditFieldValueGet(
+        DynamicFieldConfig => $DynamicFieldConfig,
         ParamObject        => $Param{ParamObject},
 
         # not necessary for this Driver but place it for consistency reasons
         ReturnValueStructure => 1,
     );
 
+    # NOTE following block does not work with multivalue script fields
+    if ($EditFieldValue) {
+
+        my $DFName = $DynamicFieldConfig->{Name};
+
+        if ( defined $Param{SetIndex} ) {
+            $DFName .= "_$Param{SetIndex}";
+        }
+
+        # if the value would change, we need to verify that the user is really allowed
+        # to access the provided referenced data via this form
+        # this is the case if either the referenced data was shown via a search (1)
+        # or is currently stored for the edited ticket/ci/... (2)
+        my $LastEvaluationResult = $Kernel::OM->Get('Kernel::System::Web::FormCache')->GetFormData(
+            LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+            Key          => 'LastValue_DynamicField_' . $DFName,
+        );
+
+        # if no LastEvaluationResult is present, use rendered value
+        $LastEvaluationResult //= $Kernel::OM->Get('Kernel::System::Web::FormCache')->GetFormData(
+            LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+            Key          => 'RenderedValue_DynamicField_' . $DFName,
+        );
+
+        # check if EditFieldValue matches last evaluation result
+        my $Allowed = ( $LastEvaluationResult eq $EditFieldValue ) ? 1 : 0;
+
+        if ( !$Allowed ) {
+            return {
+                ServerError  => 1,
+                ErrorMessage => 'Value invalid.',
+            };
+        }
+    }
+
     my $ServerError;
     my $ErrorMessage;
 
-    # perform necessary validations
-    if ( !$Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
-        $Value = [$Value];
+    # transform scalar values to array ref for iteration
+    if ( !$DynamicFieldConfig->{Config}{MultiValue} ) {
+        $EditFieldValue = [$EditFieldValue];
     }
 
-    for my $ValueItem ( @{$Value} ) {
+    # perform necessary validations
+    for my $Index ( 0 .. $#{$EditFieldValue} ) {
 
-        # perform necessary validations
-        if ( $Param{Mandatory} && $ValueItem eq '' ) {
-            $ServerError = 1;
+        my $CurrentValue = $EditFieldValue->[$Index];
+
+        if ( $Param{Mandatory} && $CurrentValue eq '' ) {
+            $ServerError  = 1;
+            $ErrorMessage = "This field is required.";
+        }
+
+        elsif (
+            IsArrayRefWithData( $DynamicFieldConfig->{Config}{RegExList} )
+            && ( $Param{Mandatory} || ( !$Param{Mandatory} && $CurrentValue ne '' ) )
+            )
+        {
+
+            # check regular expressions
+            my @RegExList = $DynamicFieldConfig->{Config}{RegExList}->@*;
+
+            REGEXENTRY:
+            for my $RegEx (@RegExList) {
+
+                if ( $CurrentValue !~ $RegEx->{Value} ) {
+                    $ServerError  = 1;
+                    $ErrorMessage = $RegEx->{ErrorMessage};
+
+                    last REGEXENTRY;
+                }
+            }
         }
     }
 
@@ -489,8 +629,8 @@ sub DisplayValueRender {
     }
 
     # set field link form config
-    my $Link        = $Param{DynamicFieldConfig}->{Config}->{Link}        || '';
-    my $LinkPreview = $Param{DynamicFieldConfig}->{Config}->{LinkPreview} || '';
+    my $Link        = $Param{DynamicFieldConfig}{Config}{Link}        || '';
+    my $LinkPreview = $Param{DynamicFieldConfig}{Config}{LinkPreview} || '';
 
     # create return structure
     my $Data = {
@@ -507,9 +647,8 @@ sub SearchFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
-    my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName   = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
+    my $FieldName  = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
+    my $FieldLabel = $Param{DynamicFieldConfig}->{Label};
 
     # set the field value
     my $Value = ( defined $Param{DefaultValue} ? $Param{DefaultValue} : '' );
@@ -535,7 +674,7 @@ sub SearchFieldRender {
     );
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     my $HTMLString = <<"EOF";
@@ -940,6 +1079,86 @@ sub Evaluate {
     my ( $Self, %Param ) = @_;
 
     return "No evaluation implemented for this field type.";
+}
+
+sub GetFieldState {
+    my ( $Self, %Param ) = @_;
+
+    my %GetParam           = $Param{GetParam}->%*;
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+
+    # for ticket dynamic fields we need the queue
+    $GetParam{Queue} = defined $Param{GetParam}{Queue}
+        ? $Param{GetParam}{Queue}
+        : $Param{GetParam}{Dest} && $Param{GetParam}{Dest} =~ /\|\|(.+)$/ ? $1
+        :                                                                   undef;
+
+    # the required args have to be present
+    for my $Required ( @{ $DynamicFieldConfig->{Config}{RequiredArgs} // [] } ) {
+        my $Value = $GetParam{DynamicField}{$Required} // $GetParam{$Required};
+
+        return () if !$Value || ( ref $Value && !IsArrayRefWithData($Value) );
+    }
+
+    my %ChangedElements = map { $Self->{Uniformity}{$_} // $_ => 1 } keys $Param{ChangedElements}->%*;
+    delete $ChangedElements{ 'DynamicField_' . $DynamicFieldConfig->{Name} };
+
+    # skip if it's only a rerun due to self change
+    return () if !%ChangedElements && !$Param{InitialRun};
+
+    # if specific AJAX triggers are defined only update on changes to them...
+    if ( IsArrayRefWithData( $DynamicFieldConfig->{Config}{AJAXTriggers} ) ) {
+        return () if none { $ChangedElements{$_} } $DynamicFieldConfig->{Config}{AJAXTriggers}->@*;
+    }
+
+    # ...if not, only check in the first run
+    elsif ( !$Param{InitialRun} ) {
+        return ();
+    }
+
+    return () if IsArrayRefWithData( $DynamicFieldConfig->{Config}{AJAXTriggers} )
+        && !$Param{InitialRun}
+        && none { $ChangedElements{ $Self->{Uniformity}{$_} // $_ } } $DynamicFieldConfig->{Config}{AJAXTriggers}->@*;
+
+    my $NewValue = $Self->Evaluate(
+        DynamicFieldConfig => $DynamicFieldConfig,
+        Object             => {
+
+            # ticket specifics
+            CustomerUserID => $Param{CustomerUser},
+            TicketID       => $Param{TicketID},
+
+            # ITSM config item specifics
+            ConfigItemID => $Param{ConfigItemID},
+
+            # general
+            %GetParam,
+        },
+    );
+
+    # do nothing if nothing changed
+    return () if !$Self->ValueIsDifferent(
+        DynamicFieldConfig => $DynamicFieldConfig,
+        Value1             => $GetParam{DynamicField}{"DynamicField_$DynamicFieldConfig->{Name}"},
+        Value2             => $NewValue,
+    );
+
+    my $DFName = $DynamicFieldConfig->{Name};
+    if ( defined $Param{SetIndex} ) {
+        $DFName .= "_$Param{SetIndex}";
+    }
+
+    # store all possible values for this field and form id for later verification
+    $Kernel::OM->Get('Kernel::System::Web::FormCache')->SetFormData(
+        LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+        FormID       => $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'FormID' ),
+        Key          => 'LastValue_DynamicField_' . $DFName,
+        Value        => $NewValue,
+    );
+
+    return (
+        NewValue => $NewValue,
+    );
 }
 
 1;

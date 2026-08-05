@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,8 +23,8 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::UnitTest::MockTime qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet FixedTimeUnset);
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 use Kernel::System::UnitTest::Selenium;
 
@@ -234,6 +234,10 @@ $Selenium->RunTest(
                 HistoryComment       => 'Customer sent an email',
                 UserID               => $TestUserID,
             );
+            $Self->True(
+                $ArticleID,
+                "Article is created - ID $ArticleID",
+            );
         }
 
         # Login as test user.
@@ -414,7 +418,7 @@ $Selenium->RunTest(
         $Selenium->execute_script("\$('.ColumnSettingsTrigger[title*=\"Status\"]').click();");
         $Selenium->WaitFor(
             JavaScript =>
-                "return typeof(\$) === 'function' && \$('#ColumnFilterState:visible').length;"
+                "return typeof(\$) === 'function' && \$('#ColumnFilterState_Search:visible').length;"
         );
         $Selenium->WaitFor(
             JavaScript =>
@@ -431,7 +435,7 @@ $Selenium->RunTest(
             "'new' state is not available as filter selection."
         );
 
-        # Naviage to test queue view with sub-queue.
+        # Navigate to test queue view with sub-queue.
         $Selenium->VerifiedGet(
             "${ScriptAlias}index.pl?Action=AgentTicketQueue;QueueID=$Queues[1]->{QueueID};View=Small;UseSubQueues=1;"
         );
@@ -440,7 +444,7 @@ $Selenium->RunTest(
         $Selenium->execute_script("\$('.ColumnSettingsTrigger[title*=\"Status\"]').click();");
         $Selenium->WaitFor(
             JavaScript =>
-                "return typeof(\$) === 'function' && \$('#ColumnFilterState:visible').length;"
+                "return typeof(\$) === 'function' && \$('#ColumnFilterState_Search:visible').length;"
         );
         $Selenium->WaitFor(
             JavaScript =>

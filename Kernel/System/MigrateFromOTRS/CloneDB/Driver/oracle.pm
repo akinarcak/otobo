@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,8 +27,8 @@ use parent qw(Kernel::System::MigrateFromOTRS::CloneDB::Driver::Base);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::DB;
+# CareOnCloud ESM modules
+use Kernel::System::DB ();
 
 our @ObjectDependencies = (
     'Kernel::System::Log',
@@ -56,7 +56,7 @@ Please look there for a detailed reference of the functions.
 sub CreateOTRSDBConnection {
     my ( $Self, %Param ) = @_;
 
-    # check OTRSDBSettings
+    # check OTRSDBSettings, Attribute is optional
     # in contrast to postgresql.pm and mysql.pm, DBDSN is used instead of DBHost and DBName
     for my $Needed (qw(DBDSN DBUser DBPassword DBType)) {
         if ( !$Param{$Needed} ) {
@@ -73,10 +73,12 @@ sub CreateOTRSDBConnection {
 
     # create target DB object
     my $OTRSDBObject = Kernel::System::DB->new(
-        DatabaseDSN  => $Param{DBDSN},
-        DatabaseUser => $Param{DBUser},
-        DatabasePw   => $Param{DBPassword},
-        Type         => $Param{DBType},
+        DatabaseDSN             => $Param{DBDSN},
+        DatabaseUser            => $Param{DBUser},
+        DatabasePw              => $Param{DBPassword},
+        Type                    => $Param{DBType},
+        Attribute               => $Param{Attribute},
+        DisconnectOnDestruction => 1,
     );
 
     if ( !$OTRSDBObject ) {
@@ -107,7 +109,7 @@ sub ColumnsList {
         }
     }
 
-    # Internally OTOBO is using lower case table names.
+    # Internally CareOnCloud ESM is using lower case table names.
     # But Oracle has upper case names.
     my $UcTable = uc $Param{Table};
     my $Rows    = $Param{DBObject}->SelectAll(
@@ -220,7 +222,7 @@ sub BlobColumnsList {
         }
     }
 
-    # Internally OTOBO is using lower case table names.
+    # Internally CareOnCloud ESM is using lower case table names.
     # But Oracle has upper case names.
     my $UcTable = uc $Param{Table};
     $Param{DBObject}->Prepare(
@@ -258,7 +260,7 @@ sub GetColumnInfos {
         }
     }
 
-    # Internally OTOBO is using lower case table names.
+    # Internally CareOnCloud ESM is using lower case table names.
     # But Oracle has upper case names.
     my $UcTable  = uc $Param{Table};
     my $UcColumn = uc $Param{Column};

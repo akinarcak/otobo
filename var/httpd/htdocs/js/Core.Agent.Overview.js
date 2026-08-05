@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -234,7 +234,7 @@ Core.Agent.Overview = (function (TargetNS) {
                             ) {
 
                             if (!$TriggerObj.parent().find('.SelectedValue').length) {
-                                Core.AJAX.FormUpdate($('#Nothing'), 'AJAXFilterUpdate', FilterName, [ FilterName ], function() {
+                                Core.AJAX.FormUpdate($('#Nothing'), 'AJAXFilterUpdate', FilterName, function() {
                                     var AutoCompleteValue = $TriggerObj
                                             .next('.ColumnSettingsContainer')
                                             .find('select')
@@ -250,7 +250,7 @@ Core.Agent.Overview = (function (TargetNS) {
                                         $TriggerObj
                                             .next('.ColumnSettingsContainer')
                                             .find('select')
-                                            .after('<span class="SelectedValue Hidden">' + AutoCompleteText + ' (' + AutoCompleteValue + ')</span>')
+                                            .after('<span class="SelectedValue Hidden">' + Core.App.EscapeHTML(AutoCompleteText) + ' (' + Core.App.EscapeHTML(AutoCompleteValue) + ')</span>')
                                             .parent()
                                             .find('input[type=text]')
                                             .after('<a href="#" class="DeleteFilter"><i class="fa fa-trash-o"></i></a>')
@@ -271,10 +271,12 @@ Core.Agent.Overview = (function (TargetNS) {
                             }
                         }
                         else {
-                            Core.AJAX.FormUpdate($('#ColumnFilterAttributes'), 'AJAXFilterUpdate', FilterName, [ FilterName ]);
+                            Core.AJAX.FormUpdate($('#ColumnFilterAttributes'), 'AJAXFilterUpdate', FilterName);
                         }
                 });
             }
+
+            Core.UI.InputFields.InitSelect($('select.ColumnFilter'));
 
             return false;
         });

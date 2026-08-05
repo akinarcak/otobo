@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,10 +16,19 @@
 
 package Kernel::System::Queue;
 
+use v5.24;
 use strict;
 use warnings;
 
 use parent qw(Kernel::System::EventHandler);
+
+# core modules
+
+# CPAN modules
+use Email::Address::XS ();
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsArrayRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -29,8 +38,11 @@ our @ObjectDependencies = (
     'Kernel::System::Group',
     'Kernel::System::Log',
     'Kernel::System::Main',
+    'Kernel::System::Salutation',
+    'Kernel::System::Signature',
     'Kernel::System::StandardTemplate',
-    'Kernel::System::SysConfig',
+    'Kernel::System::SystemAddress',
+    'Kernel::System::Translations',
     'Kernel::System::Valid',
 );
 
@@ -53,13 +65,10 @@ Don't use the constructor directly, use the ObjectManager instead:
 =cut
 
 sub new {
-    my ( $Type, %Param ) = @_;
+    my ($Type) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
-
-    $Self->{QueueID} = $Param{QueueID} || '';
+    my $Self = bless {}, $Type;
 
     $Self->{CacheType} = 'Queue';
     $Self->{CacheTTL}  = 60 * 60 * 24 * 20;
@@ -71,10 +80,8 @@ sub new {
         $Self->{PreferencesObject} = $GeneratorModule->new();
     }
 
-    # --------------------------------------------------- #
-    #  default queue settings                             #
-    #  these settings are used by the CLI version         #
-    # --------------------------------------------------- #
+    # default queue settings                             #
+    # these settings are used by the CLI version         #
     $Self->{QueueDefaults} = {
         Calendar            => '',
         UnlockTimeout       => 0,
@@ -99,13 +106,43 @@ sub new {
     return $Self;
 }
 
+=for stopwords probiert
+
 =head2 GetSystemAddress()
 
-get a queue system email address as hash (Email, RealName)
+get a queue system email address as hash.
 
     my %Address = $QueueObject->GetSystemAddress(
         QueueID => 123,
     );
+
+The attributes of the returned hash are
+
+=over 4
+
+=item Email: the address part of the system address
+
+=item Phrase: the unquoted phrase of the system address
+
+=item FormattedAddress: address that can be used in MIME header, e.g. q{"August probiert's" <gustl@testanything.org>}
+
+=item RealName: DEPRECATED the quoted phrase of the system address
+
+=back
+
+When the address is 'gustl@testanything.org' and the phrase is 'August, Ausprobierer' we get:
+
+    my %Address = (
+        Email            => q{gustl@testanything.org},
+        Phrase           => q{August, Ausprobierer},
+        FormattedAddress => q{"August, Ausprobierer" <gustl@testanything.org>},
+        RealName         => q{"August, Ausprobierer"},
+    );
+
+The formatted address is a valid address with the phrase.
+The unquoted C<Phrase> can be used in C<Kernel::System::EmailAddress::Format()>.
+
+The quoted 'RealName' should not be used as there are issues with the proper quoting.
 
 =cut
 
@@ -116,21 +153,35 @@ sub GetSystemAddress {
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     my %Address;
-    my $QueueID = $Param{QueueID} || $Self->{QueueID};
+    my $QueueID = $Param{QueueID};
 
     return if !$DBObject->Prepare(
-        SQL => 'SELECT sa.value0, sa.value1 FROM system_address sa, queue sq '
-            . 'WHERE sq.id = ? AND sa.id = sq.system_address_id',
+        SQL => <<'END_SQL',
+SELECT sa.value0, sa.value1
+  FROM system_address sa, queue sq
+  WHERE sq.id = ?
+    AND sa.id = sq.system_address_id
+END_SQL
         Bind  => [ \$QueueID ],
         Limit => 1,
     );
 
     while ( my @Row = $DBObject->FetchrowArray() ) {
-        $Address{Email}    = $Row[0];
-        $Address{RealName} = $Row[1];
+        $Address{Email} = $Row[0];
+
+        # Return the unquoted phrase which can be used with Kernel::System::EmailAddress.
+        $Address{Phrase} = $Row[1];
     }
 
-    # prepare realname quote
+    # getting the quoting and escaping of the phrase right
+    $Address{FormattedAddress} = Email::Address::XS->new(
+        phrase  => $Address{Phrase},
+        address => $Address{Email},
+    )->format;
+
+    # 'RealName' is deprecated as the quoting is not consistent
+    # prepare realname quote, for constructing emails like "$Address{RealName} <$Address{Email}>".
+    $Address{RealName} = $Address{Phrase};
     if ( $Address{RealName} =~ /(,|@|\(|\)|:)/ && $Address{RealName} !~ /^("|')/ ) {
         $Address{RealName} =~ s/"/\"/g;
         $Address{RealName} = '"' . $Address{RealName} . '"';
@@ -781,19 +832,16 @@ add queue with attributes
 sub QueueAdd {
     my ( $Self, %Param ) = @_;
 
+    # apply the default values which have been set up in the constructor
     # check if this request is from web and not from command line
     if ( !$Param{NoDefaultValues} ) {
-        for (
+        for my $Key (
             qw(UnlockTimeout FirstResponseTime FirstResponseNotify UpdateTime UpdateNotify SolutionTime SolutionNotify
             FollowUpLock SystemAddressID SalutationID SignatureID
             FollowUpID FollowUpLock DefaultSignKey Calendar)
             )
         {
-
-            # I added default values in the Load Routine
-            if ( !$Param{$_} ) {
-                $Param{$_} = $Self->{QueueDefaults}->{$_} || 0;
-            }
+            $Param{$Key} ||= $Self->{QueueDefaults}->{$Key} || 0;
         }
     }
 
@@ -914,6 +962,13 @@ sub QueueAdd {
             Queue => \%Queue,
         },
         UserID => $Param{UserID},
+    );
+
+    my %Queues = $Self->QueueList();
+
+    # generate chained translations automatically
+    $Kernel::OM->Get('Kernel::System::Translations')->TranslateParentChildElements(
+        Strings => [ values %Queues ],
     );
 
     return $QueueID if !$StandardTemplateID2QueueByCreating;
@@ -1258,6 +1313,13 @@ sub QueueUpdate {
         }
     }
 
+    my %Queues = $Self->QueueList();
+
+    # generate chained translations automatically
+    $Kernel::OM->Get('Kernel::System::Translations')->TranslateParentChildElements(
+        Strings => [ values %Queues ],
+    );
+
     return 1;
 }
 
@@ -1266,6 +1328,8 @@ sub QueueUpdate {
 get all queues
 
     my %Queues = $QueueObject->QueueList();
+
+get only the valid queues
 
     my %Queues = $QueueObject->QueueList( Valid => 1 );
 
@@ -1289,39 +1353,30 @@ sub QueueList {
         Type => $Self->{CacheType},
         Key  => $CacheKey,
     );
-    return %{$Cache} if $Cache;
 
-    # get database object
+    return $Cache->%* if $Cache;
+
+    # SQL query
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    my $SQL      = $Valid
+        ?
+        "SELECT id, name FROM queue WHERE valid_id IN ( ${\(join ', ', $Kernel::OM->Get('Kernel::System::Valid')->ValidIDsGet())} )"
+        :
+        'SELECT id, name FROM queue';
 
-    # sql query
-    if ($Valid) {
-        return if !$DBObject->Prepare(
-            SQL => "SELECT id, name FROM queue WHERE valid_id IN "
-                . "( ${\(join ', ', $Kernel::OM->Get('Kernel::System::Valid')->ValidIDsGet())} )",
-        );
-    }
-    else {
-        return if !$DBObject->Prepare(
-            SQL => 'SELECT id, name FROM queue',
-        );
-    }
-
-    # fetch the result
-    my %Queues;
-    while ( my @Row = $DBObject->FetchrowArray() ) {
-        $Queues{ $Row[0] } = $Row[1];
-    }
+    my %QueueID2Name = $DBObject->SelectMapping(
+        SQL => $SQL
+    );
 
     # set cache
     $Kernel::OM->Get('Kernel::System::Cache')->Set(
         Type  => $Self->{CacheType},
         TTL   => $Self->{CacheTTL},
         Key   => $CacheKey,
-        Value => \%Queues,
+        Value => \%QueueID2Name,
     );
 
-    return %Queues;
+    return %QueueID2Name;
 }
 
 =head2 QueuePreferencesSet()
@@ -1416,6 +1471,626 @@ sub NameExistsCheck {
     }
 
     return 0;
+}
+
+=for stopwords ro rw
+
+=head2 QueueListPermission()
+
+Get the permission for a list of queues.
+Returns nothing if the user has no 'ro' on any queue, 'ro' if the user has no 'rw' on at least one queue
+and 'rw' if the user has full permission on all queues.
+
+    my $Permission = $QueueObject->QueueListPermission(
+        QueueIDs => \@QueueIDs,      # optional
+        UserID   => $Param{UserID},
+        Default  => 'rw',            # (optional) default 'ro' (ro|rw) fallback permission if no queues given
+    );
+
+=cut
+
+sub QueueListPermission {
+    my ( $Self, %Param ) = @_;
+
+    # Check needed stuff.
+    if ( !$Param{UserID} ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error',
+            Message  => 'Need UserID!',
+        );
+        return;
+    }
+
+    my %RoQueues = $Self->GetAllQueues( UserID => $Param{UserID} );
+    my %RwQueues = $Self->GetAllQueues(
+        UserID => $Param{UserID},
+        Type   => 'rw',
+    );
+
+    # 'ro' is the default permission if no queue is given and parameter 'Default' is not set.
+    my $DefaultPermission = $Param{Default} || 'ro';
+
+    return $DefaultPermission if !IsArrayRefWithData( $Param{QueueIDs} );
+
+    # final permission is rw or '' if all are of that kind, else ro
+    my $Permission;
+    QUEUE:
+    for my $QueueID ( @{ $Param{QueueIDs} } ) {
+        if ( !defined $Permission ) {
+            if ( $RwQueues{$QueueID} ) {
+                $Permission = 'rw';
+            }
+            elsif ( $RoQueues{$QueueID} ) {
+                $Permission = 'ro';
+                last QUEUE;
+            }
+            else {
+                $Permission = '';
+            }
+        }
+
+        elsif ( $Permission eq '' ) {
+            if ( $RwQueues{$QueueID} || $RwQueues{$QueueID} ) {
+                $Permission = 'ro';
+                last QUEUE;
+            }
+        }
+
+        elsif ( !$RwQueues{$QueueID} ) {
+            $Permission = 'ro';
+            last QUEUE;
+        }
+    }
+
+    return $Permission;
+}
+
+=head2 ExportQueues()
+
+Returns data structures ready for export for each queue. Optionally filterable by giving a list of desired queue. Note that the data also contains salutations, system addresses and signatures.
+
+    my $ExportData = $QueueObject->ExportQueues(
+        Queues => [             # (optional) restrict queues to given ones
+            'Queue01',
+            'Queue02'
+        ],
+    );
+
+=cut
+
+sub ExportQueues {
+    my ( $Self, %Param ) = @_;
+
+    my %QueueFilter;
+    if ( IsArrayRefWithData( $Param{Queues} ) ) {
+        %QueueFilter = map { $_ => 1 } $Param{Queues}->@*;
+    }
+
+    # get necessary objects
+    my $GroupObject         = $Kernel::OM->Get('Kernel::System::Group');
+    my $SalutationObject    = $Kernel::OM->Get('Kernel::System::Salutation');
+    my $SignatureObject     = $Kernel::OM->Get('Kernel::System::Signature');
+    my $SystemAddressObject = $Kernel::OM->Get('Kernel::System::SystemAddress');
+    my $ValidObject         = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %QueueList = $Self->QueueList(
+        Valid => 0,
+    );
+    my %FollowUpOptions = $Self->GetFollowUpOptionList(
+        Valid => 0,
+    );
+
+    my %ExportData;
+    QUEUEID:
+    for my $QueueID ( sort keys %QueueList ) {
+
+        my %QueueData = $Self->QueueGet(
+            ID => $QueueID,
+        );
+
+        if (%QueueFilter) {
+            next QUEUEID unless $QueueFilter{ $QueueData{Name} };
+        }
+
+        # translate IDs into names or name-like identifiers
+        ATTRIBUTE:
+        for my $Attribute ( keys %QueueData ) {
+
+            next ATTRIBUTE unless $Attribute =~ /ID/;
+
+            # single-value attributes
+            if ( $Attribute eq 'ValidID' ) {
+                my $Valid = $ValidObject->ValidLookup(
+                    ValidID => $QueueData{ValidID},
+                );
+                $QueueData{Valid} = $Valid;
+                delete $QueueData{ValidID};
+            }
+            elsif ( $Attribute eq 'FollowUpID' ) {
+                $QueueData{FollowUp} = $FollowUpOptions{ $QueueData{FollowUpID} };
+                delete $QueueData{FollowUpID};
+            }
+            elsif ( $Attribute eq 'GroupID' ) {
+                my $Group = $GroupObject->GroupLookup(
+                    GroupID => $QueueData{GroupID},
+                );
+                $QueueData{Group} = $Group;
+                delete $QueueData{GroupID};
+            }
+            elsif ( $Attribute eq 'SalutationID' ) {
+                my %Salutation = $SalutationObject->SalutationGet(
+                    ID => $QueueData{SalutationID},
+                );
+
+                # transform IDs into names and clean up unnecessary attributes
+                $Salutation{Valid} = $ValidObject->ValidLookup(
+                    ValidID => $Salutation{ValidID},
+                );
+                delete $Salutation{ValidID};
+
+                delete $Salutation{ChangeTime};
+                delete $Salutation{CreateTime};
+                delete $Salutation{ID};
+
+                $QueueData{Salutation} = \%Salutation;
+                delete $QueueData{SalutationID};
+            }
+            elsif ( $Attribute eq 'SignatureID' ) {
+                my %Signature = $SignatureObject->SignatureGet(
+                    ID => $QueueData{SignatureID},
+                );
+
+                # transform IDs into names and clean up unnecessary attributes
+                $Signature{Valid} = $ValidObject->ValidLookup(
+                    ValidID => $Signature{ValidID},
+                );
+                delete $Signature{ValidID};
+
+                delete $Signature{ChangeTime};
+                delete $Signature{CreateTime};
+                delete $Signature{ID};
+
+                $QueueData{Signature} = \%Signature;
+                delete $QueueData{SignatureID};
+            }
+            elsif ( $Attribute eq 'SystemAddressID' ) {
+                my %SystemAddress = $SystemAddressObject->SystemAddressGet(
+                    ID => $QueueData{SystemAddressID},
+                );
+
+                # transform IDs into names and clean up unnecessary attributes
+                $SystemAddress{Valid} = $ValidObject->ValidLookup(
+                    ValidID => $SystemAddress{ValidID},
+                );
+                delete $SystemAddress{ValidID};
+                $SystemAddress{Queue} = $QueueList{ $SystemAddress{QueueID} };
+                delete $SystemAddress{QueueID};
+
+                delete $SystemAddress{ChangeTime};
+                delete $SystemAddress{CreateTime};
+                delete $SystemAddress{ID};
+
+                $QueueData{SystemAddress} = \%SystemAddress;
+                delete $QueueData{SystemAddressID};
+            }
+        }
+
+        # delete unneeded attributes to avoid bloating the export
+        delete $QueueData{ChangeTime};
+        delete $QueueData{CreateTime};
+        delete $QueueData{Email};
+        delete $QueueData{QueueID};
+        delete $QueueData{Realname};
+
+        $ExportData{ $QueueData{Name} } = \%QueueData;
+    }
+
+    return \%ExportData;
+}
+
+=head2 ImportQueues()
+
+Imports new queues and optionally updates existing ones. Note that given salutations, system addresses and signatures are exported as well.
+
+    my $Success = $QueueObject->ImportQueues(
+        Queues             => {
+            'QueueName01' => {
+                # Queue data
+            },
+            'QueueName02' => {
+                # Queue data
+            },
+        },
+        OverwriteExistingEntities => (0|1),
+        UserID                    => 1,
+    );
+
+=cut
+
+sub ImportQueues {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    # get necessary objects
+    my $GroupObject         = $Kernel::OM->Get('Kernel::System::Group');
+    my $SalutationObject    = $Kernel::OM->Get('Kernel::System::Salutation');
+    my $SignatureObject     = $Kernel::OM->Get('Kernel::System::Signature');
+    my $SystemAddressObject = $Kernel::OM->Get('Kernel::System::SystemAddress');
+    my $ValidObject         = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %FollowUpOptionList = $Self->GetFollowUpOptionList(
+        Valid => 0,
+    );
+    my %FollowUpOptionLookup = reverse %FollowUpOptionList;
+    my %QueueList            = $Self->QueueList(
+        Valid => 0,
+    );
+    my %QueueLookup    = reverse %QueueList;
+    my %SalutationList = $SalutationObject->SalutationList(
+        Valid => 0,
+    );
+    my %SalutationLookup = reverse %SalutationList;
+    my %SignatureList    = $SignatureObject->SignatureList(
+        Valid => 0,
+    );
+    my %SignatureLookup   = reverse %SignatureList;
+    my %SystemAddressList = $SystemAddressObject->SystemAddressList(
+        Valid => 0,
+    );
+    my %SystemAddressLookup = reverse %SystemAddressList;
+
+    # store system addresses and handle them afterwards to avoid collisions
+    my %SystemAddresses;
+
+    QUEUENAME:
+    for my $QueueName ( keys $Param{Queues}->%* ) {
+        my $QueueData = $Param{Queues}{$QueueName};
+
+        # in case of child queue, check if all parent queues are present
+        #   either in the system or in the import data
+        my @NameElements = split( /::/, $QueueData->{Name} );
+
+        # check if queue levels conform to system configuration
+        my $MaxQueueLevel = $Kernel::OM->Get('Kernel::Config')->Get('Ticket::Frontend::MaxQueueLevel');
+        if ( scalar @NameElements > $MaxQueueLevel ) {
+            next QUEUENAME;
+        }
+
+        if ( scalar @NameElements > 1 ) {
+            my $NameStrg = '';
+            for my $Index ( 0 .. $#NameElements - 1 ) {
+                if ($NameStrg) {
+                    $NameStrg .= '::' . $NameElements[$Index];
+                }
+                else {
+                    $NameStrg = $NameElements[$Index];
+                }
+
+                if ( !$QueueLookup{$NameStrg} && !$Param{Queues}{$NameStrg} ) {
+
+                    # parent element not found, skipping
+                    next QUEUENAME;
+                }
+            }
+        }
+
+        my $QueueID = $QueueLookup{ $QueueData->{Name} };
+
+        # skip if queue with same name exists and overwrite is not set
+        next QUEUENAME if ( !$Param{OverwriteExistingEntities} && $QueueID );
+
+        # create or update necessary previous objects
+        if ( $QueueData->{Salutation} ) {
+            my %Salutation = $QueueData->{Salutation}->%*;
+
+            # transform names back to IDs where necessary
+            $Salutation{ValidID} = $ValidObject->ValidLookup(
+                Valid => $Salutation{Valid},
+            );
+
+            # check if salutation already exists
+            my $SalutationID = $SalutationLookup{ $Salutation{Name} };
+
+            if ( $SalutationID && $Param{OverwriteExistingEntities} ) {
+                my $Success = $SalutationObject->SalutationUpdate(
+                    %Salutation,
+                    ID     => $SalutationID,
+                    UserID => $UserID,
+                );
+
+                next QUEUENAME unless $Success;
+            }
+            elsif ( !$SalutationID ) {
+                $SalutationID = $SalutationObject->SalutationAdd(
+                    %Salutation,
+                    UserID => $UserID,
+                );
+                $SalutationLookup{ $Salutation{Name} } = $SalutationID;
+            }
+            $QueueData->{SalutationID} = $SalutationID;
+        }
+        if ( $QueueData->{Signature} ) {
+            my %Signature = $QueueData->{Signature}->%*;
+
+            # transform names back to IDs where necessary
+            $Signature{ValidID} = $ValidObject->ValidLookup(
+                Valid => $Signature{Valid},
+            );
+
+            # check if salutation already exists
+            my $SignatureID = $SignatureLookup{ $Signature{Name} };
+
+            if ( $SignatureID && $Param{OverwriteExistingEntities} ) {
+                my $Success = $SignatureObject->SignatureUpdate(
+                    %Signature,
+                    ID     => $SignatureID,
+                    UserID => $UserID,
+                );
+
+                next QUEUENAME unless $Success;
+            }
+            elsif ( !$SignatureID ) {
+                $SignatureID = $SignatureObject->SignatureAdd(
+                    %Signature,
+                    UserID => $UserID,
+                );
+                $SignatureLookup{ $Signature{Name} } = $SignatureID;
+            }
+            $QueueData->{SignatureID} = $SignatureID;
+        }
+
+        # translate named data back to IDs
+        # single-value attributes
+        $QueueData->{FollowUpID} = $FollowUpOptionLookup{ $QueueData->{FollowUp} };
+        $QueueData->{GroupID}    = $GroupObject->GroupLookup(
+            Group => $QueueData->{Group},
+        );
+        $QueueData->{ValidID} = $ValidObject->ValidLookup(
+            Valid => $QueueData->{Valid},
+        );
+
+        # update
+        if ($QueueID) {
+
+            # get system address id and set it
+            if ( $QueueData->{SystemAddress} ) {
+                my %SystemAddress = $QueueData->{SystemAddress}->%*;
+
+                # transform names back to IDs where necessary
+                $SystemAddress{ValidID} = $ValidObject->ValidLookup(
+                    Valid => $SystemAddress{Valid},
+                );
+
+                $SystemAddress{QueueID} = $Self->QueueLookup(
+                    Queue => $SystemAddress{Queue},
+                );
+
+                my $SystemAddressID = $SystemAddressLookup{ $SystemAddress{Name} };
+
+                if ( $SystemAddressID && $Param{OverwriteExistingEntities} ) {
+                    my $Success = $SystemAddressObject->SystemAddressUpdate(
+                        %SystemAddress,
+                        ID     => $SystemAddressLookup{ $SystemAddress{Name} },
+                        UserID => $UserID,
+                    );
+
+                    next QUEUENAME unless $Success;
+                }
+                elsif ( !$SystemAddressID ) {
+                    $SystemAddressID = $SystemAddressObject->SystemAddressAdd(
+                        %SystemAddress,
+                        UserID => $UserID,
+                    );
+                    $SystemAddressLookup{ $SystemAddress{Name} } = $SystemAddressID;
+                }
+                $QueueData->{SystemAddressID} = $SystemAddressID;
+            }
+
+            my $Success = $Self->QueueUpdate(
+                $QueueData->%*,
+                QueueID => $QueueID,
+                UserID  => $UserID,
+            );
+            return unless $Success;
+        }
+
+        # create
+        else {
+            my $QueueID = $Self->QueueAdd(
+                $QueueData->%*,
+                UserID => $UserID,
+            );
+            return unless $QueueID;
+
+            if ( $QueueData->{SystemAddress} ) {
+                $SystemAddresses{ $QueueData->{Name} } = $QueueData->{SystemAddress};
+            }
+        }
+    }
+
+    # refresh system address list and lookup
+    %SystemAddressList = $SystemAddressObject->SystemAddressList(
+        Valid => 0,
+    );
+    %SystemAddressLookup = reverse %SystemAddressList;
+
+    # create or update system addresses
+    QUEUENAME:
+    for my $QueueName ( keys %SystemAddresses ) {
+
+        my %SystemAddress = $SystemAddresses{$QueueName}->%*;
+        my %QueueData     = $Self->QueueGet(
+            Name => $QueueName,
+        );
+
+        # transform names back to IDs where necessary
+        $SystemAddress{ValidID} = $ValidObject->ValidLookup(
+            Valid => $SystemAddress{Valid},
+        );
+
+        $SystemAddress{QueueID} = $Self->QueueLookup(
+            Queue => $SystemAddress{Queue},
+        );
+
+        my $SystemAddressID = $SystemAddressLookup{ $SystemAddress{Name} };
+
+        if ( $SystemAddressID && $Param{OverwriteExistingEntities} ) {
+            my $Success = $SystemAddressObject->SystemAddressUpdate(
+                %SystemAddress,
+                ID     => $SystemAddressLookup{ $SystemAddress{Name} },
+                UserID => $UserID,
+            );
+
+            next QUEUENAME unless $Success;
+        }
+        elsif ( !$SystemAddressID ) {
+
+            $SystemAddressID = $SystemAddressObject->SystemAddressAdd(
+                %SystemAddress,
+                UserID => $UserID,
+            );
+            $SystemAddressLookup{ $SystemAddress{Name} } = $SystemAddressID;
+        }
+
+        # update queue and set system address id
+        my $Success = $Self->QueueUpdate(
+            %QueueData,
+            SystemAddressID => $SystemAddressID,
+            UserID          => $UserID,
+        );
+        return unless $Success;
+    }
+
+    return 1;
+}
+
+=head2 ExportQueueTemplates()
+
+Returns data structures ready for export for each queue-template relation. Optionally filterable by giving a list of desired queues.
+
+    my $ExportData = $QueueObject->ExportQueueTemplates(
+        Queues => [          # (optional) restrict queues to given ones
+            'Queue01',
+            'Queue02'
+        ],
+    );
+
+Returns:
+
+    %ExportData = {
+        Junk => ["empty answer"],
+        Misc => ["empty answer"],
+        Postmaster => ["empty answer"],
+        Raw => ["empty answer"],
+    }
+
+=cut
+
+sub ExportQueueTemplates {
+    my ( $Self, %Param ) = @_;
+
+    my %QueueFilter;
+    if ( IsArrayRefWithData( $Param{Queues} ) ) {
+        %QueueFilter = map { $_ => 1 } $Param{Queues}->@*;
+    }
+
+    # fetch lookup lists
+    my %QueueList = $Self->QueueList(
+        Valid => 0,
+    );
+
+    my %ExportData;
+    QUEUEID:
+    for my $QueueID ( sort keys %QueueList ) {
+
+        my %QueueData = $Self->QueueGet(
+            ID => $QueueID,
+        );
+
+        if (%QueueFilter) {
+            next QUEUEID unless $QueueFilter{ $QueueData{Name} };
+        }
+
+        # get assigned templates
+        my %QueueTemplates = $Self->QueueStandardTemplateMemberList(
+            QueueID => $QueueID,
+        );
+
+        my @QueueTemplates = values %QueueTemplates;
+
+        $ExportData{ $QueueData{Name} } = \@QueueTemplates;
+    }
+
+    return \%ExportData;
+}
+
+=head2 ImportQueueTemplates()
+
+Imports new queue-template relations and optionally updates existing ones.
+
+    my $Success = $QueueObject->ImportQueueTemplates(
+        QueueTemplates => {
+            Junk => ["empty answer"],
+            Misc => ["empty answer"],
+            Postmaster => ["empty answer"],
+            Raw => ["empty answer"],
+        }
+        OverwriteExistingEntities => (0|1),
+        UserID                    => 1,
+    );
+
+=cut
+
+sub ImportQueueTemplates {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    # get necessary objects
+    my $StandardTemplateObject = $Kernel::OM->Get('Kernel::System::StandardTemplate');
+
+    # fetch lookup lists
+    my %QueueList = $Self->QueueList(
+        Valid => 0,
+    );
+    my %QueueLookup          = reverse %QueueList;
+    my %StandardTemplateList = $StandardTemplateObject->StandardTemplateList(
+        Valid => 0,
+    );
+    my %StandardTemplateLookup = reverse %StandardTemplateList;
+
+    QUEUENAME:
+    for my $QueueName ( keys $Param{QueueTemplates}->%* ) {
+        my $QueueTemplates = $Param{QueueTemplates}{$QueueName};
+
+        my $QueueID = $QueueLookup{$QueueName};
+
+        # skip queues which do not exist on the system
+        next QUEUENAME unless $QueueID;
+
+        TEMPLATENAME:
+        for my $TemplateName ( $QueueTemplates->@* ) {
+
+            # my $Active = $TemplatesSelected{$TemplateID} ? 1 : 0;
+
+            my $StandardTemplateID = $StandardTemplateLookup{$TemplateName};
+
+            next TEMPLATE unless $StandardTemplateID;
+
+            # set customer user service member
+            $Self->QueueStandardTemplateMemberAdd(
+                QueueID            => $QueueID,
+                StandardTemplateID => $StandardTemplateID,
+                Active             => 1,
+                UserID             => $UserID,
+            );
+        }
+    }
+
+    return 1;
 }
 
 1;

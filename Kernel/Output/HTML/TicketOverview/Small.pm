@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,8 +19,14 @@ package Kernel::Output::HTML::TicketOverview::Small;
 use strict;
 use warnings;
 
+# core modules
+use List::Util qw(any none);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -75,7 +81,7 @@ sub new {
         $Self->{StoredFilters} = $StoredFilters;
     }
 
-    # get the configured dyanmic fields from the Small Overview setting as a basis
+    # get the configured dynamic fields from the Small Overview setting as a basis
     my %DefaultDynamicFields = %{ $ConfigObject->Get("Ticket::Frontend::OverviewSmall")->{DynamicField} || {} };
 
     my %DefaultColumns = map { 'DynamicField_' . $_ => $DefaultDynamicFields{$_} } sort keys %DefaultDynamicFields;
@@ -83,7 +89,7 @@ sub new {
     # take general settings (Frontend::Agent) if not defined for the screen
     $Self->{Config}->{DefaultColumns} //= $ConfigObject->Get('DefaultOverviewColumns');
 
-    # check for default settings specific for this screen, should overide the dynamic fields
+    # check for default settings specific for this screen, should override the dynamic fields
     %DefaultColumns = ( %DefaultColumns, %{ $Self->{Config}->{DefaultColumns} || {} } );
 
     # configure columns
@@ -114,7 +120,7 @@ sub new {
     }
 
     # always set TicketNumber
-    if ( !grep { $_ eq 'TicketNumber' } @ColumnsEnabled ) {
+    if ( none { $_ eq 'TicketNumber' } @ColumnsEnabled ) {
         unshift @ColumnsEnabled, 'TicketNumber';
     }
 
@@ -168,6 +174,7 @@ sub new {
         'EscalationUpdateTime'   => 1,
         'EscalationResponseTime' => 1,
         'EscalationSolutionTime' => 1,
+        'AccountedTime'          => 1,
     };
 
     $Self->{AvailableFilterableColumns} = {
@@ -450,7 +457,7 @@ sub Run {
     );
 
     my $Extended = 0;
-    if ( grep { $ExtendedColumnsHash{$_} } @{ $Self->{ColumnsEnabled} } ) {
+    if ( any { $ExtendedColumnsHash{$_} } @{ $Self->{ColumnsEnabled} } ) {
         $Extended = 1;
     }
 
@@ -586,14 +593,6 @@ sub Run {
                     next MENU if !$Item;
                     next MENU if ref $Item ne 'HASH';
 
-                    # add session id if needed
-                    if ( !$LayoutObject->{SessionIDCookie} && $Item->{Link} ) {
-                        $Item->{Link}
-                            .= ';'
-                            . $LayoutObject->{SessionName} . '='
-                            . $LayoutObject->{SessionID};
-                    }
-
                     # create id
                     $Item->{ID} = $Item->{Name};
                     $Item->{ID} =~ s/(\s|&|;)//ig;
@@ -644,7 +643,7 @@ sub Run {
         # check if column is really filterable
         COLUMNNAME:
         for my $ColumnName ( @{ $Self->{ColumnsEnabled} } ) {
-            next COLUMNNAME if !grep { $_ eq $ColumnName } @{ $Self->{ColumnsEnabled} };
+            next COLUMNNAME if none { $_ eq $ColumnName } @{ $Self->{ColumnsEnabled} };
             next COLUMNNAME if !$Self->{AvailableFilterableColumns}->{$ColumnName};
             $Self->{ValidFilterableColumns}->{$ColumnName} = 1;
         }
@@ -1615,6 +1614,9 @@ sub Run {
                     $TicketColumn eq 'State'
                     || $TicketColumn eq 'Lock'
                     || $TicketColumn eq 'Priority'
+                    || $TicketColumn eq 'Service'
+                    || $TicketColumn eq 'SLA'
+                    || $TicketColumn eq 'Queue'
                     )
                 {
                     $BlockType = 'Translatable';
@@ -1631,6 +1633,13 @@ sub Run {
                     );
 
                     $DataValue = $ResponsibleInfo{'UserFullname'};
+                }
+                elsif ( $TicketColumn eq 'AccountedTime' ) {
+
+                    # get ticket object
+                    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+                    my $TimeUnits    = $ConfigObject->Get("AccountedTime::UsedUnits");
+                    $DataValue = $TicketObject->TicketAccountedTimeGet( TicketID => $Article{TicketID} ) . ' ' . $TimeUnits;
                 }
                 else {
                     $DataValue = $Article{$TicketColumn}
@@ -1699,10 +1708,11 @@ sub Run {
                     $LayoutObject->Block(
                         Name => 'RecordDynamicFieldLink',
                         Data => {
-                            Value                       => $ValueStrg->{Value},
-                            Title                       => $ValueStrg->{Title},
-                            Link                        => $ValueStrg->{Link},
-                            $DynamicFieldConfig->{Name} => $ValueStrg->{Title},
+                            %Article,
+                            Value                                      => $ValueStrg->{Value},
+                            Title                                      => $ValueStrg->{Title},
+                            Link                                       => $ValueStrg->{Link},
+                            "DynamicField_$DynamicFieldConfig->{Name}" => $ValueStrg->{Title},
                         },
                     );
                 }
@@ -1729,10 +1739,11 @@ sub Run {
                     $LayoutObject->Block(
                         Name => 'RecordDynamicField_' . $DynamicFieldConfig->{Name} . '_Link',
                         Data => {
-                            Value                       => $ValueStrg->{Value},
-                            Title                       => $ValueStrg->{Title},
-                            Link                        => $ValueStrg->{Link},
-                            $DynamicFieldConfig->{Name} => $ValueStrg->{Title},
+                            %Article,
+                            Value                                      => $ValueStrg->{Value},
+                            Title                                      => $ValueStrg->{Title},
+                            Link                                       => $ValueStrg->{Link},
+                            "DynamicField_$DynamicFieldConfig->{Name}" => $ValueStrg->{Title},
                         },
                     );
                 }
@@ -1899,6 +1910,10 @@ sub _InitialColumnFilter {
         $Param{ColumnName} eq 'State'
         || $Param{ColumnName} eq 'Lock'
         || $Param{ColumnName} eq 'Priority'
+        || $Param{ColumnName} eq 'Service'
+        || $Param{ColumnName} eq 'SLA'
+        || $Param{ColumnName} eq 'Type'
+        || $Param{ColumnName} eq 'Queue'
         )
     {
         $TranslationOption = 1;
@@ -1909,13 +1924,19 @@ sub _InitialColumnFilter {
         $Class .= ' ' . $Param{Css};
     }
 
+    if ( $Param{ColumnName} ne 'CustomerID' && $Param{ColumnName} ne 'CustomerUserID' ) {
+        $Class .= ' Modernize';
+    }
+
     # build select HTML
     my $ColumnFilterHTML = $LayoutObject->BuildSelection(
         Name        => 'ColumnFilter' . $Param{ColumnName},
         Data        => $Data,
+        TreeView    => 1,
         Class       => $Class,
         Translation => $TranslationOption,
         SelectedID  => '',
+        Multiple    => ( $Param{ColumnName} eq 'CustomerID' || $Param{ColumnName} eq 'CustomerUserID' ) ? 0 : 1,
     );
     return $ColumnFilterHTML;
 }
@@ -1967,7 +1988,7 @@ sub FilterContent {
     if ( $SelectedColumn && $Self->{StoredFilters}->{$SelectedColumn} ) {
 
         if ( IsArrayRefWithData( $Self->{StoredFilters}->{$SelectedColumn} ) ) {
-            $SelectedValue = $Self->{StoredFilters}->{$SelectedColumn}->[0];
+            $SelectedValue = $Self->{StoredFilters}->{$SelectedColumn};
         }
         elsif ( IsHashRefWithData( $Self->{StoredFilters}->{$SelectedColumn} ) ) {
             $SelectedValue = $Self->{StoredFilters}->{$SelectedColumn}->{Equals};
@@ -2023,7 +2044,7 @@ sub _ColumnFilterJSON {
     my $Data = [
         {
             Key   => 'DeleteFilter',
-            Value => uc $Label,
+            Value => ' DELETE FILTER',
         },
         {
             Key      => '-',
@@ -2052,6 +2073,10 @@ sub _ColumnFilterJSON {
         $Param{ColumnName} eq 'State'
         || $Param{ColumnName} eq 'Lock'
         || $Param{ColumnName} eq 'Priority'
+        || $Param{ColumnName} eq 'Service'
+        || $Param{ColumnName} eq 'SLA'
+        || $Param{ColumnName} eq 'Type'
+        || $Param{ColumnName} eq 'Queue'
         )
     {
         $TranslationOption = 1;
@@ -2102,6 +2127,7 @@ sub _DefaultColumnSort {
         Service                => 191,
         SLA                    => 192,
         Priority               => 193,
+        AccountedTime          => 194,
     );
 
     # dynamic fields can not be on the DefaultColumns sorting hash

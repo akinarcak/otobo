@@ -1,0 +1,97 @@
+name: careoncloud-esm
+
+services:
+  db:
+    image: mariadb:lts-noble
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CareOnCloud_DB_ROOT_PASSWORD:?Copy .env.example to .env and set CareOnCloud_DB_ROOT_PASSWORD}
+      MARIADB_AUTO_UPGRADE: "1"
+    command:
+      - --max-allowed-packet=136314880
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-log-file-size=268435456
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  redis:
+    image: redis:8-bookworm
+    user: redis:redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", ""]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  elastic:
+    profiles: ["search"]
+    image: careoncloud/careoncloud-elasticsearch:dev
+    build:
+      context: ../..
+      dockerfile: careoncloud.elasticsearch.dockerfile
+      target: careoncloud-elasticsearch
+    restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: ${CareOnCloud_ELASTIC_JAVA_OPTS:--Xms512m -Xmx512m}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cat/health >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+  web:
+    image: careoncloud/esm:dev
+    build:
+      context: ../..
+      dockerfile: careoncloud.web.dockerfile
+      target: careoncloud-web
+      args:
+        DOCKER_TAG: dev
+        GIT_BRANCH: ${CareOnCloud_GIT_BRANCH:-local}
+        GIT_COMMIT: ${CareOnCloud_GIT_COMMIT:-unknown}
+        GIT_REPO: ${CareOnCloud_GIT_REPO:-local}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["web", "development"]
+    ports:
+      - "${CareOnCloud_BIND_ADDRESS:-127.0.0.1}:${CareOnCloud_HTTP_PORT:-8080}:5000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5000/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - careoncloud-app:/opt/careoncloud
+      - careoncloud-update:/opt/careoncloud_update
+
+  daemon:
+    image: careoncloud/esm:dev
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    command: ["daemon"]
+    volumes:
+      - careoncloud-app:/opt/careoncloud
+
+volumes:
+  mariadb-data:
+  elasticsearch-data:
+  careoncloud-app:
+  careoncloud-update:

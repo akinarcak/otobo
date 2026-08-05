@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::Config;
 
@@ -58,7 +58,7 @@ subtest 'ListObjects() ZZZAAuto.pm' => sub {
     ref_ok( $Properties, 'HASH' );
     ok( $Properties->{Size},  'got Size for ZZZAAuto.pm' );
     ok( $Properties->{Mtime}, 'got Mtime for ZZZAAuto.pm' );
-    is( $Properties->{Key}, "OTOBO/$FilesPrefix/ZZZAAuto.pm", 'Key for ZZZAAuto.pm' );
+    is( $Properties->{Key}, "CareOnCloud ESM/$FilesPrefix/ZZZAAuto.pm", 'Key for ZZZAAuto.pm' );
 };
 
 subtest 'ListObjects() with Delimiter' => sub {
@@ -542,22 +542,22 @@ EOT
             'uni_delta.txt' => {
                 'Size'  => '1002',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_delta.txt",
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_delta.txt",
             },
             'uni_beta.txt' => {
                 'Size'  => '215',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_beta.txt"
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_beta.txt"
             },
             'uni_alpha.txt' => {
                 'Size'  => '439',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_alpha.txt",
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_alpha.txt",
             },
             'uni_gamma' => {
                 'Size'  => '1095',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_gamma",
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_gamma",
             }
         },
         'all files'
@@ -583,17 +583,17 @@ EOT
             'uni_delta.txt' => {
                 'Size'  => '1002',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_delta.txt",
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_delta.txt",
             },
             'uni_beta.txt' => {
                 'Size'  => '215',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_beta.txt"
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_beta.txt"
             },
             'uni_gamma' => {
                 'Size'  => '1095',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_gamma",
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_gamma",
             }
         },
         'without uni_alpha.txt'
@@ -615,7 +615,7 @@ EOT
             'uni_delta.txt' => {
                 'Size'  => '1002',
                 'Mtime' => $MtimeRegex,
-                'Key'   => "OTOBO/test/Storage/S3/greek_alphabet/uni_delta.txt",
+                'Key'   => "CareOnCloud ESM/test/Storage/S3/greek_alphabet/uni_delta.txt",
             },
         },
         'all but uni_delta.txt discarded'

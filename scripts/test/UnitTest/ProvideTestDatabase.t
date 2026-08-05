@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -50,8 +50,8 @@ else {
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
     my @DatabaseXMLFiles = (
-        "$Home/scripts/database/otobo-schema.xml",
-        "$Home/scripts/database/otobo-initial_insert.xml",
+        "$Home/scripts/database/careoncloud-schema.xml",
+        "$Home/scripts/database/careoncloud-initial_insert.xml",
     );
 
     $Success = $Helper->ProvideTestDatabase(
@@ -65,7 +65,7 @@ else {
 
     @Tables = $DBObject->ListTables();
 
-    # Count number of table elements in OTOBO schema for comparison.
+    # Count number of table elements in CareOnCloud ESM schema for comparison.
     my $XMLString = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
         Location => $DatabaseXMLFiles[0],
     );
@@ -74,7 +74,7 @@ else {
     $Self->Is(
         scalar @Tables,
         $TableCount,
-        'OTOBO tables found',
+        'CareOnCloud ESM tables found',
     );
 }
 

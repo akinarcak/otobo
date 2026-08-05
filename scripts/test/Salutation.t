@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -36,10 +36,10 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 # add salutation
 my $SalutationName = 'salutation' . $Helper->GetRandomID();
-my $Salutation     = "Dear <OTOBO_CUSTOMER_REALNAME>,
+my $Salutation     = "Dear <CareOnCloud_CUSTOMER_REALNAME>,
 
 Thank you for your request. Your email address in our database
-is \"<OTOBO_CUSTOMER_DATA_UserEmail>\".
+is \"<CareOnCloud_CUSTOMER_DATA_UserEmail>\".
 ";
 
 my $SalutationID = $SalutationObject->SalutationAdd(

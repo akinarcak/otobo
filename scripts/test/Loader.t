@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,9 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
@@ -24,8 +24,9 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::UnitTest::Diff qw(TextEqOrDiff);
 use Kernel::Config;
 
 # the question whether there is a S3 backend must the resolved early
@@ -40,31 +41,24 @@ my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 my $LoaderObject = $Kernel::OM->Get('Kernel::System::Loader');
 my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
 
-# get helper object
-$Kernel::OM->ObjectParamAdd(
-    'Kernel::System::UnitTest::Helper' => {
-        RestoreDatabase => 1,
-    },
-);
-my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
-
 my $Home = $ConfigObject->Get('Home');
 
-{
+subtest 'MinifyCSS' => sub {
+    my $SampleCSSFile         = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Reset.css";
+    my $SampleMinifiedCSSFile = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Reset.min.css";
+
     my $CSS = $MainObject->FileRead(
-        Location => "$Home/scripts/test/sample/Loader/OTOBO.Reset.css",
-    );
-    $CSS = $CSS->$*;
+        Location => $SampleCSSFile,
+    )->$*;
 
     my $ExpectedCSS = $MainObject->FileRead(
-        Location => "$Home/scripts/test/sample/Loader/OTOBO.Reset.min.css",
-    );
-    $ExpectedCSS = $ExpectedCSS->$*;
+        Location => $SampleMinifiedCSSFile,
+    )->$*;
     chomp $ExpectedCSS;
 
     my $MinifiedCSS = $LoaderObject->MinifyCSS( Code => $CSS );
 
-    is( $MinifiedCSS, $ExpectedCSS, 'MinifyCSS()' );
+    TextEqOrDiff( $MinifiedCSS, $ExpectedCSS, 'MinifyCSS()' );
 
     # empty cache
     $Kernel::OM->Get('Kernel::System::Cache')->CleanUp(
@@ -72,24 +66,31 @@ my $Home = $ConfigObject->Get('Home');
     );
 
     my $MinifiedCSSFile = $LoaderObject->GetMinifiedFile(
-        Location => "$Home/scripts/test/sample/Loader/OTOBO.Reset.css",
+        Location => $SampleCSSFile,
         Type     => 'CSS',
     );
+    TextEqOrDiff( $MinifiedCSSFile, $ExpectedCSS, 'GetMinifiedFile() for CSS, no cache' );
 
     my $MinifiedCSSFileCached = $LoaderObject->GetMinifiedFile(
-        Location => "$Home/scripts/test/sample/Loader/OTOBO.Reset.css",
+        Location => $SampleCSSFile,
         Type     => 'CSS',
     );
+    TextEqOrDiff( $MinifiedCSSFileCached, $ExpectedCSS, 'GetMinifiedFile() for CSS, with cache' );
 
-    is( $MinifiedCSSFile, $ExpectedCSS, 'GetMinifiedFile() for CSS, no cache' );
-    is( $MinifiedCSSFile, $ExpectedCSS, 'GetMinifiedFile() for CSS, with cache' );
-}
-
-{
-    my $JavaScript = $MainObject->FileRead(
-        Location => "$Home/scripts/test/sample/Loader/OTOBO.Agent.App.Login.js",
+    # No second minification is attempted. This means that the trailing newline is not dropped.
+    my $TwiceMinifiedCSSFile = $LoaderObject->GetMinifiedFile(
+        Location => $SampleMinifiedCSSFile,
+        Type     => 'CSS',
     );
-    $JavaScript = $JavaScript->$*;
+    TextEqOrDiff( $TwiceMinifiedCSSFile, $ExpectedCSS . "\n", 'GetMinifiedFile() for CSS, already minified' );
+};
+
+subtest 'MinifyJavaScript' => sub {
+    my $SampleJSFile         = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Agent.App.Login.js";
+    my $SampleMinifiedJSFile = "$Home/scripts/test/sample/Loader/CareOnCloud ESM.Agent.App.Login.min.js";
+    my $JavaScript           = $MainObject->FileRead(
+        Location => $SampleJSFile,
+    )->$*;
 
     # make sure line endings are standardized
     $JavaScript =~ s{\r\n}{\n}xmsg;
@@ -97,24 +98,50 @@ my $Home = $ConfigObject->Get('Home');
     my $MinifiedJS = $LoaderObject->MinifyJavaScript( Code => $JavaScript );
 
     my $ExpectedJS = $MainObject->FileRead(
-        Location => "$Home/scripts/test/sample/Loader/OTOBO.Agent.App.Login.min.js",
-    );
-    $ExpectedJS = $ExpectedJS->$*;
+        Location => $SampleMinifiedJSFile,
+    )->$*;
+
+    # make sure line endings are standardized
     $ExpectedJS =~ s{\r\n}{\n}xmsg;
+
     chomp $ExpectedJS;    # newline after the last line
 
-    is( $MinifiedJS, $ExpectedJS, 'MinifyJavaScript()' );
-}
+    TextEqOrDiff( $MinifiedJS, $ExpectedJS, 'MinifyJavaScript()' );
 
-{
-    my @List               = map {"$Home/scripts/test/sample/Loader/OTOBO.Agent.App.$_.js"} qw(Login Dashboard);
+    # empty cache
+    $Kernel::OM->Get('Kernel::System::Cache')->CleanUp(
+        Type => 'Loader',
+    );
+
+    my $MinifiedJSFile = $LoaderObject->GetMinifiedFile(
+        Location => $SampleJSFile,
+        Type     => 'JavaScript',
+    );
+    TextEqOrDiff( $MinifiedJSFile, $ExpectedJS, 'GetMinifiedFile() for JavaScript, no cache' );
+
+    my $MinifiedJSFileCached = $LoaderObject->GetMinifiedFile(
+        Location => $SampleJSFile,
+        Type     => 'JavaScript',
+    );
+    TextEqOrDiff( $MinifiedJSFileCached, $ExpectedJS, 'GetMinifiedFile() for JavaScript, with cache' );
+
+    # No second minification is attempted. This means that the trailing newline is not dropped.
+    my $TwiceMinifiedJSFile = $LoaderObject->GetMinifiedFile(
+        Location => $SampleMinifiedJSFile,
+        Type     => 'JavaScript',
+    );
+    TextEqOrDiff( $TwiceMinifiedJSFile, $ExpectedJS . "\n", 'GetMinifiedFile() for JavaScript, already minified' );
+};
+
+subtest 'MinifyFiles' => sub {
+    my @List               = map {"$Home/scripts/test/sample/Loader/CareOnCloud ESM.Agent.App.$_.js"} qw(Login Dashboard);
     my $MinifiedJSFilename = $LoaderObject->MinifyFiles(
         List            => \@List,
         Type            => 'JavaScript',
         TargetDirectory => $ConfigObject->Get('TempDir'),
     );
 
-    ok( $MinifiedJSFilename, 'MinifyFiles() - no cache' );
+    ok( $MinifiedJSFilename, 'no cache' );
 
     # minify the same files a second time
     my $MinifiedJSFilename2 = $LoaderObject->MinifyFiles(
@@ -123,8 +150,8 @@ my $Home = $ConfigObject->Get('Home');
         TargetDirectory => $ConfigObject->Get('TempDir'),
     );
 
-    ok( $MinifiedJSFilename2, 'MinifyFiles() - with cache' );
-    is( $MinifiedJSFilename, $MinifiedJSFilename2, 'MinifyFiles() - compare cache and no cache' );
+    ok( $MinifiedJSFilename2, 'with cache' );
+    is( $MinifiedJSFilename, $MinifiedJSFilename2, 'compare cache and no cache' );
 
     my $Location = $ConfigObject->Get('TempDir') . "/$MinifiedJSFilename";
 
@@ -151,29 +178,31 @@ my $Home = $ConfigObject->Get('Home');
     $Expected =~ s{\r\n}{\n}xmsg;
     $Expected =~ s{\n$}{};          # newline after the last line
 
-    is( $MinifiedJS, $Expected, 'MinifyFiles() result content' );
+    TextEqOrDiff( $MinifiedJS, $Expected, 'result content' );
 
     $MainObject->FileDelete(
         Location => $ConfigObject->Get('TempDir') . "/$MinifiedJSFilename",
     );
-}
+};
 
-my @JSTests = (
+subtest 'specific JavaScript minification' => sub {
+    my @JSTests = (
 
-    # this next test shows a case where the minification currently only works with
-    # parents around the regular expression. Without them, CSS::Minifier (currently 1.05) will die.
-    {
-        Source => 'function test(s) { return (/\d{1,2}/).test(s); }',
-        Result => 'function test(s){return(/\d{1,2}/).test(s);}',
-        Name   => 'Regexp minification',
-    }
-);
-
-for my $Test (@JSTests) {
-    my $Result = $LoaderObject->MinifyJavaScript(
-        Code => $Test->{Source},
+        # this next test shows a case where the minification currently only works with
+        # parents around the regular expression. Without them, CSS::Minifier (currently 1.05) will die.
+        {
+            Source => 'function test(s) { return (/\d{1,2}/).test(s); }',
+            Result => 'function test(s){return(/\d{1,2}/).test(s);}',
+            Name   => 'Regexp minification',
+        }
     );
-    is( $Result, $Test->{Result}, $Test->{Name} );
-}
+
+    for my $Test (@JSTests) {
+        my $Result = $LoaderObject->MinifyJavaScript(
+            Code => $Test->{Source},
+        );
+        TextEqOrDiff( $Result, $Test->{Result}, $Test->{Name} );
+    }
+};
 
 done_testing;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 
 our $Self;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -59,7 +59,7 @@ $Selenium->RunTest(
               xmlns:sy=\"http://purl.org/rss/1.0/modules/syndication/\"
               xmlns:slash=\"http://purl.org/rss/1.0/modules/slash/\"  >
               <channel>
-                  <title>Press Releases &#8211;otobo.de| OTOBO Simple Service Management</title>
+                  <title>Press Releases &#8211;otobo.io| OTOBO Simple Service Management</title>
                   <atom:link href=\"https://www.otobo.org/feed/?cat=112%2C254%2C111\" rel=\"self\" type=\"application/rss+xml\" />
                   <link>https://www.otobo.org</link>
                   <description>Simple service management</description>
@@ -72,11 +72,11 @@ $Selenium->RunTest(
                       <title>$RandomRSSTitle</title>
                       <link>https://www.otobo.org/$RandomRSSTitle</link>
                       <pubDate>Tue, 16 Jan 2018 09:00:07 +0000</pubDate>
-                      <dc:creator><![CDATA[Marketing OTOBO]]></dc:creator>
+                      <dc:creator><![CDATA[Marketing CareOnCloud ESM]]></dc:creator>
                       <category><![CDATA[Release and Security Notes]]></category>
-                      <category><![CDATA[Release Notes: OTOBO Community Solution]]></category>
+                      <category><![CDATA[Release Notes: CareOnCloud ESM Community Solution]]></category>
                       <guid isPermaLink=\"false\">https://www.otobo.org/?p=61580</guid>
-                      <description><![CDATA[&#160; January 16, 2018 — OTOBO, test]]></description>
+                      <description><![CDATA[&#160; January 16, 2018 — CareOnCloud ESM, test]]></description>
                       <content:encoded><![CDATA[<div class=\"row box-space-md\"> <div class=\"col-lg-12 col-md-12 col-sm-12 column1\"></div> </div>]]></content:encoded>
                   </item>
               </channel>

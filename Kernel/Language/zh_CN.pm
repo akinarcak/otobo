@@ -1,5 +1,5 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2005 zuowei <j2ee at hirain-sh.com>
 # Copyright (C) 2008-2010 Never Min <never at qnofae.org>
@@ -8,7 +8,7 @@
 # Copyright (C) 2009 Qingjiu Jia <jiaqj at yahoo.com>
 # Copyright (C) 2011 Martin Liu <liuzh66 at gmail.com> http://martinliu.cn
 # Copyright (C) 2013 Michael Shi <micshi at 163.com>
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -38,7 +38,7 @@ sub Data {
     $Self->{DateFormatShort}     = '%Y.%M.%D';
     $Self->{DateInputFormat}     = '%Y.%M.%D';
     $Self->{DateInputFormatLong} = '%Y.%M.%D - %T';
-    $Self->{Completeness}        = 0.96702077057238;
+    $Self->{Completeness}        = 0.86702888189877;
 
     # csv separator
     $Self->{Separator}         = '';
@@ -49,7 +49,10 @@ sub Data {
 
         # Template: AdminACL
         'ACL Management' => 'ACL管理',
+        'Filter by valid state' => '',
+        'Include invalid ACLs' => '',
         'Actions' => '操作',
+        'Object Type' => '',
         'Create New ACL' => '创建ACL',
         'Deploy ACLs' => '部署ACL',
         'Export ACLs' => '导出ACL',
@@ -67,6 +70,8 @@ sub Data {
             '为了创建ACL，你可以导入ACL配置或从头创建一个全新的ACL。',
         'Changes to the ACLs here only affect the behavior of the system, if you deploy the ACL data afterwards. By deploying the ACL data, the newly made changes will be written to the configuration.' =>
             '在这里的任何ACL的修改，仅将其保存在系统中。只有在部署ACL后，它才会起作用。',
+        'To delete an existing ACL you have to set the validity to invalid and save it. Afterwards a new button to delete the ACL will appear.' =>
+            '',
         'ACLs' => 'ACL',
         'Please note: This table represents the execution order of the ACLs. If you need to change the order in which ACLs are executed, please change the names of the affected ACLs.' =>
             '注意：列表中的ACL名称排序顺序决定了ACL的执行顺序。如果需要更改ACL的执行顺序，请修改相应的ACL名称。',
@@ -88,8 +93,8 @@ sub Data {
         'Set up matching criteria for this ACL. Use \'Properties\' to match the current screen or \'PropertiesDatabase\' to match attributes of the current ticket that are in the database.' =>
             '为ACL设置匹配条件。\'Properties\'用于匹配工单在内存中的属性\'，而\'PropertiesDatabase\'用于匹配工单在数据库中的属性。',
         'Change settings' => '操作动作',
-        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is a white list, \'PossibleNot\' a black list.' =>
-            '当匹配条件满足时执行规定的操作动作。记住：\'Possible\'表示允许(白名单)，\'PossibleNot\'表示禁止(黑名单)。',
+        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is an exclusive white list, \'PossibleAdd\' a white list, \'PossibleNot\' a black list. \'Possible\' also hides the empty value, which you could add again with \'[empty]\'.' =>
+            '',
         'Check the official %sdocumentation%s.' => '查看 %s 的官方文档 %s。',
         'Show or hide the content' => '显示或隐藏内容',
         'Edit ACL Information' => '编辑ACL信息',
@@ -125,12 +130,13 @@ sub Data {
         'Calendar Management' => '日历管理',
         'Add Calendar' => '添加日历',
         'Edit Calendar' => '编辑日历',
+        'Include invalid calendars' => '',
         'Calendar Overview' => '日历概览',
         'Add new Calendar' => '添加新的日历',
         'Import Appointments' => '导入预约',
         'Calendar Import' => '日历导入',
-        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by calendar management module.' =>
-            '你可以在这里上传一个配置文件来导入一个日历到系统中。这个文件必须是类似通过日历管理模块导出的.yml格式。',
+        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by the calendar management module.' =>
+            '',
         'Overwrite existing entities' => '覆盖现有条目',
         'Upload calendar configuration' => '上传日历配置',
         'Import Calendar' => '导入日历',
@@ -158,6 +164,7 @@ sub Data {
         'Calendar with same name already exists.' => '已有同名的日历。',
         'Color' => '颜色',
         'Permission group' => '权限组',
+        'Insufficient group permissions.' => '',
         'Ticket Appointments' => '工单预约',
         'Rule' => '规则',
         'Remove this entry' => '删除该条目',
@@ -193,6 +200,7 @@ sub Data {
         'Appointment Notification Management' => '预约通知管理',
         'Add Notification' => '添加通知',
         'Edit Notification' => '编辑通知',
+        'Include invalid appointment notifications' => '',
         'Export Notifications' => '导出通知',
         'Filter for Notifications' => '通知过滤器',
         'Filter for notifications' => '通知过滤器',
@@ -277,6 +285,7 @@ sub Data {
         'Attachment Management' => '附件管理',
         'Add Attachment' => '添加附件',
         'Edit Attachment' => '编辑附件',
+        'Include invalid attachments' => '',
         'Filter for Attachments' => '附件过滤器',
         'Filter for attachments' => '附件过滤器',
         'Filename' => '文件名',
@@ -289,6 +298,7 @@ sub Data {
         'Auto Response Management' => '自动响应管理',
         'Add Auto Response' => '添加自动响应',
         'Edit Auto Response' => '编辑自动响应',
+        'Include invalid auto responses' => '',
         'Filter for Auto Responses' => '自动响应过滤器',
         'Filter for auto responses' => '自动响应过滤器',
         'Response' => '回复内容',
@@ -314,25 +324,25 @@ sub Data {
         'Support data collector' => '支持数据收集工具',
         'Hint' => '提示',
         'Currently support data is only shown in this system.' => '当前的支持数据只是在系统中显示。',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
-            '建议将此数据发送给OTOBO团队，有时可以获得更好的支持。',
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
+            '建议将此数据发送给CareOnCloud ESM团队，有时可以获得更好的支持。',
         'Configuration' => '配置',
         'Send support data' => '发送支持数据',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
-            '这样系统可以将更多的支持数据信息发送给OTOBO团队。',
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
+            '这样系统可以将更多的支持数据信息发送给CareOnCloud ESM团队。',
         'Update' => '更新',
         'System Registration' => '系统注册',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            '要启用数据发送，请向OTOBO团队注册系统或更新系统注册信息（确保激活“发送支持数据”选项。）',
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            '要启用数据发送，请向CareOnCloud ESM团队注册系统或更新系统注册信息（确保激活“发送支持数据”选项。）',
         'Register this System' => '注册本系统',
         'System Registration is disabled for your system. Please check your configuration.' =>
             '本系统的系统注册功能已被禁用，请检查你的配置。',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
-            '系统注册是OTOBO团队的一项服务，它具有很多优势！',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            '请注意：为了使用OTOBO云服务，需要先注册系统。',
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
+            '系统注册是CareOnCloud ESM团队的一项服务，它具有很多优势！',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            '请注意：为了使用CareOnCloud ESM云服务，需要先注册系统。',
         'Register this system' => '注册本系统',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             '你可以在这里配置可用的云服务，其与%s的通信是安全的。',
@@ -431,12 +441,34 @@ sub Data {
         'Customer Management' => '客户管理',
         'Add Customer' => '添加客户',
         'Edit Customer' => '编辑客户',
+        'Include invalid customer companies' => '',
         'List (only %s shown - more available)' => '列表 (目前显示%s-显示更多)',
         'total' => '总共',
         'Please enter a search term to look for customers.' => '请输入搜索条件以便检索客户资料.',
         'Customer ID' => '客户ID',
         'Please note' => '请注意',
         'This customer backend is read only!' => '客户后端是只读的！',
+
+        # Template: AdminCustomerDashboardInfoTile
+        'Customer Info' => '',
+        'Customer Info Management' => '',
+        'Create new info tile entry' => '',
+        'Filter for info tile entries' => '',
+        'Create a new entry to be displayed on the info tile on the customer dashboard.' =>
+            '',
+        'Stop date' => '结束时间',
+        'Delete info tile entry' => '',
+
+        # Template: AdminCustomerDashboardInfoTileEdit
+        'Edit customer dashboard info tile entry' => '',
+        'Date invalid!' => '日期无效!',
+        'Tile content' => '',
+        'Content Body' => '',
+        'Marquee content' => '',
+        'Group Selection' => '',
+
+        # Template: AdminCustomerDashboardInfoTileNew
+        'Create new customer dashboard info tile entry' => '',
 
         # Template: AdminCustomerGroup
         'Manage Customer-Group Relations' => '管理客户与组的关系',
@@ -472,6 +504,7 @@ sub Data {
         'Customer User Management' => '客户用户管理',
         'Add Customer User' => '添加客户用户',
         'Edit Customer User' => '编辑客户用户',
+        'Include invalid customer users' => '',
         'Customer user are needed to have a customer history and to login via customer panel.' =>
             '工单的客户历史信息需要有客户用户，客户界面登录也需要用客户用户。',
         'List (%s total)' => '列表（总共 %s）',
@@ -536,9 +569,14 @@ sub Data {
 
         # Template: AdminDynamicField
         'Dynamic Fields Management' => '动态字段管理',
-        'Add new field for object' => '为对象添加新的字段',
+        'Include invalid dynamic fields' => '',
         'Filter for Dynamic Fields' => '动态字段过滤器',
         'Filter for dynamic fields' => '动态字段过滤器',
+        'Filter field by object type' => '',
+        'Filter field by namespace' => '',
+        'Add new field for object' => '为对象添加新的字段',
+        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
+            '为了增加一个新的字段，从对象列表中选择一个字段类型，对象定义了字段的范围并且不能在创建后修改。',
         'New Dynamic Fields' => '',
         'Would you like to benefit from additional dynamic field types? You have full access to the following field types:' =>
             '想从其他动态字段类型中受益吗？你可以完全访问以下字段类型：',
@@ -550,19 +588,18 @@ sub Data {
             '外部Web服务可以配置为该动态字段的数据源。',
         'This feature allows to add (multiple) contacts with data to tickets.' =>
             '此功能允许将（多个）联系人信息添加到工单中。',
-        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
-            '为了增加一个新的字段，从对象列表中选择一个字段类型，对象定义了字段的范围并且不能在创建后修改。',
         'Dynamic Fields List' => '动态字段列表',
         'Dynamic fields per page' => '每页动态字段个数',
         'Label' => '标签',
         'Order' => '订单',
         'Object' => '对象',
+        'Copy this field' => '',
         'Delete this field' => '删除这个字段',
 
         # Template: AdminDynamicFieldAdvanced
         'Import / Export' => '输入/导出',
-        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by dynamic field management module.' =>
-            '你可以处加载配置文件，以将动态字段导入到系统中。动态字段管理模块导出的这个文件必须为.yml格式。',
+        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by the dynamic field management module.' =>
+            '',
         'DynamicFields Import' => '动态字段导入',
         'DynamicFields Export' => '动态字段导出',
         'Dynamic Fields Screens' => '动态字段屏幕',
@@ -585,6 +622,9 @@ sub Data {
         'This field is required and must be numeric.' => '这个字段是必需的且必须是数字。',
         'This is the order in which this field will be shown on the screens where is active.' =>
             '这是在激活了该字段的屏幕上显示的顺序。',
+        'Namespace' => '命名空间',
+        'This is the namespace in which this field will be used as prefix with the name.' =>
+            '',
         'Tooltip message:' => '',
         'This is the tooltip message shown inside the customer interface.' =>
             '',
@@ -643,6 +683,8 @@ sub Data {
         'Example' => '样例',
         'You can reference the field with its own field name. You can also refer to other fields, e.g. with \'DynamicField_OtherFieldName\'.' =>
             '',
+        'If a dynamic field with a namespace is to be referenced, the field name needs to be stored in a variable and called.' =>
+            '',
         'Link for preview' => '连接预览',
         'If filled in, this URL will be used for a preview which is shown when this link is hovered in ticket zoom. Please note that for this to work, the regular URL field above needs to be filled in, too.' =>
             '如果填写了内容，在工单详情屏幕中当鼠标移动到这个URL上方时将显示URL的预览。请注意：要使这个功能生效，还需要上面的常规URL字段也填写好了内容。',
@@ -661,6 +703,9 @@ sub Data {
         'Searchsuffix' => '搜索后缀',
         'Result Limit' => '结果列表',
         'Case Sensitive' => '大小写敏感',
+        'Multiple Values' => '',
+        'Activate this option to allow multiple values for this field.' =>
+            '',
 
         # Template: AdminDynamicFieldDateTime
         'Default date difference' => '默认的日期差',
@@ -699,11 +744,28 @@ sub Data {
         'Fields' => '字段',
         'Screens' => '屏幕',
 
+        # Template: AdminDynamicFieldReference
+        'Check ReferenceFilter' => '',
+        'Below you can configure filters to restrict the list of referenced objects. The filters compare an attribute of the referenced object either to an attribute of the mask you are currently editing or to a fixed string.' =>
+            '',
+        'Object attribute' => '',
+        'Select an attribute of the referenced object by which the selectable entries will be filtered.' =>
+            '',
+        'Invalid ReferenceFilter_ReferenceObjectAttribute' => '',
+        'matches mask attribute' => '',
+        'Select an attribute of the edit mask to compare the selected attribute of the referenced object against.' =>
+            '',
+        'matches string' => '',
+        'Type a string to compare the selected attribute of the referenced object against.' =>
+            '',
+        'Add Reference Filter' => '',
+
         # Template: AdminDynamicFieldScreen
         'Management of Dynamic Fields <-> Screens' => '动态字段管理 <-> 屏幕',
+        'Filter by object type' => '',
         'Overview' => '概览',
         'Default Columns Screens' => '默认屏幕列',
-        'Add DynamicField' => '添加动态字段',
+        'Add Dynamic Field' => '',
         'You can assign elements to this Screen/Field by dragging the elements with the mouse from the left list to the right list.' =>
             '你可以使用鼠标将项从左侧列表拖到右侧列表，从而将该项分配给此屏幕/字段。',
         'Ordering the elements within the list is also possible by drag \'n\' drop.' =>
@@ -725,13 +787,18 @@ sub Data {
         'Assigned Required Elements' => '分配必要项',
         'Reset' => '重置',
 
-        # Template: AdminDynamicFieldText
-        'Number of rows' => '行数',
-        'Specify the height (in lines) for this field in the edit mode.' =>
-            '在编辑模式中指定此字段的高度（行）。',
-        'Number of cols' => '列宽',
-        'Specify the width (in characters) for this field in the edit mode.' =>
-            '定义编辑屏幕的列宽（单位：字符）。',
+        # Template: AdminDynamicFieldScript
+        'Expression' => '',
+        'The function which will be evaluated.' => '',
+        'Requirements' => '',
+        'If set, the function will only be evaluated if all chosen attributes are set.' =>
+            '',
+        'Preview Triggers' => '',
+        'If set, the field will be recalculated upon AJAX updates in edit masks.' =>
+            '',
+        'Storage Triggers (Events)' => '',
+        'If set, the field will be recalculated for the following events.' =>
+            '',
         'Check RegEx' => '正则表达式检查',
         'Here you can specify a regular expression to check the value. The regex will be executed with the modifiers xms.' =>
             '您可以在这里指定一个正则表达式来检查值是否符合要求，正则表达式将在编辑器的扩展内存中执行。',
@@ -739,6 +806,23 @@ sub Data {
         'Invalid RegEx' => '无效的正则表达式',
         'Error Message' => '错误消息',
         'Add RegEx' => '添加正则表达式',
+
+        # Template: AdminDynamicFieldSet
+        'Auto Indent Code' => '',
+        'Comment/Uncomment Code' => '',
+        'Search & Replace' => '',
+        'Select All' => '',
+        'Full Screen' => '',
+        'The YAML array of included dynamic fields. Syntax: \'--- [{DF: Name},...]\'' =>
+            '',
+
+        # Template: AdminDynamicFieldText
+        'Number of rows' => '行数',
+        'Specify the height (in lines) for this field in the edit mode.' =>
+            '在编辑模式中指定此字段的高度（行）。',
+        'Number of cols' => '列宽',
+        'Specify the width (in characters) for this field in the edit mode.' =>
+            '定义编辑屏幕的列宽（单位：字符）。',
 
         # Template: AdminDynamicFieldTitle
         'Template' => '模版',
@@ -784,8 +868,13 @@ sub Data {
         'Edit Job' => '编辑任务',
         'Add Job' => '添加任务',
         'Run Job' => '运行任务',
+        'Include invalid jobs' => '',
         'Filter for Jobs' => '任务筛选',
         'Filter for jobs' => '任务筛选',
+        'Here you can upload a configuration file to import generic agents to your system. The file needs to be in .yml format as exported by the generic agent management module.' =>
+            '',
+        'Generic Agents Import' => '',
+        'Generic Agents Export' => '',
         'Last run' => '最后运行',
         'Run Now!' => '现在运行!',
         'Delete this task' => '删除这个任务',
@@ -910,6 +999,12 @@ sub Data {
         'Affected Tickets' => '受影响的工单',
         'Age' => '总时长',
 
+        # Template: AdminGenericAgentImportExport
+        'Generic Agents' => '',
+        'Here you can export a configuration file of generic agents to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Generic Agents List' => '',
+
         # Template: AdminGenericInterfaceDebugger
         'GenericInterface Web Service Management' => '通用接口Web服务管理',
         'Web Service Management' => '管理WEB服务',
@@ -941,8 +1036,8 @@ sub Data {
             '该名称可用于区分不同的错误处理配置。',
         'Please provide a unique name for this web service.' => '请为这个Web服务提供一个唯一的名称。',
         'Error handling module backend' => '错误处理模块后端',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
-            '这个OTOBO错误处理后端模块将被内部调用以处理错误处理机制。',
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
+            '这个CareOnCloud ESM错误处理后端模块将被内部调用以处理错误处理机制。',
         'Processing options' => '处理选项',
         'Configure filters to control error handling module execution.' =>
             '配置过滤器来控制错误处理模块执行。',
@@ -1033,15 +1128,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             '该名称通常用于调用远程Web服务的操作。',
         'Invoker backend' => '调用程序后端',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            '这个OTOBO调用程序后端模块被调用后，负责准备需要发送给远程系统的数据，并处理它的响应数据。',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            '这个CareOnCloud ESM调用程序后端模块被调用后，负责准备需要发送给远程系统的数据，并处理它的响应数据。',
         'Mapping for outgoing request data' => '映射出站请求数据',
         'Configure' => '配置',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            '这个映射将对OTOBO调用程序输出的数据进行处理，将它转换为远程系统所期待的数据。',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            '这个映射将对CareOnCloud ESM调用程序输出的数据进行处理，将它转换为远程系统所期待的数据。',
         'Mapping for incoming response data' => '映射入站请求数据',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            '这个映射将对响应数据进行处理，将它转换为OTOBO调用程序所期待的数据。',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            '这个映射将对响应数据进行处理，将它转换为CareOnCloud ESM调用程序所期待的数据。',
         'Asynchronous' => '异步',
         'Condition' => '条件',
         'Edit this event' => '编辑这个事件',
@@ -1049,8 +1144,8 @@ sub Data {
         'Add Event' => '添加事件',
         'To add a new event select the event object and event name and click on the "+" button' =>
             '要添加新事件，请选择事件对象和事件名称，然后单击“+”按钮',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            '异步的事件触发器将由后端的OTOBO调度程序守护进程处理（推荐）。',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            '异步的事件触发器将由后端的CareOnCloud ESM调度程序守护进程处理（推荐）。',
         'Synchronous event triggers would be processed directly during the web request.' =>
             '同步的事件触发器则是在web请求期间直接处理的。',
 
@@ -1137,15 +1232,15 @@ sub Data {
         # Template: AdminGenericInterfaceMappingXSLT
         'General Shortcuts' => '通用快捷键',
         'MacOS Shortcuts' => 'MacOS快捷键',
-        'Comment code' => '注释代码',
-        'Uncomment code' => '取消注释',
-        'Auto format code' => '自动格式化代码',
-        'Expand/Collapse code block' => '展开/收起代码块',
+        'Comment/Uncomment code' => '',
+        'Auto indent code' => '',
+        'Jump to line' => '',
+        'Autocomplete' => '',
         'Find' => '查找',
         'Find next' => '查找下一个',
         'Find previous' => '查找上一个',
         'Find and replace' => '查找并替换',
-        'Find and replace all' => '查找并替换所有',
+        'Exit full screen' => '',
         'XSLT Mapping' => 'XSLT映射',
         'XSLT stylesheet' => 'XSLT样式表',
         'The entered data is not a valid XSLT style sheet.' => '输入的数据不是有效的XSLT样式表。',
@@ -1184,6 +1279,11 @@ sub Data {
             '这里定义的正则表达式将在XSLT映射之前应用。',
         'Regular expressions defined here will be applied after the XSLT mapping.' =>
             '这里定义的正则表达式将在XSLT映射之后应用。',
+        'Enable Extended XSLT Mapping' => '',
+        'Extended XSLT Mapping' => '',
+        'Enable' => '启用',
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+            '',
 
         # Template: AdminGenericInterfaceOperationDefault
         'Add Operation' => '添加操作',
@@ -1193,11 +1293,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             '这个名称通常用于从一个远程系统调用这个web服务操作。',
         'Operation backend' => '操作后端',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            '这个OTOBO操作后端模块将被调用，以便处理请求、生成响应数据。',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            '这个CareOnCloud ESM操作后端模块将被调用，以便处理请求、生成响应数据。',
         'Mapping for incoming request data' => '映射传入请求数据',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            '这个映射将对请求数据进行处理，将它转换为OTOBO所期待的数据。',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            '这个映射将对请求数据进行处理，将它转换为CareOnCloud ESM所期待的数据。',
         'Mapping for outgoing response data' => '映射出站响应数据',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             '这个映射将对响应数据进行处理，以便将它转换成远程系统所期待的数据。',
@@ -1215,8 +1315,8 @@ sub Data {
             '限制这个操作使用指定的请求方法。如果没有选择方法，则所有的请求都可以接受。',
         'Maximum message length' => '消息的最大长度',
         'This field should be an integer number.' => '这个字段值应该是一个整数。',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            '在这里你可以指定OTOBO能够处理的REST消息的最大长度(以字节为单位)。',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            '在这里你可以指定CareOnCloud ESM能够处理的REST消息的最大长度(以字节为单位)。',
         'Send Keep-Alive' => '发送Keep-Alive（保持连接）',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             '此配置定义传入的连接应该关闭还是保持连接。',
@@ -1225,7 +1325,7 @@ sub Data {
         'Endpoint' => '端点',
         'URI to indicate specific location for accessing a web service.' =>
             '用于指示访问Web服务的特定位置的URI。',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => '超时',
         'Timeout value for requests.' => '请求的超时值。',
@@ -1236,6 +1336,13 @@ sub Data {
         'The user name to be used to access the remote system.' => '用于访问远程系统的用户名。',
         'BasicAuth Password' => '基本认证密码',
         'The password for the privileged user.' => '特权用户的密码。',
+        'Kerberos User' => '',
+        'Kerberos keytab file' => '',
+        'The Kerberos keytab file for the privileged user.' => '',
+        'OAuth2 Functional Account' => '',
+        'Select the Functional-Account to use for OAuth2 authentication. Functional-Accounts can be configured here:' =>
+            '',
+        'OAuth2 Functional Accounts' => '',
         'Use Proxy Options' => '使用代理选项',
         'Show or hide Proxy options to connect to the remote system.' => '显示或隐藏连接到远程系统的代理选项。',
         'Proxy Server' => '代理服务器',
@@ -1252,25 +1359,28 @@ sub Data {
         'Client Certificate' => '客户证书',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             'SSL客户端证书文件的完整路径和名称（必须为PEM、DER或PKCS＃12格式）。',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => '例如： /opt/otobo/var/certificates/SOAP/certificate.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => '例如： /opt/careoncloud/var/certificates/SOAP/certificate.pem',
         'Client Certificate Key' => '客户证书密钥',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             'SSL客户端证书密钥文件的完整路径和名称（如果尚未包含在证书文件中）。',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => '例如： /opt/otobo/var/certificates/SOAP/key.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => '例如： /opt/careoncloud/var/certificates/SOAP/key.pem',
         'Client Certificate Key Password' => '客户端证书密钥密码',
         'The password to open the SSL certificate if the key is encrypted.' =>
             '如果密钥被加密，则此密码用于打开SSL证书。',
         'Certification Authority (CA) Certificate' => '认证机构（CA）证书',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             '用来验证SSL证书的认证机构证书文件的完整路径和名称。',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => '例如：/opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => '例如：/opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => '认证机构(CA)目录',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             '认证机构目录的完整路径，文件系统中存储CA证书的地方。',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => '例如：/opt/otobo/var/certificates/SOAP/CA',
-        'SSL hostname verification.' => 'SSL 主机名称验证。',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => '例如：/opt/careoncloud/var/certificates/SOAP/CA',
+        'SSL hostname verification' => 'SSL 主机名称验证',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             '如果无法验证主机名，则中止请求。不过禁用验证时要小心！跳过验证会有安全风险！禁用验证主要用于测试目的（比如自签名SSL证书），或者你明确知道自己在做什么。',
+        'SSL verify mode' => '',
+        'Abort the request if SSL verification fails. Disabling skips SSL verification entirely. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
+            '',
         'Controller mapping for Invoker' => '调用程序的控制器映射',
         'The controller that the invoker should send requests to. Variables marked by a \':\' will get replaced by the data value and passed along with the request. (e.g. /Ticket/:TicketID?UserLogin=:UserLogin&Password=:Password).' =>
             '控制器接受调用程序发送的请求。以“:“作为标记的变量将被数据值和其它传递参数替换。',
@@ -1279,6 +1389,9 @@ sub Data {
             '调用程序用于请求的特定的HTTP命令。',
         'Default command' => '默认命令',
         'The default HTTP command to use for the requests.' => '用于请求的默认HTTP命令。',
+        'Use multipart/form-data:' => '',
+        'Select requesters to send attachments as binary data with content type \'multipart/form-data\' instead of the default Base64 encoded inline JSON.' =>
+            '',
         'Additional request headers (all invokers)' => '',
         'Additional request headers (invoker specific)' => '',
         'Remove all headers for this invoker' => '',
@@ -1311,9 +1424,8 @@ sub Data {
         'Usually .Net web services use "/" as separator.' => '通常.Net的Web服务使用"/"作为分隔符。',
         'SOAPAction free text' => 'SOAPAction自由文本',
         'Text to be used to as SOAPAction.' => '要用作SOAPAction的文本。',
-        'Namespace' => '命名空间',
         'URI to give SOAP methods a context, reducing ambiguities.' => '为SOAP方法指定URI(通用资源标识符), 以便消除二义性。',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => '请求名称方案',
         'Select how SOAP request function wrapper should be constructed.' =>
@@ -1331,8 +1443,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             '选择如何构建SOAP回复函数封装器。',
         'Response name free text' => '回复名称自由文本',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            '在这里你可以指定OTOBO能够处理的SOAP消息的最大长度(以字节为单位)。',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            '在这里你可以指定CareOnCloud ESM能够处理的SOAP消息的最大长度(以字节为单位)。',
         'Encoding' => '编码',
         'The character encoding for the SOAP message contents.' => 'SOAP消息内容的字符编码。',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => '',
@@ -1345,6 +1457,7 @@ sub Data {
         # Template: AdminGenericInterfaceWebservice
         'Add Web Service' => '添加Web服务',
         'Edit Web Service' => '编辑Web服务',
+        'Include invalid webservices' => '',
         'Clone Web Service' => '克隆Web服务',
         'The name must be unique.' => '名称必须是唯一的。',
         'Clone' => '克隆',
@@ -1371,10 +1484,10 @@ sub Data {
         'Provider transport' => '服务提供方传输',
         'Requester transport' => '服务请求方传输',
         'Debug threshold' => '调试阀值',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            '在提供方模式中，OTOBO为远程系统提供Web服务。',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            '在请求方模式中，OTOBO使用远程系统的Web服务。',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            '在提供方模式中，CareOnCloud ESM为远程系统提供Web服务。',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            '在请求方模式中，CareOnCloud ESM使用远程系统的Web服务。',
         'Network transport' => '网络传输',
         'Error Handling Modules' => '错误处理模块',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1411,11 +1524,61 @@ sub Data {
         'Group Management' => '组管理',
         'Add Group' => '添加组',
         'Edit Group' => '编辑组',
+        'Include invalid groups' => '',
         'The admin group is to get in the admin area and the stats group to get stats area.' =>
             'admin组允许使用系统管理模块，stats组允许使用统计模块。',
         'Create new groups to handle access permissions for different groups of agent (e. g. purchasing department, support department, sales department, ...). ' =>
             '若要为不同的服务人员分配不同的访问权限，应创建新的组。(例如，采购部、支持部、销售部...)。 ',
         'It\'s useful for ASP solutions. ' => '它对ASP解决方案非常有用。 ',
+        'Here you can upload a configuration file to import groups to your system. The file needs to be in .yml format as exported by the group management module.' =>
+            '',
+        'Groups Import' => '',
+        'Groups Export' => '',
+
+        # Template: AdminGroupImportExport
+        'Here you can export a configuration file of groups to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Groups List' => '',
+
+        # Template: AdminImportExport
+        'Import/Export Management' => '导入/导出管理',
+        'Add template' => '添加模板',
+        'Create a template to import and export object information.' => '创建模板导入和导出对象信息。',
+        'To use this module, you need to install ITSMConfigurationManagement or any other package that provides back end for objects to be imported and exported.' =>
+            '要使用此模块，您需要安装ITSMConfigurationManagement或为要导入和导出的对象提供后端的任何其它包。',
+        'Number' => '编号',
+        'Format' => '格式',
+        'Start Import' => '开始导入',
+        'Start Export' => '开始导出',
+        'Delete this template' => '',
+        'Step 1 of 5 - Edit common information' => '步骤 1/5 - 编辑通用信息',
+        'Name is required!' => '命名是必需的！',
+        'Object is required!' => '对象是必需的！',
+        'Format is required!' => '格式是必需的！',
+        'Next' => '下一步',
+        'Step 2 of 5 - Edit object information' => '步骤 2/5 - 编辑目标信息',
+        'Back' => '后退',
+        'Step 3 of 5 - Edit format information' => '步骤 3/5 - 编辑格式信息',
+        'is required!' => '是必需的！',
+        'Step 4 of 5 - Edit mapping information' => '步骤 4/5 - 编辑映射信息',
+        'No map elements found.' => '没有找到映射的字段',
+        'Up' => '上',
+        'Down' => '下',
+        'Add Mapping Element' => '添加映射字段',
+        'Step 5 of 5 - Edit search information' => '步骤 5/5 - 编辑搜索信息',
+        'Template Name' => '模板名称',
+        'Restrict export per search' => '按搜索限制导出',
+        'Finish' => '完成',
+        'Import information' => '导入信息',
+        'Source File' => '源文件',
+        'Import summary for %s' => '%s的导入摘要',
+        'Records' => '记录',
+        'Success' => '成功',
+        'Failed' => '失败',
+        'Duplicate names' => '重复的名称',
+        'Last processed line number of import file' => '导入文件最后处理的行数',
+        'Ok' => '确定',
+        'Do you really want to delete this template item?' => '您真的想要删除这个模板条目吗？',
 
         # Template: AdminLog
         'System Log' => '系统日志',
@@ -1430,12 +1593,13 @@ sub Data {
         'Add Mail Account' => '添加邮件帐号',
         'Edit Mail Account for host' => '编辑邮件帐户，主机',
         'and user account' => '和用户帐户',
+        'Include invalid Mail Accounts' => '',
         'Filter for Mail Accounts' => '邮件帐户过滤器',
         'Filter for mail accounts' => '邮件帐户过滤器',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             '同一帐户的所有传入电子邮件将在所选的队列中分派。',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
-            '如果你的帐户被标记为受信任，则在到达时间已经存在的X-OTOBO标头（优先级等）将被保留并被使用，例如用于邮箱管理员过滤器。',
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+            '如果你的帐户被标记为受信任，则在到达时间已经存在的X-CareOnCloud ESM标头（优先级等）将被保留并被使用，例如用于邮箱管理员过滤器。',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             '外发电子邮件可以通过%s中的Sendmail开头的设置进行配置。',
         'System Configuration' => '系统配置',
@@ -1443,6 +1607,9 @@ sub Data {
         'Delete account' => '删除帐号',
         'Fetch mail' => '查收邮件',
         'Do you really want to delete this mail account?' => '您确定要删除这个邮件帐户吗？',
+        'OIDC Account' => '',
+        'Select the' => '',
+        'Account to use for OAuth2 authentication.' => '',
         'Example: mail.example.com' => '样例：mail.example.com',
         'IMAP Folder' => 'IMAP文件夹',
         'Only modify this if you need to fetch mail from a different folder than INBOX.' =>
@@ -1465,6 +1632,7 @@ sub Data {
 
         # Template: AdminNotificationEvent
         'Ticket Notification Management' => '工单通知管理',
+        'Include invalid notifications' => '',
         'Here you can upload a configuration file to import Ticket Notifications to your system. The file needs to be in .yml format as exported by the Ticket Notification module.' =>
             '在这里你可以上传一个配置文件以便导入工单通知，必须是与工单通知模块导出的文件一样的.yml格式。',
         'Here you can choose which events will trigger this notification. An additional ticket filter can be applied below to only send for ticket with certain criteria.' =>
@@ -1503,15 +1671,125 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => '使用逗号或分号分隔电子邮件地址。',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
-            '你可以使用诸如<OTOBO_TICKET_DynamicField_...>之类的OTOBO标签来插入当前工单中的值。',
+        'You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            '你可以使用诸如<CareOnCloud_TICKET_DynamicField_...>之类的CareOnCloud ESM标签来插入当前工单中的值。',
+
+        # Template: AdminOAuthTokenStore
+        'OAuth2 Token Management (OIDC)' => '',
+        'OpenID Connect Functional OAuth2 Account Management' => '',
+        'Add Account' => '',
+        'Edit Account' => '',
+        'About OIDC Functional Accounts' => '',
+        'This page displays an overview of configured functional OAuth accounts and their corresponding token status.' =>
+            '',
+        'You can test your configuration with a click on the \'Renew\' button, which will try to fetch or refresh a new token.' =>
+            '',
+        'OIDC profiles to link your OIDC functional account to can be created here:' =>
+            '',
+        'OAuth2 OIDC profiles' => '',
+        'Delete Account' => '',
+        'OIDC Functional Accounts and their active OAuth2 Tokens' => '',
+        'Since you do not have any OIDC provider profiles configured, you cannot add an OAuth2 functional account. You have to first configure at least one OIDC provider profile here:' =>
+            '',
+        'OIDC profiles' => '',
+        'There are no OAuth2 accounts defined.' => '',
+        'Account Name' => '',
+        'Profile Name' => '',
+        'Flow' => '',
+        'Has Token?' => '',
+        'Refresh Token Expires' => '',
+        'Renew Token(s)' => '',
+        'Renew' => '',
+        'Add Invoker Account' => '',
+        'Edit Invoker Account' => '',
+        'The unique name for this account.' => '',
+        'OIDC Profile' => '',
+        'The OpenID Connect profile to link to this functional account. OIDC profiles can be configured here:' =>
+            '',
+        'Grant Type' => '',
+        'The OAuth2 grant_type to use for acquiring tokens for this account.' =>
+            '',
+        'Selecting \'authorization_code\' will redirect you to your OpenID Connect provider\'s login page to validate your account once you click \'Save\'.' =>
+            '',
+        'The username if grant type is \'password\'.' => '',
+        'The password to use if grant type is \'password\'.' => '',
+        'OAuth2 Scopes' => '',
+        'Space separate list of OAuth2 scopes to use. Usual values include openid, email, profile, and roles.' =>
+            '',
+        'Advanced Invoker Settings' => '',
+        'Resources' => '资源',
+        'Optional (space separated list) for the resource parameter if required. Leave empty unless instructed otherwise.' =>
+            '',
+        'Resource Parameter Name' => '',
+        'Name of the resource parameter to use. Defaults to \'resource\'. Do not change unless instructed.' =>
+            '',
+        'Token Type' => '',
+        'The token type to use for external API calls. Usually \'access_token\'.' =>
+            '',
+
+        # Template: AdminOIDCProfiles
+        'OpenID Connect Profiles' => '',
+        'OpenID Connect Provider Profiles Management' => '',
+        'Add Profile' => '',
+        'Edit Profile' => '',
+        'About OIDC Provider Profiles' => '',
+        'This page displays an overview of configured OIDC provider profiles.' =>
+            '',
+        'You can connect OIDC profiles with a OIDC functional account' =>
+            '',
+        'here' => '',
+        'Delete Profile' => '',
+        'OpenID Connect Provider Profiles for Outgoing Web Service Calls (GenericInterface Invoker)' =>
+            '',
+        'There are no OIDC provider profiles defined.' => '',
+        'Client ID' => '',
+        'Provider' => '',
+        'Add OIDC Provider Profile' => '',
+        'Edit OIDC Provider Profile' => '',
+        'Since you are using OIDC as authentication module, these values have been pre-populated with the OIDC provider configuration used for login.' =>
+            '',
+        'The unique name for this profile.' => '',
+        'Metadata URL.' => '',
+        'The well-known provider metadata URL.' => '',
+        'The client ID of your OAuth2 application.' => '',
+        'Client Secret' => '',
+        'The client secret of your OAuth2 application.' => '',
+        'Time in seconds for caching provider data.' => '',
+        'SSL Options (Optional)' => '',
+        'SSL Certificate' => '',
+        'SSL certificate path.' => '',
+        'SSL Certificate Key' => '',
+        'SSL certificate private key path.' => '',
+        'SSL Password' => '',
+        'The SSL password.' => '',
+        'SSL CA File' => '',
+        'SSL certificate authority file path.' => '',
+        'SSL CA Directory' => '',
+        'SSL certificate authority directory path.' => '',
+        'SSL Verify Hostname' => '',
+        'Enable or disable SSL hostname verification. Only disable for debugging purposes!' =>
+            '',
+        'SSL Verify Mode' => '',
+        'Enable or disable SSL verification. Only disable for debugging purposes!' =>
+            '',
+        'Misc Options (Optional)' => '',
+        'Use Nonce' => '',
+        'Rand Length' => '',
+        'Random string length used for state and nonce parameters. Default is \'22\'.' =>
+            '',
+        'Rand TTL' => '',
+        'Time-to-live for state and nonce in seconds. Default is \'300\' (5 min).' =>
+            '',
+        'Leeway' => '',
+        'Time drift allowance between servers to be allowed. Default \'2\' seconds.' =>
+            '',
 
         # Template: AdminPGP
         'PGP Management' => 'PGP管理',
         'Add PGP Key' => '添加PGP密钥',
         'PGP support is disabled' => 'PGP支持已禁用',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            '要在OTOBO中使用PGP，你必须首先启用它。',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            '要在CareOnCloud ESM中使用PGP，你必须首先启用它。',
         'Enable PGP support' => '启用PGP支持',
         'Faulty PGP configuration' => '错误的PGP配置',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1536,22 +1814,22 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             '您真的想要重新安装该软包吗? 所有该模块的手工设置将丢失.',
         'Go to updating instructions' => '转到升级说明',
-        'Go to the OTOBO customer portal' => '访问OTOBO客户门户',
+        'Go to the CareOnCloud ESM customer portal' => '访问CareOnCloud ESM客户门户',
         'package information' => '软件包信息',
-        'Package installation requires a patch level update of OTOBO.' =>
-            '安装软件包需要将OTOBO补丁级别更新。',
-        'Package update requires a patch level update of OTOBO.' => '升级软件包需要将OTOBO补丁级别更新。',
-        'Please note that your installed OTOBO version is %s.' => '请注意，您安装的OTOBO版本是%s。',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
-            '安装这个软件包，你需要升级OTOBO版本到%s或者更高。',
-        'This package can only be installed on OTOBO version %s or older.' =>
-            '这个软件包只能安装在OTOBO版本%s或者更低。',
-        'This package can only be installed on OTOBO version %s or newer.' =>
-            '这个软件包只能安装在OTOBO版本%s或者更高。',
-        'Why should I keep OTOBO up to date?' => '为什么要保持OTOBO是最新的？',
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
+            '安装软件包需要将CareOnCloud ESM补丁级别更新。',
+        'Package update requires a patch level update of CareOnCloud ESM.' => '升级软件包需要将CareOnCloud ESM补丁级别更新。',
+        'Please note that your installed CareOnCloud ESM version is %s.' => '请注意，您安装的CareOnCloud ESM版本是%s。',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
+            '安装这个软件包，你需要升级CareOnCloud ESM版本到%s或者更高。',
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
+            '这个软件包只能安装在CareOnCloud ESM版本%s或者更低。',
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
+            '这个软件包只能安装在CareOnCloud ESM版本%s或者更高。',
+        'Why should I keep CareOnCloud ESM up to date?' => '为什么要保持CareOnCloud ESM是最新的？',
         'You will receive updates about relevant security issues.' => '您将收到有关安全问题的更新。',
-        'You will receive updates for all other relevant OTOBO issues.' =>
-            '你将收到所有其他有关OTOBO问题的更新。',
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
+            '你将收到所有其他有关CareOnCloud ESM问题的更新。',
         'How can I do a patch level update if I don’t have a contract?' =>
             '如果没有合约，我怎么更新补丁级别？',
         'Please find all relevant information within the updating instructions at %s.' =>
@@ -1567,7 +1845,7 @@ sub Data {
         'Install' => '安装',
         'Update repository information' => '更新软件仓库信息',
         'Cloud services are currently disabled.' => '云服务当前被禁用了。',
-        'OTOBO Verify can not continue!' => 'OTOBO验证不能继续！',
+        'CareOnCloud ESM Verify can not continue!' => 'CareOnCloud ESM验证不能继续！',
         'Enable cloud services' => '启用云服务',
         'Update all installed packages' => '更新所有已安装的软件包',
         'Online Repository' => '在线软件仓库',
@@ -1575,7 +1853,7 @@ sub Data {
         'Action' => '操作',
         'Module documentation' => '模块文档',
         'Local Repository' => '本地软件仓库',
-        'This package is verified by OTOBOverify (tm)' => '此软件包已通过OTOBOverify(tm)的验证',
+        'This package is verified by CareOnCloud Verify (tm)' => '此软件包已通过CareOnCloud Verify(tm)的验证',
         'Uninstall' => '卸载',
         'Package not correctly deployed! Please reinstall the package.' =>
             '软件包未正确安装！请重新安装软件包。',
@@ -1625,8 +1903,13 @@ sub Data {
         'PostMaster Filter Management' => '管理邮箱管理员过滤器',
         'Add PostMaster Filter' => '添加邮箱管理员过滤器',
         'Edit PostMaster Filter' => '编辑邮箱管理员过滤器',
+        'Include invalid PostMaster Filters' => '',
         'Filter for PostMaster Filters' => '邮箱管理员过滤规则筛选',
         'Filter for PostMaster filters' => '邮箱管理员过滤规则筛选',
+        'Search through PostMaster filters' => '',
+        'Search all filter attributes' => '',
+        'Limit search to selected header fields' => '',
+        'Limit search to selected set fields' => '',
         'To dispatch or filter incoming emails based on email headers. Matching using Regular Expressions is also possible.' =>
             '基于邮件标头标记的分派或过滤。可以使用正则表达式进行匹配。',
         'If you want to match only the email address, use EMAILADDRESS:info@example.com in From, To or Cc.' =>
@@ -1655,6 +1938,7 @@ sub Data {
         'Priority Management' => '优先级管理',
         'Add Priority' => '添加优先级',
         'Edit Priority' => '编辑优先级',
+        'Include invalid priorities' => '',
         'Filter for Priorities' => '优先级过滤器',
         'Filter for priorities' => '优先级过滤器',
         'This priority is present in a SysConfig setting, confirmation for updating settings to point to the new priority is needed!' =>
@@ -1663,12 +1947,13 @@ sub Data {
 
         # Template: AdminProcessManagement
         'Process Management' => '流程管理',
+        'Include inactive processes' => '',
         'Filter for Processes' => '流程过滤器',
         'Filter for processes' => '流程筛选',
         'Create New Process' => '创建新的流程',
         'Deploy All Processes' => '部署所有流程',
-        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by process management module.' =>
-            '你可以上传流程配置文件，以便将流程配置导入到你的系统中。流程配置文件采用.yml格式，它可以从流程管理模块中导出。',
+        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by the process management module.' =>
+            '',
         'Upload process configuration' => '上传流程配置',
         'Import process configuration' => '导入流程配置',
         'Ready2Adopt Processes' => '即开即用的流程',
@@ -1692,6 +1977,7 @@ sub Data {
             '请注意，修改这个活动将影响以下流程',
         'Activity' => '活动',
         'Activity Name' => '活动名称',
+        'Global' => '',
         'Activity Dialogs' => '活动对话框',
         'You can assign Activity Dialogs to this Activity by dragging the elements with the mouse from the left list to the right list.' =>
             '用鼠标将左侧列表中的元素拖放到右侧，你可以为这个活动分配活动对话框。',
@@ -1718,6 +2004,10 @@ sub Data {
         'The selected required lock does not exist.' => '选择的需要锁定不存在（无法锁定）。',
         'Submit Advice Text' => '提交按钮的建议文本',
         'Submit Button Text' => '提交按钮的文本',
+        'Input Field Definition' => '',
+        'Direct submit' => '',
+        'This property won\'t take effect because there are fields configured as visible.' =>
+            '',
         'You can assign Fields to this Activity Dialog by dragging the elements with the mouse from the left list to the right list.' =>
             '用鼠标将左侧列表中的元素拖放到右侧，你可以为这个活动对话框分配字段。',
         'Filter available fields' => '可用字段的过滤器',
@@ -1725,6 +2015,7 @@ sub Data {
         'Assigned Fields' => '分配的字段',
         'Communication Channel' => '通信渠道',
         'Is visible for customer' => '对客户可见',
+        'Standard Templates' => '',
         'Display' => 'Display（显示）',
 
         # Template: AdminProcessManagementPath
@@ -1802,10 +2093,43 @@ sub Data {
         'Transition actions are not being used in this process.' => '该流程未使用转换动作。',
 
         # Template: AdminProcessManagementTransition
-        'Please note that changing this transition will affect the following processes' =>
-            '请注意，修改这个转换将影响以下流程',
+        'Please note that changing this transition will affect the following processes:' =>
+            '',
         'Transition' => '转换',
         'Transition Name' => '转换名称',
+        'Transition Reference for "Fields" Settings' => '',
+        'Name of the ticket attribute that should be used for validation. In general, all attributes returned by the TicketGet function can be used.' =>
+            '',
+        'There are several possibilities to validate whether this transition is valid.' =>
+            '',
+        'Exact match' => '完全匹配',
+        'Value must exactly match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - negated' => '',
+        'Value must not match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the string specified in "Value".' =>
+            '',
+        'Regular Expression' => '',
+        'Value must contain a matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - negated' => '',
+        'Value must contain a non-matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the regular expression specified in "Value".' =>
+            '',
+        'Transition validation module' => '转换验证模块',
+        '"Name" is currently irrelevant, "Value" must contain the path to the module, usually Kernel::System::Process::Transition::<TA_Name>.' =>
+            '',
+        'Value must always contain a string or a regular expression used for comparison.' =>
+            '',
+        'Examples' => '',
+        'The process ticket should move to the next process step as soon as a status containing "closed" in its name is set. Therefore, configure Name="State", Type="Regular Expression" and Value="closed" (or the long form "^.*closed.*$").' =>
+            '',
+        'If a dynamic field should be used, configure Name="DynamicField_<FieldName>". To access a field inside a dynamic field of type "Set", the following syntax can be used: ' =>
+            '',
 
         # Template: AdminProcessManagementTransitionAction
         'Please note that changing this transition action will affect the following processes' =>
@@ -1821,8 +2145,13 @@ sub Data {
         'Queue Management' => '队列管理',
         'Add Queue' => '添加队列',
         'Edit Queue' => '编辑队列',
+        'Include invalid queues' => '',
         'Filter for Queues' => '队列过滤器',
         'Filter for queues' => '队列过滤器',
+        'Here you can upload a configuration file to import queues to your system. The file needs to be in .yml format as exported by the queue management module.' =>
+            '',
+        'Queues Import' => '',
+        'Queues Export' => '',
         'A queue with this name already exists!' => '队列名已存在！',
         'This queue is present in a SysConfig setting, confirmation for updating settings to point to the new queue is needed!' =>
             '这个队列已存在于系统配置的一个设置中，需要更新设置以确认指向新的队列！',
@@ -1849,6 +2178,7 @@ sub Data {
             '如果客户在工单关闭后发送跟进信件，则将该工单锁定给以前的所有者。',
         'System address' => '系统邮件地址',
         'Will be the sender address of this queue for email answers.' => '将作为邮件答复的队列的发件人地址。',
+        'Is defined in Admin > Email Addresses.' => '',
         'Default sign key' => '默认签名',
         'To use a sign key, PGP keys or S/MIME certificates need to be added with identifiers for selected queue system address.' =>
             'PGP密钥或者S/MIME证书需要被添加标识符到选定的队列系统电子邮件地址，以便使用。',
@@ -1856,6 +2186,10 @@ sub Data {
         'The salutation for email answers.' => '回复邮件中的问候语。',
         'Signature' => '签名',
         'The signature for email answers.' => '回复邮件中的签名。',
+        'The business calendar for unlock time and the escalation times. No selection means that the default calendar is used.' =>
+            '',
+        'Is defined in Admin > SystemConfiguration > Core > Time (default calendar) or in calendars 1 through 9.' =>
+            '',
         'This queue is used in the following config settings:' => '这个队列已用于以下的系统配置设置：',
 
         # Template: AdminQueueAutoResponse
@@ -1867,38 +2201,52 @@ sub Data {
         'Show All Queues' => '显示所有队列',
         'Auto Responses' => '自动响应',
 
+        # Template: AdminQueueImportExport
+        'Here you can export a configuration file of queues to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Queues List' => '',
+
         # Template: AdminQueueTemplates
         'Manage Template-Queue Relations' => '管理模板与队列的对应关系',
         'Filter for Templates' => '模板过滤器',
         'Filter for templates' => '模板筛选',
+        'Here you can upload a configuration file to import queue-template relations to your system. The file needs to be in .yml format as exported by the queue-template management module.' =>
+            '',
+        'Queue-Templates Import' => '',
+        'Queue-Templates Export' => '',
         'Templates' => '模板',
+
+        # Template: AdminQueueTemplatesImportExport
+        'Queue-Template Relations' => '',
+        'Here you can export a configuration file of queue-template relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
 
         # Template: AdminRegistration
         'System Registration Management' => '系统注册管理',
         'Edit System Registration' => '编辑系统注册',
         'System Registration Overview' => '系统注册概览',
         'Register System' => '注册系统',
-        'Validate OTOBO-ID' => '验证OTOBO-ID',
+        'Validate CareOnCloud ID' => '验证CareOnCloud ID',
         'Deregister System' => '取消系统注册',
         'Edit details' => '编辑详细信息',
         'Show transmitted data' => '显示已传输的数据',
         'Deregister system' => '取消系统注册',
         'Overview of registered systems' => '注册系统概述',
-        'This system is registered with OTOBO Team.' => '本系统已经在OTOBO团队进行了注册。',
+        'This system is registered with CareOnCloud ESM Team.' => '本系统已经在CareOnCloud ESM团队进行了注册。',
         'System type' => '系统类型',
         'Unique ID' => '唯一ID',
         'Last communication with registration server' => '与注册服务器上一次的通信',
         'System Registration not Possible' => '系统注册不可能',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            '请注意：如果OTOBO守护进程没有正确运行，你就不能注册你的系统！',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            '请注意：如果CareOnCloud ESM守护进程没有正确运行，你就不能注册你的系统！',
         'Instructions' => '说明',
         'System Deregistration not Possible' => '系统取消注册不可能',
-        'OTOBO-ID Login' => 'OTOBO-ID登陆',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
-            '系统注册是OTOBO团队的一项服务，它有很多好处！',
+        'CareOnCloud ID Login' => 'CareOnCloud ID登陆',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
+            '系统注册是CareOnCloud ESM团队的一项服务，它有很多好处！',
         'Read more' => '阅读更多',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            '为了注册系统，需要你先使用OTOBO-ID进行登陆。',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            '为了注册系统，需要你先使用CareOnCloud ID进行登陆。',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'OTOBO-ID是你在OTOBO.com网站注册的电子邮箱地址。',
         'Data Protection' => '数据保护',
@@ -1909,46 +2257,45 @@ sub Data {
         'This is only the beginning!' => '这仅仅是开始！',
         'We will inform you about our new services and offerings soon.' =>
             '有了新的服务和产品我们能很快通知你。',
-        'Can I use OTOBO without being registered?' => '如果不进行系统注册，我还可以使用OTOBO吗?',
+        'Can I use CareOnCloud ESM without being registered?' => '如果不进行系统注册，我还可以使用CareOnCloud ESM吗?',
         'System registration is optional.' => '系统注册是可选的。',
-        'You can download and use OTOBO without being registered.' => '不进行注册，你仍然可以下载和使用OTOBO。',
+        'You can download and use CareOnCloud ESM without being registered.' => '不进行注册，你仍然可以下载和使用CareOnCloud ESM。',
         'Is it possible to deregister?' => '可以取消注册吗？',
         'You can deregister at any time.' => '你可以随时取消系统注册。',
         'Which data is transfered when registering?' => '注册后，哪些数据会被上传?',
-        'A registered system sends the following data to OTOBO Team:' => '已注册的系统会将以下数据发送给OTOBO Team：',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            '域名(FQDN)、OTOBO版本、数据库、操作系统和Perl版本。',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => '已注册的系统会将以下数据发送给CareOnCloud ESM Team：',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            '域名(FQDN)、CareOnCloud ESM版本、数据库、操作系统和Perl版本。',
         'Why do I have to provide a description for my system?' => '为什么需要我提供有关注册系统的描述?',
         'The description of the system is optional.' => '注册系统的描述是可选的。',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             '注册系统描述和类型有助于您识别和管理系统的细节。',
-        'How often does my OTOBO system send updates?' => '我的OTOBO系统上传数据的频度?',
+        'How often does my CareOnCloud ESM system send updates?' => '我的CareOnCloud ESM系统上传数据的频度?',
         'Your system will send updates to the registration server at regular intervals.' =>
             '你的系统将定期向注册服务器发送更新。',
         'Typically this would be around once every three days.' => '通常这将是大约每3天1次。',
         'If you deregister your system, you will lose these benefits:' =>
             '如果你取消注册你的系统，你将失去以下好处：',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            '为了取消注册你的系统，你需要以OTOBO-ID登录。',
-        'OTOBO-ID' => 'OTOBO-ID',
-        'You don\'t have an OTOBO-ID yet?' => '还没有OTOBO-ID吗？',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            '为了取消注册你的系统，你需要以CareOnCloud ID登录。',
+        'CareOnCloud ID' => 'CareOnCloud ID',
+        'You don\'t have a CareOnCloud ID yet?' => '还没有CareOnCloud ID吗？',
         'Sign up now' => '现在注册',
         'Forgot your password?' => '忘记密码了吗？',
         'Retrieve a new one' => '获取新的密码',
-        'Next' => '下一步',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
-            '注册该系统时，这些数据将经常传输到OTOBO Team。',
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
+            '注册该系统时，这些数据将经常传输到CareOnCloud ESM Team。',
         'Attribute' => '属性',
         'FQDN' => '正式域名',
-        'OTOBO Version' => 'OTOBO版本',
+        'CareOnCloud ESM Version' => 'CareOnCloud ESM版本',
         'Operating System' => '操作系统',
         'Perl Version' => 'Perl版本',
         'Optional description of this system.' => '本系统可选的描述。',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
-            '这样系统将会将更多的支持数据信息发送给OTOBO Team。',
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
+            '这样系统将会将更多的支持数据信息发送给CareOnCloud ESM Team。',
         'Register' => '注册',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
-            '继续此步骤将从OTOBO团队注销该系统。',
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
+            '继续此步骤将从CareOnCloud ESM团队注销该系统。',
         'Deregister' => '取消注册',
         'You can modify registration settings here.' => '你可以在这里修改注册设置。',
         'Overview of Transmitted Data' => '已传输的数据概览',
@@ -1964,32 +2311,59 @@ sub Data {
         'Role Management' => '角色管理',
         'Add Role' => '添加角色',
         'Edit Role' => '编辑角色',
+        'Include invalid roles' => '',
         'Filter for Roles' => '角色过滤器',
         'Filter for roles' => '角色过滤器',
         'Create a role and put groups in it. Then add the role to the users.' =>
             '创建一个角色并将组加入角色,然后将角色赋给用户.',
+        'Here you can upload a configuration file to import roles to your system. The file needs to be in .yml format as exported by the role management module.' =>
+            '',
+        'Roles Import' => '',
+        'Roles Export' => '',
         'There are no roles defined. Please use the \'Add\' button to create a new role.' =>
             '还没有定义角色，请使用“添加”按钮来创建一个新的角色。',
 
         # Template: AdminRoleGroup
         'Manage Role-Group Relations' => '管理角色和组的关系',
+        'Here you can upload a configuration file to import role-group relations to your system. The file needs to be in .yml format as exported by the role-group management module.' =>
+            '',
+        'Role-Group Import' => '',
+        'Role-Group Export' => '',
         'Roles' => '角色',
         'Select the role:group permissions.' => '选择角色的组权限。',
         'If nothing is selected, then there are no permissions in this group (tickets will not be available for the role).' =>
             '如果没有选择，角色就不会具有任何权限 (任何工单都看不见)。',
         'Toggle %s permission for all' => '全部授予/取消 %s 权限',
+        'Read only access to the ticket in this group/queue. The ticket can be found via a search and its TicketZoom can be accessed. If used for a calendar, users can see and export all appointments in the calendar.' =>
+            '',
         'move_into' => '转移到',
-        'Permissions to move tickets into this group/queue.' => '将工单转移到这个组/队列的权限。',
+        'Permissions to move tickets into this group/queue. If used for a calendar, users can modify appointments in the calendar, but without changing the calendar selection.' =>
+            '',
         'create' => 'create（创建）',
-        'Permissions to create tickets in this group/queue.' => '在这个组/队列具有创建工单的权限。',
+        'Permissions to create tickets in this group/queue. If used for a calendar, users can create and delete appointments in the calendar.' =>
+            '',
         'note' => 'note（备注）',
-        'Permissions to add notes to tickets in this group/queue.' => '在这个组/队列具有添加备注的权限。',
+        'Permissions to add notes to tickets in this group/queue. It also allows agents to be informed via the \'Inform Agents\' section in the Notes.' =>
+            '',
         'owner' => 'owner（所有者）',
-        'Permissions to change the owner of tickets in this group/queue.' =>
-            '在这个组/队列具有变更工单所有者的权限。',
+        'Permissions to be become the owner of tickets in this group/queue. One can be selected as an owner while creating a ticket or changing the owner. Being the owner gives full rw permissions to this ticket.' =>
+            '',
         'priority' => '优先级',
-        'Permissions to change the ticket priority in this group/queue.' =>
-            '在这个组/队列具有更改工单优先级的权限。',
+        'Permissions to open the priority action in this group/queue.' =>
+            '',
+        'Full read and write access to the tickets in this group/queue. If used for a calendar, users can manage the calendar itself.' =>
+            '',
+
+        # Template: AdminRoleGroupImportExport
+        'Role-Group Relations' => '',
+        'Here you can export a configuration file of role-group relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Role-Group relations List' => '',
+
+        # Template: AdminRoleImportExport
+        'Here you can export a configuration file of roles to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Roles List' => '',
 
         # Template: AdminRoleUser
         'Manage Agent-Role Relations' => '管理服务人员与角色的关系',
@@ -2003,16 +2377,27 @@ sub Data {
         'SLA Management' => 'SLA管理',
         'Edit SLA' => '编辑SLA',
         'Add SLA' => '添加SLA',
+        'Include invalid SLAs' => '',
         'Filter for SLAs' => 'SLA过滤器',
+        'Here you can upload a configuration file to import SLAs to your system. The file needs to be in .yml format as exported by the SLA management module.' =>
+            '',
+        'SLAs Import' => '',
+        'SLAs Export' => '',
         'Please write only numbers!' => '仅可填写数字！',
+
+        # Template: AdminSLAImportExport
+        'SLAs' => '',
+        'Here you can export a configuration file of SLAs to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'SLAs List' => '',
 
         # Template: AdminSMIME
         'S/MIME Management' => 'S/MIME管理',
         'Add Certificate' => '添加证书',
         'Add Private Key' => '添加私钥',
         'SMIME support is disabled' => 'SMIME支持已禁用',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            '要在OTOBO中使用SMIME，你必须首先启用它。',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            '要在CareOnCloud ESM中使用SMIME，你必须首先启用它。',
         'Enable SMIME support' => '启用SMIME支持',
         'Faulty SMIME configuration' => '错误的SMIME配置',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2050,6 +2435,7 @@ sub Data {
         'Salutation Management' => '问候语管理',
         'Add Salutation' => '添加问候语',
         'Edit Salutation' => '编辑问候语',
+        'Include invalid salutations' => '',
         'Filter for Salutations' => '问候语过滤器',
         'Filter for salutations' => '问候语过滤器',
         'e. g.' => '例如：',
@@ -2085,9 +2471,19 @@ sub Data {
         'Service Management' => '服务管理',
         'Add Service' => '添加服务',
         'Edit Service' => '编辑服务',
+        'Include invalid services' => '',
+        'Here you can upload a configuration file to import services to your system. The file needs to be in .yml format as exported by the service management module.' =>
+            '',
+        'Services Import' => '',
+        'Services Export' => '',
         'Service name maximum length is 200 characters (with Sub-service).' =>
             '服务名(含子服务)最大长度为200字符。',
         'Sub-service of' => '上一级服务',
+
+        # Template: AdminServiceImportExport
+        'Here you can export a configuration file of services to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Services List' => '',
 
         # Template: AdminSession
         'Session Management' => '会话管理',
@@ -2109,6 +2505,7 @@ sub Data {
         'Signature Management' => '签名管理',
         'Add Signature' => '添加签名',
         'Edit Signature' => '编辑签名',
+        'Include invalid signatures' => '',
         'Filter for Signatures' => '签名过滤器',
         'Filter for signatures' => '签名过滤器',
         'Example signature' => '签名样例',
@@ -2117,6 +2514,7 @@ sub Data {
         'State Management' => '工单状态管理',
         'Add State' => '添加工单状态',
         'Edit State' => '编辑工单状态',
+        'Include invalid states' => '',
         'Filter for States' => '状态过滤器',
         'Filter for states' => '状态过滤器',
         'Attention' => '注意',
@@ -2129,18 +2527,18 @@ sub Data {
         'This state is used in the following config settings:' => '这个状态已用于以下的系统配置设置：',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => '无法将支持数据发送到OTOBO团队！',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => '无法将支持数据发送到CareOnCloud ESM团队！',
         'Enable Cloud Services' => '启用云服务',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
-            '该数据会定期发送给OTOBO团队。要停止发送此数据，请更新你的系统注册。',
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
+            '该数据会定期发送给CareOnCloud ESM团队。要停止发送此数据，请更新你的系统注册。',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             '你可以通过这个按钮手动发送支持数据：',
         'Send Update' => '发送更新',
         'Currently this data is only shown in this system.' => '目前支持数据只是在本地系统上显示。',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
-            '强烈建议将此数据发送给OTOBO团队，以获得更好的支持。',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
-            '要启用数据发送，请在OTOBO团队注册你的系统或更新你的系统注册信息（确保激活“发送支持数据”选项。）',
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
+            '强烈建议将此数据发送给CareOnCloud ESM团队，以获得更好的支持。',
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+            '要启用数据发送，请在CareOnCloud ESM团队注册你的系统或更新你的系统注册信息（确保激活“发送支持数据”选项。）',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             '点击以下按钮生成支持数据包（包括：系统注册信息、支持数据、已安装软件包列表和本地所有修改过的源代码文件）：',
         'Generate Support Bundle' => '生成支持数据包',
@@ -2152,11 +2550,11 @@ sub Data {
         'The email address for this user is invalid, this option has been disabled.' =>
             '当前用户的邮件地址无效，本选项无法使用。',
         'Sending' => '发送中',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
-            '支持包将通过电子邮件自动发送给OTOBO团队。',
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
+            '支持包将通过电子邮件自动发送给CareOnCloud ESM团队。',
         'Download File' => '下载文件',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
-            '包含支持包的文件可以下载到本地。你可以保存该文件，然后用其他方法将其发送给OTOBO团队。',
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
+            '包含支持包的文件可以下载到本地。你可以保存该文件，然后用其他方法将其发送给CareOnCloud ESM团队。',
         'Error: Support data could not be collected (%s).' => '错误：%s 无法收集支持数据。',
         'Details' => '详情',
 
@@ -2164,6 +2562,7 @@ sub Data {
         'System Email Addresses Management' => '系统邮件地址管理',
         'Add System Email Address' => '添加统邮件地址',
         'Edit System Email Address' => '编辑统邮件地址',
+        'Include invalid system addresses' => '',
         'Add System Address' => '添加系统地址',
         'Filter for System Addresses' => '系统地址过滤器',
         'Filter for system addresses' => '系统地址过滤器',
@@ -2174,6 +2573,8 @@ sub Data {
         'This email address is already used as system email address.' => '这个电子邮件地址已经用于系统电子邮件地址。',
         'The display name and email address will be shown on mail you send.' =>
             '邮件地址和显示名称将在发送的邮件中显示。',
+        'Only relevant if the postmaster mail account is set to dispatching by To-field.' =>
+            '',
         'This system address cannot be set to invalid.' => '该系统地址不能设置为无效。',
         'This system address cannot be set to invalid, because it is used in one or more queue(s) or auto response(s).' =>
             '此系统地址不能设置为无效，因为它用于一个或多个队列或自动响应。',
@@ -2188,8 +2589,8 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             '通过阅读%s来了解如何使用系统配置。',
         'Search in all settings...' => '在所有设置中搜索...',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
-            '目前没有可用的设置。 在使用软件之前，请确保运行 \'otobo.Console.pl Maint::Config::Rebuild\'。',
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+            '目前没有可用的设置。 在使用软件之前，请确保运行 \'careoncloud.Console.pl Maint::Config::Rebuild\'。',
 
         # Template: AdminSystemConfigurationDeployment
         'Changes Deployment' => '更改部署',
@@ -2283,6 +2684,7 @@ sub Data {
 
         # Template: AdminSystemMaintenance
         'System Maintenance Management' => '系统维护管理',
+        'Include invalid system maintenances' => '',
         'Schedule New System Maintenance' => '安排新的系统维护',
         'Filter for System Maintenances' => '系统维护过滤器',
         'Filter for system maintenances' => '系统维护过滤器',
@@ -2290,13 +2692,11 @@ sub Data {
             '安排一个系统维护期会通知服务人员或用户：本系统在这个时间段停止使用。',
         'Some time before this system maintenance starts the users will receive a notification on each screen announcing about this fact.' =>
             '当到达维护时间之前, 当前登录到系统的用户将会在屏幕上收到一个通知。',
-        'Stop date' => '结束时间',
         'Delete System Maintenance' => '删除系统维护',
 
         # Template: AdminSystemMaintenanceEdit
         'Edit System Maintenance' => '编辑系统维护',
         'Edit System Maintenance Information' => '编辑系统维护信息',
-        'Date invalid!' => '日期无效!',
         'Login message' => '登录消息',
         'This field must have less then 250 characters.' => '这个字段不能超过250个字符。',
         'Show login message' => '显示登录消息',
@@ -2311,9 +2711,15 @@ sub Data {
         'Template Management' => '模板管理',
         'Add Template' => '添加模板',
         'Edit Template' => '编辑模板',
+        'Include invalid templates' => '',
         'A template is a default text which helps your agents to write faster tickets, answers or forwards.' =>
             '模板就是一些能帮助服务人员快速创建、回复或转发工单的默认文本。',
         'Don\'t forget to add new templates to queues.' => '别忘了将新模板分配给队列。',
+        'Here you can upload a configuration file to import templates to your system. The file needs to be in .yml format as exported by the template management module.' =>
+            '',
+        'Templates Import' => '',
+        'Templates Export' => '',
+        'Pre-selected ticket state' => '',
         'Attachments' => '附件',
         'Delete this entry' => '删除该条目',
         'Do you really want to delete this template?' => '您真的想要删除这个模板吗？',
@@ -2336,20 +2742,75 @@ sub Data {
         'Toggle active for all' => '全部激活/不激活',
         'Link %s to selected %s' => '链接 %s 到选中的 %s',
 
+        # Template: AdminTemplateImportExport
+        'Here you can export a configuration file of templates to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Templates List' => '',
+
+        # Template: AdminTicketMask
+        'Ticket Mask Management' => '',
+        'Edit mask' => '',
+        'Change mask definition' => '',
+        'Ticket Mask' => '',
+        'Change' => '',
+        'Definition' => '',
+
+        # Template: AdminTranslations
+        'Translation Management' => '',
+        'Add Translations' => '',
+        'Edit Translations' => '',
+        'Language' => '语言',
+        'Deploy Translations' => '',
+        'Translation States' => '',
+        'New Translation' => '',
+        'Editing Translation' => '',
+        'Translation Marked for Deletion' => '',
+        'Deployed Translation' => '',
+        'Changes made here only affect the system behavior after your draft translations have been deployed. By deploying them, all changes will be written to the language files.' =>
+            '',
+        'Select an object to start adding translations. Depending on your selection, single or multiple translations can be added.' =>
+            '',
+        'Edit active translations using provided text fields!' => '',
+        'List custom translations for' => '',
+        'Draft Translations' => '',
+        'Filter for Draft Translations' => '',
+        'Active Translations' => '',
+        'Filter for Active Translations' => '',
+        'Content' => '值',
+        'Translation' => '',
+        'Marked for Deletion' => '',
+        'Edit Translation' => '',
+        'Overwrites CareOnCloud ESM translation' => '',
+        'Undo Delete Translation' => '',
+        'Delete Translation' => '',
+        'Translations' => '',
+
         # Template: AdminType
         'Type Management' => '工单类型管理',
         'Add Type' => '添加工单类型',
         'Edit Type' => '编辑工单类型',
+        'Include invalid types' => '',
         'Filter for Types' => '类型过滤器',
         'Filter for types' => '类型过滤器',
+        'Here you can upload a configuration file to import types to your system. The file needs to be in .yml format as exported by the type management module.' =>
+            '',
+        'Types Import' => '',
+        'Types Export' => '',
         'A type with this name already exists!' => '类型名字已存在!',
         'This type is present in a SysConfig setting, confirmation for updating settings to point to the new type is needed!' =>
             '这个类型已存在于系统配置的一个设置中，需要更新设置以确认指向新的类型态！',
         'This type is used in the following config settings:' => '这个类型已用于以下的系统配置设置：',
 
+        # Template: AdminTypeImportExport
+        'Types' => '类型',
+        'Here you can export a configuration file of types to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Types List' => '',
+
         # Template: AdminUser
         'Agent Management' => '服务人员管理',
         'Edit Agent' => '编辑服务人员',
+        'Include invalid users' => '',
         'Edit personal preferences for this agent' => '编辑这个服务人员的个人偏好设置',
         'Agents will be needed to handle tickets.' => '处理工单是需要服务人员的。',
         'Don\'t forget to add a new agent to groups and/or roles!' => '别忘了为新增的服务人员分配组或角色权限！',
@@ -2369,6 +2830,13 @@ sub Data {
 
         # Template: AdminUserGroup
         'Manage Agent-Group Relations' => '管理服务人员的组权限',
+        'Permissions to move tickets into this group/queue.' => '将工单转移到这个组/队列的权限。',
+        'Permissions to create tickets in this group/queue.' => '在这个组/队列具有创建工单的权限。',
+        'Permissions to add notes to tickets in this group/queue.' => '在这个组/队列具有添加备注的权限。',
+        'Permissions to change the owner of tickets in this group/queue.' =>
+            '在这个组/队列具有变更工单所有者的权限。',
+        'Permissions to change the ticket priority in this group/queue.' =>
+            '在这个组/队列具有更改工单优先级的权限。',
 
         # Template: AgentAppointmentAgendaOverview
         'Agenda Overview' => '日程概览',
@@ -2484,17 +2952,22 @@ sub Data {
         'Customer User Information Center' => '客户用户信息中心',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'OTOBO守护进程用来执行异步任务，例如：触发工单升级、发送电子邮件等等。',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            'OTOBO守护进程正常运行是正确的系统操作所必需的。',
-        'Starting the OTOBO Daemon' => '正在启动OTOBO守护进程',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            '确保存在文件“%s”（没有.dist扩展名）。这个CRON任务会每5分钟检查一次OTOBO守护进程是否在运行，并在需要时启动它。',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            '执行\'%s start\'确保\'otobo\'用户的cron任务是活动的。',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            '5分钟后，在系统中执行\'bin/otobo.Daemon.pl status\'，检查OTOBO守护进程是否正常运行。',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'CareOnCloud ESM守护进程用来执行异步任务，例如：触发工单升级、发送电子邮件等等。',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            'CareOnCloud ESM守护进程正常运行是正确的系统操作所必需的。',
+        'Starting the CareOnCloud ESM Daemon' => '正在启动CareOnCloud ESM守护进程',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            '确保存在文件“%s”（没有.dist扩展名）。这个CRON任务会每5分钟检查一次CareOnCloud ESM守护进程是否在运行，并在需要时启动它。',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            '执行\'%s start\'确保\'careoncloud\'用户的cron任务是活动的。',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            '5分钟后，在系统中执行\'bin/careoncloud.Daemon.pl status\'，检查CareOnCloud ESM守护进程是否正常运行。',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => '',
+        'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
+            '',
+        'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
+            '',
 
         # Template: AgentDashboard
         'Dashboard' => '仪表板',
@@ -2589,16 +3062,19 @@ sub Data {
         'until' => '直到',
 
         # Template: AgentDynamicFieldDBDetailedSearch
-        'Back' => '后退',
         'Detailed search' => '详细搜索',
         'Add an additional attribute' => '添加更多属性',
 
         # Template: AgentDynamicFieldDBDetails
         'Details view' => '查看详情',
 
+        # Template: AgentElasticsearchCommon
+        'Elasticsearch Results' => '',
+
         # Template: AgentElasticsearchQuickResult
         'Tickets' => '工单',
         'ConfigItems' => 'ConfigItems',
+        'FAQs' => '',
 
         # Template: AgentInfo
         'To accept some news, a license or some changes.' => '接收新闻、许可证或者一些变更信息。',
@@ -2655,7 +3131,7 @@ sub Data {
         'This setting can currently not be saved.' => '此设置目前无法保存。',
         'This setting can currently not be saved' => '此设置目前无法保存',
         'Save this setting' => '保存该设置',
-        'Did you know? You can help translating OTOBO at %s.' => '你知道吗? 你也可以通过%s帮助翻译 OTOBO。',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => '你知道吗? 你也可以通过%s帮助翻译 CareOnCloud ESM。',
 
         # Template: SettingsList
         'Reset to default' => '重置为默认',
@@ -2675,7 +3151,7 @@ sub Data {
         # Template: AgentStatisticsAdd
         'Statistics Management' => '统计管理',
         'Add Statistics' => '添加统计',
-        'Read more about statistics in OTOBO' => '详细了解OTR关于统计的信息',
+        'Read more about statistics in CareOnCloud ESM' => '详细了解OTR关于统计的信息',
         'Dynamic Matrix' => '动态矩阵',
         'Each cell contains a singular data point.' => '每个单元格包含一个单数据点。',
         'Dynamic List' => '动态列表',
@@ -2714,7 +3190,6 @@ sub Data {
             '',
         'Please note that you can only select charts as statistics output format if you configured one of the renderer binaries on your system.' =>
             '',
-        'Configure PhantomJS' => '',
         'Configure GoogleChrome' => '',
         'General settings' => '',
         'Automatic generation settings' => '',
@@ -2772,12 +3247,14 @@ sub Data {
         'Set Pending Time for %s%s%s' => '为%s%s%s添加挂起时间',
         'Change Priority of %s%s%s' => '变更工单%s%s%s的优先级',
         'Change Responsible of %s%s%s' => '变更工单%s%s%s的负责人',
+        'Edit Article "%s" of %s%s%s' => '',
         'The ticket has been locked' => '工单已锁定',
         'Undo & close' => '撤销并关闭',
+        'All fields marked with an asterisk (*) are mandatory.' => '所有带“*”的字段都是强制要求输入的字段.',
         'Ticket Settings' => '工单设置',
-        'Queue invalid.' => '队列无效。',
         'Service invalid.' => '服务无效。',
         'SLA invalid.' => 'SLA无效。',
+        'Queue invalid.' => '队列无效。',
         'New Owner' => '新的所有者',
         'Please set a new owner!' => '请指定新的所有者！',
         'Owner invalid.' => '所有者无效。',
@@ -2797,6 +3274,12 @@ sub Data {
         'Text Template' => '内容模板',
         'Setting a template will overwrite any text or attachment.' => '设置一个模板将覆盖任何文本或附件。',
         'Invalid time!' => '无效时间!',
+
+        # Template: AgentTicketArticleEdit
+        'Edit Article' => '',
+
+        # Template: AgentTicketArticleVersionView
+        'Viewing Article Version#%s of current Article: #%s %s' => '',
 
         # Template: AgentTicketBounce
         'Bounce %s%s%s' => '退回%s%s%s',
@@ -2847,7 +3330,6 @@ sub Data {
 
         # Template: AgentTicketEmail
         'Create New Email Ticket' => '创建邮件工单',
-        'Example Template' => '模板样例',
         'To customer user' => '选择客户用户',
         'Please include at least one customer user for the ticket.' => '请包括至少一个客户用户。',
         'Select this customer as the main customer.' => '选择这个客户用户作为主要联系人。',
@@ -2903,6 +3385,7 @@ sub Data {
         'First Response Time' => '首次响应时间',
         'Update Time' => '更新时间',
         'Solution Time' => '解决时间',
+        'Accounted Time' => '',
         'Move ticket to a different queue' => '将工单转移到另一个队列',
         'Change queue' => '更改队列',
 
@@ -2923,8 +3406,6 @@ sub Data {
         'Create New Phone Ticket' => '创建电话工单',
         'Please include at least one customer for the ticket.' => '请包括至少一个客户用户。',
         'To queue' => '队列',
-        'Chat protocol' => '聊天协议',
-        'The chat will be appended as a separate article.' => '将聊天内容作为单独的信件追加到工单。',
 
         # Template: AgentTicketPhoneCommon
         'Phone Call for %s%s%s' => '%s%s%s的电话',
@@ -2991,12 +3472,15 @@ sub Data {
         'No.' => 'NO.',
         'Unread articles' => '未读信件',
         'Via' => '通过',
+        'Article Edited' => '',
+        'Time Units' => '',
         'Important' => '重要',
         'Unread Article!' => '未读信件!',
         'Incoming message' => '接收的消息',
         'Outgoing message' => '发出的消息',
         'Internal message' => '内部消息',
         'Sending of this message has failed.' => '发送这个消息已失败。',
+        'The article was edited' => '',
         'Resize' => '调整大小',
         'Mark this article as read' => '标记该信件为已读',
         'Show Full Text' => '显示详细内容',
@@ -3068,10 +3552,11 @@ sub Data {
         'Ticket Search' => '工单搜索',
         'New Ticket' => '新建工单',
 
+        # Template: CustomerElasticsearchQuickResult
+        'FAQ#' => '',
+
         # Template: CustomerError
         'An Error Occurred' => '发生了一个错误',
-        'Error Details' => '详细错误信息',
-        'Traceback' => '追溯',
 
         # Template: CustomerFooterJS
         '%s detected possible network issues. You could either try reloading this page manually or wait until your browser has re-established the connection on its own.' =>
@@ -3129,7 +3614,7 @@ sub Data {
         'Click here for an unfiltered list of all your tickets.' => '点击这里可以得到你的所有工单未过滤的列表。',
 
         # Template: CustomerTicketMessage
-        'Issue a new Ticket' => '发出一个新工单',
+        'Create a new Ticket' => '',
         'Service level agreement' => '服务级别协议',
 
         # Template: CustomerTicketOverview
@@ -3138,11 +3623,11 @@ sub Data {
         'Sort' => '排序',
 
         # Template: CustomerTicketSearch
+        'Search for a Ticket' => '',
         'Profile' => '搜索条件',
         'e. g. 10*5155 or 105658*' => '例如: 10*5155 或 105658*',
         'CustomerID' => 'CustomerID',
         'Fulltext Search in Tickets (e. g. "John*n" or "Will*")' => '对工单进行全文搜索（例如 "John*n" 或 "Will*"）',
-        'Types' => '类型',
         'Time Restrictions' => '时间限制',
         'No time settings' => '没有设置时间',
         'All' => '全部',
@@ -3152,9 +3637,8 @@ sub Data {
         'Only tickets created between' => '仅工单创建时间区间',
         'Ticket Archive System' => '工单归档系统',
         'Save Search as Template?' => '将搜索保存为模板吗？',
-        'Save as Template?' => '保存为模板吗？',
         'Save as Template' => '保存为模板',
-        'Template Name' => '模板名称',
+        'Save as Template?' => '保存为模板吗？',
         'Pick a profile name' => '输入模板名称',
         'Output to' => '输出为',
 
@@ -3166,9 +3650,6 @@ sub Data {
         # Template: CustomerTicketZoom
         'Reply' => '回复',
         'Discard' => '舍弃',
-        'Ticket Information' => '工单信息',
-        'Categories' => '分类目录',
-        'Further actions' => '下一步行动',
 
         # Template: Chat
         'Expand article' => '展开信件',
@@ -3176,18 +3657,22 @@ sub Data {
         # Template: MIMEBase
         'Article Information' => '文章信息',
 
+        # Template: TicketInfo
+        'Ticket Information' => '工单信息',
+        'Categories' => '分类目录',
+        'Further actions' => '下一步行动',
+
         # Template: CustomerWarning
         'Warning' => '警告',
 
         # Template: TileNewTicket
-        'Issue%sa ticket' => '发出%sa工单',
+        'Create%sa ticket' => '',
 
         # Template: DashboardEventsTicketCalendar
         'Event Information' => '事件信息',
 
         # Template: Error
         'Send a bugreport' => '发送一个BUG报告',
-        'Expand' => '展开',
 
         # Template: Footer
         'Powered by %s' => '由%s驱动',
@@ -3218,7 +3703,6 @@ sub Data {
         'License' => '许可证',
         'Database Settings' => '数据库设置',
         'General Specifications and Mail Settings' => '一般设定和邮件配置',
-        'Finish' => '完成',
         'Welcome to %s' => '欢迎使用%s',
         'Germany' => '德国',
         'Phone' => '电话',
@@ -3258,8 +3742,8 @@ sub Data {
 
         # Template: InstallerDBStart
         'Install Type' => '安装类型',
-        'Create a new database for OTOBO' => '为OTOBO创建新的数据库',
-        'Use an existing database for OTOBO' => '使用现有的OTOBO数据库',
+        'Create a new database for CareOnCloud ESM' => '为CareOnCloud ESM创建新的数据库',
+        'Use an existing database for CareOnCloud ESM' => '使用现有的CareOnCloud ESM数据库',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3270,15 +3754,18 @@ sub Data {
         'Database check successful.' => '数据库检查完成。',
         'Database User' => '数据库用户',
         'New' => 'New（新建）',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
-            '已经为OTOBO系统创建了新的数据库普通用户。',
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
+            '已经为CareOnCloud ESM系统创建了新的数据库普通用户。',
         'Generated password' => '自动生成的密码',
         'Repeat Password' => '重复输入密码',
         'Passwords do not match' => '密码不匹配',
 
+        # Template: InstallerDBmysql
+        'Authentication Plugin' => '',
+
         # Template: InstallerFinish
         'Start page' => '开始页面',
-        'Your OTOBO Team' => 'OTOBO团队',
+        'Your CareOnCloud ESM Team' => 'CareOnCloud ESM团队',
 
         # Template: InstallerLicense
         'Don\'t accept license' => '不同意许可',
@@ -3308,10 +3795,10 @@ sub Data {
             '手动输入的电子邮件地址将通过DNS服务器验证MX记录。如果DNS服务器响应慢或无法提供公网解析，请不要使用此选项。',
         'Elasticsearch' => 'Elasticsearch',
         'Initialize Elasticsearch' => '初始化 Elasticsearch',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
-            'Elasticsearch服务器已经找到了，并且已经为OTOBO自动激活。',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
-            '正在运行的Elasticsearch服务器似乎不太干净，或者它没有使用标准配置。要手动激活Elasticsearch，必要的时候需要在管理界面中编辑Web服务，在SysConfig中激活\'Elasticsearch :: Active\'和\'Frontend :: ToolBarModule ### 250-Ticket :: ElasticsearchFulltext\'，并运行otobo.Console命令\'Maint :: Elasticsearch :: Migration\'。',
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
+            'Elasticsearch服务器已经找到了，并且已经为CareOnCloud ESM自动激活。',
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
+            '正在运行的Elasticsearch服务器似乎不太干净，或者它没有使用标准配置。要手动激活Elasticsearch，必要的时候需要在管理界面中编辑Web服务，在SysConfig中激活\'Elasticsearch :: Active\'和\'Frontend :: ToolBarModule ### 250-Ticket :: ElasticsearchFulltext\'，并运行careoncloud.Console命令\'Maint :: Elasticsearch :: Migration\'。',
 
         # Template: LinkObject
         'Delete link' => '删除链接',
@@ -3340,16 +3827,16 @@ sub Data {
         'Clean up and finish' => '清理和完成',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
-            '迁移已完成，感谢你试用OTOBO-我们希望你会喜欢。',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
-            '为了能够使用OTOBO, 您必须以root身份在命令行中(Terminal/Shell)输入以下行。',
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
+            '迁移已完成，感谢你试用CareOnCloud ESM-我们希望你会喜欢。',
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+            '为了能够使用CareOnCloud ESM, 您必须以root身份在命令行中(Terminal/Shell)输入以下行。',
         'Restart your webserver' => '重启web服务器',
-        'After doing so your OTOBO is up and running.' => '完成这些后，您的OTOBO系统就启动并运行了。',
+        'After doing so your CareOnCloud ESM is up and running.' => '完成这些后，您的CareOnCloud ESM系统就启动并运行了。',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
-            '这个迁移脚本将引导你逐步完成，将你的工单系统从OTRS或（（OTRS））Community Edition版本6迁移到OTOBO 10。',
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
+            '这个迁移脚本将引导你逐步完成，将你的工单系统从OTRS或（（OTRS））Community Edition版本6迁移到CareOnCloud ESM 10。',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             '你的原始系统不会有任何危险：在那里没有任何更改。',
         'Instructions and details on migration prerequisites can be found in the migration manual. We strongly recommend reading it before starting migration.' =>
@@ -3358,21 +3845,19 @@ sub Data {
             '如果必须停止迁移，则可以在任何时候随时恢复到停止的点，只要尚未删除缓存即可。',
         'All entered passwords are cached until the migration is finished.' =>
             '所有输入的密码都将被缓存，直到迁移完成。',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
-            ' 有权访问此页面，或具有OTOBO主目录读取权限的任何人都可以读到它们。如果中止迁移，你可以选择再次访问此页面来清除缓存。',
-        'If you need support, just ask our experts – either at' => '如果需要支持，请问询我们的专家 - 或者在',
-        'OTOBO forum' => 'OTOBO论坛',
-        'or directly via mail to' => '或者直接写邮件发到',
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+            ' 有权访问此页面，或具有CareOnCloud ESM主目录读取权限的任何人都可以读到它们。如果中止迁移，你可以选择再次访问此页面来清除缓存。',
+        'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
+            '',
         'Cached data found' => '发现缓存数据',
         'You will continue where you aborted the migration last time. If you do not want this, please discard your previous progress.' =>
             '你将从上次退出的位置继续进行迁移，当然如果不需要，你也可以放弃以前的进程。',
-        'An error occured.' => '发生一个错误。',
+        'An error occurred.' => '发生一个错误。',
         'Discard previous progress' => '放弃以前的进程',
         'Insecure HTTP connection' => '不安全的HTTP链接',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
-            '你正在通过http运行迁移脚本，这是非常不安全的，因为在这个过程中需要使用各种密码，而这些密码将以未加密的方式进行传输。你和OTOBO服务器之间的任何人都可以读取它们！所以，请考虑修改设置为https。',
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
+            '你正在通过http运行迁移脚本，这是非常不安全的，因为在这个过程中需要使用各种密码，而这些密码将以未加密的方式进行传输。你和CareOnCloud ESM服务器之间的任何人都可以读取它们！所以，请考虑修改设置为https。',
         'Continue anyways :(' => '不论如何都继续:(',
-        ' Continue anyways :(' => ' 不论如何都继续 :(',
 
         # Template: OTRSDBSettings
         'DSN' => '',
@@ -3394,8 +3879,8 @@ sub Data {
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => '功能不可用',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            '抱歉，当前的OTOBO不能用于移动终端。如果你想在移动终端上使用，你可以切换到桌面模式或使用普通桌面终端。',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            '抱歉，当前的CareOnCloud ESM不能用于移动终端。如果你想在移动终端上使用，你可以切换到桌面模式或使用普通桌面终端。',
 
         # Template: Motd
         'Message of the Day' => '今日消息',
@@ -3435,8 +3920,8 @@ sub Data {
 
         # Template: PublicDefault
         'Welcome' => '欢迎',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            '这是OTOBO默认的公共界面！没有操作参数。',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            '这是CareOnCloud ESM默认的公共界面！没有操作参数。',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             '你可以安装一个定制的有公共界面的公共模块（通过软件包管理器），例如FAQ知识库模块。',
 
@@ -3488,7 +3973,6 @@ sub Data {
             '统计生成后不允许修改这个元素。',
 
         # Template: StatsParamsWidget
-        'Format' => '格式',
         'Exchange Axis' => '转换坐标轴',
         'Configurable Params of Static Stat' => '静态统计的可配置参数',
         'No element selected.' => '没有选择元素。',
@@ -3533,7 +4017,6 @@ sub Data {
         'Disable this setting, so it is no longer effective' => '禁用此设置，因此它不再有效',
         'Disable' => '禁用',
         'Enable this setting, so it becomes effective' => '启用此设置，使其生效',
-        'Enable' => '启用',
         'Reset this setting to its default state' => '将此设置重置为默认状态',
         'Reset setting' => '重置设置',
         'Allow users to adapt this setting from within their personal preferences' =>
@@ -3594,10 +4077,15 @@ sub Data {
         'Delete user\'s value.' => '删除用户的数值。',
 
         # Template: Test
-        'OTOBO Test Page' => 'OTOBO测试页',
+        'CareOnCloud ESM Test Page' => 'CareOnCloud ESM测试页',
         'Unlock' => '解锁',
         'Welcome %s %s' => '欢迎使用%s %s',
         'Counter' => '计数器',
+
+        # Template: TranslationsTable
+        'Filter Content' => '',
+        'Filter for Translations' => '',
+        'No content available to translate.' => '',
 
         # Template: Warning
         'Go back to the previous page' => '返回前一页',
@@ -3634,7 +4122,7 @@ sub Data {
 
         # JS Template: PackageResolve
         'Package' => '包',
-        'Uninstall from OTOBO' => '从OTOBO卸载',
+        'Uninstall from CareOnCloud ESM' => '从CareOnCloud ESM卸载',
         'Ignore' => '忽略',
         'Migrate' => '迁移',
 
@@ -3682,20 +4170,28 @@ sub Data {
         'Country' => '国家',
         'Mr.' => '先生',
         'Mrs.' => '女士',
+        'Manager' => '',
         'Address' => '地址',
         'View system log messages.' => '查看系统日志信息。',
         'Edit the system configuration settings.' => '编辑系统配置。',
         'Update and extend your system with software packages.' => '更新或安装系统的软件包或模块。',
 
+        # Perl Module: Kernel/GenericInterface/Transport/HTTP/REST.pm
+        'Error fetching the OAuth2 Token' => '',
+        'Attached OAuth2 Bearer Token' => '',
+
+        # Perl Module: Kernel/Language.pm
+        '(in process)' => '（进行中）',
+
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             '数据库中的ACL信息与系统配置不一致，请部署所有ACL。',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            '由于未知错误不能导入ACL，请检查OTOBO日志以获得更多信息',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            '由于未知错误不能导入ACL，请检查CareOnCloud ESM日志以获得更多信息',
         'The following ACLs have been added successfully: %s' => '下列ACL已经成功添加：%s',
         'The following ACLs have been updated successfully: %s' => '下列ACL已经成功更新：%s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
-            '在添加/更新下列ACL：%s 时出现一些错误，请检查OTOBO日志以获得更多信息。',
+            '在添加/更新下列ACL：%s 时出现一些错误，请检查CareOnCloud ESM日志以获得更多信息。',
         'There was an error creating the ACL' => '创建ACL时出现了一个错误',
         'Need ACLID!' => '需要ACLID！',
         'Could not get data for ACLID %s' => '不能获得ACLID为%s 的数据',
@@ -3707,7 +4203,6 @@ sub Data {
         '%s (copy) %s' => '%s (副本) %s',
         'Please note that ACL restrictions will be ignored for the Superuser account (UserID 1).' =>
             '请注意，超级用户帐户（UserID 1）将忽略ACL限制。',
-        'Exact match' => '完全匹配',
         'Negated exact match' => '完全匹配取反',
         'Regular expression' => '正则表达式',
         'Regular expression (ignore case)' => '正则表达式（忽略大小写）',
@@ -3735,6 +4230,7 @@ sub Data {
         '+15 minutes' => '+15分钟',
         '+30 minutes' => '+30分钟',
         '+1 hour' => '+1小时',
+        '+1 day' => '',
 
         # Perl Module: Kernel/Modules/AdminAppointmentImport.pm
         'No permissions' => '没有权限',
@@ -3749,14 +4245,14 @@ sub Data {
         'Unknown Notification %s!' => '未知通知 %s！',
         '%s (copy)' => '%s (副本)',
         'There was an error creating the Notification' => '创建通知时出现了一个错误',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            '由于一个未知错误不能导入通知，请检查OTOBO日志以获取更多信息',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            '由于一个未知错误不能导入通知，请检查CareOnCloud ESM日志以获取更多信息',
         'The following Notifications have been added successfully: %s' =>
             '下列通知已成功添加：%s',
         'The following Notifications have been updated successfully: %s' =>
             '下列通知已成功更新：%s',
         'There where errors adding/updating the following Notifications: %s. Please check the log file for more information.' =>
-            '添加/更新下列通知时出现错误：%s，请检查OTOBO日志以获取更多信息。',
+            '添加/更新下列通知时出现错误：%s，请检查CareOnCloud ESM日志以获取更多信息。',
         'Notification updated!' => '通知已更新！',
         'Agent (resources), who are selected within the appointment' => '这个预约选择的服务人员（资源）',
         'All agents with (at least) read permission for the appointment (calendar)' =>
@@ -3765,6 +4261,7 @@ sub Data {
             '所有对这个预约（日历）有写权限的服务人员',
 
         # Perl Module: Kernel/Modules/AdminAttachment.pm
+        'No permission to edit this attachment.' => '',
         'Attachment added!' => '附件已添加！',
 
         # Perl Module: Kernel/Modules/AdminAutoResponse.pm
@@ -3783,7 +4280,6 @@ sub Data {
         'Invalid StartTime: %s!' => '无效的开始时间：%s！',
         'Successful' => '成功',
         'Processing' => '处理',
-        'Failed' => '失败',
         'Invalid Filter: %s!' => '无效的过滤器：%s！',
         'Less than a second' => '不到一秒钟',
         'sorted descending' => '降序排序',
@@ -3821,6 +4317,24 @@ sub Data {
         'Customer Company %s already exists!' => '客户单位 %s 已经存在！',
         'Customer company added!' => '客户单位已添加！',
 
+        # Perl Module: Kernel/Modules/AdminCustomerDashboardInfoTile.pm
+        'Start date shouldn\'t be defined after Stop date!' => '开始日期不能在结束日期之后！',
+        'Name is missing!' => '',
+        'Content is missing!' => '',
+        'ValidID is missing!' => '',
+        'Group is missing!' => '',
+        'There was an error creating the info tile entry' => '',
+        'Need ID!' => '',
+        'This Entry does not exist, or you don\'t have permissions to access it in its current state.' =>
+            '',
+        'Could not get data for ID %s' => '',
+        'Info tile entry was added successfully!' => '',
+        'Info tile entry was updated successfully!' => '',
+        'Session has been killed!' => '会话已经被终止掉！',
+        'All sessions have been killed, except for your own.' => '除了本会话外，所有会话都已经被kill掉。',
+        'There was an error updating the info tile entry' => '',
+        'It was not possible to delete the info tile entry: %s!' => '',
+
         # Perl Module: Kernel/Modules/AdminCustomerGroup.pm
         'No configuration for \'CustomerGroupPermissionContext\' found!' =>
             '找不到\'CustomerGroupPermissionContext（客户组权限上下文）\'的配置！',
@@ -3855,9 +4369,9 @@ sub Data {
         'Undefined subaction.' => '没有定义的子动作。',
         'Need %s' => '需要%s',
         'Add %s field' => '添加%s字段',
+        'The field must be numeric.' => '这个字段必须是数字。',
         'The field does not contain only ASCII letters and numbers.' => '这个字段不是仅包含ASCII字符和数字。',
         'There is another field with the same name.' => '存在同名的另一字段。',
-        'The field must be numeric.' => '这个字段必须是数字。',
         'Need ValidID' => '需要有效的ID',
         'Could not create the new field' => '不能创建这个新字段',
         'Need ID' => '需要ID',
@@ -3885,12 +4399,48 @@ sub Data {
         'An element is used as parent element, but not included itself. Please include it.' =>
             '',
 
+        # Perl Module: Kernel/Modules/AdminDynamicFieldLens.pm
+        'The referenced dynamic field' => '',
+        'Select the dynamic field that references an object' => '',
+        'The attribute of the referenced object' => '',
+        'Select the attribute dynamic field that references an object' =>
+            '',
+        'A field of type %s is currently not usable as lens attribute.' =>
+            '',
+        'Field %s is not a reference field.' => '',
+        'Not a valid dynamic field.' => '',
+
         # Perl Module: Kernel/Modules/AdminDynamicFieldScreen.pm
         'Settings were saved.' => '设置被保存。',
         'System was not able to save the setting!' => '系统不能保存配置！',
         'Setting is locked by another user!' => '设置被其它用户锁定！',
         'System was not able to reset the setting!' => '系统无法重置该设置！',
         'Settings were reset.' => '设置被重置。',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldScript.pm
+        'Need valid field driver.' => '',
+        'Erroneous value in RequiredArgs.' => '',
+        'Erroneous value in PreviewTriggers.' => '',
+        'Erroneous value in StorageTriggers.' => '',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldSet.pm
+        'Missing Dynamic Field.' => '',
+        'No valid dynamic field "%s".' => '',
+        'The dynamic field type "%s" of dynamic field "%s" can not be used in sets.' =>
+            '',
+        'The dynamic field "%s" can not be used in sets as it is either a Set field or a Lens field pointing to a Set field.' =>
+            '',
+        'The dynamic field "%s" is already in use in a ticket mask.' => '',
+        'The object type of the dynamic field "%s" does not match the object type of the Set field.' =>
+            '',
+        'Misconfigured Grid - need Rows as Array!' => '',
+        'Misconfigured Grid - need Columns as integer > 0!' => '',
+        'Misconfigured Grid - Rows can\'t be empty!' => '',
+        'Misconfigured Grid - Rows must contain entries with key \'DF\'!' =>
+            '',
+        'Missing Dynamic Field or Grid.' => '',
+        'The field must be a valid YAML containing an array of dynamic fields.' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminEmail.pm
         'Select at least one recipient.' => '选择至少一个收件人。',
@@ -4024,6 +4574,8 @@ sub Data {
             '映射前的传出响应数据（ProviderResponseInput）',
         'Outgoing error handler data after error handling (ProviderErrorHandlingOutput)' =>
             '错误处理后的传出错误处理程序数据（ProviderErrorHandlingOutput）',
+        'Disabled' => '已禁用',
+        'Enabled' => '已启用',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceOperationDefault.pm
         'Could not determine config for operation %s' => '不能确定操作%s 的配置',
@@ -4033,6 +4585,8 @@ sub Data {
         'Need valid Subaction!' => '需要有效的子动作！',
         'This field should be an integer.' => '该字段应为整数。',
         'File or Directory not found.' => '找不到文件或目录。',
+        'This key is already used' => '',
+        'This key is not allowed' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
         'There is another web service with the same name.' => '存在同名的另一WEB服务。',
@@ -4044,12 +4598,12 @@ sub Data {
         'Could not load %s.' => '不能载入 %s。',
         'Could not read %s!' => '不能读取 %s！',
         'Need a file to import!' => '导入需要一个文件！',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            '导入的文件没有有效的YAML内容！请检查OTOBO日志以获取详细信息',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            '导入的文件没有有效的YAML内容！请检查CareOnCloud ESM日志以获取详细信息',
         'Web service "%s" deleted!' => 'Web服务“%s”已经删除！',
-        'OTOBO as provider' => 'OTOBO作为服务提供方',
+        'CareOnCloud ESM as provider' => 'CareOnCloud ESM作为服务提供方',
         'Operations' => '操作',
-        'OTOBO as requester' => 'OTOBO作为服务请求方',
+        'CareOnCloud ESM as requester' => 'CareOnCloud ESM作为服务请求方',
         'Invokers' => '调用程序',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4059,6 +4613,23 @@ sub Data {
         # Perl Module: Kernel/Modules/AdminGroup.pm
         'Group updated!' => '组已更新！',
 
+        # Perl Module: Kernel/Modules/AdminImportExport.pm
+        'No object backend found!' => '没有找到对象的后端！',
+        'No format backend found!' => '没有找到格式的后端！',
+        'Template not found!' => '没有找到模板！',
+        'Can\'t insert/update template!' => '不能插入/更新模板！',
+        'Needed TemplateID!' => '需要TemplateID！',
+        'Error occurred. Import impossible! See Syslog for details.' => '出现错误。不能导入！查看Syslog获取详细信息。',
+        'Error occurred. Export impossible! See Syslog for details.' => '出现错误。不能导出！查看Syslog获取详细信息。',
+        'Template List' => '模板清单',
+        'number' => '数字',
+        'number bigger than zero' => '数字大于0',
+        'integer' => '整数',
+        'integer bigger than zero' => '整数大于0',
+        'Element required, please insert data' => '需要元素，请插入数据',
+        'Invalid data, please insert a valid %s' => '无效的数据，请插入一个有效的%s',
+        'Format not found!' => '没有找到格式！',
+
         # Perl Module: Kernel/Modules/AdminMailAccount.pm
         'Mail account added!' => '邮件账号已添加！',
         'Email account fetch already fetched by another process. Please try again later!' =>
@@ -4067,6 +4638,9 @@ sub Data {
         'Dispatching by selected Queue.' => '按所选队列分派。',
 
         # Perl Module: Kernel/Modules/AdminNotificationEvent.pm
+        'No permission to edit this ticket notification.' => '',
+        'You need %s permissions!' => '需要%s 权限！',
+        'Agent who created the first article' => '',
         'Agent who created the ticket' => '创建该工单的服务人员',
         'Agent who owns the ticket' => '拥有这个工单的服务人员',
         'Agent who is responsible for the ticket' => '对这个工单负责的服务人员',
@@ -4079,8 +4653,35 @@ sub Data {
         'Customer user of the ticket' => '该工单的客户用户',
         'All recipients of the first article' => '第一封信件的所有收件人',
         'All recipients of the last article' => '最近一封信件的所有收件人',
+        'Only send within working hours' => '',
+        'Only send outside working hours' => '',
         'Invisible to customer' => '客户不可见',
         'Visible to customer' => '对客户可见',
+
+        # Perl Module: Kernel/Modules/AdminOAuthTokenStore.pm
+        'Account Name is missing!' => '',
+        'Username is required!' => '',
+        'Password is required!' => '',
+        'Account Name is taken!' => '',
+        'Error creating/updating %s!' => '',
+        'Unable to generate OIDC provider authentication URL for login. Invalid OIDC configuration!' =>
+            '',
+        'Account %s deleted!' => '',
+        'Token %s updated!' => '',
+        'Invalid OAuth State!' => '',
+        'Invalid Account %s for Token!' => '',
+        'Invalid Issuer %s for Token %s!' => '',
+
+        # Perl Module: Kernel/Modules/AdminOIDCProfiles.pm
+        'Profile Name is missing!' => '',
+        'Provider metadata url is missing!' => '',
+        'Provider client id is missing!' => '',
+        'Provider client secret is missing!' => '',
+        'Profile Name is taken!' => '',
+        'Error creating/updating Profile %s!' => '',
+        'Profile %s deleted!' => '',
+        'Profile %s could not be deleted - do you have any Functional Accounts referencing this Profile?' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminPGP.pm
         'PGP environment is not working. Please check log for more info!' =>
@@ -4096,7 +4697,7 @@ sub Data {
         'Can\'t read %s!' => '不能读取%s！',
         'File is OK' => '文件正常',
         'Package has locally modified files.' => '软件包中有本地修改过的文件。',
-        'Package not verified by the OTOBO Team!' => '软件包没有OTOBO团队的验证！',
+        'Package not verified by the CareOnCloud ESM Team!' => '软件包没有CareOnCloud ESM团队的验证！',
         'Not Started' => '没有启动',
         'Updated' => '更新时间',
         'Already up-to-date' => '已经是最新的',
@@ -4117,9 +4718,9 @@ sub Data {
             '在选定的软件仓库中找不到软件包， 请查看日志以获取更多信息！',
         'Package not verified due a communication issue with verification server!' =>
             '不能验证软件包，因为与验证服务器无法正常通信！',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => '不能连接到OTOBO附加功能列表服务器！',
-        'Can\'t get OTOBO Feature Add-on list from server!' => '不能从服务器获取OTOBO附加功能列表！',
-        'Can\'t get OTOBO Feature Add-on from server!' => '不能从服务器获取OTOBO附加功能！',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => '不能连接到CareOnCloud ESM附加功能列表服务器！',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => '不能从服务器获取CareOnCloud ESM附加功能列表！',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => '不能从服务器获取CareOnCloud ESM附加功能！',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => '没有这个过滤器：%s',
@@ -4131,6 +4732,8 @@ sub Data {
         'Process Management information from database is not in sync with the system configuration, please synchronize all processes.' =>
             '数据库中的流程管理信息与系统配置不一致，请同步所有流程。',
         'Need ExampleProcesses!' => '需要ExampleProcesses！',
+        'There was an error setting the entity sync status for Process entity: %s' =>
+            '为流程实体：%s设置实体同步状态时出现了一个错误',
         'Need ProcessID!' => '需要流程ID！',
         'Yes (mandatory)' => '是（强制）',
         'Unknown Process %s!' => '未知的流程 %s！',
@@ -4138,10 +4741,17 @@ sub Data {
             '为这个流程生成新的实体ID时出现了一个错误',
         'The StateEntityID for state Inactive does not exists' => '状态为‘非活动的’的StateEntityID不存在',
         'There was an error creating the Process' => '创建该流程时出现了一个错误',
-        'There was an error setting the entity sync status for Process entity: %s' =>
-            '为流程实体：%s设置实体同步状态时出现了一个错误',
-        'Could not get data for ProcessID %s' => '不能获取ID为 %s的流程数据',
+        'There was an error generating a new EntityID while copying an associated Element' =>
+            '',
+        'There was an error copying an associated Element' => '',
+        'There was an error setting the entity sync status for an associated Element entity: %s' =>
+            '',
         'There was an error updating the Process' => '更新该流程时出现了一个错误',
+        'Could not get data for ProcessID %s' => '不能获取ID为 %s的流程数据',
+        'Process: %s successfully deleted, but failed to delete an associated Element' =>
+            '',
+        'Process: %s successfully deleted, but there was an error setting the entity sync status for an associated Element entity' =>
+            '',
         'Process: %s could not be deleted' => '不能删除流程：%s',
         'There was an error synchronizing the processes.' => '同步该流程时出现了一个错误。',
         'The %s:%s is still in use' => '%s:%s 仍在使用中',
@@ -4150,24 +4760,30 @@ sub Data {
         'There was an error setting the entity sync status for %s entity: %s' =>
             '为 %s 实体： %s 设置实体同步状态时出现了一个错误',
         'Could not get %s' => '不能获取 %s',
+        'Need ProcessEntityID!' => '',
         'Need %s!' => '需要 %s！',
         'Process: %s is not Inactive' => '流程： %s 的状态不是‘非活动的’',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementActivity.pm
-        'There was an error generating a new EntityID for this Activity' =>
-            '为这个活动生成新的EntityID时出现了一个错误',
-        'There was an error creating the Activity' => '创建活动时出现了一个错误',
-        'There was an error setting the entity sync status for Activity entity: %s' =>
-            '设置活动实体： %s的同步状态时出现了一个错误',
-        'Need ActivityID!' => '需要ActivityID！',
-        'Could not get data for ActivityID %s' => '不能获得ActivityID %s的数据',
-        'There was an error updating the Activity' => '更新活动时出现了一个错误',
+        'Non-global activity dialogs may not be assigned to global activities.' =>
+            '',
+        'There was an error generating a new entity ID for this activity.' =>
+            '',
+        'There was an error creating the activity.' => '',
+        'There was an error setting the entity sync status for activity entity: %s' =>
+            '',
+        'Need ActivityID and ProcessEntityID!' => '',
+        'Could not get data for activity ID %s' => '',
+        'This activity is not available to the current process.' => '',
+        'Activities currently shared by other processes may not be set to non-global.' =>
+            '',
+        'There was an error updating the activity.' => '',
         'Missing Parameter: Need Activity and ActivityDialog!' => '参数缺失：需要活动或活动对话框！',
         'Activity not found!' => '没有找到活动！',
         'ActivityDialog not found!' => '没有找到活动对话框！',
-        'ActivityDialog already assigned to Activity. You cannot add an ActivityDialog twice!' =>
-            '活动对话框已经分配给活动，不能重复添加活动对话框！',
-        'Error while saving the Activity to the database!' => '保存活动到数据库时出错！',
+        'Activity dialog already assigned to activity. You cannot add an activity dialog twice.' =>
+            '',
+        'Error while saving the activity to the database.' => '',
         'This subaction is not valid' => '这个子操作无效',
         'Edit Activity "%s"' => '编辑活动“%s”',
 
@@ -4177,8 +4793,12 @@ sub Data {
         'There was an error creating the ActivityDialog' => '创建这个活动对话框时出现了一个错误',
         'There was an error setting the entity sync status for ActivityDialog entity: %s' =>
             '设置活动对话框实体的同步状态时出现了一个错误',
-        'Need ActivityDialogID!' => '需要ActivityDialogID！',
+        'Need ActivityDialogID and ProcessEntityID!' => '',
         'Could not get data for ActivityDialogID %s' => '不能获得ActivityDialogID %s的数据',
+        'This Activity Dialog is not available to the current Process!' =>
+            '',
+        'ActivityDialogs currently used in gobal ' => '',
+        'ActivityDialogs currently used in non-gobal Activities ' => '',
         'There was an error updating the ActivityDialog' => '更新活动对话框时出现了一个错误',
         'Edit Activity Dialog "%s"' => '编辑活动对话框“%s”',
         'Agent Interface' => '服务人员界面',
@@ -4197,11 +4817,15 @@ sub Data {
         'There was an error creating the Transition' => '创建转换时出现了一个错误',
         'There was an error setting the entity sync status for Transition entity: %s' =>
             '设置转换实体的同步状态时出现了一个错误',
-        'Need TransitionID!' => '需要TransitionID！',
+        'Need TransitionID and ProcessEntityID!' => '',
         'Could not get data for TransitionID %s' => '不能获得TransitionID %s的数据',
+        'This Transition is not available to the current Process!' => '',
+        'Transitions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the Transition' => '更新转换时出现了一个错误',
         'Edit Transition "%s"' => '编辑转换“%s”',
-        'Transition validation module' => '转换验证模块',
+        'Regular expression - all' => '',
+        'Regular expression - negated' => '',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementTransitionAction.pm
         'At least one valid config parameter is required.' => '至少需要一个有效的配置参数。',
@@ -4210,8 +4834,12 @@ sub Data {
         'There was an error creating the TransitionAction' => '创建转换动作时出现了一个错误',
         'There was an error setting the entity sync status for TransitionAction entity: %s' =>
             '设置转换动作实体：%s的同步状态时出现了一个错误',
-        'Need TransitionActionID!' => '需要TransitionActionID！',
+        'Need TransitionActionID and ProcessEntityID!' => '',
         'Could not get data for TransitionActionID %s' => '不能获得TransitionActionID %s的数据',
+        'This Transition Action is not available to the current Process!' =>
+            '',
+        'TransitionActions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the TransitionAction' => '更新转换动作时出现了一个错误',
         'Edit Transition Action "%s"' => '编辑转换操作“%s”',
         'Error: Not all keys seem to have values or vice versa.' => '错误：不是所有键都有值，或存在没有键的值。',
@@ -4290,13 +4918,13 @@ sub Data {
         'You currently don\'t have any favourite settings.' => '你目前没有收藏任何设置。',
         'The following settings could not be found: %s' => '找不到以下设置：%s',
         'Import not allowed!' => '不允许导入！',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
-            '由于一个未知错误不能导入系统配置，请检查OTOBO日志以获取更多信息。',
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
+            '由于一个未知错误不能导入系统配置，请检查CareOnCloud ESM日志以获取更多信息。',
         'Category Search' => '搜索类别',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
-            '某些导入的设置不在配置的当前状态中，或者无法进行更新。 请查看OTOBO日志了解更多信息。',
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
+            '某些导入的设置不在配置的当前状态中，或者无法进行更新。 请查看CareOnCloud ESM日志了解更多信息。',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
         'This deployment does not contain changes in the setting values!' =>
@@ -4313,6 +4941,7 @@ sub Data {
         'System was not able to lock the setting!' => '系统无法锁定该设置！',
         'Missing setting name.' => '缺少设置名称。',
         'Setting not found.' => '没有找到设置。',
+        'Missing setting key!' => '',
         'Missing Settings!' => '缺少设置！',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationSettingHistory.pm
@@ -4328,24 +4957,38 @@ sub Data {
         'System was not able to delete the user setting values!' => '系统无法删除用户设置数值！',
 
         # Perl Module: Kernel/Modules/AdminSystemMaintenance.pm
-        'Start date shouldn\'t be defined after Stop date!' => '开始日期不能在结束日期之后！',
         'There was an error creating the System Maintenance' => '创建系统维护时出现了一个错误',
         'Need SystemMaintenanceID!' => '需要SystemMaintenanceID！',
         'Could not get data for SystemMaintenanceID %s' => '不能获得SystemMaintenanceID %s的数据',
         'System Maintenance was added successfully!' => '系统维护添加成功！',
         'System Maintenance was updated successfully!' => '系统维护更新成功！',
-        'Session has been killed!' => '会话已经被终止掉！',
-        'All sessions have been killed, except for your own.' => '除了本会话外，所有会话都已经被kill掉。',
         'There was an error updating the System Maintenance' => '更新系统维护时出现了一个错误',
         'Was not possible to delete the SystemMaintenance entry: %s!' => '不能删除系统维护条目：%s！',
 
         # Perl Module: Kernel/Modules/AdminTemplate.pm
+        'No permission to edit this template.' => '',
         'Template updated!' => '模板已更新！',
         'Template added!' => '模板已添加！',
 
         # Perl Module: Kernel/Modules/AdminTemplateAttachment.pm
         'Change Attachment Relations for Template' => '为模板指定附件',
         'Change Template Relations for Attachment' => '为附件指定模板',
+
+        # Perl Module: Kernel/Modules/AdminTranslations.pm
+        'Translation unmarked for deletion!' => '',
+        'Error trying unmark translation for delete!' => '',
+        'Translations changed!' => '',
+        'No translations were changed!' => '',
+        'Errors trying to change translations!' => '',
+        'Translations added!' => '',
+        'No translations were given to add!' => '',
+        'Translation already exists!' => '',
+        'Translations deployed successfully!' => '',
+        'Nothing to do!' => '',
+        'Errors occurred when trying to deploy translation. Please check system logs!' =>
+            '',
+        'All Items' => '',
+        'Deployment Results' => '',
 
         # Perl Module: Kernel/Modules/AdminType.pm
         'Need Type!' => '需要类型！',
@@ -4465,7 +5108,6 @@ sub Data {
 
         # Perl Module: Kernel/Modules/AgentTicketActionCommon.pm
         'No TicketID is given!' => '没有指定TicketID 工单编号！',
-        'You need %s permissions!' => '需要%s 权限！',
         'Loading draft failed!' => '加载草稿失败！',
         'Sorry, you need to be the ticket owner to perform this action.' =>
             '只有工单的所有者才能执行此操作。',
@@ -4480,6 +5122,14 @@ sub Data {
         'wrote' => '写道',
         'Message from' => '消息来自',
         'End message' => '消息结束',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleEdit.pm
+        'No ArticleID is given!' => '没有指定信件ID！',
+        'This action is not permitted on the article!' => '',
+        'This article is not editable!' => '',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleStatus.pm
+        'Can\'t set this Ticket option, no TicketID is given!' => '',
 
         # Perl Module: Kernel/Modules/AgentTicketBounce.pm
         '%s is needed!' => '需要%s！',
@@ -4518,9 +5168,6 @@ sub Data {
         # Perl Module: Kernel/Modules/AgentTicketEmailOutbound.pm
         'Got no TicketID!' => '没有获得工单编号！',
         'System Error!' => '系统错误！',
-
-        # Perl Module: Kernel/Modules/AgentTicketEmailResend.pm
-        'No ArticleID is given!' => '没有指定信件ID！',
 
         # Perl Module: Kernel/Modules/AgentTicketEscalationView.pm
         'Next week' => '下周',
@@ -4618,14 +5265,14 @@ sub Data {
         'This step does not belong anymore to the current activity in process for ticket \'%s%s%s\'! Another user changed this ticket in the meantime. Please close this window and reload the ticket.' =>
             '此步骤不再属于工单“%s%s%s”流程的当前活动！ 另一位用户在此期间改变了这个工单。请关闭此窗口，再重新加载这个工单。',
         'Missing ProcessEntityID in Ticket %s!' => '在工单 “%s”中缺少流程实体ID！',
-        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
-            '不能设置动态字段“%s”的值，工单ID为“%s”，活动对话框 “%s”！',
         'Could not set PendingTime for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             '不能设置工单 “%s”的挂起时间，活动对话框 “%s”！',
         'Wrong ActivityDialog Field config: %s can\'t be Display => 1 / Show field (Please change its configuration to be Display => 0 / Do not show field or Display => 2 / Show field as mandatory)!' =>
             '错误的活动对话框字段配置：%s 不能设置为Display => 1/显示字段（请修改它的配置为Display => 0/不显示字段或Display => 2 /强制显示字段）！',
         'Could not set %s for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             '不能设置“%s”，工单ID为“%s”，活动对话框 “%s”！',
+        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
+            '不能设置动态字段“%s”的值，工单ID为“%s”，活动对话框 “%s”！',
         'Default Config for Process::Default%s missing!' => 'Process::Default%s 默认配置缺失！',
         'Default Config for Process::Default%s invalid!' => 'Process::Default%s 默认配置无效！',
 
@@ -4713,12 +5360,11 @@ sub Data {
         'Notification Was Sent' => '通知已发送',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state.' =>
             '这个工单不存在，或者它的当前状态下你无权访问它。',
+        'Could not delete form draft.' => '',
         'Missing FormDraftID!' => '缺少表单草稿ID！',
         'Can\'t get for ArticleID %s!' => '不能获得ID为“%s”的信件！',
         'Article filter settings were saved.' => '信件过滤器设置已保存。',
         'Event type filter settings were saved.' => '事件类型过滤器设置已保存。',
-        'Need ArticleID!' => '需要信件ID！',
-        'Invalid ArticleID!' => '无效的信件ID！',
         'Forward article via mail' => '通过邮件转发信件',
         'Forward' => '转发',
         'Fields with no group' => '没有分组的字段',
@@ -4733,10 +5379,13 @@ sub Data {
         'Error: the file could not be deleted properly. Please contact your administrator (missing FileID).' =>
             '错误：文件无法正确删除，请联系您的管理员（缺少文件ID）。',
 
+        # Perl Module: Kernel/Modules/BasePassword.pm
+        'Can`t remove SessionID.' => '不能移除会话ID。',
+
         # Perl Module: Kernel/Modules/CustomerDashboardCommon.pm
-        'Registration for tile %s of CustomerDashboard is invalid! Either Module or Template needed.' =>
+        'Registration for tile \'%s\' of CustomerDashboard is invalid! Order needs to be a number and unique.' =>
             '',
-        'Registration for tile %s of CustomerDashboard is invalid! Order needs to be a unique number.' =>
+        'Registration for tile %s of customer dashboard is invalid! Either Module or Template needed.' =>
             '',
 
         # Perl Module: Kernel/Modules/CustomerGenericContent.pm
@@ -4744,6 +5393,9 @@ sub Data {
         'Invalid Key!' => '',
         'Failed to load Content!' => '',
         'Destination unknown.' => '',
+
+        # Perl Module: Kernel/Modules/CustomerPreferences.pm
+        'No valid config for %s' => '',
 
         # Perl Module: Kernel/Modules/CustomerTicketArticleContent.pm
         'ArticleID is needed!' => '需要信件ID！',
@@ -4764,12 +5416,9 @@ sub Data {
         'Need CustomerID!' => '需要客户ID！',
         'My Tickets' => '我的工单',
         'Company Tickets' => '单位工单',
-        'Untitled!' => '未命名！',
 
         # Perl Module: Kernel/Modules/CustomerTicketSearch.pm
         'Customer Realname' => '客户用户真实姓名',
-        'Created within the last' => '在最近...之内创建的',
-        'Created more than ... ago' => '在...之前创建的',
         'Please remove the following words because they cannot be used for the search:' =>
             '请移除以下不能用于搜索的词语：',
 
@@ -4786,7 +5435,7 @@ sub Data {
         'Configure "Home" in Kernel/Config.pm first!' => '首先在文件Kernel/Config.pm中配置“Home”！',
         'File "%s/Kernel/Config.pm" not found!' => '没有找到文件“%s/Kernel/Config.pm”！',
         'Directory "%s" not found!' => '没有找到目录“%s”！',
-        'Install OTOBO' => '安装OTOBO',
+        'Install CareOnCloud ESM' => '安装CareOnCloud ESM',
         'Intro' => '介绍',
         'Kernel/Config.pm isn\'t writable!' => '文件Kernel/Config.pm不可写入！',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -4803,7 +5452,7 @@ sub Data {
         'Unknown database type "%s".' => '未知的数据库类型“%s”。',
         'Please go back.' => '请返回。',
         'Create Database' => '创建数据库',
-        'Install OTOBO - Error' => '安装OTOBO - 错误',
+        'Install CareOnCloud ESM - Error' => '安装CareOnCloud ESM - 错误',
         'File "%s/%s.xml" not found!' => '没有找到文件“%s/%s.xml”！',
         'Contact your Admin!' => '联系你的系统管理员！',
         'Execution of SQL statement failed: ' => '',
@@ -4818,6 +5467,8 @@ sub Data {
             '不能连接到数据库，没有安装Perl模块 DBD::%s！',
         'Can\'t connect to database, read comment!' => '不能连接到数据库，读取注释！',
         'Database already contains data - it should be empty!' => '数据库中已包含数据 - 应该清空它！',
+        'Error: database version requirement not satisfied. Have version: %s Want version: %s' =>
+            '',
         'Error: Please make sure your database accepts packages over %s MB in size (it currently only accepts packages up to %s MB). Please adapt the max_allowed_packet setting of your database in order to avoid errors.' =>
             '错误：请确认你的数据库能够接收大于%sMB的数据包（目前能够接收的最大数据包为%sMB）。为了避免程序报错，请调整数据库max_allowed_packet参数。',
         'Error: Please set the value for innodb_log_file_size on your database to at least %s MB (current: %s MB, recommended: %s MB). For more information, please have a look at %s.' =>
@@ -4826,7 +5477,7 @@ sub Data {
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             '如果要重新运行MigrateFromOTRS工具，请在SysConfig中禁用SecureMode。',
-        'OTRS to OTOBO migration' => '从OTRS迁移到OTOBO',
+        'OTRS to CareOnCloud ESM migration' => '从OTRS迁移到CareOnCloud ESM',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => '没有%s!',
@@ -4841,6 +5492,15 @@ sub Data {
 
         # Perl Module: Kernel/Output/HTML/Article/Chat.pm
         'Chat' => '聊天',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleDelete.pm
+        'Delete this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleEdit.pm
+        'Edit this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleRestore.pm
+        'Restore this article' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketBounce.pm
         'Bounce Article to a different mail address' => '将邮件退回到另一个邮箱地址',
@@ -4871,8 +5531,12 @@ sub Data {
         'Print this article' => '打印信件',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/GetHelpLink.pm
-        'Contact us at hello@otobo.de' => '通过 hello@otobo.de 联系我们',
+        'Contact us at hello@otobo.io' => '通过 hello@otobo.io 联系我们',
         'Get Help' => '获取帮助',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/MarkArticleSeenUnseen.pm
+        'Mark article as unseen' => '',
+        'Mark as unseen' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/MarkAsImportant.pm
         'Mark' => '标记',
@@ -4950,8 +5614,8 @@ sub Data {
         'Shown Tickets' => '显示工单',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => '无法连接OTOBO新闻服务器！',
-        'Can\'t get OTOBO News from server!' => '无法从服务器获取OTOBO新闻！',
+        'Can\'t connect to CareOnCloud ESM News server!' => '无法连接CareOnCloud ESM新闻服务器！',
+        'Can\'t get CareOnCloud ESM News from server!' => '无法从服务器获取CareOnCloud ESM新闻！',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => '无法连接到产品新闻服务器！',
@@ -4973,6 +5637,12 @@ sub Data {
         'User set their status to unavailable.' => '用户设置他们的状态为不可用。',
         'Unavailable' => '不可用',
 
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchGeneric.pm
+        'Shown Elasticsearch Results' => '',
+
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchTicketGeneric.pm
+        'Shown Elsticsearch Results' => '',
+
         # Perl Module: Kernel/Output/HTML/Layout.pm
         'Standard' => '标准',
         'The following tickets are not updated: %s.' => '下列工单没有更新：%s。',
@@ -4981,10 +5651,6 @@ sub Data {
         'd' => '天',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state. You can take one of the following actions:' =>
             '这个工单不存在，或者它的当前状态下你无权访问它。你可以采取下列操作之一：',
-        'This is a' => '这是一个',
-        'email' => '电子邮件',
-        'click here' => '点击这里',
-        'to open it in a new window.' => '在新窗口中打开。',
         'Year' => '年',
         'Hours' => '小时',
         'Minutes' => '分钟',
@@ -5035,7 +5701,7 @@ sub Data {
             '一次系统维护将开始于：%s，预计结束时间为：%s',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'OTOBO守护进程没有运行。',
+        'CareOnCloud ESM Daemon is not running.' => 'CareOnCloud ESM守护进程没有运行。',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5061,9 +5727,6 @@ sub Data {
         'Please make sure you\'ve chosen at least one transport method for mandatory notifications.' =>
             '请确保您已经为强制通知选择至少一种传输方法。',
         'Preferences updated successfully!' => '偏好设置更新成功！',
-
-        # Perl Module: Kernel/Output/HTML/Preferences/Language.pm
-        '(in process)' => '（进行中）',
 
         # Perl Module: Kernel/Output/HTML/Preferences/OutOfOffice.pm
         'Please specify an end date that is after the start date.' => '请指定在开始时间之后的结束时间。',
@@ -5125,11 +5788,16 @@ sub Data {
         'Cancel editing and unlock this setting' => '取消编辑并解锁此设置',
         'Reset this setting to its default value.' => '将这个设置重置为默认值。',
         'Unable to load %s!' => '无法加载%s！',
-        'Content' => '值',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/Lock.pm
         'Unlock to give it back to the queue' => '解锁并释放工单到队列',
         'Lock it to work on it' => '锁定并处理工单',
+
+        # Perl Module: Kernel/Output/HTML/TicketMenu/ShowHideDeletedArticles.pm
+        'Hide deleted articles' => '',
+        'Click to hide deleted articles' => '',
+        'Show deleted articles' => '',
+        'Click to show deleted articles' => '',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/TicketWatcher.pm
         'Unwatch' => '取消关注',
@@ -5139,6 +5807,9 @@ sub Data {
 
         # Perl Module: Kernel/Output/HTML/TicketOverviewMenu/Sort.pm
         'Order by' => '排序',
+
+        # Perl Module: Kernel/Output/HTML/TicketZoom/SimilarTickets.pm
+        'Similar Tickets' => '',
 
         # Perl Module: Kernel/Output/HTML/ToolBar/TicketLocked.pm
         'Locked Tickets New' => '新的锁定工单数',
@@ -5213,137 +5884,213 @@ sub Data {
         'This email address is already in use for another customer user.' =>
             '这个电子邮件地址已被其他客户用户使用。',
 
+        # Perl Module: Kernel/System/DynamicField/Driver/Agent.pm
+        'Group of the agents' => '',
+        'Select the group of the agents.' => '',
+        'External source key' => '',
+        'When set via an external source (e.g. web service or import / export), the value will be interpreted as this attribute.' =>
+            '',
+
         # Perl Module: Kernel/System/DynamicField/Driver/BaseDateTime.pm
         'before/after' => '在...之前/之后',
         'between' => '在...之间',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/BaseText.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseReference.pm
+        'Referenced object type' => '',
+        'Select the type of the referenced object.' => '',
+        'Input mode of edit field' => '',
+        'Select the input mode for the edit field.' => '',
+        'Link type' => '',
+        'Select the link type.' => '',
+        'Forwards: Referencing (Source) -> Referenced (Target)' => '',
+        'Backwards: Referenced (Source) -> Referencing (Target)' => '',
+        'Link Direction' => '',
+        'The referencing object is the one containing this dynamic field, the referenced object is the one selected as value of the dynamic field.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseScript.pm
         'e.g. Text or Te*t' => '如：Text或Te*t',
 
         # Perl Module: Kernel/System/DynamicField/Driver/Checkbox.pm
         'Ignore this field.' => '忽略该字段。',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/TextArea.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/CustomerCompany.pm
+        'Attribute which will be searched on autocomplete' => '',
+        'Select the attribute which customer companies will be searched by.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/RichText.pm
         'This field is required or' => '这个字段是必填的',
         'The field content is too long!' => '字段值太长了！',
         'Maximum size is %s characters.' => '最多%s个字符。',
+        'Full %s Text' => '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/Ticket.pm
+        'Queue of the ticket' => '',
+        'Select the queue of the ticket.' => '',
+        'Type of the ticket' => '',
+        'Select the type of the ticket.' => '',
+        'Select the attribute which tickets will be searched by.' => '',
+        'Attribute which is displayed for values' => '',
+        'Select the type of display.' => '',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/CSV.pm
+        'Column Separator' => '列分隔符',
+        'Tabulator (TAB)' => 'TAB键 (TAB)',
+        'Semicolon (;)' => '分号 (;)',
+        'Colon (:)' => '冒号 (:)',
+        'Dot (.)' => '句号 (.)',
+        'Comma (,)' => '逗号（,）',
+        'Charset' => '字符集',
+        'Include Column Headers' => '包括列标题',
+        'Column' => '列',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/JSON.pm
+        'Pretty print the exported concatenated JSON' => '',
+
+        # Perl Module: Kernel/System/ImportExport/ObjectBackend/Ticket.pm
+        'Default Queue' => '',
+        'Default Type' => '',
+        'Default Service' => '',
+        'Default SLA' => '',
+        'Default state' => '',
+        'Default priority' => '',
+        'Default owner' => '',
+        'Default responsible' => '',
+        'Default lock' => '',
+        'Default CustomerID' => '',
+        'Default CustomerUserID' => '',
+        'Default ArchiveFlag' => '',
+        'Default subject' => '',
+        'Default body' => '',
+        'Default sender type' => '',
+        'Default is visible to customer' => '',
+        'Empty fields indicate that the current values are kept' => '',
+        'Do not update existing tickets' => '',
+        'Only update tickets of this user in the target system' => '',
+        'Import/Export articles' => '',
+        'Default Backend' => '',
+        'Store articles on separate lines indicated by a blank first entry' =>
+            '',
+        'Import/Export attachments (as the last entries per line)' => '',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => '数据库完整性检查。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => '部署ACL配置。',
         'Deployment completed, perfect!' => '部署完成，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => '迁移数据库表单auto_responses。',
         'Migration failed.' => '迁移失败。',
         'Migrate database table auto_response.' => '迁移数据库表单auto_responses。',
         'Migration completed, perfect!' => '迁移完成，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => 'OTOBO缓存清除。',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
+        'CareOnCloud ESM Cache cleanup.' => 'CareOnCloud ESM缓存清除。',
         'Completed.' => '完成。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => '需要 OTRSData->%s！',
-        'Can\'t access OTRS Home: %s!' => '不能访问OTRS Home: %s！',
+        'Can\'t access OTRS home directory: %s!' => '',
         'All needed files copied and migrated, perfect!' => '所有需要的文件都已经复制并迁移了，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => '复制数据库。',
         'Skipped...' => '',
         'System was unable to connect to OTRS database.' => '系统无法连接OTRS数据库。',
         'System was unable to complete data transfer.' => '系统无法完成数据传递。',
         'Data transfer completed.' => '数据传递完成。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => '检查OTOBO的版本是否正确。',
-        'Check if OTOBO and OTRS connect is possible.' => '检查OTOBO和OTRS能否连接。',
-        'Can\'t open RELEASE file from OTRSHome: %s!' => '无法从 OTRSHome: %s 打开RELEASE文件！',
-        'Check if OTOBO and OTRS version is correct.' => '检查OTOBO 和 OTRS 的版本是否正确。',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
+        'Check if CareOnCloud ESM version is correct.' => '检查CareOnCloud ESM的版本是否正确。',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => '检查CareOnCloud ESM和OTRS能否连接。',
+        'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => '检查CareOnCloud ESM 和 OTRS 的版本是否正确。',
         '%s does not exist!' => '%s 不存在！',
-        'No OTOBO system found!' => '没发现OTOBO系统！',
+        'No CareOnCloud ESM system found!' => '没发现CareOnCloud ESM系统！',
         'You are trying to run this script on the wrong framework version %s!' =>
             '你是在错误的框架版本 %s 上运行这个脚本！',
-        'OTOBO Version is correct: %s.' => 'OTOBO版本正确：%s。',
+        'CareOnCloud ESM Version is correct: %s.' => 'CareOnCloud ESM版本正确：%s。',
         'Check if OTRS version is correct.' => '检查OTRS版本是否正确。',
         'OTRS RELEASE file %s does not exist!' => '',
         'Can\'t read OTRS RELEASE file: %s' => '',
         'No OTRS system found!' => '没发现OTRS系统！',
-        'Unknown PRODUCT found in OTRS RELASE file: %s. Expected values are %s.' =>
+        'Unknown PRODUCT found in OTRS RELEASE file: %s. Expected values are %s.' =>
             '',
         'OTRS Version is correct: %s.' => 'OTRS版本正确：%s。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => '',
-        'Nothing to do, as the the table \'%s\' does not exist.' => '',
+        'Nothing to do, as the table \'%s\' does not exist.' => '',
         'UPDATE of the table \'%s\' failed.' => '',
         'Migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => '迁移配置设置。',
-        'An error occured during SysConfig data migration or no configuration exists.' =>
-            'SysConfig数据迁移时发生错误或配置不存在。',
-        'An error occured during SysConfig migration when writing XML to DB.' =>
-            '将XML写入DB时，在SysConfig迁移期间发生一个错误。',
+        'An error occurred during system configuration data migration or no configuration exists.' =>
+            '',
+        'An error occurred during system configuration migration when writing XML to DB.' =>
+            '',
         'SysConfig data migration completed.' => 'SysConfig数据迁移完成了。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => '迁移网络服务配置。',
         'Failed - see the log!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => '迁移数据库表通知。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
-        'Can\'t open Kernel/Config.pm file from OTRSHome: %s!' => '无法从 OTRSHome: %s打开Kernel/Config.pm文件！',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => '检查OTOBO主页中是否存在Kernel / Config.pm。',
-        'Kernel/Config.pm exists in OTOBO home' => 'OTOBO主页中是否存在Kernel / Config.pm',
-        'Check if we are able to connect to OTRS Home.' => '检查我们能否连接到OTRS Home。',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
+        'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
+            '',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => '检查CareOnCloud ESM主页中是否存在Kernel / Config.pm。',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => 'CareOnCloud ESM主页中是否存在Kernel / Config.pm',
+        'Check if we are able to connect to OTRS home directory.' => '',
         'Can\'t connect to OTRS file directory.' => '无法连接到OTRS文件目录。',
         'Connect to OTRS file directory is possible.' => '可能可以连接到OTRS文件目录。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => '尝试进行数据库连接和完整性检查。',
         'Could not create database object.' => '无法创建数据库对象。',
         'Database connect and sanity checks completed.' => '连接到数据库并且完整性检查完成。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => '检查是否所有需要的软件包都已经安装。',
         'The following packages are only installed in OTRS:' => '下面的软件包只安装到OTRS：',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             '请在迁移之前安装（或者卸载）这个软件包，如果某一个软件包没有适用OTOBO的，请通过bugs\@otobo.org联系OTOBO团队，我们会找到一个解决方案。',
         'The same packages are installed on both systems, perfect!' => '同样的软件包可以安装在两个系统上，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => '',
         'Done -' => '',
         'Failed at -' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => '检查是否所有需要的Perl模块都已经安装。',
         '%s script does not exist.' => '%s 脚本不存在。',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             '一个或多个需要的Perl模块缺失，请按照建议安装它们，而后重新运行迁移脚本。',
         'All required Perl modules have been installed, perfect!' => '所有需要的Perl模块都已经安装，完美！',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => '迁移邮件管理过滤器。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => '部署流程管理配置。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => '迁移数据库表单响应_模板。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => '迁移数据库表单称呼。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => '迁移数据库表单签名。',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => '迁移统计数据。',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -5352,18 +6099,33 @@ sub Data {
         'Imported notification has body text with more than 4000 characters.' =>
             '导入的通知包含的正文文本超过4000个字符。',
 
+        # Perl Module: Kernel/System/OpenIDConnect/OAuth2.pm
+        'Error fetching Token: %s' => '',
+        'Need ClientID and ClientSecret!' => '',
+        'Got no content when requesting Token. Response Code: %s' => '',
+        'Got no JSON object when requesting Token. Response: %s' => '',
+
+        # Perl Module: Kernel/System/OpenIDConnect/TokenProvider.pm
+        'AccountName %s not found!' => '',
+        'No valid refresh_token for Account %s using grant_type \'authorization code\' !' =>
+            '',
+        'Need functional account Invoker settings in System Configuration for %s.' =>
+            '',
+        'Did not receive the desired TokenType \'%s\' in OIDC provider response for Invoker %s!' =>
+            '',
+        'Time left on fresh token is: %s s for Invoker %s!' => '',
+        'Could not get the OAuth2 token_endpoint for Invoker ' => '',
+
         # Perl Module: Kernel/System/Package.pm
         'not installed' => '没有安装',
         'installed' => '已安装',
         'Unable to parse repository index document.' => '无法解析软件仓库索引文档。',
-        'No packages for your framework version found in this repository, it only contains packages for other framework versions.' =>
-            '软件仓库中没有当前系统版本可用的软件包。',
         'File is not installed!' => '文件没有安装！',
         'File is different!' => '文件被修改！',
         'Can\'t read file!' => '不能读取文件！',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
-            '<p>其他软件包可以为OTOBO提供很多有用的增强性功能，不过请确保这些软件包的来源可靠，因为它们有可能以多种方式修改OTOBO。</p>',
-        'Package not verified by the OTOBO community!' => '软件包没有经过OTOBO社区验证！',
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
+            '<p>其他软件包可以为CareOnCloud ESM提供很多有用的增强性功能，不过请确保这些软件包的来源可靠，因为它们有可能以多种方式修改CareOnCloud ESM。</p>',
+        'Package not verified by the CareOnCloud ESM community!' => '软件包没有经过CareOnCloud ESM社区验证！',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '',
         'Verification not possible (e.g. no internet connection)!' => '',
@@ -5390,13 +6152,20 @@ sub Data {
         'quarter' => '一刻钟',
         'half-year' => '半年',
 
-        # Perl Module: Kernel/System/Stats/Dynamic/Ticket.pm
+        # Perl Module: Kernel/System/Stats/Dynamic/ArticleList.pm
+        'unlimited' => '无限制',
+        'Attributes to be printed' => '要打印的属性',
+        'Sort sequence' => '排序',
+        'State Historic' => '状态历史',
         'State Type' => '工单状态类型',
+        'State Type Historic' => '工单状态类型历史',
         'Created Priority' => '创建的优先级',
         'Created State' => '创建的状态',
         'Create Time' => '创建时间',
+        'Article Create Time' => '',
         'Pending until time' => '挂起待定时间',
         'Close Time' => '关闭时间',
+        'Historic Time Range' => '历史信息的时间范围',
         'Escalation' => '升级',
         'Escalation - First Response Time' => '首次响应时间升级',
         'Escalation - Update Time' => '更新时间升级',
@@ -5404,6 +6173,7 @@ sub Data {
         'Agent/Owner' => '服务人员/所有者',
         'Created by Agent/Owner' => '创建人',
         'Assigned to Customer User Login' => '分配给客户用户登录名',
+        'Last Changed' => '最近更改',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketAccountedTime.pm
         'Evaluation by' => '评估方法',
@@ -5420,16 +6190,6 @@ sub Data {
         'Article Min Time' => '信件最小处理时间',
         'Article Max Time' => '信件最大处理时间',
         'Number of Articles' => '信件数',
-
-        # Perl Module: Kernel/System/Stats/Dynamic/TicketList.pm
-        'unlimited' => '无限制',
-        'Attributes to be printed' => '要打印的属性',
-        'Sort sequence' => '排序',
-        'State Historic' => '状态历史',
-        'State Type Historic' => '工单状态类型历史',
-        'Historic Time Range' => '历史信息的时间范围',
-        'Number' => '编号',
-        'Last Changed' => '最近更改',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketSolutionResponseTime.pm
         'Solution Average' => '平均解决时间',
@@ -5474,6 +6234,11 @@ sub Data {
         'Internal Error: Could not read file.' => '内部错误：不能读取文件。',
         'Tables found which are not present in the database.' => '数据库中不存在的表。',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/Type.pm
+        'Database Type' => '',
+        'The type of the database looks strange as it contain no Latin letters.' =>
+            '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mssql/Size.pm
         'Database Size' => '数据库大小',
         'Could not determine database size.' => '不能确定数据库大小。',
@@ -5492,14 +6257,17 @@ sub Data {
         'There were tables found which do not have \'utf8mb4\' as charset.' =>
             '发现了一些表单没有 \'utf8mb4\' 字符集。',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Connection.pm
+        'SSL Version' => '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InnoDBLogFileSize.pm
         'InnoDB Log File Size' => 'InnoDB日志文件大小',
         'The setting innodb_log_file_size must be at least 256 MB.' => '参数innodb_log_file_size必须设置为至少256MB。',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => '无效的默认值',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
-            '找到具有无效的默认值的表。 为了自动修复它，请运行：bin/otobo.Console.pl Maint::Database::Check --repair',
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
+            '找到具有无效的默认值的表。 为了自动修复它，请运行：bin/careoncloud.Console.pl Maint::Database::Check --repair',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
         'Maximum Query Size' => '最大查询大小',
@@ -5518,6 +6286,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Version.pm
         'MySQL 5.x or higher is required.' => '需要MySQL 5.X或更高版本。',
+        'Client Info' => '',
+        'Perl Client Info' => '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/oracle/NLS.pm
         'NLS_LANG Setting' => 'NLS_LANG设置',
@@ -5552,8 +6322,8 @@ sub Data {
         'Certificate check' => '',
         'Found obsolete cryptographic function.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'OTOBO磁盘分区',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
+        'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM磁盘分区',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => '硬盘使用情况',
@@ -5577,8 +6347,6 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/PerlModulesAudit.pm
         'Perl Modules Audit' => 'Perl 模块 Audit',
-        'CPAN::Audit reported that one or more installed Perl modules have known vulnerabilities. Please note that there might be false positives for distributions patching Perl modules without changing their version number.' =>
-            'CPAN::Audit 报告一个或多个已安装的 Perl 模块是否存在已知漏洞。 请注意，在不更改版本号的情况下修补Perl模块的发行版可能存在误报。',
         'CPAN::Audit did not report any known vulnerabilities in the installed Perl modules.' =>
             '在已安装的Perl模块中 CPAN::Audit 未报告出任何已知漏洞。',
 
@@ -5589,37 +6357,37 @@ sub Data {
         'There should be more than 60% free swap space.' => '需要至少60%的可用交换空间。',
         'There should be no more than 200 MB swap space used.' => '交换空间不应该使用超过200MB。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => '信件搜索索引状态',
         'Indexed Articles' => '索引过的信件',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => '信件/通信渠道',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => '传入的通信',
         'Outgoing communications' => '外发的通信',
         'Failed communications' => '失败的通信',
         'Average processing time of communications (s)' => '通信平均处理时间',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => '通讯日志帐号状态（最近24小时）',
         'No connections found.' => '找不到连接。',
         'ok' => 'OK',
         'permanent connection errors' => '永久性连接错误',
         'intermittent connection errors' => '间歇性连接错误',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => '配置设置',
         'Could not determine value.' => '不能确定参数值。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => '守护进程',
         'Daemon is running.' => '守护进程正在运行。',
         'Daemon is not running.' => '守护进程没有运行。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => '数据库记录',
         'Ticket History Entries' => '工单历史条目',
         'Articles' => '信件',
@@ -5634,26 +6402,26 @@ sub Data {
         'Tickets Per Month (avg)' => '平均每月工单数',
         'Open Tickets' => '处理中的工单',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => '默认的系统管理员密码',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             '安全风险：服务人员帐户root@localhost还在使用默认密码。请修改密码或禁用此帐户。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => '电子邮件发送队列',
         'Emails queued for sending' => '已排队准备发送的电子邮件',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => '正式域名',
         'Please configure your FQDN setting.' => '请配置您的正式域名。',
         'Domain Name' => '域名',
         'Your FQDN setting is invalid.' => '您的正式域名无效。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => '文件系统是可写的',
-        'The file system on your OTOBO partition is not writable.' => 'OTOBO分区所有文件系统是不可写的。',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'CareOnCloud ESM分区所有文件系统是不可写的。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => '遗留的配置备份',
         'No legacy configuration backup files found.' => '找不到遗留的配置备份文件。',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -5661,77 +6429,77 @@ sub Data {
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             '已安装的软件包不再需要旧的配置备份文件，请从 Kernel/Config/Backups 文件夹中删除它们。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => '软件包安装状态',
         'Some packages have locally modified files.' => '一些软件包有在本地修改过的文件。',
         'Some packages are not correctly installed.' => '一些软件包没有正确安装。',
         'Package Verification Status' => '软件包验证状态',
-        'Some packages are not verified by the OTOBO Team.' => '一些软件包未经OTOBO团队验证。',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => '一些软件包未经CareOnCloud ESM团队验证。',
         'Package Framework Version Status' => '软件包框架版本状态',
         'Some packages are not allowed for the current framework version.' =>
             '一些软件包无法在当前的框架版本中使用。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => '软件包列表',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => '会话配置设置',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => '假脱机邮件',
-        'There are emails in var/spool that OTOBO could not process.' => 'var/spool 目录下有一些OTOBO无法处理的邮件。',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => 'var/spool 目录下有一些CareOnCloud ESM无法处理的邮件。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             '您的系统ID设置无效，它只能包含数字。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => '默认工单类型',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             '配置的默认工单类型无效或缺失，请修改设置Ticket::Type::Default，选择一个有效的工单类型。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => '工单索引模块',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             '您已经超过60000个工单，应该使用后端静态数据库。请参阅管理员手册（性能调优部分）查阅更多信息。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => '有锁定的工单的无效用户',
         'There are invalid users with locked tickets.' => '出现了有锁定的工单的无效用户。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             '您的系统不能有超过8000个处理中的工单。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => '工单搜索索引模块',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             '索引进程强制将原始信件文本存储在信件搜索索引中，而不执行过滤器或应用停用词列表。 这将增加搜索索引的大小，从而可能减慢全文搜索。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'ticket_lock_index 表中的孤儿记录',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'ticket_lock_index 表中包含孤儿记录。请运行bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup"清理静态数据库的索引。',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'ticket_lock_index 表中包含孤儿记录。请运行bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup"清理静态数据库的索引。',
         'Orphaned Records In ticket_index Table' => 'ticket_index 表中的孤儿记录',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'ticket_index表中包含孤儿记录，请运行bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup"，清理静态数据库的索引。',
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'ticket_index表中包含孤儿记录，请运行bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup"，清理静态数据库的索引。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => '时间设置',
         'Server time zone' => '服务器时区',
-        'OTOBO time zone' => 'OTOBO时区',
-        'OTOBO time zone is not set.' => 'OTOBO时区未设置。',
+        'CareOnCloud ESM time zone' => 'CareOnCloud ESM时区',
+        'CareOnCloud ESM time zone is not set.' => 'CareOnCloud ESM时区未设置。',
         'User default time zone' => '用户默认时区',
         'User default time zone is not set.' => '用户默认时区未设置。',
         'Calendar time zone is not set.' => '日历时区未设置。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => '用户界面 - 服务人员皮肤用法',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => '用户界面 - 服务人员主题用法',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => '用户界面 - 特殊的统计',
         'Agents using custom main menu ordering' => '服务人员使用定制的主菜单排序',
         'Agents using favourites for the admin overview' => '服务人员在系统管理概览使用收藏夹',
@@ -5742,8 +6510,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'MPM多路处理模块',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'OTOBO需要apache运行“prefork”MPM多路处理模块。',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'CareOnCloud ESM需要apache运行“prefork”MPM多路处理模块。',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'CGI加速器用法',
@@ -5773,7 +6541,7 @@ sub Data {
         'Webserver Version' => 'WEB服务器版本',
         'Could not determine webserver version.' => '不能确定WEB服务器版本。',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => '并发用户详细信息',
         'Concurrent Users' => '并发用户数',
 
@@ -5799,17 +6567,13 @@ sub Data {
         'Value is not correct! Please, consider updating this field.' => '值不正确！ 请考虑更新这个字段。',
         'Value doesn\'t satisfy regex (%s).' => '值不满足正则表达式（%s）。',
 
-        # Perl Module: Kernel/System/SysConfig/ValueType/Checkbox.pm
-        'Enabled' => '已启用',
-        'Disabled' => '已禁用',
-
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
-            '系统无法在OTOBOTimeZone中计算用户的日期！',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            '系统无法在CareOnCloudTimeZone中计算用户的日期！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
-            '系统无法在OTOBOTimeZone中计算用户的日期时间！',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            '系统无法在CareOnCloudTimeZone中计算用户的日期时间！',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -5826,13 +6590,20 @@ sub Data {
         'Chat Participant' => '聊天参与人',
         'Chat Message Text' => '聊天消息文本',
 
+        # Perl Module: Kernel/System/Ticket/Mask.pm
+        'Base structure is not valid. Please provide an array with data in YAML format.' =>
+            '',
+        'Error parsing dynamic fields.' => '',
+        'No dynamic field "%s".' => '',
+        'Dynamic field "%s" not valid.' => '',
+        'Dynamic field "%s" already in use in a Set.' => '',
+
         # Perl Module: Kernel/System/Web/InterfaceAgent.pm
         'Too many failed login attempts, please retry in %s s.' => '多次登陆尝试都失败的话，请在 %s s再试试。',
         'Login failed! Your user name or password was entered incorrectly.' =>
             '登录失败！用户名或密码错误。',
         'Authentication succeeded, but no user data record is found in the database. Please contact the administrator.' =>
             '认证成功，但在数据库中没有找到用户数据记录，请联系系统管理员。',
-        'Can`t remove SessionID.' => '不能移除会话ID。',
         'Logout successful.' => '成功注销。',
         'Feature not active!' => '功能尚未激活!',
         'Sent password reset instructions. Please check your email.' => '密码重置说明已发送，请检查邮件。',
@@ -5868,7 +6639,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => '',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => '暂时无效',
         'Group for default access.' => '具有默认权限的组。',
         'Group of all administrators.' => '所有管理员的组。',
@@ -5933,8 +6704,8 @@ sub Data {
         'Auto remove will be sent out after a customer removed the request.' =>
             '客户移除请求后会发送自动移除。',
         'default reply (after new ticket has been created)' => '默认答复（新工单创建后）',
-        'default reject (after follow-up and rejected of a closed ticket)' =>
-            '默认拒绝（跟进已关闭工单被拒绝后）',
+        'default reject (after follow-up and rejection of a closed ticket)' =>
+            '',
         'default follow-up (after a ticket follow-up has been added)' => '默认跟进（添加工单跟进后）',
         'default reject/new ticket created (after closed follow-up with new ticket creation)' =>
             '默认拒绝并创建新工单（跟进已关闭工单则创建新工单）',
@@ -6004,6 +6775,10 @@ sub Data {
         'There was an error deleting the attachment. Please check the logs for more information.' =>
             '删除附件时出错。 请检查日志以获取更多信息。',
         'Attachment was deleted successfully.' => '附件已成功删除。',
+
+        # JS File: Core.Agent.Admin.CustomerDashboardInfoTile
+        'Do you really want to delete this customer dashboard info tile entry?' =>
+            '',
 
         # JS File: Core.Agent.Admin.DynamicField
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!' =>
@@ -6082,8 +6857,8 @@ sub Data {
         'Currently not possible' => '目前不可能',
         'This is currently disabled because of an ongoing package upgrade.' =>
             '由于正在进行软件包升级，因此目前已被禁用。',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
-            '由于OTOBO守护进程没有运行，这个选项当前被禁用。',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
+            '由于CareOnCloud ESM守护进程没有运行，这个选项当前被禁用。',
         'Are you sure you want to update all installed packages?' => '您确定要更新所有已安装的软件包吗？',
         'No response from get package upgrade run status.' => '获取软件包升级运行状态时没有响应。',
 
@@ -6115,6 +6890,8 @@ sub Data {
         'This TransitionAction is already used in this Path. You cannot use it twice!' =>
             '路径已经使用了这个转换动作，你不能重复添加转换动作！',
         'Hide EntityIDs' => '隐藏实体编号',
+        'Non-global ActivityDialogs may not be assigned to global Activities!' =>
+            '',
         'Edit Field Details' => '编辑字段详情',
         'Customer interface does not support articles not visible for customers.' =>
             '客户界面不支持客户不可见的信件。',
@@ -6176,13 +6953,17 @@ sub Data {
         'Deleting the template and its data. This may take a while...' =>
             '删除这个模板及其相关数据。 可能还要等一会儿...',
 
+        # JS File: Core.Agent.Admin.Translations
+        'Missing Translations' => '',
+        'At least one translation must be filled!' => '',
+        'All translations must be filled!' => '',
+
         # JS File: Core.Agent.AppointmentCalendar
         'Jump' => '跳转',
         'Timeline Month' => '月时间表',
         'Timeline Week' => '周时间表',
         'Timeline Day' => '每日时间表',
         'Previous' => '上一步',
-        'Resources' => '资源',
         'Su' => '日',
         'Mo' => '一',
         'Tu' => '二',
@@ -6202,6 +6983,16 @@ sub Data {
         'Are you sure you want to delete this appointment? This operation cannot be undone.' =>
             '你真的要删除这个预约吗？这个操作无法回退。',
 
+        # JS File: Core.Agent.ArticleFeatures
+        'Article Delete' => '',
+        'Are you sure you want to delete this article?' => '',
+        'Article deleted successfully!' => '',
+        'Article already marked as deleted.' => '',
+        'Article Restore' => '',
+        'Are you sure you want to restore this article?' => '',
+        'Article restored successfully!' => '',
+        'Article not available for restoring.' => '',
+
         # JS File: Core.Agent.CustomerSearch
         'First select a customer user, then select a customer ID to assign to this ticket.' =>
             '首先选择一个客户用户，然后选择一个客户ID来分配给这个工单。',
@@ -6213,7 +7004,7 @@ sub Data {
             '请至少输入一个搜索条件或输入*搜索所有。',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => '关于OTOBO守护进程的信息',
+        'Information about the CareOnCloud ESM Daemon' => '关于CareOnCloud ESM守护进程的信息',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => '请检查标记为红色的字段，需要输入有效的值。',
@@ -6319,6 +7110,10 @@ sub Data {
         'Do you really want to revert this setting to its historical value?' =>
             '你确定要把这个设置恢复到它的历史值吗？',
 
+        # JS File: Core.UI.CodeMirrorEditor
+        'Error trying to create CodeMirror instance, please check configuration!' =>
+            '',
+
         # JS File: Core.UI.Datepicker
         'Open date selection' => '打开日历',
         'Invalid date (need a future date)!' => '无效的日期（需使用未来的日期）！',
@@ -6361,6 +7156,7 @@ sub Data {
         'Sorry, you can only upload one file here.' => '对不起，您只能在这里上传一个文件。',
         'Sorry, you can only upload %s files.' => '对不起，您只能在这里上传%s个文件。',
         'Please only select at most %s files for upload.' => '请至少选择%s个文件进行上传。',
+        'Upload information' => '上传信息',
         'The following files are not allowed to be uploaded: %s' => '不允许上传以下文件：%s',
         'The following files exceed the maximum allowed size per file of %s and were not uploaded: %s' =>
             '以下文件超过允许的单个文件最大大小%s，没有上传的文件有：%s',
@@ -6368,9 +7164,14 @@ sub Data {
             '以下文件已上传，没有重复上传：%s',
         'No space left for the following files: %s' => '以下文件没有可用空间：%s',
         'Available space %s of %s.' => '可用空间%s，总共%s。',
-        'Upload information' => '上传信息',
         'An unknown error occurred when deleting the attachment. Please try again. If the error persists, please contact your system administrator.' =>
             '删除附件时发生未知错误，请再试一次。 如果错误仍然存在，请与系统管理员联系。',
+
+        # JS File: ITSM.Admin.ImportExport
+        'Deleting template...' => '正在删除模板……',
+        'There was an error deleting the template. Please check the logs for more information.' =>
+            '删除模板时出错，请检查日志以获取更多信息。',
+        'Template was deleted successfully.' => '模板已成功删除。',
 
         # JS File: Core.Language.UnitTest
         'yes' => '是',
@@ -6378,22 +7179,18 @@ sub Data {
         'This is %s' => '这是%s',
         'Complex %s with %s arguments' => '复杂%s，带有%s参数',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '没有可用数据。',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => '分组的',
         'Stacked' => '堆叠的',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => '流',
         'Expanded' => '展开的',
 
         # SysConfig
-        '
-            Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown
-            in an extra table
-        ' => '',
         '
 Dear Customer,
 
@@ -6419,8 +7216,6 @@ Thanks for your help!
         ' 2 minutes' => ' 2 分钟',
         ' 5 minutes' => ' 5 分钟',
         ' 7 minutes' => ' 7 分钟',
-        '"Slim" skin which tries to save screen space for power users.' =>
-            '为高级用户节约屏幕空间的“修身版”皮肤。',
         '%s' => '%s',
         '(UserLogin) Firstname Lastname' => '（登录用户名）名 姓',
         '(UserLogin) Lastname Firstname' => '（登录用户名）姓 名',
@@ -6440,10 +7235,13 @@ Thanks for your help!
         '30 Minutes' => '30分钟',
         '300 (Beginner)' => '300（新手）',
         '5 Minutes' => '5 分钟',
+        '7 days' => '',
         'A TicketWatcher Module.' => '工单关注者模块。',
         'A Website' => '网址',
         'A list of dynamic fields that are merged into the main ticket during a merge operation. Only dynamic fields that are empty in the main ticket will be set.' =>
             '在合并工单过程中合并到主工单的动态字段列表，只有主工单中为空的动态字段才会被设置。',
+        'A list of parameters which can be updated via the UpdateAJAX.' =>
+            '',
         'A picture' => '图片',
         'ACL module that allows closing parent tickets only if all its children are already closed ("State" shows which states are not available for the parent ticket until all child tickets are closed).' =>
             'ACL模块仅在所有子工单都关闭后才允许关闭父工单（除非所有子工单都已经关闭，否则父工单显示的“状态”均不可用）。',
@@ -6452,13 +7250,13 @@ Thanks for your help!
         'Activate Elasticsearch.' => '激活Elasticsearch。',
         'Activate the customer frontend.' => '',
         'Activate the public frontend.' => '',
-        'Activates Rendering of DynamicFields outside of the DynamicField block.' =>
-            '在DynamicField块之外激活DynamicField的呈现。',
         'Activates a blinking mechanism of the queue that contains the oldest ticket.' =>
             '包含最早工单的队列激活闪烁提醒机制。',
         'Activates lost password feature for agents, in the agent interface.' =>
             '在服务人员界面中，激活忘记密码功能。',
         'Activates lost password feature for customers.' => '在客户界面中，激活忘记密码功能。',
+        'Activates rendering of dynamic fields outside of the dynamic field block.' =>
+            '',
         'Activates support for customer and customer user groups.' => '激活对客户和客户用户组的支持。',
         'Activates the article filter in the zoom view to specify which articles should be shown.' =>
             '在详情视图中激活信件过滤器以指定显示的信件。',
@@ -6483,8 +7281,10 @@ Thanks for your help!
         'Added subscription for user "%s".' => '已为用户“%s”添加关注。',
         'Added system request (%s).' => '已添加系统请求 (%s)。',
         'Added web request from customer.' => '已添加来自客户的网页请求。',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
-            '为OTOBO日志文件添加实际年月的后缀，每月创建一个日志文件。',
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
+            '为CareOnCloud ESM日志文件添加实际年月的后缀，每月创建一个日志文件。',
+        'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
+            '',
         'Adds customers email addresses to recipients in the ticket compose screen of the agent interface. The customers email address won\'t be added if the article type is email-internal.' =>
             '在服务人员界面中，在编写工单时添加客户邮件地址到收件人，如果信件类型为内部邮件则不添加客户邮件地址。',
         'Adds the one time vacation days for the indicated calendar.' => '为指定日历添加一次假期。',
@@ -6510,6 +7310,7 @@ Thanks for your help!
         'Agent Name' => '服务人员姓名',
         'Agent Name + FromSeparator + System Address Display Name' => '服务人员姓名 + 隔离符号 + 系统邮件地址显示姓名',
         'Agent Preferences.' => '服务人员偏好设置。',
+        'Agent Reference Dynamic Field With Data Search' => '',
         'Agent Statistics.' => '服务人员统计。',
         'Agent User Search' => '服务人员搜索用户',
         'Agent User Search.' => '服务人员搜索用户。',
@@ -6538,12 +7339,15 @@ Thanks for your help!
             '查看服务人员所属服务工单数的服务人员界面通知模块。可以通过使用键“Group（组）”和值如“rw:group1;move_into:group2”来实现显示/不显示这个链接的额外访问控制。',
         'Agent interface notification module to see the number of watched tickets. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '查看服务人员关注工单数的服务人员界面通知模块。可以通过使用键“Group（组）”和值如“rw:group1;move_into:group2”来实现显示/不显示这个链接的额外访问控制。',
+        'Agent reference dynamic field with data search.' => '',
         'AgentTicketZoom widget that displays Contact with data dynamic field in the side bar.' =>
             'AgentTicketZoom小部件在侧栏中显示有数据动态字段联系人。',
         'AgentTicketZoom widget that displays a table of objects linked to the ticket.' =>
             '服务人员工单详情小部件，显示链接到该工单的对象表。',
         'AgentTicketZoom widget that displays customer information for the ticket in the side bar.' =>
             '服务人员工单详情小部件，在侧边栏中显示客户信息。',
+        'AgentTicketZoom widget that displays similar ticket data in the side bar. Elasticsearch needs to be enabled beofre you can enable this widget.' =>
+            '',
         'AgentTicketZoom widget that displays ticket data in the side bar.' =>
             '服务人员工单详情小部件，在侧边栏显示工单数据。',
         'Agents ↔ Groups' => '服务人员 ↔ 组',
@@ -6652,11 +7456,16 @@ Thanks for your help!
         'Appointment notifications' => '预约通知',
         'Appointments' => '预约',
         'Arabic (Saudi Arabia)' => '阿拉伯语（沙特阿拉伯）',
+        'Article ID: %s was deleted by "%s" (%s)' => '',
+        'Article ID: %s was edited by "%s" (%s)' => '',
+        'Article ID: %s was restored by "%s" (%s)' => '',
+        'Article Version View' => '',
         'Article attributes that should be available in ticket invoker configuration frontend (0 = visible/selectable, 1 = default/preselected).' =>
             '',
         'ArticleTree' => '信件树',
+        'As soon as the move queue option dropdown is enabled for example in the AgentTicketZoom dialogue, it is possible to move tickets locked to other agents to another queue by activating this option.' =>
+            '',
         'Attachment Name' => '附件名',
-        'Autoloading of Znuny4OTOBOPasswordPolicy extensions.' => '自动加载Znuny4OTOBOPasswordPolicy的扩展。',
         'Automated line break in text messages after x number of chars.' =>
             '文本消息中在X个字符后自动换行。',
         'Automatically change the state of a ticket with an invalid owner once it is unlocked. Maps from a state type to a new ticket state.' =>
@@ -6672,13 +7481,13 @@ Thanks for your help!
         'Automatically sets the responsible of a ticket (if it is not set yet) after the first owner update.' =>
             '在第一次工单所有者更新后自动设置工单的负责人（如果还没有设置）。',
         'Avatar' => '头像',
-        'Balanced white skin by Felix Niklas (slim version).' => 'Felix Niklas制作的平衡白皮肤（修身版）。',
-        'Balanced white skin by Felix Niklas.' => 'Felix Niklas制作的平衡白皮肤。',
         'Based on global RichText setting' => '基于全局富文本设置',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
-            '基本的全文索引设置。执行 "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" 以生成一个新索引。',
-        'Blocks all the incoming emails that do not have a valid ticket number in subject with From: @example.com address.' =>
-            '阻止所有来自@example.com地址、主题中无有效工单号的进入邮件。',
+        'Basic Auth' => '',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+            '基本的全文索引设置。执行 "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" 以生成一个新索引。',
+        'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
+            '',
+        'Both' => '',
         'Bounced to "%s".' => '退回给“%s”。',
         'Bulgarian' => '保加利亚语',
         'Bulk Action' => '批量操作',
@@ -6735,8 +7544,8 @@ Thanks for your help!
         'Checks for queued outgoing emails to be sent.' => '检查要发送的排队外发邮件。',
         'Checks if an E-Mail is a followup to an existing ticket by searching the subject for a valid ticket number.' =>
             '通过搜索主题中的有效工单号，检查一个邮件是否是跟进到已存在的工单。',
-        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module.' =>
-            '检查一个电子邮件是否是具有外部工单号的，某个现有工单的后续操作，这个邮件可通过ExternalTicketNumberRecognition过滤器模块找到。',
+        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew. Please define a rule set in the settings "000-ExternalTicketNumberRecognition1" through "000-ExternalTicketNumberRecognition4".' =>
+            '',
         'Checks the SystemID in ticket number detection for follow-ups. If not enabled, SystemID will be changed after using the system.' =>
             '在跟进工单的工单编号检测时检查系统ID。如果不启用，系统ID将在使用系统后更改。',
         'Child' => '子',
@@ -6757,6 +7566,11 @@ Thanks for your help!
         'Cloud service admin module registration for the transport layer.' =>
             '云服务的传输层管理模块注册。',
         'Collect support data for asynchronous plug-in modules.' => '收集异步插件模块的支持数据。',
+        'Color definitions for agent interface high contrast skin.' => '',
+        'Color definitions for customer interface high contrast skin.' =>
+            '',
+        'Color definitions for the agent interface (default skin). MainDark, -Light and Hover are the navigation background, buttons and some other main elements. Highlight are e.g. icons and selected elements in the navbar. BG- and Text colors are various background, and text colors. Hover colors are used in selections and tables. Notify colors are the background of notifications.' =>
+            '',
         'Color definitions for the customer interface.' => '客户界面的颜色定义。',
         'Column ticket filters for Ticket Overviews type "Small".' => '工单概览简洁版式的字段过滤器。',
         'Columns that can be filtered in the escalation view of the agent interface. Note: Only Ticket attributes, Dynamic Fields (DynamicField_NameX) and Customer attributes (e.g. CustomerUserPhone, CustomerCompanyName, ...) are allowed.' =>
@@ -6787,19 +7601,22 @@ Thanks for your help!
         'Company Tickets.' => '单位工单。',
         'Company name which will be included in outgoing emails as an X-Header.' =>
             '单位名称将作为X-Header包括在外发邮件中。',
-        'Compat module for AgentZoom to AgentTicketZoom.' => '服务人员工单详情视图中服务人员详情的兼容模块。',
         'Complex' => '复杂',
         'Compose' => '撰写',
         'Configure Processes.' => '配置流程。',
         'Configure and manage ACLs.' => '配置和管理ACL。',
         'Configure any additional readonly mirror databases that you want to use.' =>
             '配置任何您想要使用的额外只读镜像数据库。',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
-            '配置将支持数据发送到OTOBO团队以便获得更好的支持。',
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
+            '配置将支持数据发送到CareOnCloud ESM团队以便获得更好的支持。',
         'Configure the About information.' => '',
         'Configure the privacy policy.' => '',
         'Configure which screen should be shown after a new ticket has been created.' =>
             '配置创建新工单后显示的界面。',
+        'Configure which screen should be shown after a ticket has been marked as seen.' =>
+            '',
+        'Configure which screen should be shown after a ticket has been marked as unseen.' =>
+            '',
         'Configure your own log text for PGP.' => '配置您自己的PGP日志文本。',
         'Configures a default TicketDynamicField setting. "Name" defines the dynamic field which should be used, "Value" is the data that will be set, and "Event" defines the trigger event. Please check the developer manual (https://doc.otobo.org/), chapter "Ticket Event Module".' =>
             '',
@@ -6820,16 +7637,22 @@ Thanks for your help!
             '控制自动填充字段是否用于管理客户用户界面中的客户ID选择。',
         'Controls if the ticket and article seen flags are removed when a ticket is archived.' =>
             '控制工单和信件归档后的可见标志是否被移除。',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'Converts HTML mails into text messages.' => '将HTML邮件转换为文本信息。',
         'Create New process ticket.' => '创建新的流程工单。',
         'Create Templates for AdminDynamicFieldTitle.' => '为 AdminDynamicFieldTitle 创建模板。',
         'Create Ticket' => '创建工单',
         'Create a new calendar appointment linked to this ticket' => '创建一个新的日历预约到这个工单',
         'Create and manage Service Level Agreements (SLAs).' => '创建和管理服务品质协议(SLA)。',
+        'Create and manage advanced definitions for ticket masks.' => '',
         'Create and manage agents.' => '创建和管理服务人员。',
         'Create and manage appointment notifications.' => '创建和管理预约通知.',
         'Create and manage attachments.' => '创建和管理附件。',
         'Create and manage calendars.' => '创建和管理日历。',
+        'Create and manage custom translations.' => '',
         'Create and manage customer users.' => '创建和管理客户用户。',
         'Create and manage customers.' => '创建和管理客户。',
         'Create and manage dynamic fields.' => '创建和管理动态字段。',
@@ -6858,12 +7681,15 @@ Thanks for your help!
         'Created ticket [%s] in "%s" with priority "%s" and state "%s".' =>
             '已创建工单 [%s]，在 "%s"，优先级为"%s" ，状态为"%s"。',
         'Croatian' => '克罗地亚语',
+        'Custom CSS styles for RichText articles.' => '',
         'Custom RSS Feed' => '定制RSS订阅',
         'Custom text for the page shown to customers that have no tickets yet (if you need those text translated add them to a custom translation module).' =>
             '显示给还没有工单的客户的网页定制文本（如果您需要翻译这些文本，将它们添加到定制翻译模块）。',
         'Customer Administration' => '客户管理',
         'Customer Companies' => '客户单位',
+        'Customer Company' => '',
         'Customer Dashboard' => '客户仪表盘',
+        'Customer Dashboard Info Tile' => '',
         'Customer Dynamic Field Database Detailed Search' => '客户动态字段数据库详情搜索',
         'Customer Dynamic Field Database Details' => '客户动态字段数据库详情',
         'Customer Dynamic Field Database Search' => '客户动态字段数据库搜索',
@@ -6872,6 +7698,7 @@ Thanks for your help!
         'Customer Information Center search.' => '客户信息中心搜索。',
         'Customer Information Center.' => '客户信息中心。',
         'Customer Password.' => '客户密码。',
+        'Customer Reference Dynamic Field With Data Search' => '',
         'Customer Ticket Print Module.' => '客户工单打印模块。',
         'Customer User Administration' => '客户用户管理',
         'Customer User Information' => '客户用户信息',
@@ -6889,6 +7716,7 @@ Thanks for your help!
         'Customer item (icon) which shows the open tickets of this customer as info block. Setting CustomerUserLogin to 1 searches for tickets based on login name rather than CustomerID.' =>
             '显示处理中工单信息块的客户信息（图标）。设置参数CustomerUserLogin为1，则基于登录名而不是客户ID搜索工单。',
         'Customer preferences.' => '客户偏好设置。',
+        'Customer reference dynamic field with data search.' => '',
         'Customer ticket overview' => '客户工单概览',
         'Customer ticket search.' => '客户工单搜索。',
         'Customer ticket zoom' => '客户工单详情',
@@ -6904,7 +7732,6 @@ Thanks for your help!
         'Dashboard overview.' => '仪表板概览。',
         'Data used to export the search result in CSV format.' => '用于将搜索结果输出为CSV格式的数据。',
         'Date / Time' => '日期 / 时间',
-        'Default (Slim)' => '默认（修身版）',
         'Default ACL values for ticket actions.' => '工单操作的默认ACL值。',
         'Default ProcessManagement entity prefixes for entity IDs that are automatically generated.' =>
             '自动生成的流程实体ID的默认前缀。',
@@ -6919,7 +7746,6 @@ Thanks for your help!
             '在服务人员和客户工单详情中发件人（From）的默认显示类型。',
         'Default loop protection module.' => '默认的邮件环路保护模块。',
         'Default queue ID used by the system in the agent interface.' => '在服务人员界面中系统使用的默认队列ID。',
-        'Default skin for the agent interface (slim version).' => '服务人员界面的默认皮肤（修身版）。',
         'Default skin for the agent interface.' => '服务人员界面的默认皮肤。',
         'Default skin for the customer interface.' => '客户界面的默认皮肤。',
         'Default ticket ID used by the system in the agent interface.' =>
@@ -6929,8 +7755,8 @@ Thanks for your help!
         'Default value for NameX' => 'NameX的默认值',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             '定义链接对象小部件(LinkObject::ViewMode = \"complex\")设置按钮中的操作。请注意，这些操作必须已经在以下JS和CSS文件中注册：Core.AllocationList.css、Core.UI.AllocationList.js、 Core.UI.Table.Sort.js、Core.Agent.TableFilters.js。',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（例如：faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（例如：faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             '定义客户用户数据（键）与工单动态字段（值）的映射。目的是在工单动态字段中存储客户用户数据。动态字段必须存在于系统中且启用了AgentTicketFreeText（服务人员工单自由文本），这样才能由服务人员手动设置/更新。动态字段不能在服务人员电话工单、邮件工单和客户工单中启用，否则他们将优先于自动设置值。要使用这些映射，还要激活Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser的设置。',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -6939,6 +7765,12 @@ Thanks for your help!
             '定义结束时间的动态字段名称。这个字段需要手动加入到系统作为工单的一种“日期/时间”，并且要在工单创建屏幕和/或其它任何工单操作屏幕激活。',
         'Define dynamic field name for start time. This field has to be manually added to the system as Ticket: "Date / Time" and must be activated in ticket creation screens and/or in any other ticket action screens.' =>
             '定义开始时间的动态字段名称。这个字段需要手动加入到系统作为工单的一种“日期/时间”，并且要在工单创建屏幕和/或其它任何工单操作屏幕激活。',
+        'Define possible namespaces for dynamic fields. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces for global usage (currently dynamic fields and process elements). Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces specifically for process elements. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters.' =>
+            '',
         'Define the max depth of queues.' => '定义队列的最大深度。',
         'Define the queue comment 2.' => '定义队列注释2。',
         'Define the service comment 2.' => '定义服务注释2。',
@@ -6964,14 +7796,14 @@ Thanks for your help!
             '定义一个客户条目，以在客户信息块的尾部生成一个谷歌图标。',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             '定义一个客户条目，以在客户信息块的尾部生成一个谷歌地图图标。',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '定义HTML输出结果中在CVE号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '定义HTML输出结果中在微软公告号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '定义HTML输出结果中在BUG追踪号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用OTOBO的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '定义HTML输出结果中在CVE号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '定义HTML输出结果中在微软公告号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '在HTML输出结果中为预定义字符串添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '定义HTML输出结果中在BUG追踪号码后面添加链接的过滤器。图像元素允许两种输入方式：第一种是用图像的名称（如faq.png），在这种情况下会使用CareOnCloud ESM的图像路径；第二种是插入图像的链接。',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             '定义一个在服务人员工单详情屏幕从信件文本中搜集CVE编号的过滤器，并在靠近信件的一个自定义区块中显示结果。如果想要在鼠标移到到链接元素上时显示内容预览，就填写URLPreview字段。它可以与URL中的地址相同，也可以是另外一个URL。请注意：一些网站不能在iframe框架中显示（如Google），这样就无法在预览模式中正常显示内容。',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -7003,7 +7835,7 @@ Thanks for your help!
         'Defines all the possible stats output formats.' => '定义所有可能的统计输出格式。',
         'Defines an alternate URL, where the login link refers to.' => '定义一个用户登录链接的备选URL地址。',
         'Defines an alternate URL, where the logout link refers to.' => '定义一个用户退出链接的备选URL地址。',
-        'Defines an alternate login URL for the customer panel..' => '定义客户门户的登录备用URL地址。',
+        'Defines an alternate login URL for the customer panel.' => '',
         'Defines an alternate logout URL for the customer panel.' => '定义客户门户的退出备用URL地址。',
         'Defines an external link to the database of the customer (e.g. \'http://yourhost/customer.php?CID=[% Data.CustomerID %]\' or \'\').' =>
             '定义一个客户数据库的外部链接（例如：\'http://yourhost/customer.php?CID=[% Data.CustomerID %]\' 或 \'\'）。',
@@ -7011,15 +7843,16 @@ Thanks for your help!
             '定义一个图标，链接预约编辑屏幕中的当前位置到谷歌地图页面。',
         'Defines an overview module to show the address book view of a customer user list.' =>
             '定义一个概览模块以显示客户用户列表的通讯录视图。',
-        'Defines available article actions for Chat articles.' => '定义聊天信件的可用信件操作。',
-        'Defines available article actions for Email articles.' => '定义电子邮件信件的可用信件操作。',
         'Defines available article actions for Internal articles.' => '定义内部信件的可用信件操作。',
         'Defines available article actions for Phone articles.' => '定义电话信件的可用信件操作。',
+        'Defines available article actions for e-mail articles.' => '',
         'Defines available article actions for invalid articles.' => '定义无效信件的可用信件操作。',
         'Defines available groups for the admin overview screen.' => '为管理员概览屏幕定义可用组。',
         'Defines chat communication channel.' => '定义聊天通信渠道。',
         'Defines default headers for outgoing emails.' => '定义外发电子邮件的默认标头。',
         'Defines email communication channel.' => '定义电子邮件通信通道。',
+        'Defines for which article types the editing of subject, body and attachment is enabled. "Both" includes "Phone" and "Internal".' =>
+            '',
         'Defines from which ticket attributes the agent can select the result order.' =>
             '定义服务人员选择结果顺序的工单属性。',
         'Defines groups for preferences items.' => '为偏好设置项定义分组。',
@@ -7065,14 +7898,17 @@ Thanks for your help!
             '定义服务人员界面在变更工单客户屏幕是否需要工单锁定（如果工单还没有锁定，则工单被锁定且当前服务人员被自动设置为工单所有者）。',
         'Defines if agents should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             '定义是否允许因在个人偏好设置中没有存储共享密钥而不能使用双因素身份验证的服务人员登录。',
+        'Defines if articles written by the customer are editable.' => '',
         'Defines if customers should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             '定义是否允许因在个人偏好设置中没有存储共享密钥而不能使用双因素身份验证的客户用户登录。',
+        'Defines if parent-child translations for queues and services should be generated automatically.' =>
+            '',
         'Defines if the communication between this system and the servers that provide cloud services is possible. If set to \'Disable cloud services\', some functionality will be lost such as support data sending, Package Verify™ and product News dashboard widgets, among others.' =>
             '定义此系统与提供云服务的服务器之间是否可以进行通信。如果设置为“禁用云服务”，则某些功能将丢失，例如支持数据发送，Package Verify™和产品新闻仪表板小部件等。',
+        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in agent interface.' =>
+            '',
         'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in customer interface.' =>
             '定义客户界面是否使用增强模式（启用表格、替换、下标、上标、从WORD粘贴等功能）。',
-        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.).' =>
-            '定义是否使用增强模式（启用表格、替换、下标、上标、从WORD粘贴等功能）。',
         'Defines if the first article should be displayed as expanded, that is visible for the related customer. If nothing defined, latest article will be expanded.' =>
             '定义对相关客户可见的第一个信件是否应扩展显示，如果没有定义，则会扩展显示最新的信件。',
         'Defines if the message in the email outbound screen of the agent interface is visible for the customer by default.' =>
@@ -7101,20 +7937,24 @@ Thanks for your help!
             '定义默认情况下客户是否可以看到服务人员界面工单负责人屏幕中的备注。',
         'Defines if the previously valid token should be accepted for authentication. This is slightly less secure but gives users 30 seconds more time to enter their one-time password.' =>
             '定义在身份验证时是否接受先前有效的链接令牌。这稍微降低了安全性但是给用户多了30秒时间来输入他们的一次性密码。',
+        'Defines if the ticket info widget is displayed permanently on the left below the article list or is available via click on the \'Information\' button.' =>
+            '',
         'Defines if the values for filters should be retrieved from all available tickets. If enabled, only values which are actually used in any ticket will be available for filtering. Please note: The list of customers will always be retrieved like this.' =>
             '定义过滤器的值是否应从所有可用的工单中检索。如果启用了，则只有实际用在工单中的值才能用于过滤。请注意：客户用户列表将像这样始终被检索。',
-        'Defines if time accounting is mandatory in the agent interface. If enabled, a note must be entered for all ticket actions (no matter if the note itself is configured as active or is originally mandatory for the individual ticket action screen).' =>
-            '定义在服务人员界面工时管理是否是强制的。如果启用了，所有工单操作必须输入一个备注（不管是否启用了工单备注，也不管个别工单操作屏幕本来就是强制的）。',
+        'Defines if time accounting is mandatory in the agent interface, if a note is entered.' =>
+            '',
         'Defines if time accounting must be set to all tickets in bulk action.' =>
             '定义在批量操作中是否设置所有工单的工时管理。',
+        'Defines if user can modify all possible values/labels of dynamic fields in one data table.' =>
+            '',
         'Defines internal communication channel.' => '定义内部通信渠道。',
         'Defines out of office message template. Two string parameters (%s) available: end date and number of days left.' =>
             '定义不在办公室的消息模板。有两个字符串参数（%s）：结束日期和剩余天数。',
         'Defines phone communication channel.' => '定义电话通信渠道。',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             '定义将工单作为日历事件显示的队列。',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            '使用公共模块 \'PublicSupportDataCollector\' （如用于OTOBO守护进程的模块）定义用于搜集支持数据的HTTP主机名。',
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            '使用公共模块 \'PublicSupportDataCollector\' （如用于CareOnCloud ESM守护进程的模块）定义用于搜集支持数据的HTTP主机名。',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             '定义IP正则表达式以访问本地的软件仓库。您需要启用这个设置以访问本地的软件仓库，远程主机上还需要设置package::RepositoryList。',
         'Defines the PostMaster header to be used on the filter for keeping the current state of the ticket.' =>
@@ -7147,9 +7987,13 @@ Thanks for your help!
         'Defines the close state for quick close.' => '定义快速关闭的关闭状态。',
         'Defines the column to store the keys for the preferences table.' =>
             '定义在偏好设置表中存储密钥的字段。',
-        'Defines the communication chanel for the quick close article action.' =>
+        'Defines the communication channel for the quick close article action.' =>
             '为快速关闭操作设置通讯通道。',
         'Defines the config options for the autocompletion feature.' => '定义自动完成功能的配置选项。',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketSeenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketUnseenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
         'Defines the config parameters of this item, to be shown in the preferences view.' =>
             '定义在个人偏好设置视图中显示这个条目的配置参数。',
         'Defines the config parameters of this item, to be shown in the preferences view. \'PasswordRegExp\' allows to match passwords against a regular expression. Define the minimum number of characters using \'PasswordMinSize\'. Define if at least 2 lowercase and 2 uppercase letter characters are needed by setting the appropriate option to \'1\'. \'PasswordMin2Characters\' defines if the password needs to contain at least 2 letter characters (set to 0 or 1). \'PasswordNeedDigit\' controls the need of at least 1 digit (set to 0 or 1 to control). \'PasswordMaxLoginFailed\' allows to set an agent to invalid-temporarily if max failed logins reached. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -7159,9 +8003,9 @@ Thanks for your help!
         'Defines the connections for http/ftp, via a proxy.' => '定义通过代理到HTTP/FTP的连接。',
         'Defines the customer preferences key where the shared secret key is stored.' =>
             '定义客户存储的共享密钥中的预设密钥。',
+        'Defines the data objects available to be translated.' => '',
         'Defines the date input format used in forms (option or input fields).' =>
             '定义表单中数据的输入格式（选项或输入字段）。',
-        'Defines the default CSS used in rich text editors.' => '定义用于富文本编辑器的默认CSS。',
         'Defines the default agent name in the ticket zoom view of the customer interface.' =>
             '定义客户界面工单详情视图中默认的服务人员姓名。',
         'Defines the default auto response type of the article for this operation.' =>
@@ -7170,12 +8014,12 @@ Thanks for your help!
             '定义服务人员界面工单自定义字段界面的默认备注正文。',
         'Defines the default filter fields in the customer user address book search (CustomerUser or CustomerCompany). For the CustomerCompany fields a prefix \'CustomerCompany_\' must be added.' =>
             '定义客户用户通讯录搜索（客户用户或客户单位）中的默认过滤器字段。 对于客户单位字段，必须添加一个前缀“CustomerCompany_”。',
-        'Defines the default front-end (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
+        'Defines the default frontend (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
             '',
-        'Defines the default front-end language. All the possible values are determined by the available language files on the system (see the next setting).' =>
-            '定义默认的前端语言。所有可能的值由系统中可用的语言文件确定（查看下一个设置）。',
+        'Defines the default frontend language. All the possible values are determined by the available language files on the system. These values are listed as the keys in the setting \'DefaultUsedLanguages\'.' =>
+            '',
         'Defines the default history type in the customer interface.' => '定义客户界面中的默认历史类型。',
-        'Defines the default interface. Unknown pathes below the script alias are redirected to the selected interface.' =>
+        'Defines the default interface. Unknown paths below the script alias are redirected to the selected interface.' =>
             '',
         'Defines the default maximum number of X-axis attributes for the time scale.' =>
             '定义X轴时间刻度属性的默认最大数。',
@@ -7326,6 +8170,8 @@ Thanks for your help!
             '定义这个信件操作对客户的默认可见性。',
         'Defines the displayed style of the From field in notes that are visible for customers. A default agent name can be defined in Ticket::Frontend::CustomerTicketZoom###DefaultAgentName setting.' =>
             '定义客户可见的注释中“发件人”字段的显示样式。 可以在 Ticket::Frontend::CustomerTicketZoom###DefaultAgentName 设置中定义默认的服务人员姓名。',
+        'Defines the dynamic field to identify tickets by for this operation. Please put in the field name only without the \'DynamicField_\' prefix.' =>
+            '',
         'Defines the dynamic fields that are used for displaying on calendar events.' =>
             '定义显示在日历事件中的动态字段。',
         'Defines the event object types that will be handled via AdminAppointmentNotificationEvent.' =>
@@ -7337,18 +8183,14 @@ Thanks for your help!
             '定义信件中处理文本的过滤器，以便高亮URL地址。',
         'Defines the format of responses in the ticket compose screen of the agent interface ([% Data.OrigFrom | html %] is From 1:1, [% Data.OrigFromName | html %] is only realname of From).' =>
             '定义服务人员界面工单编写屏幕响应的发件人格式（[% Data.OrigFrom | html %]是发件人，[% Data.OrigFromName |html %] 是仅有发件人真实姓名。',
-        'Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
-            '定义本系统的正式域名。这个设置用于变量OTOBO_CONFIG_FQDN，在所有的消息表单中使用，以创建系统内部到工单的链接。',
+        'Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
+            '定义本系统的正式域名。这个设置用于变量CareOnCloud_CONFIG_FQDN，在所有的消息表单中使用，以创建系统内部到工单的链接。',
         'Defines the groups every customer user will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer user for these groups).' =>
             '定义每个客户用户都会在其中的组（如果启用了CustomerGroupSupport-客户组支持，并且你不想管理这些组的每个客户用户）。',
         'Defines the groups every customer will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer for these groups).' =>
             '定义每个客户都会在其中的组（如果启用了CustomerGroupSupport-客户组支持，并且你不想管理这些组的每个客户）。',
         'Defines the headers which will be shown to generic content for the requested key.' =>
             '',
-        'Defines the height for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
-            '定义本屏幕富文本编辑器组件的高度。输入数值（像素值）或百分比值（相对值）。',
-        'Defines the height for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            '定义富文本编辑器组件的高度。输入数值（像素值）或百分比值（相对值）。',
         'Defines the history comment for the close ticket screen action, which gets used for ticket history in the agent interface.' =>
             '为工单关闭操作屏幕定义历史注释信息，以用于服务人员界面的工单历史。',
         'Defines the history comment for the email ticket screen action, which gets used for ticket history in the agent interface.' =>
@@ -7404,6 +8246,10 @@ Thanks for your help!
         'Defines the hours and week days of the indicated calendar, to count the working time.' =>
             '定义指定日历每周天数和小时数，以便计算工作时间。',
         'Defines the hours and week days to count the working time.' => '定义每周天数和小时数，以便计算工作时间。',
+        'Defines the initial height for the rich text editor component. Enter number (pixels).' =>
+            '',
+        'Defines the initial height in pixels for the rich text editor component for this screen.' =>
+            '',
         'Defines the key to be checked with Kernel::Modules::AgentInfo module. If this user preferences key is true, the message is accepted by the system.' =>
             '定义与Kernel::Modules::AgentInfo模块一起检查的键。如果这个用户偏好键设置为真，这个消息是被系统接受的。',
         'Defines the key to check with CustomerAccept. If this user preferences key is true, then the message is accepted by the system.' =>
@@ -7414,8 +8260,8 @@ Thanks for your help!
             '定义链接类型“父子”。如果源名称和目标名称相同，则结果链接是无方向链接，否则结果链接是方向性链接。',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             '定义链接类型组。同一组的链接类型废除另外一个，例如：如果工单A以“普通”链接到工单B，则这些工单不能添加另外的“父子”链接。',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            '定义在线软件仓库列表。另一个用于安装的软件仓库，例如：键="http://example.com/otobo/public.pl?Action=PublicRepository;File=" ，值="Some Name"。',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            '定义在线软件仓库列表。另一个用于安装的软件仓库，例如：键="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" ，值="Some Name"。',
         'Defines the list of params that can be passed to ticket search function.' =>
             '定义能传递到工单搜索功能的参数清单。',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -7425,8 +8271,8 @@ Thanks for your help!
             '定义为额外软件包获取在线软件仓库列表的地址，将使用第一个可用的结果。',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             '定义系统的日志模块。“File（文件）”将所有消息写入一个指定的日志文件，“SysLog（系统日志）”使用操作系统的syslog守护进程如syslogd。',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            '定义通过浏览器上传文件的最大尺寸（单位：字节）。警告：这个选项设置过小将使您的OTOBO实例出现许多遮罩屏幕导致停止工作（可能是需要用户输入的任何遮罩屏幕）。',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            '定义通过浏览器上传文件的最大尺寸（单位：字节）。警告：这个选项设置过小将使您的CareOnCloud ESM实例出现许多遮罩屏幕导致停止工作（可能是需要用户输入的任何遮罩屏幕）。',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             '定义一个会话ID的最大有效时间（单位：秒）。',
         'Defines the maximum number of affected tickets per job.' => '定义每个任务影响的最大工单数。',
@@ -7447,8 +8293,8 @@ Thanks for your help!
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             '定义客户界面显示当前登录的所有客户人员的模块。',
         'Defines the module to authenticate customers.' => '定义客户身份验证的模块。',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            '定义服务人员界面如果OTOBO守护进程没有运行就显示一个通知的模块。',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            '定义服务人员界面如果CareOnCloud ESM守护进程没有运行就显示一个通知的模块。',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             '如果系统配置不同步，定义在服务人员界面中显示一条通知的模块。',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -7469,10 +8315,12 @@ Thanks for your help!
             '如果客户在系统维护期间登录，定义在客户界面中显示一条通知的模块。',
         'Defines the module to display a notification in the customer interface, if the customer user has not yet selected a time zone.' =>
             '如果客户用户还没有选择一个时区，定义在客户界面中显示一条通知的模块。',
+        'Defines the module to display a notification in the customer interface. UseMarquee options: 1/0. NotifyPriority options: Notice/Error/Success/Info.' =>
+            '',
         'Defines the module to generate code for periodic page reloads.' =>
             '定义生成定期页面刷新代码的模块。',
-        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
-            '定义发送电子邮件的模块。 “DoNotSendEmail”根本不发送电子邮件。 任何“SMTP”机制都使用指定的（外部）邮件服务器。 “Sendmail”直接使用操作系统的sendmail二进制文件。 “Test”不会发送电子邮件，而是将它们写入$OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ 以用于测试目的。',
+        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
+            '定义发送电子邮件的模块。 “DoNotSendEmail”根本不发送电子邮件。 任何“SMTP”机制都使用指定的（外部）邮件服务器。 “Sendmail”直接使用操作系统的sendmail二进制文件。 “Test”不会发送电子邮件，而是将它们写入$CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ 以用于测试目的。',
         'Defines the module used to store the session data. With "DB" the frontend server can be splitted from the db server. "FS" is faster.' =>
             '定义存储会话数据的模块。使用“DB（数据库）”则前端服务器能从数据库服务器中拆分出来。“FS（文件系统）”更快一些。',
         'Defines the modules in Kernel/Output/HTML/GenericContent/ which provide the inner content to the chosen key.' =>
@@ -7485,8 +8333,8 @@ Thanks for your help!
             '定义在偏好设置表中存储用户标识符的列名称。',
         'Defines the name of the indicated calendar.' => '定义指定的日历名称。',
         'Defines the name of the key for customer sessions.' => '定义客户会话中关键词的名称。',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            '定义会话中关键词的名称，如Session、SessionID或OTOBO。',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            '定义会话中关键词的名称，如Session、SessionID或CareOnCloud ESM。',
         'Defines the name of the table where the user preferences are stored.' =>
             '定义存储用户偏好设置的表的名称。',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -7536,6 +8384,8 @@ Thanks for your help!
             '定义仪表板后端参数。“Limit（限制”）定义默认显示的条目数。“GROUP（组）”用于到本插件的访问权限限制（如 Group:admin;group1;group2）。“Default（默认）”代表这个插件是默认启用还是需要用户手动启用。“CacheTTL”表明本插件的缓存过期时间（单位：分钟）。“Mandatory（强制）”确定插件是否始终显示且不能被服务人员移除。',
         'Defines the parameters for the dashboard backend. "Limit" defines the number of entries displayed by default. "Group" is used to restrict access to the plugin (e. g. Group: admin;group1;group2;). "Default" indicates if the plugin is enabled by default or if the user needs to enable it manually. "CacheTTLLocal" defines the cache expiration period in minutes for the plugin. "Mandatory" determines if the plugin is always shown and can not be removed by agents.' =>
             '定义仪表板后端参数。“Limit（限制”）定义默认显示的条目数。“GROUP（组）”用于到本插件的访问权限限制（如 Group:admin;group1;group2）。“Default（默认）”代表这个插件是默认启用还是需要用户手动启用。“CacheTTLLocal”定义本插件的缓存过期时间（单位：分钟）。“Mandatory（强制）”确定插件是否始终显示且不能被服务人员移除。',
+        'Defines the parameters for the elasticsearch widget backend.' =>
+            '',
         'Defines the path and TTF-File to handle bold italic monospaced font in PDF documents.' =>
             '定义PDF文档中粗斜体等宽字体的TTF字体文件的路径和文件名。',
         'Defines the path and TTF-File to handle bold italic proportional font in PDF documents.' =>
@@ -7557,10 +8407,7 @@ Thanks for your help!
         'Defines the path to PGP binary.' => '定义PGP程序文件的路径。',
         'Defines the path to open ssl binary. It may need a HOME env ($ENV{HOME} = \'/var/lib/wwwrun\';).' =>
             '定义SSL程序文件的路径，可能需要HOME环境变量($ENV{HOME} = \'/var/lib/wwwrun\';)。',
-        'Defines the path to the Google Chrome or Chromium binary. If set, this binary will be used instead of PhantomJS::Bin.' =>
-            '',
-        'Defines the path to the PhantomJS binary. You can use a static build from http://phantomjs.org/download.html for an easy installation process.' =>
-            '',
+        'Defines the path to the Google Chrome or Chromium binary.' => '',
         'Defines the period of time (in minutes) before agent is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
             '定义由于不活动而将服务人员标记为“离开”的时间（单位：分钟）（例如：在“已登录的用户”小部件或聊天中）。',
         'Defines the period of time (in minutes) before customer is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
@@ -7572,6 +8419,10 @@ Thanks for your help!
             '定义服务人员界面电话工单的收件人和邮件工单的发件人（“队列”显示所有队列，“系统邮件地址”显示所有的系统邮件）。',
         'Defines the recipient target of the tickets ("Queue" shows all queues, "SystemAddress" shows only the queues which are assigned to system addresses) in the customer interface.' =>
             '定义客户界面工单收件人的目标（“Queue队列”显示所有的队列，“SystemAddress系统邮件地址”只显示分配到系统邮件地址的队列）。',
+        'Defines the redirect URL for setting a ticket article to \'seen\'.' =>
+            '',
+        'Defines the redirect URL for setting a ticket article to \'unseen\'.' =>
+            '',
         'Defines the required permission to show a ticket in the escalation view of the agent interface.' =>
             '定义服务人员界面升级视图显示工单所必需的权限。',
         'Defines the search limit for the stats.' => '定义统计的搜索限制。',
@@ -7582,7 +8433,7 @@ Thanks for your help!
             '定义服务人员真实姓名和给定队列邮件地址之间的分隔符。',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             '定义在服务人员界面客户用户通讯录搜索结果屏幕中显示的列和位置。',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> and <CareOnCloud_CONFIG_ScriptAlias> will be substituted.' =>
             '',
         'Defines the source dynamic field for storing historical data.' =>
             '定义源动态字段用于存储历史数据。',
@@ -7608,8 +8459,8 @@ Thanks for your help!
             '定义快速关闭操作的主题，该主题用于话务员界面的工单历史记录。',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             '定义系统管理员的邮件地址，它将显示在本系统的错误屏幕中。',
-        'Defines the system identifier. Every ticket number and http session string contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO).' =>
-            '定义本系统的标识符。每个工单编号和HTTP会话字符串均包含这个ID。这确保只有属于本系统的工单才会被跟进处理（在两套OTOBO实例间通信时有用）。',
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
+            '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             '定义到外部客户数据库的目标属性，例如：\'AsPopup PopupType_TicketAction\'。',
         'Defines the target attribute in the link to external customer database. E.g. \'target="cdb"\'.' =>
@@ -7627,11 +8478,11 @@ Thanks for your help!
         'Defines the ticket plugin for calendar appointments.' => '定义日历预约的工单插件。',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             '定义一个指定日历（可能在以后分配给一个指定的队列）的时区。',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            '使用公共模块“PublicSupportDataCollector”（例如用于OTOBO守护进程的模块）来定义支持数据收集的超时（以秒为单位，最小为20秒）。',
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            '使用公共模块“PublicSupportDataCollector”（例如用于CareOnCloud ESM守护进程的模块）来定义支持数据收集的超时（以秒为单位，最小为20秒）。',
         'Defines the two-factor module to authenticate agents.' => '定义服务人员的双因素身份验证模块。',
         'Defines the two-factor module to authenticate customers.' => '定义客户的双因素身份验证模块。',
-        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
+        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
             '',
         'Defines the used character for plaintext email quotes in the ticket compose screen of the agent interface. If this is empty or inactive, original emails will not be quoted but appended to the response.' =>
             '定义服务人员界面工单编写屏幕使用的普通文本邮件引用字符。如果这个设置为空或不激活，原始邮件将不会被引用而是追加到回复内容中。',
@@ -7640,14 +8491,16 @@ Thanks for your help!
             '定义用户头像。 请注意：将\'Active（激活）\'设置为0只会阻止服务人员在个人偏好设置中编辑此组的设置，但仍然允许管理员以其他用户的名义编辑这些设置。 使用\'PreferenceGroup\'来控制这些设置应该显示在用户界面的哪个区域。',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '定义工单的有效状态类型。如果一个工单处于此设置中任一状态类型的状态，则该工单将被视为打开，否则将被视为关闭。',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            '定义解锁的工单有效的状态。为解锁工单，可以使用脚本"bin/otobo.Console.pl Maint::Ticket::UnlockTimeout"。',
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+            '',
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            '定义解锁的工单有效的状态。为解锁工单，可以使用脚本"bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout"。',
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
+            '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             '定义工单能看到的锁定状态。注意：修改这个设置后，请确保删除缓存以便使用新值。默认：未锁定，临时锁定。',
         'Defines the width for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
             '定义本屏幕中富文本编辑器组件的宽度。输入数值（像素值）或百分比值（相对值）。',
-        'Defines the width for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            '定义富文本编辑器组件的宽度。输入数值（像素值）或百分比值（相对值）。',
         'Defines time in minutes since last modification for drafts of specified type before they are considered expired.' =>
             '定义指定类型的草稿自最近修改之后到被认为已过期之前的分钟数。',
         'Defines whether to index archived tickets for fulltext searches.' =>
@@ -7665,6 +8518,7 @@ Thanks for your help!
         'Defines, which tickets of which ticket state types should not be listed in linked ticket lists.' =>
             '定义在链接的工单列表中不出现的工单状态类型。',
         'Delete expired cache from core modules.' => '删除核心模块过期的缓存。',
+        'Delete expired form cache hourly.' => '',
         'Delete expired loader cache weekly (Sunday mornings).' => '每周删除过期的加载器缓存（星期天早晨）。',
         'Delete expired sessions.' => '删除过期的会话。',
         'Delete expired ticket draft entries.' => '删除过期的工单草稿条目。',
@@ -7682,6 +8536,8 @@ Thanks for your help!
             '确定在每个详情遮罩窗口中是否应在每个链接旁边显示删除链接的按钮。',
         'Determines if the list of possible queues to move to ticket into should be displayed in a dropdown list or in a new window in the agent interface. If "New Window" is set you can add a move note to the ticket.' =>
             '确定在服务人员界面转移工单到可能的队列列表是否在下拉列表中或新窗口显示。如果设置为“新窗口”，您可以为这个工单添加一个移动备注。',
+        'Determines if the statistics module may generate article lists.' =>
+            '',
         'Determines if the statistics module may generate ticket lists.' =>
             '确定统计模块是否可以生成工单清单。',
         'Determines the next possible ticket states, after the creation of a new email ticket in the agent interface.' =>
@@ -7712,41 +8568,65 @@ Thanks for your help!
             '确定服务人员界面收件人（电话工单）和发件人（邮件工单）哪些选项有效。',
         'Determines which queues will be valid for ticket\'s recepients in the customer interface.' =>
             '确定客户界面哪些队列可以作为工单的有效收件人。',
+        'Dialog to show after marking a ticket as seen' => '',
+        'Dialog to show after marking a ticket as unseen' => '',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             '禁用HHTP头"Content-Security-Policy"以便允许载入扩展的脚本内容。禁用这个HTTP头可能引起安全问题！仅在您知道您在干什么时才禁用它！',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
-            '禁用HHTP头"X-Frame-Options: SAMEORIGIN" 以便允许OTOBO可以包含在其它网址的IFrame框架中。禁用这个HTTP头可能有安全问题！仅在您知道您在干什么时才禁用它！',
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+            '禁用HHTP头"X-Frame-Options: SAMEORIGIN" 以便允许CareOnCloud ESM可以包含在其它网址的IFrame框架中。禁用这个HTTP头可能有安全问题！仅在您知道您在干什么时才禁用它！',
         'Disable autocomplete in the login screen.' => '在登陆窗口禁止自动完成。',
         'Disable cloud services' => '禁用云服务',
         'Disables sending reminder notifications to the responsible agent of a ticket (Ticket::Responsible needs to be enabled).' =>
             '禁止发送提醒通知给工单负责人（需要启用Ticket::Responsible设置）。',
         'Disables the redirection to the last screen overview / dashboard after a ticket is closed.' =>
             '当工单关闭时，取消到最近浏览页/仪表板的重定向。',
+        'Display a message explaining that the asterisk indicates mandatory fields.' =>
+            '',
         'Display a warning and prevent search when using stop words within fulltext search.' =>
             '在全文搜索使用了停止词时显示一个警告并阻止搜索。',
         'Display communication log entries.' => '显示通信日志条目。',
         'Display settings to override defaults for Process Tickets.' => '为流程工单显示设置值覆盖默认值。',
+        'Display settings to override defaults for dynamic field widget for Tickets.' =>
+            '',
+        'Displayable via click' => '',
         'Displays the accounted time for an article in the ticket zoom view.' =>
             '在工单详情视图中显示所用工时。',
         'Displays the number of all tickets with the same CustomerID as current ticket in the ticket zoom view.' =>
             '在工单详情视图中显示与当前工单具有相同的客户ID的所有工单数。',
-        'Down' => '下',
         'Dropdown' => '下拉选择框',
         'Dutch' => '荷兰语',
         'Dutch stop words for fulltext index. These words will be removed from the search index.' =>
             '全文索引的荷兰语停止词。这些词将从搜索索引中移除。',
+        'Dynamic Field Contents' => '',
+        'Dynamic Field Information' => '',
+        'Dynamic Field Labels' => '',
+        'Dynamic Field Screen' => '',
+        'Dynamic Field Set' => '',
+        'Dynamic Field Set Backend GUI' => '',
         'Dynamic Fields Checkbox Backend GUI' => '动态字段复选框后端GUI',
         'Dynamic Fields Contact Data Backend GUI' => '动态字段联系人数据后台GUI',
         'Dynamic Fields Database Backend GUI' => '动态字段数据库后台GUI',
         'Dynamic Fields Date Time Backend GUI' => '动态字段日期时间后端GUI',
         'Dynamic Fields Drop-down Backend GUI' => '动态字段下拉框后端GUI',
         'Dynamic Fields GUI' => '动态字段GUI',
+        'Dynamic Fields Lens Backend GUI' => '',
         'Dynamic Fields Multiselect Backend GUI' => '动态字段多选框后端GUI',
         'Dynamic Fields Overview Limit' => '动态字段概览限制',
+        'Dynamic Fields Reference Backend GUI' => '',
         'Dynamic Fields Text Backend GUI' => '动态字段文本框后端图形界面',
         'Dynamic Fields Web Service Backend GUI' => '动态字段Web服务后台GUI',
         'Dynamic Fields used to export the search result in CSV format.' =>
             '用于输出搜索结果为CSV格式的动态字段。',
+        'Dynamic field event module that deletes script field events if a dynamic field of type script gets deleted.' =>
+            '',
+        'Dynamic field event module that updates PartOfSet attributes of fields which are included in a set.' =>
+            '',
+        'Dynamic field event module that updates the MultiValue attribute of the Lens field configuration to match the MultiValue attribute of the attribute field.' =>
+            '',
+        'Dynamic fields available as attributes for the settings \'Ticket::Frontend::CustomerTicketCategories###DynamicField\', which are shown in the ticket overview screen of the customer interface.' =>
+            '',
+        'Dynamic fields groups for dynamic field widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
+            '',
         'Dynamic fields groups for process widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
             '流程小部件的动态字段组。键是组名，值是要显示的动态字段。例如：\'键 => My Group\'，\'值: Name_X, NameY\'。',
         'Dynamic fields limit per page for Dynamic Fields Overview.' => '动态字段概览视图的每页动态字段数限制。',
@@ -7754,6 +8634,8 @@ Thanks for your help!
             '在客户界面的工单消息屏幕中显示的动态字段选项。 注意。 如果要在客户界面的工单详情屏幕中显示这些字段，则必须在CustomerTicketZoom ### DynamicField中启用它们。',
         'Dynamic fields options shown in the ticket reply section in the ticket zoom screen of the customer interface.' =>
             '在客户界面的工单详情屏幕中工单回复部分显示的动态字段选项。',
+        'Dynamic fields shown in the dynamic field widget in ticket zoom screen of the agent interface.' =>
+            '',
         'Dynamic fields shown in the email outbound screen of the agent interface.' =>
             '在服务人员界面的电子邮件外发屏幕中显示的动态字段。',
         'Dynamic fields shown in the process widget in ticket zoom screen of the agent interface.' =>
@@ -7776,8 +8658,6 @@ Thanks for your help!
             '在服务人员界面的工单转移屏幕中显示的动态字段。',
         'Dynamic fields shown in the ticket note screen of the agent interface.' =>
             '在服务人员界面的工单备注屏幕中显示的动态字段。',
-        'Dynamic fields shown in the ticket overview screen of the customer interface.' =>
-            '在客户界面的工单概览屏幕中显示的动态字段。',
         'Dynamic fields shown in the ticket owner screen of the agent interface.' =>
             '在服务人员界面的工单所有者屏幕中显示的动态字段。',
         'Dynamic fields shown in the ticket pending screen of the agent interface.' =>
@@ -7811,7 +8691,6 @@ Thanks for your help!
         'DynamicField' => 'DynamicField（动态字段）',
         'DynamicField backend registration.' => '动态字段后端注册。',
         'DynamicField object registration.' => '动态字段对象注册。',
-        'DynamicFieldScreen' => '动态字段窗口DynamicFieldScreen',
         'DynamicField_%s' => 'DynamicField_%s',
         'E-Mail Outbound' => '外发邮件',
         'Edit Customer Companies.' => '编辑客户单位。',
@@ -7820,6 +8699,7 @@ Thanks for your help!
         'Edit contacts with data' => '用数据编辑联系人',
         'Edit contacts with data.' => '用数据编辑联系人。',
         'Edit customer company' => '编辑客户单位',
+        'Elasticsearch (u)' => '',
         'Elasticsearch quick result module.' => 'Elasticsearch快速结果模块。',
         'Email Addresses' => '邮件地址',
         'Email Outbound' => '外发邮件',
@@ -7830,15 +8710,18 @@ Thanks for your help!
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             '如果你信任所有的公共和私有PGP密钥（即使它们不是可信任签名认证的），则启用这个参数。',
         'Enabled filters.' => '启用的过滤器。',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            '启用PGP支持。当启用PGP签名和加密邮件时，强烈推荐以OTOBO用户运行WEB服务器，否则，访问.pnugp目录会有权限问题。',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            '启用PGP支持。当启用PGP签名和加密邮件时，强烈推荐以CareOnCloud ESM用户运行WEB服务器，否则，访问.pnugp目录会有权限问题。',
         'Enables S/MIME support.' => '启用S/MIME支持。',
         'Enables customers to create their own accounts.' => '允许客户自己建立帐户。',
         'Enables fetch S/MIME from CustomerUser backend support.' => '在客户用户后端支持模块启用收取S/MIME（邮件）。',
         'Enables file upload in the package manager frontend.' => '在软件包管理前端启用文件上传。',
         'Enables or disables the caching for templates. WARNING: Do NOT disable template caching for production environments for it will cause a massive performance drop! This setting should only be disabled for debugging reasons!' =>
             '启用或禁用模板缓存。警告：不要在生产环境禁用模板缓存，因为这会引起巨大的性能下降！这个设置只在调试时才禁用！',
+        'Enables or disables the debug mode for translations module.' => '',
         'Enables or disables the debug mode over frontend interface.' => '启用或禁用前端界面的调试模式。',
+        'Enables or disables the editing of articles which are visible for the customer in general.' =>
+            '',
         'Enables or disables the ticket watcher feature, to keep track of tickets without being the owner nor the responsible.' =>
             '启用或禁用工单关注人功能，以便非所有者或负责人也能跟踪工单情况。',
         'Enables performance log (to log the page response time). It will affect the system performance. Frontend::Module###AdminPerformanceLog must be enabled.' =>
@@ -7853,8 +8736,8 @@ Thanks for your help!
             '启用工单负责人功能，以跟踪指定的工单。',
         'Enables ticket type feature.' => '启用工单类型功能。',
         'Enables ticket watcher feature only for the listed groups.' => '仅对列表中的组启用工单关注人功能。',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
-            '启用SecureMode会禁用Web安装程序（http://yourhost.example.com/otobo/installer.pl）和迁移。这样做是为了防止系统被劫持。如果未启用SecureMode，则可以重新安装系统。在这种情况下，当前的基本配置将用于在安装程序脚本中预先填充问题。启用SecureMode还可以启用GenericAgent，PackageManager和SQL Box。',
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+            '启用SecureMode会禁用Web安装程序（http://yourhost.example.com/careoncloud/installer.pl）和迁移。这样做是为了防止系统被劫持。如果未启用SecureMode，则可以重新安装系统。在这种情况下，当前的基本配置将用于在安装程序脚本中预先填充问题。启用SecureMode还可以启用GenericAgent，PackageManager和SQL Box。',
         'English (Canada)' => '英语（加拿大）',
         'English (United Kingdom)' => '英语（英国）',
         'English (United States)' => '英语（美国）',
@@ -7867,6 +8750,7 @@ Thanks for your help!
         'Escalation view' => '升级视图',
         'EscalationTime' => '升级时间',
         'Estonian' => '爱沙尼亚',
+        'Evaluate all script fields.' => '',
         'Event module registration (store historical data in dynamic fields).' =>
             '事件模块登记（在动态字段存储历史数据）。',
         'Event module registration. For more performance you can define a trigger event (e. g. Event => TicketCreate).' =>
@@ -7896,8 +8780,8 @@ Thanks for your help!
             '执行定制的命令或模块。注意：如果使用模块，需要使用函数。',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             '为主题中没有工单编号的邮件执行回复或引用头的跟进检查。',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
-            '对OTOBO头\'X-OTOBO-Bounce\'执行后续检查。',
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'.' =>
+            '对CareOnCloud ESM头\'X-CareOnCloud-Bounce\'执行后续检查。',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             '为主题中没有工单编号的邮件执行附件内容的跟进检查。',
         'Executes follow-up checks on email body for mails that don\'t have a ticket number in the subject.' =>
@@ -7915,22 +8799,22 @@ Thanks for your help!
             '通过代理获取软件包，覆盖“WebUserAgent::Proxy”设置。',
         'Fields of the customer company index, used for the company fulltext search. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '客户公司索引的字段，用于公司全文搜索。字段也被存储，但是对于整体功能不是必需的。',
-        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
-            '工单索引的字段，用于工单的全文搜索，这个字段也会被存储，但是对于整体功能不是必需的。如果添加了可以更新的字段（尤其是DynamicFields），则必须将它们各自的更新事件添加到Elasticsearch Webservice的TicketManagement调用程序！',
+        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
+            '',
         'Fields stored in the customer company index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '客户公司索引中存储的字段，除了全文搜索之外，还用于其他用途。为了完整的功能，所有字段都是必填项。',
         'Fields stored in the customer user index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '客户用户索引中存储的字段，除了全文搜索之外，还用于其他用途。为了完整的功能，所有字段都是必填项。',
-        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
-            '存储在工单索引中的字段除了用于全文搜索之外，还用于其他用途。为了完整的功能，所有字段都是必填项。如果添加了可以更新的字段（尤其是DynamicFields），则必须将它们各自的更新事件添加到Elasticsearch Webservice的TicketManagement调用程序！',
+        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
+            '',
         'Fields to be searched in ticket index. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '票证索引中要搜索的字段也会被存储，但是对于整体功能不是必需的。',
         'File that is displayed in the Kernel::Modules::AgentInfo module, if located under Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.' =>
             '显示在模块Kernel::Modules::AgentInfo中的文件，位于Kernel/Output/HTML/Templates/Standard/AgentInfo.tt。',
-        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            '调试ACL的过滤器。注意：可以按以下格式添加更多的工单属性 <OTOBO_TICKET_属性>，例如：<OTOBO_TICKET_Priority>。',
-        'Filter for debugging Transitions. Note: More filters can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            '调试转换的过滤器。注意：可以按以下格式添加更多的过滤器 <OTOBO_TICKET_属性>，例如：<OTOBO_TICKET_Priority>。',
+        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            '调试ACL的过滤器。注意：可以按以下格式添加更多的工单属性 <CareOnCloud_TICKET_属性>，例如：<CareOnCloud_TICKET_Priority>。',
+        'Filter for debugging Transitions. Note: More filters can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            '调试转换的过滤器。注意：可以按以下格式添加更多的过滤器 <CareOnCloud_TICKET_属性>，例如：<CareOnCloud_TICKET_Priority>。',
         'Filter incoming emails.' => '进入的邮件的过滤器。',
         'Finnish' => '芬兰语',
         'First Christmas Day' => '圣诞节的第一天',
@@ -7961,6 +8845,8 @@ Thanks for your help!
         'French stop words for fulltext index. These words will be removed from the search index.' =>
             '全文索引的法语停止词，这些词将从搜索索引中移除。',
         'Frontend' => '前端',
+        'Frontend module for dashboard info tile in customer interface.' =>
+            '',
         'Frontend module registration (disable AgentTicketService link if Ticket Service feature is not used).' =>
             '前端模块注册（如果没有使用工单服务功能，禁用服务人员工单服务链接）。',
         'Frontend module registration (disable company link if no company feature is used).' =>
@@ -7974,11 +8860,13 @@ Thanks for your help!
         'Frontend module registration for the customer interface.' => '客户界面的前端模块注册。',
         'Frontend module registration for the public interface.' => '公共界面的前端模块注册。',
         'Full value' => '全值',
+        'Fulltext Elasticsearch' => '',
         'Fulltext index regex filters to remove parts of the text.' => '全文索引正则表达式过滤器用来删除部分文本。',
         'Fulltext search' => '全文搜索',
         'Fulltext search using Elasticsearch.' => '用Elasticsearch进行全文搜索。',
-        'FulltextES' => '全文弹性搜索FulltextES',
+        'Functional Account and Token Management.' => '',
         'Galician' => '加利西亚语',
+        'General Label' => '',
         'General ticket data shown in the ticket overviews (fall-back). Note that TicketNumber can not be disabled, because it is necessary.' =>
             '在工单概览中显示的一般工单数据（低效运行）。 请注意，工单编号不能被禁用，因为它是必要的。',
         'Generate HTML comment hooks for the specified blocks so that filters can use them.' =>
@@ -8026,11 +8914,12 @@ Thanks for your help!
         'Graph: Stacked Area Chart' => '图形：堆叠面积图',
         'Greek' => '希腊语',
         'Hebrew' => '希伯来语',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
-            '帮助扩展信件全文搜索（发件人、收件人、抄送、主题和正文搜索）。它将在信件创建后条带化所有信件并建立索引，提升全文搜索50%的效率。可使用命令 "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" 来创建初始索引。',
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+            '帮助扩展信件全文搜索（发件人、收件人、抄送、主题和正文搜索）。它将在信件创建后条带化所有信件并建立索引，提升全文搜索50%的效率。可使用命令 "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" 来创建初始索引。',
         'High Contrast' => '高对比度',
         'High contrast skin for visually impaired users.' => '用于视力受损用户的高对比度皮肤。',
         'Hindi' => '印度语',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => '',
         'Hungarian' => '匈牙利语',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             '如果Customer::AuthModule（客户认证模块）选择“数据库”，可以指定数据库驱动（一般使用自动检测）。',
@@ -8042,8 +8931,8 @@ Thanks for your help!
             '如果Customer::AuthModule（客户认证模块）选择“数据库”，必须指定连接到客户表的DSN（数据源名称）。',
         'If "DB" was selected for Customer::AuthModule, the column name for the CustomerPassword in the customer table must be specified.' =>
             '如果Customer::AuthModule（客户认证模块）选择“数据库”，必须指定客户表中客户密码的字段名称。',
-        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified.' =>
-            '如果为Customer::AuthModule（客户认证模块）选择了“DB（数据库）”，则必须指定密码的加密类型。',
+        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified. It is discouraged to configure the not really secure algorithms like \'md5\', \'apr1\', \'crypt\', and \'plain\'.' =>
+            '',
         'If "DB" was selected for Customer::AuthModule, the name of the column for the CustomerKey in the customer table must be specified.' =>
             '如果Customer::AuthModule（客户认证模块）选择“数据库”，必须指定客户表中客户密钥的字段名称。',
         'If "DB" was selected for Customer::AuthModule, the name of the table where your customer data should be stored must be specified.' =>
@@ -8078,8 +8967,8 @@ Thanks for your help!
             '如果Customer::AuthModule（客户认证模块）选择“LDAP”，可以在这里指定访问属性。',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             '如果Customer::AuthModule（客户认证模块）选择“LDAP”，您可以指定系统是否要停止的条件（例如由于网络问题无法建立到服务器的连接）。',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            '如果Customer::AuthModule（客户认证模块）选择“LDAP”，您可以检查在posixGroup组中的用户是否允许认证，例如：用户需要在组xyz才能使用OTOBO。指定这个有权访问系统的组名。',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            '如果Customer::AuthModule（客户认证模块）选择“LDAP”，您可以检查在posixGroup组中的用户是否允许认证，例如：用户需要在组xyz才能使用CareOnCloud ESM。指定这个有权访问系统的组名。',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             '如果选用了LDAP，您可以为每个LDAP查询添加一个过滤器，例如：(mail=*)、 (objectclass=user) 或 (!objectclass=computer)。',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -8098,6 +8987,12 @@ Thanks for your help!
             '如果为CryptType(加密类型)选择了“bcrypt”，请使用此处指定的bcrypt哈希cost 值。 目前最大支持的cost 值为31。',
         'If "file" was selected for LogModule, a logfile must be specified. If the file doesn\'t exist, it will be created by the system.' =>
             '如果日志模块选用了“文件”，必须指定日志文件名。如果文件不存在，系统会创建它。',
+        'If \'XOAUTH2\' or \'OAUTHBEARER\' is selected in the \'SendmailModule::OAuth2Method\' setting, then this setting needs to be enabled and set to a valid OIDC Functional Account. OIDC Accounts can be configured in the Admin UI \'OAuth Functional Accounts\' Module.' =>
+            '',
+        'If activated additional data such as the history and links will be read from a foreign DB containing the exported tickets and added to the imported tickets on this system. This is only available for created, not for updated tickets.' =>
+            '',
+        'If activated, a clicked activity button will be hidden in the customer ticket zoom frontend.' =>
+            '',
         'If active, none of the regular expressions may match the user\'s email address to allow registration.' =>
             '如果激活此选项，没有正则表达式能够匹配允许用户注册的邮件地址。',
         'If active, one of the regular expressions has to match the user\'s email address to allow registration.' =>
@@ -8110,6 +9005,8 @@ Thanks for your help!
             '如果发送邮件模块选用了“SMTP”，并且邮件服务器需要认证，必须指定发送邮件的服务器。',
         'If any of the "SMTP" mechanisms was selected as SendmailModule, the port where your mailserver is listening for incoming connections must be specified.' =>
             '如果发送邮件模块选用了“SMTP”，并且邮件服务器需要认证，必须指定邮件服务器监听的端口。',
+        'If any of the "SSL" mechanisms was selected as SendmailModule than declare whether the mail server should be verified.' =>
+            '',
         'If enabled debugging information for ACLs is logged.' => '如果启用了此选项，将记录ACL的调试信息。',
         'If enabled debugging information for transitions is logged.' => '如果启用了此选项，将记录转换的调试信息。',
         'If enabled defines the preselected state for customer follow-up in the customer interface.' =>
@@ -8118,16 +9015,16 @@ Thanks for your help!
             '如果启用了此选项，守护进程的标准错误流将重定向到一个日志文件。',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             '如果启用了此选项，守护进程的标准输出流将重定向到一个日志文件。',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
-            '如果启用，守护程序将使用此目录创建其PID文件。 注意：请在任何更改之前停止守护程序，并且只有在不使用<$OTOBOHome>/var/run/时才使用此设置。',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
-            '如果启用，OTOBO将以最小化的形式提供所有CSS文件。',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
-            '如果启用了此选项，OTOBO将用压缩格式传送所有的JavaScript文件。',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            '如果启用，守护程序将使用此目录创建其PID文件。 注意：请在任何更改之前停止守护程序，并且只有在不使用<$CareOnCloudHome>/var/run/时才使用此设置。',
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
+            '如果启用，CareOnCloud ESM将以最小化的形式提供所有CSS文件。',
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
+            '如果启用了此选项，CareOnCloud ESM将用压缩格式传送所有的JavaScript文件。',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             '如果启用了此选项，电话工单和邮件工单将在新窗口中打开。',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
-            '如果启用了此选项，将从WEB界面、HTTP头信息和外发邮件的X-Headers头信息中移除OTOBO版本标签。注意：如果你要修改这个选项，请确保清空缓存。',
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+            '如果启用了此选项，将从WEB界面、HTTP头信息和外发邮件的X-Headers头信息中移除CareOnCloud ESM版本标签。注意：如果你要修改这个选项，请确保清空缓存。',
         'If enabled, the cache data be held in memory.' => '如果启用了，缓存数据将会保留在内存中。',
         'If enabled, the cache data will be stored in cache backend.' => '如果启用了，缓存数据将会存储到缓存后端。',
         'If enabled, the customer can search for tickets in all services (regardless what services are assigned to the customer).' =>
@@ -8137,20 +9034,22 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '如果启用了此选项，在鼠标移动到主菜单位置时打开一级子菜单（而不是需要点击后再打开）。',
         'If enabled, the quick close action will create an article.' => '启用后，快速关闭操作将创建一条记录。',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            '如果启用，那么尚未选择时区的用户将被通知选择时区。 注意：如果（1）用户尚未选择时区，并且（2）OTOBOTimeZone和UserDefaultTimeZone相同，（3）未设置为UTC，则不会显示通知。',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            '如果启用，那么尚未选择时区的用户将被通知选择时区。 注意：如果（1）用户尚未选择时区，并且（2）CareOnCloudTimeZone和UserDefaultTimeZone相同，（3）未设置为UTC，则不会显示通知。',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '如果没有指定SendmailNotificationEnvelopeFrom，这个选项可确保使用邮件的发件人地址而不是空白的发件人（在某些邮件服务器的配置中需要此选项）。',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
             '如果设置了此参数，这个地址用于外发通知的信件发件人头信息。如果没有指定地址，则信件发件人头信息为空（除非设置了SendmailNotificationEnvelopeFrom::FallbackToEmailFrom参数）。',
         'If set, this address is used as envelope sender in outgoing messages (not notifications - see below). If no address is specified, the envelope sender is equal to queue e-mail address.' =>
             '如果设置了此参数，这个地址将用于外发消息（不是通知-通知在下面查看）的信件发件人头。如果不指定地址，信件发件人头就为空。',
+        'If the accounted time units for articles are shown in the article list. Only showing if at least one article has any accounted time.' =>
+            '',
         'If this option is enabled, tickets created via the web interface, via Customers or Agents, will receive an autoresponse if configured. If this option is not enabled, no autoresponses will be sent.' =>
             '如果这个选项启用了，服务人员或客户通过WEB界面创建的工单将收到自动响应（如果配置了自动响应）。如果这个选项不启用，则不会发送自动响应。',
         'If this regex matches, no message will be send by the autoresponder.' =>
             '如果这个正则表达式匹配了，自动响应不会发送任何消息。',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
-            '如果启用此设置，则允许安装未经OTOBO Team验证的软件包，不过这些软件包可能会威胁整个系统！',
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
+            '如果启用此设置，则允许安装未经CareOnCloud ESM Team验证的软件包，不过这些软件包可能会威胁整个系统！',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             '如果启用这个设置，本地修改内容不会在软件包管理器和支持数据收集工具中高亮显示为错误。',
         'If you\'re going to be out of office, you may wish to let other users know by setting the exact dates of your absence.' =>
@@ -8158,21 +9057,28 @@ Thanks for your help!
         'Ignore system sender article types (e. g. auto responses or email notifications) to be flagged as \'Unread Article\' in AgentTicketZoom or expanded automatically in Large view screens.' =>
             '忽略系统发件人信件类型 （如：自动响应或电子邮件通知），在 工单详情屏幕或在大视图屏幕自动扩展时将其标记为 \'未读信件\' 。',
         'Ignores not ticket related attributes.' => '',
+        'Import and export object information.' => '导入和导出对象信息。',
         'Import appointments screen.' => '导入预约屏幕。',
+        'Import/Export' => '导入/导出',
+        'In case only one value in a dropdown is left, (0) you do nothing with the field and show it, (1) that single value is selected automatically but the field is still shown or (2) that single value is selected automatically and the field is hidden (but still has the value). Possible dropdown fields could be e.g. Dest (destination queue), ServiceID, SLAID, TypeID, DynamicFields (list your DF names without "DynamicField_" as a prefix) and more.' =>
+            '',
         'Include tickets of subqueues per default when selecting a queue.' =>
             '选择队列的时候默认包括子队列的工单。',
         'Include unknown customers in ticket filter.' => '在工单过滤器中包括未知客户。',
         'Includes article create times in the ticket search of the agent interface.' =>
             '服务人员界面工单搜索时包括工单创建时间。',
         'Incoming Phone Call.' => '客户来电。',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            '索引加速器：选择您的后端工单视图加速器模块。“RuntimeDB（运行时数据库）”实时生成每个队列视图（工单总数不超过60000个且系统打开的工单不超过6000个时没有性能问题）。“StaticDB（静态数据库）是最强大的模块，它使用额外的类似于视图的工单索引表（工单总数超过80000且系统打开的工单超过6000时推荐使用），使用命令"bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild"来初始化索引。',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            '索引加速器：选择您的后端工单视图加速器模块。“RuntimeDB（运行时数据库）”实时生成每个队列视图（工单总数不超过60000个且系统打开的工单不超过6000个时没有性能问题）。“StaticDB（静态数据库）是最强大的模块，它使用额外的类似于视图的工单索引表（工单总数超过80000且系统打开的工单超过6000时推荐使用），使用命令"bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild"来初始化索引。',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             '表明是否应该将始终退回邮件视为正常的跟进处理。',
         'Indonesian' => '印度尼西亚语',
         'Inline' => '内联',
         'Input' => '输入',
         'Interface language' => '界面语言',
+        'Interfaces for which the restoring of pending information is activated.' =>
+            '',
+        'Internal' => '',
         'Internal communication channel.' => '内部通信渠道。',
         'International Workers\' Day' => '五一劳动节',
         'It is possible to configure different skins, for example to distinguish between diferent agents, to be used on a per-domain basis within the application. Using a regular expression (regex), you can configure a Key/Content pair to match a domain. The value in "Key" should match the domain, and the value in "Content" should be a valid skin on your system. Please see the example entries for the proper form of the regex.' =>
@@ -8186,13 +9092,11 @@ Thanks for your help!
         'Italian' => '意大利语',
         'Italian stop words for fulltext index. These words will be removed from the search index.' =>
             '全文索引的意大利语停止词，这些词将从搜索索引中移除。',
-        'Ivory' => '象牙白',
-        'Ivory (Slim)' => '象牙白（修身版）',
         'Japanese' => '日语',
         'JavaScript function for the search frontend.' => '搜索界面的JavaScript函数。',
-        'Jump to OTOBO!' => '跃入OTOBO的怀抱！',
+        'Jump to CareOnCloud ESM!' => '跃入CareOnCloud ESM的怀抱！',
         'Korean' => '韩语',
-        'Language' => '语言',
+        'Languages' => '',
         'Large' => '详细',
         'Last Screen Overview' => '最近屏幕概览',
         'Last customer subject' => '最后客户主题',
@@ -8202,7 +9106,9 @@ Thanks for your help!
         'Lastname, Firstname (UserLogin)' => '姓, 名（登录用户名）',
         'LastnameFirstname' => '姓名',
         'Latvian' => '拉脱维亚语',
+        'Lax' => '',
         'Left' => '左',
+        'Lens' => '',
         'Link Object' => '链接对象',
         'Link Object.' => '链接对象。',
         'Link agents to groups.' => '链接服务人员到组。',
@@ -8219,6 +9125,10 @@ Thanks for your help!
         'Links 2 tickets with a "Normal" type link.' => '将2个工单链接为“普通”。',
         'Links 2 tickets with a "ParentChild" type link.' => '将2个工单链接为“父子”。',
         'Links appointments and tickets with a "Normal" type link.' => '将预约和工单链接为“普通”类型。',
+        'List of Active CKEditor Plugins. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'List of Active CKEditor Plugins. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'List of CSS files to always be loaded for the agent interface.' =>
             '服务人员界面始终载入的CSS文件列表。',
         'List of CSS files to always be loaded for the customer interface.' =>
@@ -8247,8 +9157,12 @@ Thanks for your help!
         'List of responsive CSS files to always be loaded for the customer interface.' =>
             '客户界面始终载入的响应CSS文件列表。',
         'List of states for which escalations should be suspended.' => '列表中的状态下，升级会被挂起。',
+        'List of ticket masks which can be altered using AdminTicketMask.' =>
+            '',
         'List view' => '列表视图',
         'Lithuanian' => '立陶宛语',
+        'Loader module for dashboard info tile in customer interface.' =>
+            '',
         'Loader module registration for the agent interface.' => '服务人员界面的加载器模块注册。',
         'Loader module registration for the customer interface.' => '客户界面的加载器模块注册。',
         'Lock / unlock this ticket' => '锁定/解锁这个工单',
@@ -8270,10 +9184,10 @@ Thanks for your help!
         'Makes the application check the MX record of email addresses before sending an email or submitting a telephone or email ticket.' =>
             '在发送邮件或提交电话工单/邮件工单前让系统检查邮件地址的MX记录。',
         'Makes the application check the syntax of email addresses.' => '让系统检查邮件地址的语法。',
-        'Makes the session management use html cookies. If html cookies are disabled or if the client browser disabled html cookies, then the system will work as usual and append the session id to the links.' =>
-            '让会话管理使用HTML Cookies。如果禁用了html cookies或客户端浏览器禁用了html cookies，系统仍会正常工作，并将会话ID追加到链接地址中。',
         'Malay' => '马来语',
-        'Manage OTOBO Team cloud services.' => 'OTOBO管理团队云服务。',
+        'Manage Customer Dashboard Info Tile Entries' => '',
+        'Manage CareOnCloud ESM Team cloud services.' => 'CareOnCloud ESM管理团队云服务。',
+        'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => '管理邮件加密的PGP密钥。',
         'Manage POP3 or IMAP accounts to fetch email from.' => '管理收取邮件的POP3或IMAP帐号。',
         'Manage S/MIME certificates for email encryption.' => '管理邮件加密的S/MIME证书。',
@@ -8281,11 +9195,17 @@ Thanks for your help!
         'Manage different calendars.' => '管理不同的日历。',
         'Manage dynamic field in screens.' => '在界面管理动态字段。',
         'Manage existing sessions.' => '管理已登录会话。',
+        'Manage import and export of objects.' => '',
         'Manage support data.' => '管理支持数据。',
         'Manage system registration.' => '管理系统注册。',
         'Manage tasks triggered by event or time based execution.' => '管理事件触发或基于时间执行的任务。',
+        'Mark as (un)seen' => '',
         'Mark as Spam!' => '标记为垃圾!',
+        'Mark as seen' => '',
         'Mark this ticket as junk!' => '标记这个工单为垃圾!',
+        'Mark ticket as seen' => '',
+        'Mark ticket as unseen' => '',
+        'Mark tickets as seen or unseen via bulk action' => '',
         'Max size (in characters) of the customer information table (phone and email) in the compose screen.' =>
             '在编写工单屏幕客户信息表格（电话和邮件）的最大尺寸（单位：字符）。',
         'Max size (in rows) of the informed agents box in the agent interface.' =>
@@ -8294,6 +9214,8 @@ Thanks for your help!
             '服务人员界面相关的服务人员屏幕的最大尺寸（单位：行）。',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             '在邮件回复和一些概览视图屏幕信件主题的最大尺寸。',
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+            '',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             '一天中给自己的邮件地址发送自动邮件响应的最大数（邮件环路保护）。',
         'Maximal auto email responses to own email-address a day, configurable by email address (Loop-Protection).' =>
@@ -8320,7 +9242,8 @@ Thanks for your help!
         'Medium' => '基本',
         'Merge this ticket and all articles into another ticket' => '将这个工单和所有的信件合并到另一工单',
         'Merged Ticket (%s/%s) to (%s/%s).' => '已将工单(%s/%s)合并到(%s/%s)。',
-        'Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>.' => '合并工单<OTOBO_TICKET>到 <OTOBO_MERGE_TO_TICKET>。',
+        'Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>.' => '合并工单<CareOnCloud_TICKET>到 <CareOnCloud_MERGE_TO_TICKET>。',
+        'Message of the day' => '',
         'Minute' => '分钟',
         'Miscellaneous' => '杂项',
         'Module for To-selection in new ticket screen in the customer interface.' =>
@@ -8382,7 +9305,7 @@ Thanks for your help!
         'New Year\'s Day' => '新年',
         'New Year\'s Eve' => '除夕',
         'New process ticket' => '新的流程工单',
-        'News about OTOBO.' => 'OTOBO新闻。',
+        'News about CareOnCloud ESM.' => 'CareOnCloud ESM新闻。',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             '服务人员界面工单电话接入屏幕在添加一个电话备注后工单可能的下一状态。',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -8400,26 +9323,35 @@ Thanks for your help!
             '服务人员界面搜索工具显示每个工单的行数。',
         'Number of shards (NS), replicas (NR) and fields limit for the index \'ticket\'.' =>
             '',
+        'Number of shards (NS), replicas (NR) and fields limit for the index \'tmpattachments\'.' =>
+            '',
         'Number of shards (NS), replicas (NR) and fields limit for the index. Note: \'Elasticsearch::ArticleIndexCreationSettings\' is deprecated. For upwards compatibility use \'Elasticsearch::IndexSettings###Default\' instead.' =>
             '',
-        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices.\'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
+        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices. \'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
             '',
         'Number of tickets to be displayed in each page of a search result in the agent interface.' =>
             '服务人员界面搜索结果每页显示的工单数。',
         'Number of tickets to be displayed in each page of a search result in the customer interface.' =>
             '客户界面搜索结果每页显示的工单数。',
-        'OTOBO News' => 'OTOBO新闻',
-        'OTOBO Team Services' => 'OTOBO团队服务',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
-            'OTOBO能够使用一个或多个只读镜像数据库以扩展操作（如全文搜索或生成统计报表）。您可以在这里指定第一个镜像数据库的DSN（数据源名称）。',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
-            'OTOBO不支持对没有结束日期或没有重复次数的预约做循环处理。在导入过程中，可能有ICS文件包含了此类预约。作为替代，系统将所有的此类预约创建为已过去的预约，然后加上接下来的N个月(默认120个月或10年)的重复预约。',
-        'Objects to search for, how many entries and which attributs to show.' =>
+        'OAUTHBEARER' => '',
+        'OAuth Functional Accounts' => '',
+        'OAuth Tokens' => '',
+        'OIDC Profile Management' => '',
+        'OIDC Profiles' => '',
+        'CareOnCloud ESM News' => 'CareOnCloud ESM新闻',
+        'CareOnCloud ESM Team Services' => 'CareOnCloud ESM团队服务',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+            'CareOnCloud ESM能够使用一个或多个只读镜像数据库以扩展操作（如全文搜索或生成统计报表）。您可以在这里指定第一个镜像数据库的DSN（数据源名称）。',
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+            'CareOnCloud ESM不支持对没有结束日期或没有重复次数的预约做循环处理。在导入过程中，可能有ICS文件包含了此类预约。作为替代，系统将所有的此类预约创建为已过去的预约，然后加上接下来的N个月(默认120个月或10年)的重复预约。',
+        'Object backend module registration for the import/export module.' =>
+            '',
+        'Objects to search for, how many entries and which attributes to show.' =>
             '搜索的目标，显示的条目和属性。',
-        'Objects to search for, how many entries and which attributs to show. Ticket attributes, except queue, have to explicitely be stored via Elasticsearch.' =>
-            '要搜索的对象，要显示的条目数和属性。',
+        'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
+            '',
         'Open an external link!' => '打开一个外部链接！',
-        'Open the OTOBO home page in a new window' => '',
+        'Open the CareOnCloud ESM home page in a new window' => '',
         'Open tickets (customer user)' => '处理中的工单（客户用户）',
         'Open tickets (customer)' => '处理中的工单（客户）',
         'Option' => '选项',
@@ -8527,10 +9459,15 @@ Thanks for your help!
         'ParentChild' => '父子',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             '日志文件的路径（仅在邮件循环保护模块选择文件系统时适用且这是强制需要的）。',
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
         'Pending time' => '挂起时间',
         'People' => '人员',
         'Performs the configured action for each event (as an Invoker) for each configured web service.' =>
             '对每个已配置的Web服务的每个事件（作为调用程序）执行配置的操作。',
+        'Permanent' => '',
         'Permitted width for compose email windows.' => '编写邮件屏幕允许的宽度。',
         'Permitted width for compose note windows.' => '编写备注屏幕允许的宽度。',
         'Persian' => '波斯语',
@@ -8558,6 +9495,7 @@ Thanks for your help!
         'Process Management Path GUI' => '流程管理 路径的GUI',
         'Process Management Transition Action GUI' => '流程管理 转换动作的GUI',
         'Process Management Transition GUI' => '流程管理 转换的GUI',
+        'Process dialog' => '',
         'Process pending tickets.' => '处理挂起的工单。',
         'ProcessID' => '流程ID',
         'Processes & Automation' => '流程和自动化',
@@ -8580,12 +9518,24 @@ Thanks for your help!
             '',
         'Rebuilds the ACL preselection cache.' => '重建ACL预选缓存。',
         'Rebuilds the escalation index.' => '重建升级索引。',
-        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value.' =>
-            '通过外部工单编号识别一个工单是否为已有工单的跟进。 注意：“NumberRegExp”表达式中的第一个捕获组将用作工单编号值。',
+        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew.' =>
+            '',
         'Redis server address. Example: 127.0.0.1:6379.' => 'Redis服务器地址，比如：127.0.0.1:6379。',
         'Refresh interval' => '刷新间隔',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as unseen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as unseen.' =>
+            '',
         'Registers a log module, that can be used to log communication related information.' =>
             '注册一个日志模块用于记录通信相关信息。',
+        'Registration of the CSV format backend module for the ImportExport feature.' =>
+            '',
+        'Registration of the JSON format backend module for the ImportExport feature.' =>
+            '',
         'Reminder Tickets' => '提醒的工单',
         'Removed subscription for user "%s".' => '用户“%s”已移除的关注。',
         'Removes old generic interface debug log entries created before the specified amount of days.' =>
@@ -8646,6 +9596,7 @@ Thanks for your help!
             '从归档中恢复一个工单（只针对工单状态变更为任何可处理的状态的事件）。',
         'Retains all services in listings even if they are children of invalid elements.' =>
             '在列表中保留所有的服务，即使他们是无效的子元素。',
+        'Richtext' => '',
         'Right' => '权限',
         'Roles ↔ Groups' => '角色 ↔ 组',
         'Romanian' => '罗马尼亚',
@@ -8662,19 +9613,21 @@ Thanks for your help!
             '以“演示”模式运行系统。如果启用了，服务人员能够修改偏好设置，如通过WEB界面选择语言和主题，这些变更内容只对当前会话有效。服务人员不能修改密码。',
         'Russian' => '俄语',
         'S/MIME Certificates' => 'S/MIME证书',
+        'SSL_VERIFY_NONE - no verification of mail server host' => '',
+        'SSL_VERIFY_PEER - verify the mail server host' => '',
         'Salutations' => '问候语',
         'Sample command output' => '命令输出样例',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
             '',
         'Schedule a maintenance period.' => '计划一个系统维护期。',
         'Screen after new ticket' => '创建新工单后的视图',
+        'Script (Template Toolkit)' => '',
         'Search Customer' => '搜索客户',
         'Search Ticket.' => '搜索工单。',
         'Search Tickets.' => '搜索工单。',
         'Search User' => '搜索用户',
         'Search backend default router.' => '搜索的后端默认路由。',
         'Search backend router.' => '搜索的后端路由。',
-        'Search.' => '搜索。',
         'Second Christmas Day' => '圣诞节的第二天',
         'Second Queue' => '第二队列',
         'Select after which period ticket overviews should refresh automatically.' =>
@@ -8689,7 +9642,7 @@ Thanks for your help!
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             '选择你的个人时区，所有时间将相对于这个时区显示。',
         'Select your preferred layout for the software.' => '选择你喜欢的软件布局。',
-        'Select your preferred theme for OTOBO.' => '选择你喜欢的OTOBO界面主题。',
+        'Select your preferred theme for CareOnCloud ESM.' => '选择你喜欢的CareOnCloud ESM界面主题。',
         'Selects the cache backend to use.' => '选择使用的缓存后端。',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             '选择处理WEB界面上传文件的模块。“数据库”存储所有上传文件到数据库中，“文件系统”存储所有上传文件到文件系统中。',
@@ -8703,7 +9656,7 @@ Thanks for your help!
         'Sends all outgoing email via bcc to the specified address. Please use this only for backup reasons.' =>
             '通过BCC（密件抄送）发送所有外发邮件到指定地址。请只在备份情况下使用这个选项。',
         'Sends customer notifications just to the mapped customer.' => '仅给映射的客户用户发送客户通知。',
-        'Sends registration information to OTOBO group.' => '发送注册信息到OTOBO集团。',
+        'Sends registration information to Rother OSS.' => '',
         'Sends reminder notifications of unlocked ticket after reaching the reminder date (only sent to ticket owner).' =>
             '在到达提醒时间后发送解锁工单的提醒通知（只发送给工单所有者）。',
         'Sends the notifications which are configured in the admin interface under "Ticket Notifications".' =>
@@ -8841,8 +9794,8 @@ Thanks for your help!
         'Sets the prefered time units (e.g. work units, hours, minutes).' =>
             '设置首选的时间单位（如 工作日、小时、分钟）。',
         'Sets the preferred digest to be used for PGP binary.' => '设置要用于PGP二进制文件的首选摘要。',
-        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
-            '设置配置的web服务器上脚本目录的前缀，这个设置用于变量OTOBO_CONFIG_ScriptAlias，此变量可在系统的所有消息表单中找到，用来在系统内创建到工单的链接。',
+        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
+            '设置配置的web服务器上脚本目录的前缀，这个设置用于变量CareOnCloud_CONFIG_ScriptAlias，此变量可在系统的所有消息表单中找到，用来在系统内创建到工单的链接。',
         'Sets the queue in the ticket close screen of a zoomed ticket in the agent interface.' =>
             '设置服务人员界面工单关闭屏幕的队列。',
         'Sets the queue in the ticket free text screen of a zoomed ticket in the agent interface.' =>
@@ -8936,13 +9889,16 @@ Thanks for your help!
             '设置服务人员界面工单优先级屏幕的工单类型（需要启用Ticket::Type）。',
         'Sets the ticket type in the ticket responsible screen of the agent interface (Ticket::Type needs to be enabled).' =>
             '设置服务人员界面工单负责人屏幕的工单类型（需要启用Ticket::Type）。',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
-            '将OTOBO内部使用的时区设置如在数据库中存储日期和时间。 警告：此设置一旦设置就不能更改，包含日期/时间的工单或其他数据已据此创建。',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
-            '设置将分配给新创建的用户的时区，并将用于尚未设置时区的用户。 这是默认使用的时区，用于转换OTOBO时区与用户时区之间的日期和时间。',
+        'Sets the time units in the ticket note screen of the agent interface.' =>
+            '',
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+            '将CareOnCloud ESM内部使用的时区设置如在数据库中存储日期和时间。 警告：此设置一旦设置就不能更改，包含日期/时间的工单或其他数据已据此创建。',
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
+            '设置将分配给新创建的用户的时区，并将用于尚未设置时区的用户。 这是默认使用的时区，用于转换CareOnCloud ESM时区与用户时区之间的日期和时间。',
         'Sets the timeout (in seconds) for http/ftp downloads.' => '设置http/ftp下载的超时时间（单位：秒）。',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
             '设置软件下载的超时时间（单位：秒），覆盖参数“WebUserAgent::Timeout”。',
+        'Settings for Similar Ticket Search in ES.' => '',
         'Settings for the customer login screen.' => '客户登陆界面的配置。',
         'Shared Secret' => '共享密钥',
         'Show a responsible selection in phone and email tickets in the agent interface.' =>
@@ -8950,9 +9906,11 @@ Thanks for your help!
         'Show article as rich text even if rich text writing is disabled.' =>
             '以富文本格式显示信件（即使富文本编写被禁用）。',
         'Show command line output.' => '显示命令行输出。',
+        'Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown in an extra table.' =>
+            '',
+        'Show or Hide Deleted Articles' => '',
+        'Show or Hide deleted articles.' => '',
         'Show queues even when only locked tickets are in.' => '显示队列（即使队列里只有已锁定的工单）。',
-        'Show the current owner in the customer interface.' => '在客户界面显示工单当前所有者。',
-        'Show the current queue in the customer interface.' => '在客户界面显示当前队列。',
         'Show the history for this ticket' => '显示这个工单的历史',
         'Show the ticket history' => '显示工单历史信息',
         'Show various content.' => '',
@@ -9020,6 +9978,8 @@ Thanks for your help!
             '在服务人员界面工单详情视图中，为“挂起工单”菜单显示一个链接。可以通过使用键“Group（组）”和值如“rw:group1;move_into:group2”来实现显示/不显示这个链接的额外访问控制。 为了给菜单条目分组，使用键"ClusterName（菜单组名称）"，其值可为您想在界面上看到的任何菜单组名称（系统默认为Miscellaneous-杂项），使用键"ClusterPriority（菜单组优先级）"来配置工具栏中菜单组的显示顺序。',
         'Shows a link in the menu to set the priority of a ticket in every ticket overview of the agent interface.' =>
             '在服务人员界面所有工单概览视图，为“设置工单优先级”菜单显示一个链接。',
+        'Shows a link in the menu to show/hide deleted articles in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2". To cluster menu items use for Key "ClusterName" and for the Content any name you want to see in the UI. Use "ClusterPriority" to configure the order of a certain cluster within the toolbar.' =>
+            '',
         'Shows a link in the menu to zoom a ticket in the ticket overviews of the agent interface.' =>
             '在服务人员界面所有工单概览视图，为“工单详情”菜单显示一个链接。',
         'Shows a link to access article attachments via a html online viewer in the zoom view of the article in the agent interface.' =>
@@ -9071,13 +10031,15 @@ Thanks for your help!
             '在一个多选框字段中显示所有的客户用户（如果客户用户过多则不好用）。',
         'Shows an owner selection in phone and email tickets in the agent interface.' =>
             '在服务人员界面电话和邮件工单屏幕显示所有者选择器。',
+        'Shows creation date instead of age in the customer interface if ticket is older than configured value (days).' =>
+            '',
         'Shows customer history tickets in AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer.' =>
             '在AgentTicketPhone（服务人员电话工单）、AgentTicketEmail（服务人员邮件工单）和AgentTicketCustomer（服务人员客户工单）模块显示客户历史工单信息。',
         'Shows either the last customer article\'s subject or the ticket title in the small format overview.' =>
             '在工单概览简洁版式中显示最近的客户信件的主题或工单标题。',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             '以树形或列表形式显示系统中存在的父/子队列的清单。',
-        'Shows information on how to start OTOBO Daemon' => '显示如何启动OTOBO守护进程的信息',
+        'Shows information on how to start CareOnCloud ESM Daemon' => '显示如何启动CareOnCloud ESM守护进程的信息',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '在服务人员界面的工单详情视图中显示到外部页面的链接。 可以通过使用键“Group”和内容如“rw：group1; move_into：group2”来完成额外的访问控制，以显示或不显示此链接。',
         'Shows the article head information in the agent zoom view.' => '在服务人员工单详情视图显示信件的头部信息。',
@@ -9129,6 +10091,8 @@ Thanks for your help!
             '如果启用，则以长格式显示时间（天、小时、分钟）；如果不启用，则以短格式显示时间（天、小时）。',
         'Shows time use complete description (days, hours, minutes), if enabled; or just first letter (d, h, m), if not enabled.' =>
             '如果启用，则显示时间的完整描述（天、小时、分钟）；如果不启用，则只显示时间的首字母（d-天，h-时,m-分）。',
+        'Shows time with localization indicator (01.01.1970 00:01 (Europe/Berlin)), if enabled; or without (01.01.1970 00:01), if not enabled.' =>
+            '',
         'Signature data.' => '签名数据。',
         'Signatures' => '签名',
         'Simple' => '简单',
@@ -9163,16 +10127,16 @@ Thanks for your help!
         'Specifies the directory where SSL certificates are stored.' => '指定存储SSL证书的目录。',
         'Specifies the directory where private SSL certificates are stored.' =>
             '指定存储私有SSL证书的目录。',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            '指定系统发送通知的邮件地址。这个邮件地址用来创建通知管理员的完整显示名称（如"OTOBO通知"otobo@your.example.com），您可以使用配置的变量OTOBO_CONFIG_FQDN，或者选择另外的邮件地址。',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            '指定系统发送通知的邮件地址。这个邮件地址用来创建通知管理员的完整显示名称（如"CareOnCloud ESM通知"careoncloud@your.example.com），您可以使用配置的变量CareOnCloud_CONFIG_FQDN，或者选择另外的邮件地址。',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             '指定从调度程序任务获取通知消息的邮件地址。',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
             '指定组名，以便组中有rw（读写）权限的用户能够访问“切换到客户”功能。',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             '指定用户需要rw（读写）权限的组，以便他们可以编辑其他用户的首选项。',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
-            '指定系统发送通知的姓名，这个发件人姓名用于创建通知管理员完整的显示名称（如"OTOBO通知"otobo@your.example.com）。',
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
+            '指定系统发送通知的姓名，这个发件人姓名用于创建通知管理员完整的显示名称（如"CareOnCloud ESM通知"careoncloud@your.example.com）。',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             '指定服务人员显示姓和名的先后顺序。',
         'Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).' =>
@@ -9217,6 +10181,7 @@ Thanks for your help!
         'Stopped solution time escalation.' => '解决时间升级已停止。',
         'Stopped update time escalation.' => '更新时间升级已停止。',
         'Stores cookies after the browser has been closed.' => '在浏览器关闭后保存cookies。',
+        'Strict' => '',
         'Strips empty lines on the ticket preview in the queue view.' => '在工单队列视图工单预览时去掉空白行。',
         'Strips empty lines on the ticket preview in the service view.' =>
             '在工单服务视图工单预览时去掉空白行。',
@@ -9224,6 +10189,8 @@ Thanks for your help!
         'Suspend already escalated tickets.' => '把一个已经升级的工单挂起。',
         'Swahili' => '斯瓦希里语',
         'Swedish' => '瑞典语',
+        'Switch deleted article status view' => '',
+        'Switch deleted article status view.' => '',
         'System Address Display Name' => '系统邮件地址显示姓名',
         'System Configuration Deployment' => '系统配置部署',
         'System Configuration Group' => '系统配置组',
@@ -9242,6 +10209,8 @@ Thanks for your help!
         'The PGP signature with the keyid is good.' => '具有keyid的PGP签名是好的。',
         'The agent skin\'s InternalName which should be used in the agent interface. Please check the available skins in Frontend::Agent::Skins.' =>
             '服务人员界面皮肤的内部名称，请在Frontend::Agent::Loader::Agent::Skin中检查可用的皮肤。',
+        'The authentication method to use for SMTP Authentication, defaults to \'Basic Auth\'. If \'XOAUTH2\' or \'OAUTHBEARER\' is selected, then the \'"SendmailModule \'"SendmailModule::OAuth2FunctionalAccount\' setting needs to be enabled and set to a valid OIDC Functional Account.  OIDC Accounts can be configured in the Admin UI  \'OAuth Functional Accounts\' Module.' =>
+            '',
         'The customer skin\'s InternalName which should be used in the customer interface. Please check the available skins in Frontend::Customer::Skins.' =>
             '客户界面皮肤的内部名称，请在Frontend::Customer::Loader::Customer::Skin中检查可用的皮肤。',
         'The daemon registration for sync with S3.' => '',
@@ -9285,6 +10254,8 @@ Thanks for your help!
             '转发邮件中加在主题前的文字，如FW、Fwd或WG。',
         'The value of the From field' => '“发件人”字段的值',
         'Theme' => '主题',
+        'These attributes are passed when connecting to the database. A common use case is a connection which is secured by TLS.' =>
+            '',
         'This configuration defines all possible screens to enable or disable default columns.' =>
             '此配置定义了所有可能的界面，以启用或禁用默认列。',
         'This configuration defines all possible screens to enable or disable dynamic fields.' =>
@@ -9293,6 +10264,8 @@ Thanks for your help!
             '这个配置定义了是否只显示有效的动态字段，还是显示所有的（包括无效的）。',
         'This configuration defines the number of iterations that should be performed at max for calculating the WorkingTime for a Ticket. Attention: Setting this configuration to high can lead to performance issues.' =>
             '此配置定义为计算工单的工作时间而可以执行的最大迭代次数。注意：将此配置设置为高有可能会影响性能。',
+        'This configuration registers a bulk module to mark tickets as seen or unseen via bulk action.' =>
+            '',
         'This configuration registers an OutputFilter module that injects the javascript functionality to remove PendingTime.' =>
             '此配置注册一个OutputFilter模块，该模块注入javascript功能以删除PendingTime。',
         'This event module stores attributes from CustomerUser as DynamicFields tickets. Please see DynamicFieldFromCustomerUser::Mapping setting for how to configure the mapping.' =>
@@ -9306,7 +10279,7 @@ Thanks for your help!
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             '每次请求时这个模块和它的PreRun()函数（如果定义了）将被执行。',
         'This module is being used to extend the password policy.' => '此模块用于扩展密码策略。',
-        'This module is part of the admin area of OTOBO.' => '这个模块是OTOBO系统管理的一部分。',
+        'This module is part of the admin area of CareOnCloud ESM.' => '这个模块是CareOnCloud ESM系统管理的一部分。',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             '这个选项定义存储流程管理活动条目ID的动态字段。',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -9315,11 +10288,13 @@ Thanks for your help!
         'This option defines the process tickets default priority.' => '这个选项定义流程工单的默认优先级。',
         'This option defines the process tickets default queue.' => '这个选项定义流程工单的默认队列。',
         'This option defines the process tickets default state.' => '这个选项定义流程工单的默认状态。',
-        'This option will deny the access to customer company tickets, which are not created by the customer user.' =>
-            '这个选项将拒绝客户用户访问不是由他本人创建的客户单位工单。',
+        'This option sets additional quick date buttons to pending dates. For ordering purposes one hash entry per array segment has to be set. The key is the button name, value is the value, where a single number n sets the date to n days from now, +n adds n days to the currently set date, and -n subtracts them.' =>
+            '',
+        'This option will deny the access to customer company tickets, which are not created by the customer user. Please also deactivate "CustomerFrontend::Navigation###CustomerTicketOverview###002-Ticket" so that the button is no longer visible.' =>
+            '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '这个设置允许您使用自己的国家列表覆盖内置的国家列表，如果您只想用到一小部分的国家时格外有用。',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => '此设置已弃用。 替代方式是设置OTOBOTimeZone。',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '此设置已弃用。 替代方式是设置CareOnCloudTimeZone。',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '这个设置显示所有概览屏幕（而不是仅队列视图）中的排序属性。',
         'Ticket Close' => '工单关闭',
@@ -9331,6 +10306,7 @@ Thanks for your help!
         'Ticket FreeText.' => '工单自定义字段。',
         'Ticket History.' => '工单历史。',
         'Ticket Lock.' => '工单锁定。',
+        'Ticket Masks' => '',
         'Ticket Merge.' => '工单合并。',
         'Ticket Move.' => '工单转移（队列）。',
         'Ticket Note.' => '工单备注。',
@@ -9345,6 +10321,10 @@ Thanks for your help!
         'Ticket Priority.' => '工单优先级。',
         'Ticket Queue Overview' => '工单队列概览',
         'Ticket Responsible.' => '工单负责人。',
+        'Ticket Search.' => '',
+        'Ticket States' => '',
+        'Ticket Title' => '',
+        'Ticket Types' => '',
         'Ticket Watcher' => '工单关注人',
         'Ticket Zoom' => '工单详情',
         'Ticket Zoom.' => '工单详情。',
@@ -9366,17 +10346,23 @@ Thanks for your help!
         'Tickets in the following queues will not be stored on the Elasticsearch server. To apply this to existing tickets, the ticket migration has to be run via console, after changing this option.' =>
             '以下队列中的工单不会存储在Elasticsearch服务器上，要将其应用于现有工单，必须在更改此选项后通过控制台运行工单迁移。',
         'Tickets.' => '工单。',
-        'Tile registration for the CustomerDashboard. Module is required.' =>
-            '需要模块实现CustomerDashboard的注册。',
-        'Time in seconds that gets added to the actual time if setting a pending-state (default: 86400 = 1 day).' =>
-            '如果设置一个挂起状态，添加到实际时间的秒数（默认：86400 = 1天）。',
+        'Tile registration for the customer dashboard. Module is required.' =>
+            '',
+        'Tile registration for the customer dashboard. Module is required. Optionally, an order for items can be set. The order must have the name of the item as key and the desired position as integer value.' =>
+            '',
+        'Time in seconds that gets added to the actual time if setting a pending-state. Examples: 86400 = 1 day or 604800 = 1 week.' =>
+            '',
         'To accept login information, such as an EULA or license.' => '接受登录信息，如EULA（最终用户许可协议）或许可。',
         'To download attachments.' => '下载附件。',
         'To view HTML attachments.' => '查看HTML附件。',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
-            '在软件包管理器中显示/不显示OTOBO扩展功能。',
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
+            '在软件包管理器中显示/不显示CareOnCloud ESM扩展功能。',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '工具栏条目的快捷键。可以通过使用键“Group（组）”和值如“rw:group1;move_into:group2”来实现显示/不显示这个链接的额外访问控制。',
+        'Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
+        'Translate the language names in the language selection. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
         'Transport selection for appointment notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
             '预约通知的传输选项。 请注意：将\'Active（激活）\'设置为0只会阻止服务人员在个人偏好设置中编辑此组的设置，但仍然允许管理员以其他用户的名义编辑这些设置。 使用\'PreferenceGroup\'来控制这些设置应该显示在用户界面的哪个区域。',
         'Transport selection for ticket notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -9393,14 +10379,13 @@ Thanks for your help!
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             '开启远程IP地址检查。如果通过代理或拨号连接访问系统，应该关闭，因为远程IP在每次请求时可能都不一样。',
         'Tweak the system as you wish.' => '根据需要调整系统。',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
-            '要使用的守护程序日志循环类型：选择“OTOBO”以使OTOBO系统处理文件循环，或选择“外部”以使用第三方循环机制（如logrotate）。 注意：外部循环机制需要使用其自身的配置。',
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+            '要使用的守护程序日志循环类型：选择“CareOnCloud ESM”以使CareOnCloud ESM系统处理文件循环，或选择“外部”以使用第三方循环机制（如logrotate）。 注意：外部循环机制需要使用其自身的配置。',
         'Ukrainian' => '乌克兰语',
         'Unlock tickets that are past their unlock timeout.' => '过了解锁超时时间后解锁工单。',
         'Unlock tickets whenever a note is added and the owner is out of office.' =>
             '每当添加备注或所有者不在办公室时，解锁工单。',
         'Unlocked ticket.' => '解锁的工单。',
-        'Up' => '上',
         'Upcoming Events' => '即将发生的事件',
         'Update Ticket "Seen" flag if every article got seen or a new Article got created.' =>
             '如果每个工单都已看过或创建了新的信件，更新工单“已看”标志。',
@@ -9421,8 +10406,13 @@ Thanks for your help!
         'Uses richtext for viewing and editing ticket notification.' => '查看和编辑工单通知时使用富文本。',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             '查看和编辑以下内容时使用富文本：信件、问候语、签名、标准模板、自动响应和通知。',
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
+            '',
+        'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
+            '',
         'Vietnam' => '越南语',
         'View performance benchmark results.' => '查看性能基准测试结果.',
+        'View stored article version.' => '',
         'Watch this ticket' => '关注这个工单',
         'Watched Tickets' => '关注的工单',
         'Watched Tickets.' => '关注的工单。',
@@ -9431,14 +10421,17 @@ Thanks for your help!
             '我们正在执行系统维护，暂时无法登录。',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             '我们正在执行系统维护，很快就恢复正常使用。',
-        'We have changed the default ticket unlock behaviour in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behaviour is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behaviour of OTRS version 2-6 and OTOBO 10..' =>
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
             '',
         'Web Service' => '网络服务',
         'Web Services' => 'Web服务',
+        'Welcome %s, to your CareOnCloud ESM.' => '',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             '仪表板开头的欢迎语。名称将插入到WelcomeText的％s中。 “ UserTitle”，“ UserFirstname”，“ UserLastname”，“ UserEmail”和“ UserLogin”将被替换。',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
             '服务人员创建工单时，工单是否被自动锁定到该服务人员。',
+        'When support data is collected via SupportDataCollector, certain SysConfig values marked with ValueType="Password" are automatically masked. This prevents passwords from appearing in plain text in the support data. This setting defines the settings that contain complex configuration hashes that should not be masked when generating the support data.' =>
+            '',
         'When tickets are merged, a note will be added automatically to the ticket which is no longer active. Here you can define the body of this note (this text cannot be changed by the agent).' =>
             '工单被合并时，自动添加一个备注到不再活动的工单，您可以在这里定义这个备注的正文（这个文本不能被服务人员修改）。',
         'When tickets are merged, a note will be added automatically to the ticket which is no longer active. Here you can define the subject of this note (this subject cannot be changed by the agent).' =>
@@ -9447,24 +10440,29 @@ Thanks for your help!
             '工单被合并时，通过设置“通知发送人”复选框选项，客户能收到邮件通知，您可以在这个文本框中定义一个预先格式化的文本（服务人员可在以后修改）。',
         'Whether extended customer information is shown in the ticket print screen of the customer interface.' =>
             '',
-        'Whether fields should be automatically filled (1), and in that case also be hidden from ticket formulars (2).' =>
-            '字段是否自动填充(1)， 那种情况下将会在工单表中隐藏起来(2)。',
         'Whether or not to collect meta information from articles using filters configured in Ticket::Frontend::ZoomCollectMetaFilters.' =>
             '通过在Ticket::Frontend::ZoomCollectMetaFilters中配置的过滤器确定是否收集信件元信息。',
         'Whether the execution of TicketACL can be avoided by checking cached field dependencies. This can improve loading times of ticket formulars, but has to be disabled, if ACLModules are to be used for Ticket- and Form-ReturnTypes.' =>
             '通过检查缓存字段的依存性，可以避免执行TicketACL，这样可以优化工单表单的加载时间。不过如果ACLModules用于Ticket-和 Form-ReturnTypes，就必须禁用。',
         'Whether to force redirect all requests from http to https protocol. Please check that your web server is configured correctly for https protocol before enable this option.' =>
             '是否强制将所有请求从http重定向到https协议。启用此选项之前，请检查Web服务器是否正确配置了https协议。',
+        'Which units are used and shown in the overview for timeunits?' =>
+            '',
+        'XOAUTH2' => '',
         'Yes, but hide archived tickets' => '是，但隐藏已归档的工单',
-        'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
-            '您的工单号为“<OTOBO_TICKET>”的邮件已经退回给“<OTOBO_BOUNCE_TO>”，请联系这个地址以获得更多的信息。',
-        'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
-            '您的单号为"<OTOBO_TICKET>"的邮件已被合并到工单"<OTOBO_MERGE_TO_TICKET>" 。',
+        'Your Tickets. Your CareOnCloud ESM.' => '',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is bounced to "<CareOnCloud_BOUNCE_TO>". Contact this address for further information.' =>
+            '您的工单号为“<CareOnCloud_TICKET>”的邮件已经退回给“<CareOnCloud_BOUNCE_TO>”，请联系这个地址以获得更多的信息。',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is merged to "<CareOnCloud_MERGE_TO_TICKET>".' =>
+            '您的单号为"<CareOnCloud_TICKET>"的邮件已被合并到工单"<CareOnCloud_MERGE_TO_TICKET>" 。',
+        'Your external tools' => '',
+        'Your last tickets' => '',
         'Your queue selection of your preferred queues. You also get notified about those queues via email if enabled.' =>
             '你的优先队列中选择的队列，如果启用了，你还会得到有关这些队列的电子邮件通知。',
         'Your service selection of your preferred services. You also get notified about those services via email if enabled.' =>
             '你的优先服务中选择的服务，如果启用了，你还会得到有关这些队列的电子邮件通知。',
         'Zoom' => '展开',
+        'always' => '',
         'attachment' => '附件',
         'bounce' => '退回',
         'compose' => '编写',
@@ -9506,6 +10504,7 @@ Thanks for your help!
         'Add to favourites',
         'Agent',
         'All occurrences',
+        'All translations must be filled!',
         'All-day',
         'An error occurred during communication.',
         'An error occurred! Please check the browser error log for more details!',
@@ -9518,13 +10517,22 @@ Thanks for your help!
         'Apr',
         'April',
         'Are you sure you want to delete this appointment? This operation cannot be undone.',
+        'Are you sure you want to delete this article?',
         'Are you sure you want to remove all user values?',
+        'Are you sure you want to restore this article?',
         'Are you sure you want to update all installed packages?',
         'Are you using a browser plugin like AdBlock or AdBlockPlus? This can cause several issues and we highly recommend you to add an exception for this domain.',
+        'Article Delete',
+        'Article Restore',
+        'Article already marked as deleted.',
+        'Article deleted successfully!',
         'Article display',
         'Article filter',
+        'Article not available for restoring.',
+        'Article restored successfully!',
         'As soon as you use this button or link, you will leave this screen and its current state will be saved automatically. Do you want to continue?',
         'Ascending sort applied, ',
+        'At least one translation must be filled!',
         'Attachment was deleted successfully.',
         'Attachments',
         'Aug',
@@ -9574,8 +10582,10 @@ Thanks for your help!
         'Delete this Operation',
         'Delete this PostMasterFilter',
         'Delete this Template',
+        'Delete this template',
         'Delete web service',
         'Deleting attachment...',
+        'Deleting template...',
         'Deleting the field and its data. This may take a while...',
         'Deleting the mail account and its data. This may take a while...',
         'Deleting the postmaster filter and its data. This may take a while...',
@@ -9592,6 +10602,7 @@ Thanks for your help!
         'Do you really want to continue?',
         'Do you really want to delete "%s"?',
         'Do you really want to delete this certificate?',
+        'Do you really want to delete this customer dashboard info tile entry?',
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!',
         'Do you really want to delete this generic agent job?',
         'Do you really want to delete this key?',
@@ -9616,6 +10627,7 @@ Thanks for your help!
         'Error during AJAX communication',
         'Error during AJAX communication. Status: %s, Error: %s',
         'Error in the mail settings. Please correct and try again.',
+        'Error trying to create CodeMirror instance, please check configuration!',
         'Error: Browser Check failed!',
         'Event Type Filter',
         'Expanded',
@@ -9636,7 +10648,8 @@ Thanks for your help!
         'If you now leave this page, all open popup windows will be closed, too!',
         'Ignore',
         'Import web service',
-        'Information about the OTOBO Daemon',
+        'Information',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -9667,6 +10680,7 @@ Thanks for your help!
         'May',
         'May_long',
         'Migrate',
+        'Missing Translations',
         'Mo',
         'Mon',
         'Monday',
@@ -9686,6 +10700,7 @@ Thanks for your help!
         'No response from package upgrade all.',
         'No sort applied, ',
         'No space left for the following files: %s',
+        'Non-global ActivityDialogs may not be assigned to global Activities!',
         'Not available',
         'Notice',
         'Notification',
@@ -9791,6 +10806,7 @@ Thanks for your help!
         'Switch to mobile mode',
         'System Registration',
         'Team',
+        'Template was deleted successfully.',
         'Th',
         'The browser you are using is too old.',
         'The deployment is already running.',
@@ -9804,6 +10820,7 @@ Thanks for your help!
         'There are no more drafts available.',
         'There is a package upgrade process running, click here to see status information about the upgrade progress.',
         'There was an error deleting the attachment. Please check the logs for more information.',
+        'There was an error deleting the template. Please check the logs for more information.',
         'There was an error. Please save all settings you are editing and check the logs for more information.',
         'This Activity cannot be deleted because it is the Start Activity.',
         'This Activity is already used in the Process. You cannot add it twice!',
@@ -9819,7 +10836,7 @@ Thanks for your help!
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -9836,7 +10853,7 @@ Thanks for your help!
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

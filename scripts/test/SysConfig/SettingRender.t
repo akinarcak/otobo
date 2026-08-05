@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -52,7 +52,7 @@ my @Tests = (
         ],
         EffectiveValue => 1,
         ExpectedResult => '<div class="Setting" data-change-time=""><div class=\'SettingContent\'>
-<input class="" type="checkbox" id="Checkbox_TestCheckbox1" value="1" checked disabled=\'disabled\' ><input type=\'hidden\' name=\'TestCheckbox1\' id="TestCheckbox1" value=\'1\' />
+<input class="" type="checkbox" id="Checkbox_TestCheckbox1" value="1" checked disabled ><input type=\'hidden\' name=\'TestCheckbox1\' id="TestCheckbox1" value=\'1\' />
 <label for=\'Checkbox_TestCheckbox1\' class=\'CheckboxLabel\'>Enabled</label>
 </div><div class="WidgetMessage Bottom">Default: Disabled</div></div>
 ',

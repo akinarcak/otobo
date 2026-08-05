@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,12 +23,12 @@ use utf8;
 # core modules
 
 # CPAN modules
-use DateTime;
+use DateTime ();
 use Test2::V0;
 
-# OTOBO modueles
+# CareOnCloud ESM modueles
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::System::DateTime;
+use Kernel::System::DateTime ();
 
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
@@ -43,7 +43,7 @@ my $Values = $DateTimeObject->Get;
 
 is(
     $Values->{TimeZone},
-    $DateTimeObject->OTOBOTimeZoneGet(),
+    $DateTimeObject->CareOnCloudTimeZoneGet(),
     'Time zone of DateTime object must match the one configured for data storage.'
 );
 
@@ -78,7 +78,7 @@ is(
     'Time zone of DateTime object must match the one configured for data storage.'
 );
 
-# Test for ToOTOBODateTimeZone
+# Test for ToCareOnCloudDateTimeZone
 $DateTimeObject = $Kernel::OM->Create(
     'Kernel::System::DateTime',
     ObjectParams => {
@@ -92,17 +92,17 @@ $DateTimeObject = $Kernel::OM->Create(
     },
 );
 
-my $OriginalOTOBOTimeZone = $DateTimeObject->OTOBOTimeZoneGet();
+my $OriginalCareOnCloudTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet();
 
 # set specific time zone for data storage
 $ConfigObject->Set(
-    Key   => 'OTOBOTimeZone',
+    Key   => 'CareOnCloudTimeZone',
     Value => 'UTC',
 );
 
-my $OTOBOTimeZone = $DateTimeObject->OTOBOTimeZoneGet();
+my $CareOnCloudTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet();
 
-$DateTimeObject->ToOTOBOTimeZone();
+$DateTimeObject->ToCareOnCloudTimeZone();
 my $DateTimeValues         = $DateTimeObject->Get();
 my $ExpectedDateTimeValues = {
     Year      => 2016,
@@ -120,7 +120,7 @@ my $ExpectedDateTimeValues = {
 is(
     $DateTimeValues,
     $ExpectedDateTimeValues,
-    'Date and time after call to ToOTOBOTimeZone must match expected values.'
+    'Date and time after call to ToCareOnCloudTimeZone must match expected values.'
 );
 
 #
@@ -337,7 +337,7 @@ for my $TestConfig (@DateTimeTestConfigs) {
 
             my $ExpectedValue = $TestConfig->{Params}->{$ValueName} || 0;
             if ( !$ExpectedValue && $ValueName eq 'TimeZone' ) {
-                $ExpectedValue = $DateTimeObject->OTOBOTimeZoneGet();
+                $ExpectedValue = $DateTimeObject->CareOnCloudTimeZoneGet();
             }
 
             if ( !defined $Values->{$ValueName} || $Values->{$ValueName} ne $ExpectedValue ) {
@@ -367,7 +367,7 @@ my @StringTestConfigs = (
             Hour      => 14,
             Minute    => 59,
             Second    => 0,
-            TimeZone  => $OTOBOTimeZone,
+            TimeZone  => $CareOnCloudTimeZone,
         },
     },
     {
@@ -384,7 +384,7 @@ my @StringTestConfigs = (
             Hour      => 0,
             Minute    => 7,
             Second    => 45,
-            TimeZone  => $OTOBOTimeZone,
+            TimeZone  => $CareOnCloudTimeZone,
         },
     },
     {
@@ -509,7 +509,7 @@ for my $TestConfig (@StringTestConfigs) {
 
     is(
         $DateTimeObject->Get(),
-        \%ExpectedResult,,
+        \%ExpectedResult,
         "$Description: Creation of DateTime",
     );
 
@@ -517,7 +517,7 @@ for my $TestConfig (@StringTestConfigs) {
 
     is(
         $DateTimeObject->Get(),
-        \%ExpectedResult,,
+        \%ExpectedResult,
         "$Description: after changing the year in the source",
     );
 }

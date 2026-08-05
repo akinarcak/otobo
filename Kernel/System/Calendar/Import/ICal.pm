@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,10 +23,11 @@ use warnings;
 # core modules
 
 # CPAN modules
-use Data::ICal;
-use Data::ICal::Entry::Event;
+use Data::ICal               ();
+use Data::ICal::Entry::Alarm ();
+use Data::ICal::Entry::Event ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -154,6 +155,8 @@ sub Import {
     my $PluginObject      = $Kernel::OM->Get('Kernel::System::Calendar::Plugin');
     my $AppointmentObject = $Kernel::OM->Get('Kernel::System::Calendar::Appointment');
 
+    my %DeprecatedTimeZones = DateTime::TimeZone->links();
+
     ENTRY:
     for my $Entry (@Entries) {
         my $Properties = $Entry->properties();
@@ -221,12 +224,18 @@ sub Import {
                 # check timezone
                 if ( $Properties->{'dtstart'}->[0]->{'_parameters'}->{'TZID'} ) {
                     $TimezoneID = $Properties->{'dtstart'}->[0]->{'_parameters'}->{'TZID'};
+
+                    # translate deprecated timezones (ex: Europe/Amsterdam -> Europe/Brussels)
+                    if ( $DeprecatedTimeZones{$TimezoneID} ) {
+                        $TimezoneID = $DeprecatedTimeZones{$TimezoneID};
+                    }
                 }
             }
 
             my $StartTimeICal = $Self->_FormatTime(
                 Time => $Properties->{'dtstart'}->[0]->{'value'},
             );
+
             my $StartTimeObject = $Kernel::OM->Create(
                 'Kernel::System::DateTime',
                 ObjectParams => {
@@ -236,7 +245,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $StartTimeObject->ToOTOBOTimeZone();
+                $StartTimeObject->ToCareOnCloudTimeZone();
             }
 
             $Parameters{StartTime} = $StartTimeObject->ToString();
@@ -256,6 +265,11 @@ sub Import {
                 # check timezone
                 if ( $Properties->{'dtend'}->[0]->{'_parameters'}->{'TZID'} ) {
                     $TimezoneID = $Properties->{'dtend'}->[0]->{'_parameters'}->{'TZID'};
+
+                    # translate deprecated timezones (ex: Europe/Amsterdam -> Europe/Brussels)
+                    if ( $DeprecatedTimeZones{$TimezoneID} ) {
+                        $TimezoneID = $DeprecatedTimeZones{$TimezoneID};
+                    }
                 }
             }
 
@@ -271,7 +285,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $EndTimeObject->ToOTOBOTimeZone();
+                $EndTimeObject->ToCareOnCloudTimeZone();
             }
 
             $Parameters{EndTime} = $EndTimeObject->ToString();
@@ -511,7 +525,7 @@ sub Import {
                         );
 
                         if ( !$Parameters{AllDay} ) {
-                            $ExcludeTimeObject->ToOTOBOTimeZone();
+                            $ExcludeTimeObject->ToCareOnCloudTimeZone();
                         }
 
                         push @RecurrenceExclude, $ExcludeTimeObject->ToString();
@@ -526,12 +540,12 @@ sub Import {
 
             # get team
             if (
-                IsArrayRefWithData( $Properties->{'x-otobo-team'} )
-                && ref $Properties->{'x-otobo-team'}->[0] eq 'Data::ICal::Property'
-                && $Properties->{'x-otobo-team'}->[0]->{'value'}
+                IsArrayRefWithData( $Properties->{'x-careoncloud-team'} )
+                && ref $Properties->{'x-careoncloud-team'}->[0] eq 'Data::ICal::Property'
+                && $Properties->{'x-careoncloud-team'}->[0]->{'value'}
                 )
             {
-                my @Teams = split( /,/, $Properties->{'x-otobo-team'}->[0]->{'value'} );
+                my @Teams = split( /,/, $Properties->{'x-careoncloud-team'}->[0]->{'value'} );
 
                 if (@Teams) {
                     my @TeamIDs;
@@ -550,12 +564,12 @@ sub Import {
 
             # get resource
             if (
-                IsArrayRefWithData( $Properties->{'x-otobo-resource'} )
-                && ref $Properties->{'x-otobo-resource'}->[0] eq 'Data::ICal::Property'
-                && $Properties->{'x-otobo-resource'}->[0]->{'value'}
+                IsArrayRefWithData( $Properties->{'x-careoncloud-resource'} )
+                && ref $Properties->{'x-careoncloud-resource'}->[0] eq 'Data::ICal::Property'
+                && $Properties->{'x-careoncloud-resource'}->[0]->{'value'}
                 )
             {
-                my @Resources = split( /,/, $Properties->{'x-otobo-resource'}->[0]->{'value'} );
+                my @Resources = split( /,/, $Properties->{'x-careoncloud-resource'}->[0]->{'value'} );
 
                 if (@Resources) {
                     my @Users;
@@ -575,8 +589,8 @@ sub Import {
         # get available plugin keys suitable for lowercase search
         my $PluginKeys = $PluginObject->PluginKeys();
 
-        # plugin fields (start with 'x-otobo-plugin-')
-        my @PluginFields = grep { $_ =~ /x-otobo-plugin-/i } keys %{$Properties};
+        # plugin fields (start with 'x-careoncloud-plugin-')
+        my @PluginFields = grep { $_ =~ /x-careoncloud-plugin-/i } keys %{$Properties};
 
         PLUGINFIELD:
         for my $PluginField (@PluginFields) {
@@ -587,7 +601,7 @@ sub Import {
                 )
             {
                 # extract lowercase plugin key
-                my ($PluginKeyLC) = $PluginField =~ m/x-otobo-plugin-(.*)$/;
+                my ($PluginKeyLC) = $PluginField =~ m/x-careoncloud-plugin-(.*)$/;
 
                 # get proper plugin key
                 my $PluginKey = $PluginKeys->{$PluginKeyLC};
@@ -640,7 +654,7 @@ sub Import {
             );
 
             if ( !$Parameters{AllDay} ) {
-                $RecurrenceIDObject->ToOTOBOTimeZone();
+                $RecurrenceIDObject->ToCareOnCloudTimeZone();
             }
 
             $Param{RecurrenceID} = $RecurrenceIDObject->ToString();

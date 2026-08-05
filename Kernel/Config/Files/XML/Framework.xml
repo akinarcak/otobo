@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Framework">
+<careoncloud_config version="2.0" init="Framework">
     <Setting Name="SecureMode" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.</Description>
+        <Description Translatable="1">Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
@@ -50,39 +50,49 @@
         <Description Translatable="1">Defines the name of the application, shown in the web interface, tabs and title bar of the web browser.</Description>
         <Navigation>Core</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBO 10</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloud ESM</Item>
         </Value>
     </Setting>
     <Setting Name="SystemID" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the system identifier. Every ticket number and http session string contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO).</Description>
+        <Description Translatable="1">Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^\d+$">10</Item>
         </Value>
     </Setting>
     <Setting Name="FQDN" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.</Description>
+        <Description Translatable="1">Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">yourhost.example.com</Item>
         </Value>
     </Setting>
     <Setting Name="SupportDataCollector::HTTPHostname" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">Defines the HTTP hostname for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the OTOBO Daemon).</Description>
+        <Description Translatable="1">Defines the HTTP hostname for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the CareOnCloud ESM Daemon).</Description>
         <Navigation>Core::SupportDataCollector</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex=""></Item>
         </Value>
     </Setting>
     <Setting Name="SupportDataCollector::WebUserAgent::Timeout" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the OTOBO Daemon).</Description>
+        <Description Translatable="1">Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module 'PublicSupportDataCollector' (e.g. used from the CareOnCloud ESM Daemon).</Description>
         <Navigation>Core::SupportDataCollector</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^[2-9][0-9]{1,}|[1-9][0-9]{2,}$">20</Item>
         </Value>
     </Setting>
+    <Setting Name="SupportDataCollector::SkipMaskPasswordSettings" Required="1" Valid="1">
+        <Description Translatable="1">When support data is collected via SupportDataCollector, certain SysConfig values marked with ValueType="Password" are automatically masked. This prevents passwords from appearing in plain text in the support data. This setting defines the settings that contain complex configuration hashes that should not be masked when generating the support data.</Description>
+        <Navigation>Core::SupportDataCollector</Navigation>
+        <Value>
+            <Array>
+                <Item ValueType="String">PreferencesGroups###Password</Item>
+                <Item ValueType="String">CustomerPreferencesGroups###Password</Item>
+            </Array>
+        </Value>
+    </Setting>
     <Setting Name="HttpType" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then 'http' must be specified here. The setting of 'HttpType' has no affect on the web server's settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping 'HttpType' set to 'https' is that the session management cookie will only be set for secure connections.</Description>
+        <Description Translatable="1">Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then 'http' must be specified here. The setting of 'HttpType' has no affect on the web server's settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping 'HttpType' set to 'https' is that the session management cookie will only be set for secure connections.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="https">
@@ -99,17 +109,17 @@
         </Value>
     </Setting>
     <Setting Name="ScriptAlias" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.</Description>
+        <Description Translatable="1">Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">otobo/</Item>
+            <Item ValueType="String" ValueRegex="">careoncloud/</Item>
         </Value>
     </Setting>
     <Setting Name="AdminEmail" Required="1" Valid="1">
         <Description Translatable="1">Defines the system administrator's email address. It will be displayed in the error screens of the application.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">support@&lt;OTOBO_CONFIG_FQDN&gt;</Item>
+            <Item ValueType="String" ValueRegex="">support@&lt;CareOnCloud_CONFIG_FQDN&gt;</Item>
         </Value>
     </Setting>
     <Setting Name="Organization" Required="1" Valid="1">
@@ -120,7 +130,7 @@
         </Value>
     </Setting>
     <Setting Name="DefaultLanguage" Required="1" Valid="1">
-        <Description Translatable="1">Defines the default front-end language. All the possible values are determined by the available language files on the system (see the next setting).</Description>
+        <Description Translatable="1">Defines the default frontend language. All the possible values are determined by the available language files on the system. These values are listed as the keys in the setting 'DefaultUsedLanguages'.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^(..|.._..)$">en</Item>
@@ -243,7 +253,7 @@
         </Value>
     </Setting>
     <Setting Name="DefaultTheme" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the default front-end (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.</Description>
+        <Description Translatable="1">Defines the default frontend (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">Standard</Item>
@@ -271,8 +281,54 @@
         <Navigation>Frontend::Customer</Navigation>
         <Value>
             <Hash>
-                <Item Key="URLLogo">skins/Customer/default/img/otobo_logo_simple_w.svg</Item>
-                <Item Key="URLSignet">skins/Customer/default/img/otobo_signet_w.svg</Item>
+                <Item Key="URLLogo">skins/Customer/default/img/careoncloud-logo.png</Item>
+                <Item Key="URLSignet">skins/Customer/default/img/careoncloud-signet.png</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerPreferencesGroups###Skin" Required="1" Valid="1">
+        <Description Translatable="1">Defines all the parameters for this item in the customer preferences.</Description>
+        <Navigation>Frontend::Customer::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Preferences::Skin</Item>
+                <Item Key="PreferenceGroup">UserProfile</Item>
+                <Item Key="Label" Translatable="1">Skin</Item>
+                <Item Key="Desc" Translatable="1">Select your preferred layout for the software.</Item>
+                <Item Key="Key" Translatable="1">Skin</Item>
+                <Item Key="PrefKey">UserSkin</Item>
+                <Item Key="Prio">500</Item>
+                <Item Key="Active">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="AgentColorDefinitions" Required="1" Valid="1">
+        <Description Translatable="1">Color definitions for the agent interface (default skin). MainDark, -Light and Hover are the navigation background, buttons and some other main elements. Highlight are e.g. icons and selected elements in the navbar. BG- and Text colors are various background, and text colors. Hover colors are used in selections and tables. Notify colors are the background of notifications.</Description>
+        <Navigation>Frontend::Agent</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="MainDark">#00023c</Item>
+                <Item Key="MainLight">#000099</Item>
+                <Item Key="MainHover">#001bff</Item>
+                <Item Key="BGElement">#fff</Item>
+                <Item Key="BGLight">#f7f7f9</Item>
+                <Item Key="BGLightMedium">#eeeef2</Item>
+                <Item Key="BGMedium">#e5e5eb</Item>
+                <Item Key="BGMediumDark">#cdcdd8</Item>
+                <Item Key="BGDark">#bfc0ce</Item>
+                <Item Key="TextLight">#7f809d</Item>
+                <Item Key="TextMedium">#54557c</Item>
+                <Item Key="TextDark">#00023c</Item>
+                <Item Key="TextErr">#ea2400</Item>
+                <Item Key="TextWarn">#f5af36</Item>
+                <Item Key="TextLink">#001bff</Item>
+                <Item Key="Highlight">#fef235</Item>
+                <Item Key="NotifyOK">#c4cdfa</Item>
+                <Item Key="NotifyWarn">#fffccc</Item>
+                <Item Key="NotifyErr">#f9bcb2</Item>
+                <Item Key="HoverLight">#fffccc</Item>
+                <Item Key="HoverDark">#fef235</Item>
+                <Item Key="ShadowDark">rgba(0,2,71,0.16)</Item>
             </Hash>
         </Value>
     </Setting>
@@ -283,6 +339,7 @@
             <Hash>
                 <Item Key="MainDark">#00023c</Item>
                 <Item Key="MainLight">#001bff</Item>
+                <Item Key="MainHover">#000099</Item>
                 <Item Key="BGLight">#f7f7f9</Item>
                 <Item Key="BGDark">#bfbfce</Item>
                 <Item Key="TextDark">#00023c</Item>
@@ -291,8 +348,71 @@
                 <Item Key="NotifyOK">#c4cdfa</Item>
                 <Item Key="NotifyWarn">#fffccc</Item>
                 <Item Key="NotifyErr">#f9bcb2</Item>
-                <Item Key="HoverLight">#6d83f2</Item>
-                <Item Key="HoverDark">#000099</Item>
+                <Item Key="HoverLight">#c4cdfa</Item>
+                <Item Key="HoverDark">#6d83f2</Item>
+                <Item Key="ShadowMain">rgba(0,27,255,0.24)</Item>
+                <Item Key="ShadowDark">rgba(4,0,71,0.16)</Item>
+            </Hash>
+        </Value>
+    </Setting>
+   <Setting Name="SkinColorDefinition::highcontrast" Required="1" Valid="1">
+        <Description Translatable="1">Color definitions for agent interface high contrast skin.</Description>
+        <Navigation>Frontend::Agent</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="MainDark">#333</Item>
+                <Item Key="MainLight">#333</Item>
+                <Item Key="MainHover">#fff</Item>
+                <Item Key="BGElement">#ffffff</Item>
+                <Item Key="BGLight">#ffffff</Item>
+                <Item Key="BGLightMedium">#fff</Item>
+                <Item Key="BGMedium">#ccc</Item>
+                <Item Key="BGMediumDark">#ccc</Item>
+                <Item Key="BGDark">#000000</Item>
+                <Item Key="TextLight">#ffffff</Item>
+                <Item Key="TextMedium">#777</Item>
+                <Item Key="TextDark">#000000</Item>
+                <Item Key="TextErr">#000000</Item>
+                <Item Key="TextWarn">#000000</Item>
+                <Item Key="TextLink">#001bff</Item>
+                <Item Key="Highlight">#fef235</Item>
+                <Item Key="NotifyOK">#c4cdfa</Item>
+                <Item Key="NotifyWarn">#fffccc</Item>
+                <Item Key="NotifyErr">#ea2400</Item>
+                <Item Key="HoverLight">#ccc</Item>
+                <Item Key="HoverDark">#000</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Customer::Skin###001-high-contrast" Required="1" Valid="1">
+        <Description Translatable="1">Default skin for the customer interface.</Description>
+        <Navigation>Frontend::Base::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="InternalName">highcontrast</Item>
+                <Item Key="VisibleName" Translatable="1">High Contrast</Item>
+                <Item Key="Description" Translatable="1">High contrast skin for visually impaired users.</Item>
+                <Item Key="HomePage">www.otobo.org</Item>
+            </Hash>
+        </Value>
+    </Setting>
+   <Setting Name="CustomerSkinColorDefinition::highcontrast" Required="1" Valid="1">
+        <Description Translatable="1">Color definitions for customer interface high contrast skin.</Description>
+        <Navigation>Frontend::Customer</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="MainDark">#333</Item>
+                <Item Key="MainLight">#001bff</Item>
+                <Item Key="BGLight">#ffffff</Item>
+                <Item Key="BGDark">#000000</Item>
+                <Item Key="TextDark">#000000</Item>
+                <Item Key="TextLight">#ffffff</Item>
+                <Item Key="Highlight">#ffffff</Item>
+                <Item Key="NotifyOK">#e0e0e0</Item>
+                <Item Key="NotifyWarn">#fffccc</Item>
+                <Item Key="NotifyErr">#f9bcb2</Item>
+                <Item Key="HoverLight">#e0e0e0</Item>
+                <Item Key="HoverDark">#b5b5b5</Item>
                 <Item Key="ShadowMain">rgba(0,27,255,0.24)</Item>
                 <Item Key="ShadowDark">rgba(4,0,71,0.16)</Item>
             </Hash>
@@ -329,7 +449,7 @@
         <Navigation>Frontend::Agent</Navigation>
         <Value>
             <Hash>
-                <Item Key="URL">skins/Agent/default/img/Otobo_Wortmarke_Digital_Blau_RGB.svg</Item>
+                <Item Key="URL">skins/Agent/default/img/careoncloud-logo.png</Item>
                 <Item Key="StyleHeight">150px</Item>
             </Hash>
         </Value>
@@ -338,32 +458,32 @@
         <Description Translatable="1">Defines the URL base path of icons, CSS and Java Script.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">/otobo-web/</Item>
+            <Item ValueType="String" ValueRegex="">/careoncloud-web/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::ImagePath" Required="1" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Defines the URL image path of icons for navigation.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;skins/Agent/default/img/</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;skins/Agent/default/img/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::CSSPath" Required="1" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Defines the URL CSS path.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;css/</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;css/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::JavaScriptPath" Required="1" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Defines the URL java script path.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;js/</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;js/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::DefaultInterface" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the default interface. Unknown pathes below the script alias are redirected to the selected interface.</Description>
+        <Description Translatable="1">Defines the default interface. Unknown paths below the script alias are redirected to the selected interface.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="index.pl">
@@ -384,39 +504,60 @@
         <Description Translatable="1">Defines the URL rich text editor path.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Frontend::WebPath&gt;js/thirdparty/ckeditor-4.16.0/</Item>
-        </Value>
-    </Setting>
-    <Setting Name="Frontend::RichTextWidth" Required="1" Valid="1">
-        <Description Translatable="1">Defines the width for the rich text editor component. Enter number (pixels) or percent value (relative).</Description>
-        <Navigation>Frontend::Base</Navigation>
-        <Value>
-            <Item ValueType="String" ValueRegex="^\d+%?$">620</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;js/thirdparty/ckeditor5-47.6.1/</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::RichTextHeight" Required="1" Valid="1">
-        <Description Translatable="1">Defines the height for the rich text editor component. Enter number (pixels) or percent value (relative).</Description>
+        <Description Translatable="1">Defines the initial height for the rich text editor component. Enter number (pixels).</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^\d+%?$">320</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::RichText::DefaultCSS" Required="1" Valid="1">
-        <Description Translatable="1">Defines the default CSS used in rich text editors.</Description>
+        <Description Translatable="1">Custom CSS styles for RichText articles.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">font-family:Geneva,Helvetica,Arial,sans-serif; font-size: 12px;</Item>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::RichTextArticleStyles" Required="1" Valid="1" ConfigLevel="200">
+        <Description Translatable="1">Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-content.css</Item>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::RichTextEditorStyles" Required="1" Valid="1" ConfigLevel="200">
+        <Description Translatable="1">Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-editor.css</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerFrontend::RichText::DefaultCSS" Required="1" Valid="1">
-        <Description Translatable="1">Defines the default CSS used in rich text editors.</Description>
+        <Description Translatable="1">Custom CSS styles for RichText articles.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">font-family:'Quicksand', sans-serif; font-size: 14px; line-height: 1.5; color: #00023c;</Item>
+            <Item ValueType="String" ValueRegex=""></Item>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerFrontend::RichTextArticleStyles" Required="1" Valid="1" ConfigLevel="200">
+        <Description Translatable="1">Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-content.css</Item>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerFrontend::RichTextEditorStyles" Required="1" Valid="1" ConfigLevel="200">
+        <Description Translatable="1">Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">common/css/ckeditor5-47.6.1-editor.css</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::RichText::EnhancedMode" Required="1" Valid="1">
-        <Description Translatable="1">Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.).</Description>
+        <Description Translatable="1">Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in agent interface.</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
@@ -429,6 +570,286 @@
             <Item ValueType="Checkbox">0</Item>
         </Value>
     </Setting>
+    <Setting Name="Frontend::CKEditorPlugins" Required="1" Valid="1">
+        <Description Translatable="1">List of Active CKEditor Plugins. (Only used if `Frontend::RichText::EnhancedMode` is enabled).</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Array>
+                <Item>Alignment</Item>
+                <Item>Autoformat</Item>
+                <Item>BlockQuote</Item>
+                <Item>Bold</Item>
+                <Item>CodeBlock</Item>
+                <Item>DataFilter</Item>
+                <Item>DataSchema</Item>
+                <Item>FindAndReplace</Item>
+                <Item>FontColor</Item>
+                <Item>FontFamily</Item>
+                <Item>FontSize</Item>
+                <Item>FontBackgroundColor</Item>
+                <Item>GeneralHtmlSupport</Item>
+                <Item>Heading</Item>
+                <Item>HorizontalLine</Item>
+                <Item>Image</Item>
+                <Item>ImageResize</Item>
+                <Item>ImageStyle</Item>
+                <Item>ImageUpload</Item>
+                <Item>ImageToolbar</Item>
+                <Item>ImageInsert</Item>
+                <Item>Indent</Item>
+                <Item>IndentBlock</Item>
+                <Item>Italic</Item>
+                <Item>Link</Item>
+                <Item>List</Item>
+                <Item>Paragraph</Item>
+                <Item>RemoveFormat</Item>
+                <Item>SelectAll</Item>
+                <Item>SimpleUploadAdapter</Item>
+                <Item>SourceEditing</Item>
+                <Item>SpecialCharacters</Item>
+                <Item>SpecialCharactersEssentials</Item>
+                <Item>Strikethrough</Item>
+                <Item>Table</Item>
+                <Item>TableCellProperties</Item>
+                <Item>TableColumnResize</Item>
+                <Item>TableProperties</Item>
+                <Item>TableToolbar</Item>
+                <Item>Underline</Item>
+                <Item>Undo</Item>
+                <Item>PasteFromOffice</Item>
+                <Item>Fullscreen</Item>
+                <Item>TodoList</Item>
+            </Array>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::EnhancedCKEditorToolbar" Required="1" Valid="1">
+        <Description Translatable="1">Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `Frontend::RichText::EnhancedMode` is enabled).</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem>
+                    <Array>
+                    </Array>
+                </DefaultItem>
+                <Item>
+                    <Array>
+                        <Item>heading</Item>
+                        <Item>bold</Item>
+                        <Item>italic</Item>
+                        <Item>underline</Item>
+                        <Item>strikethrough</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>bulletedList</Item>
+                        <Item>numberedList</Item>
+                        <Item>todoList</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>insertTable</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>indent</Item>
+                        <Item>outdent</Item>
+                        <Item>alignment</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>link</Item>
+                        <Item>undo</Item>
+                        <Item>redo</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>insertImage</Item>
+                        <Item>horizontalLine</Item>
+                        <Item>blockQuote</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>findAndReplace</Item>
+                        <Item>fontColor</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>fontBackgroundColor</Item>
+                        <Item>removeFormat</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>sourceEditing</Item>
+                        <Item>specialCharacters</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>fontFamily</Item>
+                        <Item>fontSize</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>codeBlock</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>fullscreen</Item>
+                    </Array>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerFrontend::CKEditorPlugins" Required="1" Valid="1">
+        <Description Translatable="1">List of Active CKEditor Plugins. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Array>
+                <Item>Alignment</Item>
+                <Item>Autoformat</Item>
+                <Item>BlockQuote</Item>
+                <Item>Bold</Item>
+                <Item>CodeBlock</Item>
+                <Item>DataFilter</Item>
+                <Item>DataSchema</Item>
+                <Item>FindAndReplace</Item>
+                <Item>FontColor</Item>
+                <Item>FontFamily</Item>
+                <Item>FontSize</Item>
+                <Item>FontBackgroundColor</Item>
+                <Item>GeneralHtmlSupport</Item>
+                <Item>Heading</Item>
+                <Item>HorizontalLine</Item>
+                <Item>Image</Item>
+                <Item>ImageResize</Item>
+                <Item>ImageStyle</Item>
+                <Item>ImageUpload</Item>
+                <Item>ImageToolbar</Item>
+                <Item>ImageInsert</Item>
+                <Item>Indent</Item>
+                <Item>IndentBlock</Item>
+                <Item>Italic</Item>
+                <Item>Link</Item>
+                <Item>List</Item>
+                <Item>Paragraph</Item>
+                <Item>RemoveFormat</Item>
+                <Item>SelectAll</Item>
+                <Item>SimpleUploadAdapter</Item>
+                <Item>SourceEditing</Item>
+                <Item>SpecialCharacters</Item>
+                <Item>SpecialCharactersEssentials</Item>
+                <Item>Strikethrough</Item>
+                <Item>Table</Item>
+                <Item>TableCellProperties</Item>
+                <Item>TableColumnResize</Item>
+                <Item>TableProperties</Item>
+                <Item>TableToolbar</Item>
+                <Item>Underline</Item>
+                <Item>Undo</Item>
+                <Item>PasteFromOffice</Item>
+                <Item>Fullscreen</Item>
+                <Item>TodoList</Item>
+            </Array>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerFrontend::EnhancedCKEditorToolbar" Required="1" Valid="1">
+        <Description Translatable="1">Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem>
+                    <Array>
+                    </Array>
+                </DefaultItem>
+                <Item>
+                    <Array>
+                        <Item>heading</Item>
+                        <Item>bold</Item>
+                        <Item>italic</Item>
+                        <Item>underline</Item>
+                        <Item>strikethrough</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>bulletedList</Item>
+                        <Item>numberedList</Item>
+                        <Item>todoList</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>insertTable</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>indent</Item>
+                        <Item>outdent</Item>
+                        <Item>alignment</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>link</Item>
+                        <Item>undo</Item>
+                        <Item>redo</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>insertImage</Item>
+                        <Item>horizontalLine</Item>
+                        <Item>blockQuote</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>findAndReplace</Item>
+                        <Item>fontColor</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>fontBackgroundColor</Item>
+                        <Item>removeFormat</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>sourceEditing</Item>
+                        <Item>specialCharacters</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>fontFamily</Item>
+                        <Item>fontSize</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>codeBlock</Item>
+                    </Array>
+                </Item>
+                <Item>
+                    <Array>
+                        <Item>fullscreen</Item>
+                    </Array>
+                </Item>
+            </Array>
+        </Value>
+    </Setting>
     <Setting Name="DisableLoginAutocomplete" Required="0" Valid="1">
         <Description Translatable="1">Disable autocomplete in the login screen.</Description>
         <Navigation>Frontend::Base</Navigation>
@@ -437,7 +858,7 @@
         </Value>
     </Setting>
     <Setting Name="DisableIFrameOriginRestricted" Required="0" Valid="1">
-        <Description Translatable="1">Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!</Description>
+        <Description Translatable="1">Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
@@ -500,6 +921,25 @@
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+    <Setting Name="TimeShowLocalization" Required="1" Valid="1">
+        <Description Translatable="1">Shows time with localization indicator (01.01.1970 00:01 (Europe/Berlin)), if enabled; or without (01.01.1970 00:01), if not enabled.</Description>
+        <Navigation>Core::Time</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerFrontend::TimeShowCreatedAt" Required="0" Valid="0">
+        <Description Translatable="1">Shows creation date instead of age in the customer interface if ticket is older than configured value (days).</Description>
+        <Navigation>Frontend::Customer</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="1">
+                <Item ValueType="Option" Value="0" Translatable="1">always</Item>
+                <Item ValueType="Option" Value="1" Translatable="1">1 day</Item>
+                <Item ValueType="Option" Value="2" Translatable="1">2 days</Item>
+                <Item ValueType="Option" Value="7" Translatable="1">7 days</Item>
+            </Item>
         </Value>
     </Setting>
     <Setting Name="AttachmentDownloadType" Required="1" Valid="1">
@@ -623,14 +1063,28 @@
         <Description Translatable="1">If "file" was selected for LogModule, a logfile must be specified. If the file doesn't exist, it will be created by the system.</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">/tmp/otobo.log</Item>
+            <Item ValueType="String" ValueRegex="">/tmp/careoncloud.log</Item>
         </Value>
     </Setting>
     <Setting Name="LogModule::LogFile::Date" Required="1" Valid="1">
-        <Description Translatable="1">Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.</Description>
+        <Description Translatable="1">Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+    <Setting Name="LogModule::LogFile::MaxSize" Required="0" Valid="1">
+        <Description Translatable="1">MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).</Description>
+        <Navigation>Core::Log</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[0-9]*$">524288000</Item>
+        </Value>
+    </Setting>
+    <Setting Name="LogModule::LogFile::MaxKeepRotated" Required="0" Valid="1">
+        <Description Translatable="1">How many rotated careoncloud.log files to keep. Default is 3.</Description>
+        <Navigation>Core::Log</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="^[0-9]*$">3</Item>
         </Value>
     </Setting>
     <Setting Name="MinimumLogLevel" Required="1" Valid="1">
@@ -646,7 +1100,7 @@
         </Value>
     </Setting>
     <Setting Name="SendmailModule" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the module to send emails. "DoNotSendEmail" doesn't send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn't send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.</Description>
+        <Description Translatable="1">Defines the module to send emails. "DoNotSendEmail" doesn't send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn't send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
             <Item ValueType="PerlModule" ValueFilter="Kernel/System/Email/*.pm">Kernel::System::Email::Sendmail</Item>
@@ -685,6 +1139,16 @@
         <Navigation>Core::Email</Navigation>
         <Value>
             <Item ValueType="Password">MailserverPassword</Item>
+        </Value>
+    </Setting>
+    <Setting Name="SendmailModule::SSLVerifyMode" Required="0" Valid="0" ConfigLevel="200">
+        <Description Translatable="1">If any of the "SSL" mechanisms was selected as SendmailModule than declare whether the mail server should be verified.</Description>
+        <Navigation>Core::Email</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="0">
+                <Item ValueType="Option" Value="0" Translatable="1">SSL_VERIFY_NONE - no verification of mail server host</Item>
+                <Item ValueType="Option" Value="1" Translatable="1">SSL_VERIFY_PEER - verify the mail server host</Item>
+            </Item>
         </Value>
     </Setting>
     <Setting Name="SendmailBcc" Required="0" Valid="1" ConfigLevel="200">
@@ -801,7 +1265,7 @@
         <Description Translatable="1">Defines an alternate URL, where the logout link refers to.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">http://host.example.com/thanks-for-using-otobo.html</Item>
+            <Item ValueType="String" ValueRegex="">http://host.example.com/thanks-for-using-careoncloud.html</Item>
         </Value>
     </Setting>
     <Setting Name="PreApplicationModule###AgentInfo" Required="0" Valid="0" ConfigLevel="300">
@@ -937,17 +1401,17 @@
         </Value>
     </Setting>
     <Setting Name="SessionName" Required="1" Valid="1">
-        <Description Translatable="1">Defines the name of the session key. E.g. Session, SessionID or OTOBO.</Description>
+        <Description Translatable="1">Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBOAgentInterface</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloudAgentInterface</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelSessionName" Required="1" Valid="1">
         <Description Translatable="1">Defines the name of the key for customer sessions.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBOCustomerInterface</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloudCustomerInterface</Item>
         </Value>
     </Setting>
     <Setting Name="SessionCheckRemoteIP" Required="1" Valid="1">
@@ -971,6 +1435,17 @@
             <Item ValueType="String" ValueRegex="^[0-9]{1,8}$">57600</Item>
         </Value>
     </Setting>
+    <Setting Name="SessionSameSite" Required="1" Valid="1">
+        <Description Translatable="1">Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.</Description>
+        <Navigation>Core::Session</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="Lax">
+                <Item ValueType="Option" Value="Strict" Translatable="1">Strict</Item>
+                <Item ValueType="Option" Value="Lax"    Translatable="1">Lax</Item>
+                <Item ValueType="Option" Value="None"   Translatable="1">None</Item>
+            </Item>
+        </Value>
+    </Setting>
     <Setting Name="SessionMaxIdleTime" Required="1" Valid="1">
         <Description Translatable="1">Sets the inactivity time (in seconds) to pass before a session is killed and a user is logged out.</Description>
         <Navigation>Core::Session</Navigation>
@@ -980,13 +1455,6 @@
     </Setting>
     <Setting Name="SessionDeleteIfTimeToOld" Required="1" Valid="1">
         <Description Translatable="1">Deletes requested sessions if they have timed out.</Description>
-        <Navigation>Core::Session</Navigation>
-        <Value>
-            <Item ValueType="Checkbox">1</Item>
-        </Value>
-    </Setting>
-    <Setting Name="SessionUseCookie" Required="1" Valid="1">
-        <Description Translatable="1">Makes the session management use html cookies. If html cookies are disabled or if the client browser disabled html cookies, then the system will work as usual and append the session id to the links.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -1045,7 +1513,7 @@
         <Description Translatable="1">If "FS" was selected for SessionModule, a directory where the session data will be stored must be specified.</Description>
         <Navigation>Core::Session</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/var/sessions</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/var/sessions</Item>
         </Value>
     </Setting>
     <Setting Name="SessionTable" Required="1" Valid="1">
@@ -1070,7 +1538,7 @@
         </Value>
     </Setting>
     <Setting Name="TimeZone" Required="0" Valid="0">
-        <Description Translatable="1">This setting is deprecated. Set OTOBOTimeZone instead.</Description>
+        <Description Translatable="1">This setting is deprecated. Set CareOnCloudTimeZone instead.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="+0">
@@ -1102,22 +1570,22 @@
             </Item>
         </Value>
     </Setting>
-    <Setting Name="OTOBOTimeZone" Required="1" Valid="1">
-        <Description Translatable="1">Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.</Description>
+    <Setting Name="CareOnCloudTimeZone" Required="1" Valid="1">
+        <Description Translatable="1">Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="TimeZone">UTC</Item>
         </Value>
     </Setting>
     <Setting Name="UserDefaultTimeZone" Required="1" Valid="1">
-        <Description Translatable="1">Sets the time zone that will be assigned to newly created users and will be used for users that haven't yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user's time zone.</Description>
+        <Description Translatable="1">Sets the time zone that will be assigned to newly created users and will be used for users that haven't yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user's time zone.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="TimeZone">UTC</Item>
         </Value>
     </Setting>
     <Setting Name="ShowUserTimeZoneSelectionNotification" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, users that haven't selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.</Description>
+        <Description Translatable="1">If enabled, users that haven't selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.</Description>
         <Navigation>Core::Time</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -2507,7 +2975,7 @@
         </Value>
     </Setting>
     <Setting Name="WebMaxFileUpload" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).</Description>
+        <Description Translatable="1">Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).</Description>
         <Navigation>Frontend::Base</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^[0-9]{1,11}$">48000000</Item>
@@ -2524,7 +2992,7 @@
         <Description Translatable="1">Specifies the text that should appear in the log file to denote a CGI script entry.</Description>
         <Navigation>Core::Log</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBO-CGI</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloud ESM-CGI</Item>
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::FilterText###AAAURL" Required="0" Valid="1">
@@ -2615,7 +3083,7 @@
         <Description Translatable="1">Specifies the path to the converter that allows the view of XML files, in the web interface.</Description>
         <Navigation>Frontend::Agent::MIMEViewer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/scripts/tools/xml2html.pl</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/scripts/tools/xml2html.pl</Item>
         </Value>
     </Setting>
     <Setting Name="WebUserAgent::Timeout" Required="1" Valid="1" ConfigLevel="200">
@@ -2651,16 +3119,16 @@
         <Navigation>Core::Package</Navigation>
         <Value>
             <Array>
-                <Item>https://ftp.otobo.org/pub/otobo/misc/packages/repository.xml</Item>
+                <Item>https://ftp.otobo.org/pub/careoncloud/misc/packages/repository.xml</Item>
             </Array>
         </Value>
     </Setting>
     <Setting Name="Package::RepositoryList" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".</Description>
+        <Description Translatable="1">Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".</Description>
         <Navigation>Core::Package</Navigation>
         <Value>
             <Hash>
-                <Item Key="ftp://ftp.example.com/pub/otobo/misc/packages/">[Example] ftp://ftp.example.com/</Item>
+                <Item Key="ftp://ftp.example.com/pub/careoncloud/misc/packages/">[Example] ftp://ftp.example.com/</Item>
             </Hash>
         </Value>
     </Setting>
@@ -2693,14 +3161,14 @@
         </Value>
     </Setting>
     <Setting Name="Package::ShowFeatureAddons" Required="0" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">Toggles display of OTOBO FeatureAddons list in PackageManager.</Description>
+        <Description Translatable="1">Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.</Description>
         <Navigation>Core::Package</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
         </Value>
     </Setting>
     <Setting Name="Package::AllowNotVerifiedPackages" Required="0" Valid="1" ConfigLevel="100">
-        <Description Translatable="1">If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!</Description>
+        <Description Translatable="1">If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!</Description>
         <Navigation>Core::Package</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -2772,7 +3240,8 @@
         <Description Translatable="1">Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).</Description>
         <Navigation>Core::PDF</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/var/logo-otobo.png</Item>
+            <!-- the modifier 'i' is for ignoring case, works for both Perl and JavaScript regex -->
+            <Item ValueType="String" ValueRegex="\.(?i:gif|jpeg|jpg|png)$">&lt;CareOnCloud_CONFIG_Home&gt;/var/logo-careoncloud.png</Item>
         </Value>
     </Setting>
     <Setting Name="PDF::PageSize" Required="1" Valid="1">
@@ -2870,7 +3339,7 @@
         </Value>
     </Setting>
     <Setting Name="PGP" Required="1" Valid="1">
-        <Description Translatable="1">Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.</Description>
+        <Description Translatable="1">Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.</Description>
         <Navigation>Core::Crypt::PGP</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
@@ -2887,7 +3356,7 @@
         <Description Translatable="1">Sets the options for PGP binary.</Description>
         <Navigation>Core::Crypt::PGP</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">--homedir /opt/otobo/.gnupg/ --batch --no-tty --yes</Item>
+            <Item ValueType="String" ValueRegex="">--homedir /opt/careoncloud/.gnupg/ --batch --no-tty --yes</Item>
         </Value>
     </Setting>
     <Setting Name="PGP::Options::DigestPreference" Required="0" Valid="1">
@@ -2909,8 +3378,9 @@
         <Navigation>Core::Crypt::PGP</Navigation>
         <Value>
             <Hash>
-                <Item Key="D2DF79FA">SomePassword</Item>
-                <Item Key="488A0B8F">SomePassword</Item>
+                <DefaultItem ValueType="Password">Secret</DefaultItem>
+                <Item ValueType="Password" Key="D2DF79FA">SomePassword</Item>
+                <Item ValueType="Password" Key="488A0B8F">SomePassword</Item>
             </Hash>
         </Value>
     </Setting>
@@ -3001,38 +3471,38 @@
         </Value>
     </Setting>
     <Setting Name="NotificationSenderName" Required="1" Valid="1">
-        <Description Translatable="1">Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).</Description>
+        <Description Translatable="1">Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">OTOBO Notifications</Item>
+            <Item ValueType="String" ValueRegex="">CareOnCloud ESM Notifications</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationSenderEmail" Required="1" Valid="1">
-        <Description Translatable="1">Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.</Description>
+        <Description Translatable="1">Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.</Description>
         <Navigation>Core::Email</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">otobo@&lt;OTOBO_CONFIG_FQDN&gt;</Item>
+            <Item ValueType="String" ValueRegex="">esm@&lt;CareOnCloud_CONFIG_FQDN&gt;</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationSubjectLostPasswordToken" Required="1" Valid="1">
         <Description Translatable="1">Defines the subject for notification mails sent to agents, with token about new requested password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password request</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password request</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationBodyLostPasswordToken" Required="1" Valid="1">
         <Description Translatable="1">Defines the body text for notification mails sent to agents, with token about new requested password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
-You or someone impersonating you has requested to change your OTOBO
+You or someone impersonating you has requested to change your CareOnCloud ESM
 password.
 
 If you want to do this, click on the link below. You will receive another email containing the password.
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;index.pl?Action=LostPassword;Token=&lt;OTOBO_TOKEN&gt;
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;index.pl?Action=LostPassword;Token=&lt;CareOnCloud_TOKEN&gt;
 
 If you did not request a new password, please ignore this email.
             </Item>
@@ -3042,23 +3512,23 @@ If you did not request a new password, please ignore this email.
         <Description Translatable="1">Defines the subject for notification mails sent to agents, about new password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password</Item>
         </Value>
     </Setting>
     <Setting Name="NotificationBodyLostPassword" Required="1" Valid="1">
         <Description Translatable="1">Defines the body text for notification mails sent to agents, about new password.</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
 
-Here's your new OTOBO password.
+Here's your new CareOnCloud ESM password.
 
-New password: &lt;OTOBO_NEWPW&gt;
+New password: &lt;CareOnCloud_NEWPW&gt;
 
 You can log in via the following URL:
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;index.pl
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;index.pl
             </Item>
         </Value>
     </Setting>
@@ -3098,6 +3568,20 @@ You can log in via the following URL:
             </Hash>
         </Value>
     </Setting>
+    <Setting Name="ReferenceData::TranslatedCountryNames" Required="0" Valid="0">
+        <Description Translatable="1">Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.</Description>
+        <Navigation>Core::ReferenceData</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    <Setting Name="ReferenceData::TranslatedLanguageNames" Required="0" Valid="0">
+        <Description Translatable="1">Translate the language names in the language selection. Requires that Locale::CLDR and the relevant language packs are installed.</Description>
+        <Navigation>Core::ReferenceData</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
     <Setting Name="PerformanceLog" Required="0" Valid="1" ConfigLevel="200">
         <Description Translatable="1">Enables performance log (to log the page response time). It will affect the system performance. Frontend::Module###AdminPerformanceLog must be enabled.</Description>
         <Navigation>Core::PerformanceLog</Navigation>
@@ -3109,7 +3593,7 @@ You can log in via the following URL:
         <Description Translatable="1">Specifies the path of the file for the performance log.</Description>
         <Navigation>Core::PerformanceLog</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">&lt;OTOBO_CONFIG_Home&gt;/var/log/Performance.log</Item>
+            <Item ValueType="String" ValueRegex="">&lt;CareOnCloud_CONFIG_Home&gt;/var/log/Performance.log</Item>
         </Value>
     </Setting>
     <Setting Name="PerformanceLog::FileMax" Required="1" Valid="1" ConfigLevel="200">
@@ -3173,6 +3657,24 @@ You can log in via the following URL:
         <Navigation>Frontend::Agent::View::Preferences</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">user_id</Item>
+        </Value>
+    </Setting>
+    <Setting Name="Preferences::UpdateAJAX::Allowed###001-Framework" Required="1" Valid="1" ConfigLevel="200">
+        <Description Translatable="1">A list of parameters which can be updated via the UpdateAJAX.</Description>
+        <Navigation>Frontend::Agent::View::Preferences</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="UserTicketZoomArticleTableHeight">1</Item>
+                <Item Key="UserSystemConfigurationCategory">1</Item>
+                <Item Key="UserSystemConfigurationFavourites">1</Item>
+                <Item Key="UserAgentDoNotShowBrowserLinkMessage">1</Item>
+                <Item Key="AdminNavigationBarFavourites">1</Item>
+                <Item Key="UserNavBarItemsOrder">1</Item>
+                <Item Key="UserWidgetState_SystemConfiguration_Actions">1</Item>
+                <Item Key="UserWidgetState_SystemConfiguration_Navigation">1</Item>
+                <Item Key="UserWidgetState_SystemConfiguration_Sticky">1</Item>
+                <Item Key="UserWidgetState_SystemConfiguration_Help">1</Item>
+            </Hash>
         </Value>
     </Setting>
     <Setting Name="PreferencesGroups###Password" Required="0" Valid="1">
@@ -3296,7 +3798,7 @@ You can log in via the following URL:
                 <Item Key="Module">Kernel::Output::HTML::Preferences::Theme</Item>
                 <Item Key="PreferenceGroup">Miscellaneous</Item>
                 <Item Key="Label" Translatable="1">Theme</Item>
-                <Item Key="Desc" Translatable="1">Select your preferred theme for OTOBO.</Item>
+                <Item Key="Desc" Translatable="1">Select your preferred theme for CareOnCloud ESM.</Item>
                 <Item Key="Key" Translatable="1"></Item>
                 <Item Key="PrefKey">UserTheme</Item>
                 <Item Key="NeedsReload">1</Item>
@@ -3347,7 +3849,7 @@ You can log in via the following URL:
                 <Item Key="PreferenceGroup">Miscellaneous</Item>
                 <Item Key="Label" Translatable="1">CSV Separator</Item>
                 <Item Key="Desc" Translatable="1">Select the separator character used in CSV files (stats and searches). If you don't select a separator here, the default separator for your language will be used.</Item>
-                <Item Key="Key" Translatable="1">CSV Separator</Item>
+                <Item Key="Key" Translatable="1"></Item>
                 <Item Key="Data">
                     <Hash>
                         <Item Key=""></Item>
@@ -3482,7 +3984,7 @@ You can log in via the following URL:
         </Value>
     </Setting>
     <Setting Name="CustomerPanelLoginURL" Required="0" Valid="0">
-        <Description Translatable="1">Defines an alternate login URL for the customer panel..</Description>
+        <Description Translatable="1">Defines an alternate login URL for the customer panel.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="">http://host.example.com/cgi-bin/login.pl</Item>
@@ -3620,21 +4122,21 @@ You can log in via the following URL:
         <Description Translatable="1">Defines the subject for notification mails sent to customers, with token about new requested password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password request</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password request</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelBodyLostPasswordToken" Required="1" Valid="1">
         <Description Translatable="1">Defines the body text for notification mails sent to customers, with token about new requested password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
-You or someone impersonating you has requested to change your OTOBO
+You or someone impersonating you has requested to change your CareOnCloud ESM
 password.
 
 If you want to do this, click on this link. You will receive another email containing the password.
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerLostPassword;Token=&lt;OTOBO_TOKEN&gt;
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerLostPassword;Token=&lt;CareOnCloud_TOKEN&gt;
 
 If you did not request a new password, please ignore this email.
             </Item>
@@ -3644,19 +4146,19 @@ If you did not request a new password, please ignore this email.
         <Description Translatable="1">Defines the subject for notification mails sent to customers, about new password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO password</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM password</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelBodyLostPassword" Required="1" Valid="1">
         <Description Translatable="1">Defines the body text for notification mails sent to customers, about new password.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
 
-New password: &lt;OTOBO_NEWPW&gt;
+New password: &lt;CareOnCloud_NEWPW&gt;
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl
             </Item>
         </Value>
     </Setting>
@@ -3664,26 +4166,26 @@ New password: &lt;OTOBO_NEWPW&gt;
         <Description Translatable="1">Defines the subject for notification mails sent to customers, about new account.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">New OTOBO Account!</Item>
+            <Item ValueType="String" ValueRegex="">New CareOnCloud ESM account!</Item>
         </Value>
     </Setting>
     <Setting Name="CustomerPanelBodyNewAccount" Required="1" Valid="1">
         <Description Translatable="1">Defines the body text for notification mails sent to customers, about new account.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
-            <Item ValueType="Textarea">Hi &lt;OTOBO_USERFIRSTNAME&gt;,
+            <Item ValueType="Textarea">Hi &lt;CareOnCloud_USERFIRSTNAME&gt;,
 
-You or someone impersonating you has created a new OTOBO account for
+You or someone impersonating you has created a new CareOnCloud ESM account for
 you.
 
-Full name: &lt;OTOBO_USERFIRSTNAME&gt; &lt;OTOBO_USERLASTNAME&gt;
-User name: &lt;OTOBO_USERLOGIN&gt;
-Password : &lt;OTOBO_USERPASSWORD&gt;
+Full name: &lt;CareOnCloud_USERFIRSTNAME&gt; &lt;CareOnCloud_USERLASTNAME&gt;
+User name: &lt;CareOnCloud_USERLOGIN&gt;
+Password : &lt;CareOnCloud_USERPASSWORD&gt;
 
 You can log in via the following URL. We encourage you to change your password
 via the Preferences button after logging in.
 
-&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl
+&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl
             </Item>
         </Value>
     </Setting>
@@ -3695,7 +4197,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Customer::AuthModule::DB::CryptType" Required="1" Valid="1" ConfigLevel="200">
-        <Description Translatable="1">If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified.</Description>
+        <Description Translatable="1">If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified. It is discouraged to configure the not really secure algorithms like 'md5', 'apr1', 'crypt', and 'plain'.</Description>
         <Navigation>Core::Auth::Customer</Navigation>
         <Value>
             <Item ValueType="Select" SelectedID="sha2">
@@ -3742,7 +4244,19 @@ via the Preferences button after logging in.
         <Description Translatable="1">If "DB" was selected for Customer::AuthModule, the DSN for the connection to the customer table must be specified.</Description>
         <Navigation>Core::Auth::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">DBI:mysql:database=customerdb;host=customerdbhost</Item>
+            <Item ValueType="String" ValueRegex="">DBI:MariaDB:database=customerdb;host=customerdbhost</Item>
+        </Value>
+    </Setting>
+    <Setting Name="Customer::AuthModule::DB::Attribute" Required="0" Valid="0" ConfigLevel="200">
+        <Description Translatable="1">These attributes are passed when connecting to the database. A common use case is a connection which is secured by TLS.</Description>
+        <Navigation>Core::Auth::Customer</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="mariadb_ssl">1</Item>
+                <Item Key="mariadb_client_cert">/opt/careoncloud/tls/client-cert.pem</Item>
+                <Item Key="mariadb_client_key">/opt/careoncloud/tls/client-key.pem</Item>
+                <Item Key="mariadb_ssl_optional">1</Item>
+            </Hash>
         </Value>
     </Setting>
     <Setting Name="Customer::AuthModule::DB::User" Required="0" Valid="0" ConfigLevel="200">
@@ -3802,10 +4316,10 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Customer::AuthModule::LDAP::GroupDN" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.</Description>
+        <Description Translatable="1">If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.</Description>
         <Navigation>Core::Auth::Customer</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">cn=otoboallow,ou=posixGroups,dc=example,dc=com</Item>
+            <Item ValueType="String" ValueRegex="">cn=careoncloudallow,ou=posixGroups,dc=example,dc=com</Item>
         </Value>
     </Setting>
     <Setting Name="Customer::AuthModule::LDAP::AccessAttr" Required="0" Valid="0" ConfigLevel="200">
@@ -4162,9 +4676,9 @@ via the Preferences button after logging in.
                         <Item>thirdparty/fullcalendar-3.10.2/fullcalendar.min.js</Item>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOMultiBarChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
                         <Item>thirdparty/canvg-1.4/canvg.js</Item>
@@ -4898,9 +5412,9 @@ via the Preferences button after logging in.
                         <Item Key="Order">4000</Item>
                     </Hash>
                 </Item>
-                <Item Key="OTOBOTeamServices">
+                <Item Key="CareOnCloudTeamServices">
                     <Hash>
-                        <Item Key="Title" Translatable="1">OTOBO Team Services</Item>
+                        <Item Key="Title" Translatable="1">CareOnCloud ESM Team Services</Item>
                         <Item Key="Order">5000</Item>
                     </Hash>
                 </Item>
@@ -4970,6 +5484,19 @@ via the Preferences button after logging in.
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
             </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AdminUser###001-Framework" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.User.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
         </Value>
     </Setting>
     <Setting Name="Frontend::Navigation###AdminUser###001-Framework" Required="0" Valid="0">
@@ -5074,6 +5601,41 @@ via the Preferences button after logging in.
                 <Item Key="Description" Translatable="1">Create and manage groups.</Item>
                 <Item Key="IconBig">fa-users</Item>
                 <Item Key="IconSmall"></Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AdminGroupImportExport" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Group Import Export</Item>
+                    <Item Key="Title">GroupImportExport</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AdminGroupImportExport###003-ImportExportStandardObjects" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.GroupImportExport.js</Item>
+                    </Array>
+                </Item>
             </Hash>
         </Value>
     </Setting>
@@ -5697,6 +6259,41 @@ via the Preferences button after logging in.
             </Hash>
         </Value>
     </Setting>
+    <Setting Name="Frontend::Module###AdminRoleImportExport" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Role Import Export</Item>
+                    <Item Key="Title">RoleImportExport</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AdminRoleImportExport###003-ImportExportStandardObjects" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.RoleImportExport.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
     <Setting Name="Frontend::Module###AdminRoleUser" Required="0" Valid="1">
         <Description Translatable="1">Frontend module registration for the agent interface.</Description>
         <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
@@ -5834,6 +6431,41 @@ via the Preferences button after logging in.
                 <Item Key="Description" Translatable="1">Link roles to groups.</Item>
                 <Item Key="IconBig">fa-circle-o</Item>
                 <Item Key="IconSmall">fa-users</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AdminRoleGroupImportExport" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the admin interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Role-Group Relations Import Export</Item>
+                    <Item Key="Title">RoleGroupImportExport</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AdminRoleGroupImportExport###003-ImportExportStandardObjects" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.RoleGroupImportExport.js</Item>
+                    </Array>
+                </Item>
             </Hash>
         </Value>
     </Setting>
@@ -6387,7 +7019,7 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">System Registration</Item>
-                <Item Key="Block">OTOBOTeamServices</Item>
+                <Item Key="Block">CareOnCloudTeamServices</Item>
                 <Item Key="Description" Translatable="1">Manage system registration.</Item>
                 <Item Key="IconBig">fa-edit</Item>
                 <Item Key="IconSmall"></Item>
@@ -6462,7 +7094,7 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">Support Data Collector</Item>
-                <Item Key="Block">OTOBOTeamServices</Item>
+                <Item Key="Block">CareOnCloudTeamServices</Item>
                 <Item Key="Description" Translatable="1">Manage support data.</Item>
                 <Item Key="IconBig">fa-search</Item>
                 <Item Key="IconSmall"></Item>
@@ -6516,7 +7148,7 @@ via the Preferences button after logging in.
             </Array>
         </Value>
     </Setting>
-    <Setting Name="Frontend::NavigationModule###AdminCloudServices" Required="0" Valid="1">
+    <Setting Name="Frontend::NavigationModule###AdminCloudServices" Required="0" Valid="0">
         <Description Translatable="1">Admin area navigation for the agent interface.</Description>
         <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
         <Value>
@@ -6532,8 +7164,8 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
                 <Item Key="Name" Translatable="1">Cloud Services</Item>
-                <Item Key="Block">OTOBOTeamServices</Item>
-                <Item Key="Description" Translatable="1">Manage OTOBO Team cloud services.</Item>
+                <Item Key="Block">CareOnCloudTeamServices</Item>
+                <Item Key="Description" Translatable="1">Manage CareOnCloud ESM Team cloud services.</Item>
                 <Item Key="IconBig">fa-cloud</Item>
                 <Item Key="IconSmall"></Item>
             </Hash>
@@ -6554,7 +7186,7 @@ via the Preferences button after logging in.
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Communication Log GUI</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -7108,8 +7740,8 @@ via the Preferences button after logging in.
         <Navigation>Frontend::Customer::View::Login</Navigation>
         <Value>
             <Hash>
-                <Item Key="LoginText">Your Tickets. Your OTOBO.</Item>
-                <Item Key="Background">/otobo-web/common/img/LoginBG.jpg</Item>
+                <Item Key="LoginText" Translatable="1">Your tickets. Your CareOnCloud ESM.</Item>
+                <Item Key="Background">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/LoginBG.jpg</Item>
             </Hash>
         </Value>
     </Setting>
@@ -7219,14 +7851,16 @@ via the Preferences button after logging in.
         <Navigation>Frontend::Customer::View::Dashboard::Configuration</Navigation>
         <Value>
             <Hash>
-                <Item Key="WelcomeText">Welcome %s, to your OTOBO.</Item>
+                <Item Key="WelcomeText" Translatable="1">Welcome %s, to CareOnCloud ESM.</Item>
                 <Item Key="Name">UserFirstname</Item>
                 <Item Key="SubText">This service portal is available to you all day every day.</Item>
             </Hash>
         </Value>
     </Setting>
+
+    <!-- setup of the tiles, <CareOnCloud_CONFIG_SettingName> is replaced in the Config entry -->
     <Setting Name="CustomerDashboard::Tiles###NewTicket" Required="0" Valid="1">
-        <Description Translatable="1">Tile registration for the CustomerDashboard. Module is required.</Description>
+        <Description Translatable="1">Tile registration for the customer dashboard. Module is required.</Description>
         <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
         <Value>
             <Hash>
@@ -7241,7 +7875,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="CustomerDashboard::Tiles###FeaturedLink-01" Required="0" Valid="1">
-        <Description Translatable="1">Tile registration for the CustomerDashboard. Module is required.</Description>
+        <Description Translatable="1">Tile registration for the customer dashboard. Module is required.</Description>
         <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
         <Value>
             <Hash>
@@ -7250,11 +7884,11 @@ via the Preferences button after logging in.
                 <Item Key="Config">
                     <Hash>
                         <Item Key="TextColor">#ffffff</Item>
-                        <Item Key="BackgroundImage">/otobo-web/common/img/Dashboard/dashboard_bgfl.png</Item>
-                        <Item Key="HeaderText">That's new in OTOBO 10.1</Item>
-                        <Item Key="MainText">Highlights: Processes in the service portal, S3, modern authentication with OpenID Connect, enhanced S/MIME functionality</Item>
+                        <Item Key="BackgroundImage">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/dashboard_bgfl.png</Item>
+                        <Item Key="HeaderText">CareOnCloud ESM | Service Management</Item>
+                        <Item Key="MainText">CareOnCloud ESM brings service modelling, integration, system connectivity and administration together in one platform.</Item>
                         <Item Key="FooterText">Explore &gt;</Item>
-                        <Item Key="Link">https://otobo.de/en/otobo-10-1/</Item>
+                        <Item Key="Link">https://esm.arcak.net</Item>
                         <Item Key="NewTab">0</Item>
                     </Hash>
                 </Item>
@@ -7262,7 +7896,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="CustomerDashboard::Tiles###TicketList-01" Required="0" Valid="1">
-        <Description Translatable="1">Tile registration for the CustomerDashboard. Module is required.</Description>
+        <Description Translatable="1">Tile registration for the customer dashboard. Module is required.</Description>
         <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
         <Value>
             <Hash>
@@ -7270,7 +7904,7 @@ via the Preferences button after logging in.
                 <Item Key="Module">Kernel::Output::HTML::CustomerDashboard::TileTicketList</Item>
                 <Item Key="Config">
                     <Hash>
-                        <Item Key="Text">Your last tickets</Item>
+                        <Item Key="Text" Translatable="1">Your last tickets</Item>
                         <Item Key="SortBy">Age</Item>
                         <Item Key="OrderBy">Down</Item>
                         <Item Key="StateType"></Item>
@@ -7281,8 +7915,8 @@ via the Preferences button after logging in.
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="CustomerDashboard::Tiles###PlainText-01" Required="0" Valid="1">
-        <Description Translatable="1">Tile registration for the CustomerDashboard. Module is required.</Description>
+    <Setting Name="CustomerDashboard::Tiles###PlainText-01" Required="0" Valid="0">
+        <Description Translatable="1">Tile registration for the customer dashboard. Module is required.</Description>
         <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
         <Value>
             <Hash>
@@ -7290,7 +7924,7 @@ via the Preferences button after logging in.
                 <Item Key="Template">Dashboard/TilePlainText</Item>
                 <Item Key="Config">
                     <Hash>
-                        <Item Key="HeaderText">Message of the day</Item>
+                        <Item Key="HeaderText" Translatable="1">Message of the day</Item>
                         <Item Key="MainText" ValueType="Textarea">Hello World! :)</Item>
                         <Item Key="TextColor">#00023c</Item>
                         <Item Key="BackgroundColor">#fff</Item>
@@ -7300,7 +7934,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="CustomerDashboard::Tiles###ToolBox-01" Required="0" Valid="1">
-        <Description Translatable="1">Tile registration for the CustomerDashboard. Module is required.</Description>
+        <Description Translatable="1">Tile registration for the customer dashboard. Module is required.</Description>
         <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
         <Value>
             <Hash>
@@ -7308,22 +7942,27 @@ via the Preferences button after logging in.
                 <Item Key="Module">Kernel::Output::HTML::CustomerDashboard::TileToolBox</Item>
                 <Item Key="Config">
                     <Hash>
-                        <Item Key="Text">Your external tools</Item>
+                        <Item Key="Text" Translatable="1">Your external tools</Item>
                         <Item Key="TextColor">#00023c</Item>
                         <Item Key="Links">
                             <Hash>
-                                <Item Key="https://duckduckgo.com/">1</Item>
-                                <Item Key="https://www.wikipedia.org">2</Item>
-                                <Item Key="https://www.openstreetmap.org">3</Item>
-                                <Item Key="https://protonvpn.com/">4</Item>
+                                <Item Key="https://www.otobo.io">1</Item>
+                                <Item Key="https://www.openstreetmap.org">2</Item>
+                                <Item Key="https://www.wikipedia.org">3</Item>
                             </Hash>
                         </Item>
                         <Item Key="Images">
                             <Hash>
-                                <Item Key="https://cdn3.iconfinder.com/data/icons/social-media-logos-flat-colorful-1/2048/5364_-_DuckDuckGo-512.png">1</Item>
-                                <Item Key="https://cdn3.iconfinder.com/data/icons/inficons-round-brand-set-2/512/wikipedia-512.png">2</Item>
-                                <Item Key="https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/openstreetmap-512.png">3</Item>
-                                <Item Key="https://protonvpn.com/assets/img/media/protonvpn-sign-green.png">4</Item>
+                                <Item Key="/careoncloud-web/skins/Customer/default/img/careoncloud-logo.png">1</Item>
+                                <Item Key="/careoncloud-web/skins/Customer/default/img/sample_openstreetmap.png">2</Item>
+                                <Item Key="/careoncloud-web/skins/Customer/default/img/sample_wikipedia.png">3</Item>
+                            </Hash>
+                        </Item>
+                        <Item Key="Titles">
+                            <Hash>
+                                <Item Key="CareOnCloud ESM">1</Item>
+                                <Item Key="OpenStreetMap">2</Item>
+                                <Item Key="Wikipedia">3</Item>
                             </Hash>
                         </Item>
                     </Hash>
@@ -7331,8 +7970,8 @@ via the Preferences button after logging in.
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="CustomerDashboard::Tiles###PlainPicture-01" Required="0" Valid="1">
-        <Description Translatable="1">Tile registration for the CustomerDashboard. Module is required.</Description>
+    <Setting Name="CustomerDashboard::Tiles###PlainPicture-01" Required="0" Valid="0">
+        <Description Translatable="1">Tile registration for the customer dashboard. Module is required.</Description>
         <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
         <Value>
             <Hash>
@@ -7342,9 +7981,144 @@ via the Preferences button after logging in.
                     <Hash>
                         <Item Key="Text">Overview</Item>
                         <Item Key="TextColor">#00023c</Item>
-                        <Item Key="Image">/otobo-web/common/img/Dashboard/Example.png</Item>
+                        <Item Key="Image">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/Example.png</Item>
                     </Hash>
                 </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerDashboard::Tiles###InfoTile-01" Required="0" Valid="1">
+        <Description Translatable="1">Tile registration for the customer dashboard. Module is required. Optionally, an order for items can be set. The order must have the name of the item as key and the desired position as integer value.</Description>
+        <Navigation>Frontend::Customer::View::Dashboard::Tiles</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Order">7</Item>
+                <Item Key="Module">Kernel::Output::HTML::CustomerDashboard::InfoTile</Item>
+                <Item Key="Template">Dashboard/TileInfoEntries</Item>
+                <Item Key="Config">
+                    <Hash>
+                        <Item Key="TextColor">#00023c</Item>
+                        <Item Key="BackgroundColor">#fff</Item>
+                        <Item Key="Order">
+                            <Hash>
+                            </Hash>
+                        </Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="CustomerFrontend::Module###CustomerDashboardContent" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the customer interface.</Description>
+        <Navigation>Frontend::Customer::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                   <Item Key="Group">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Create tickets.</Item>
+                    <Item Key="NavBarName">Ticket</Item>
+                    <Item Key="Title" Translatable="1">New Ticket</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AdminCustomerDashboardInfoTile" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module for dashboard info tile in customer interface.</Description>
+        <Navigation>Frontend::Admin::CustomerDashboardInfoTile</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Admin</Item>
+                    <Item Key="Title" Translatable="1">Customer Info</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AdminCustomerDashboardInfoTile###002-ExtendedCustomerDashboardInfoTile" Required="0" Valid="1">
+        <Description Translatable="1">Loader module for dashboard info tile in customer interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.CustomerDashboardInfoTile.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Navigation###AdminCustomerDashboardInfoTile###002-ExtendedCustomerDashboardInfoTile" Required="0" Valid="0">
+        <Description Translatable="1">Main menu item registration.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Admin</Item>
+                    <Item Key="Title" Translatable="1">Customer Dashboard Info Tile</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::NavigationModule###AdminCustomerDashboardInfoTile" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                        <Item>admin</Item>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">Customer Info</Item>
+                <Item Key="Block">Administration</Item>
+                <Item Key="Description" Translatable="1">Manage Customer Dashboard Info Tile Entries</Item>
+                <Item Key="IconBig">fa-wrench</Item>
+                <Item Key="IconSmall"></Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <Setting Name="CustomerFrontend::NotifyModule###8-CustomerAnnouncement-Check" Required="0" Valid="1">
+        <Description Translatable="1">Defines the module to display a notification in the customer interface. UseMarquee options: 1/0. NotifyPriority options: Notice/Error/Success/Info.</Description>
+        <Navigation>Frontend::Customer::FrontendNotification</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Notification::CustomerAnnouncementCheck</Item>
+                <Item Key="Segregation">###</Item>
+                <Item Key="UseMarquee">1</Item>
+                <Item Key="NotifyPriority">Error</Item>
             </Hash>
         </Value>
     </Setting>
@@ -7513,12 +8287,12 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="CustomerFrontend::FooterLinks" Required="0" Valid="0">
-        <Description Translatable="1">Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. &lt;OTOBO_CONFIG_HttpType&gt;, &lt;OTOBO_CONFIG_FQDN&gt; and &lt;OTOBO_CONFIG_ScriptAlias&gt; will be substituted.</Description>
+        <Description Translatable="1">Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. &lt;CareOnCloud_CONFIG_HttpType&gt;, &lt;CareOnCloud_CONFIG_FQDN&gt; and &lt;CareOnCloud_CONFIG_ScriptAlias&gt; will be substituted.</Description>
         <Navigation>Frontend::Customer</Navigation>
         <Value>
             <Hash>
-                <Item Key="&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerGenericContent&amp;Key=About">About</Item>
-                <Item Key="&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerAccept&amp;Review=1">Privacy Policy</Item>
+                <Item Key="&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerGenericContent&amp;Key=About">About</Item>
+                <Item Key="&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;customer.pl?Action=CustomerAccept&amp;Review=1">Privacy Policy</Item>
             </Hash>
         </Value>
     </Setting>
@@ -7623,9 +8397,9 @@ via the Preferences button after logging in.
                     <Array>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOMultiBarChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
                         <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
                         <Item>thirdparty/canvg-1.4/canvg.js</Item>
@@ -7811,10 +8585,10 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Core::MirrorDB::DSN" Required="0" Valid="0" ConfigLevel="200">
-        <Description Translatable="1">OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.</Description>
+        <Description Translatable="1">CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.</Description>
         <Navigation>Core::DB::Mirror</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="">DBI:mysql:database=mirrordb;host=mirrordbhost</Item>
+            <Item ValueType="String" ValueRegex="">DBI:MariaDB:database=mirrordb;host=mirrordbhost</Item>
         </Value>
     </Setting>
     <Setting Name="Core::MirrorDB::User" Required="0" Valid="0" ConfigLevel="200">
@@ -7836,7 +8610,7 @@ via the Preferences button after logging in.
         <Navigation>Core::DB::Mirror</Navigation>
         <Value>
             <Hash>
-                <Item Key="DSN">DBI:mysql:database=mirrordb;host=mirrordbhost</Item>
+                <Item Key="DSN">DBI:MariaDB:database=mirrordb;host=mirrordbhost</Item>
                 <Item Key="User">some_user</Item>
                 <Item Key="Password" ValueType="Password">some_password</Item>
             </Hash>
@@ -7847,7 +8621,7 @@ via the Preferences button after logging in.
         <Navigation>Core::DB::Mirror</Navigation>
         <Value>
             <Hash>
-                <Item Key="DSN">DBI:mysql:database=mirrordb;host=mirrordbhost</Item>
+                <Item Key="DSN">DBI:MariaDB:database=mirrordb;host=mirrordbhost</Item>
                 <Item Key="User">some_user</Item>
                 <Item Key="Password" ValueType="Password">some_password</Item>
             </Hash>
@@ -7858,7 +8632,7 @@ via the Preferences button after logging in.
         <Navigation>Core::DB::Mirror</Navigation>
         <Value>
             <Hash>
-                <Item Key="DSN">DBI:mysql:database=mirrordb;host=mirrordbhost</Item>
+                <Item Key="DSN">DBI:MariaDB:database=mirrordb;host=mirrordbhost</Item>
                 <Item Key="User">some_user</Item>
                 <Item Key="Password" ValueType="Password">some_password</Item>
             </Hash>
@@ -7869,7 +8643,7 @@ via the Preferences button after logging in.
         <Navigation>Core::DB::Mirror</Navigation>
         <Value>
             <Hash>
-                <Item Key="DSN">DBI:mysql:database=mirrordb;host=mirrordbhost</Item>
+                <Item Key="DSN">DBI:MariaDB:database=mirrordb;host=mirrordbhost</Item>
                 <Item Key="User">some_user</Item>
                 <Item Key="Password" ValueType="Password">some_password</Item>
             </Hash>
@@ -7880,7 +8654,7 @@ via the Preferences button after logging in.
         <Navigation>Core::DB::Mirror</Navigation>
         <Value>
             <Hash>
-                <Item Key="DSN">DBI:mysql:database=mirrordb;host=mirrordbhost</Item>
+                <Item Key="DSN">DBI:MariaDB:database=mirrordb;host=mirrordbhost</Item>
                 <Item Key="User">some_user</Item>
                 <Item Key="Password" ValueType="Password">some_password</Item>
             </Hash>
@@ -7930,12 +8704,12 @@ via the Preferences button after logging in.
         <Value>
             <Hash>
                 <Item Key="Module">Kernel::Output::HTML::Dashboard::News</Item>
-                <Item Key="Title" Translatable="1">OTOBO News</Item>
-                <Item Key="Description" Translatable="1">News about OTOBO.</Item>
+                <Item Key="Title" Translatable="1">CareOnCloud ESM announcements</Item>
+                <Item Key="Description" Translatable="1">CareOnCloud ESM announcements are available from your service team.</Item>
                 <Item Key="Block">ContentSmall</Item>
                 <Item Key="Limit">6</Item>
                 <Item Key="Group">admin</Item>
-                <Item Key="Default">1</Item>
+                <Item Key="Default">0</Item>
                 <Item Key="CacheTTL">360</Item>
                 <Item Key="Mandatory">0</Item>
             </Hash>
@@ -7948,9 +8722,9 @@ via the Preferences button after logging in.
             <Hash>
                 <Item Key="Module">Kernel::Output::HTML::Dashboard::RSS</Item>
                 <Item Key="Title" Translatable="1">Custom RSS Feed</Item>
-                <Item Key="Description" Translatable="1">OTOBO News</Item>
-                <Item Key="URL">https://otobo.de/en/feed/</Item>
-                <Item Key="URL_de">https://otobo.de/de/feed/</Item>
+                <Item Key="Description" Translatable="1">CareOnCloud ESM News</Item>
+                <Item Key="URL">https://otobo.io/en/feed/</Item>
+                <Item Key="URL_de">https://otobo.io/de/feed/</Item>
                 <Item Key="Block">ContentSmall</Item>
                 <Item Key="Limit">6</Item>
                 <Item Key="Group"></Item>
@@ -7986,7 +8760,7 @@ via the Preferences button after logging in.
                 <Item Key="Title" Translatable="1">A picture</Item>
                 <Item Key="Description" Translatable="1">Some picture description!</Item>
                 <Item Key="Block">ContentLarge</Item>
-                <Item Key="URL">https://otobo.de/wp-content/uploads/2020/11/OTOBO-Rother-OSS-1.jpg</Item>
+                <Item Key="URL">https://otobo.io/wp-content/uploads/2024/06/Tile-OTOBO-Self-Service-Portal.jpg</Item>
                 <Item Key="Group"></Item>
                 <Item Key="Default">1</Item>
                 <Item Key="Link">https://otobo.org/</Item>
@@ -8058,7 +8832,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###CVE" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <Value>
             <Hash>
@@ -8100,7 +8874,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###Bugtraq" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <!-- Example strings: BugTraq ID: 23862 | BugTraq ID: 8945 | Bugtraq ID 140 | BUGTRAQ:20070425 | BID 20799 -->
         <!-- Example URL: https://www.securityfocus.com/bid/23862/info  -->
@@ -8141,7 +8915,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###MSBulletins" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <!-- Example strings: MS07-021 | MS04-028 | MS-07-002 -->
         <!-- Example URL: https://www.microsoft.com/technet/security/bulletin/MS07-021.mspx  -->
@@ -8177,7 +8951,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###Setting1" Required="0" Valid="0">
-        <Description Translatable="1">Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <Value>
             <Hash>
@@ -8211,7 +8985,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Frontend::Output::OutputFilterTextAutoLink###Setting2" Required="0" Valid="0">
-        <Description Translatable="1">Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.</Description>
+        <Description Translatable="1">Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.</Description>
         <Navigation>Frontend::Base::OutputFilter</Navigation>
         <Value>
             <Hash>
@@ -8253,21 +9027,21 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Secure::DisableBanner" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.</Description>
+        <Description Translatable="1">If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.</Description>
         <Navigation>Core</Navigation>
         <Value>
             <Item ValueType="Checkbox">0</Item>
         </Value>
     </Setting>
     <Setting Name="Loader::Enabled::CSS" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, OTOBO will deliver all CSS files in minified form.</Description>
+        <Description Translatable="1">If enabled, CareOnCloud ESM will deliver all CSS files in minified form.</Description>
         <Navigation>Frontend::Base::Loader</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
         </Value>
     </Setting>
     <Setting Name="Loader::Enabled::JS" Required="1" Valid="1">
-        <Description Translatable="1">If enabled, OTOBO will deliver all JavaScript files in minified form.</Description>
+        <Description Translatable="1">If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.</Description>
         <Navigation>Frontend::Base::Loader</Navigation>
         <Value>
             <Item ValueType="Checkbox">1</Item>
@@ -8316,14 +9090,14 @@ via the Preferences button after logging in.
         <Navigation>Frontend::Base::Loader</Navigation>
         <Value>
             <Array>
-                <Item>thirdparty/jquery-3.6.0/jquery.min.js</Item>
+                <Item>thirdparty/jquery-3.7.1/jquery.min.js</Item>
                 <Item>thirdparty/jquery-browser-detection/jquery-browser-detection.js</Item>
-                <Item>thirdparty/jquery-ui-1.13.2/jquery-ui.min.js</Item>
+                <Item>thirdparty/jquery-ui-1.14.1/jquery-ui.min.js</Item>
                 <Item>thirdparty/jquery-ui-touch-punch-0.2.3/jquery.ui.touch-punch.js</Item>
-                <Item>thirdparty/jquery-validate-1.19.3/jquery.validate.js</Item>
+                <Item>thirdparty/jquery-validate-1.21.0/jquery.validate.min.js</Item>
                 <Item>thirdparty/jquery-pubsub/pubsub.js</Item>
                 <Item>thirdparty/jquery-jstree-3.3.7/jquery.jstree.js</Item>
-                <Item>thirdparty/nunjucks-3.2.2/nunjucks.min.js</Item>
+                <Item>thirdparty/nunjucks-3.2.4/nunjucks.min.js</Item>
                 <Item>Core.Init.js</Item>
                 <Item>Core.JavaScriptEnhancements.js</Item>
                 <Item>Core.Debug.js</Item>
@@ -8366,15 +9140,6 @@ via the Preferences button after logging in.
             </Array>
         </Value>
     </Setting>
-    <Setting Name="Loader::Agent::CommonJS###100-CKEditor" Required="1" Valid="1">
-        <Description Translatable="1">List of JS files to always be loaded for the agent interface.</Description>
-        <Navigation>Frontend::Base::Loader</Navigation>
-        <Value>
-            <Array>
-                <Item>thirdparty/ckeditor-4.16.0/ckeditor.js</Item>
-            </Array>
-        </Value>
-    </Setting>
     <Setting Name="Loader::Customer::CommonCSS###000-Framework" Required="1" Valid="1">
         <Description Translatable="1">List of CSS files to always be loaded for the customer interface.</Description>
         <Navigation>Frontend::Base::Loader</Navigation>
@@ -8394,6 +9159,7 @@ via the Preferences button after logging in.
                 <Item>Core.Icons.css</Item>
                 <Item>Core.Footer.css</Item>
                 <Item>Core.Items.css</Item>
+                <Item>ExtendedCDBInfo.Tile.css</Item>
             </Array>
         </Value>
     </Setting>
@@ -8411,13 +9177,13 @@ via the Preferences button after logging in.
         <Navigation>Frontend::Base::Loader</Navigation>
         <Value>
             <Array>
-                <Item>thirdparty/jquery-3.6.0/jquery.min.js</Item>
+                <Item>thirdparty/jquery-3.7.1/jquery.min.js</Item>
                 <Item>thirdparty/jquery-browser-detection/jquery-browser-detection.js</Item>
-                <Item>thirdparty/jquery-validate-1.19.3/jquery.validate.js</Item>
-                <Item>thirdparty/jquery-ui-1.13.2/jquery-ui.min.js</Item>
+                <Item>thirdparty/jquery-validate-1.21.0/jquery.validate.min.js</Item>
+                <Item>thirdparty/jquery-ui-1.14.1/jquery-ui.min.js</Item>
                 <Item>thirdparty/jquery-pubsub/pubsub.js</Item>
                 <Item>thirdparty/jquery-jstree-3.3.7/jquery.jstree.js</Item>
-                <Item>thirdparty/nunjucks-3.2.2/nunjucks.min.js</Item>
+                <Item>thirdparty/nunjucks-3.2.4/nunjucks.min.js</Item>
                 <Item>Core.Init.js</Item>
                 <Item>Core.Debug.js</Item>
                 <Item>Core.Exception.js</Item>
@@ -8447,19 +9213,11 @@ via the Preferences button after logging in.
                 <Item>Core.Customer.Responsive.js</Item>
                 <Item>Core.UI.NavigationBar.js</Item>
                 <Item>Core.UI.Elasticsearch.js</Item>
+                <Item>ExtendedCDBInfo.Tile.js</Item>
             </Array>
         </Value>
     </Setting>
-    <Setting Name="Loader::Customer::CommonJS###100-CKEditor" Required="1" Valid="1">
-        <Description Translatable="1">List of JS files to always be loaded for the customer interface.</Description>
-        <Navigation>Frontend::Base::Loader</Navigation>
-        <Value>
-            <Array>
-                <Item>thirdparty/ckeditor-4.16.0/ckeditor.js</Item>
-            </Array>
-        </Value>
-    </Setting>
-    <Setting Name="OpenMainMenuOnHover" Required="1" Valid="1">
+    <Setting Name="OpenMainMenuOnHover" UserPreferencesGroup="Advanced" UserModificationPossible="1" Required="1" Valid="1">
         <Description Translatable="1">If enabled, the first level of the main menu opens on mouse hover (instead of click only).</Description>
         <Navigation>Frontend::Agent</Navigation>
         <Value>
@@ -8498,42 +9256,6 @@ via the Preferences button after logging in.
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="Loader::Agent::Skin###001-slim" Required="0" Valid="1">
-        <Description Translatable="1">Default skin for the agent interface (slim version).</Description>
-        <Navigation>Frontend::Base::Loader</Navigation>
-        <Value>
-            <Hash>
-                <Item Key="InternalName">slim</Item>
-                <Item Key="VisibleName" Translatable="1">Default (Slim)</Item>
-                <Item Key="Description" Translatable="1">"Slim" skin which tries to save screen space for power users.</Item>
-                <Item Key="HomePage">www.otobo.org</Item>
-            </Hash>
-        </Value>
-    </Setting>
-    <Setting Name="Loader::Agent::Skin###001-ivory" Required="0" Valid="1">
-        <Description Translatable="1">Balanced white skin by Felix Niklas.</Description>
-        <Navigation>Frontend::Base::Loader</Navigation>
-        <Value>
-            <Hash>
-                <Item Key="InternalName">ivory</Item>
-                <Item Key="VisibleName" Translatable="1">Ivory</Item>
-                <Item Key="Description" Translatable="1">Balanced white skin by Felix Niklas.</Item>
-                <Item Key="HomePage">www.felixniklas.de</Item>
-            </Hash>
-        </Value>
-    </Setting>
-    <Setting Name="Loader::Agent::Skin###001-ivory-slim" Required="0" Valid="1">
-        <Description Translatable="1">Balanced white skin by Felix Niklas (slim version).</Description>
-        <Navigation>Frontend::Base::Loader</Navigation>
-        <Value>
-            <Hash>
-                <Item Key="InternalName">ivory-slim</Item>
-                <Item Key="VisibleName" Translatable="1">Ivory (Slim)</Item>
-                <Item Key="Description" Translatable="1">Balanced white skin by Felix Niklas (slim version).</Item>
-                <Item Key="HomePage">www.felixniklas.de</Item>
-            </Hash>
-        </Value>
-    </Setting>
     <Setting Name="Loader::Agent::Skin###002-high-contrast" Required="0" Valid="1">
         <Description Translatable="1">High contrast skin for visually impaired users.</Description>
         <Navigation>Frontend::Base::Loader</Navigation>
@@ -8542,7 +9264,7 @@ via the Preferences button after logging in.
                 <Item Key="InternalName">highcontrast</Item>
                 <Item Key="VisibleName" Translatable="1">High Contrast</Item>
                 <Item Key="Description" Translatable="1">High contrast skin for visually impaired users.</Item>
-                <Item Key="HomePage">www.otrs.com</Item>
+                <Item Key="HomePage">www.otobo.io</Item>
             </Hash>
         </Value>
     </Setting>
@@ -9070,7 +9792,7 @@ via the Preferences button after logging in.
         <Navigation>Core::CommunicationChannel</Navigation>
         <Value>
             <Hash>
-                <Item Key="Name" Translatable="1">OTOBO</Item>
+                <Item Key="Name" Translatable="1">CareOnCloud ESM</Item>
                 <Item Key="Icon">fa-cloud</Item>
                 <Item Key="Description" Translatable="1">Internal communication channel.</Item>
                 <Item Key="Module">Kernel::System::CommunicationChannel::Internal</Item>
@@ -9269,7 +9991,7 @@ via the Preferences button after logging in.
         <Navigation>Core::Elasticsearch::Settings</Navigation>
         <Value>
             <Array>
-                <Item>Junk</Item>
+                <DefaultItem ValueType="Entity" ValueEntityType="Queue" ValueRegex=""></DefaultItem>
             </Array>
         </Value>
     </Setting>
@@ -9316,7 +10038,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Elasticsearch::TicketStoreFields" Required="0" Valid="1" ConfigLevel="100">
-        <Description Translatable="1">Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!</Description>
+        <Description Translatable="1">Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!</Description>
         <Navigation>Core::Elasticsearch::Settings</Navigation>
         <Value>
             <Hash>
@@ -9345,7 +10067,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Elasticsearch::TicketSearchFields" Required="0" Valid="1">
-        <Description Translatable="1">Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!</Description>
+        <Description Translatable="1">Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!</Description>
         <Navigation>Core::Elasticsearch::Settings</Navigation>
         <Value>
             <Hash>
@@ -9435,7 +10157,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Elasticsearch::IndexSettings###Default" Required="0" Valid="0">
-        <Description Translatable="1">Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces 'Elasticsearch::ArticleIndexCreationSettings' in future versions. If both are present and not equal this one has priority. Use 'Elasticsearch::IndexSettings###...' if you want to define special settings for single indices.'...' may be one of 'Customer', 'CustomerUser', 'Ticket' or 'ConfigItem'.</Description>
+        <Description Translatable="1">Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces 'Elasticsearch::ArticleIndexCreationSettings' in future versions. If both are present and not equal this one has priority. Use 'Elasticsearch::IndexSettings###...' if you want to define special settings for single indices. '...' may be one of 'Customer', 'CustomerUser', 'Ticket' or 'ConfigItem'.</Description>
         <Navigation>Core::Elasticsearch::Settings</Navigation>
         <Value>
             <Hash>
@@ -9484,6 +10206,16 @@ via the Preferences button after logging in.
            </Hash>
         </Value>
     </Setting>
+    <Setting Name="Elasticsearch::IndexSettings###TmpAttachments" Required="0" Valid="0">
+        <Description Translatable="1">Number of shards (NS), replicas (NR) and fields limit for the index 'tmpattachments'.</Description>
+        <Navigation>Core::Elasticsearch::Settings</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="NS">1</Item>
+                <Item Key="NR">0</Item>
+           </Hash>
+        </Value>
+    </Setting>
     <Setting Name="Elasticsearch::QuickSearchCreatedFormat" Required="0" Valid="0">
         <Description Translatable="1">Format of Creation date shown for tickets. As an example '%Y-%m-%d %H:%M:%S' would be interpreted as '2020-01-22 18:07:23'. Please refer to http://search.cpan.org/~drolsky/DateTime-1.21/lib/DateTime.pm#strftime_Patterns.</Description>
         <Navigation>Core::Elasticsearch::Settings</Navigation>
@@ -9492,7 +10224,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <Setting Name="Elasticsearch::QuickSearchShow###Ticket" Required="0" Valid="1">
-        <Description Translatable="1">Objects to search for, how many entries and which attributs to show. Ticket attributes, except queue, have to explicitely be stored via Elasticsearch.</Description>
+        <Description Translatable="1">Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.</Description>
         <Navigation>Core::Elasticsearch::Settings</Navigation>
         <Value>
             <Hash>
@@ -9507,17 +10239,17 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="AttributeHeader">
                     <Hash>
-                        <Item Key="TicketNumber">Ticket#</Item>
-                        <Item Key="Title">Title</Item>
-                        <Item Key="Queue">Queue</Item>
-                        <Item Key="Age">Age</Item>
+                        <Item Key="TicketNumber" Translatable="1">Ticket Number</Item>
+                        <Item Key="Title" Translatable="1">Ticket Title</Item>
+                        <Item Key="Queue" Translatable="1">Queue</Item>
+                        <Item Key="Age" Translatable="1">Age</Item>
                     </Hash>
                 </Item>
             </Hash>
         </Value>
     </Setting>
     <Setting Name="Elasticsearch::QuickSearchShow###CustomerCompany" Required="0" Valid="1">
-        <Description Translatable="1">Objects to search for, how many entries and which attributs to show.</Description>
+        <Description Translatable="1">Objects to search for, how many entries and which attributes to show.</Description>
         <Navigation>Core::Elasticsearch::Settings</Navigation>
         <Value>
             <Hash>
@@ -9531,16 +10263,16 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="AttributeHeader">
                     <Hash>
-                        <Item Key="CustomerCompanyName">Name</Item>
-                        <Item Key="CustomerID">ID</Item>
-                        <Item Key="CustomerCompanyComment">Comment</Item>
+                        <Item Key="CustomerCompanyName" Translatable="1">Customer Name</Item>
+                        <Item Key="CustomerID" Translatable="1">Customer ID</Item>
+                        <Item Key="CustomerCompanyComment" Translatable="1">Comment</Item>
                     </Hash>
                 </Item>
             </Hash>
         </Value>
     </Setting>
     <Setting Name="Elasticsearch::QuickSearchShow###CustomerUser" Required="0" Valid="1">
-        <Description Translatable="1">Objects to search for, how many entries and which attributs to show.</Description>
+        <Description Translatable="1">Objects to search for, how many entries and which attributes to show.</Description>
         <Navigation>Core::Elasticsearch::Settings</Navigation>
         <Value>
             <Hash>
@@ -9555,10 +10287,10 @@ via the Preferences button after logging in.
                 </Item>
                 <Item Key="AttributeHeader">
                     <Hash>
-                        <Item Key="UserLogin">Login</Item>
-                        <Item Key="UserFirstname">Name</Item>
-                        <Item Key="UserLastname">Name</Item>
-                        <Item Key="UserEmail">Email</Item>
+                        <Item Key="UserLogin" Translatable="1">Login</Item>
+                        <Item Key="UserFirstname" Translatable="1">Firstname</Item>
+                        <Item Key="UserLastname" Translatable="1">Lastname</Item>
+                        <Item Key="UserEmail" Translatable="1">Email</Item>
                     </Hash>
                 </Item>
             </Hash>
@@ -9765,7 +10497,7 @@ via the Preferences button after logging in.
         </Value>
     </Setting>
     <!-- End SettingUser -->
-    <!-- nofilter(TidyAll::Plugin::OTOBO::Znuny4OTOBO::ACLKeysLevel3Actions) -->
+    <!-- nofilter(TidyAll::Plugin::OTOBO::Znuny4CareOnCloud::ACLKeysLevel3Actions) -->
     <Setting Name="Frontend::Module###ExternalURLJump" Required="0" Valid="0">
         <Description Translatable="1">Frontend module registration for the agent interface.</Description>
         <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
@@ -9806,9 +10538,9 @@ via the Preferences button after logging in.
                             <Array>
                             </Array>
                         </Item>
-                        <Item Key="Description" Translatable="1">Open the OTOBO home page in a new window</Item>
-                        <Item Key="Name" Translatable="1">Jump to OTOBO!</Item>
-                        <Item Key="Link">Action=ExternalURLJump;URL=http://otobo.de/</Item>
+                        <Item Key="Description" Translatable="1">Open the CareOnCloud ESM home page in a new window</Item>
+                        <Item Key="Name" Translatable="1">Jump to CareOnCloud ESM!</Item>
+                        <Item Key="Link">Action=ExternalURLJump;URL=http://otobo.io/</Item>
                         <Item Key="LinkOption">target="_blank"</Item>
                         <Item Key="NavBar">JumptoExternalURL</Item>
                         <Item Key="Type">Menu</Item>
@@ -9860,9 +10592,9 @@ via the Preferences button after logging in.
                             <Array>
                             </Array>
                         </Item>
-                        <Item Key="Description" Translatable="1">Open the OTOBO home page in a new window</Item>
-                        <Item Key="Name" Translatable="1">Jump to OTOBO!</Item>
-                        <Item Key="Link">Action=ExternalURLJump;URL=http://otobo.de/</Item>
+                        <Item Key="Description" Translatable="1">Open the CareOnCloud ESM home page in a new window</Item>
+                        <Item Key="Name" Translatable="1">Jump to CareOnCloud ESM!</Item>
+                        <Item Key="Link">Action=ExternalURLJump;URL=http://otobo.io/</Item>
                         <Item Key="LinkOption">target="_blank"</Item>
                         <Item Key="NavBar">Ticket</Item>
                         <Item Key="Type">Menu</Item>
@@ -9913,9 +10645,9 @@ via the Preferences button after logging in.
                     <Array>
                         <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
                         <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOLineChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOMultiBarChart.js</Item>
-                        <Item>thirdparty/nvd3-1.7.1/models/OTOBOStackedAreaChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
                         <Item>Core.UI.AdvancedChart.js</Item>
                         <Item>Core.Agent.StatisticsReports.js</Item>
                     </Array>
@@ -9975,19 +10707,408 @@ via the Preferences button after logging in.
             </Hash>
         </Value>
     </Setting>
-    <Setting Name="PhantomJS::Bin" Required="0" Valid="0">
-        <Description Translatable="1">Defines the path to the PhantomJS binary. You can use a static build from http://phantomjs.org/download.html for an easy installation process.</Description>
-        <Navigation>Core::PhantomJS</Navigation>
-        <Value>
-            <Item ValueRegex="" ValueType="File">/usr/bin/phantomjs</Item>
-        </Value>
-    </Setting>
     <Setting Name="GoogleChrome::Bin" Required="0" Valid="0">
-        <Description Translatable="1">Defines the path to the Google Chrome or Chromium binary. If set, this binary will be used instead of PhantomJS::Bin.</Description>
+        <Description Translatable="1">Defines the path to the Google Chrome or Chromium binary.</Description>
         <Navigation>Core::GoogleChrome</Navigation>
         <Value>
             <Item ValueRegex="" ValueType="File">/usr/bin/chromium</Item>
         </Value>
     </Setting>
     <!-- End Statistic Reports -->
-</otobo_config>
+
+    <!-- Custom Translations -->
+    <Setting Name="Frontend::AdminModuleGroups###002-Translations" Required="1" Valid="1">
+        <Description Translatable="1">Defines available groups for the admin overview screen.</Description>
+        <Navigation>Frontend::Base::NavBarModule</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Translations">
+                    <Hash>
+                        <Item Key="Title" Translatable="1">Languages</Item>
+                        <Item Key="Order">4500</Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::NavigationModule###AdminTranslations" Required="1" Valid="1">
+        <Description Translatable="1">Admin area navigation for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                        <Item>admin</Item>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">Translations</Item>
+                <Item Key="Block">Translations</Item>
+                <Item Key="Description" Translatable="1">Create and manage custom translations.</Item>
+                <Item Key="IconBig">fa-language</Item>
+                <Item Key="IconSmall"></Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AdminTranslations" Required="1" Valid="1">
+        <Description Translatable="1">Frontend module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
+                    <Item Key="Title" Translatable="1">Translations</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AdminTranslations###002-Translations" Required="1" Valid="1">
+        <Description Translatable="1">Loader module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                        <Item>Translations.Admin.Default.css</Item>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.Translations.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::TranslationsDebug" Required="1" Valid="1" ConfigLevel="100">
+        <Description Translatable="1">Enables or disables the debug mode for translations module.</Description>
+        <Navigation>Frontend::Base</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+
+    <Setting Name="Translations::ObjectList" Required="1" Valid="1">
+        <Description Translatable="1">Defines the data objects available to be translated.</Description>
+        <Navigation>Core::Translations</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="DynamicFieldLabel" Translatable="1">Dynamic Field Labels</Item>
+                <Item Key="DynamicFieldContent" Translatable="1">Dynamic Field Contents</Item>
+                <Item Key="GeneralLabel" Translatable="1">General Label</Item>
+                <Item Key="Priority" Translatable="1">Priorities</Item>
+                <Item Key="Queue" Translatable="1">Queues</Item>
+                <Item Key="Service" Translatable="1">Services</Item>
+                <Item Key="SLA" Translatable="1">SLAs</Item>
+                <Item Key="Template" Translatable="1">Templates</Item>
+                <Item Key="State" Translatable="1">Ticket States</Item>
+                <Item Key="Type" Translatable="1">Ticket Types</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Translations::TranslateParentChild" Required="0" Valid="1">
+        <Description Translatable="1">Defines if parent-child translations for queues and services should be generated automatically.</Description>
+        <Navigation>Core::Translations</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">1</Item>
+        </Value>
+    </Setting>
+    <Setting Name="Translations::AllowModifyAll" Required="1" Valid="1">
+        <Description Translatable="1">Defines if user can modify all possible values/labels of dynamic fields in one data table.</Description>
+        <Navigation>Core::Translations</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+
+    <!-- Elasticsearch configs-->
+
+    <Setting Name="Frontend::Module###AgentElasticsearch" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the agent interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Elastic Module</Item>
+                    <Item Key="Title"></Item>
+                    <Item Key="NavBarName">Dashboard</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AgentElasticsearch###001-Framework" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for the agent interface.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="CSS">
+                    <Array>
+                        <Item>Core.Agent.Dashboard.css</Item>
+                        <Item>Core.AllocationList.css</Item>
+                        <Item>thirdparty/fullcalendar-3.10.2/fullcalendar.min.css</Item>
+                        <Item>thirdparty/nvd3-1.7.1/nv.d3.css</Item>
+                    </Array>
+                </Item>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>thirdparty/momentjs-2.29.3/moment.min.js</Item>
+                        <Item>thirdparty/fullcalendar-3.10.2/fullcalendar.min.js</Item>
+                        <Item>thirdparty/d3-3.5.6/d3.min.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/nvd3.min.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudLineChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudMultiBarChart.js</Item>
+                        <Item>thirdparty/nvd3-1.7.1/models/CareOnCloudStackedAreaChart.js</Item>
+                        <Item>thirdparty/canvg-1.4/rgbcolor.js</Item>
+                        <Item>thirdparty/canvg-1.4/StackBlur.js</Item>
+                        <Item>thirdparty/canvg-1.4/canvg.js</Item>
+                        <Item>thirdparty/StringView-8/stringview.js</Item>
+                        <Item>Core.UI.AdvancedChart.js</Item>
+                        <Item>Core.UI.AllocationList.js</Item>
+                        <Item>Core.Agent.TableFilters.js</Item>
+                        <Item>Core.Agent.Dashboard.js</Item>
+                        <Item>Core.Agent.Statistics.ParamsWidget.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+
+    <!-- Elasticsearch Widget Configs -->
+
+    <Setting Name="ElasticsearchWidgetBackend###01-ElasticsearchTickets" Required="0" Valid="1">
+        <Description Translatable="1">Defines the parameters for the elasticsearch widget backend.</Description>
+        <Navigation>Core::Elasticsearch::Settings</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Elasticsearch::ElasticsearchTicketGeneric</Item>
+                <Item Key="Name" Translatable="1">Tickets</Item>
+                <Item Key="Permission">AgentTicketZoom</Item>
+                <Item Key="Default">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="ElasticsearchWidgetBackend###02-ElasticsearchCustomerCompany" Required="0" Valid="1">
+        <Description Translatable="1">Defines the parameters for the elasticsearch widget backend.</Description>
+        <Navigation>Core::Elasticsearch::Settings</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Elasticsearch::ElasticsearchCustomerGeneric</Item>
+                <Item Key="Name" Translatable="1">Customers</Item>
+                <Item Key="Permission">AgentCustomerInformationCenter</Item>
+                <Item Key="Default">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="ElasticsearchWidgetBackend###03-ElasticsearchCustomerUser" Required="0" Valid="1">
+        <Description Translatable="1">Defines the parameters for the elasticsearch widget backend.</Description>
+        <Navigation>Core::Elasticsearch::Settings</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::Elasticsearch::ElasticsearchCustomerUserGeneric</Item>
+                <Item Key="Name" Translatable="1">Customer Users</Item>
+                <Item Key="Permission">AgentCustomerUserInformationCenter</Item>
+                <Item Key="Default">1</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <!-- OIDC/OAuth2 -->
+    <Setting Name="Frontend::Module###AdminOAuthTokenStore" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Admin</Item>
+                    <Item Key="Title" Translatable="1">OAuth Tokens</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Loader::Module::AdminOAuthTokenStore###001-Framework" Required="0" Valid="1">
+        <Description Translatable="1">Loader module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::Loader</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="JavaScript">
+                    <Array>
+                        <Item>Core.Agent.Admin.OAuth2Module.js</Item>
+                    </Array>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Navigation###AdminOAuthTokenStore###001-Framework" Required="0" Valid="0">
+        <Description Translatable="1">Main menu item registration.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash>
+                    </Hash>
+                </DefaultItem>
+            </Array>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::NavigationModule###AdminOAuthTokenStore" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                        <Item>admin</Item>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">OAuth Functional Accounts</Item>
+                <Item Key="Block">Administration</Item>
+                <Item Key="Description" Translatable="1">Functional Account and Token Management.</Item>
+                <Item Key="IconBig">fa-circle-o</Item>
+                <Item Key="IconSmall"></Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AdminOIDCProfiles" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Group">
+                        <Array>
+                            <Item>admin</Item>
+                        </Array>
+                    </Item>
+                    <Item Key="Description">Admin</Item>
+                    <Item Key="Title" Translatable="1">OIDC Profiles</Item>
+                    <Item Key="NavBarName">Admin</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Navigation###AdminOIDCProfiles###001-Framework" Required="0" Valid="0">
+        <Description Translatable="1">Main menu item registration.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash>
+                    </Hash>
+                </DefaultItem>
+            </Array>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::NavigationModule###AdminOIDCProfiles" Required="0" Valid="1">
+        <Description Translatable="1">Admin area navigation for the agent interface.</Description>
+        <Navigation>Frontend::Admin::ModuleRegistration::AdminOverview</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Group">
+                    <Array>
+                        <Item>admin</Item>
+                    </Array>
+                </Item>
+                <Item Key="GroupRo">
+                    <Array>
+                    </Array>
+                </Item>
+                <Item Key="Module">Kernel::Output::HTML::NavBar::ModuleAdmin</Item>
+                <Item Key="Name" Translatable="1">OIDC Profile Management</Item>
+                <Item Key="Block">Administration</Item>
+                <Item Key="Description" Translatable="1">Manage OpendID Connect OAuth2 Profiles.</Item>
+                <Item Key="IconBig">fa-circle-o</Item>
+                <Item Key="IconSmall"></Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Daemon::SchedulerCronTaskManager::Task###TokenStoreUpdater" Required="0" Valid="1" ConfigLevel="100">
+         <Description Translatable="1">Executes a custom command or module. Note: if module is used, function is required.</Description>
+         <Navigation>Daemon::SchedulerCronTaskManager::Task</Navigation>
+         <Value>
+             <Hash>
+                 <Item Key="TaskName">TokenStoreUpdater</Item>
+                 <Item Key="Schedule">0 * * * *</Item>
+                 <Item Key="Module">Kernel::System::OpenIDConnect::TokenStoreUpdater</Item>
+                 <Item Key="Function">Run</Item>
+                 <Item Key="MaximumParallelInstances">1</Item>
+                 <Item Key="Params">
+                     <Array>
+                        <Item>Interval</Item>
+                        <Item>3600</Item>
+                     </Array>
+                 </Item>
+             </Hash>
+         </Value>
+    </Setting>
+    <!-- OIDC/mail-->
+    <Setting Name="SendmailModule::OAuth2FunctionalAccount" Required="0" Valid="0" ConfigLevel="200">
+        <Description Translatable="1">If 'XOAUTH2' or 'OAUTHBEARER' is selected in the 'SendmailModule::OAuth2Method' setting, then this setting needs to be enabled and set to a valid OIDC Functional Account. OIDC Accounts can be configured in the Admin UI 'OAuth Functional Accounts' Module.</Description>
+        <Navigation>Core::Email</Navigation>
+        <Value>
+            <Item ValueType="String" ValueRegex="">FunctionalAccount</Item>
+        </Value>
+    </Setting>
+    <Setting Name="SendmailModule::OAuth2Method" Required="0" Valid="1" ConfigLevel="200">
+        <Description Translatable="1">The authentication method to use for SMTP Authentication, defaults to 'Basic Auth'. If 'XOAUTH2' or 'OAUTHBEARER' is selected, then the '"SendmailModule '"SendmailModule::OAuth2FunctionalAccount' setting needs to be enabled and set to a valid OIDC Functional Account.  OIDC Accounts can be configured in the Admin UI  'OAuth Functional Accounts' Module.</Description>
+        <Navigation>Core::Email</Navigation>
+        <Value>
+            <Item ValueType="Select" SelectedID="Basic">
+                <Item ValueType="Option" Value="Basic" Translatable="1">Basic Auth</Item>
+                <Item ValueType="Option" Value="XOAUTH2" Translatable="1">XOAUTH2</Item>
+                <Item ValueType="Option" Value="OAUTHBEARER" Translatable="1">OAUTHBEARER</Item>
+            </Item>
+        </Value>
+    </Setting>
+
+    <!-- Namespaces -->
+    <Setting Name="Namespaces###Global" Required="0" Valid="0">
+        <Description Translatable="1">Define possible namespaces for global usage (currently dynamic fields and process elements). Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.</Description>
+        <Navigation>Core::Namespaces</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="String" ValueRegex="^[a-zA-Z0-9]{1,64}$"></DefaultItem>
+            </Array>
+        </Value>
+    </Setting>
+    <!-- End Namespaces -->
+</careoncloud_config>

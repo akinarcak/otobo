@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
@@ -164,8 +164,8 @@ sub Run {
         }
         else {
             $Success = $ImportExportObject->TemplateUpdate(
-                UserID => $Self->{UserID},
                 %{$TemplateData},
+                UserID => $Self->{UserID},
             );
         }
 
@@ -261,10 +261,9 @@ sub Run {
                 if (
                     $Item->{Input}->{Regex}
                     &&
-                    !$AttributeValues{ $Item->{Key} } =~ $Item->{Input}->{Regex}
+                    $AttributeValues{ $Item->{Key} } !~ $Item->{Input}->{Regex}
                     )
                 {
-
                     $DataTypeError{ $Item->{Name} } = 1;
                     $Error = 1;
                 }
@@ -525,6 +524,7 @@ sub Run {
                 # create form input
                 my $InputString = $LayoutObject->ImportExportFormInputCreate(
                     Item   => $Item,
+                    Class  => 'Modernize',
                     Prefix => 'Object::' . $AttributeRowCounter . '::',
                     Value  => $MappingObjectData->{ $Item->{Key} },
                     ID     => $Item->{Key} . $AttributeRowCounter,
@@ -1182,12 +1182,20 @@ sub Run {
             return;
         }
 
+        # TODO: does application/x-ndjson need "\r\n" as separator?
         my $FileContent = join "\n", $Result->{DestinationContent}->@*;
 
+        # TODO: the formatters should tell their extension, and MIME type
+        # TODO: Could not find a MIME type for concatenated JSON
+        my $Extension = lc $TemplateData->{Format};
+        my %MimeType  = (
+            csv  => 'text/csv',
+            json => 'text/plain'    # or 'application/x-ndjson', 'application/json-seq'
+        );
         return $LayoutObject->Attachment(
             Type        => 'attachment',
-            Filename    => 'Export.csv',
-            ContentType => 'text/csv',
+            Filename    => "Export.$Extension",
+            ContentType => ( $MimeType{$Extension} // 'text/plain' ),
             Content     => $FileContent,
         );
     }

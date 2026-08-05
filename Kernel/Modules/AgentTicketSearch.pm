@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,11 +16,17 @@
 
 package Kernel::Modules::AgentTicketSearch;
 
+use v5.24;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -28,16 +34,11 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Type;
 }
 
 sub Run {
     my ( $Self, %Param ) = @_;
-
-    my $Output;
 
     # get needed objects
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
@@ -214,6 +215,41 @@ sub Run {
         ObjectType  => [ 'Ticket', 'Article' ],
         FieldFilter => $DynamicFieldFilter || {},
     );
+
+    my @SetInnerFields;
+    DYNAMICFIELD:
+    for my $DynamicFieldConfig ( @{$DynamicField} ) {
+
+        next DYNAMICFIELD unless IsHashRefWithData($DynamicFieldConfig);
+
+        my $IsSetField = $BackendObject->HasBehavior(
+            DynamicFieldConfig => $DynamicFieldConfig,
+            Behavior           => 'IsSetField',
+        );
+        next DYNAMICFIELD unless $IsSetField;
+
+        my @SetElements;
+        if ( $DynamicFieldConfig->{FieldType} eq 'Lens' ) {
+            my $AttributeDFConfig = $DynamicFieldObject->DynamicFieldGet(
+                ID => $DynamicFieldConfig->{Config}{AttributeDF},
+            );
+            @SetElements = @{ $AttributeDFConfig->{Config}{Include} // [] };
+        }
+        else {
+            @SetElements = @{ $DynamicFieldConfig->{Config}{Include} // [] };
+        }
+
+        for my $SetElement (@SetElements) {
+
+            $Self->_ExtractInnerDynamicFields(
+                SetElement     => $SetElement,
+                Label          => $DynamicFieldConfig->{Label},
+                SetInnerFields => \@SetInnerFields,
+            );
+        }
+    }
+
+    push @{$DynamicField}, @SetInnerFields;
 
     # collect all searchable article field definitions and add the fields to the attributes array
     my %ArticleSearchableFields = $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleSearchableFieldsList();
@@ -569,7 +605,7 @@ sub Run {
                     );
 
                     # Convert start time to local system time zone.
-                    $DateTimeObject->ToOTOBOTimeZone();
+                    $DateTimeObject->ToCareOnCloudTimeZone();
                     $GetParam{ $TimeType . 'TimeNewerDate' } = $DateTimeObject->ToString();
                 }
                 if (
@@ -592,7 +628,7 @@ sub Run {
                     );
 
                     # Convert stop time to local system time zone.
-                    $DateTimeObject->ToOTOBOTimeZone();
+                    $DateTimeObject->ToCareOnCloudTimeZone();
                     $GetParam{ $TimeType . 'TimeOlderDate' } = $DateTimeObject->ToString();
                 }
             }
@@ -748,7 +784,7 @@ sub Run {
         # check whether we want to perform a search via Elasticsearch or not
         # use normal search for sorting, or if ES is not activated
         if ( $GetParam{FulltextES} && ( !$ESActive || $Self->{TakeLastSearch} ) ) {
-            $GetParam{Fulltext} = $GetParam{Fulltext} || $GetParam{FulltextES};
+            $GetParam{Fulltext} ||= $GetParam{FulltextES};
             delete $GetParam{FulltextES};
         }
 
@@ -830,6 +866,29 @@ sub Run {
             ObjectType  => ['Ticket'],
             FieldFilter => $Config->{SearchCSVDynamicField} || {},
         );
+
+        my @CSVSetInnerFields;
+        DYNAMICFIELD:
+        for my $DynamicFieldConfig ( @{$CSVDynamicField} ) {
+
+            next DYNAMICFIELD unless IsHashRefWithData($DynamicFieldConfig);
+            next DYNAMICFIELD unless $DynamicFieldConfig->{FieldType} eq 'Set';
+
+            my @CurrentInnerFields = @{ $DynamicFieldConfig->{Config}{Include} // [] };
+            for my $DF (@CurrentInnerFields) {
+                my $CSVInnerFieldConfigRef = $DynamicFieldObject->DynamicFieldGet(
+                    Name => $DF->{DF},
+                );
+
+                # necessary to not overwrite cached data of field config by altering the reference
+                my %CSVInnerFieldConfig = $CSVInnerFieldConfigRef->%*;
+
+                $CSVInnerFieldConfig{Label} = $DynamicFieldConfig->{Label} . '::' . $CSVInnerFieldConfig{Label};
+                push @CSVSetInnerFields, \%CSVInnerFieldConfig;
+            }
+        }
+
+        push @{$CSVDynamicField}, @CSVSetInnerFields;
 
         # CSV and Excel output
         if (
@@ -2014,7 +2073,7 @@ sub Run {
                 Sort        => 'TreeView',
                 Size        => 5,
                 Multiple    => 1,
-                Translation => 0,
+                Translation => $TreeView,
                 Max         => 200,
                 Class       => 'Modernize',
             );
@@ -2028,7 +2087,7 @@ sub Run {
                 Sort        => 'AlphanumericValue',
                 Size        => 5,
                 Multiple    => 1,
-                Translation => 0,
+                Translation => 1,
                 Max         => 200,
                 Class       => 'Modernize',
             );
@@ -2086,11 +2145,12 @@ sub Run {
                     Action => $Self->{Action},
                 ),
             },
-            Name       => 'StateIDs',
-            Multiple   => 1,
-            Size       => 5,
-            SelectedID => $GetParam{StateIDs},
-            Class      => 'Modernize',
+            Name        => 'StateIDs',
+            Multiple    => 1,
+            Size        => 5,
+            SelectedID  => $GetParam{StateIDs},
+            Class       => 'Modernize',
+            Translation => 1,
         );
         my %AllQueues = $Kernel::OM->Get('Kernel::System::Queue')->GetAllQueues(
             UserID => $Self->{UserID},
@@ -2458,7 +2518,7 @@ sub Run {
                 Sort        => 'AlphanumericValue',
                 Size        => 3,
                 Multiple    => 1,
-                Translation => 0,
+                Translation => 1,
                 Class       => 'Modernize',
             );
         }
@@ -2651,7 +2711,7 @@ sub Run {
     }
 
     # show default search screen
-    $Output = $LayoutObject->Header();
+    my $Output = $LayoutObject->Header();
     $Output .= $LayoutObject->NavigationBar();
 
     # Notify if there are tickets which are not updated.
@@ -2673,6 +2733,66 @@ sub Run {
     );
     $Output .= $LayoutObject->Footer();
     return $Output;
+}
+
+sub _ExtractInnerDynamicFields {
+
+    my ( $Self, %Param ) = @_;
+
+    my $SetElement     = $Param{SetElement};
+    my $Label          = $Param{Label};
+    my $SetInnerFields = $Param{SetInnerFields};
+
+    # if this Set element is a DF, add it to @SetInnerFields
+    if ( exists $SetElement->{DF} ) {
+
+        my $DynamicFieldObject  = $Kernel::OM->Get('Kernel::System::DynamicField');
+        my $InnerFieldConfigRef = $DynamicFieldObject->DynamicFieldGet(
+            Name => $SetElement->{DF},
+        );
+
+        # necessary to not overwrite cached data of field config by altering the reference
+        my %InnerFieldConfig = $InnerFieldConfigRef->%*;
+
+        $InnerFieldConfig{Label} = $Label . '::' . $InnerFieldConfig{Label};
+        push @$SetInnerFields, \%InnerFieldConfig;
+    }
+
+    # otherwise if it is a Grid, walk the Grid and find it's contained DFs
+    elsif ( exists $SetElement->{Grid} ) {
+
+        if ( !exists $SetElement->{Grid}->{Rows} ) {
+            return;
+        }
+
+        if ( !IsArrayRefWithData( $SetElement->{Grid}->{Rows} ) ) {
+            return;
+        }
+
+        ROW:
+        for my $Row ( $SetElement->{Grid}->{Rows}->@* ) {
+
+            if ( !IsArrayRefWithData($Row) ) {
+                next ROW;
+            }
+
+            COLUMN:
+            for my $Column ( $Row->@* ) {
+
+                if ( !IsHashRefWithData($Column) ) {
+                    next COLUMN;
+                }
+
+                $Self->_ExtractInnerDynamicFields(
+                    SetElement     => $Column,
+                    Label          => $Label,
+                    SetInnerFields => $SetInnerFields,
+                );
+            }
+        }
+    }
+
+    return;
 }
 
 1;

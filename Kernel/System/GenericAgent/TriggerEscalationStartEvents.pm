@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -115,7 +115,7 @@ sub Run {
     for my $Attr ( grep { defined $Ticket{$_} } sort keys %TicketAttr2Event ) {
 
         # the decay time is configured in minutes
-        my $DecayTimeInSeconds = $Kernel::OM->Get('Kernel::Config')->Get('OTOBOEscalationEvents::DecayTime') || 0;
+        my $DecayTimeInSeconds = $Kernel::OM->Get('Kernel::Config')->Get('CareOnCloudEscalationEvents::DecayTime') || 0;
 
         $DecayTimeInSeconds *= 60;
 
@@ -123,7 +123,7 @@ sub Run {
         # search in reverse order, as @HistoryLines sorted ascendingly by CreateTime
         if ($DecayTimeInSeconds) {
             my $PrevEventLine = first { $_->{HistoryType} eq $TicketAttr2Event{$Attr} }
-            reverse @HistoryLines;
+                reverse @HistoryLines;
             if ( $PrevEventLine && $PrevEventLine->{CreateTime} ) {
 
                 my $PrevEventTime = $Kernel::OM->Create(

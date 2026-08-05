@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,16 +14,20 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -40,6 +44,7 @@ $Selenium->RunTest(
         ) || die "Did not get test user";
 
         # Load sample XML file.
+        # XMLNoCookie will initially not be checked.
         my $Directory = $Config->Get('Home') . '/scripts/test/sample/SysConfig/XMLNoCookie';
         my $XMLLoaded = $SysConfigObject->ConfigurationXML2DB(
             UserID    => 1,
@@ -47,10 +52,7 @@ $Selenium->RunTest(
             Force     => 1,
             CleanUp   => 0,
         );
-        $Self->True(
-            $XMLLoaded,
-            "Example XML loaded.",
-        );
+        ok( $XMLLoaded, "Example XML loaded." );
 
         # Deploy changes.
         my %DeploymentResult = $SysConfigObject->ConfigurationDeploy(
@@ -59,19 +61,11 @@ $Selenium->RunTest(
             Force       => 1,
             AllSettings => 1,
         );
-        $Self->True(
-            $DeploymentResult{Success},
-            "Deployment successful.",
-        );
+        ok( $DeploymentResult{Success}, "Deployment successful." );
 
-        # Disable cookies.
-        $Helper->ConfigSettingChange(
-            Valid => 1,
-            Key   => 'SessionUseCookie',
-            Value => 0,
-        );
-
-        # Log in after redirect without a session ID.
+        # Initial login in this process.
+        # There should be a redirect to the login page. After providing the credentials
+        # another redirect to the admin page.
         $Selenium->VerifiedGet(
             "${ScriptAlias}index.pl?Action=AdminSystemConfiguration;Subaction=View;Setting=NoCookieCheckbox"
         );
@@ -100,29 +94,30 @@ $Selenium->RunTest(
         );
         $Selenium->find_element( $Prefix . ' button.Update', 'css' )->click();
 
-        # verify the the deploy notification is faded in
+        # verify the deploy notification is faded in
         $Selenium->WaitFor(
             ElementExists => '//a[contains(@href,"Subaction=Deployment")]',
         );
 
-        # verify that the deploy notification contains the session cookie
-        $Selenium->find_element('//a[contains(@href,"Subaction=Deployment")][contains(@href,"OTOBOAgentInterface=")]');
+        # verify that the deploy notification does not contain the session cookie
+        $Selenium->find_no_element_ok('//a[contains(@href,"Subaction=Deployment")][contains(@href,"CareOnCloudAgentInterface")]');
 
         # do the deployment, authenticated with the session cookie in the URL
         $Selenium->find_element('//a[contains(@href,"Subaction=Deployment")]')->VerifiedClick();
-        $Self->Is(
+        is(
             $Selenium->execute_script("return \$('#DeploymentStart').length > 0"),
-            "1",
+            '1',
             "The deployment link not redirecting to login.",
         );
 
-        # Log in after redirect without a session ID.
+        # There is no redirect to the login page as support for SessionUseCookie = 1
+        # had been removed for CareOnCloud ESM 11.1.x
         $Selenium->VerifiedGet(
             "${ScriptAlias}index.pl?Action=AdminSystemConfiguration;Subaction=View;Setting=NoCookieCheckbox"
         );
-        $Selenium->find_element( "#User",        'css' )->send_keys($TestUserLogin);
-        $Selenium->find_element( '#Password',    'css' )->send_keys($TestUserLogin);
-        $Selenium->find_element( '#LoginButton', 'css' )->VerifiedClick();
+        $Selenium->find_no_element_ok( "#User",        'css' );
+        $Selenium->find_no_element_ok( '#Password',    'css' );
+        $Selenium->find_no_element_ok( '#LoginButton', 'css' );
 
         # Open the checkbox for editing.
         $Selenium->execute_script("\$(\"$Prefix div.Content\").mouseenter();");
@@ -145,4 +140,4 @@ $Selenium->RunTest(
     }
 );
 
-$Self->DoneTesting();
+done_testing;

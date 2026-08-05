@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # get needed objects
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -198,7 +200,7 @@ for my $Test (@Tests) {
             );
         }
 
-        $Self->True(
+        ok(
             $TicketID,
             "$Test->{Name} | $Backend - Ticket created $TicketID",
         );
@@ -207,7 +209,7 @@ for my $Test (@Tests) {
         push @AddedTicketIDs, $TicketID;
 
         my @ArticleIDs = map { $_->{ArticleID} } $ArticleObject->ArticleList( TicketID => $TicketID );
-        $Self->True(
+        ok(
             $ArticleIDs[0],
             "$Test->{Name} | $Backend - Article created",
         );
@@ -226,7 +228,7 @@ for my $Test (@Tests) {
             delete $AttachmentIndex{$AttachmentID}->{Filesize};
             delete $AttachmentIndex{$AttachmentID}->{FilesizeRaw};
 
-            $Self->IsDeeply(
+            is(
                 $AttachmentIndex{$AttachmentID},
                 $Test->{ExpectedResults}->{$AttachmentFilename},
                 "$Test->{Name} | $Backend - Attachment",
@@ -235,6 +237,4 @@ for my $Test (@Tests) {
     }
 }
 
-# cleanup is done by RestoreDatabase.
-
-$Self->DoneTesting();
+done_testing;

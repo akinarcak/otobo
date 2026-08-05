@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -97,11 +97,11 @@ $Self->True(
 
 my @Tests = (
     {
-        Name       => 'Test supported tags -<OTOBO_CUSTOMER_REALNAME> and <OTOBO_CUSTOMER_DATA_UserEmail>',
-        Salutation => "Dear <OTOBO_CUSTOMER_REALNAME>,
+        Name       => 'Test supported tags -<CareOnCloud_CUSTOMER_REALNAME> and <CareOnCloud_CUSTOMER_DATA_UserEmail>',
+        Salutation => "Dear <CareOnCloud_CUSTOMER_REALNAME>,
 
     Thank you for your request. Your email address in our database
-    is \"<OTOBO_CUSTOMER_DATA_UserEmail>\".
+    is \"<CareOnCloud_CUSTOMER_DATA_UserEmail>\".
     ",
         ExpectedResult => "Dear $TestUserFirstname $TestUserLastname,
 
@@ -111,13 +111,13 @@ my @Tests = (
     },
     {
         Name           => 'Test unsupported tags',
-        Salutation     => 'Test: <OTOBO_AGENT_SUBJECT> <OTOBO_AGENT_BODY> <OTOBO_CUSTOMER_BODY> <OTOBO_CUSTOMER_SUBJECT>',
+        Salutation     => 'Test: <CareOnCloud_AGENT_SUBJECT> <CareOnCloud_AGENT_BODY> <CareOnCloud_CUSTOMER_BODY> <CareOnCloud_CUSTOMER_SUBJECT>',
         ExpectedResult => 'Test: - - - -',
     },
     {
-        Name       => 'Test supported tags - <OTOBO_TICKET_*>  with TicketID',
+        Name       => 'Test supported tags - <CareOnCloud_TICKET_*>  with TicketID',
         Salutation =>
-            'Options of the ticket data (e. g. <OTOBO_TICKET_TicketNumber>, <OTOBO_TICKET_TicketID>, <OTOBO_TICKET_Queue>, <OTOBO_TICKET_State>)',
+            'Options of the ticket data (e. g. <CareOnCloud_TICKET_TicketNumber>, <CareOnCloud_TICKET_TicketID>, <CareOnCloud_TICKET_Queue>, <CareOnCloud_TICKET_State>)',
     },
 );
 
@@ -137,7 +137,7 @@ for my $Test (@Tests) {
     my $SalutationID = $SalutationObject->SalutationAdd(
         Name => $Helper->GetRandomID() . '-Salutation',
         Text => $Test->{Salutation},
-        ,
+
         ContentType => 'text/plain; charset=utf-8',
         Comment     => 'some comment',
         ValidID     => 1,

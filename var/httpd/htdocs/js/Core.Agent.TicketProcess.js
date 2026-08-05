@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -71,14 +71,6 @@ Core.Agent.TicketProcess = (function (TargetNS) {
                 });
             }
 
-            // remove/destroy CKEditor instances
-            // This is needed to initialize other instances (in other activity dialogs)
-            // without a page reload
-            if (typeof CKEDITOR !== 'undefined' && CKEDITOR.instances) {
-                $.each(CKEDITOR.instances, function (Key) {
-                    CKEDITOR.instances[Key].destroy();
-                });
-            }
 
             if ($('#ProcessEntityID').val()) {
 
@@ -104,7 +96,7 @@ Core.Agent.TicketProcess = (function (TargetNS) {
 
                     if (!Response) {
 
-                        // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefor we handle the error manually.
+                        // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefor we handle the error manually.
                         Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No content received.", 'CommunicationError'));
                         $('#AJAXLoader').addClass('Hidden');
                     }
@@ -146,7 +138,7 @@ Core.Agent.TicketProcess = (function (TargetNS) {
                         Core.UI.InitAjaxDnDUpload();
 
                         // move help triggers into field rows for dynamic fields
-                        $('.Row > .FieldHelpContainer').each(function () {
+                        $('.Row > .FieldCell > .FieldHelpContainer').each(function () {
                             if (!$(this).next('label').find('.Marker').length) {
                                 $(this).prependTo($(this).next('label'));
                             }
@@ -154,6 +146,7 @@ Core.Agent.TicketProcess = (function (TargetNS) {
                                 $(this).insertAfter($(this).next('label').find('.Marker'));
                             }
                         });
+
 
                         // Initially display dynamic fields with TreeMode = 1 correctly
                         Core.UI.TreeSelection.InitDynamicFieldTreeViewRestore();
@@ -175,12 +168,28 @@ Core.Agent.TicketProcess = (function (TargetNS) {
 
                         Core.UI.InputFields.InitMultiValueDynamicFields();
 
+                        QuickDateButtons.Init();
+
+                        // Bind event to StandardTemplate field.
+                        $('#StandardTemplateID').on('change', function () {
+                            Core.Agent.TicketAction.ConfirmTemplateOverwrite('RichText', $(this), function () {
+                                Core.AJAX.FormUpdate($('#RichText').closest('form'), 'AJAXUpdate', 'StandardTemplateID');
+                            });
+                            return false;
+                        });
+
                         // Publish event when first activity dialog has loaded, so other code can know to execute again.
                         Core.App.Publish('TicketProcess.Init.FirstActivityDialog.Load', [$ElementToUpdate]);
+
+                        // NOTE this code aims to resemble the functionality of the submit event in Core.UI.InputFields.Init(), currently located in var/https/htdocs/js/Core.UI.InputFields.js Line 320, which does not take effect in AgentTicketProcess for an yet unknown reason
+                        $('button[type=submit]').on('click', function() {
+                            $('.DynamicFieldText').attr('disabled', false);
+                            return true;
+                        });
                     }
                     else {
 
-                        // We are out of the OTOBO App scope, that's why an exception would not be caught. Therefor we handle the error manually.
+                        // We are out of the CareOnCloud ESM App scope, that's why an exception would not be caught. Therefor we handle the error manually.
                         Core.Exception.HandleFinalError(new Core.Exception.ApplicationError("No such element id: " + $ElementToUpdate.attr('id') + " in page!", 'CommunicationError'));
                         $('#AJAXLoader').addClass('Hidden');
                     }
@@ -191,6 +200,14 @@ Core.Agent.TicketProcess = (function (TargetNS) {
                     $('#ActivityDialogContent').empty();
                 });
             }
+            return false;
+        });
+
+        // Bind event to StandardTemplate field.
+        $('#StandardTemplateID').on('change', function () {
+            Core.Agent.TicketAction.ConfirmTemplateOverwrite('RichText', $(this), function () {
+                Core.AJAX.FormUpdate($('#RichText').closest('form'), 'AJAXUpdate', 'StandardTemplateID');
+            });
             return false;
         });
 

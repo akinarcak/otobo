@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -49,7 +49,7 @@ my @Tests = (
     {
         Name   => 'Search XMLContent WrongSearch',
         Config => {
-            Search     => "OTOBONoneExsitingString$RandomNumber-UnitTest",
+            Search     => "CareOnCloudNoneExsitingString$RandomNumber-UnitTest",
             SearchType => 'XMLContent',
         },
         ExpectedResultsInclude => [],
@@ -58,7 +58,7 @@ my @Tests = (
     {
         Name   => 'Search Metadata WrongSearch',
         Config => {
-            Search     => "OTOBONoneExsitingString$RandomNumber-UnitTest",
+            Search     => "CareOnCloudNoneExsitingString$RandomNumber-UnitTest",
             SearchType => 'Metadata',
         },
         ExpectedResultsInclude => [],
@@ -67,7 +67,7 @@ my @Tests = (
     {
         Name   => 'Search Filename WrongSearch',
         Config => {
-            Search     => "OTOBONoneExsitingString$RandomNumber-UnitTest",
+            Search     => "CareOnCloudNoneExsitingString$RandomNumber-UnitTest",
             SearchType => 'Filename',
         },
         ExpectedResultsInclude => [],
@@ -88,7 +88,7 @@ my @Tests = (
             Search     => "ValueType=",
             SearchType => 'Metadata',
         },
-        ExpectedResultsInclude => [],
+        ExpectedResultsInclude => [qw(SupportDataCollector::SkipMaskPasswordSettings)],
         Success                => 1,
     },
     {

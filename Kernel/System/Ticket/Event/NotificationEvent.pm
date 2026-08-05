@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,9 +20,12 @@ use v5.24;
 use strict;
 use warnings;
 
-use List::Util qw(first);
-use Mail::Address;
+# core modules
+use List::Util qw(any first);
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -46,6 +49,7 @@ our @ObjectDependencies = (
     'Kernel::System::DateTime',
     'Kernel::System::User',
     'Kernel::System::CheckItem',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
@@ -291,7 +295,7 @@ sub Run {
                     $AgentSendNotification = 1;
                 }
 
-                # skip sending the notification if the agent has disable it in its preferences
+                # skip sending the notification if the agent has disabled it in its preferences
                 if (
                     IsArrayRefWithData( $Notification{Data}->{VisibleForAgent} )
                     && $Notification{Data}->{VisibleForAgent}->[0]
@@ -470,6 +474,39 @@ sub _NotificationFilter {
 
                 last VALUE if $Match;
             }
+            elsif ( $Key eq 'CalendarFilter' ) {
+
+                # Get the applying calendar for the ticket.
+                my $Calendar = $Kernel::OM->Get('Kernel::System::Ticket')->TicketCalendarGet(
+                    QueueID => $Param{Ticket}->{QueueID},
+                    SLAID   => $Param{Ticket}->{SLAID},
+                );
+
+                my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
+                my $Margin         = 5;
+
+                # Add a margin to the current date. If the delta is within the margin, we are within working hours.
+                my $Success = $DateTimeObject->Add(
+                    Seconds       => $Margin,
+                    AsWorkingTime => 1,
+                    Calendar      => $Calendar,
+                );
+
+                my $Delta = $Kernel::OM->Create('Kernel::System::DateTime')->Delta(
+                    DateTimeObject => $DateTimeObject
+                );
+
+                if ( $Delta->{AbsoluteSeconds} <= $Margin ) {
+                    if ( $Value eq 'SendWithinHours' ) {
+                        $Match = 1;
+                    }
+                }
+                else {
+                    if ( $Value eq 'SendOutsideHours' ) {
+                        $Match = 1;
+                    }
+                }
+            }
             else {
 
                 if (
@@ -606,7 +643,7 @@ sub _RecipientsGet {
 
             if (
                 $Recipient
-                =~ /^Agent(Owner|Responsible|Watcher|WritePermissions|MyQueues|MyServices|MyQueuesMyServices|CreateBy)$/
+                =~ /^Agent(Owner|Responsible|Watcher|WritePermissions|MyQueues|MyServices|MyQueuesMyServices|CreateBy|CreateByTicket)$/
                 )
             {
                 if ( $Recipient eq 'AgentOwner' ) {
@@ -722,11 +759,14 @@ sub _RecipientsGet {
                     if ( $Articles[0] && $Articles[0]->{ArticleNumber} == 1 ) {
                         push @{ $Notification{Data}->{RecipientAgents} }, $Ticket{CreateBy};
                     }
+                }
+                elsif ( $Recipient eq 'AgentCreateByTicket' ) {
 
+                    push @{ $Notification{Data}->{RecipientAgents} }, $Ticket{CreateBy};
                 }
             }
 
-            # Other OTOBO packages might add other kind of recipients that are normally handled by
+            # Other CareOnCloud ESM packages might add other kind of recipients that are normally handled by
             #   other modules then an elsif condition here is useful.
             elsif ( $Recipient eq 'Customer' ) {
 
@@ -895,17 +935,13 @@ sub _RecipientsGet {
                     next RECIPIENT;
                 }
 
-                my %Recipient;
-                my @AllRecipients;
-                my @TmpRecipients;
-                my @TmpRecipientAgents;
-                my @RecipientAgents;
-
                 # Get recipient agents to prevent multiple notifications
+                my @RecipientAgents;
                 if ( IsArrayRefWithData( $Notification{Data}->{RecipientAgents} ) ) {
                     @RecipientAgents = @{ $Notification{Data}->{RecipientAgents} };
                 }
 
+                my @TmpRecipientAgents;
                 if (@RecipientAgents) {
                     for my $UserID (@RecipientAgents) {
 
@@ -917,48 +953,47 @@ sub _RecipientsGet {
                     }
                 }
 
-                # Get all recipients from the article.
-                ALLRECIPIENTS:
-                for my $Header (qw(From To Cc)) {
+                my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
 
-                    next ALLRECIPIENTS if !$Article{$Header};
+                # Get the bare addresses of all of the recipients in the article
+                # Do not split an address line by comma, as a comma might be part of the phrase.
+                my @Addresses =
+                    map { $EmailAddressObject->GetAddress( AddressObject => $_ ) }
+                    map { $EmailAddressObject->ParseAddressLine( Line => $Article{$_} ) }
+                    qw(From To Cc);
 
-                    push @TmpRecipients, split /,/, $Article{$Header};
-                }
-
-                # Loop through recipients.
-                EMAIL:
-                for my $Email ( Mail::Address->parse(@TmpRecipients) ) {
+                # Filter the bare addresses.
+                my @AllRecipients;
+                ADDRESS:
+                for my $Address (@Addresses) {
 
                     # Skip notification if email address is already used by other groups.
-                    next EMAIL if grep { $_ eq $Email->address() } @RecipientUserEmails;
+                    next ADDRESS if any { $_ eq $Address } @RecipientUserEmails;
 
                     # Validate email address.
                     my $Valid = $CheckItemObject->CheckEmail(
-                        Address => $Email->address(),
+                        Address => $Address,
                     );
 
                     # Skip invalid.
-                    next EMAIL if !$Valid;
-
-                    # Check if email address is a local.
-                    my $IsLocal = $SystemAddressObject->SystemAddressIsLocalAddress(
-                        Address => $Email->address(),
-                    );
+                    next ADDRESS unless $Valid;
 
                     # Skip local email address.
-                    next EMAIL if $IsLocal;
+                    next ADDRESS if $SystemAddressObject->SystemAddressIsLocalAddress(
+                        Address => $Address,
+                    );
 
                     # Skip email addresses from agents selected by other groups.
-                    next EMAIL if grep { $_ eq $Email->address() } @TmpRecipientAgents;
+                    next ADDRESS if any { $_ eq $Address } @TmpRecipientAgents;
 
-                    push @AllRecipients, $Email->address();
+                    push @AllRecipients, $Address;
 
-                    # Push Email Addresses into array to prevent multiple notifications.
-                    push @RecipientUserEmails, $Email->address();
+                    # Push email addresses into array to prevent multiple notifications.
+                    push @RecipientUserEmails, $Address;
                 }
 
                 # Merge recipients.
+                my %Recipient;
                 $Recipient{UserEmail} = join( ',', @AllRecipients );
 
                 $Recipient{Type} = 'Customer';
@@ -1169,16 +1204,16 @@ sub _SendRecipientNotification {
                 $_->{HistoryType} eq 'SendCustomerNotification'
                     && $_->{Name} eq
                     "\%\%$Param{Recipient}->{UserEmail}"
-            }
-            reverse @HistoryLines;
+                }
+                reverse @HistoryLines;
         }
         else {
             $LastNotificationHistory = first {
                 $_->{HistoryType} eq 'SendAgentNotification'
                     && $_->{Name} eq
                     "\%\%$Param{Notification}->{Name}\%\%$Param{Recipient}->{UserLogin}\%\%$Param{Transport}"
-            }
-            reverse @HistoryLines;
+                }
+                reverse @HistoryLines;
         }
 
         if ( $LastNotificationHistory && $LastNotificationHistory->{CreateTime} ) {

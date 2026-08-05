@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 our $Self;
 
 # get selenium object
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -49,7 +49,7 @@ $Selenium->RunTest(
         my $ScriptAlias = $Kernel::OM->Get('Kernel::Config')->Get('ScriptAlias');
 
         # navigate to AdminMailAccount
-        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminMailAccount");
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminMailAccount;IncludeInvalid=1");
 
         # check AdminMailAccount screen
         $Selenium->find_element( "table",             'css' );
@@ -136,7 +136,7 @@ $Selenium->RunTest(
         my %Check = (
             Type          => 'IMAP',
             LoginEdit     => $RandomID,
-            PasswordEdit  => 'otobo-dummy-password-placeholder',    # real password is not sent to user
+            PasswordEdit  => 'careoncloud-dummy-password-placeholder',    # real password is not sent to user
             HostEdit      => 'pop3.example.com',
             Trusted       => 0,
             DispatchingBy => 'Queue',
@@ -204,6 +204,8 @@ $Selenium->RunTest(
             Value   => '2',
         );
         $Selenium->find_element( "#Submit", 'css' )->VerifiedClick();
+
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminMailAccount");
 
         # check class of invalid EmailAccount in the overview table
         $Self->True(

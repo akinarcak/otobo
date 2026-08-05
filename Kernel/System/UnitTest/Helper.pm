@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -29,9 +29,8 @@ use File::Path qw(rmtree);
 use Test2::V0;
 use Test2::API qw/context run_subtest/;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::System::SysConfig;
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -135,7 +134,61 @@ sub new {
         $Self->DisableAsyncCalls();
     }
 
+    # The tenant policy denies every subject that has no tenant binding, and the
+    # inherited test suite creates throwaway agents that have none. Left enabled it
+    # makes TicketCreate() return undef, which cascades into thousands of unrelated
+    # failures. Suspend it by default; the policy has its own coverage under
+    # development/careoncloud/Accept-{Ticket,Search}Policy.pl, and a test that wants
+    # the policy active can pass KeepTenantPolicy.
+    if ( !$Param{KeepTenantPolicy} ) {
+        $Self->SuspendTenantPolicy();
+    }
+
     return $Self;
+}
+
+=head2 SuspendTenantPolicy()
+
+Turns the tenant scoping policies off for the remainder of the current test
+process.
+
+    $Helper->SuspendTenantPolicy();
+
+Only the in-memory configuration is changed, so nothing leaks into the database
+or into other test scripts.
+
+=cut
+
+sub SuspendTenantPolicy {
+    my ($Self) = @_;
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    # These are the five that wrap core ticket and search behaviour. The remaining
+    # CareOnCloud::*::Enabled switches gate their own feature modules and do not
+    # interfere with the inherited tests, so they stay on.
+    SETTING:
+    for my $Setting (
+        qw(
+        CareOnCloud::TicketAudit::Enabled
+        CareOnCloud::TicketPolicy::Enabled
+        CareOnCloud::SearchPolicy::Enabled
+        CareOnCloud::TenantGuard::Enabled
+        CareOnCloud::TenantCache::Enabled
+        )
+        )
+    {
+        # Only touch settings that this installation actually knows about, so the
+        # helper keeps working when the packages are not installed.
+        next SETTING if !defined $ConfigObject->Get($Setting);
+
+        $ConfigObject->Set(
+            Key   => $Setting,
+            Value => 0,
+        );
+    }
+
+    return 1;
 }
 
 =head2 GetRandomID()
@@ -159,7 +212,7 @@ sub GetRandomID {
 =head2 GetRandomNumber()
 
 creates a random number that can be used in tests as a unique identifier.
-The creates random number always has 16 digits.
+The created random number always has 16 digits.
 
 It is guaranteed that within a test this function will never return a duplicate.
 
@@ -186,7 +239,9 @@ sub GetRandomNumber {
 
     my $Prefix = $PID . substr time(), -5, 5;
 
-    return $Prefix . sprintf( '%.05d', ( $GetRandomNumberPrevious{$Prefix}++ || 0 ) );
+    my $Counter = sprintf '%.05d', ( $GetRandomNumberPrevious{$Prefix}++ || 0 );
+
+    return "$Prefix$Counter";
 }
 
 =head2 GetSequentialTwoLetterString()
@@ -209,13 +264,22 @@ sub GetSequentialTwoLetterString {
 
 =head2 TestUserCreate()
 
-creates a test user that can be used in tests. It will
-be set to invalid automatically during L</DESTROY()>. Returns
-the login name of the new user, the password is the same.
+creates a test user that can be used in tests. The created user will
+be set to invalid automatically during L</DESTROY()>.
+The password of the test user is the same as the login name.
+
+In scalar context the method returns the login name of the new user:
 
     my $TestUserLogin = $Helper->TestUserCreate(
         Groups => ['admin', 'users'],           # optional, list of groups to add this user to (rw rights)
         Language => 'de'                        # optional, defaults to 'en' if not set
+    );
+
+In list context the ID of the test user is created as well:
+
+    my ($TestUserLogin, $TestUserID) = $Helper->TestUserCreate(
+        Groups   => [users'],           # optional, list of groups to add this user to (rw rights)
+        Language => 'fr'                # optional, defaults to 'en' if not set
     );
 
 =cut
@@ -519,7 +583,7 @@ sub ConfigSettingChange {
     my $PackageName = 'ZZZZUnitTest' . $Identifier;
 
     my $Code = <<"END_CODE";
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::$PackageName;
 use strict;
@@ -616,7 +680,7 @@ sub CustomCodeActivate {
     # There is no need to restart the webserver as the changed config
     # is picked up by Kernel::Config::new() for every request.
     # Often the test script is not even running on the same machine as the webserver.
-    # Or there are multiple web server running on different /opt/otobo dirs.
+    # Or there are multiple web server running on different /opt/careoncloud dirs.
 
     return 1;
 }
@@ -688,7 +752,7 @@ sub UseTmpArticleDir {
 
 =head2 DisableAsyncCalls()
 
-Disable scheduling of asynchronous tasks using C<AsynchronousExecutor> component of OTOBO daemon.
+Disable scheduling of asynchronous tasks using C<AsynchronousExecutor> component of CareOnCloud ESM daemon.
 
 =cut
 
@@ -709,7 +773,7 @@ sub DisableAsyncCalls {
 Provide temporary database for the test. Please first define test database settings in C<Config.pm>, i.e:
 
     $Self->{TestDatabase} = {
-        DatabaseDSN  => 'DBI:mysql:database=otobo_test;host=127.0.0.1;',
+        DatabaseDSN  => 'DBI:MariaDB:database=otobo_test;host=127.0.0.1;',
         DatabaseUser => 'otobo_test',
         DatabasePw   => 'otobo_test',
     };
@@ -720,11 +784,11 @@ receive all calls sent over system C<DBObject>.
 All database contents will be automatically dropped when the Helper object is destroyed.
 
     $Helper->ProvideTestDatabase(
-        DatabaseXMLString => $XML,      # (optional) OTOBO database XML schema to execute
+        DatabaseXMLString => $XML,      # (optional) CareOnCloud ESM database XML schema to execute
                                         # or
         DatabaseXMLFiles => [           # (optional) List of XML files to load and execute
-            '/opt/otobo/scripts/database/otobo-schema.xml',
-            '/opt/otobo/scripts/database/otobo-initial_insert.xml',
+            '/opt/careoncloud/scripts/database/careoncloud-schema.xml',
+            '/opt/careoncloud/scripts/database/careoncloud-initial_insert.xml',
         ],
     );
 
@@ -770,7 +834,7 @@ sub ProvideTestDatabase {
     my $PackageName = "ZZZZUnitTest$Identifier";
     $Self->CustomCodeActivate(
         Code => qq^
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::$PackageName;
 use strict;
@@ -953,17 +1017,17 @@ sub TestDatabaseCleanup {
 
 =head2 DatabaseXMLExecute()
 
-Execute supplied XML against current database. Content of supplied XML or XMLFilename parameter must be valid OTOBO
+Execute supplied XML against current database. Content of supplied XML or XMLFilename parameter must be valid CareOnCloud ESM
 database XML schema.
 
     $Helper->DatabaseXMLExecute(
-        XML => $XML,     # OTOBO database XML schema to execute
+        XML => $XML,     # CareOnCloud ESM database XML schema to execute
     );
 
 Alternatively, it can also load an XML file to execute:
 
     $Helper->DatabaseXMLExecute(
-        XMLFile => '/path/to/file',  # OTOBO database XML file to execute
+        XMLFile => '/path/to/file',  # CareOnCloud ESM database XML file to execute
     );
 
 =cut
@@ -1129,9 +1193,11 @@ END {
 
     # trigger Kernel::System::UnitTest::Helper::DESTROY()
     # perform cleanup actions, including some tests, in Kernel::System::UnitTest::Helper::DESTROY()
-    $Kernel::OM->ObjectsDiscard(
-        Objects => ['Kernel::System::UnitTest::Helper'],
-    );
+    if ( defined $Kernel::OM ) {
+        $Kernel::OM->ObjectsDiscard(
+            Objects => ['Kernel::System::UnitTest::Helper'],
+        );
+    }
 }
 
 1;

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -120,7 +120,7 @@ Core.UI.TreeSelection = (function (TargetNS) {
                 ElementNameTrim = ElementName.replace(/(^[\xA0]+)/g, ''),
                 CurrentLevel = (ElementName.length - ElementNameTrim.length) / 2,
                 ChildOf = 0,
-                ElementIndex = 0,
+                ElementIndex,
                 CurrentElement;
 
             // Skip entry if no ID (should only occur for the leading empty element, '-')
@@ -236,7 +236,7 @@ Core.UI.TreeSelection = (function (TargetNS) {
             Multiple = ($SelectObj.attr('multiple') !== '' && $SelectObj.attr('multiple') !== undefined) ? true : false,
             ElementCount = $SelectObj.find('option').length,
             DialogTitle = $SelectObj.parent().prev('label').clone().children().remove().end().text(),
-            Elements = {},
+            Elements,
             InDialog = false,
             StyleSheetURL,
             SelectedNodesTree,
@@ -268,7 +268,7 @@ Core.UI.TreeSelection = (function (TargetNS) {
         }
 
         DialogTitle = $.trim(DialogTitle);
-        DialogTitle = DialogTitle.substr(0, DialogTitle.length - 1);
+        DialogTitle = DialogTitle.substring(0, DialogTitle.length - 1);
         DialogTitle = DialogTitle.replace(/^\*\s+/, '');
 
         // Check if there are elements to select from
@@ -304,7 +304,7 @@ Core.UI.TreeSelection = (function (TargetNS) {
             plugins: [ 'search' ]
         })
         /*eslint-enable camelcase */
-        .on('select_node.jstree', function (node, selected, event) {
+        .on('select_node.jstree', function (_node, selected, event) {
             var $Node = $('#' + selected.node.id);
             if ($Node.hasClass('Disabled') || !$Node.is(':visible')) {
                 $TreeObj.jstree('deselect_node', selected.node);
@@ -525,7 +525,7 @@ Core.UI.TreeSelection = (function (TargetNS) {
 
         $FieldObj.find('option').remove();
 
-        $.each(Data, function(index, OptionData) {
+        $.each(Data, function(_index, OptionData) {
 
             Key = OptionData[0] || '';
             Value = OptionData[1] || '';
@@ -553,12 +553,12 @@ Core.UI.TreeSelection = (function (TargetNS) {
 
             SelectedAttr = '';
             if (Selected) {
-                SelectedAttr = ' selected="selected"';
+                SelectedAttr = ' selected';
             }
 
             DisabledAttr = '';
             if (Disabled) {
-                DisabledAttr = ' disabled="disabled"';
+                DisabledAttr = ' disabled';
             }
 
             SelectData.push({
@@ -583,7 +583,7 @@ Core.UI.TreeSelection = (function (TargetNS) {
             return 0;
         });
 
-        $.each(SelectData, function(index, SelectedData) {
+        $.each(SelectData, function(_index, SelectedData) {
             $FieldObj.append('<option value="' + SelectedData.Key + '"' + SelectedData.SelectedAttr + SelectedData.DisabledAttr + '>' + SelectedData.Value + '</option>');
         });
 

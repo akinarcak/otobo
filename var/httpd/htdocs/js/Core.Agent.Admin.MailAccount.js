@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -78,6 +78,30 @@ Core.Agent.Admin = Core.Agent.Admin || {};
     };
 
     /*
+    * @name ToggleAuth
+    * @memberof Core.Agent.Admin.MailAccount
+    * @function
+    * @description
+    *      This function will show hide Password and FunctionalAccount inputs depending on wheter the Auth typ is set to 'Basic' or not
+    */
+    TargetNS.ToggleAuth = function() {
+
+        var Auth = $('.MailAuth').val();
+        if(Auth == 'Basic') {
+
+            $('.MailPassword').css('display', 'block').addClass('Validate_Required');
+            $('.MailAccount').css('display','none');
+            $('#AccountName').removeClass('Validate_Required');
+        }
+        else {
+
+            $('.MailPassword').css('display', 'none').removeClass('Validate_Required');
+            $('.MailAccount').css('display', 'block');
+            $('#AccountName').addClass('Validate_Required');
+        }
+    };
+
+    /*
     * @name Init
     * @memberof Core.Agent.Admin.MailAccount
     * @function
@@ -109,7 +133,20 @@ Core.Agent.Admin = Core.Agent.Admin || {};
 
         Core.UI.Table.InitTableFilter($("#FilterMailAccounts"), $("#MailAccounts"));
 
+        // init checkbox to include invalid elements
+        $('input#IncludeInvalid').off('change').on('change', function () {
+            var URL = Core.Config.Get("Baselink") + 'Action=' + Core.Config.Get("Action") + ';IncludeInvalid=' + ( $(this).is(':checked') ? 1 : 0 );
+            window.location.href = URL;
+        });
+
         TargetNS.MailAccountDelete();
+        TargetNS.ToggleAuth();
+
+        $('.MailAuth').on('change', function() {
+
+            TargetNS.ToggleAuth();
+        });
+
     };
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');

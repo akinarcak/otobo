@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2023 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,9 +26,9 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -40,26 +40,56 @@ sub new {
     # Some setup
     $Self->{TemplateFile} = 'AdminDynamicFieldLens';
 
-    # set up the field type specific settings
-    # This dynamic field support multiple values.
-    my %MultiValueSelectionData = (
-        0 => Translatable('No'),
-        1 => Translatable('Yes'),
-    );
+    # field types which are usable as attribute df
+    $Self->{IsAttributeFieldCapable} = {
+        Agent    => 1,
+        Checkbox => 1,
+
+        # see https://github.com/RotherOSS/otobo/issues/3809
+        ContactWD       => 0,
+        CustomerCompany => 1,
+        CustomerUser    => 1,
+
+        # see https://github.com/RotherOSS/otobo/issues/3793
+        Database              => 0,
+        Date                  => 1,
+        DateTime              => 1,
+        Dropdown              => 1,
+        FAQ                   => 1,
+        GeneralCatalog        => 1,
+        ITSMConfigItem        => 1,
+        ITSMConfigItemVersion => 1,
+
+        # see https://github.com/RotherOSS/otobo/issues/3789
+        Lens        => 0,
+        Multiselect => 1,
+
+        # see https://github.com/RotherOSS/otobo/issues/3720 and https://github.com/RotherOSS/otobo/issues/3815
+        RichText              => 0,
+        ScriptTemplateToolkit => 1,
+        Set                   => 1,
+        Text                  => 1,
+        TextArea              => 1,
+        Ticket                => 1,
+        Title                 => 1,
+
+        # see https://github.com/RotherOSS/otobo/issues/3446
+        WebService => 0,
+    };
 
     # declare the field type specific settings
     $Self->{FieldTypeSettings} = {
         Lens => [
             {
                 ConfigParamName => 'ReferenceDF',
-                Label           => Translatable('The referenced DF'),
-                Explanation     => Translatable('Select the DF that references an object'),
+                Label           => Translatable('The referenced dynamic field'),
+                Explanation     => Translatable('Select the dynamic field that references an object'),
                 InputType       => 'Text',
             },
             {
                 ConfigParamName => 'AttributeDF',
-                Label           => Translatable('The attribute DF of the referenced object'),
-                Explanation     => Translatable('Select the attribute DF that references an object'),
+                Label           => Translatable('The attribute of the referenced object'),
+                Explanation     => Translatable('Select the attribute dynamic field that references an object'),
                 InputType       => 'Text',
             },
         ],
@@ -124,8 +154,44 @@ sub _Add {
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     my %GetParam;
+
+    # check if we clone from an existing field
+    my $CloneFieldID = $ParamObject->GetParam( Param => "CloneFieldID" );
+    if ($CloneFieldID) {
+        my $FieldConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+            ID => $CloneFieldID,
+        );
+
+        # if we found a field config, copy its content for usage in _ShowScreen
+        if ( IsHashRefWithData($FieldConfig) ) {
+
+            # copy standard stuff
+            for my $Key (qw(ObjectType FieldType Label Name ValidID)) {
+                $GetParam{$Key} = $FieldConfig->{$Key};
+            }
+
+            # iterate over special stuff and copy in-depth content as flat list
+            CONFIGKEY:
+            for my $ConfigKey ( keys $FieldConfig->{Config}->%* ) {
+                next CONFIGKEY if $ConfigKey eq 'PartOfSet';
+
+                my $DFDetails = $FieldConfig->{Config};
+                if ( $ConfigKey eq 'ReferenceDF' || $ConfigKey eq 'AttributeDF' ) {
+                    my $FieldConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+                        ID => $DFDetails->{$ConfigKey},
+                    );
+                    $GetParam{$ConfigKey} = $FieldConfig->{Name};
+                }
+                else {
+                    $GetParam{$ConfigKey} = $DFDetails->{$ConfigKey};
+                }
+            }
+        }
+        $GetParam{CloneFieldID} = $CloneFieldID;
+    }
+
     for my $Needed (qw(ObjectType FieldType FieldOrder)) {
-        $GetParam{$Needed} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => $Needed );
+        $GetParam{$Needed} //= $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => $Needed );
         if ( !$GetParam{$Needed} ) {
             return $LayoutObject->ErrorScreen(
                 Message => $LayoutObject->{LanguageObject}->Translate( 'Need %s', $Needed ),
@@ -133,8 +199,8 @@ sub _Add {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # get the object type and field type display name
@@ -143,10 +209,12 @@ sub _Add {
     my $FieldTypeName  = $ConfigObject->Get('DynamicFields::Driver')->{ $GetParam{FieldType} }->{DisplayName}      || '';
 
     # check namespace validity
-    my $Namespaces = $ConfigObject->Get('DynamicField::Namespaces');
-    my $Namespace  = '';
-    if ( IsArrayRefWithData($Namespaces) && $GetParam{NamespaceFilter} ) {
-        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } $Namespaces->@* ) ? $GetParam{NamespaceFilter} : '';
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
+    my $Namespace = '';
+    if ( @DFNamespaces && $GetParam{NamespaceFilter} ) {
+        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } @DFNamespaces ) ? $GetParam{NamespaceFilter} : '';
     }
 
     return $Self->_ShowScreen(
@@ -196,8 +264,8 @@ sub _AddAction {
         $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # extract field type specific parameters, e.g. MultiValue
@@ -207,6 +275,34 @@ sub _AddAction {
             my $Name = $Setting->{ConfigParamName};
             $GetParam{$Name} = $ParamObject->GetParam( Param => $Name );
         }
+    }
+
+    # check attribute df
+    my $AttributeDFConfig = $DynamicFieldObject->DynamicFieldGet(
+        Name => $GetParam{AttributeDF},
+    );
+    if ( !$Self->{IsAttributeFieldCapable}{ $AttributeDFConfig->{FieldType} } ) {
+
+        # add server error error class
+        $Errors{AttributeDFServerError} = 'ServerError';
+        $Errors{AttributeDFServerErrorMessage} =
+            $Kernel::OM->Get('Kernel::Language')->Translate( 'A field of type %s is currently not usable as lens attribute.', $AttributeDFConfig->{FieldType} );
+    }
+
+    # check reference df
+    my $ReferenceDFConfig = $DynamicFieldObject->DynamicFieldGet(
+        Name => $GetParam{ReferenceDF},
+    );
+    my $IsReferenceField = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->HasBehavior(
+        DynamicFieldConfig => $ReferenceDFConfig,
+        Behavior           => 'IsReferenceField',
+    );
+    if ( !$IsReferenceField ) {
+
+        # add server error error class
+        $Errors{ReferenceDFServerError} = 'ServerError';
+        $Errors{ReferenceDFServerErrorMessage} =
+            $Kernel::OM->Get('Kernel::Language')->Translate( 'Field %s is not a reference field.', $ReferenceDFConfig->{Name} );
     }
 
     if ( $GetParam{Name} ) {
@@ -270,10 +366,10 @@ sub _AddAction {
             Name => $FieldConfig{$ConfigDF},
         );
 
-        # TODO: Show error message
-        if ( !$DynamicField ) {
-            $Errors{ $ConfigDF . 'ServerError' }            = 'ServerError';
-            $Errors{ $ConfigDF . 'NameServerErrorMessage' } = Translatable('Not a valid dynamic field.');
+        # show error message
+        if ( !IsHashRefWithData($DynamicField) ) {
+            $Errors{ $ConfigDF . 'ServerError' }        = 'ServerError';
+            $Errors{ $ConfigDF . 'ServerErrorMessage' } = Translatable('Not a valid dynamic field.');
         }
 
         # store the ID
@@ -347,8 +443,8 @@ sub _Change {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # get the object type and field type display name
@@ -463,8 +559,8 @@ sub _ChangeAction {
         $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # extract field type specific parameters, e.g. MultiValue
@@ -474,6 +570,34 @@ sub _ChangeAction {
             my $Name = $Setting->{ConfigParamName};
             $GetParam{$Name} = $ParamObject->GetParam( Param => $Name );
         }
+    }
+
+    # check attribute df
+    my $AttributeDFConfig = $DynamicFieldObject->DynamicFieldGet(
+        Name => $GetParam{AttributeDF},
+    );
+    if ( !$Self->{IsAttributeFieldCapable}{ $AttributeDFConfig->{FieldType} } ) {
+
+        # add server error error class
+        $Errors{AttributeDFServerError} = 'ServerError';
+        $Errors{AttributeDFServerErrorMessage} =
+            $Kernel::OM->Get('Kernel::Language')->Translate( 'A field of type %s is currently not usable as lens attribute.', $AttributeDFConfig->{FieldType} );
+    }
+
+    # check reference df
+    my $ReferenceDFConfig = $DynamicFieldObject->DynamicFieldGet(
+        Name => $GetParam{ReferenceDF},
+    );
+    my $IsReferenceField = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->HasBehavior(
+        DynamicFieldConfig => $ReferenceDFConfig,
+        Behavior           => 'IsReferenceField',
+    );
+    if ( !$IsReferenceField ) {
+
+        # add server error error class
+        $Errors{ReferenceDFServerError} = 'ServerError';
+        $Errors{ReferenceDFServerErrorMessage} =
+            $Kernel::OM->Get('Kernel::Language')->Translate( 'Field %s is not a reference field.', $ReferenceDFConfig->{Name} );
     }
 
     if ( $GetParam{Name} ) {
@@ -579,10 +703,10 @@ sub _ChangeAction {
             Name => $FieldConfig{$ConfigDF},
         );
 
-        # TODO: Show error message
-        if ( !$DynamicField ) {
-            $Errors{ $ConfigDF . 'ServerError' }            = 'ServerError';
-            $Errors{ $ConfigDF . 'NameServerErrorMessage' } = Translatable('Not a valid dynamic field.');
+        # show error message
+        if ( !IsHashRefWithData($DynamicField) ) {
+            $Errors{ $ConfigDF . 'ServerError' }        = 'ServerError';
+            $Errors{ $ConfigDF . 'ServerErrorMessage' } = Translatable('Not a valid dynamic field.');
         }
 
         # store the ID
@@ -697,12 +821,15 @@ sub _ChangeAction {
 sub _ShowScreen {
     my ( $Self, %Param ) = @_;
 
+    my $Namespace = $Param{Namespace};
     $Param{DisplayFieldName} = 'New';
 
-    my $Namespace;
     if ( $Param{Mode} eq 'Change' || $Param{Name} ) {
-        $Param{ShowWarning}      = 'ShowWarning';
-        $Param{DisplayFieldName} = $Param{Name};
+
+        if ( !$Param{CloneFieldID} ) {
+            $Param{ShowWarning}      = 'ShowWarning';
+            $Param{DisplayFieldName} = $Param{Name};
+        }
 
         # check for namespace
         if ( $Param{Name} =~ /(.*)-(.*)/ ) {
@@ -769,7 +896,7 @@ sub _ShowScreen {
         Class         => 'Modernize W75pc Validate_Number',
     );
 
-    # Selections may be set up in a declaritive way
+    # Selections may be set up in a declarative way
     my $FieldType = $Param{FieldType};
     if ( $Self->{FieldTypeSettings}->{$FieldType} ) {
         for my $Setting ( $Self->{FieldTypeSettings}->{$FieldType}->@* ) {
@@ -778,9 +905,11 @@ sub _ShowScreen {
             my $FieldStrg;
             if ( $Setting->{InputType} eq 'Text' ) {
 
+                my $ClassString = 'W50pc' . ( $Param{ $Name . 'ServerError' } ? ' ServerError' : '' );
+
                 # TODO: proper HTML builder
                 $FieldStrg = sprintf
-                    qq{<input id="%s" class="W50pc" type="text" maxlength="500" value="%s" name="%s"/>},
+                    qq{<input id="%s" class="$ClassString" type="text" maxlength="500" value="%s" name="%s"/>},
                     $Name,
                     $Param{$Name} // '',
                     $Name;
@@ -790,7 +919,7 @@ sub _ShowScreen {
                     Name       => $Name,
                     Data       => $Setting->{SelectionData},
                     SelectedID => $Param{$Name} || '0',
-                    Class      => 'Modernize W50pc',
+                    Class      => 'Modernize W50pc' . ( $Param{ $Name . 'ServerError' } ? ' ServerError' : '' ),
                 );
             }
 
@@ -798,20 +927,23 @@ sub _ShowScreen {
                 $LayoutObject->Block(
                     Name => 'ConfigParamRow',
                     Data => {
-                        ConfigParamName => $Name,
-                        Label           => $Setting->{Label},
-                        FieldStrg       => $FieldStrg,
-                        Explanation     => $Setting->{Explanation},
+                        ConfigParamName    => $Name,
+                        Label              => $Setting->{Label},
+                        FieldStrg          => $FieldStrg,
+                        Explanation        => $Setting->{Explanation},
+                        ServerErrorMessage => $Param{ $Name . 'ServerErrorMessage' },
                     },
                 );
             }
         }
     }
 
-    my $NamespaceList = $Kernel::OM->Get('Kernel::Config')->Get('DynamicField::Namespaces');
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
+    if (@DFNamespaces) {
         my $NamespaceStrg = $LayoutObject->BuildSelection(
-            Data          => $NamespaceList,
+            Data          => \@DFNamespaces,
             Name          => 'Namespace',
             SelectedValue => $Namespace || '',
             PossibleNone  => 1,
@@ -868,15 +1000,13 @@ sub _ShowScreen {
     # get the field id
     my $FieldID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ID' );
 
-    # only if the dymamic field exists and should be edited,
+    # only if the dynamic field exists and should be edited,
     # not if the field is added for the first time
     if ($FieldID) {
 
         my $DynamicField = $DynamicFieldObject->DynamicFieldGet(
             ID => $FieldID,
         );
-
-        my $FieldConfig = $DynamicField->{Config};
 
         my $DynamicFieldName = $DynamicField->{Name};
 
@@ -919,7 +1049,7 @@ sub _ShowScreen {
         if ($IsDirtyConfig) {
             $LayoutObject->Block(
                 Name => 'DynamicFieldInSysConfigDirty',
-                ,
+
             );
         }
 
@@ -935,7 +1065,7 @@ sub _ShowScreen {
         );
     }
 
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    if (@DFNamespaces) {
         if ( IsStringWithData( $Param{NamespaceFilter} ) ) {
             $FilterStrg .= ";NamespaceFilter=" . $LayoutObject->Output(
                 Template => '[% Data.Filter | uri %]',

@@ -1,14 +1,14 @@
-# Documentation of OTOBO JavaScript Namespaces
+# Documentation of CareOnCloud ESM JavaScript Namespaces
 
-This is the documentation of all JavaScript namespaces used in OTOBO. The information
+This is the documentation of all JavaScript namespaces used in CareOnCloud ESM. The information
 is automatically extracted from the JavaScript source files of
-[the rel-6_0 branch](https://github.com/OTOBO/otobo/tree/rel-6_0).
+[the rel-6_0 branch](https://github.com/CareOnCloud ESM/careoncloud/tree/rel-6_0).
 
 If you find any error or an inconsistency, please feel free to fix the issue and send us a pull request!
 
 ## Structure of JavaScript Namespaces
 
-Every namespace has a matching JavaScript file. Some namespaces are used in every OTOBO screen or dialog (e.g.
+Every namespace has a matching JavaScript file. Some namespaces are used in every CareOnCloud ESM screen or dialog (e.g.
 [Core.Form](Core.Form.html), [Core.AJAX](Core.AJAX.html)), some are only loaded and used for a specific screen (e.g.
 [Core.Agent.Admin.ACL](Core.Agent.Admin.ACL.html),
 [Core.Agent.Admin.ProcessManagement](Core.Agent.Admin.ProcessManagement.html)).

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,9 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
@@ -25,8 +25,8 @@ use utf8;
 use Test2::V0;
 use Test2::API qw/context/;
 
-# OTOBO modules
-use Kernel::System::UnitTest::MockTime qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeAddSeconds FixedTimeSet);
 use Kernel::System::UnitTest::RegisterDriver;    # set up $Self and $Kernel::OM
 
 our $Self;
@@ -170,19 +170,19 @@ for my $Hours ( sort keys %WorkingHours ) {
         $QueueName = "Queue-$UniqueSignature";
         $QueueID   = $QueueObject->QueueAdd(
             Name                => $QueueName,
-            ValidID             => 1,
-            GroupID             => 1,
+            ValidID             =>  1,
+            GroupID             =>  1,
             FirstResponseTime   => -10,
-            FirstResponseNotify => 80,
+            FirstResponseNotify =>  80,
             UpdateTime          => -20,
-            UpdateNotify        => 80,
+            UpdateNotify        =>  80,
             SolutionTime        => -40,
-            SolutionNotify      => 80,
-            SystemAddressID     => 1,
-            SalutationID        => 1,
-            SignatureID         => 1,
-            UserID              => 1,
-            Comment             => "Queue for OTOBOEscalationEvents.t for test run at $StartingTimeStamp",
+            SolutionNotify      =>  80,
+            SystemAddressID     =>  1,
+            SalutationID        =>  1,
+            SignatureID         =>  1,
+            UserID              =>  1,
+            Comment             => "Queue for CareOnCloudEscalationEvents.t for test run at $StartingTimeStamp",
         );
         $Self->True( $QueueID, "QueueAdd() $QueueName" );
 
@@ -354,7 +354,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # run GenericAgent job again, with suppressed event generation
     {
         $ConfigObject->Set(
-            Key   => 'OTOBOEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 100,
         );
 
@@ -372,7 +372,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # run GenericAgent job again, without suppressed event generation
     {
         $ConfigObject->Set(
-            Key   => 'OTOBOEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 0,
         );
 
@@ -395,7 +395,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # generate an response and see the first response escalation go away
     {
         $ConfigObject->Set(
-            Key   => 'OTOBOEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 0,
         );
 
@@ -451,7 +451,7 @@ for my $Hours ( sort keys %WorkingHours ) {
     # no new escalations when escalation times are far in the future
     {
         $ConfigObject->Set(
-            Key   => 'OTOBOEscalationEvents::DecayTime',
+            Key   => 'CareOnCloudEscalationEvents::DecayTime',
             Value => 0,
         );
 

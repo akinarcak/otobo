@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,9 +16,15 @@
 
 package Kernel::System::CustomerCompany::DB;
 
+use v5.24;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -34,10 +40,10 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # get customer company map
+    # actually the parameter CustomerCompanyMap includes the complete config of the backend
     $Self->{CustomerCompanyMap} = $Param{CustomerCompanyMap} || die "Got no CustomerCompanyMap!";
 
     # config options
@@ -64,24 +70,26 @@ sub new {
         $Self->{CacheTTL}    = $Self->{CustomerCompanyMap}->{CacheTTL} || 0;
     }
 
-    # get database object
-    $Self->{DBObject} = $Kernel::OM->Get('Kernel::System::DB');
-
     # create new db connect if DSN is given
     if ( $Self->{CustomerCompanyMap}->{Params}->{DSN} ) {
         $Self->{DBObject} = Kernel::System::DB->new(
-            DatabaseDSN  => $Self->{CustomerCompanyMap}->{Params}->{DSN},
-            DatabaseUser => $Self->{CustomerCompanyMap}->{Params}->{User},
-            DatabasePw   => $Self->{CustomerCompanyMap}->{Params}->{Password},
-            Type         => $Self->{CustomerCompanyMap}->{Params}->{Type} || '',
+            DatabaseDSN             => $Self->{CustomerCompanyMap}->{Params}->{DSN},
+            Attribute               => $Self->{CustomerCompanyMap}->{Params}->{Attribute},
+            DatabaseUser            => $Self->{CustomerCompanyMap}->{Params}->{User},
+            DatabasePw              => $Self->{CustomerCompanyMap}->{Params}->{Password},
+            Type                    => $Self->{CustomerCompanyMap}->{Params}->{Type} || '',
+            DisconnectOnDestruction => 1,
         ) || die('Can\'t connect to database!');
 
         # remember that we have the DBObject not from parent call
         $Self->{NotParentDBObject} = 1;
     }
+    else {
+        $Self->{DBObject} = $Kernel::OM->Get('Kernel::System::DB');
+    }
 
     # this setting specifies if the table has the create_time,
-    # create_by, change_time and change_by fields of OTOBO
+    # create_by, change_time and change_by fields of CareOnCloud ESM
     $Self->{ForeignDB} = $Self->{CustomerCompanyMap}->{Params}->{ForeignDB} ? 1 : 0;
 
     # defines if the database search will be performend case sensitive (1) or not (0)
@@ -370,7 +378,7 @@ sub CustomerCompanySearchDetail {
         }
     }
 
-    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+    my $DBObject = $Self->{DBObject};
 
     # Assemble the conditions used in the WHERE clause.
     my @SQLWhere;
@@ -551,7 +559,7 @@ sub CustomerCompanySearchDetail {
         #   from the dynamic field search.
         if (@DynamicFieldCustomerIDs) {
 
-            my $SQLQueryInCondition = $Kernel::OM->Get('Kernel::System::DB')->QueryInCondition(
+            my $SQLQueryInCondition = $DBObject->QueryInCondition(
                 Key      => $Self->{CustomerCompanyKey},
                 Values   => \@DynamicFieldCustomerIDs,
                 BindMode => 0,
@@ -569,7 +577,7 @@ sub CustomerCompanySearchDetail {
 
         next FIELD if !@{ $Param{ $Field->{Name} } };
 
-        my $SQLQueryInCondition = $Kernel::OM->Get('Kernel::System::DB')->QueryInCondition(
+        my $SQLQueryInCondition = $DBObject->QueryInCondition(
             Key      => $Field->{DatabaseField},
             Values   => $Param{ $Field->{Name} },
             BindMode => 0,
@@ -984,6 +992,12 @@ sub _CustomerCompanyCacheClear {
     # delete all search cache entries
     $Self->{CacheObject}->CleanUp(
         Type => $Self->{CacheType} . '_CustomerCompanyList',
+    );
+    $Self->{CacheObject}->CleanUp(
+        Type => $Self->{CacheType} . '_CustomerCompanySearchDetail',
+    );
+    $Self->{CacheObject}->CleanUp(
+        Type => $Self->{CacheType} . '_CustomerSearchDetailDynamicFields',
     );
 
     for my $Function (qw(CustomerCompanyList)) {

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('List all known OTOBO package repsitories.');
+    $Self->Description('List all known CareOnCloud ESM package repsitories.');
 
     return;
 }
@@ -37,7 +37,7 @@ sub Configure {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    $Self->Print("<yellow>Listing OTOBO package repositories...</yellow>\n");
+    $Self->Print("<yellow>Listing CareOnCloud ESM package repositories...</yellow>\n");
 
     my $Count = 0;
     my %List;
@@ -60,7 +60,7 @@ sub Run {
     print "+----------------------------------------------------------------------------+\n";
     print "\n";
 
-    $Self->Print("<yellow>Listing OTOBO package repository contents...</yellow>\n");
+    $Self->Print("<yellow>Listing CareOnCloud ESM package repository contents...</yellow>\n");
 
     for my $URL ( sort { $List{$a} cmp $List{$b} } keys %List ) {
         print

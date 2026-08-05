@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,20 +15,20 @@
 
 package Kernel::System::Daemon::DaemonModules::SyncWithS3;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 use parent qw(Kernel::System::Daemon::BaseDaemon Kernel::System::Daemon::DaemonModules::BaseTaskWorker);
 
 # core modules
-use File::stat;
+use File::stat qw(stat);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::Storage::S3;
+# CareOnCloud ESM modules
+use Kernel::System::Storage::S3 ();
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -137,12 +137,12 @@ sub Run {
 
     # TODO: what about locking
     # reinstall packages
-    # Use the console command in order to avoid dependance on OTOBO modules in the watchdog loop
-    my $Output = qx{$Self->{Home}/bin/otobo.Console.pl Admin::Package::ReinstallAll};
+    # Use the console command in order to avoid dependance on CareOnCloud ESM modules in the watchdog loop
+    my $Output = qx{$Self->{Home}/bin/careoncloud.Console.pl Admin::Package::ReinstallAll};
     warn "Admin::Package::ReinstallAll: $Output";
 
-    # TODO: $OTOBO_HOME/bin/otobo.Console.pl Maint::Config::Rebuild
-    # TODO: $OTOBO_HOME/bin/otobo.Console.pl Maint::Cache::Delete
+    # TODO: $CareOnCloud_HOME/bin/careoncloud.Console.pl Maint::Config::Rebuild
+    # TODO: $CareOnCloud_HOME/bin/careoncloud.Console.pl Maint::Cache::Delete
 
     # no locking required as there should be no concurrent access
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -39,8 +39,8 @@ use utf8;
 # CPAN modules
 use Moo;
 
-# OTOBO modules
-use Test2::API qw/context run_subtest/;
+# CareOnCloud ESM modules
+use Test2::API qw(context run_subtest);
 
 extends 'Test::Selenium::Remote::WebElement';
 
@@ -49,7 +49,7 @@ our $ObjectManagerDisabled = 1;
 =head2 VerifiedSubmit()
 
 Submit a form element and wait for the page to be fully loaded.
-This works only in OTOBO.
+This works only in CareOnCloud ESM.
 
     $SeleniumWebElement->VerifiedSubmit();
 
@@ -66,7 +66,7 @@ sub VerifiedSubmit {
         $Self->driver()->WaitFor(
             JavaScript =>
                 'return typeof(Core) == "object" && typeof(Core.App) == "object" && Core.App.PageLoadComplete'
-        ) || $Context->throw("OTOBO API verification failed after element submit.");
+        ) || $Context->throw("CareOnCloud ESM API verification failed after element submit.");
     };
     my $Pass = run_subtest(
         'VerifiedSubmit',
@@ -88,7 +88,7 @@ sub VerifiedSubmit {
 =head2 VerifiedClick()
 
 click an element that causes a page get/reload/submit and wait for the page to be fully loaded.
-This works only in OTOBO.
+This works only in CareOnCloud ESM.
 
     $SeleniumWebElement->VerifiedClick(
         $Button             # optional, see Selenium docs
@@ -109,7 +109,7 @@ sub VerifiedClick {
         $Self->driver()->WaitFor(
             JavaScript =>
                 'return typeof(Core) == "object" && typeof(Core.App) == "object" && Core.App.PageLoadComplete'
-        ) || $Context->throw("OTOBO API verification failed after element click.");
+        ) || $Context->throw("CareOnCloud ESM API verification failed after element click.");
     };
 
     my $Pass = run_subtest(
@@ -125,6 +125,32 @@ sub VerifiedClick {
     $Context->throw('command failed') unless $Pass;
 
     $Context->release();
+
+    return;
+}
+
+=head2 get_value()
+
+    # get value might fail for select objects, try to workaround using JS
+    # this is a base class override
+
+=cut
+
+sub get_value {
+
+    my $Self = shift;
+
+    my $Result = $Self->SUPER::get_value(@_);
+
+    return $Result if $Result;
+
+    my $ID = $Self->get_attribute('id');
+    if ($ID) {
+
+        # use plain old getElementById - some few IDs will be not so valid
+        # css selectors, especially when coming with embeded square brackets []
+        return $Self->driver()->execute_script("return document.getElementById('$ID').value;");
+    }
 
     return;
 }

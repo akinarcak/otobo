@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,37 +15,33 @@
 # --
 
 package Kernel::System::DateTime;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::Time)
-## nofilter(TidyAll::Plugin::OTOBO::Perl::Translatable)
 
 use v5.24;
 use strict;
 use warnings;
 
-use Exporter qw(import);
-
-our %EXPORT_TAGS = (    ## no critic qw(OTOBO::RequireCamelCase)
-    all => [
-        'OTOBOTimeZoneGet',
-        'SystemTimeZoneGet',
-        'TimeZoneList',
-        'UserDefaultTimeZoneGet',
-    ],
-);
-
-Exporter::export_ok_tags('all');
-
 # core modules
 use Scalar::Util qw(looks_like_number);
-use List::Util qw(none);
+use List::Util   qw(none);
+use Exporter     qw(import);
+use overload
+    '>'        => \&_OpIsNewerThan,
+    '<'        => \&_OpIsOlderThan,
+    '>='       => \&_OpIsNewerThanOrEquals,
+    '<='       => \&_OpIsOlderThanOrEquals,
+    '=='       => \&_OpEquals,
+    '!='       => \&_OpNotEquals,
+    'fallback' => 1;
 
 # CPAN modules
-use DateTime 1.08;    # need 1.08 because Kernel::System::DateTime overrides _core_time()
-use DateTime::TimeZone;
-use DateTime::Locale;
+use DateTime 1.08      ();    # need 1.08 because Kernel::System::DateTime overrides _core_time()
+use DateTime::TimeZone ();
+use DateTime::Locale   ();
 
-# OTOBO modules
-use Kernel::System::VariableCheck qw( IsArrayRefWithData IsHashRefWithData );
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsArrayRefWithData IsHashRefWithData);
 
 our %ObjectManagerFlags = (
     NonSingleton            => 1,
@@ -60,14 +56,16 @@ our @ObjectDependencies = (
 
 our $Locale = DateTime::Locale->load('en_US');
 
-use overload
-    '>'        => \&_OpIsNewerThan,
-    '<'        => \&_OpIsOlderThan,
-    '>='       => \&_OpIsNewerThanOrEquals,
-    '<='       => \&_OpIsOlderThanOrEquals,
-    '=='       => \&_OpEquals,
-    '!='       => \&_OpNotEquals,
-    'fallback' => 1;
+our %EXPORT_TAGS = (    ## no critic qw(OTOBO::RequireCamelCase)
+    all => [
+        'CareOnCloudTimeZoneGet',
+        'SystemTimeZoneGet',
+        'TimeZoneList',
+        'UserDefaultTimeZoneGet',
+    ],
+);
+
+Exporter::export_ok_tags('all');
 
 =head1 NAME
 
@@ -75,16 +73,39 @@ Kernel::System::DateTime - Handles date and time calculations.
 
 =head1 DESCRIPTION
 
-Handles date and time calculations.
+Methods for date and time handling based on the L<DateTime> module.
 
 =head1 PUBLIC INTERFACE
+
+For convenience, this module also supports some comparison operators. This allows comparisons like:
+
+    if ( $ActualTaskEnd < $PlannedTaskEnd ) {
+        say 'finished in time';
+    }
+
+The overloaded operators are: '>', '<', '>=', '<=', '==', and '!='.
+
+Some of the public methods ignore the invoker and can be imported as subroutines into
+the current namespace. The subroutines are:
+
+=over 4
+
+=item CareOnCloudTimeZoneGet()
+
+=item SystemTimeZoneGet()
+
+=item TimeZoneList()
+
+=item UserDefaultTimeZoneGet()
+
+=back
 
 =head2 new()
 
 Creates a DateTime object. Do not use new() directly, instead use the object manager:
 
     # Create an object with current date and time
-    # within time zone set in SysConfig OTOBOTimeZone:
+    # within time zone set in SysConfig CareOnCloudTimeZone:
     my $DateTimeObject = $Kernel::OM->Create(
         'Kernel::System::DateTime'
     );
@@ -108,7 +129,7 @@ Creates a DateTime object. Do not use new() directly, instead use the object man
             Hour     => 12,                     # optional, defaults to 0
             Minute   => 35,                     # optional, defaults to 0
             Second   => 59,                     # optional, defaults to 0
-            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig OTOBOTimeZone
+            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloudTimeZone
         }
     );
 
@@ -131,7 +152,7 @@ Creates a DateTime object. Do not use new() directly, instead use the object man
         'Kernel::System::DateTime',
         ObjectParams => {
             String   => '2016-08-14 22:45:00',
-            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig OTOBOTimeZone
+            TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloudTimeZone
         }
     );
 
@@ -170,7 +191,7 @@ sub new {
     my $Self = bless {}, $Class;
 
     # CPAN DateTime: only use English descriptions and abbreviations internally.
-    #   This has nothing to do with the user's locale settings in OTOBO.
+    #   This has nothing to do with the user's locale settings in CareOnCloud ESM.
     $Self->{Locale} = $Locale;
 
     # An already created CPANDateTimeObject is passed in.
@@ -472,7 +493,7 @@ sub Add {
 
             # Switch to time zone of calendar
             $TimeZone = $ConfigObject->Get( "TimeZone::Calendar" . $Param{Calendar} )
-                || $Self->OTOBOTimeZoneGet();
+                || $Self->CareOnCloudTimeZoneGet();
 
             # Use Kernel::System::DateTime's ToTimeZone() here because of error handling
             # and because performance is irrelevant at this point.
@@ -743,7 +764,7 @@ sub Subtract {
     $Self->{CPANDateTimeObject}->set_time_zone('UTC');
     $Self->ToTimeZone( TimeZone => $DateTimeValues->{TimeZone} );
 
-    return if $@;
+    return if $Error;
 
     return 1;
 }
@@ -922,7 +943,7 @@ sub Delta {
 
             # switch to time zone of calendar
             $TimeZone = $ConfigObject->Get( "TimeZone::Calendar" . $Param{Calendar} )
-                || $Self->OTOBOTimeZoneGet();
+                || $Self->CareOnCloudTimeZoneGet();
 
             eval {
                 $StartDateTimeObject->set_time_zone($TimeZone);
@@ -1190,11 +1211,11 @@ sub ToTimeZone {
     return 1;
 }
 
-=head2 ToOTOBOTimeZone()
+=head2 ToCareOnCloudTimeZone()
 
 Converts the date and time of this object to the data storage time zone.
 
-    my $Success = $DateTimeObject->ToOTOBOTimeZone();
+    my $Success = $DateTimeObject->ToCareOnCloudTimeZone();
 
 Returns:
 
@@ -1202,10 +1223,10 @@ Returns:
 
 =cut
 
-sub ToOTOBOTimeZone {
+sub ToCareOnCloudTimeZone {
     my ( $Self, %Param ) = @_;
 
-    return $Self->ToTimeZone( TimeZone => $Self->OTOBOTimeZoneGet() );
+    return $Self->ToTimeZone( TimeZone => $Self->CareOnCloudTimeZoneGet() );
 }
 
 =head2 Validate()
@@ -1350,12 +1371,12 @@ Returns the date/time of this object as time stamp in RFC 2822 format to be used
     my $MailTimeStamp = $DateTimeObject->ToEmailTimeStamp();
 
     # Typical usage:
-    # You want to have the date/time of OTOBO + its UTC offset, so:
+    # You want to have the date/time of CareOnCloud ESM + its UTC offset, so:
     my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
     my $MailTimeStamp = $DateTimeObject->ToEmailTimeStamp();
 
     # If you already have a DateTime object, possibly in another time zone:
-    $DateTimeObject->ToOTOBOTimeZone();
+    $DateTimeObject->ToCareOnCloudTimeZone();
     my $MailTimeStamp = $DateTimeObject->ToEmailTimeStamp();
 
 Returns:
@@ -1420,7 +1441,7 @@ sub ToCTimeString {
 Checks if date/time of this object is a vacation day.
 
     my $IsVacationDay = $DateTimeObject->IsVacationDay(
-        Calendar => 9, # optional, OTOBO vacation days otherwise
+        Calendar => 9, # optional, CareOnCloud ESM vacation days otherwise
     );
 
 Returns:
@@ -1447,7 +1468,7 @@ sub IsVacationDay {
 
             # Switch to time zone of calendar
             my $TimeZone = $ConfigObject->Get( "TimeZone::Calendar" . $Param{Calendar} )
-                || $Self->OTOBOTimeZoneGet();
+                || $Self->CareOnCloudTimeZoneGet();
 
             if ( defined $TimeZone ) {
                 $Self->ToTimeZone( TimeZone => $TimeZone );
@@ -1537,9 +1558,15 @@ You can also call this method without an object:
 
     my $TimeZones = Kernel::System::DateTime->TimeZoneList();
 
+Importing this subroutine is also supported:
+
+    use Kernel::System::DateTime qw(TimeZoneList);
+
+    my $TimeZones = TimeZoneList();
+
 Returns:
 
-    my $TimeZoneList = [
+    my $TimeZones = [
         # ...
         'Europe/Amsterdam',
         'Europe/Andorra',
@@ -1612,10 +1639,15 @@ sub TimeZoneByOffsetList {
 
 Checks if the given time zone is valid.
 
-    my $Valid = $DateTimeObject->IsTimeZoneValid( TimeZone => 'Europe/Berlin' );
+    my $IsValid = $DateTimeObject->IsTimeZoneValid( TimeZone => 'Europe/Berlin' );
+
+You can also call this method without an object:
+
+    my $IsValid = Kernel::System::DateTime->IsTimeZoneValid( TimeZone => 'ACWST' );
 
 Returns:
-    $ValidID = 1;    # if given time zone is valid, 0 otherwise.
+
+    $IsValid = 1;    # if given time zone is valid, 0 otherwise.
 
 =cut
 
@@ -1645,23 +1677,30 @@ sub IsTimeZoneValid {
     return $ValidTimeZones->{ $Param{TimeZone} } ? 1 : 0;
 }
 
-=head2 OTOBOTimeZoneGet()
+=head2 CareOnCloudTimeZoneGet()
 
-Returns the time zone set for OTOBO.
+Returns the time zone set for CareOnCloud ESM in the SysConfig. The default is C<'UTC'>.
 
-    my $OTOBOTimeZone = $DateTimeObject->OTOBOTimeZoneGet();
+    my $CareOnCloudTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet;
 
-    # You can also call this method without an object:
-    #my $OTOBOTimeZone = Kernel::System::DateTime->OTOBOTimeZoneGet();
+You can also call this subroutine without an object:
+
+    my $CareOnCloudTimeZone = Kernel::System::DateTime->CareOnCloudTimeZoneGet;
+
+Importing this subroutine is also supported:
+
+    use Kernel::System::DateTime qw(CareOnCloudTimeZone);
+
+    my $CareOnCloudTimeZone = CareOnCloudTimeZoneGet();
 
 Returns:
 
-    my $OTOBOTimeZone = 'Europe/Berlin';
+    my $CareOnCloudTimeZone = 'Europe/Berlin';
 
 =cut
 
-sub OTOBOTimeZoneGet {
-    return $Kernel::OM->Get('Kernel::Config')->Get('OTOBOTimeZone') || 'UTC';
+sub CareOnCloudTimeZoneGet {
+    return $Kernel::OM->Get('Kernel::Config')->Get('CareOnCloudTimeZone') || 'UTC';
 }
 
 =head2 UserDefaultTimeZoneGet()
@@ -1669,11 +1708,17 @@ sub OTOBOTimeZoneGet {
 Returns the time zone set as default in SysConfig UserDefaultTimeZone for newly created users or existing users without
 time zone setting.
 
-    my $UserDefaultTimeZoneGet = $DateTimeObject->UserDefaultTimeZoneGet();
+    my $UserDefaultTimeZone = $DateTimeObject->UserDefaultTimeZoneGet();
 
 You can also call this method without an object:
 
-    my $UserDefaultTimeZoneGet = Kernel::System::DateTime->UserDefaultTimeZoneGet();
+    my $UserDefaultTimeZone = Kernel::System::DateTime->UserDefaultTimeZoneGet();
+
+Importing this subroutine is also supported:
+
+    use Kernel::System::DateTime qw(UserDefaultTimeZoneGet);
+
+    my $UserDefaultTimeZone = UserDefaultTimeZoneGet();
 
 Returns:
 
@@ -1695,14 +1740,20 @@ You can also call this method without an object:
 
     my $SystemTimeZone = Kernel::System::DateTime->SystemTimeZoneGet();
 
+Importing this subroutine is also supported:
+
+    use Kernel::System::DateTime qw(SystemTimeZoneGet);
+
+    my $SystemTimeZone = SystemTimeZoneGet();
+
 Returns:
 
-    my $SystemTimeZone = 'Europe/Berlin';
+    my $SystemTimeZone = 'Antarctica/Rothera';
 
 =cut
 
 sub SystemTimeZoneGet {
-    return DateTime::TimeZone->new( name => 'local' )->name();
+    return DateTime::TimeZone->new( name => 'local' )->name;
 }
 
 =head2 TimeStamp2SystemTime()
@@ -2017,7 +2068,7 @@ sub _StringToHash {
             time_zone => $OffsetOrTZ,
         );
         $DT->set_time_zone('UTC');
-        $DT->set_time_zone( $Self->OTOBOTimeZoneGet() );
+        $DT->set_time_zone( $Self->CareOnCloudTimeZoneGet() );
 
         return {
             ( map { ucfirst $_ => $DT->$_() } qw(year month day hour minute second) )
@@ -2037,7 +2088,7 @@ sub _StringToHash {
 Creates a CPAN DateTime object which will be stored within this object and used for date/time calculations.
 
     # Create an object with current date and time
-    # within time zone set in SysConfig OTOBOTimeZone:
+    # within time zone set in SysConfig CareOnCloudTimeZone:
     my $CPANDateTimeObject = $DateTimeObject->_CPANDateTimeObjectCreate();
 
     # Create an object with current date and time
@@ -2054,7 +2105,7 @@ Creates a CPAN DateTime object which will be stored within this object and used 
         Hour     => 12,                 # optional, defaults to 0
         Minute   => 35,                 # optional, defaults to 0
         Second   => 59,                 # optional, defaults to 0
-        TimeZone => 'Europe/Berlin',    # optional, defaults to setting of SysConfig OTOBOTimeZone
+        TimeZone => 'Europe/Berlin',    # optional, defaults to setting of SysConfig CareOnCloudTimeZone
     );
 
     # Create an object from an epoch timestamp. These timestamps are always UTC/GMT,
@@ -2071,7 +2122,7 @@ Creates a CPAN DateTime object which will be stored within this object and used 
     # for the list of supported string formats.
     my $CPANDateTimeObject = $DateTimeObject->_CPANDateTimeObjectCreate(
         String   => '2016-08-14 22:45:00',
-        TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig OTOBOTimeZone
+        TimeZone => 'Europe/Berlin',        # optional, defaults to setting of SysConfig CareOnCloudTimeZone
     );
 
     # For setting the time zone one may also pass an offset or 'Z'
@@ -2107,7 +2158,7 @@ sub _CPANDateTimeObjectCreate {
         );
     }
 
-    my $OffsetOrTZ = $Param{TimeZone} || $Self->OTOBOTimeZoneGet();
+    my $OffsetOrTZ = $Param{TimeZone} || $Self->CareOnCloudTimeZoneGet();
 
     if ( $OffsetOrTZ ne 'Z' && $OffsetOrTZ !~ m/[+-]\d{2}:?(?:\d{2})?/i ) {
         if ( !$Self->IsTimeZoneValid( TimeZone => $OffsetOrTZ ) ) {

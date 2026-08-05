@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,15 +18,18 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
+# core modules
+use File::Copy qw(copy move);
+use File::Path qw(mkpath rmtree);
+
+# CPAN modules
 use Test2::V0;
-use Kernel::System::UnitTest::RegisterDriver;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::System::Crypt::SMIME ();
 
 our $Self;
-
-use Kernel::System::Crypt::SMIME;
-use File::Copy;
-use File::Path();
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -46,7 +49,7 @@ my $CertPath    = $ConfigObject->Get('Home') . "/var/tmp/certs";
 my $PrivatePath = $ConfigObject->Get('Home') . "/var/tmp/private";
 $CertPath    =~ s{/{2,}}{/}smxg;
 $PrivatePath =~ s{/{2,}}{/}smxg;
-File::Path::rmtree($CertPath);
+rmtree($CertPath);
 File::Path::rmtree($PrivatePath);
 File::Path::make_path( $CertPath,    { chmod => 0770 } );    ## no critic qw(ValuesAndExpressions::ProhibitLeadingZeros)
 File::Path::make_path( $PrivatePath, { chmod => 0770 } );    ## no critic qw(ValuesAndExpressions::ProhibitLeadingZeros)
@@ -98,7 +101,7 @@ my $CreateDir = sub {
     my $Directory = $_[0];
 
     if ( !-d $Directory ) {
-        File::Path::mkpath( $Directory, 0, 0770 );    ## no critic qw(ValuesAndExpressions::ProhibitLeadingZeros)
+        mkpath( $Directory, 0, 0770 );    ## no critic qw(ValuesAndExpressions::ProhibitLeadingZeros)
 
         if ( !-d $Directory ) {
             $Self->True(
@@ -450,14 +453,14 @@ for my $Test (@Tests) {
 }
 
 # remove temporary directory
-$Success = File::Path::rmtree( $Home . '/var/tmp/SMIMETest' );
+$Success = rmtree( $Home . '/var/tmp/SMIMETest' );
 $Self->True(
     $Success,
     'Removed temporary Certificates and Private Keys root directory with true',
 );
 
-File::Path::rmtree($CertPath);
-File::Path::rmtree($PrivatePath);
+rmtree($CertPath);
+rmtree($PrivatePath);
 
 # cleanup cache is done by RestoreDatabase
 

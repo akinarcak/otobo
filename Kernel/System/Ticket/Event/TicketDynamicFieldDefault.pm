@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -67,7 +67,7 @@ sub Run {
 
     my $CacheKey = '_TicketDynamicFieldDefault::AlreadyProcessed';
 
-    # loop protection: only execute this handler once for each ticket
+    # loop protection: bail out if ticket was not found previously
     return if ( $TicketObject->{$CacheKey}->{ $Param{Data}->{TicketID} } );
 
     # get ticket data in silent mode, it could be that the ticket was deleted
@@ -80,7 +80,7 @@ sub Run {
 
     if ( !%Ticket ) {
 
-        # remember that the event was executed for this TicketID to avoid multiple executions
+        # remember that the ticket was not found to prevent multiple executions
         # store the information in the ticket object
         $TicketObject->{$CacheKey}->{ $Param{Data}->{TicketID} } = 1;
 

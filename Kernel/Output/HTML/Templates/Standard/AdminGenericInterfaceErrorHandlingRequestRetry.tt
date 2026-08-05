@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -140,7 +140,7 @@
                         <div class="Field">
                             <input type="text" readonly class="W50pc" id="ErrorHandlingTypeDisplay" value="[% Data.ErrorHandlingType | html %]" />
                             <p class="FieldExplanation">
-                                [% Translate("This OTOBO error handling backend module will be called internally to process the error handling mechanism.") | html %]
+                                [% Translate("This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.") | html %]
                             </p>
                         </div>
                         <div class="Clear"></div>

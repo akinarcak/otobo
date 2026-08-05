@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,12 +23,12 @@ use namespace::autoclean;
 use utf8;
 
 # core modules
-use File::stat;
-use Digest::MD5;
+use File::stat  qw(stat);
+use Digest::MD5 qw(md5_hex);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
@@ -36,6 +36,12 @@ our $ObjectManagerDisabled = 1;
 =head1 NAME
 
 Kernel::Output::HTML::Layout::Loader - CSS/JavaScript
+
+=head1 SYNOPSIS
+
+    # No instances of this class should be created directly.
+    # Instead the module is loaded implicitly by Kernel::Output::HTML::Layout
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
 =head1 DESCRIPTION
 
@@ -85,7 +91,7 @@ sub LoaderCreateAgentCSSCalls {
     # 2. use HostBased skin setting, if available
     # 3. use default skin from configuration
 
-    my $SkinSelected = $Self->{'UserSkin'};
+    my $SkinSelected = $Param{Skin} || $Self->{'UserSkin'};
 
     # check if the skin is valid
     my $SkinValid = 0;
@@ -154,10 +160,10 @@ sub LoaderCreateAgentCSSCalls {
         my @FileList;
 
         MODULE:
-        for my $Module ( sort keys %{$Setting} ) {
-            next MODULE if ref $Setting->{$Module}->{CSS} ne 'ARRAY';
+        for my $Module ( sort keys $Setting->%* ) {
+            next MODULE unless ref $Setting->{$Module}->{CSS} eq 'ARRAY';
 
-            @FileList = ( @FileList, @{ $Setting->{$Module}->{CSS} || [] } );
+            push @FileList, $Setting->{$Module}->{CSS}->@*;
         }
 
         $Self->_HandleCSSList(
@@ -211,19 +217,11 @@ sub LoaderCreateAgentJSCalls {
     my $DoMinify = $ConfigObject->Get('Loader::Enabled::JS');
 
     {
-        my @FileList;
-
-        # get global js
+        # get JS files from the SysConfig setting Loader::Agent::CommonJS
         my $CommonJSList = $ConfigObject->Get('Loader::Agent::CommonJS');
+        my @FileList     = map { $CommonJSList->{$_}->@* } ( sort keys $CommonJSList->%* );
 
-        KEY:
-        for my $Key ( sort keys %{$CommonJSList} ) {
-            next KEY if $Key eq '100-CKEditor' && !$ConfigObject->Get('Frontend::RichText');
-
-            push @FileList, @{ $CommonJSList->{$Key} };
-        }
-
-        # get toolbar module js
+        # get toolbar module JS
         my $ToolbarModuleSettings = $ConfigObject->Get('Frontend::ToolBarModule');
         for my $Key ( sort keys %{$ToolbarModuleSettings} ) {
             if ( $ToolbarModuleSettings->{$Key}->{JavaScript} ) {
@@ -237,7 +235,6 @@ sub LoaderCreateAgentJSCalls {
             BlockName => 'CommonJS',
             JSHome    => $JSHome,
         );
-
     }
 
     # now handle module specific JavaScript
@@ -253,7 +250,7 @@ sub LoaderCreateAgentJSCalls {
         for my $Module ( sort keys %{$Setting} ) {
             next MODULE unless ref $Setting->{$Module}->{JavaScript} eq 'ARRAY';
 
-            @FileList = ( @FileList, @{ $Setting->{$Module}->{JavaScript} || [] } );
+            push @FileList, $Setting->{$Module}->{JavaScript}->@*;
         }
 
         $Self->_HandleJSList(
@@ -262,7 +259,6 @@ sub LoaderCreateAgentJSCalls {
             BlockName => 'ModuleJS',
             JSHome    => $JSHome,
         );
-
     }
 
     return 1;
@@ -330,7 +326,7 @@ sub LoaderCreateJavaScriptTemplateData {
         $JSTemplateDir = $JSStandardTemplateDir;
     }
 
-    # get the needed pathes
+    # get the needed paths
     my $Home                 = $ConfigObject->Get('Home');
     my $JSCachePath          = 'var/httpd/htdocs/js/js-cache';
     my $TargetFilenamePrefix = "TemplateJS_$Theme";
@@ -437,7 +433,7 @@ sub LoaderCreateJavaScriptTemplateData {
     my $ChecksumInput = join
         '',
         map { $ChecksumData{$_} } sort keys %ChecksumData;
-    my $TemplateChecksum = Digest::MD5::md5_hex($ChecksumInput);
+    my $TemplateChecksum = md5_hex($ChecksumInput);
 
     # remember the checksum, so that in the next iteration in doesn't have to be recomputed
     $CacheObject->Set(
@@ -489,7 +485,7 @@ Only the file for the current user language is created.
 sub LoaderCreateJavaScriptTranslationData {
     my ( $Self, %Param ) = @_;
 
-    # get the needed pathes
+    # get the needed paths
     my $ConfigObject         = $Kernel::OM->Get('Kernel::Config');
     my $Home                 = $ConfigObject->Get('Home');
     my $JSCachePath          = 'var/httpd/htdocs/js/js-cache';
@@ -602,7 +598,7 @@ sub LoaderCreateCustomerCSSCalls {
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $SkinSelected = $ConfigObject->Get('Loader::Customer::SelectedSkin')
+    my $SkinSelected = $Self->{'UserSkin'} || $ConfigObject->Get('Loader::Customer::SelectedSkin')
         || 'default';
 
     # force a skin based on host name
@@ -657,10 +653,10 @@ sub LoaderCreateCustomerCSSCalls {
         my @FileList;
 
         MODULE:
-        for my $Module ( sort keys %{$Setting} ) {
-            next MODULE if ref $Setting->{$Module}->{CSS} ne 'ARRAY';
+        for my $Module ( sort keys $Setting->%* ) {
+            next MODULE unless ref $Setting->{$Module}->{CSS} eq 'ARRAY';
 
-            @FileList = ( @FileList, @{ $Setting->{$Module}->{CSS} || [] } );
+            push @FileList, $Setting->{$Module}->{CSS}->@*;
         }
 
         $Self->_HandleCSSList(
@@ -714,16 +710,9 @@ sub LoaderCreateCustomerJSCalls {
     my $DoMinify = $ConfigObject->Get('Loader::Enabled::JS');
 
     {
+        # get JS files from the SysConfig setting Loader::Customer::CommonJS
         my $CommonJSList = $ConfigObject->Get('Loader::Customer::CommonJS');
-
-        my @FileList;
-
-        KEY:
-        for my $Key ( sort keys %{$CommonJSList} ) {
-            next KEY if $Key eq '100-CKEditor' && !$ConfigObject->Get('Frontend::RichText');
-
-            push @FileList, @{ $CommonJSList->{$Key} };
-        }
+        my @FileList     = map { $CommonJSList->{$_}->@* } ( sort keys $CommonJSList->%* );
 
         $Self->_HandleJSList(
             List      => \@FileList,
@@ -731,7 +720,6 @@ sub LoaderCreateCustomerJSCalls {
             BlockName => 'CommonJS',
             JSHome    => $JSHome,
         );
-
     }
 
     # now handle module specific JS
@@ -745,9 +733,9 @@ sub LoaderCreateCustomerJSCalls {
 
         MODULE:
         for my $Module ( sort keys %{$Setting} ) {
-            next MODULE if ref $Setting->{$Module}->{JavaScript} ne 'ARRAY';
+            next MODULE unless ref $Setting->{$Module}->{JavaScript} eq 'ARRAY';
 
-            @FileList = ( @FileList, @{ $Setting->{$Module}->{JavaScript} || [] } );
+            push @FileList, $Setting->{$Module}->{JavaScript}->@*;
         }
 
         $Self->_HandleJSList(

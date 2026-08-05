@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -41,9 +41,9 @@ $ConfigObject->Set(
     Value => 0,
 );
 
-my $SettingsXML = << 'END_XML';
+my $SettingsXML = <<'END_XML';
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Framework">
+<careoncloud_config version="2.0" init="Framework">
     <Setting Name="Test0" Required="1" Valid="1">
         <Description Translatable="1">Test.</Description>
         <Navigation>Core::Test</Navigation>
@@ -58,7 +58,7 @@ my $SettingsXML = << 'END_XML';
             <Item ValueType="String" ValueRegex=".*">Test</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
 END_XML
 
 my $SysConfigObject    = $Kernel::OM->Get('Kernel::System::SysConfig');
@@ -232,6 +232,7 @@ for my $Test (@Tests) {
         'Default setting must be lock for resetting it.',
     );
 
+    ## nofilter(TidyAll::Plugin::OTOBO::Perl::UnitTestConfigChanges)
     my $Success = $SysConfigObject->SettingReset(
         %{ $Test->{Params} },
         ExclusiveLockGUID => $ExclusiveLockGUID,

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,8 +16,16 @@
 
 package Kernel::System::DB::mssql;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -27,13 +35,10 @@ our @ObjectDependencies = (
 );
 
 sub new {
-    my ( $Type, %Param ) = @_;
+    my ( $Class, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Class;
 }
 
 sub LoadPreferences {
@@ -58,7 +63,7 @@ sub LoadPreferences {
     # we only take what is left of the minus; our version string: "Microsoft SQL Server 2012"
     $Self->{'DB::Version'} = 'SELECT LEFT( @@VERSION, (CHARINDEX ( \'-\' ,@@VERSION) -2) )';
 
-    # dbi attributes
+    # DBI/DBD::Sybase or such attributes. These will be passed when connecting to the database.
     $Self->{'DB::Attribute'} = {
         LongTruncOk => 1,
         LongReadLen => 70 * 1024 * 1024,
@@ -146,20 +151,20 @@ sub TableCreate {
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $SQLStart     = '';
-    my $SQLEnd       = '';
-    my $SQL          = '';
-    my @Column       = ();
-    my $TableName    = '';
-    my %Default      = ();
-    my $ForeignKey   = ();
-    my %Foreign      = ();
-    my $IndexCurrent = ();
-    my %Index        = ();
-    my $UniqCurrent  = ();
-    my %Uniq         = ();
-    my $PrimaryKey   = '';
-    my @Return       = ();
+    my $SQLStart = '';
+    my $SQLEnd   = '';
+    my $SQL      = '';
+    my @Column;
+    my $TableName = '';
+    my %Default;
+    my $ForeignKey;
+    my %Foreign;
+    my $IndexCurrent;
+    my %Index;
+    my $UniqCurrent;
+    my %Uniq;
+    my $PrimaryKey = '';
+    my @Return;
 
     for my $Tag (@Param) {
 
@@ -235,7 +240,7 @@ sub TableCreate {
         }
 
         # auto increment
-        if ( $Tag->{AutoIncrement} && $Tag->{AutoIncrement} =~ /^true$/i ) {
+        if ( $Tag->{AutoIncrement} && lc $Tag->{AutoIncrement} eq 'true' ) {
             $SQL .= ' IDENTITY(1,1) ';
         }
 
@@ -351,14 +356,14 @@ sub TableAlter {
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $SQLStart      = '';
-    my @SQL           = ();
-    my @Index         = ();
-    my $IndexName     = ();
+    my $SQLStart = '';
+    my @SQL;
+    my @Index;
+    my $IndexName;
     my $ForeignTable  = '';
     my $ReferenceName = '';
-    my @Reference     = ();
-    my $Table         = '';
+    my @Reference;
+    my $Table = '';
 
     my $Start = '';
     if ( $ConfigObject->Get('Database::ShellOutput') ) {
@@ -487,6 +492,9 @@ sub TableAlter {
                 else {
                     $SQLAlter .= ' NULL';
                 }
+
+                # TODO: handle AutoIncrement fields
+
                 push @SQL, $Start . $SQLAlter;
 
                 # add default
@@ -748,9 +756,9 @@ sub Insert {
     my $ConfigObject   = $Kernel::OM->Get('Kernel::Config');
     my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
 
-    my $SQL    = '';
-    my @Keys   = ();
-    my @Values = ();
+    my $SQL = '';
+    my @Keys;
+    my @Values;
     TAG:
     for my $Tag (@Param) {
         if ( $Tag->{Tag} eq 'Insert' && $Tag->{TagType} eq 'Start' ) {

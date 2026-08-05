@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package var::processes::examples::Conference_Room_Reservation_pre;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::PerlCritic)
 
 use strict;
@@ -76,14 +77,14 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-Room1' => 'Room 1',
-                    'otobo5s-Room2' => 'Room 2',
-                    'otobo5s-Room3' => 'Room 3',
-                    'otobo5s-Room4' => 'Room 4',
-                    'otobo5s-Room5' => 'Room 5',
-                    'otobo5s-Room6' => 'Room 6',
-                    'otobo5s-Room7' => 'Room 7',
-                    'otobo5s-Room8' => 'Room 8',
+                    'careoncloud5s-Room1' => 'Room 1',
+                    'careoncloud5s-Room2' => 'Room 2',
+                    'careoncloud5s-Room3' => 'Room 3',
+                    'careoncloud5s-Room4' => 'Room 4',
+                    'careoncloud5s-Room5' => 'Room 5',
+                    'careoncloud5s-Room6' => 'Room 6',
+                    'careoncloud5s-Room7' => 'Room 7',
+                    'careoncloud5s-Room8' => 'Room 8',
                 },
                 TranslatableValues => 0,
             },
@@ -99,12 +100,12 @@ sub Run {
                 PossibleNone   => 1,
                 TreeView       => 1,
                 PossibleValues => {
-                    'otobo5s-Flipchart'                              => 'Flipchart',
-                    'otobo5s-Projector HDMI'                         => 'Projector HDMI',
-                    'otobo5s-Projector VGA'                          => 'Projector VGA',
-                    'otobo5s-Room Service - Soft Drinks & Beverages' => 'Room Service - Soft Drinks & Beverages',
-                    'otobo5s-Room Service - Soft Drinks only'        => 'Room Service - Soft Drinks only',
-                    'otobo5s-Whiteboard'                             => 'Whiteboard',
+                    'careoncloud5s-Flipchart'                              => 'Flipchart',
+                    'careoncloud5s-Projector HDMI'                         => 'Projector HDMI',
+                    'careoncloud5s-Projector VGA'                          => 'Projector VGA',
+                    'careoncloud5s-Room Service - Soft Drinks & Beverages' => 'Room Service - Soft Drinks & Beverages',
+                    'careoncloud5s-Room Service - Soft Drinks only'        => 'Room Service - Soft Drinks only',
+                    'careoncloud5s-Whiteboard'                             => 'Whiteboard',
                 },
                 TranslatableValues => 0,
             },
@@ -120,8 +121,8 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-approved' => 'approved',
-                    'otobo5s-rejected' => 'rejected',
+                    'careoncloud5s-approved' => 'approved',
+                    'careoncloud5s-rejected' => 'rejected',
                 },
                 TranslatableValues => 0,
             },
@@ -139,8 +140,8 @@ sub Run {
                 DefaultValue   => '',
                 PossibleNone   => 1,
                 PossibleValues => {
-                    'otobo5s-no'  => 'no',
-                    'otobo5s-yes' => 'yes',
+                    'careoncloud5s-no'  => 'no',
+                    'careoncloud5s-yes' => 'yes',
                 },
                 TranslatableValues => 0,
             },

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,17 @@ package Kernel::System::CustomerAuth::LDAP;
 
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::ParamObject)
 
+use v5.24;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
 use Net::LDAP;
 use Net::LDAP::Util qw(escape_filter_value);
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -37,11 +43,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
-
-    # Debug 0=off 1=on
-    $Self->{Debug} = 0;
+    my $Self = bless {}, $Type;
 
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -83,23 +85,15 @@ sub new {
         );
         return;
     }
-    $Self->{SearchUserDN} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::SearchUserDN' . $Param{Count} )
-        || '';
-    $Self->{SearchUserPw} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::SearchUserPw' . $Param{Count} )
-        || '';
-    $Self->{GroupDN}    = $ConfigObject->Get( 'Customer::AuthModule::LDAP::GroupDN' . $Param{Count} ) || '';
-    $Self->{AccessAttr} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::AccessAttr' . $Param{Count} )
-        || '';
-    $Self->{UserAttr} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::UserAttr' . $Param{Count} )
-        || 'DN';
-    $Self->{UserSuffix} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::UserSuffix' . $Param{Count} )
-        || '';
-    $Self->{DestCharset} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::Charset' . $Param{Count} )
-        || 'utf-8';
+    $Self->{SearchUserDN} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::SearchUserDN' . $Param{Count} ) || '';
+    $Self->{SearchUserPw} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::SearchUserPw' . $Param{Count} ) || '';
+    $Self->{GroupDN}      = $ConfigObject->Get( 'Customer::AuthModule::LDAP::GroupDN' . $Param{Count} )      || '';
+    $Self->{AccessAttr}   = $ConfigObject->Get( 'Customer::AuthModule::LDAP::AccessAttr' . $Param{Count} )   || '';
+    $Self->{UserAttr}     = $ConfigObject->Get( 'Customer::AuthModule::LDAP::UserAttr' . $Param{Count} )     || 'DN';
+    $Self->{UserSuffix}   = $ConfigObject->Get( 'Customer::AuthModule::LDAP::UserSuffix' . $Param{Count} )   || '';
 
     # ldap filter always used
-    $Self->{AlwaysFilter} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::AlwaysFilter' . $Param{Count} )
-        || '';
+    $Self->{AlwaysFilter} = $ConfigObject->Get( 'Customer::AuthModule::LDAP::AlwaysFilter' . $Param{Count} ) || '';
 
     # Net::LDAP new params
     if ( $ConfigObject->Get( 'Customer::AuthModule::LDAP::Params' . $Param{Count} ) ) {
@@ -159,25 +153,28 @@ sub Auth {
     $Param{User} =~ s/^\s+//;
     $Param{User} =~ s/\s+$//;
 
+    # Debugging can only be activated in the source code,
+    # so that sensitive information is not inadvertently leaked.
+    my $Debug = 0;
+
     # add user suffix
     if ( $Self->{UserSuffix} ) {
         $Param{User} .= $Self->{UserSuffix};
 
         # just in case for debug
-        if ( $Self->{Debug} > 0 ) {
+        if ($Debug) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'notice',
-                Message  => "CustomerUser: ($Param{User}) added $Self->{UserSuffix} to username!",
+                Message  => "CustomerUser: $Param{User} added $Self->{UserSuffix} to username!",
             );
         }
     }
 
     # just in case for debug!
-    if ( $Self->{Debug} > 0 ) {
+    if ($Debug) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  => "CustomerUser: '$Param{User}' tried to authenticate with Pw: '$Param{Pw}' "
-                . "(REMOTE_ADDR: $RemoteAddr)",
+            Message  => "CustomerUser: $Param{User} tried to authenticate (REMOTE_ADDR: $RemoteAddr)",
         );
     }
 
@@ -276,10 +273,10 @@ sub Auth {
     if ( $Self->{AccessAttr} && $Self->{GroupDN} ) {
 
         # just in case for debug
-        if ( $Self->{Debug} > 0 ) {
+        if ($Debug) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'notice',
-                Message  => 'check for groupdn!',
+                Message  => 'Checking for GroupDN.',
             );
         }
 
@@ -364,6 +361,7 @@ sub Auth {
     return $Param{User};
 }
 
+# TODO: this could be simplified because $Charset is always utf-8
 sub _ConvertTo {
     my ( $Self, $Text, $Charset ) = @_;
 
@@ -372,16 +370,17 @@ sub _ConvertTo {
     # get encode object
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
-    if ( !$Charset || !$Self->{DestCharset} ) {
+    if ( !$Charset ) {
         $EncodeObject->EncodeInput( \$Text );
+
         return $Text;
     }
 
-    # convert from input charset ($Charset) to directory charset ($Self->{DestCharset})
+    # convert from input charset ($Charset) to directory charset (utf-8)
     return $EncodeObject->Convert(
         Text => $Text,
         From => $Charset,
-        To   => $Self->{DestCharset},
+        To   => 'utf-8',
     );
 }
 

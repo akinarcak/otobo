@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,13 +24,13 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::GenericInterface::Debugger;
-use Kernel::GenericInterface::Operation::Session::SessionCreate;
-use Kernel::GenericInterface::Operation::Ticket::TicketUpdate;
-use Kernel::GenericInterface::Requester;
-use Kernel::System::VariableCheck qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;                                   # Set up $Kernel::OM
+use Kernel::GenericInterface::Debugger                          ();
+use Kernel::GenericInterface::Operation::Session::SessionCreate ();         ## no perlimports, new() from string
+use Kernel::GenericInterface::Operation::Ticket::TicketUpdate   ();         ## no perlimports, new() from string
+use Kernel::GenericInterface::Requester                         ();
+use Kernel::System::VariableCheck                               qw(:all);
 
 # get helper object
 # skip SSL certificate verification
@@ -755,15 +755,13 @@ for my $Test (@Tests) {
 
     # check several article data
     if ( $ExpectedReturnRemoteDataKey->{Article} ) {
-        is(
-            $RequestResultKey->{Article}->{Body},
-            $ExpectedReturnRemoteDataKey->{Article}->{Body},
+        ok(
+            $RequestResultKey->{Article}->{Body} eq $ExpectedReturnRemoteDataKey->{Article}->{Body},
             "$Test->{Name} - RequesterResult Article Body Ok.",
         );
 
-        is(
-            $RequestResultKey->{Article}->{Subject},
-            $ExpectedReturnRemoteDataKey->{Article}->{Subject},
+        ok(
+            $RequestResultKey->{Article}->{Subject} =~ /$ExpectedReturnRemoteDataKey->{Article}->{Subject}/,
             "$Test->{Name} - RequesterResult Article Subject Ok.",
         );
 
@@ -803,15 +801,14 @@ for my $Test (@Tests) {
 
     # check several article data
     if ( $ExpectedReturnLocalDataKey->{Article} ) {
-        is(
-            $LocalResultKey->{Article}->{Body},
-            $ExpectedReturnLocalDataKey->{Article}->{Body},
+
+        ok(
+            $LocalResultKey->{Article}->{Body} eq $ExpectedReturnLocalDataKey->{Article}->{Body},
             "$Test->{Name} - LocalResult Article Body Ok.",
         );
 
-        is(
-            $LocalResultKey->{Article}->{Subject},
-            $ExpectedReturnLocalDataKey->{Article}->{Subject},
+        ok(
+            $LocalResultKey->{Article}->{Subject} =~ /$ExpectedReturnLocalDataKey->{Article}->{Subject}/,
             "$Test->{Name} - LocalResult Article Subject Ok.",
         );
 
@@ -869,7 +866,7 @@ for my $TicketID (@TicketIDs) {
 # delete dynamic fields
 my $DeleteFieldList = $DynamicFieldObject->DynamicFieldList(
     ResultType => 'HASH',
-    ObjectType => 'Ticket',
+    ObjectType => [ 'Ticket', 'Article', ],
 );
 
 DYNAMICFIELD:

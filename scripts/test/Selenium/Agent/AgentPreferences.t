@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,9 +24,9 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::RegisterDriver;    # Set up $Self (unused) and $Kernel::OM
-use Kernel::Language;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::Language ();
 use Kernel::System::UnitTest::Selenium;
 
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
@@ -515,7 +515,7 @@ JAVASCRIPT
         # check edited values
         my $UserSkin = $Selenium->find_element( '#UserSkin', 'css' )->get_value();
         {
-            my $ToDo = todo('skin ivory does not exist in OTOBO, issue #678');
+            my $ToDo = todo('skin ivory does not exist in CareOnCloud ESM, issue #678');
 
             is( $UserSkin, "ivory", "#UserSkin updated value" );
         }

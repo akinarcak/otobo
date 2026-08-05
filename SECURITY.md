@@ -1,68 +1,65 @@
-# OTOBO Team Vulnerability Disclosure Policy
+# CareOnCloud ESM Security Policy
 
-We take the security of our systems seriously, and we value the security community.
-The disclosure of security vulnerabilities helps us ensure the security and privacy of our users.
+## Reporting a vulnerability
 
-## Guidelines
+Report suspected vulnerabilities privately through the repository's
+[GitHub private vulnerability reporting channel](https://github.com/akinarcak/otobo/security/advisories/new).
+Do not create a public issue, discussion, or pull request for a suspected
+vulnerability. Include the affected version or commit, impact, reproduction
+steps, and any proof of concept needed to validate the report.
 
-We require that all researchers:
+The project acknowledges a valid report within three business days. Critical
+vulnerabilities are targeted for a fix, mitigation, or documented response
+within seven calendar days. These are response targets, not a guarantee that a
+particular issue can be fully remediated in that period.
 
-- Respect the rules. Operate within the rules set forth by the OTOBO
-Security Team, or speak up if in strong disagreement with the rules.
-- Respect privacy. Make a good faith effort not to access or destroy
-another user's data. Avoid degradation of user experience, disruption to
-production systems, and destruction of data.
-- Be patient. Make a good faith effort to clarify and support on
-arising questions. Keep information about any vulnerabilities you’ve
-discovered confidential between yourself and OTOBO Team until we
-resolved the issue with a public OTOBO Security Announcement (typically
-within 90 days)
-- Do no harm. Act for the common good through the prompt reporting of
-all found vulnerabilities. Never willfully exploit others without their
-permission.
-- Use the communication channel below to report vulnerability
-information to us. Do not use personal emails, social media accounts, or
-other private connections to contact a member of a security team in
-regards to vulnerabilities or any program related issues, unless you
-have been instructed to do so.
+If the private reporting control is not enabled in the GitHub repository,
+maintainers must enable it before publishing a CareOnCloud release. Public
+channels remain out of scope for vulnerability disclosure.
 
-If you follow these guidelines when reporting an issue to us, we commit to:
-- Not pursue or support any legal action related to your research;
-- Work with you to understand and resolve the issue quickly (including
-an initial confirmation of your report within 1 week of submission);
-- Recognize your contribution on our Security Researcher Hall of Fame,
-if you are the first to report the issue and we make a code or
-configuration change based on the issue.
+## Supported scope
 
-## Scope
+Before the first versioned CareOnCloud release, the supported source is the
+current CareOnCloud ESM development branch and candidate builds made from it.
+After versioned releases begin, this table must be replaced with explicit
+release lines and end-of-support dates.
 
-- OTOBO and Features created by the OTOBO Team
-- Managed OTOBO and created by the OTOBO Team
+| Version | Security support |
+| --- | --- |
+| Pre-1.0 CareOnCloud ESM candidate builds | Supported on a best-effort security basis; no production-readiness claim |
 
-### Out of scope
-Any services hosted by 3rd party providers and services are excluded
-from scope. These services include OTOBO instances hosted by external
-parties and forks of OTOBO.
+In scope:
 
+- CareOnCloud ESM source, first-party `CareOnCloud*` packages, release artifacts and
+  official candidate deployments operated by the project.
+- Tenant isolation, authentication/authorization, secrets handling, audit,
+  API, web, container and deployment configuration defects.
 
-## Supported Versions
+Out of scope:
 
-The following versions of OTOBO are currently being supported with security updates.
-Older versions are not supported and have known vulnerabilities.
+- Third-party or customer-managed deployments where the project has no
+  authorization to test.
+- Denial-of-service testing, destructive testing, or access to data that the
+  reporter does not own or is not authorized to access.
+- Social engineering and issues already public or previously disclosed without
+  new material impact.
 
-| Version | Supported          | Known vulnerabilities   |
-| ------- | ------------------ |------------------------ |
-| 10.x     | :white_check_mark: |:x:                     |
-| 11.x     | :white_check_mark: |:x:                     |
+## Coordinated disclosure and customers
 
-## How to report a security vulnerability?
-If you believe you’ve found a security vulnerability in one of our
-products or platforms please send it to us by emailing
-security@otobo.org. Please include the following details with your report:
+The project coordinates CVE assignment with the reporter and an appropriate
+CVE Numbering Authority when a CVE is warranted. Managed customers affected by
+a confirmed vulnerability receive a private advisory containing the impact,
+mitigation, remediation status, and any required action before or alongside
+public disclosure when practical.
 
-- Description of the location and potential impact of the vulnerability;
-- A detailed description of the steps required to reproduce the
-vulnerability (POC scripts, screenshots, and compressed screen captures
-are all helpful to us); and
-- Your name/pseudonym for recognition in our Hall of Fame. If you prefer
-to remain anonymous, we encourage them to submit under a pseudonym.
+Reporters acting in good faith, preserving privacy, and avoiding service
+disruption will not be subject to legal action by the project for the research
+described in their report. Disclosure is coordinated with the reporter; the
+default target is no later than 90 days after acknowledgement unless users need
+earlier notice or a fix requires a different timeline.
+
+## Upstream relationship
+
+CareOnCloud ESM is derived from CareOnCloud ESM. Upstream CareOnCloud ESM vulnerabilities may also
+need to be reported to the upstream project, but CareOnCloud reports are in
+scope here and are not excluded because this repository is a fork.

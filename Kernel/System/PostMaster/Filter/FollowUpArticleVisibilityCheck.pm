@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,10 +20,10 @@ use strict;
 use warnings;
 
 our @ObjectDependencies = (
-    'Kernel::System::Log',
     'Kernel::System::CustomerUser',
     'Kernel::System::Ticket',
     'Kernel::System::Ticket::Article',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
@@ -66,8 +66,8 @@ sub Run {
     #   automatic notifications. In these cases there is no need to hide them.
     #   See also bug#10182 for details.
     if (
-        !$Param{GetParam}->{'X-OTOBO-FollowUp-SenderType'}
-        || $Param{GetParam}->{'X-OTOBO-FollowUp-SenderType'} ne 'customer'
+        !$Param{GetParam}->{'X-CareOnCloud-FollowUp-SenderType'}
+        || $Param{GetParam}->{'X-CareOnCloud-FollowUp-SenderType'} ne 'customer'
         )
     {
         return 1;
@@ -89,10 +89,9 @@ sub Run {
 
     # Email Reply-To address for forwarded emails
     my $ReplyToAddress;
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
     if ( $Param{GetParam}->{ReplyTo} ) {
-        $ReplyToAddress = $Self->{ParserObject}->GetEmailAddress(
-            Email => $Param{GetParam}->{ReplyTo},
-        );
+        $ReplyToAddress = $EmailAddressObject->GetAddress( Email => $Param{GetParam}->{ReplyTo} );
     }
 
     # check if current sender is customer (do nothing)
@@ -128,19 +127,19 @@ sub Run {
         next ARTICLE if !$Article->{To};
 
         # check based on recipient addresses of the article
-        my @ToEmailAddresses = $Self->{ParserObject}->SplitAddressLine(
-            Line => $Article->{To},
+        my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+        my @EmailAdresses      = (
+            $EmailAddressObject->ParseAddressLine(
+                Line => $Article->{To},
+            ),
+            $EmailAddressObject->ParseAddressLine(
+                Line => $Article->{Cc},
+            )
         );
-        my @CcEmailAddresses = $Self->{ParserObject}->SplitAddressLine(
-            Line => $Article->{Cc},
-        );
-        my @EmailAdresses = ( @ToEmailAddresses, @CcEmailAddresses );
 
         EMAIL:
         for my $Email (@EmailAdresses) {
-            my $Recipient = $Self->{ParserObject}->GetEmailAddress(
-                Email => $Email,
-            );
+            my $Recipient = $EmailAddressObject->GetAddress( AddressObject => $Email );
             if ( lc $Recipient eq lc $SenderAddress ) {
                 $IsInternalForward = 1;
                 last ARTICLE;
@@ -162,8 +161,8 @@ sub Run {
 
     return 1 if !$IsInternalForward;
 
-    $Param{GetParam}->{'X-OTOBO-FollowUp-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer} // 0;
-    $Param{GetParam}->{'X-OTOBO-FollowUp-SenderType'}           = $Param{JobConfig}->{SenderType} || 'customer';
+    $Param{GetParam}->{'X-CareOnCloud-FollowUp-IsVisibleForCustomer'} = $Param{JobConfig}->{IsVisibleForCustomer} // 0;
+    $Param{GetParam}->{'X-CareOnCloud-FollowUp-SenderType'}           = $Param{JobConfig}->{SenderType} || 'customer';
 
     return 1;
 }

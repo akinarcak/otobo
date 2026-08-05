@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -48,11 +48,11 @@ sub new {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    $Self->_AddCommunicationLog( Message => 'Searching for header X-OTOBO-Bounce.' );
+    $Self->_AddCommunicationLog( Message => 'Searching for header X-CareOnCloud-Bounce.' );
 
-    return if !$Param{GetParam}->{'X-OTOBO-Bounce'};
+    return if !$Param{GetParam}->{'X-CareOnCloud-Bounce'};
 
-    my $BounceMessageID = $Param{GetParam}->{'X-OTOBO-Bounce-OriginalMessageID'};
+    my $BounceMessageID = $Param{GetParam}->{'X-CareOnCloud-Bounce-OriginalMessageID'};
 
     $Self->_AddCommunicationLog(
         Message => sprintf(
@@ -92,8 +92,8 @@ sub _SetArticleTransmissionSendError {
         ChannelName => 'Email',
     );
 
-    my $BounceError     = $Param{GetParam}->{'X-OTOBO-Bounce-ErrorMessage'};
-    my $BounceMessageID = $Param{GetParam}->{'X-OTOBO-Bounce-OriginalMessageID'};
+    my $BounceError     = $Param{GetParam}->{'X-CareOnCloud-Bounce-ErrorMessage'};
+    my $BounceMessageID = $Param{GetParam}->{'X-CareOnCloud-Bounce-OriginalMessageID'};
 
     my $CurrentStatus = $ArticleBackendObject->ArticleGetTransmissionError(
         ArticleID => $ArticleID,

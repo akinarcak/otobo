@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,6 +16,7 @@
 
 package Kernel::System::VirtualFS;
 
+use v5.24;
 use strict;
 use warnings;
 
@@ -48,8 +49,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # load backend
     $Self->{BackendDefault} = $Kernel::OM->Get('Kernel::Config')->Get('VirtualFS::Backend')
@@ -59,7 +59,7 @@ sub new {
         return;
     }
 
-    $Self->{Backend}->{ $Self->{BackendDefault} } = $Self->{BackendDefault}->new();
+    $Self->{Backend}->{ $Self->{BackendDefault} } = $Self->{BackendDefault}->new;
 
     return $Self;
 }
@@ -70,7 +70,7 @@ read a file from virtual file system
 
     my %File = $VirtualFSObject->Read(
         Filename => '/Object/some/name.txt',
-        Mode     => 'utf8',
+        Mode     => 'utf8', # allowed values are 'utf8' or 'binary'
 
         # optional
         DisableWarnings => 1,
@@ -78,8 +78,10 @@ read a file from virtual file system
 
 returns
 
+Note that the content value is returned as a reference to a string.
+
     my %File = (
-        Content  => $ContentSCALAR,
+        Content  => $ReferenceToContentString,
 
         # preferences data
         Preferences => {
@@ -101,12 +103,13 @@ sub Read {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(Filename Mode)) {
-        if ( !$Param{$_} ) {
+    for my $Key (qw(Filename Mode)) {
+        if ( !$Param{$Key} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  => "Need $_!"
             );
+
             return;
         }
     }
@@ -120,6 +123,7 @@ sub Read {
                 Message  => "No such file '$Param{Filename}'!",
             );
         }
+
         return;
     }
 
@@ -134,18 +138,18 @@ sub Read {
         Bind => [ \$FileID ],
     );
 
-    while ( my @Row = $DBObject->FetchrowArray() ) {
+    while ( my @Row = $DBObject->FetchrowArray ) {
         $Preferences{ $Row[0] } = $Row[1];
     }
 
     # load backend (if not default)
     if ( !$Self->{Backend}->{$Backend} ) {
 
-        return if !$Kernel::OM->Get('Kernel::System::Main')->Require($Backend);
+        return unless $Kernel::OM->Get('Kernel::System::Main')->Require($Backend);
 
-        $Self->{Backend}->{$Backend} = $Backend->new();
+        $Self->{Backend}->{$Backend} = $Backend->new;
 
-        return if !$Self->{Backend}->{$Backend};
+        return unless $Self->{Backend}->{$Backend};
     }
 
     # get file
@@ -153,7 +157,8 @@ sub Read {
         %Param,
         BackendKey => $BackendKey,
     );
-    return if !$Content;
+
+    return unless $Content;
 
     return (
         Preferences => \%Preferences,
@@ -168,7 +173,7 @@ write a file to virtual file system
     my $Success = $VirtualFSObject->Write(
         Content  => \$Content,
         Filename => '/Object/SomeFileName.txt',
-        Mode     => 'binary'            # (binary|utf8)
+        Mode     => 'binary'            # allowed values are 'utf8' and 'binary'
 
         # optional, preferences data
         Preferences => {
@@ -209,7 +214,7 @@ sub Write {
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     # insert
-    return if !$DBObject->Do(
+    return unless $DBObject->Do(
         SQL => 'INSERT INTO virtual_fs (filename, backend_key, backend, create_time)'
             . ' VALUES ( ?, \'TMP\', ?, current_timestamp)',
         Bind => [ \$Param{Filename}, \$Self->{BackendDefault} ],
@@ -239,10 +244,11 @@ sub Write {
 
     # store file
     my $BackendKey = $Self->{Backend}->{ $Self->{BackendDefault} }->Write(%Param);
-    return if !$BackendKey;
+
+    return unless $BackendKey;
 
     # update backend key
-    return if !$DBObject->Do(
+    return unless $DBObject->Do(
         SQL  => 'UPDATE virtual_fs SET backend_key = ? WHERE id = ?',
         Bind => [ \$BackendKey, \$FileID ],
     );

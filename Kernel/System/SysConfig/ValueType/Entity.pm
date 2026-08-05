@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package Kernel::System::SysConfig::ValueType::Entity;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
 
 use strict;
@@ -110,6 +111,14 @@ sub SettingEffectiveValueCheck {
     if ( ref $Param{EffectiveValue} ) {
         $Result{Error} = 'EffectiveValue for Entity must be scalar!';
         return %Result;
+    }
+
+    # Allow empty values for entities in general.
+    if ( $Param{EffectiveValue} eq '' ) {
+        return (
+            Success        => 1,
+            EffectiveValue => $Param{EffectiveValue},
+        );
     }
 
     my $Value = $Param{XMLContentParsed}->{Value};
@@ -337,6 +346,7 @@ sub SettingRender {
         Disabled      => $Param{RW} ? 0 : 1,
         SelectedValue => $EffectiveValue,
         Title         => $Param{Name},
+        Translation   => 0,
         OptionTitle   => 1,
         Class         => "$Param{Class} Modernize",
     );
@@ -415,6 +425,7 @@ sub AddItem {
         ID            => $Param{Name} . $Param{IDSuffix},
         SelectedValue => $Param{DefaultItem}->{Content},
         Title         => $Param{Name},
+        Translation   => 0,
         OptionTitle   => 1,
         Class         => "$Param{Class} Modernize Entry",
     );

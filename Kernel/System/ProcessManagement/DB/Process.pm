@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,21 +16,16 @@
 
 package Kernel::System::ProcessManagement::DB::Process;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 
 # core modules
+use List::Util qw(any none);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::ProcessManagement::DB::Entity;
-use Kernel::System::ProcessManagement::DB::Activity;
-use Kernel::System::ProcessManagement::DB::ActivityDialog;
-use Kernel::System::ProcessManagement::DB::Process::State;
-use Kernel::System::ProcessManagement::DB::Transition;
-use Kernel::System::ProcessManagement::DB::TransitionAction;
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -42,8 +37,16 @@ our @ObjectDependencies = (
     'Kernel::System::Encode',
     'Kernel::System::Log',
     'Kernel::System::Main',
+    'Kernel::System::Namespace',
     'Kernel::System::Storage::S3',
+    'Kernel::System::SysConfig',
     'Kernel::System::YAML',
+    'Kernel::System::ProcessManagement::DB::Entity',
+    'Kernel::System::ProcessManagement::DB::Activity',
+    'Kernel::System::ProcessManagement::DB::ActivityDialog',
+    'Kernel::System::ProcessManagement::DB::Process::State',
+    'Kernel::System::ProcessManagement::DB::Transition',
+    'Kernel::System::ProcessManagement::DB::TransitionAction',
 );
 
 =head1 NAME
@@ -71,12 +74,12 @@ sub new {
     my $Self = {};
     bless( $Self, $Type );
 
-    $Self->{EntityObject}           = Kernel::System::ProcessManagement::DB::Entity->new();
-    $Self->{ActivityDialogObject}   = Kernel::System::ProcessManagement::DB::ActivityDialog->new();
-    $Self->{ActivityObject}         = Kernel::System::ProcessManagement::DB::Activity->new();
-    $Self->{StateObject}            = Kernel::System::ProcessManagement::DB::Process::State->new();
-    $Self->{TransitionObject}       = Kernel::System::ProcessManagement::DB::Transition->new();
-    $Self->{TransitionActionObject} = Kernel::System::ProcessManagement::DB::TransitionAction->new();
+    $Self->{EntityObject}           = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Entity');
+    $Self->{ActivityDialogObject}   = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::ActivityDialog');
+    $Self->{ActivityObject}         = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Activity');
+    $Self->{StateObject}            = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Process::State');
+    $Self->{TransitionObject}       = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Transition');
+    $Self->{TransitionActionObject} = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::TransitionAction');
 
     # get the cache TTL (in seconds)
     $Self->{CacheTTL} = int( $Kernel::OM->Get('Kernel::Config')->Get('Process::CacheTTL') || 3600 );
@@ -144,7 +147,7 @@ sub ProcessAdd {
     );
 
     my $EntityExists;
-    while ( my @Data = $DBObject->FetchrowArray() ) {
+    while ( $DBObject->FetchrowArray() ) {
         $EntityExists = 1;
     }
 
@@ -581,7 +584,7 @@ returns 1 if success or undef otherwise
         ID            => 123,             # mandatory
         EntityID      => 'P1'             # mandatory, exportable unique identifier
         Name          => 'NameOfProcess', # mandatory
-        StateentityID => 'S1',
+        StateEntityID => 'S1',
         Layout        => $LayoutHashRef,  # mandatory, diagram objects positions to be stored in
                                           #   YAML format
         Config        => $ConfigHashRef,  # mandatory, process configuration to be stored in YAML
@@ -619,7 +622,7 @@ sub ProcessUpdate {
     );
 
     my $EntityExists;
-    while ( my @Data = $DBObject->FetchrowArray() ) {
+    while ( $DBObject->FetchrowArray() ) {
         $EntityExists = 1;
     }
 
@@ -1216,13 +1219,13 @@ Returns:
 
     my $ProcessDump = $ProcessObject->ProcessDump(
         ResultType  => 'FILE'                                                    # 'SCALAR' || 'HASH' || 'FILE'
-        Location    => '/opt/otobo/Kernel/Config/Files/ZZZProcessManagement.pm', # mandatory for ResultType = 'FILE'
+        Location    => '/opt/careoncloud/Kernel/Config/Files/ZZZProcessManagement.pm', # mandatory for ResultType = 'FILE'
         UserID      => 1,
     );
 
 Returns:
 
-    $ProcessDump = '/opt/otobo/Kernel/Config/Files/ZZZProcessManagement.pm';     # or undef if can't write the file
+    $ProcessDump = '/opt/careoncloud/Kernel/Config/Files/ZZZProcessManagement.pm';     # or undef if can't write the file
 
 or, when S3 is active
 
@@ -1242,7 +1245,7 @@ sub ProcessDump {
         return;
     }
 
-    # default valuse
+    # default value
     my $ResultType = $Param{ResultType} // 'SCALAR';
 
     if ( $ResultType eq 'FILE' ) {
@@ -1290,11 +1293,13 @@ sub ProcessDump {
         next ACTIVITY if !IsHashRefWithData($ActivityData);
 
         $ActivityDump{ $ActivityData->{EntityID} } = {
-            ID             => $ActivityData->{ID},
-            Name           => $ActivityData->{Name},
-            CreateTime     => $ActivityData->{CreateTime},
-            ChangeTime     => $ActivityData->{ChangeTime},
-            ActivityDialog => $ActivityData->{Config}->{ActivityDialog} || '',
+            ID              => $ActivityData->{ID},
+            Name            => $ActivityData->{Name},
+            Namespace       => $ActivityData->{Namespace}       || '',
+            ProcessEntityID => $ActivityData->{ProcessEntityID} || '',
+            CreateTime      => $ActivityData->{CreateTime},
+            ChangeTime      => $ActivityData->{ChangeTime},
+            ActivityDialog  => $ActivityData->{Config}->{ActivityDialog} || '',
         };
     }
 
@@ -1310,6 +1315,8 @@ sub ProcessDump {
 
         $ActivityDialogDump{ $ActivityDialogData->{EntityID} } = {
             Name                 => $ActivityDialogData->{Name},
+            Namespace            => $ActivityDialogData->{Namespace}       || '',
+            ProcessEntityID      => $ActivityDialogData->{ProcessEntityID} || '',
             CreateTime           => $ActivityDialogData->{CreateTime},
             ChangeTime           => $ActivityDialogData->{ChangeTime},
             Interface            => $ActivityDialogData->{Config}->{Interface}            || '',
@@ -1322,6 +1329,7 @@ sub ProcessDump {
             SubmitAdviceText     => $ActivityDialogData->{Config}->{SubmitAdviceText}     || '',
             SubmitButtonText     => $ActivityDialogData->{Config}->{SubmitButtonText}     || '',
             InputFieldDefinition => $ActivityDialogData->{Config}->{InputFieldDefinition} || '',
+            DirectSubmit         => $ActivityDialogData->{Config}->{DirectSubmit}         || 0,
         };
     }
 
@@ -1337,6 +1345,8 @@ sub ProcessDump {
 
         $TransitionDump{ $TransitionData->{EntityID} } = {
             Name             => $TransitionData->{Name},
+            Namespace        => $TransitionData->{Namespace}       || '',
+            ProcessEntityID  => $TransitionData->{ProcessEntityID} || '',
             CreateTime       => $TransitionData->{CreateTime},
             ChangeTime       => $TransitionData->{ChangeTime},
             Condition        => $TransitionData->{Config}->{Condition}        || {},
@@ -1355,11 +1365,13 @@ sub ProcessDump {
         next TRANSITIONACTION if !IsHashRefWithData($TransitionActionData);
 
         $TransitionActionDump{ $TransitionActionData->{EntityID} } = {
-            Name       => $TransitionActionData->{Name},
-            CreateTime => $TransitionActionData->{CreateTime},
-            ChangeTime => $TransitionActionData->{ChangeTime},
-            Module     => $TransitionActionData->{Config}->{Module} || '',
-            Config     => $TransitionActionData->{Config}->{Config} || {},
+            Name            => $TransitionActionData->{Name},
+            Namespace       => $TransitionActionData->{Namespace}       || '',
+            ProcessEntityID => $TransitionActionData->{ProcessEntityID} || '',
+            CreateTime      => $TransitionActionData->{CreateTime},
+            ChangeTime      => $TransitionActionData->{ChangeTime},
+            Module          => $TransitionActionData->{Config}->{Module} || '',
+            Config          => $TransitionActionData->{Config}->{Config} || {},
         };
     }
 
@@ -1426,7 +1438,7 @@ sub ProcessDump {
     {
         # build comment (therefore we need to trick out the filter)
         $PMFileOutput .= <<'EOF';
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
 package Kernel::Config::Files::ZZZProcessManagement;
 use strict;
@@ -1537,7 +1549,7 @@ sub ProcessImport {
 
     my @MissingDynamicFieldNames;
     for my $UsedDynamicFieldName (@UsedDynamicFields) {
-        if ( !grep { $_ eq $UsedDynamicFieldName } @PresentDynamicFieldNames ) {
+        if ( none { $_ eq $UsedDynamicFieldName } @PresentDynamicFieldNames ) {
             push @MissingDynamicFieldNames, $UsedDynamicFieldName;
         }
     }
@@ -1549,6 +1561,9 @@ sub ProcessImport {
                 . "Import has been stopped.",
         );
     }
+
+    # collect namespaces to add potential missing ones
+    my %ImportNamespaces;
 
     # make sure all activities and dialogs are present
     my @UsedActivityDialogs;
@@ -1566,6 +1581,10 @@ sub ProcessImport {
                 push @UsedActivityDialogs, $UsedActivityDialog;
             }
         }
+
+        if ( $ProcessData->{Activities}{$ActivityEntityID}{Namespace} ) {
+            $ImportNamespaces{ $ProcessData->{Activities}{$ActivityEntityID}{Namespace} } = 1;
+        }
     }
 
     for my $ActivityDialogEntityID (@UsedActivityDialogs) {
@@ -1573,6 +1592,10 @@ sub ProcessImport {
             return (
                 Message => "Missing data for ActivityDialog $ActivityDialogEntityID.",
             );
+        }
+
+        if ( $ProcessData->{ActivityDialogs}{$ActivityDialogEntityID}{Namespace} ) {
+            $ImportNamespaces{ $ProcessData->{ActivityDialogs}{$ActivityDialogEntityID}{Namespace} } = 1;
         }
     }
 
@@ -1583,6 +1606,10 @@ sub ProcessImport {
                 Message => "Missing data for Transition $TransitionEntityID.",
             );
         }
+
+        if ( $ProcessData->{Transitions}{$TransitionEntityID}{Namespace} ) {
+            $ImportNamespaces{ $ProcessData->{Transitions}{$TransitionEntityID}{Namespace} } = 1;
+        }
     }
 
     # make sure all transition actions are present
@@ -1592,6 +1619,93 @@ sub ProcessImport {
                 Message => "Missing data for TransitionAction $TransitionActionEntityID.",
             );
         }
+
+        if ( $ProcessData->{TransitionActions}{$TransitionActionEntityID}{Namespace} ) {
+            $ImportNamespaces{ $ProcessData->{TransitionActions}{$TransitionActionEntityID}{Namespace} } = 1;
+        }
+    }
+
+    # check if new namespaces need to be created and if so, do it
+    my @Namespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'ProcessManagement',
+    );
+
+    my @NamespacesToAdd;
+    IMPORTNAMESPACE:
+    for my $ImportNamespace ( keys %ImportNamespaces ) {
+        next IMPORTNAMESPACE if any { $_ eq $ImportNamespace } @Namespaces;
+
+        push @NamespacesToAdd, $ImportNamespace;
+    }
+
+    if (@NamespacesToAdd) {
+        my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+
+        my %ProcessNamespacesSetting = $SysConfigObject->SettingGet(
+            Name => 'Namespaces###ProcessManagement',
+        );
+
+        my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+            UserID    => 1,
+            Force     => 1,
+            DefaultID => $ProcessNamespacesSetting{DefaultID},
+        );
+
+        # Update setting with modified data
+        my %Result = $SysConfigObject->SettingUpdate(
+            Name           => 'Namespaces###ProcessManagement',
+            IsValid        => 1,
+            EffectiveValue => [
+                $ProcessNamespacesSetting{EffectiveValue}->@*,
+                @NamespacesToAdd,
+            ],
+            ExclusiveLockGUID => $ExclusiveLockGUID,
+            UserID            => 1,
+        );
+
+        if ( !$Result{Success} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Could not update setting 'Namespaces###ProcessManagement'.",
+            );
+
+            return;
+        }
+
+        my $Success = $SysConfigObject->SettingUnlock(
+            UserID    => 1,
+            DefaultID => $ProcessNamespacesSetting{DefaultID},
+        );
+
+        if ( !$Success ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Could not unlock setting 'Namespaces###ProcessManagement'.",
+            );
+
+            return;
+        }
+
+        my %DeploymentResult = $SysConfigObject->ConfigurationDeploy(
+            Comments      => "ProcessImport - update setting 'Namespaces###ProcessManagement' with namespaces of imported process elements.",
+            UserID        => 1,
+            Force         => 1,
+            DirtySettings => ['Namespaces###ProcessManagement'],
+        );
+
+        if ( !$DeploymentResult{Success} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Deployment failed.",
+            );
+
+            return;
+        }
+
+        $Kernel::OM->ObjectsDiscard(
+            Objects => ['Kernel::Config'],
+        );
+        my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
     }
 
     my %EntityMapping;
@@ -1847,7 +1961,8 @@ sub ProcessImport {
             'The process "%s" and all of its data has been imported successfully.',
             $ProcessData->{Process}->{Name}
         ),
-        Success => 1,
+        Success          => 1,
+        ProcessEntityIDs => [ keys $EntityMapping{Process}->%* ],
     );
 }
 

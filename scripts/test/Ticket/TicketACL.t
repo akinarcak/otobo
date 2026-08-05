@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,11 +19,12 @@ use warnings;
 use utf8;
 
 # core modules
+use Storable qw(dclone);
 
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and $main::Self
 
 our $Self;
@@ -61,12 +62,15 @@ my ( $UserLogin, $UserID ) = $Helper->TestUserCreate(
 my %UserData = $UserObject->GetUserData(
     UserID => $UserID,
 );
+ok( scalar %UserData, 'first user created' );
+
 my ( $NewUserLogin, $NewUserID ) = $Helper->TestUserCreate(
     Groups => ['admin'],
 );
 my %NewUserData = $UserObject->GetUserData(
     UserID => $NewUserID,
 );
+ok( scalar %NewUserData, 'second user created' );
 
 # set customer user options
 my $CustomerUserLogin = $Helper->TestCustomerUserCreate()
@@ -997,8 +1001,6 @@ my @Tests = (
 );
 
 for my $Test (@Tests) {
-
-    my $Config     = $Test->{Config};
     my $ACLSuccess = $TicketObject->TicketAcl( %{ $Test->{Config} } );
 
     if ( !$Test->{SuccessMatch} ) {
@@ -2927,7 +2929,6 @@ my $ExecuteTests = sub {
             "$Test->{Name} ACLs Set and Get from sysconfig",
         );
 
-        my $Config     = $Test->{Config};
         my $ACLSuccess = $TicketObject->TicketAcl( %{ $Test->{Config} } );
 
         # get the data from ACL
@@ -4182,7 +4183,7 @@ $NumberOfTests = $#TestsNot;
 for my $TestCase ( sort keys %TestModifiers ) {
     for my $Index ( 0 .. $NumberOfTests ) {
 
-        my $Test = Storable::dclone( $TestsNot[$Index] );
+        my $Test = dclone( $TestsNot[$Index] );
 
         $Test->{Name} = $TestModifiers{$TestCase}->[$Index]->{Name};
         $Test->{ACLs}->{'Role-Test'}->{Properties}->{User}->{Role} = $TestModifiers{$TestCase}->[$Index]->{Role};

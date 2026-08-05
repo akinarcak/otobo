@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,7 @@ ConvenienceMethods.t - test some select methods of Kernel::System::DB
 
 =head1 SYNOPSIS
 
-    prove -I . -I Kernel/cpan-lib/ --verbose --merge scripts/test/DB/ConvenienceMethods.t
+    bin/careoncloud.Console.pl Dev::UnitTest::Run --verbose --merge scripts/test/DB/ConvenienceMethods.t
 
 =head1 DESCRIPTION
 
@@ -51,7 +51,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # get needed objects
@@ -75,9 +75,9 @@ ok( $DBObject->Do( SQL => $CreateTableSQL ), 'table created' );
 
 # country translations, sorted by the English name
 my @Countries = (
-    [ 'Austria',  'Österreich', 'ඔස්ට්රියාව',    1 ],
+    [ 'Austria',  'Österreich',  'ඔස්ට්රියාව',  1 ],
     [ 'Colombia', 'Kolumbien',   'කොලොම්බියාව', 1 ],
-    [ 'Germany',  'Deutschland', 'ජර්මනිය',             1 ],
+    [ 'Germany',  'Deutschland', 'ජර්මනිය',     1 ],
 );
 
 # Insert the values.
@@ -95,7 +95,7 @@ is( $NumInserted, scalar(@Countries), 'insert countries with column bind' );
 
 # Add more countries with ArrayTupleFetch.
 my @MoreCountries = (
-    [ 'Malawi',    'Malawi',    'මලාවි',              1 ],
+    [ 'Malawi',    'Malawi',    'මලාවි',      1 ],
     [ 'Sri Lanka', 'Sri Lanka', 'ශ්රී ලංකාව', 1 ],
 );
 push @Countries, @MoreCountries;

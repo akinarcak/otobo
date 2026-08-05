@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,9 +14,9 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
@@ -25,10 +25,10 @@ use File::Path qw(mkpath rmtree);
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::MockTime qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);
 use Kernel::System::UnitTest::RegisterDriver;    # set up the $Self and $Kernel::OM
-use Kernel::Output::HTML::ArticleCheck::SMIME;
+use Kernel::Output::HTML::ArticleCheck::SMIME ();
 
 our $Self;
 
@@ -285,7 +285,14 @@ my @Certificates = (
         PrivateSecretFileName => 'SMIMEPrivateKeyPass-3.asc',
     },
     {
-        CertificateName       => 'OTOBOUserCert',
+        CertificateName       => 'Check4',
+        CertificateHash       => $Check3Hash,
+        CertificateFileName   => 'SMIMECertificate-4.asc',
+        PrivateKeyFileName    => 'SMIMEPrivateKey-4.asc',
+        PrivateSecretFileName => 'SMIMEPrivateKeyPass-4.asc',
+    },
+    {
+        CertificateName       => 'CareOnCloudUserCert',
         CertificateHash       => $AxelCertHash,
         CertificateFileName   => 'SMIMEUserCertificate-Axel.crt',
         PrivateKeyFileName    => 'SMIMEUserPrivateKey-Axel.pem',
@@ -539,7 +546,7 @@ my @Tests = (
         FixedTimeSet => 1,
         Data         => {
             Events                   => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail           => ['unittest@example.org'],
+            RecipientEmail           => ['unittest_expired@example.org'],
             EmailSecuritySettings    => ['1'],
             EmailSigningCrypting     => ['SMIMECrypt'],
             EmailMissingCryptingKeys => ['Skip'],
@@ -552,7 +559,7 @@ my @Tests = (
         FixedTimeSet => 1,
         Data         => {
             Events                   => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail           => ['unittest@example.org'],
+            RecipientEmail           => ['unittest_expired@example.org'],
             EmailSecuritySettings    => ['1'],
             EmailSigningCrypting     => ['SMIMECrypt'],
             EmailMissingCryptingKeys => ['Send'],
@@ -565,7 +572,7 @@ my @Tests = (
         FixedTimeSet => 1,
         Data         => {
             Events                   => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail           => ['unittest@example.org'],
+            RecipientEmail           => ['unittest_expired@example.org'],
             EmailSecuritySettings    => ['1'],
             EmailSigningCrypting     => ['SMIMESignCrypt'],
             EmailMissingCryptingKeys => ['Skip'],
@@ -578,7 +585,7 @@ my @Tests = (
         FixedTimeSet => 1,
         Data         => {
             Events                   => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail           => ['unittest@example.org'],
+            RecipientEmail           => ['unittest_expired@example.org'],
             EmailSecuritySettings    => ['1'],
             EmailSigningCrypting     => ['SMIMESignCrypt'],
             EmailMissingCryptingKeys => ['Send'],
@@ -620,12 +627,12 @@ for my $Test (@Tests) {
         Message => {
             en => {
                 Subject     => 'JobName',
-                Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+                Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
                 ContentType => 'text/plain',
             },
             de => {
                 Subject     => 'JobName',
-                Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+                Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
                 ContentType => 'text/plain',
             },
         },

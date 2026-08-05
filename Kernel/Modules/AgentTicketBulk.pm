@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -125,7 +125,7 @@ sub Run {
                 Data         => \%QueueList,
                 SelectedID   => $GetParam{QueueID},
                 TreeView     => $TreeView,
-                Translation  => 0,
+                Translation  => $TreeView,
                 PossibleNone => 1,
             },
         );
@@ -143,9 +143,10 @@ sub Run {
             }
 
             push @JSONData, {
-                Name       => 'StateID',
-                Data       => \%StateList,
-                SelectedID => $GetParam{StateID},
+                Name        => 'StateID',
+                Data        => \%StateList,
+                SelectedID  => $GetParam{StateID},
+                Translation => 1,
             };
         }
 
@@ -162,7 +163,7 @@ sub Run {
                 Data         => \%TypeList,
                 SelectedID   => $GetParam{TypeID},
                 PossibleNone => 1,
-                Translation  => 0,
+                Translation  => 1,
             };
         }
 
@@ -207,9 +208,10 @@ sub Run {
             }
 
             push @JSONData, {
-                Name       => 'PriorityID',
-                Data       => \%PriorityList,
-                SelectedID => $GetParam{PriorityID},
+                Name        => 'PriorityID',
+                Data        => \%PriorityList,
+                SelectedID  => $GetParam{PriorityID},
+                Translation => 1,
             };
         }
 
@@ -642,6 +644,16 @@ sub Run {
                 if ( !$TicketID ) {
                     $Error{'LinkTogetherParentInvalid'} = 'ServerError';
                 }
+
+                # check permissions
+                my $Access = $TicketObject->TicketPermission(
+                    Type     => 'ro',
+                    TicketID => $TicketID,
+                    UserID   => $Self->{UserID}
+                );
+                if ( !$Access ) {
+                    $Error{'LinkTogetherParentInvalid'} = 'ServerError';
+                }
             }
 
             # call Validate() in all ticket bulk modules
@@ -888,14 +900,13 @@ sub Run {
                     my $Customer   = $Recipients[0];
 
                     # get template generator object
-                    my $CustomerUserObject      = $Kernel::OM->Get('Kernel::System::CustomerUser');
-                    my $TemplateGeneratorObject = $Kernel::OM->ObjectParamAdd(
+                    my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
+                    $Kernel::OM->ObjectParamAdd(
                         'Kernel::System::TemplateGenerator' => {
                             CustomerUserObject => $CustomerUserObject,
                         },
                     );
-
-                    $TemplateGeneratorObject = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
+                    my $TemplateGeneratorObject = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
 
                     # generate sender name
                     my $From = $TemplateGeneratorObject->Sender(
@@ -1357,7 +1368,8 @@ sub _Mask {
             Data => \%StateList,
             Name => 'StateID',
             %State,
-            Class => 'Modernize',
+            Class       => 'Modernize FormUpdate',
+            Translation => 1,
         );
         $LayoutObject->Block(
             Name => 'State',
@@ -1365,6 +1377,8 @@ sub _Mask {
         );
 
         my $StateObject = $Kernel::OM->Get('Kernel::System::State');
+
+        my $QuickDateButtons = $Config->{QuickDateButtons} // $ConfigObject->Get('Ticket::Frontend::DefaultQuickDateButtons');
 
         STATE_ID:
         for my $StateID ( sort keys %StateList ) {
@@ -1378,7 +1392,9 @@ sub _Mask {
                 Class                => $Param{Errors}->{DateInvalid}                           || '',
                 Validate             => 1,
                 ValidateDateInFuture => 1,
+                QuickDateButtons     => $QuickDateButtons,
             );
+
             $LayoutObject->Block(
                 Name => 'StatePending',
                 Data => \%Param,
@@ -1400,8 +1416,8 @@ sub _Mask {
             Name         => 'TypeID',
             SelectedID   => $Param{TypeID},
             Sort         => 'AlphanumericValue',
-            Translation  => 0,
-            Class        => 'Modernize',
+            Translation  => 1,
+            Class        => 'Modernize FormUpdate',
         );
         $LayoutObject->Block(
             Name => 'Type',
@@ -1422,7 +1438,7 @@ sub _Mask {
             Translation  => 0,
             SelectedID   => $Param{OwnerID},
             PossibleNone => 1,
-            Class        => 'Modernize',
+            Class        => 'Modernize FormUpdate',
         );
         $LayoutObject->Block(
             Name => 'Owner',
@@ -1443,7 +1459,7 @@ sub _Mask {
             Name         => 'ResponsibleID',
             Translation  => 0,
             SelectedID   => $Param{ResponsibleID},
-            Class        => 'Modernize',
+            Class        => 'Modernize FormUpdate',
         );
         $LayoutObject->Block(
             Name => 'Responsible',
@@ -1464,7 +1480,8 @@ sub _Mask {
         Size           => 0,
         Name           => 'QueueID',
         OnChangeSubmit => 0,
-        Class          => 'Modernize',
+        TreeView       => $ConfigObject->Get('Ticket::Frontend::ListType') eq 'tree' ? 1 : 0,
+        Class          => 'Modernize FormUpdate',
     );
 
     # get priority
@@ -1490,7 +1507,7 @@ sub _Mask {
             Data => \%PriorityList,
             Name => 'PriorityID',
             %Priority,
-            Class => 'Modernize',
+            Class => 'Modernize FormUpdate',
 
         );
         $LayoutObject->Block(
@@ -1573,11 +1590,6 @@ sub _Mask {
     if ( $Param{TicketsWereLocked} ) {
 
         my $URL = $Self->{LastScreenOverview};
-
-        # add session if no cookies are enabled
-        if ( $Self->{SessionID} && !$Self->{SessionIDCookie} ) {
-            $URL .= ';' . $Self->{SessionName} . '=' . $Self->{SessionID};
-        }
 
         $LayoutObject->AddJSData(
             Key   => 'TicketBulkURL',

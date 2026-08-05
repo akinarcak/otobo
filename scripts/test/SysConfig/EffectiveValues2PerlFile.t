@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,18 +14,19 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-## nofilter(TidyAll::Plugin::OTOBO::Perl::TestSubs)
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeAddSeconds FixedTimeSet);
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::ON and the test driver $Self
 
 our $Self;
-
-use Kernel::System::ObjectManager;
 
 # Get needed objects
 my $HelperObject = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
@@ -91,7 +92,7 @@ my @Tests = (
         },
         ExpectedValue => {
             Package => 'Kernel::Config::Files::ZZZAAAuto;',
-            Value   => << 'EOF'
+            Value   => <<'EOF'
 $Self->{'SettingName'} =  '1';
 EOF
         },
@@ -117,7 +118,7 @@ EOF
         },
         ExpectedValue => {
             Package => 'Kernel::Config::Files::ZZZAAAuto;',
-            Value   => << 'EOF'
+            Value   => <<'EOF'
 $Self->{'SettingName'} =  '1';
 $Self->{'AnotherSettingName'} =  '2';
 EOF
@@ -142,7 +143,7 @@ EOF
         },
         ExpectedValue => {
             Package => 'Kernel::Config::Files::User::1;',
-            Value   => << 'EOF'
+            Value   => <<'EOF'
 $Self->{'SettingName'} =  [
   {
     'Value' => 1
@@ -178,7 +179,7 @@ EOF
         },
         ExpectedValue => {
             Package => 'Kernel::Config::Files::User::1;',
-            Value   => << 'EOF'
+            Value   => <<'EOF'
 $Self->{'SettingName'} =  [
   {
     'Value' => 1
@@ -221,7 +222,7 @@ EOF
         },
         ExpectedValue => {
             Package => 'Kernel::Config::Files::User::1;',
-            Value   => << 'EOF'
+            Value   => <<'EOF'
 $Self->{'SettingName'}->{'Key1'} =  [
   {
     'Value' => 1
@@ -265,7 +266,7 @@ EOF
         },
         ExpectedValue => {
             Package => 'Kernel::Config::Files::User::1;',
-            Value   => << 'EOF'
+            Value   => <<'EOF'
 delete $Self->{'DefaultUsedLanguages'};
 EOF
         },
@@ -276,8 +277,8 @@ EOF
 my $AssembleExpectedValue = sub {
     my %Param = @_;
 
-    my $File = << "EOF";
-# OTOBO config file (automatically generated)
+    my $File = <<"EOF";
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:2.0
 package $Param{Package}
 use strict;
@@ -290,7 +291,7 @@ EOF
 
     $File .= $Param{Value};
 
-    $File .= << 'EOF';
+    $File .= <<'EOF';
     return;
 }
 1;

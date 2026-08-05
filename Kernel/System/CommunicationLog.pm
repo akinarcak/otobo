@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -276,13 +276,13 @@ sub ObjectLogStop {
 Adds a log entry for a certain log object.
 
     my $Success = $CommunicationLogObject->ObjectLog(
-        ObjectLogType => '...' # (required) To be defined by the related LogObject
-        ObjectLogID   => 123, # (required) The ObjectID of the started object type
+        ObjectLogType => 'Message', # (required) To be defined by the related LogObject
+        Priority      => 'Error',   # optional, the default is 'Info'
+        Key           => 'Kernel::System::MailQueue',
+        Value         => 'Need Message',
     );
 
-Returns:
-
-    1 in case of success, 0 in case of errors
+Returns 1 in case of success, 0 or undef in case of errors.
 
 =cut
 

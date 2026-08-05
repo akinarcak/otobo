@@ -1,6 +1,6 @@
 /*
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2021 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2024 Rother OSS GmbH, https://otobo.io/
 
 This software comes with ABSOLUTELY NO WARRANTY. For details, see
 the enclosed file COPYING for license information (GPL). If you
@@ -154,7 +154,7 @@ border-style: solid;
      *   auto, content long enough to trigger the horizontal scroll and a hover style set
      *   on elements inside the container.
      *   The container mysteriously increases in size.
-     *   (e.g. if you have installed OTOBODashboardOverviewFilters and many dynamic fields are
+     *   (e.g. if you have installed CareOnCloudDashboardOverviewFilters and many dynamic fields are
      *   shown in the dashboard.)
      */
     min-height: 0%;

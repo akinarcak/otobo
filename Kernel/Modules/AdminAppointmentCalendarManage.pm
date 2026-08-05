@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,7 @@ package Kernel::Modules::AdminAppointmentCalendarManage;
 use strict;
 use warnings;
 
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 use parent qw(Kernel::System::AsynchronousExecutor);
@@ -33,6 +33,10 @@ sub new {
     my $Self = {%Param};
     bless( $Self, $Type );
 
+    if ( !$Param{AccessRw} && $Param{AccessRo} ) {
+        $Self->{LightAdmin} = 1;
+    }
+
     # Certain search parameters for ticket appointments should be stored as scalars, not array refs.
     $Self->{SearchParamScalar} = [
         'MIMEBase_From',
@@ -42,6 +46,15 @@ sub new {
         'MIMEBase_Body',
         'MIMEBase_AttachmentName',
     ];
+
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
 
     return $Self;
 }
@@ -108,6 +121,17 @@ sub Run {
         );
 
         $GetParam{$Key} = $SafeGetParam{String};
+    }
+
+    # transfer param IncludeInvalid
+    if ( defined $GetParam{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $GetParam{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $GetParam{IncludeInvalid};
     }
 
     my $LayoutObject   = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
@@ -189,6 +213,20 @@ sub Run {
             }
         }
 
+        if (
+            $Self->{LightAdmin}
+            && !$Kernel::OM->Get('Kernel::System::Group')->PermissionCheck(
+                UserID    => $Self->{UserID},
+                GroupName => $Kernel::OM->Get('Kernel::System::Group')->GroupLookup(
+                    GroupID => $GetParam{GroupID},
+                ),
+                Type => 'rw',
+            )
+            )
+        {
+            $Error{GroupIDInvalid} = "ServerError";
+        }
+
         $GetParam{TicketAppointments} = $Self->_GetTicketAppointmentParams(%GetParam);
 
         # Get queue create permissions for the user.
@@ -227,7 +265,7 @@ sub Run {
         if (%Error) {
 
             # get selections
-            my $GroupSelection     = $Self->_GroupSelectionGet(%GetParam);
+            my $GroupSelection     = $Self->_GroupSelectionGet( %GetParam, %Error );
             my $ColorPalette       = $Self->_ColorPaletteGet();
             my $ValidSelection     = $Self->_ValidSelectionGet(%GetParam);
             my %TicketAppointments = $Self->_TicketAppointments();
@@ -244,7 +282,7 @@ sub Run {
                     ValidID      => $ValidSelection,
                     Subaction    => 'StoreNew',
                     Title        => Translatable('Add new Calendar'),
-                    WidgetStatus => $RuleCount ? 'Expanded' : 'Collapsed',
+                    WidgetStatus => ( $RuleCount ? 'Expanded' : 'Collapsed' ),
                     %TicketAppointments,
                 },
             );
@@ -378,7 +416,7 @@ sub Run {
                 ValidID      => $ValidSelection,
                 Subaction    => 'Update',
                 Title        => Translatable('Edit Calendar'),
-                WidgetStatus => $RuleCount ? 'Expanded' : 'Collapsed',
+                WidgetStatus => ( $RuleCount ? 'Expanded' : 'Collapsed' ),
                 %TicketAppointments,
             },
         );
@@ -504,7 +542,7 @@ sub Run {
                     ValidID      => $ValidSelection,
                     Subaction    => 'Update',
                     Title        => Translatable('Edit Calendar'),
-                    WidgetStatus => $RuleCount ? 'Expanded' : 'Collapsed',
+                    WidgetStatus => ( $RuleCount ? 'Expanded' : 'Collapsed' ),
                     %TicketAppointments,
                 },
             );
@@ -701,15 +739,55 @@ sub Run {
 sub _Overview {
     my ( $Self, %Param ) = @_;
 
+    my %RequiredPermissions;
+
+    if ( $Self->{LightAdmin} ) {
+        %RequiredPermissions = (
+            UserID     => $Self->{UserID},
+            Permission => 'rw',
+        );
+    }
+
     my $CalendarObject = $Kernel::OM->Get('Kernel::System::Calendar');
 
-    # get all calendars user has RW access to
-    my @Calendars = $CalendarObject->CalendarList(
-        UserID     => $Self->{UserID},
-        Permission => 'rw',
-    );
+    # get all calendars user has access to and apply valid state filter
+    my @Calendars;
+    if ( $Self->{IncludeInvalid} ) {
+        push @Calendars, $CalendarObject->CalendarList(
+            %RequiredPermissions,
+
+            # from CalendarList POD: 0 - All states
+            ValidID => 0,
+        );
+    }
+    else {
+
+        # fetch valid
+        push @Calendars, $CalendarObject->CalendarList(
+            %RequiredPermissions,
+
+            # from CalendarList POD: 1 - All valid
+            ValidID => 1,
+        );
+
+        # fetch invalid-temporarily
+        push @Calendars, $CalendarObject->CalendarList(
+            %RequiredPermissions,
+
+            # from CalendarList POD: 3 - All temporarily invalid
+            ValidID => 3,
+        );
+    }
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+
+    $LayoutObject->Block(
+        Name => 'IncludeInvalid',
+        Data => {
+            IncludeInvalid        => $Self->{IncludeInvalid},
+            IncludeInvalidChecked => $Self->{IncludeInvalidChecked} ? 'checked' : '',
+        },
+    );
 
     $LayoutObject->Block(
         Name => 'CalendarFilter',
@@ -725,10 +803,12 @@ sub _Overview {
     $Param{ValidCount} = 0;
     for my $Calendar (@Calendars) {
 
-        # group name
-        $Calendar->{Group} = $Kernel::OM->Get('Kernel::System::Group')->GroupLookup(
-            GroupID => $Calendar->{GroupID},
-        );
+        # get the group name when we have a group id
+        $Calendar->{Group} = $Calendar->{GroupID}
+            ? $Kernel::OM->Get('Kernel::System::Group')->GroupLookup(
+                GroupID => $Calendar->{GroupID},
+            )
+            : '';
 
         # valid text
         $Calendar->{Valid} = $Kernel::OM->Get('Kernel::System::Valid')->ValidLookup(
@@ -801,18 +881,25 @@ sub _Mask {
 sub _GroupSelectionGet {
     my ( $Self, %Param ) = @_;
 
-    # get list of groups where user has RW permissions
-    my %GroupList = $Kernel::OM->Get('Kernel::System::Group')->PermissionUserGet(
-        UserID => $Self->{UserID},
-        Type   => 'rw',
-    );
+    my %GroupList;
+
+    # get all groups that user has access to
+    if ( $Self->{LightAdmin} ) {
+        %GroupList = $Kernel::OM->Get('Kernel::System::Group')->PermissionUserGet(
+            UserID => $Self->{UserID},
+            Type   => 'rw',
+        );
+    }
+    else {
+        %GroupList = $Kernel::OM->Get('Kernel::System::Group')->GroupList( Valid => 1 );
+    }
 
     my $GroupSelection = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->BuildSelection(
         Data        => \%GroupList,
         Name        => 'GroupID',
         SelectedID  => $Param{GroupID} || '',
         Translation => 0,
-        Class       => 'Modernize Validate_Required',
+        Class       => 'Modernize Validate_Required ' . ( $Param{GroupIDInvalid} // '' ),
     );
 
     return $GroupSelection;
@@ -1062,7 +1149,10 @@ sub _GetTicketAppointmentParams {
             if ( $Key =~ /^${Field}_([A-Za-z0-9]+)/ ) {
                 my $RuleID = $1;
 
-                # if rule id is integer, generate random guid
+                # If the rule id is an integer then generate a random id, hoping that there are no clashes.
+                # The rule id is an integer when new rules have been added in Core.Agent.Admin.AppointmentCalendar.Manage.js
+                # The rule id is used in event handlers. Based on the rule id they can infer which rule
+                # has caused the creation of the appointment.
                 if ( IsInteger($RuleID) ) {
                     $TicketAppointmentParams{$RuleID}->{RuleID} = $MainObject->GenerateRandomString(
                         Length     => 32,

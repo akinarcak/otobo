@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -48,7 +50,7 @@ my $TicketID = $TicketObject->TicketCreate(
     OwnerID      => 1,
     UserID       => 1,
 );
-$Self->True(
+ok(
     $TicketID,
     'TicketCreate()',
 );
@@ -61,7 +63,7 @@ my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
 # get current XHeaders
 my @XHeaders        = @{ $ConfigObject->Get('PostmasterX-Header') };
-my $KeepStateHeader = $ConfigObject->Get('KeepStateHeader') || 'X-OTOBO-FollowUp-State-Keep';
+my $KeepStateHeader = $ConfigObject->Get('KeepStateHeader') || 'X-CareOnCloud-FollowUp-State-Keep';
 
 # make sure Keep state header is not in this list
 @XHeaders = grep { $_ ne $KeepStateHeader } @XHeaders;
@@ -230,14 +232,14 @@ for my $Test (@Tests) {
     }
 
     # check we actually got followup
-    $Self->Is(
+    is(
         $Return[0] || 0,
         2,
         "$Test->{Name} Run() - FollowUp",
     );
 
     #check we actually got same TicketID
-    $Self->Is(
+    is(
         $Return[1] || 0,
         $MainTicket{TicketID},
         "$Test->{Name} Run() - FollowUp/TicketID",
@@ -253,13 +255,11 @@ for my $Test (@Tests) {
         DynamicFields => 0,
     );
 
-    $Self->Is(
+    is(
         $Ticket{State},
         $Test->{ExpectedResults},
         "$Test->{Name} Run() - State after FollowUp",
     );
 }
 
-# cleanup is done by RestoreDatabase
-
-$Self->DoneTesting();
+done_testing;

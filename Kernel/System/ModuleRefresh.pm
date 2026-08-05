@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,18 +26,18 @@ use parent qw(Module::Refresh);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our $ObjectManagerDisabled = 1;
 
 =head1 NAME
 
-Kernel::System::ModuleRefresh - refresh OTOBO Perl modules in long running processes
+Kernel::System::ModuleRefresh - refresh CareOnCloud ESM Perl modules in long running processes
 
 =head1 DESCRIPTION
 
 This module is used for reloading modules. Use cases are changed modules in F<Kernel/Config/Files> and modules
-changed by OTOBO package installation. Only modules in the namespace C<Kernel> and C<var::packagesetup> are meant to be refreshed.
+changed by CareOnCloud ESM package installation. Only modules in the namespace C<Kernel> and C<var::packagesetup> are meant to be refreshed.
 
 This module inherits from L<Module::Refresh> and thus provides the same interface. One difference is the
 method C<mtime> which provides the keys for the cache C<Module::Refresh::CACHE>. The overridden method only
@@ -47,9 +47,14 @@ on SSDs.
 
 Another difference is that in the method C<new()> only modules in C<Kernel> and C<var::packagesetup> are cached.
 
+Yet another difference is that the method C<unload_subs()> has been overridden to effectively do nothing.
+This means the already bound functions will not be invalidated. So the only effect will be that modules might be reloaded
+via the builtin command C<require>. This assures that the method lookup finds the new implementation.
+
 =head1 DISCLAIMERS
 
 The method C<refresh()> should not be used as it still works on the complete C<%INC>.
+The recommendation is to only use the methods C<refresh_module_if_modified> and C<refresh_module>.
 
 Using C<Kernel::System::ModuleRefresh> and C<Module::Refresh> in the same program is discouraged.
 
@@ -75,12 +80,29 @@ sub new {
 
 Generate a cache key based on the modified time and the file size.
 
+This method overrides C<Module::Refresh::mtime()>. The overridden method also includes the inode number.
+The inode number has been excluded here, as it was found that it frequently changes on solid state disks.
+
 =cut
 
 sub mtime {
     my ( $Class, $Module ) = @_;
 
     return join ':', ( stat $Module )[ 7, 9 ];    # size and mtime
+}
+
+=head2 unload_subs()
+
+This method is called internally when a module is actually reloaded.
+The CareOnCloud ESM specific implementation is that nothing is done. This means
+that already loaded subs are not invalidated.
+
+=cut
+
+sub unload_subs {
+    my $Self = shift;
+
+    return $Self;
 }
 
 1;

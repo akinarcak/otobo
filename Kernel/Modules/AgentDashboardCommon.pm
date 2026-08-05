@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,12 +15,20 @@
 # --
 
 package Kernel::Modules::AgentDashboardCommon;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::DBObject)
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
 
-use Kernel::Language qw(Translatable);
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our $ObjectManagerDisabled = 1;
@@ -29,10 +37,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Type;
 }
 
 sub Run {
@@ -136,10 +141,10 @@ sub Run {
                     Code => 'Core.Agent.CustomerInformationCenterSearch.OpenSearchDialog();'
                 );
 
-                my $Output = $LayoutObject->Header();
-                $Output .= $LayoutObject->NavigationBar();
-                $Output .= $LayoutObject->Footer();
-                return $Output;
+                return join '',
+                    $LayoutObject->Header,
+                    $LayoutObject->NavigationBar,
+                    $LayoutObject->Footer;
             }
         }
     }
@@ -156,10 +161,10 @@ sub Run {
                     Code => 'Core.Agent.CustomerUserInformationCenterSearch.OpenSearchDialog();'
                 );
 
-                my $Output = $LayoutObject->Header();
-                $Output .= $LayoutObject->NavigationBar();
-                $Output .= $LayoutObject->Footer();
-                return $Output;
+                return join '',
+                    $LayoutObject->Header,
+                    $LayoutObject->NavigationBar,
+                    $LayoutObject->Footer;
             }
         }
     }
@@ -393,7 +398,7 @@ sub Run {
             next COLUMNNAME if $FilterValue eq '';
 
             if ( $ColumnName eq 'CustomerID' ) {
-                push @{ $ColumnFilter{$ColumnName} }, $FilterValue;
+                push @{ $ColumnFilter{$ColumnName} },           $FilterValue;
                 push @{ $ColumnFilter{ $ColumnName . 'Raw' } }, $FilterValue;
             }
             elsif ( $ColumnName eq 'CustomerUserID' ) {
@@ -563,8 +568,8 @@ sub Run {
         }
 
         my $Key = $UserSettingsKey . $Name;
-        if ( defined $Self->{$Key} ) {
-            $Backends{$Name} = $Self->{$Key};
+        if ( defined $Self->{Session}{$Key} ) {
+            $Backends{$Name} = $Self->{Session}{$Key};
         }
         else {
             $Backends{$Name} = $Config->{$Name}->{Default};
@@ -579,7 +584,7 @@ sub Run {
     # set order of plugins
     my $Key = $UserSettingsKey . 'Position';
     my @Order;
-    my $Value = $Self->{$Key};
+    my $Value = $Self->{Session}{$Key};
 
     if ($Value) {
         @Order = split /;/, $Value;
@@ -732,7 +737,7 @@ sub Run {
                     Data => {
                         %{ $Element{Config} },
                         %{$Param},
-                        Data     => $Self->{ $Param->{Name} },
+                        Data     => $Self->{Session}{ $Param->{Name} },
                         NamePref => $Param->{Name},
                         Name     => $Name,
                         NameForm => $NameForm,
@@ -848,14 +853,14 @@ sub Run {
         }
     }
 
-    my $Output = $LayoutObject->Header();
-    $Output .= $LayoutObject->NavigationBar();
-    $Output .= $LayoutObject->Output(
-        TemplateFile => $Self->{Action},
-        Data         => \%Param
-    );
-    $Output .= $LayoutObject->Footer();
-    return $Output;
+    return join '',
+        $LayoutObject->Header,
+        $LayoutObject->NavigationBar,
+        $LayoutObject->Output(
+            TemplateFile => $Self->{Action},
+            Data         => \%Param
+        ),
+        $LayoutObject->Footer;
 }
 
 sub _Element {
@@ -891,12 +896,11 @@ sub _Element {
         return if !$PermissionOK;
     }
 
-    # get config object
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-
     # load backends
     my $Module = $Configs->{$Name}->{Module};
-    return if !$Kernel::OM->Get('Kernel::System::Main')->Require($Module);
+
+    return unless $Kernel::OM->Get('Kernel::System::Main')->Require($Module);
+
     my $Object = $Module->new(
         %{$Self},
         Config                => $Configs->{$Name},
@@ -948,7 +952,7 @@ sub _Element {
         # Mandatory widgets are displayed as read-only.
         my $Readonly = '';
         if ( $Configs->{$Name}->{Mandatory} ) {
-            $Readonly = 'disabled="disabled"';
+            $Readonly = 'disabled';
         }
 
         $LayoutObject->Block(

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ use utf8;
 use Test2::V0;
 use Capture::Tiny qw(capture);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 my $CommandObject = $Kernel::OM->Get('Kernel::System::Console::Command::Help');
@@ -44,7 +44,7 @@ subtest 'command help' => sub {
         return $CommandObject->Execute('Help');
     };
     is( $ExitCode, 0, "Exit code looking for one command" );
-    like( $Result, qr/otobo.Console.pl Help command/, "Found Help for 'Help' command" );
+    like( $Result, qr/careoncloud.Console.pl Help command/, "Found Help for 'Help' command" );
     is( $Error, '', 'no error' );
 };
 
@@ -53,8 +53,8 @@ subtest 'command search' => sub {
         return $CommandObject->Execute('Lis');
     };
     is( $ExitCode, 0, "Exit code searching for commands" );
-    unlike( $Result, qr/otobo.Console.pl Help command/, "Help for 'Help' command not found" );
-    like( $Result, qr/List all installed OTOBO packages/, 'Found Admin::Package::List command entry' );
+    unlike( $Result, qr/careoncloud.Console.pl Help command/, "Help for 'Help' command not found" );
+    like( $Result, qr/List all installed CareOnCloud ESM packages/, 'Found Admin::Package::List command entry' );
     is( $Error, '', 'no error' );
 };
 
@@ -63,7 +63,7 @@ subtest 'command search (empty)' => sub {
         return $CommandObject->Execute('NonExistingSearchTerm');
     };
     is( $ExitCode, 0, 'Exit code searching for commands' );
-    unlike( $Result, qr/otobo.Console.pl Help command/, "Help for 'Help' command not found" );
+    unlike( $Result, qr/careoncloud.Console.pl Help command/, "Help for 'Help' command not found" );
     like( $Result, qr/No commands found./, "No commands found." );
     is( $Error, '', 'no error' );
 };

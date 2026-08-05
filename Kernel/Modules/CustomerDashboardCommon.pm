@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,6 @@
 # --
 
 package Kernel::Modules::CustomerDashboardCommon;
-## nofilter(TidyAll::Plugin::OTOBO::Perl::DBObject)
 
 use strict;
 use warnings;
@@ -26,8 +25,7 @@ use namespace::autoclean;
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our $ObjectManagerDisabled = 1;
@@ -52,17 +50,47 @@ sub Run {
 
     my $Output = $LayoutObject->CustomerHeader();
 
-    my $TileHTML = '';
+    # validate that each tile has a valid and unique Order
+    # tiles with invalid or duplicate Order are moved to the end by giving them top Order values
+    my $MaxOrder = 0;
+    my %OrderUsed;
+    my @InvalidOrderTiles;
+    for my $Tile ( sort { $UsedTiles->{$a}->{Order} <=> $UsedTiles->{$b}->{Order} } keys $UsedTiles->%* ) {
+
+        # check if the Order is valid and unique
+        my $Order = $UsedTiles->{$Tile}{Order};
+        if ( $Order !~ m/^\d+$/ || $OrderUsed{$Order} ) {
+            push @InvalidOrderTiles, $Tile;
+            my $Message = $LayoutObject->{LanguageObject}->Translate(
+                'Registration for tile \'%s\' of CustomerDashboard is invalid! Order needs to be a number and unique.',
+                $Tile,
+            );
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => $Message,
+            );
+        }
+        else {
+            if ( $Order > $MaxOrder ) {
+                $MaxOrder = $Order;
+            }
+            $OrderUsed{$Order} = 1;
+        }
+    }
+
+    for my $Tile (@InvalidOrderTiles) {
+        $UsedTiles->{$Tile}{Order} = ++$MaxOrder;
+    }
 
     # generate the HTML of the individual tiles
-    my %OrderUsed;
+    my $TileHTML = '';
     for my $Tile ( sort { $UsedTiles->{$a}->{Order} <=> $UsedTiles->{$b}->{Order} } keys $UsedTiles->%* ) {
 
         # check if the registration for each tile is valid
         if ( !$UsedTiles->{$Tile}{Module} ) {
             if ( !$UsedTiles->{$Tile}{Template} ) {
                 my $Message = $LayoutObject->{LanguageObject}->Translate(
-                    'Registration for tile %s of CustomerDashboard is invalid! Either Module or Template needed.',
+                    'Registration for tile %s of customer dashboard is invalid! Either Module or Template needed.',
                     $Tile,
                 );
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
@@ -96,26 +124,24 @@ sub Run {
         # create a backend object
         my $BackendObject = $BackendModule->new();
 
-        # check if the Order is an unique number
-        my $TileID = sprintf '%02d', $UsedTiles->{$Tile}{Order};    # assuming Order being less than 100
-        if ( $TileID !~ m/^\d+$/ || ++$OrderUsed{$TileID} > 1 ) {
-            my $Message = $LayoutObject->{LanguageObject}->Translate(
-                'Registration for tile %s of CustomerDashboard is invalid! Order needs to be a unique number.',
-                $Tile,
-            );
-            $Kernel::OM->Get('Kernel::System::Log')->Log(
-                Priority => 'error',
-                Message  => $Message,
-            );
+        # replace the CareOnCloud_CONFIG macro in the config, for settings like:
+        #   <Item Key="BackgroundImage">&lt;CareOnCloud_CONFIG_Frontend::WebPath&gt;common/img/Dashboard/dashboard_bgfl.png</Item>
+        my $Config = $UsedTiles->{$Tile}->{Config} || {};
+        KEY:
+        for my $Key ( keys $Config->%* ) {
+            next KEY unless defined $Config->{$Key};
+            next KEY unless ref $Config->{$Key} eq '';
 
-            return $LayoutObject->ErrorScreen( Message => $Message );
+            $Config->{$Key} =~ s{<CareOnCloud_CONFIG_(.+?)>}{$ConfigObject->Get($1)}egx;
         }
+
+        my $TileID = sprintf '%02d', $UsedTiles->{$Tile}{Order};    # assuming Order being less than 100
 
         # get the HTML
         $TileHTML .= $BackendObject->Run(
             TileID   => $TileID,
             Template => $UsedTiles->{$Tile}{Template} || '',
-            Config   => $UsedTiles->{$Tile}{Config}   || {},
+            Config   => $Config,
             UserID   => $Self->{UserID},
         );
     }

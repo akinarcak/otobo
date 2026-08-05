@@ -1,5 +1,5 @@
 # --
-# Copyright (C) 2021 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU AFFERO General Public License as published by
@@ -17,8 +17,8 @@
 # or see http://www.gnu.org/licenses/agpl.txt.
 # --
 
-# Running screen with the otobo_web_1 container had the effect that new sessions
+# Running screen with the careoncloud_web_1 container had the effect that new sessions
 # start with /bin/sh. Even though $SHELL is set to /bin/bash and no shell
 # has been set up in /etc/screenrc.
-# As a workaround set the shell explicitly in this ~otobo/.screenrc file.
+# As a workaround set the shell explicitly in this ~careoncloud/.screenrc file.
 shell /bin/bash

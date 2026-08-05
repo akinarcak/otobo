@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,13 @@ use strict;
 use warnings;
 use utf8;
 
+# core modules
+
+# CPAN modules
 use Test2::V0;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
-use URI::Escape();
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 
 our $Self;
 
@@ -52,10 +54,10 @@ $Self->Is(
 );
 
 my $Home   = $ConfigObject->Get('Home');
-my $Daemon = $Home . '/bin/otobo.Daemon.pl';
+my $Daemon = $Home . '/bin/careoncloud.Daemon.pl';
 
 # get daemon status (stop if necessary to reload configuration with planner daemon disabled)
-my $PreviousDaemonStatus = `perl $Daemon status`;
+my $PreviousDaemonStatus = `$^X $Daemon status`;
 
 if ( !$PreviousDaemonStatus ) {
     $Self->False(
@@ -67,7 +69,7 @@ if ( !$PreviousDaemonStatus ) {
 
 if ( $PreviousDaemonStatus =~ m{Daemon running}i ) {
 
-    my $ResultMessage = system("perl $Daemon stop");
+    my $ResultMessage = system("$^X $Daemon stop");
 }
 else {
     $Self->True(
@@ -81,7 +83,7 @@ my $SleepTime = 120;
 note "Waiting at most $SleepTime s until daemon stops";
 ACTIVESLEEP:
 for my $Seconds ( 1 .. $SleepTime ) {
-    my $DaemonStatus = `perl $Daemon status`;
+    my $DaemonStatus = `$^X $Daemon status`;
     if ( $DaemonStatus =~ m{Daemon not running}i ) {
         last ACTIVESLEEP;
     }
@@ -89,7 +91,7 @@ for my $Seconds ( 1 .. $SleepTime ) {
     sleep 1;
 }
 
-my $CurrentDaemonStatus = `perl $Daemon status`;
+my $CurrentDaemonStatus = `$^X $Daemon status`;
 
 $Self->True(
     int $CurrentDaemonStatus =~ m{Daemon not running}i,

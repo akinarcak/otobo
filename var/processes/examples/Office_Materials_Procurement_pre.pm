@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package var::processes::examples::Office_Materials_Procurement_pre;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::PerlCritic)
 
 use strict;
@@ -48,8 +49,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-delivered' => 'delivered',
-                    'otobo5s-ordered'   => 'ordered',
+                    'careoncloud5s-delivered' => 'delivered',
+                    'careoncloud5s-ordered'   => 'ordered',
                 },
                 TranslatableValues => 0,
             },
@@ -63,21 +64,21 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-envelope'        => 'Flipchart',
-                    'otobo5s-flip chart'      => 'flip chart',
-                    'otobo5s-highlighter'     => 'highlighter',
-                    'otobo5s-hole puncher'    => 'hole puncher',
-                    'otobo5s-labeling device' => 'labeling device',
-                    'otobo5s-paper clip'      => 'paper clip',
-                    'otobo5s-postits'         => 'postits',
-                    'otobo5s-scotch tape'     => 'scotch tape',
-                    'otobo5s-sheet protector' => 'sheet protector',
-                    'otobo5s-stamps'          => 'stamps',
-                    'otobo5s-staple gun'      => 'staple gun',
-                    'otobo5s-staves'          => 'staves',
-                    'otobo5s-storage box'     => 'storage box',
-                    'otobo5s-toner'           => 'toner',
-                    'otobo5s-white board'     => 'white board',
+                    'careoncloud5s-envelope'        => 'Flipchart',
+                    'careoncloud5s-flip chart'      => 'flip chart',
+                    'careoncloud5s-highlighter'     => 'highlighter',
+                    'careoncloud5s-hole puncher'    => 'hole puncher',
+                    'careoncloud5s-labeling device' => 'labeling device',
+                    'careoncloud5s-paper clip'      => 'paper clip',
+                    'careoncloud5s-postits'         => 'postits',
+                    'careoncloud5s-scotch tape'     => 'scotch tape',
+                    'careoncloud5s-sheet protector' => 'sheet protector',
+                    'careoncloud5s-stamps'          => 'stamps',
+                    'careoncloud5s-staple gun'      => 'staple gun',
+                    'careoncloud5s-staves'          => 'staves',
+                    'careoncloud5s-storage box'     => 'storage box',
+                    'careoncloud5s-toner'           => 'toner',
+                    'careoncloud5s-white board'     => 'white board',
                 },
                 TranslatableValues => 0,
             },

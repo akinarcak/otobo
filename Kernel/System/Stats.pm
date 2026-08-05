@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,13 +19,14 @@ package Kernel::System::Stats;
 use strict;
 use warnings;
 
-use MIME::Base64;
-
+# core modules
 use POSIX qw(ceil);
 
-use Kernel::Language qw(Translatable);
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Output::HTML::Statistics::View;
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -45,30 +46,30 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::Stats - stats lib
+Kernel::System::Stats - statistics lib
 
 =head1 DESCRIPTION
 
-All stats functions.
+All statistics functions.
 
 =head2 Explanation for the time zone parameter
 
 The time zone parameter is available, if the statistic is a dynamic statistic. The selected periods in the frontend are time zone neutral and for the
-search parameters, the selection will be converted to the OTOBO time zone, because the times
+search parameters, the selection will be converted to the CareOnCloud ESM time zone, because the times
 are stored within this time zone in the database.
 
 This means e.g. if an absolute period of time from 2015-08-01 00:00:00 to 2015-09-10 23:59:59 and a time zone with an offset of +6 hours has been selected,
-the period will be converted from the +6 time zone to the OTOBO time zone for the search parameter,
-so that the right time will be used for searching the database. Given that the OTOBO time zone is set to UTC, this
+the period will be converted from the +6 time zone to the CareOnCloud ESM time zone for the search parameter,
+so that the right time will be used for searching the database. Given that the CareOnCloud ESM time zone is set to UTC, this
 would result in a period of 2015-07-31 18:00:00 to 2015-09-10 17:59:59 UTC.
 
 For a relative time period, e. g. the last 10 full days, and a time zone with an offset of +10 hours, a DateTime object with the +10 time zone will be created
 for the current time. For the period end date, this date will be taken and extended to the end of the day. Then, 10 full days will be subtracted from this.
-This is the start of the period, which will be extended to 00:00:00. Start and end date will be converted to the time zone of OTOBO to search the database.
+This is the start of the period, which will be extended to 00:00:00. Start and end date will be converted to the time zone of CareOnCloud ESM to search the database.
 
-Example for relative time period 'last 10 full days' with selected time zone offset +10 hours, current date/time within this time zone 2015-09-10 16:00:00, OTOBO time zone is UTC:
-End date: 2015-09-10 16:00:00 -> extended to 2015-09-10 23:59:59 -> 2015-09-10 13:59:59 OTOBO time zone (UTC)
-Start date: 2015-09-10 16:00:00 - 10 days -> 2015-08-31 16:00:00 -> extended to 00:00:00: 2015-09-01 00:00:00 -> 2015-08-31 14:00:00 OTOBO time zone (UTC)
+Example for relative time period 'last 10 full days' with selected time zone offset +10 hours, current date/time within this time zone 2015-09-10 16:00:00, CareOnCloud ESM time zone is UTC:
+End date: 2015-09-10 16:00:00 -> extended to 2015-09-10 23:59:59 -> 2015-09-10 13:59:59 CareOnCloud ESM time zone (UTC)
+Start date: 2015-09-10 16:00:00 - 10 days -> 2015-08-31 16:00:00 -> extended to 00:00:00: 2015-09-01 00:00:00 -> 2015-08-31 14:00:00 CareOnCloud ESM time zone (UTC)
 
 =head1 PUBLIC INTERFACE
 
@@ -84,8 +85,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # temporary directory
     $Self->{StatsTempDir} = $Kernel::OM->Get('Kernel::Config')->Get('Home') . '/var/stats/';
@@ -159,7 +159,7 @@ sub StatsAdd {
 
     # start new stats record
     my @XMLHash = (
-        { otobo_stats => [ \%MetaData ] },
+        { careoncloud_stats => [ \%MetaData ] },
     );
     my $Success = $XMLObject->XMLHashAdd(
         Type    => 'Stats',
@@ -217,6 +217,7 @@ sub StatsGet {
         # Don't store complex structure in memory as it will be modified later.
         CacheInMemory => 0,
     );
+
     return $Cache if ref $Cache eq 'HASH';
 
     # get hash from storage
@@ -234,7 +235,7 @@ sub StatsGet {
     }
 
     my %Stat;
-    my $StatsXML = $XMLHash[0]->{otobo_stats}->[1];
+    my $StatsXML = $XMLHash[0]->{careoncloud_stats}->[1];
 
     # process all strings
     $Stat{StatID} = $Param{StatID};
@@ -259,7 +260,7 @@ sub StatsGet {
             $Stat{TimeZone} = $StatsXML->{TimeZone}->[1]->{Content};
         }
         else {
-            $Stat{TimeZone} = Kernel::System::DateTime->OTOBOTimeZoneGet();
+            $Stat{TimeZone} = Kernel::System::DateTime->CareOnCloudTimeZoneGet();
         }
     }
 
@@ -554,7 +555,7 @@ sub StatsUpdate {
 
     my @Array = (
         {
-            otobo_stats => [ \%StatXML ],
+            careoncloud_stats => [ \%StatXML ],
         },
     );
 
@@ -668,13 +669,14 @@ fetches all statistics that the current user may see
         UserID   => $UserID,
     );
 
-    Returns
+Returns a hashref with the statistic ID as the key:
 
     {
         6 => {
             Title => "Title of stat",
             ...
-        }
+        },
+        ...
     }
 
 =cut
@@ -843,12 +845,14 @@ build sum in x or/and y axis
 sub SumBuild {
     my ( $Self, %Param ) = @_;
 
+    my $LanguageObject = $Kernel::OM->Get('Kernel::Language');
+
     my @Data = @{ $Param{Array} };
 
     # add sum y
     if ( $Param{SumCol} ) {
 
-        push @{ $Data[1] }, Translatable('Sum');
+        push @{ $Data[1] }, $LanguageObject->Translate('Sum');
 
         for my $Index1 ( 2 .. $#Data ) {
 
@@ -880,7 +884,7 @@ sub SumBuild {
     if ( $Param{SumRow} ) {
 
         my @SumRow = ();
-        $SumRow[0] = 'Sum';
+        $SumRow[0] = $LanguageObject->Translate('Sum');
 
         for my $Index1 ( 2 .. $#Data ) {
 
@@ -964,12 +968,20 @@ sub GetStatsObjectAttributes {
 
 =head2 GetStaticFiles()
 
-Get all static files
+gets either all or only the not yet used static statistic files. Essentially these are the Perl modules
+that are located in the folder F<Kernel/System/Stats/Static>.
 
     my $FileHash = $StatsObject->GetStaticFiles(
         OnlyUnusedFiles => 1 | 0, # optional default 0
         UserID => $UserID,
     );
+
+Returns:
+
+    $FileHash = {
+        OpenTicketCountPerDayPeriod => 1,
+        StateAction                 => 1,
+    };
 
 =cut
 
@@ -1001,7 +1013,7 @@ sub GetStaticFiles {
         return ();
     }
 
-    my %StaticFiles;
+    my %SkipFile;
     if ( $Param{OnlyUnusedFiles} ) {
 
         # get all Stats from the db
@@ -1017,9 +1029,9 @@ sub GetStaticFiles {
                     NoObjectAttributes => 1,
                 );
 
-                # check witch one are static statistics
+                # check which ones are static statistics
                 if ( $Data->{File} && $Data->{StatType} eq 'static' ) {
-                    $StaticFiles{ $Data->{File} } = 1;
+                    $SkipFile{ $Data->{File} } = 1;
                 }
             }
         }
@@ -1028,16 +1040,15 @@ sub GetStaticFiles {
     # read files
     my %Filelist;
 
-    DIRECTORY:
+    FILENAME:
     while ( defined( my $Filename = readdir $StaticDirH ) ) {
-        next DIRECTORY if $Filename eq '.';
-        next DIRECTORY if $Filename eq '..';
+        next FILENAME if $Filename eq '.';
+        next FILENAME if $Filename eq '..';
 
-        if ( $Filename =~ m{^(.*)\.pm$}x ) {
-            if ( !defined $StaticFiles{$1} ) {
-                $Filelist{$1} = $1;
-            }
-        }
+        next FILENAME unless $Filename =~ m{^(.*)\.pm$}x;
+        next FILENAME if $SkipFile{$1};
+
+        $Filelist{$1} = $1;
     }
     closedir $StaticDirH;
 
@@ -1046,7 +1057,7 @@ sub GetStaticFiles {
 
 =head2 GetDynamicFiles()
 
-Get all static objects
+Get all dynamic files
 
     my $FileHash = $StatsObject->GetDynamicFiles();
 
@@ -1116,7 +1127,7 @@ get behaviours that a statistic supports
         ObjectModule => 'Kernel::System::Stats::Dynamic::TicketList',
     );
 
-    returns
+Returns:
 
     {
         ProvidesDashboardWidget => 1,
@@ -1127,6 +1138,7 @@ get behaviours that a statistic supports
 
 sub GetObjectBehaviours {
     my ( $Self, %Param ) = @_;
+
     my $Module = $Param{ObjectModule};
 
     # check if it is cached
@@ -1297,7 +1309,7 @@ sub Export {
         Type => 'Stats',
         Key  => $Param{StatID},
     );
-    my $StatsXML = $XMLHash[0]->{otobo_stats}->[1];
+    my $StatsXML = $XMLHash[0]->{careoncloud_stats}->[1];
 
     my %File;
     $File{Filename} = $Self->StringAndTimestamp2Filename(
@@ -1342,7 +1354,7 @@ sub Export {
     # convert hash to string
     $File{Content} = $XMLObject->XMLHash2XML(
         {
-            otobo_stats => [
+            careoncloud_stats => [
                 undef,
                 $StatsXML,
             ],
@@ -1387,9 +1399,9 @@ sub Import {
 
     # We love to import OTRS stats too, so we need to check
     my $StatsXML;
-    if ( $XMLHash[0]->{otobo_stats}->[1] ) {
+    if ( $XMLHash[0]->{careoncloud_stats}->[1] ) {
 
-        $StatsXML = $XMLHash[0]->{otobo_stats}->[1];
+        $StatsXML = $XMLHash[0]->{careoncloud_stats}->[1];
 
     }
     elsif ( $XMLHash[0]->{otrs_stats}->[1] ) {
@@ -1401,7 +1413,7 @@ sub Import {
 
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
-            Message  => "Can't import Stat, because the required element otobo_stats or otrs_stats is not available!"
+            Message  => "Can't import Stat, because the required element careoncloud_stats or otrs_stats is not available!"
         );
         return;
     }
@@ -1516,7 +1528,7 @@ sub Import {
         Key     => $StatID,
         XMLHash => [
             {
-                otobo_stats => [
+                careoncloud_stats => [
                     undef,
                     $StatsXML,
                 ],
@@ -1533,7 +1545,7 @@ sub Import {
 
 =head2 GetParams()
 
-    get all edit params from stats for view
+get all edit params from stats for view
 
     my $Params = $StatsObject->GetParams( StatID => '123' );
 
@@ -1553,7 +1565,7 @@ sub GetParams {
     my $Stat = $Self->StatsGet( StatID => $Param{StatID} );
 
     # static
-    # don't remove this if clause, because is required for otobo.GenerateStats.pl
+    # don't remove this if clause, because is required for careoncloud.GenerateStats.pl
     my @Params;
     if ( $Stat->{StatType} eq 'static' ) {
 
@@ -1873,24 +1885,19 @@ sub StringAndTimestamp2Filename {
         $DateTimeObject->ToTimeZone( TimeZone => $Param{TimeZone} );
     }
 
-    my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
-    $Param{String} = $MainObject->FilenameCleanUp(
-        Filename => $Param{String},
-        Type     => 'Attachment',
+    my @FilenameParts = (
+        $Param{String},
+        $DateTimeObject->Format( Format => '%Y-%m-%d_%H:%M' )
     );
-
-    my $Filename = $Param{String} . '_';
-    $Filename .= $DateTimeObject->Format( Format => '%Y-%m-%d_%H:%M' );
-
     if ( defined $Param{TimeZone} ) {
-        my $TimeZone = $MainObject->FilenameCleanUp(
-            Filename => $Param{TimeZone},
-            Type     => 'Attachment',
-        );
-        $Filename .= '_TimeZone_' . $TimeZone;
+        push @FilenameParts, 'TimeZone' => $Param{TimeZone};
     }
 
-    return $Filename;
+    # this also replaces the ':' in the timestamp
+    return $Kernel::OM->Get('Kernel::System::Main')->FilenameCleanUp(
+        Filename => join( '_', @FilenameParts ),
+        Type     => 'Attachment',
+    );
 }
 
 =head2 StatNumber2StatID()
@@ -1916,7 +1923,7 @@ sub StatNumber2StatID {
 
     my @Key = $Kernel::OM->Get('Kernel::System::XML')->XMLHashSearch(
         Type => 'Stats',
-        What => [ { "[%]{'otobo_stats'}[%]{'StatNumber'}[%]{'Content'}" => $Param{StatNumber} } ],
+        What => [ { "[%]{'careoncloud_stats'}[%]{'StatNumber'}[%]{'Content'}" => $Param{StatNumber} } ],
     );
     if ( @Key && $#Key < 1 ) {
         return $Key[0];
@@ -2167,7 +2174,7 @@ sub StatsCleanUp {
 
 =head2 _GenerateStaticStats()
 
-    take the stat configuration and get the stat table
+take the stat configuration and get the stat table
 
     my @StatArray = $StatsObject->_GenerateStaticStats(
         ObjectModule => $Stat->{ObjectModule},
@@ -2250,7 +2257,7 @@ sub _GenerateStaticStats {
 
 =head2 _GenerateDynamicStats()
 
-    take the stat configuration and get the stat table
+take the stat configuration and get the stat table
 
     my @StatArray = $StatsObject->_GenerateDynamicStats(
         ObjectModule     => 'Kernel::System::Stats::Dynamic::Ticket',
@@ -2475,7 +2482,7 @@ sub _GenerateDynamicStats {
                 $TitleTimeStop  = $Element->{TimeStop};
             }
 
-            # Select All function needed from otobo.GenerateStats.pl and fixed values of the frontend
+            # Select All function needed from careoncloud.GenerateStats.pl and fixed values of the frontend
             elsif ( !$Element->{SelectedValues}[0] ) {
                 my @Values = keys( %{ $Element->{Values} } );
                 $Element->{SelectedValues} = \@Values;
@@ -2499,13 +2506,13 @@ sub _GenerateDynamicStats {
         }
         elsif ( $RestrictionPart->{Block} eq 'Time' ) {
 
-            # convert start and stop time to OTOBO time zone
-            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStart} } = $Self->_ToOTOBOTimeZone(
+            # convert start and stop time to CareOnCloud ESM time zone
+            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStart} } = $Self->_ToCareOnCloudTimeZone(
                 String   => $RestrictionPart->{TimeStart},
                 TimeZone => $Param{TimeZone},
             );
 
-            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStop} } = $Self->_ToOTOBOTimeZone(
+            $RestrictionAttribute{ $RestrictionPart->{Values}{TimeStop} } = $Self->_ToCareOnCloudTimeZone(
                 String   => $RestrictionPart->{TimeStop},
                 TimeZone => $Param{TimeZone},
             );
@@ -2814,14 +2821,14 @@ sub _GenerateDynamicStats {
             push(
                 @{ $Xvalue->{SelectedValues} },
                 {
-                    # convert to OTOBO time zone for correct database search parameter
+                    # convert to CareOnCloud ESM time zone for correct database search parameter
 
-                    TimeStart => $Self->_ToOTOBOTimeZone(
+                    TimeStart => $Self->_ToCareOnCloudTimeZone(
                         String   => $TimeStart,
                         TimeZone => $Param{TimeZone},
                     ),
 
-                    TimeStop => $Self->_ToOTOBOTimeZone(
+                    TimeStop => $Self->_ToCareOnCloudTimeZone(
                         String   => $TimeStop,
                         TimeZone => $Param{TimeZone},
                     ),
@@ -2864,7 +2871,16 @@ sub _GenerateDynamicStats {
         # all elements which are shown with multiselectfields
         if ( $Ref1->{Block} ne 'Time' ) {
             my %SelectedValues;
+            SELECTEDVALUE:
             for my $Ref2 ( @{ $Ref1->{SelectedValues} } ) {
+
+                if ( !defined $Ref1->{Values}{$Ref2} ) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'notice',
+                        Message  => "\"$Ref2\" is used as $Ref1->{Name} but is not present. Skipping it. (StatID $Param{StatID} - \"$Param{Title}\")",
+                    );
+                    next SELECTEDVALUE;
+                }
 
                 # Do not translate the values, please see bug#12384 for more information.
                 $SelectedValues{$Ref2} = $Ref1->{Values}{$Ref2};
@@ -3457,8 +3473,8 @@ sub _GenerateDynamicStats {
         return @StatArray;
     }
 
-    # convert to OTOBO time zone to get the correct time for the check
-    my $CheckTimeStop = $Self->_ToOTOBOTimeZone(
+    # convert to CareOnCloud ESM time zone to get the correct time for the check
+    my $CheckTimeStop = $Self->_ToCareOnCloudTimeZone(
         String   => $TitleTimeStop,
         TimeZone => $Param{TimeZone},
     );
@@ -3912,8 +3928,8 @@ sub _AutomaticSampleImport {
             }
 
             my $Content = '';
-            while (<$Filehandle>) {
-                $Content .= $_;
+            while ( my $Line = <$Filehandle> ) {
+                $Content .= $Line;
             }
             close $Filehandle;
 
@@ -3928,22 +3944,22 @@ sub _AutomaticSampleImport {
     return 1;
 }
 
-=head2 _FromOTOBOTimeZone()
+=head2 _FromCareOnCloudTimeZone()
 
-Converts the given date/time string from OTOBO time zone to the given time zone.
+Converts the given date/time string from CareOnCloud ESM time zone to the given time zone.
 
-    my $String = $StatsObject->_FromOTOBOTimeZone(
+    my $TimeStamp = $StatsObject->_FromCareOnCloudTimeZone(
         String   => '2016-02-20 20:00:00',
         TimeZone => 'Europe/Berlin',
     );
 
-Returns (example for OTOBO time zone being set to UTC):
+Returns (example for CareOnCloud ESM time zone being set to UTC):
 
     $TimeStamp = '2016-02-20 21:00:00',
 
 =cut
 
-sub _FromOTOBOTimeZone {
+sub _FromCareOnCloudTimeZone {
     my ( $Self, %Param ) = @_;
 
     # check needed params
@@ -3977,22 +3993,22 @@ sub _FromOTOBOTimeZone {
     return $DateTimeObject->ToString();
 }
 
-=head2 _ToOTOBOTimeZone()
+=head2 _ToCareOnCloudTimeZone()
 
-Converts the given date/time string from the given time zone to OTOBO time zone.
+Converts the given date/time string from the given time zone to CareOnCloud ESM time zone.
 
-    my $String = $StatsObject->_ToOTOBOTimeZone(
+    my $TimeStamp = $StatsObject->_ToCareOnCloudTimeZone(
         String    => '2016-02-20 18:00:00',
         TimeZone  => 'Europe/Berlin',
     );
 
-Returns (example for OTOBO time zone being set to UTC):
+Returns (example for CareOnCloud ESM time zone being set to UTC):
 
     $TimeStamp = '2016-02-20 17:00:00',
 
 =cut
 
-sub _ToOTOBOTimeZone {
+sub _ToCareOnCloudTimeZone {
     my ( $Self, %Param ) = @_;
 
     # check needed params
@@ -4020,7 +4036,7 @@ sub _ToOTOBOTimeZone {
         return;
     }
 
-    $DateTimeObject->ToOTOBOTimeZone();
+    $DateTimeObject->ToCareOnCloudTimeZone();
 
     return $DateTimeObject->ToString();
 }
@@ -4470,6 +4486,7 @@ sub _TimeStamp2DateTime {
     my ( $Self, %Param, ) = @_;
 
     my $TimeStamp = $Param{TimeStamp};
+
     return $Kernel::OM->Create(
         'Kernel::System::DateTime',
         ObjectParams => {

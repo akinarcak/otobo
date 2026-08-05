@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,16 +24,122 @@ use utf8;
 use HTTP::Request::Common qw(POST);
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::Output::HTML::Layout;
-use Kernel::System::VariableCheck qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);    # must be loaded before RegisterOM
+use Kernel::System::UnitTest::RegisterOM;                   # Set up $Kernel::OM
+use Kernel::System::UnitTest::Diff qw(TextEqOrDiff);
+use Kernel::Output::HTML::Layout   ();
+use Kernel::System::VariableCheck  qw(:all);
+
+# get helper object
+$Kernel::OM->ObjectParamAdd(
+    'Kernel::System::UnitTest::Helper' => {
+        RestoreDatabase  => 1,
+        UseTmpArticleDir => 1,
+    },
+);
 
 # get needed objects
-my $Helper          = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
-my $DFBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
-my $ParamObject     = $Kernel::OM->Get('Kernel::System::Web::Request');
+my $ConfigObject       = $Kernel::OM->Get('Kernel::Config');
+my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
+my $DFBackendObject    = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
+my $Helper             = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
+my $ParamObject        = $Kernel::OM->Get('Kernel::System::Web::Request');
+my $UserObject         = $Kernel::OM->Get('Kernel::System::User');
+
+my $RandomID = $Helper->GetRandomID;
+diag "RandomID is $RandomID";
+
+$ConfigObject->Set(
+    Key   => 'CheckEmailAddresses',
+    Value => 0,
+);
+
+my $UserID = 1;    # root
+
+# create agents
+my $FirstUserID = $UserObject->UserAdd(
+    UserFirstname => 'Test',
+    UserLastname  => 'User1',
+    UserLogin     => 'TestUser1' . $RandomID,
+    UserPw        => 'some-pass',
+    UserEmail     => 'test1' . $RandomID . 'email@example.com',
+    ValidID       => 1,
+    ChangeUserID  => 1,
+);
+ok( $FirstUserID, 'Creation of first agent' );
+
+my $SecondUserID = $UserObject->UserAdd(
+    UserFirstname => 'Test',
+    UserLastname  => 'User2',
+    UserLogin     => 'TestUser2' . $RandomID,
+    UserPw        => 'some-pass',
+    UserEmail     => 'test2' . $RandomID . 'email@example.com',
+    ValidID       => 1,
+    ChangeUserID  => 1,
+);
+ok( $SecondUserID, 'Creation of second agent' );
+
+my $LayoutObject = Kernel::Output::HTML::Layout->new(
+    Lang         => 'en',
+    UserTimeZone => 'UTC',
+);
+
+# collect user data and build string for html selection comparison
+my %UserList = $UserObject->UserSearch(
+    Search => '*',
+    Valid  => 1,
+);
+my %UserLookup = map {
+    my $UserName = $UserObject->UserName(
+        UserID => $_,
+    );
+    my %Preferences = $UserObject->GetPreferences(
+        UserID => $_
+    );
+    my $TextEscaped = $LayoutObject->Ascii2Html(
+        Text => qq{"$UserName" <$Preferences{UserEmail}>},
+    );
+    if ( length $TextEscaped > 100 ) {
+        $TextEscaped = substr( $TextEscaped, 0, 95 ) . '[...]';
+    }
+    $_ => $TextEscaped
+} keys %UserList;
+
+my $UserSelectionString               = '';
+my $UserSelectionSelectedString       = '  <option value="" selected>-</option>';
+my $UserSelectionSelectedAgent1String = '';
+my $UserSelectionSelectedAgent2String = '';
+for my $UserID ( sort { $UserLookup{$a} cmp $UserLookup{$b} } keys %UserLookup ) {
+    $UserSelectionString         = join( "\n", ( $UserSelectionString,         '  <option value="' . $UserID . '">' . $UserLookup{$UserID} . '</option>' ) );
+    $UserSelectionSelectedString = join( "\n", ( $UserSelectionSelectedString, '  <option value="' . $UserID . '">' . $UserLookup{$UserID} . '</option>' ) );
+    if ( $UserID eq $FirstUserID ) {
+        $UserSelectionSelectedAgent1String
+            = join( "\n", ( $UserSelectionSelectedAgent1String, '  <option value="' . $UserID . '" selected>' . $UserLookup{$UserID} . '</option>' ) );
+    }
+    else {
+        $UserSelectionSelectedAgent1String
+            = join( "\n", ( $UserSelectionSelectedAgent1String, '  <option value="' . $UserID . '">' . $UserLookup{$UserID} . '</option>' ) );
+    }
+    if ( $UserID eq $SecondUserID ) {
+        $UserSelectionSelectedAgent2String
+            = join( "\n", ( $UserSelectionSelectedAgent2String, '  <option value="' . $UserID . '" selected>' . $UserLookup{$UserID} . '</option>' ) );
+    }
+    else {
+        $UserSelectionSelectedAgent2String
+            = join( "\n", ( $UserSelectionSelectedAgent2String, '  <option value="' . $UserID . '">' . $UserLookup{$UserID} . '</option>' ) );
+    }
+}
+
+# remove preceding newline which is created due to initialization with empty string
+$UserSelectionString               =~ s/^\n//;
+$UserSelectionSelectedAgent1String =~ s/^\n//;
+$UserSelectionSelectedAgent2String =~ s/^\n//;
+
+# add empty value to the top
+$UserSelectionString               = "  <option value=\"\">-</option>\n" . $UserSelectionString;
+$UserSelectionSelectedAgent1String = "  <option value=\"\">-</option>\n" . $UserSelectionSelectedAgent1String;
+$UserSelectionSelectedAgent2String = "  <option value=\"\">-</option>\n" . $UserSelectionSelectedAgent2String;
 
 # use a fixed year to compare the time selection results
 FixedTimeSet(
@@ -45,12 +151,84 @@ FixedTimeSet(
     )->ToEpoch()
 );
 
-my $LayoutObject = Kernel::Output::HTML::Layout->new(
-    Lang         => 'en',
-    UserTimeZone => 'UTC',
+# prepare dynamic fields to include in set
+my @IncludeDFConfigs = (
+
+    # Fields to include in SetOfAgentsAndTexts
+    {
+        Name         => 'Text5' . $RandomID,
+        Label        => 'Text5',
+        LabelEscaped => 'Text5',
+        FieldOrder   => 123,
+        FieldType    => 'Text',
+        ObjectType   => 'Ticket',
+        Config       => {
+            MultiValue => 0,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name         => 'Text6' . $RandomID,
+        Label        => 'Text6',
+        LabelEscaped => 'Text6',
+        FieldOrder   => 123,
+        FieldType    => 'Text',
+        ObjectType   => 'Ticket',
+        Config       => {
+            MultiValue => 1,
+            Tooltip    => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name         => 'Agent1' . $RandomID,
+        Label        => 'Agent1',
+        LabelEscaped => 'Agent1',
+        FieldOrder   => 123,
+        FieldType    => 'Agent',
+        ObjectType   => 'Ticket',
+        Config       => {
+            EditFieldMode => 'Dropdown',
+            PossibleNone  => 1,
+            Multiselect   => 0,
+            MultiValue    => 0,
+            GroupFilter   => [],
+            Tooltip       => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
+    {
+        Name         => 'Agent2' . $RandomID,
+        Label        => 'Agent2',
+        LabelEscaped => 'Agent2',
+        FieldOrder   => 123,
+        FieldType    => 'Agent',
+        ObjectType   => 'Ticket',
+        Config       => {
+            EditFieldMode => 'Dropdown',
+            PossibleNone  => 1,
+            Multiselect   => 0,
+            MultiValue    => 1,
+            GroupFilter   => [],
+            Tooltip       => '',
+        },
+        ValidID => 1,
+        UserID  => $UserID,
+    },
 );
 
-my $UserID = 1;
+for my $IncludeDFConfig (@IncludeDFConfigs) {
+
+    my $Success = $DynamicFieldObject->DynamicFieldAdd(
+        $IncludeDFConfig->%*,
+    );
+
+    ok( $Success, 'Creation of set-included dynamic field ' . $IncludeDFConfig->{Name} );
+}
 
 # theres is not really needed to add the dynamic fields for this test, we can define a static
 # set of configurations
@@ -190,6 +368,29 @@ my %DynamicFieldConfigs = (
         ValidID    => 1,
         CreateTime => '2011-02-08 15:08:00',
         ChangeTime => '2011-06-11 17:22:00',
+    },
+
+    # Set, using the previously created Text5 and Text6 and agent fields
+    Set => {
+        ID            => 123,
+        InternalField => 0,
+        Name          => 'SetOfAgentsAndTexts',
+        Label         => 'Set of agents and texts',
+        LabelEscaped  => 'Set of agents and texts',
+        FieldOrder    => 123,
+        FieldType     => 'Set',
+        ObjectType    => 'Ticket',
+        Config        => {
+            MultiValue => 0,
+            Tooltip    => '',
+            Include    => [
+                { DF => 'Text5' . $RandomID },
+                { DF => 'Text6' . $RandomID },
+                { DF => 'Agent1' . $RandomID },
+                { DF => 'Agent2' . $RandomID },
+            ],
+        },
+        ValidID => 1,
     },
 );
 
@@ -951,7 +1152,7 @@ EOF
 <select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
   <option value="">-</option>
   <option value="1">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="2" selected>B</option>
 EOF
             Label => <<"EOF",
 <label id="LabelDynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" for="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}">
@@ -975,7 +1176,7 @@ EOF
             Field => <<"EOF" . '</select>',
 <select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1002,7 +1203,7 @@ EOF
             Field => <<"EOF" . '</select>',
 <select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1029,7 +1230,7 @@ EOF
             Field => <<"EOF" . '</select>',
 <select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1056,7 +1257,7 @@ EOF
 <select class="DynamicFieldText Modernize MyClass Validate_Required" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
   <option value="">-</option>
   <option value="1">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="2" selected>B</option>
 </select>
 <div id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}Error" class="TooltipErrorMessage">
     <p>
@@ -1090,7 +1291,7 @@ EOF
 <select class="DynamicFieldText Modernize MyClass ServerError" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
   <option value="">-</option>
   <option value="1">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="2" selected>B</option>
 </select>
 <div id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}ServerError" class="TooltipErrorMessage">
     <p>
@@ -1122,7 +1323,7 @@ EOF
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
 <select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
-  <option value="2" selected="selected">Value2</option>
+  <option value="2" selected>Value2</option>
 EOF
             Label => <<"EOF",
 <label id="LabelDynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" for="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}">
@@ -1135,7 +1336,13 @@ EOF
     {
         Name   => 'Dropdown: No Possible None',
         Config => {
-            DynamicFieldConfig   => $DynamicFieldConfigs{Dropdown},
+            DynamicFieldConfig => {
+                $DynamicFieldConfigs{Dropdown}->%*,
+                Config => {
+                    $DynamicFieldConfigs{Dropdown}{Config}->%*,
+                    PossibleNone => 0,
+                },
+            },
             LayoutObject         => $LayoutObject,
             ParamObject          => $ParamObject,
             Value                => 1,
@@ -1146,7 +1353,7 @@ EOF
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
 <select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1172,7 +1379,7 @@ EOF
             Field => <<"EOF" . '</select>',
 <select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="5">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1197,9 +1404,9 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF",
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
+<select class="DynamicFieldText Modernize MyClass FormUpdate" id="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" name="DynamicField_$DynamicFieldConfigs{Dropdown}->{Name}" size="1">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 </select>
 EOF
@@ -1224,7 +1431,7 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
   <option value="1">A</option>
   <option value="2">B</option>
@@ -1247,10 +1454,10 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
   <option value="1">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="2" selected>B</option>
 EOF
             Label => <<"EOF",
 <label id="LabelDynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" for="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
@@ -1272,9 +1479,9 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1297,10 +1504,10 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="1" selected>A</option>
+  <option value="2" selected>B</option>
 EOF
             Label => <<"EOF",
 <label id="LabelDynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" for="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
@@ -1324,9 +1531,9 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1351,10 +1558,10 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="1" selected>A</option>
+  <option value="2" selected>B</option>
 EOF
             Label => <<"EOF",
 <label id="LabelDynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" for="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
@@ -1378,9 +1585,9 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1405,10 +1612,10 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="1" selected>A</option>
+  <option value="2" selected>B</option>
 EOF
             Label => <<"EOF",
 <label id="LabelDynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" for="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
@@ -1431,10 +1638,10 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF",
-<select class="DynamicFieldText Modernize MyClass Validate_Required" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass Validate_Required" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
   <option value="1">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="2" selected>B</option>
 </select>
 <div id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}Error" class="TooltipErrorMessage">
     <p>
@@ -1465,10 +1672,10 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF",
-<select class="DynamicFieldText Modernize MyClass ServerError" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass ServerError" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
   <option value="1">A</option>
-  <option value="2" selected="selected">B</option>
+  <option value="2" selected>B</option>
 </select>
 <div id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}ServerError" class="TooltipErrorMessage">
     <p>
@@ -1499,8 +1706,8 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
-  <option value="2" selected="selected">Value2</option>
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+  <option value="2" selected>Value2</option>
 EOF
             Label => <<"EOF",
 <label id="LabelDynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" for="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
@@ -1513,7 +1720,13 @@ EOF
     {
         Name   => 'Multiselect: No Possible None',
         Config => {
-            DynamicFieldConfig   => $DynamicFieldConfigs{Multiselect},
+            DynamicFieldConfig => {
+                $DynamicFieldConfigs{Multiselect}->%*,
+                Config => {
+                    $DynamicFieldConfigs{Multiselect}{Config}->%*,
+                    PossibleNone => 0,
+                },
+            },
             LayoutObject         => $LayoutObject,
             ParamObject          => $ParamObject,
             Value                => 1,
@@ -1523,8 +1736,8 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF" . '</select>',
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
-  <option value="1" selected="selected">A</option>
+<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 EOF
             Label => <<"EOF",
@@ -1549,9 +1762,9 @@ EOF
         },
         ExpectedResults => {
             Field => <<"EOF",
-<select class="DynamicFieldText Modernize MyClass" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple="multiple" name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
+<select class="DynamicFieldText Modernize MyClass FormUpdate" id="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}" multiple name="DynamicField_$DynamicFieldConfigs{Multiselect}->{Name}">
   <option value="">-</option>
-  <option value="1" selected="selected">A</option>
+  <option value="1" selected>A</option>
   <option value="2">B</option>
 </select>
 EOF
@@ -1585,7 +1798,7 @@ EOF
   <option value="5">05</option>
   <option value="6">06</option>
   <option value="7">07</option>
-  <option value="8" selected="selected">08</option>
+  <option value="8" selected>08</option>
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
@@ -1611,7 +1824,7 @@ EOF
   <option value="18">18</option>
   <option value="19">19</option>
   <option value="20">20</option>
-  <option value="21" selected="selected">21</option>
+  <option value="21" selected>21</option>
   <option value="22">22</option>
   <option value="23">23</option>
   <option value="24">24</option>
@@ -1628,7 +1841,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -1651,7 +1864,7 @@ EOF
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
-  <option value="16" selected="selected">16</option>
+  <option value="16" selected>16</option>
   <option value="17">17</option>
   <option value="18">18</option>
   <option value="19">19</option>
@@ -1705,7 +1918,7 @@ EOF
   <option value="42">42</option>
   <option value="43">43</option>
   <option value="44">44</option>
-  <option value="45" selected="selected">45</option>
+  <option value="45" selected>45</option>
   <option value="46">46</option>
   <option value="47">47</option>
   <option value="48">48</option>
@@ -1756,7 +1969,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Month Validate_DateHour_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour Validate_DateMinute_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -1769,7 +1982,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -1795,14 +2008,14 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
   <option value="2017">2017</option>
   <option value="2018">2018</option>
 </select> - <select class="Validate_DateHour DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" title="Hours">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -1827,7 +2040,7 @@ EOF
   <option value="22">22</option>
   <option value="23">23</option>
 </select>:<select class="Validate_DateMinute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" title="Minutes">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -1930,7 +2143,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Month Validate_DateHour_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour Validate_DateMinute_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -1943,7 +2156,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -1969,14 +2182,14 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
   <option value="2017">2017</option>
   <option value="2018">2018</option>
 </select> - <select class="Validate_DateHour DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" title="Hours">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2001,7 +2214,7 @@ EOF
   <option value="22">22</option>
   <option value="23">23</option>
 </select>:<select class="Validate_DateMinute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" title="Minutes">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2104,7 +2317,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Month Validate_DateHour_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour Validate_DateMinute_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -2117,7 +2330,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -2143,14 +2356,14 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
   <option value="2017">2017</option>
   <option value="2018">2018</option>
 </select> - <select class="Validate_DateHour DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" title="Hours">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2175,7 +2388,7 @@ EOF
   <option value="22">22</option>
   <option value="23">23</option>
 </select>:<select class="Validate_DateMinute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" title="Minutes">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2278,7 +2491,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Month Validate_DateHour_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour Validate_DateMinute_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -2291,7 +2504,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -2317,14 +2530,14 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
   <option value="2017">2017</option>
   <option value="2018">2018</option>
 </select> - <select class="Validate_DateHour DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" title="Hours">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2349,7 +2562,7 @@ EOF
   <option value="22">22</option>
   <option value="23">23</option>
 </select>:<select class="Validate_DateMinute DynamicFieldText DateSelection MyClass" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" title="Minutes">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2446,7 +2659,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Month Validate_DateHour_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour Validate_DateMinute_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute DynamicFieldText DateSelection MyClass Validate_Required" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -2459,7 +2672,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -2485,14 +2698,14 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
   <option value="2017">2017</option>
   <option value="2018">2018</option>
 </select> - <select class="Validate_DateHour DynamicFieldText DateSelection MyClass Validate_Required" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" title="Hours">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2517,7 +2730,7 @@ EOF
   <option value="22">22</option>
   <option value="23">23</option>
 </select>:<select class="Validate_DateMinute DynamicFieldText DateSelection MyClass Validate_Required" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" title="Minutes">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2621,7 +2834,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Month Validate_DateHour_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour Validate_DateMinute_DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute DynamicFieldText DateSelection MyClass ServerError" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -2634,7 +2847,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -2660,14 +2873,14 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
   <option value="2017">2017</option>
   <option value="2018">2018</option>
 </select> - <select class="Validate_DateHour DynamicFieldText DateSelection MyClass ServerError" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Hour" title="Hours">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2692,7 +2905,7 @@ EOF
   <option value="22">22</option>
   <option value="23">23</option>
 </select>:<select class="Validate_DateMinute DynamicFieldText DateSelection MyClass ServerError" id="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" name="DynamicField_$DynamicFieldConfigs{DateTime}->{Name}Minute" title="Minutes">
-  <option value="0" selected="selected">00</option>
+  <option value="0" selected>00</option>
   <option value="1">01</option>
   <option value="2">02</option>
   <option value="3">03</option>
@@ -2791,7 +3004,7 @@ EOF
   <option value="5">05</option>
   <option value="6">06</option>
   <option value="7">07</option>
-  <option value="8" selected="selected">08</option>
+  <option value="8" selected>08</option>
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
@@ -2817,7 +3030,7 @@ EOF
   <option value="18">18</option>
   <option value="19">19</option>
   <option value="20">20</option>
-  <option value="21" selected="selected">21</option>
+  <option value="21" selected>21</option>
   <option value="22">22</option>
   <option value="23">23</option>
   <option value="24">24</option>
@@ -2834,7 +3047,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -2876,7 +3089,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{Date}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{Date}->{Name}Month DynamicFieldText MyClass" id="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -2889,7 +3102,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -2915,7 +3128,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -2962,7 +3175,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{Date}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{Date}->{Name}Month DynamicFieldText MyClass" id="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -2975,7 +3188,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -3001,7 +3214,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -3048,7 +3261,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{Date}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{Date}->{Name}Month DynamicFieldText MyClass" id="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -3061,7 +3274,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -3087,7 +3300,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -3136,7 +3349,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{Date}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{Date}->{Name}Month DynamicFieldText MyClass" id="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -3149,7 +3362,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -3175,7 +3388,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -3218,7 +3431,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{Date}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{Date}->{Name}Month DynamicFieldText MyClass Validate_Required" id="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -3231,7 +3444,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -3257,7 +3470,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -3307,7 +3520,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
 </select>/<select class="Validate_DateDay Validate_DateYear_DynamicField_$DynamicFieldConfigs{Date}->{Name}Year Validate_DateMonth_DynamicField_$DynamicFieldConfigs{Date}->{Name}Month DynamicFieldText MyClass ServerError" id="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" name="DynamicField_$DynamicFieldConfigs{Date}->{Name}Day" title="Day">
   <option value="1">01</option>
   <option value="2">02</option>
@@ -3320,7 +3533,7 @@ EOF
   <option value="9">09</option>
   <option value="10">10</option>
   <option value="11">11</option>
-  <option value="12" selected="selected">12</option>
+  <option value="12" selected>12</option>
   <option value="13">13</option>
   <option value="14">14</option>
   <option value="15">15</option>
@@ -3346,7 +3559,7 @@ EOF
   <option value="2010">2010</option>
   <option value="2011">2011</option>
   <option value="2012">2012</option>
-  <option value="2013" selected="selected">2013</option>
+  <option value="2013" selected>2013</option>
   <option value="2014">2014</option>
   <option value="2015">2015</option>
   <option value="2016">2016</option>
@@ -3369,59 +3582,234 @@ EOF
         },
         Success => 1,
     },
+    {
+        Name   => 'Set: Correct Value',
+        Config => {
+            DynamicFieldConfig => $DynamicFieldConfigs{Set},
+            LayoutObject       => $LayoutObject,
+            ParamObject        => $ParamObject,
+
+            # a list of Set values
+            Value => [
+
+                # actually only on Set value in the list
+                {
+
+                    # value for the first dynamic field in the set
+                    "Text5$RandomID" => 'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+
+                    # value for the second dynamic field in the set
+                    "Text6$RandomID" => [
+                        'Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                        'Text4: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN',
+                    ],
+
+                    # value for the third dynamic field in the set
+                    "Agent1$RandomID" => $FirstUserID,
+
+                    # value for the fourth dynamic field in the set
+                    "Agent2$RandomID" => [
+                        $FirstUserID,
+                        $SecondUserID,
+                    ],
+                },
+            ],
+            Class => 'MyClass',
+        },
+        ExpectedResults => {
+            Field => <<"EOF",
+<input type="hidden" id="DynamicField_$DynamicFieldConfigs{Set}->{Name}_0" name="OriginSetIndex_$DynamicFieldConfigs{Set}->{Name}" value="0"/>
+<input type="hidden" id="DynamicField_$DynamicFieldConfigs{Set}->{Name}_0" name="SetIndex_$DynamicFieldConfigs{Set}->{Name}" value="0"/>
+<fieldset class="DynamicFieldSet">
+                        <div class="Row Row_DynamicField" style="grid-template-columns: 1fr">
+                            <div class="FieldCell" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[0]->{Name}_0" for="DynamicField_$IncludeDFConfigs[0]->{Name}_0">
+$IncludeDFConfigs[0]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<input type="text" class="DynamicFieldText W50pc" id="DynamicField_$IncludeDFConfigs[0]->{Name}_0" name="DynamicField_$IncludeDFConfigs[0]->{Name}_0" title="$IncludeDFConfigs[0]->{LabelEscaped}" value="Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN" />
+                                </div>
+                                <div class="Clear"></div>
+                            </div>
+                        </div>
+                        <div class="Row Row_DynamicField MultiValue" style="grid-template-columns: 1fr">
+                            <div class="FieldCell MultiValue_0" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[1]->{Name}_0" for="DynamicField_$IncludeDFConfigs[1]->{Name}_0">
+$IncludeDFConfigs[1]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<input type="text" class="DynamicFieldText W50pc" id="DynamicField_$IncludeDFConfigs[1]->{Name}_0_0" name="DynamicField_$IncludeDFConfigs[1]->{Name}_0" title="$IncludeDFConfigs[1]->{LabelEscaped}" value="Text3: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN" />
+                                </div>
+                                <div class="AddRemoveValueRow">
+                                    <a class="RemoveValueRow"><i class="fa fa-minus-square"></i></a>
+                                    <a class="AddValueRow"><i class="fa fa-plus-square"></i></a>
+                                </div>
+                                <div class="Clear"></div>
+                            </div>
+                            <div class="FieldCell MultiValue_1" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[1]->{Name}_0" for="DynamicField_$IncludeDFConfigs[1]->{Name}_0">
+$IncludeDFConfigs[1]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<input type="text" class="DynamicFieldText W50pc" id="DynamicField_$IncludeDFConfigs[1]->{Name}_0_1" name="DynamicField_$IncludeDFConfigs[1]->{Name}_0" title="$IncludeDFConfigs[1]->{LabelEscaped}" value="Text4: 🏔 - U+1F3D4 - SNOW CAPPED MOUNTAIN" />
+                                </div>
+                                <div class="AddRemoveValueRow">
+                                    <a class="RemoveValueRow"><i class="fa fa-minus-square"></i></a>
+                                    <a class="AddValueRow"><i class="fa fa-plus-square"></i></a>
+                                </div>
+                                <div class="Clear"></div>
+                            </div>
+                            <div class="MultiValue_Template" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[1]->{Name}_0" for="DynamicField_$IncludeDFConfigs[1]->{Name}_0">
+$IncludeDFConfigs[1]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<input type="text" class="DynamicFieldText W50pc" id="DynamicField_$IncludeDFConfigs[1]->{Name}_0_Template" name="DynamicField_$IncludeDFConfigs[1]->{Name}_0" title="$IncludeDFConfigs[1]->{LabelEscaped}" value="" />
+                                </div>
+                                <div class="AddRemoveValueRow">
+                                    <a class="RemoveValueRow"><i class="fa fa-minus-square"></i></a>
+                                    <a class="AddValueRow"><i class="fa fa-plus-square"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Row Row_DynamicField" style="grid-template-columns: 1fr">
+                            <div class="FieldCell" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[2]->{Name}_0" for="DynamicField_$IncludeDFConfigs[2]->{Name}_0">
+$IncludeDFConfigs[2]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<select class="DynamicFieldReference DynamicFieldText Modernize FormUpdate" id="DynamicField_$IncludeDFConfigs[2]->{Name}_0" name="DynamicField_$IncludeDFConfigs[2]->{Name}_0">
+$UserSelectionSelectedAgent1String
+</select>
+                                </div>
+                                <div class="Clear"></div>
+                            </div>
+                        </div>
+                        <div class="Row Row_DynamicField MultiValue" style="grid-template-columns: 1fr">
+                            <div class="FieldCell MultiValue_0" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[3]->{Name}_0_0" for="DynamicField_$IncludeDFConfigs[3]->{Name}_0_0">
+$IncludeDFConfigs[3]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<select class="DynamicFieldReference DynamicFieldText Modernize FormUpdate" id="DynamicField_$IncludeDFConfigs[3]->{Name}_0_0" name="DynamicField_$IncludeDFConfigs[3]->{Name}_0">
+$UserSelectionSelectedAgent1String
+</select>
+                                </div>
+                                <div class="AddRemoveValueRow">
+                                    <a class="RemoveValueRow"><i class="fa fa-minus-square"></i></a>
+                                    <a class="AddValueRow"><i class="fa fa-plus-square"></i></a>
+                                </div>
+                                <div class="Clear"></div>
+                            </div>
+                            <div class="FieldCell MultiValue_1" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[3]->{Name}_0_0" for="DynamicField_$IncludeDFConfigs[3]->{Name}_0_0">
+$IncludeDFConfigs[3]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<select class="DynamicFieldReference DynamicFieldText Modernize FormUpdate" id="DynamicField_$IncludeDFConfigs[3]->{Name}_0_1" name="DynamicField_$IncludeDFConfigs[3]->{Name}_0">
+$UserSelectionSelectedAgent2String
+</select>
+                                </div>
+                                <div class="AddRemoveValueRow">
+                                    <a class="RemoveValueRow"><i class="fa fa-minus-square"></i></a>
+                                    <a class="AddValueRow"><i class="fa fa-plus-square"></i></a>
+                                </div>
+                                <div class="Clear"></div>
+                            </div>
+                            <div class="MultiValue_Template" style="grid-column: 1 / span 1">
+                                <label id="LabelDynamicField_$IncludeDFConfigs[3]->{Name}_0_0" for="DynamicField_$IncludeDFConfigs[3]->{Name}_0_0">
+$IncludeDFConfigs[3]->{LabelEscaped}:
+</label>
+                                <div class="Field">
+<select class="DynamicFieldReference DynamicFieldText Modernize FormUpdate" id="DynamicField_$IncludeDFConfigs[3]->{Name}_0_Template" name="DynamicField_$IncludeDFConfigs[3]->{Name}_0">
+$UserSelectionString
+</select>
+                                </div>
+                                <div class="AddRemoveValueRow">
+                                    <a class="RemoveValueRow"><i class="fa fa-minus-square"></i></a>
+                                    <a class="AddValueRow"><i class="fa fa-plus-square"></i></a>
+                                </div>
+                            </div>
+                        </div>
+</fieldset>
+EOF
+            Label => <<"EOF",
+<label id="LabelDynamicField_$DynamicFieldConfigs{Set}->{Name}" for="DynamicField_$DynamicFieldConfigs{Set}->{Name}">
+$DynamicFieldConfigs{Set}->{LabelEscaped}:
+</label>
+EOF
+        },
+        Success => 1,
+    },
 );
 
 # execute tests
 for my $Test (@Tests) {
 
-    my $FieldHTML;
+    subtest $Test->{Name} => sub {
 
-    if ( IsHashRefWithData( $Test->{Config} ) ) {
-        my %Config = %{ $Test->{Config} };
+        my $FieldHTML;
 
-        if ( IsHashRefWithData( $Test->{Config}->{CGIParam} ) ) {
+        if ( IsHashRefWithData( $Test->{Config} ) ) {
+            my %Config = $Test->{Config}->%*;
 
-            # create a new HTTP::Request object to simulate a web request
-            my $HTTPRequest = POST( '/', [ $Test->{Config}->{CGIParam}->%* ] );
-            $Config{ParamObject} = Kernel::System::Web::Request->new(
-                HTTPRequest => $HTTPRequest,
-            );
+            if ( IsHashRefWithData( $Test->{Config}->{CGIParam} ) ) {
+
+                # create a new HTTP::Request object to simulate a web request
+                my $HTTPRequest = POST( '/', [ $Test->{Config}->{CGIParam}->%* ] );
+                $Config{ParamObject} = Kernel::System::Web::Request->new(
+                    HTTPRequest => $HTTPRequest,
+                );
+            }
+            $FieldHTML = $DFBackendObject->EditFieldRender(%Config);
         }
-        $FieldHTML = $DFBackendObject->EditFieldRender(%Config);
-    }
-    else {
-        $FieldHTML = $DFBackendObject->EditFieldRender;
-    }
+        else {
+            $FieldHTML = $DFBackendObject->EditFieldRender;
+        }
 
-    if ( $Test->{Success} ) {
-
-        # TODO Have a look at the newlines produced during template rendering. See Issue #1135
-        $FieldHTML->{Field} =~ s/^\n+//;
-        $FieldHTML->{Field} =~ s/\n+$//;
-        $FieldHTML->{Field} =~ s/\n{2,}/\n/g;
-
-        # Heredocs always have the newline, even if it is not expected
-        if ( $FieldHTML->{Field} !~ m{\n$} ) {
-
-            # chomp $Test->{ExpectedResults}->{Field};
+        if ( $Test->{Success} ) {
 
             # TODO Have a look at the newlines produced during template rendering. See Issue #1135
-            $Test->{ExpectedResults}->{Field} =~ s/^\n+//;
-            $Test->{ExpectedResults}->{Field} =~ s/\n+$//;
-        }
+            $FieldHTML->{Field} =~ s/^\n+//;
+            $FieldHTML->{Field} =~ s/\n+$//;
+            $FieldHTML->{Field} =~ s/\n{2,}/\n/g;
 
-        is(
-            $FieldHTML,
-            $Test->{ExpectedResults},
-            "$Test->{Name} | EditFieldRender()",
-        );
-    }
-    else {
-        ok(
-            !defined $FieldHTML,
-            "$Test->{Name} | EditFieldRender() (should be undef)"
-        );
-    }
+            # Remove lines which consist only of whitespace
+            $FieldHTML->{Field} =~ s/^\s+\n//gm;
+
+            # Heredocs always have the newline, even if it is not expected
+            if ( $FieldHTML->{Field} !~ m{\n$} ) {
+
+                # chomp $Test->{ExpectedResults}->{Field};
+
+                # TODO Have a look at the newlines produced during template rendering. See Issue #1135
+                $Test->{ExpectedResults}->{Field} =~ s/^\n+//;
+                $Test->{ExpectedResults}->{Field} =~ s/\n+$//;
+            }
+
+            is(
+                $FieldHTML,
+                {
+                    Field => T(),
+                    Label => T(),
+                },
+                "EditFieldRender() gave the expected structure",
+            );
+
+            for my $Key (qw(Field Label)) {
+
+                # compare long strings and get an unified diff in case of mismatch
+                TextEqOrDiff(
+                    $FieldHTML->{$Key},
+                    $Test->{ExpectedResults}->{$Key},
+                    "EditFieldRender() gave the expected content for $Key",
+                );
+            }
+        }
+        else {
+            ok( !defined $FieldHTML, 'EditFieldRender failed, as expected' );
+        }
+    };
 }
 
 done_testing;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,9 +16,9 @@
 
 package Kernel::System::Package::Event::SyncWithS3;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use namespace::autoclean;
 use utf8;
 
@@ -27,8 +27,8 @@ use utf8;
 # CPAN modules
 use Mojo::JSON qw(encode_json);
 
-# OTOBO modules
-use Kernel::System::Storage::S3;
+# CareOnCloud ESM modules
+use Kernel::System::Storage::S3 ();
 
 our @ObjectDependencies = (
     'Kernel::System::Log',
@@ -72,7 +72,7 @@ sub Run {
     );
 
     # extra copy in the file system with the same timestamp as in S3
-    my $TargetLocation = "/opt/otobo/Kernel/Config/Files/$EventFileName";
+    my $TargetLocation = "/opt/careoncloud/Kernel/Config/Files/$EventFileName";
 
     return $StorageS3Object->SaveObjectToFile(
         Key      => $EventFilePath,

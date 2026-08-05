@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -37,6 +37,17 @@
     [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
 
     <div class="SidebarColumn">
+[% RenderBlockStart("IncludeInvalid") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include invalid PostMaster Filters") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include invalid PostMaster Filters") | html %]</label>
+            </div>
+        </div>
+[% RenderBlockEnd("IncludeInvalid") %]
 [% RenderBlockStart("ActionList") %]
         <div class="WidgetSimple">
             <div class="Header">
@@ -69,6 +80,31 @@
             </div>
         </div>
 [% RenderBlockEnd("Filter") %]
+
+[% RenderBlockStart("Search") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2><label for="SearchTerm">[% Translate("Filter for PostMaster Filters") | html %]</label></h2>
+            </div>
+            <div class="Content">
+                <form action="[% Env("CGIHandle") %]?Action=AdminPostMasterFilter" enctype="multipart/form-data" method="post" class="Validate PreventMultipleSubmits">
+                    <input type="text" id="SearchTerm" class="FilterBox" name="SearchTerm" value="[% Data.SearchTerm | html %]" title="[% Translate("Search through PostMaster filters") | html %]">
+                    <div class="FieldExplanation">
+                        <p>[% Translate("Search all filter attributes") | html %]</p>
+                    </div>
+                    [% Data.SearchFilterStrg %]
+                    <div class="FieldExplanation">
+                        <p>[% Translate("Limit search to selected header fields") | html %]</p>
+                    </div>
+                    [% Data.SearchValueStrg %]
+                    <div class="FieldExplanation">
+                        <p>[% Translate("Limit search to selected set fields") | html %]</p>
+                    </div>
+                    <button id="SubmitSearch" class="CallForAction Fullsize Center SpacingTop" type="submit">[% Translate("Search") | html %]</button>
+                </form>
+            </div>
+        </div>
+[% RenderBlockEnd("Search") %]
 
 [% IF Env("Subaction") == 'Update' || Env("Subaction") == "AddAction" %]
         <div class="WidgetSimple">
@@ -106,6 +142,8 @@
                     <thead>
                         <tr>
                             <th>[% Translate("Name") | html %]</th>
+                            <th>[% Translate("Stop after match") | html %]</th>
+                            <th>[% Translate("Validity") | html %]</th>
                             <th class="Center W10pc">[% Translate("Delete") | html %]</th>
                         </tr>
                     </thead>
@@ -122,6 +160,8 @@
                             <td>
                                 <a class="AsBlock" href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Update;Name=[% Data.Name | uri %]">[% Translate(Data.Name) | html %]</a>
                             </td>
+                            <td>[% Translate(Data.StopAfterMatch) | html %]</td>
+                            <td>[% Translate(Data.Valid) | html %]</td>
                             <td class="Center">
                                 <a class="TrashCan PostMasterFilterDelete" href="#" data-query-string="Action=[% Env("Action") %];Subaction=Delete;Name=[% Data.Name | uri %];[% Env("ChallengeTokenParam") | html %]" title="[% Translate("Delete this filter") | html %]">
                                 <i class="fa fa-trash-o"></i>
@@ -175,6 +215,22 @@
                             [% Data.StopAfterMatch %]
                             <div id="StopAfterMatchError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
                             <div id="StopAfterMatchServerError" class="TooltipErrorMessage"><p>[% Translate("This field is required.") | html %]</p></div>
+                        </div>
+                        <div class="Clear"></div>
+
+                        <label class="Mandatory" for="ValidID"><span class="Marker">*</span> [% Translate("Validity") | html %]:</label>
+                        <div class="Field">
+                            [% Data.ValidOption %]
+                            <div id="ValidIDError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="ValidIDServerError" class="TooltipErrorMessage">
+                                <p>
+[% RenderBlockStart("ValidOptionServerError") %]
+                                    [% Translate("This field is required.") | html %]
+[% RenderBlockEnd("ValidOptionServerError") %]
+                                </p>
+                            </div>
                         </div>
                         <div class="Clear"></div>
                     </fieldset>
@@ -273,7 +329,7 @@
 
                     <label for="MatchHeaderExample">[% Translate("Header") | html %] 1:</label>
                     <div class="Field">
-                        <select name="MatchHeaderExample" id="MatchHeaderExample" class="Modernize W33pc"><option selected="selected" value="To">To</option></select>
+                        <select name="MatchHeaderExample" id="MatchHeaderExample" class="Modernize W33pc"><option selected value="To">To</option></select>
                         <label for="MatchValueExample">[% Translate("Value") | html %] 1:</label>
                         <input type="text" name="MatchValueExample" id="MatchValueExample" value="(me|test)@example.com" class="W33pc" maxlength="50"/>
                     </div>
@@ -283,7 +339,7 @@
 
                     <label for="SetHeaderExample">[% Translate("Header") | html %] 1:</label>
                     <div class="Field">
-                        <select name="SetHeaderExample" id="SetHeaderExample" class="Modernize W33pc"><option selected="selected" value="X-OTOBO-Queue">X-OTOBO-Queue</option></select>
+                        <select name="SetHeaderExample" id="SetHeaderExample" class="Modernize W33pc"><option selected value="X-CareOnCloud-Queue">X-CareOnCloud-Queue</option></select>
                         <label for="SetValueExample">[% Translate("Value") | html %] 1:</label>
                         <input type="text" name="SetValueExample" id="SetValueExample" value="SomeQueue" class="W33pc" maxlength="50"/>
                     </div>

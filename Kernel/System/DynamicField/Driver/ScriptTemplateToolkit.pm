@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -66,13 +66,18 @@ sub Evaluate {
 
     my %DynamicFields = ref $Param{Object}{DynamicField} eq 'HASH' ? $Param{Object}{DynamicField}->%* : ();
 
-    return $Kernel::OM->Create('Kernel::Output::HTML::Layout')->Output(
+    my $Value = $Kernel::OM->Create('Kernel::Output::HTML::Layout')->Output(
         Template => $Param{DynamicFieldConfig}{Config}{Expression},
         Data     => {
             $Param{Object}->%*,
             %DynamicFields,
         },
     );
+
+    # remove newlines and carriage returns to enable matching with edit field value
+    $Value =~ s/(\n|\r)//g;
+
+    return $Value;
 }
 
 1;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-# Default configuration for OTOBO. All changes to this file will be lost after an
+# Default configuration for CareOnCloud ESM. All changes to this file will be lost after an
 # update, please use AdminSystemConfiguration to configure your system.
 
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
@@ -25,19 +25,22 @@ use v5.24;
 use strict;
 use warnings;
 use utf8;
+use experimental 'bitwise'; # can be removed when "use v5.28" is active
+use feature 'bitwise';      # can be removed when "use v5.28" is active
 
 # core modules
-use Digest::MD5 qw(md5_hex);
-use Exporter qw(import);
-use Fcntl qw(:flock);
+use Digest::MD5    qw(md5_hex);
+use Exporter       qw(import);
+use Fcntl          qw(:flock); ## no perlimports
 use File::Basename qw(basename);
-use File::stat;
+use File::stat     qw(stat);
 
 # CPAN modules
 use Try::Tiny;
 
-# OTOBO modules
-use Kernel::System::ModuleRefresh; # based on Module::Refresh
+# CareOnCloud ESM modules
+use Kernel::MinimalPerlVersion    ();
+use Kernel::System::ModuleRefresh (); # based on Module::Refresh
 
 our @EXPORT = qw(Translatable); ## no critic qw(Modules::ProhibitAutomaticExportation)
 
@@ -53,12 +56,17 @@ This class implements several internal functions that are used internally in
 L<Kernel::Config>. The two externally used functions are documented as part
 of L<Kernel::Config>, even though they are actually implemented here.
 
+This module also holds examples of settings that may be used in F<Kernel/Config.pm>.
+
 =head1 PUBLIC INTERFACE
 
 =head2 LoadDefaults()
 
-loads the default values of settings that are required to run OTOBO even
+loads the default values of settings that are required to run CareOnCloud ESM even
 when it was not fully configured yet.
+
+These settings should be the same as the settings that are declared in
+the F<Kernel/Config/Files/XML/*.xml> files.
 
 =cut
 
@@ -101,11 +109,11 @@ sub LoadDefaults {
     # ScriptAlias
     # Prefix to index.pl used as ScriptAlias in web config
     # (Used when emailing links to agents).
-    $Self->{ScriptAlias} = 'otobo/';
+    $Self->{ScriptAlias} = 'careoncloud/';
 
     # AdminEmail
     # (Email of the system admin.)
-    $Self->{AdminEmail} = 'support@<OTOBO_CONFIG_FQDN>';
+    $Self->{AdminEmail} = 'support@<CareOnCloud_CONFIG_FQDN>';
 
     # Organization
     # (If this is anything other than '', then the email will have an
@@ -114,52 +122,100 @@ sub LoadDefaults {
 
     # ProductName
     # (Application name displayed in frontend.)
-    $Self->{ProductName} = 'OTOBO 10';
+    $Self->{ProductName} = 'CareOnCloud ESM';
 
     # --------------------------------------------------- #
     # database settings                                   #
     # --------------------------------------------------- #
+
     # DatabaseHost
     # (The database host.)
     $Self->{DatabaseHost} = 'localhost';
 
     # Database
     # (The database name.)
-    $Self->{Database} = 'otobo';
+    $Self->{Database} = 'careoncloud_esm';
 
     # DatabaseUser
     # (The database user.)
-    $Self->{DatabaseUser} = 'otobo';
+    $Self->{DatabaseUser} = 'careoncloud_esm';
 
     # DatabasePw
     # (The password of database user.)
     $Self->{DatabasePw} = 'some-pass';
 
     # DatabaseDSN
-    # The database DSN for MySQL ==> more: "perldoc DBD::mysql"
-    $Self->{DatabaseDSN} = "DBI:mysql:database=<OTOBO_CONFIG_Database>;host=<OTOBO_CONFIG_DatabaseHost>;";
+    # The database DSN for MySQL and MariaDB ==> more: "perldoc DBD::MariaDB"
+    # Note that internally a DSN starting with 'DBI:mysql' would be switched to 'DBI:MariaDB'
+    $Self->{DatabaseDSN} = "DBI:MariaDB:database=<CareOnCloud_CONFIG_Database>;host=<CareOnCloud_CONFIG_DatabaseHost>;";
 
     # The database DSN for PostgreSQL ==> more: "perldoc DBD::Pg"
-#    $Self->{DatabaseDSN} = "DBI:Pg:dbname=<OTOBO_CONFIG_Database>;host=<OTOBO_CONFIG_DatabaseHost>;";
+#    $Self->{DatabaseDSN} = "DBI:Pg:dbname=<CareOnCloud_CONFIG_Database>;host=<CareOnCloud_CONFIG_DatabaseHost>;";
 
     # The database DSN for Oracle ==> more: "perldoc DBD::oracle"
 #    $Self->{DatabaseDSN} = "DBI:Oracle://$Self->{DatabaseHost}:1521/$Self->{Database}";
 #
+    # environment variables for DBD::oracle
 #    $ENV{ORACLE_HOME}     = '/path/to/your/oracle';
 #    $ENV{NLS_DATE_FORMAT} = 'YYYY-MM-DD HH24:MI:SS';
 #    $ENV{NLS_LANG}        = 'AMERICAN_AMERICA.AL32UTF8';
 #    $ENV{NLS_LANG}        = 'GERMAN_GERMANY.AL32UTF8';
 
-    # If you want to use an init sql after connect, use this here.
-    # (e. g. can be used for mysql encoding between client and server)
+    # Additional connect attributes for the main 'careoncloud' database connection.
+    # Set the attributes needed for encrypted database connections here.
+    $Self->{DatabaseAttribute} = {};
+
+    # Activate 'mariadb_ssl_*' attributes when the connection to the MariaDB or MySQL database is secured by TLS.
+    # For a list of all supported parameters see https://metacpan.org/pod/DBD::mysql#connect
+    # Note that these attributes apply only to the main database connections. Depending on the
+    # setup, the customer database may also use the main connection.
+    #
+    #    mariadb_ssl                    : boolean, enforce encryption with TLS
+    #    mariadb_ssl_ca                 : specify the certificate authority file
+    #                                     Do not specify this with self signed certificates.
+    #                                     See https://serverfault.com/questions/399487/cant-connect-to-mysql-using-self-signed-ssl-certificate
+    #    mariadb_ssl_client_cert        : PEM certificate
+    #    mariadb_ssl_client_key         : private key of the client, the server must have the public key
+    #    mariadb_ssl_optional           : boolean workarounda for strange behavior when connecting
+    #                                     see  https://github.com/perl5-dbi/DBD-mysql/issues/333#issuecomment-888972939
+    #    mariadb_ssl_verify_server_cert : activate check of the server certificate
+    #
+    # This example prohibits the fallback to unsecured communication. Beware that DBD::MariaDB seems to be banning
+    # settings where man in the middle attacks are possible. When mariadb_ssl_optional = 0 is set
+    # then mariadb_ssl_verify_server_cert => 1 must also be passed. This means that the server certificate CN
+    # must be the DNS name which the client uses to connect to the server. In the Docker use case that CN is db.
+    #Alternatively specifying a subject alternative name SAN should work to. But this hasn't been tested.
+#    $Self->{DatabaseAttribute} = {
+#        mariadb_ssl                    => 1,
+#        mariadb_ssl_ca_file            => '/opt/careoncloud/tls/ca-cert.pem',
+#        mariadb_ssl_client_cert        => '/opt/careoncloud/tls/client-cert.pem',
+#        mariadb_ssl_client_key         => '/opt/careoncloud/tls/client-key.pem',
+#        mariadb_ssl_optional           => 0,
+#        mariadb_ssl_verify_server_cert => 1,
+#    };
+
+    # Setup for all database connections.
+
+    # Use 'Database::Connect' if you want to run initial SQL commands after connecting to the database.
+    # Formerly this sample was used with MySQL for setting the encoding between client and server.
     #    $Self->{'Database::Connect'} = 'SET NAMES utf8';
 
     # If you want to use the sql slow log feature, enable this here.
     # (To log every sql query which takes longer the 4 sec.)
     #    $Self->{'Database::SlowLog'} = 0;
 
+    # Specify Database::Attributes when you want to pass installation specific
+    # database connect attributes to all database connections.
+    #
+    # Note that attributes specified here apply to all database connections. This includes
+    # connections to the Customer database and connections for database dynamic fields.
+    # For setting attributes only for the main connection please use 'DatabaseAttribute'.
+    #
+    # See the sample attributes for 'DatabaseAttribute' for an example
+    # how to make use of 'Database::Attribute'.
+
     # --------------------------------------------------- #
-    # otobo.psgi configuration                            #
+    # careoncloud.psgi configuration                            #
     # --------------------------------------------------- #
     # default redirect
     $Self->{'Frontend::DefaultInterface'} = 'index.pl';
@@ -174,6 +230,7 @@ sub LoadDefaults {
     # --------------------------------------------------- #
     # default valid
     $Self->{DefaultValid} = 'valid';
+    $Self->{ValidateInputParams} = 1;
 
     # default language
     # (the default frontend language) [default: en]
@@ -300,19 +357,45 @@ sub LoadDefaults {
 
     # Frontend::WebPath
     # (URL base path of icons, CSS and Java Script.)
-    $Self->{'Frontend::WebPath'} = '/otobo-web/';
+    $Self->{'Frontend::WebPath'} = '/careoncloud-web/';
 
     # Frontend::JavaScriptPath
     # (URL JavaScript path.)
-    $Self->{'Frontend::JavaScriptPath'} = '<OTOBO_CONFIG_Frontend::WebPath>js/';
+    $Self->{'Frontend::JavaScriptPath'} = '<CareOnCloud_CONFIG_Frontend::WebPath>js/';
 
     # Frontend::CSSPath
     # (URL CSS path.)
-    $Self->{'Frontend::CSSPath'} = '<OTOBO_CONFIG_Frontend::WebPath>css/';
+    $Self->{'Frontend::CSSPath'} = '<CareOnCloud_CONFIG_Frontend::WebPath>css/';
+
+    # AgentColorDefinitions
+    $Self->{'AgentColorDefinitions'} = {
+        MainDark      => '#00023c',
+        MainLight     => '#000099',
+        MainHover     => '#001bff',
+        BGElement     => '#fff',
+        BGLight       => '#f7f7f9',
+        BGLightMedium => '#eeeef2',
+        BGMedium      => '#e5e5eb',
+        BGMediumDark  => '#cdcdd8',
+        BGDark        => '#bfc0ce',
+        TextLight     => '#7f809d',
+        TextMedium    => '#54557c',
+        TextDark      => '#00023c',
+        TextErr       => '#ea2400',
+        TextWarn      => '#f5af36',
+        TextLink      => '#001bff',
+        Highlight     => '#fef235',
+        NotifyOK      => '#c4cdfa',
+        NotifyWarn    => '#fffccc',
+        NotifyErr     => '#f9bcb2',
+        HoverLight    => '#fffccc',
+        HoverDark     => '#fef235',
+        ShadowDark    => 'rgba(0,2,71,0.16)',
+    };
 
     # Frontend::ImagePath
     # (URL image path of icons for navigation.)
-    $Self->{'Frontend::ImagePath'} = '<OTOBO_CONFIG_Frontend::WebPath>skins/Agent/default/img/';
+    $Self->{'Frontend::ImagePath'} = '<CareOnCloud_CONFIG_Frontend::WebPath>skins/Agent/default/img/';
 
     # DefaultViewNewLine
     # (insert new line in text messages after max x chars and
@@ -352,7 +435,7 @@ sub LoadDefaults {
     $Self->{CheckEmailAddresses} = 1;
 
     # CheckMXRecord
-    # (Check mx recorde of used email addresses)
+    # (Check mx records of used email addresses)
     $Self->{CheckMXRecord} = 1;
 
     # CheckEmailValidAddress
@@ -379,7 +462,7 @@ sub LoadDefaults {
     $Self->{'LogModule::SysLog::Charset'} = 'utf-8';
 
     # param for LogModule Kernel::System::Log::File (required!)
-    $Self->{'LogModule::LogFile'} = '/tmp/otobo.log';
+    $Self->{'LogModule::LogFile'} = '/tmp/careoncloud.log';
 
     # param if the date (yyyy-mm) should be added as suffix to
     # logfile [0|1]
@@ -414,11 +497,11 @@ sub LoadDefaults {
 
     # --------------------------------------------------- #
     # authentication settings                             #
-    # (enable what you need, auth against otobo db,       #
+    # (enable what you need, auth against careoncloud db,       #
     # against LDAP directory, against HTTP basic auth,    #
     # against Radius server or against OpenIDConnect)     #
     # --------------------------------------------------- #
-    # This is the auth. module against the otobo db
+    # This is the auth. module against the careoncloud db
     $Self->{AuthModule} = 'Kernel::System::Auth::DB';
 
     # defines AuthSyncBackend (AuthSyncModule) for AuthModule
@@ -426,7 +509,9 @@ sub LoadDefaults {
     # example values: AuthSyncBackend, AuthSyncBackend2
 #    $Self->{'AuthModule::UseSyncBackend'} = '';
 
-    # password crypt type (bcrypt|sha2|sha1|md5|apr1|crypt|plain)
+    # crypt type of user passwords in the database (bcrypt|sha2|sha1|md5|apr1|crypt|plain)
+    # It is discouraged to change this setting. The internally used default is 'sha2'.
+    # At least 'md5', 'apr1', 'crypt', and 'plain' are considered to be not really secure.
 #    $Self->{'AuthModule::DB::CryptType'} = 'sha2';
 
     # If "bcrypt" was selected for CryptType, use cost specified here for bcrypt hashing.
@@ -437,12 +522,25 @@ sub LoadDefaults {
     # (take care that Net::LDAP is installed!)
 #    $Self->{AuthModule} = 'Kernel::System::Auth::LDAP';
 #    $Self->{'AuthModule::LDAP::Host'} = 'ldap.example.com';
+#        to use ldaps protocol, specify url with ldaps:// scheme
+#            for example 'ldaps://ldap.example.com'
+#        to use a port different from ldaps default (636)
+#        specify the port as part of the URL:
+#            for example 'ldaps://ldap.example.com:737'
 #    $Self->{'AuthModule::LDAP::BaseDN'} = 'dc=example,dc=com';
 #    $Self->{'AuthModule::LDAP::UID'} = 'uid';
 
+# to verify TLS certificates with ldaps protocol, configure
+#    $Self->{'AuthModule::LDAP::Params'} = {
+#        verify => 'require',
+#    };
+
+# alternatively to using ldaps, you can also use StartTLS
+#    $Self->{'AuthModule::LDAP::StartTLS'} = 'required';
+
     # Check if the user is allowed to auth in a posixGroup
-    # (e. g. user needs to be in a group xyz to use otobo)
-#    $Self->{'AuthModule::LDAP::GroupDN'} = 'cn=otoboallow,ou=posixGroups,dc=example,dc=com';
+    # (e. g. user needs to be in a group xyz to use careoncloud)
+#    $Self->{'AuthModule::LDAP::GroupDN'} = 'cn=careoncloudallow,ou=posixGroups,dc=example,dc=com';
 #    $Self->{'AuthModule::LDAP::AccessAttr'} = 'memberUid';
     # for ldap posixGroups objectclass (just uid)
 #    $Self->{'AuthModule::LDAP::UserAttr'} = 'UID';
@@ -456,7 +554,7 @@ sub LoadDefaults {
 
     # in case you want to add always one filter to each ldap query, use
     # this option. e. g. AlwaysFilter => '(mail=*)' or AlwaysFilter => '(objectclass=user)'
-    # or if you want to filter with a locigal OR-Expression, like AlwaysFilter => '(|(mail=*abc.com)(mail=*xyz.com))'
+    # or if you want to filter with a logical OR-Expression, like AlwaysFilter => '(|(mail=*abc.com)(mail=*xyz.com))'
 #    $Self->{'AuthModule::LDAP::AlwaysFilter'} = '';
 
     # in case you want to add a suffix to each login name, then
@@ -471,10 +569,6 @@ sub LoadDefaults {
     # is not in use.
 #    $Self->{'AuthModule::LDAP::UserLowerCase'} = 0;
 
-    # In case you need to use OTOBO in iso-charset, you can define this
-    # by using this option (converts utf-8 data from LDAP to iso).
-#    $Self->{'AuthModule::LDAP::Charset'} = 'iso-8859-1';
-
     # Net::LDAP new params (if needed - for more info see perldoc Net::LDAP)
 #    $Self->{'AuthModule::LDAP::Params'} = {
 #        port    => 389,
@@ -482,8 +576,6 @@ sub LoadDefaults {
 #        async   => 0,
 #        version => 3,
 #    };
-    # Net::LDAP::start_tls verify type (if needed - for more info see Net::LDAP::start_tls)
-#    $Self->{'AuthModule::LDAP::StartTLS'} = 'required';
 
     # Die if backend can't work, e. g. can't connect to server.
 #    $Self->{'AuthModule::LDAP::Die'} = 1;
@@ -504,7 +596,7 @@ sub LoadDefaults {
     # for the latter the Action must be "Login"
 #    $Self->{'AuthModule::OpenIDConnect::Config'}{ClientSettings} = {
 #        ClientID    => 'abc123',
-#        RedirectURI => 'https://my.otobo.server/otobo/index.pl?Action=Login',
+#        RedirectURI => 'https://my.careoncloud.server/careoncloud/index.pl?Action=Login',
 #    };
     # For the authorization code flow the client secret has to be provided
 #    $Self->{'AuthModule::OpenIDConnect::Config'}{ClientSettings}{ClientSecret} = 's3cr3t';
@@ -513,7 +605,7 @@ sub LoadDefaults {
 #        OpenIDConfiguration => 'https://keycloak:8080/auth/realms/MyRealm/.well-known/openid-configuration',
 #        TTL                 => 60 * 30,      # optional: time period the extracted openid-configuration is cached
 #        Name                => 'Intern4',    # optional: necessary only if one needs to differentiate between User and CustomerUser configuration e.g.
-#        SSLOptions          => {             # if special ssl options are needed; SSLVerifyHostname => 0 is also possible but should only be used for testing purposes
+#        SSLOptions          => {             # if special ssl options are needed; SSLVerifyHostname => 0 and SSLVerifyMode => 0 are also possible but should only be used for testing purposes
 #            SSLCertificate => 'SSL_cert_file',     # client certificate
 #            SSLKey         => 'SSL_key_file',      # client cert key
 #            SSLPassword    => 'SSL_passwd_cb',     # password for client cert key
@@ -528,18 +620,18 @@ sub LoadDefaults {
 #        UseNonce   => 1,      # add a nonce to request and token (this is primarily important for the implicit flow where it is enabled by default)
 #        RandLength => 22,     # length for state and nonce random strings - default: 22
 #        RandTTL    => 60 * 5, # valid time period for state and nonce (roughly the time a user can take to authenticate) - default: 300 s
-#        Leeway     => 2,      # leeway for small time differences between the OTOBO server and the OpenID provier - default: 2 s
+#        Leeway     => 2,      # leeway for small time differences between the CareOnCloud ESM server and the OpenID provider - default: 2 s
 #    };
     # Optionally enable user authorization via the id token - hashes can be used for complex claims
 #    $Self->{'AuthModule::OpenIDConnect::RoleMap'} = {
 #        TokenAttribute => {
-#            TokenRole1 => 'OTOBORole1',
-#            TokenRole2 => 'OTOBORole2',
+#            TokenRole1 => 'CareOnCloudRole1',
+#            TokenRole2 => 'CareOnCloudRole2',
 #        },
 #        TokenAttribute2 => {
 #            abc123 => {
-#                TokenRole1 => 'OTOBORole1',
-#                TokenRole3 => 'OTOBORole3',
+#                TokenRole1 => 'CareOnCloudRole1',
+#                TokenRole3 => 'CareOnCloudRole3',
 #            }
 #        },
 #    };
@@ -565,8 +657,8 @@ sub LoadDefaults {
     # Note:
     # If you use this module, you should use as fallback the following
     # config settings if user isn't login through apache ($ENV{REMOTE_USER}).
-#    $Self->{LoginURL} = 'http://host.example.com/not-authorised-for-otobo.html';
-#    $Self->{LogoutURL} = 'http://host.example.com/thanks-for-using-otobo.html';
+#    $Self->{LoginURL} = 'http://host.example.com/not-authorised-for-careoncloud.html';
+#    $Self->{LogoutURL} = 'http://host.example.com/thanks-for-using-careoncloud.html';
 
     # This is example configuration to auth. agents against a radius server.
 #    $Self->{'AuthModule'} = 'Kernel::System::Auth::Radius';
@@ -581,6 +673,13 @@ sub LoadDefaults {
     # check a otp (one-time password)                     #
     # after successful authentication                     #
     # as an extra security measure                        #
+    #                                                     #
+    # if agents should be able to change their own        #
+    # secret you need to enable it in the system          #
+    # configuration (go to                                #
+    # frontend->agent->view->preferences and set active   #
+    # to 1 in                                             #
+    # PreferencesGroups###GoogleAuthenticatorSecretKey)   #
     # --------------------------------------------------- #
     # This is the auth module using the google authenticator mechanism
 #    $Self->{'AuthTwoFactorModule'} = 'Kernel::System::Auth::TwoFactor::GoogleAuthenticator';
@@ -597,16 +696,30 @@ sub LoadDefaults {
 
     # --------------------------------------------------- #
     # authentication sync settings                        #
-    # (enable agent data sync. after succsessful          #
+    # (enable agent data sync. after successful           #
     # authentication)                                     #
     # --------------------------------------------------- #
     # This is an example configuration for an LDAP auth sync. backend.
     # (take care that Net::LDAP is installed!)
 #    $Self->{AuthSyncModule} = 'Kernel::System::Auth::Sync::LDAP';
 #    $Self->{'AuthSyncModule::LDAP::Host'} = 'ldap.example.com';
+#        to use ldaps protocol, specify url with ldaps:// scheme
+#            for example 'ldaps://ldap.example.com'
+#        to use a port different from ldaps default (636)
+#        specify the port as part of the URL:
+#            for example 'ldaps://ldap.example.com:737'
+
+# to verify TLS certificates with ldaps protocol, configure
+#    $Self->{'AuthSyncModule::LDAP::Params'} = {
+#        verify => 'require',
+#    };
+
+# alternatively to using ldaps, you can also use StartTLS
+#    $Self->{'AuthSyncModule::LDAP::StartTLS'} = 'required';
+
 #    $Self->{'AuthSyncModule::LDAP::BaseDN'} = 'dc=example,dc=com';
 #    $Self->{'AuthSyncModule::LDAP::UID'} = 'uid';
-#    $Self->{'AuthSyncModule::LDAP::GroupDN'} = 'cn=otoboallow,ou=posixGroups,dc=example,dc=com';
+#    $Self->{'AuthSyncModule::LDAP::GroupDN'} = 'cn=careoncloudallow,ou=posixGroups,dc=example,dc=com';
 
     # The following is valid but would only be necessary if the
     # anonymous user do NOT have permission to read from the LDAP tree
@@ -631,10 +744,6 @@ sub LoadDefaults {
 #        UserEmail     => 'mail',
 #    };
 
-    # In case you need to use OTOBO in iso-charset, you can define this
-    # by using this option (converts utf-8 data from LDAP to iso).
-#    $Self->{'AuthSyncModule::LDAP::Charset'} = 'iso-8859-1';
-
     # Net::LDAP new params (if needed - for more info see perldoc Net::LDAP)
 #    $Self->{'AuthSyncModule::LDAP::Params'} = {
 #        port    => 389,
@@ -642,8 +751,6 @@ sub LoadDefaults {
 #        async   => 0,
 #        version => 3,
 #    };
-    # Net::LDAP::start_tls verify type (if needed - for more info see Net::LDAP::start_tls)
-#    $Self->{'AuthSyncModule::LDAP::StartTLS'} = 'required';
 
 
     # Die if backend can't work, e. g. can't connect to server.
@@ -668,11 +775,11 @@ sub LoadDefaults {
 
     # AuthSyncModule::LDAP::UserSyncGroupsDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # groups to otobo groups, define the following.)
+    # groups to careoncloud groups, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncGroupsDefinition'} = {
 #        # ldap group
-#        'cn=agent,o=otobo' => {
-#            # otobo group
+#        'cn=agent,o=careoncloud' => {
+#            # careoncloud group
 #            'admin' => {
 #                # permission
 #                rw => 1,
@@ -683,7 +790,7 @@ sub LoadDefaults {
 #                ro => 1,
 #            },
 #        },
-#        'cn=agent2,o=otobo' => {
+#        'cn=agent2,o=careoncloud' => {
 #            'users' => {
 #                rw => 1,
 #                ro => 1,
@@ -693,28 +800,28 @@ sub LoadDefaults {
 
     # AuthSyncModule::LDAP::UserSyncRolesDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # groups to otobo roles, define the following.)
+    # groups to careoncloud roles, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncRolesDefinition'} = {
 #        # ldap group
-#        'cn=agent,o=otobo' => {
-#            # otobo role
+#        'cn=agent,o=careoncloud' => {
+#            # careoncloud role
 #            'role1' => 1,
 #            'role2' => 0,
 #        },
-#        'cn=agent2,o=otobo' => {
+#        'cn=agent2,o=careoncloud' => {
 #            'role3' => 1,
 #        }
 #    };
 
     # AuthSyncModule::LDAP::UserSyncAttributeGroupsDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # attributes to otobo groups, define the following.)
+    # attributes to careoncloud groups, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncAttributeGroupsDefinition'} = {
 #        # ldap attribute
 #        'LDAPAttribute' => {
 #            # ldap attribute value
 #            'LDAPAttributeValue1' => {
-#                # otobo group
+#                # careoncloud group
 #                'admin' => {
 #                    # permission
 #                    rw => 1,
@@ -738,13 +845,13 @@ sub LoadDefaults {
 
     # AuthSyncModule::LDAP::UserSyncAttributeRolesDefinition
     # (If "LDAP" was selected for AuthModule and you want to sync LDAP
-    # attributes to otobo roles, define the following.)
+    # attributes to careoncloud roles, define the following.)
 #    $Self->{'AuthSyncModule::LDAP::UserSyncAttributeRolesDefinition'} = {
 #        # ldap attribute
 #        'LDAPAttribute' => {
 #            # ldap attribute value
 #            'LDAPAttributeValue1' => {
-#                # otobo role
+#                # careoncloud role
 #                'role1' => 1,
 #                'role2' => 1,
 #            },
@@ -854,8 +961,8 @@ sub LoadDefaults {
 #    $Self->{SessionModule} = 'Kernel::System::AuthSession::FS';
 
     # SessionName
-    # (Name of the session key. E. g. Session, SessionID, OTOBO)
-    $Self->{SessionName} = 'OTOBOAgentInterface';
+    # (Name of the session key. E. g. Session, SessionID, CareOnCloud ESM)
+    $Self->{SessionName} = 'CareOnCloudAgentInterface';
 
     # SessionCheckRemoteIP
     # (If the application is used via a proxy-farm then the
@@ -865,7 +972,7 @@ sub LoadDefaults {
 
     # SessionDeleteIfNotRemoteID
     # (Delete session if the session id is used with an
-    # invalied remote IP?) [0|1]
+    # invalid remote IP?) [0|1]
     $Self->{SessionDeleteIfNotRemoteID} = 1;
 
     # SessionMaxTime
@@ -881,22 +988,14 @@ sub LoadDefaults {
     # (Delete session's witch are requested and to old?) [0|1]
     $Self->{SessionDeleteIfTimeToOld} = 1;
 
-    # SessionUseCookie
-    # (Should the session management use html cookies?
-    # It's more comfortable to send links -==> if you have a valid
-    # session, you don't have to login again.) [0|1]
-    # Note: If the client browser disabled html cookies, the system
-    # will work as usual, append SessionID to links!
-    $Self->{SessionUseCookie} = 1;
-
     # SessionUseCookieAfterBrowserClose
     # (store cookies in browser after closing a browser) [0|1]
     $Self->{SessionUseCookieAfterBrowserClose} = 0;
 
     # SessionDir
-    # directory for all sessen id information (just needed if
+    # directory for all session id information (just needed if
     # $Self->{SessionModule}='Kernel::System::AuthSession::FS)
-    $Self->{SessionDir} = '<OTOBO_CONFIG_Home>/var/sessions';
+    $Self->{SessionDir} = '<CareOnCloud_CONFIG_Home>/var/sessions';
 
     # SessionTable*
     # (just needed if $Self->{SessionModule}='Kernel::System::AuthSession::DB)
@@ -907,8 +1006,8 @@ sub LoadDefaults {
     # Time Settings
     # --------------------------------------------------- #
     # TimeZone
-    # (set the OTOBO time zone, default is UTC)
-#    $Self->{'OTOBOTimeZone'} = 'UTC';
+    # (set the CareOnCloud ESM time zone, default is UTC)
+#    $Self->{'CareOnCloudTimeZone'} = 'UTC';
 
     # Time*
     # (Used for ticket age, escalation and system unlock calculation)
@@ -956,13 +1055,13 @@ sub LoadDefaults {
     $Self->{WebMaxFileUpload} = 48000000;
 
     # WebUploadCacheModule
-    # (select you WebUploadCacheModule module, default DB [DB|FS])
+    # (select your WebUploadCacheModule module, default DB [DB|FS])
     $Self->{WebUploadCacheModule} = 'Kernel::System::Web::UploadCache::DB';
 
 #    $Self->{WebUploadCacheModule} = 'Kernel::System::Web::UploadCache::FS';
 
     # CGILogPrefix
-    $Self->{CGILogPrefix} = 'OTOBO-CGI';
+    $Self->{CGILogPrefix} = 'CareOnCloud-CGI';
 
     # --------------------------------------------------- #
     # Agent Web Interface
@@ -1002,17 +1101,20 @@ sub LoadDefaults {
     # directories                                         #
     # --------------------------------------------------- #
     # root directory
-    $Self->{Home} = '/opt/otobo';
+    $Self->{Home} = '/opt/careoncloud';
 
     # tmp dir
-    $Self->{TempDir} = '<OTOBO_CONFIG_Home>/var/tmp';
+    $Self->{TempDir} = '<CareOnCloud_CONFIG_Home>/var/tmp';
 
     # article dir
-    $Self->{'Ticket::Article::Backend::MIMEBase::ArticleDataDir'} = '<OTOBO_CONFIG_Home>/var/article';
+    $Self->{'Ticket::Article::Backend::MIMEBase::ArticleDataDir'} = '<CareOnCloud_CONFIG_Home>/var/article';
 
-    # html template dirs
-    $Self->{TemplateDir}       = '<OTOBO_CONFIG_Home>/Kernel/Output';
-    $Self->{CustomTemplateDir} = '<OTOBO_CONFIG_Home>/Custom/Kernel/Output';
+    # HTML template dirs
+    #
+    # TemplateDir is also used for assembling the path Kernel/Output/HMTL/Layout/,
+    # which holds the base classes of the Kernel::Output::HTML::Layout module
+    $Self->{TemplateDir}       = '<CareOnCloud_CONFIG_Home>/Kernel/Output';
+    $Self->{CustomTemplateDir} = '<CareOnCloud_CONFIG_Home>/Custom/Kernel/Output';
 
     # --------------------------------------------------- #
     # CommonCSS                                           #
@@ -1033,7 +1135,8 @@ sub LoadDefaults {
       'Core.Animations.css',
       'Core.Icons.css',
       'Core.Footer.css',
-      'Core.Items.css'
+      'Core.Items.css',
+      'ExtendedCDBInfo.Tile.css',
     ];
 
     # Agent Common CSS
@@ -1067,13 +1170,13 @@ sub LoadDefaults {
 
     # Customer Common JS
     $Self->{'Loader::Customer::CommonJS'}->{'000-Framework'} = [
-        'thirdparty/jquery-3.6.0/jquery.min.js',
+        'thirdparty/jquery-3.7.1/jquery.min.js',
         'thirdparty/jquery-browser-detection/jquery-browser-detection.js',
-        'thirdparty/jquery-validate-1.19.3/jquery.validate.js',
-        'thirdparty/jquery-ui-1.13.2/jquery-ui.min.js',
+        'thirdparty/jquery-validate-1.21.0/jquery.validate.min.js',
+        'thirdparty/jquery-ui-1.14.1/jquery-ui.min.js',
         'thirdparty/jquery-pubsub/pubsub.js',
         'thirdparty/jquery-jstree-3.3.7/jquery.jstree.js',
-        'thirdparty/nunjucks-3.2.2/nunjucks.min.js',
+        'thirdparty/nunjucks-3.2.4/nunjucks.min.js',
         'Core.Init.js',
         'Core.Debug.js',
         'Core.Exception.js',
@@ -1102,19 +1205,20 @@ sub LoadDefaults {
         'Core.Customer.js',
         'Core.Customer.Responsive.js',
         'Core.UI.NavigationBar.js',
-        'Core.UI.Elasticsearch.js'
+        'Core.UI.Elasticsearch.js',
+        'ExtendedCDBInfo.Tile.js',
     ];
 
     # Agent Common JS
     $Self->{'Loader::Agent::CommonJS'}->{'000-Framework'} = [
-        'thirdparty/jquery-3.6.0/jquery.min.js',
+        'thirdparty/jquery-3.7.1/jquery.min.js',
         'thirdparty/jquery-browser-detection/jquery-browser-detection.js',
-        'thirdparty/jquery-ui-1.13.2/jquery-ui.min.js',
+        'thirdparty/jquery-ui-1.14.1/jquery-ui.min.js',
         'thirdparty/jquery-ui-touch-punch-0.2.3/jquery.ui.touch-punch.js',
-        'thirdparty/jquery-validate-1.19.3/jquery.validate.js',
+        'thirdparty/jquery-validate-1.21.0/jquery.validate.min.js',
         'thirdparty/jquery-pubsub/pubsub.js',
         'thirdparty/jquery-jstree-3.3.7/jquery.jstree.js',
-        'thirdparty/nunjucks-3.2.2/nunjucks.min.js',
+        'thirdparty/nunjucks-3.2.4/nunjucks.min.js',
         'Core.Init.js',
         'Core.JavaScriptEnhancements.js',
         'Core.Debug.js',
@@ -1162,7 +1266,7 @@ sub LoadDefaults {
     # --------------------------------------------------- #
 
     # Package::RepositoryRoot
-    # (get online repository list, use the fist availabe result)
+    # (get online repository list, use the fist available result)
     $Self->{'Package::RepositoryRoot'} = [
         'https://ftp.otobo.org/pub/otobo/misc/packages/repository.xml',
     ];
@@ -1170,7 +1274,7 @@ sub LoadDefaults {
     # Package::RepositoryList
     # (repository list)
 #    $Self->{'Package::RepositoryList'} = {
-#        'ftp://ftp.example.com/pub/otobo/misc/packages/' => '[Example] ftp://ftp.example.com/',
+#        'ftp://ftp.example.com/pub/careoncloud/misc/packages/' => '[Example] ftp://ftp.example.com/',
 #    };
 
     # Package::Timeout
@@ -1186,7 +1290,7 @@ sub LoadDefaults {
     # --------------------------------------------------- #
     $Self->{PGP}            = 0;
     $Self->{'PGP::Bin'}     = '/usr/bin/gpg';
-    $Self->{'PGP::Options'} = '--homedir /opt/otobo/.gnupg/ --batch --no-tty --yes';
+    $Self->{'PGP::Options'} = '--homedir /opt/careoncloud/.gnupg/ --batch --no-tty --yes';
 
 #    $Self->{'PGP::Options'} = '--batch --no-tty --yes';
 #    $Self->{'PGP::Key::Password'}->{'D2DF79FA'} = 1234;
@@ -1282,7 +1386,7 @@ sub LoadDefaults {
         'PreferenceGroup'  => 'Miscellaneous',
         'Key'     => '',
         'Label'   => 'Theme',
-        'Desc'    => 'Select your preferred theme for OTOBO.',
+        'Desc'    => 'Select your preferred theme for CareOnCloud ESM.',
         'Module'  => 'Kernel::Output::HTML::Preferences::Theme',
         'PrefKey' => 'UserTheme',
         'Prio'    => '3000',
@@ -1297,21 +1401,21 @@ sub LoadDefaults {
     # --------------------------------------------------- #
 
     # notification sender
-    $Self->{NotificationSenderName}  = 'OTOBO Notifications';
-    $Self->{NotificationSenderEmail} = 'otobo@<OTOBO_CONFIG_FQDN>';
+    $Self->{NotificationSenderName}  = 'CareOnCloud ESM Notifications';
+    $Self->{NotificationSenderEmail} = 'esm@<CareOnCloud_CONFIG_FQDN>';
 
     # notification email for new password
-    $Self->{NotificationSubjectLostPassword} = 'New OTOBO password';
-    $Self->{NotificationBodyLostPassword}    = 'Hi <OTOBO_USERFIRSTNAME>,
+    $Self->{NotificationSubjectLostPassword} = 'New CareOnCloud ESM password';
+    $Self->{NotificationBodyLostPassword}    = 'Hi <CareOnCloud_USERFIRSTNAME>,
 
 
-Here\'s your new OTOBO password.
+Here\'s your new CareOnCloud ESM password.
 
-New password: <OTOBO_NEWPW>
+New password: <CareOnCloud_NEWPW>
 
 You can log in via the following URL:
 
-<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>index.pl
+<CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>index.pl
             ';
 
     # --------------------------------------------------- #
@@ -1322,8 +1426,8 @@ You can log in via the following URL:
     # --------------------------------------------------- #
 
     # SessionName
-    # (Name of the session key. E. g. Session, SessionID, OTOBO)
-    $Self->{CustomerPanelSessionName} = 'OTOBOCustomerInterface';
+    # (Name of the session key. E. g. Session, SessionID, CareOnCloud ESM)
+    $Self->{CustomerPanelSessionName} = 'CareOnCloudCustomerInterface';
 
     # CustomerPanelUserID
     # (The customer panel db-uid.) [default: 1]
@@ -1331,7 +1435,7 @@ You can log in via the following URL:
 
     # CustomerGroupSupport (0 = compatible to previous behavior)
     # (if this is 1, the you need to set the group <-> customer user
-    # relations! http://host/otobo/index.pl?Action=AdminCustomerUserGroup
+    # relations! http://host/careoncloud/index.pl?Action=AdminCustomerUserGroup
     # otherway, each user is ro/rw in each group!)
     $Self->{CustomerGroupSupport} = 0;
 
@@ -1382,74 +1486,90 @@ You can log in via the following URL:
     $Self->{CustomerPanelLostPassword} = 1;
 
     # CustomerPanelCreateAccount
-    # (use create cutomer account self feature)
+    # (use create customer account self feature)
     $Self->{CustomerPanelCreateAccount} = 1;
 
     # --------------------------------------------------- #
     # notification email about new password               #
     # --------------------------------------------------- #
-    $Self->{CustomerPanelSubjectLostPassword} = 'New OTOBO password';
-    $Self->{CustomerPanelBodyLostPassword}    = 'Hi <OTOBO_USERFIRSTNAME>,
+    $Self->{CustomerPanelSubjectLostPassword} = 'New CareOnCloud ESM password';
+    $Self->{CustomerPanelBodyLostPassword}    = 'Hi <CareOnCloud_USERFIRSTNAME>,
 
 
-New password: <OTOBO_NEWPW>
+New password: <CareOnCloud_NEWPW>
 
-<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>customer.pl
+<CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>customer.pl
             ';
 
     # --------------------------------------------------- #
     # notification email about new account                #
     # --------------------------------------------------- #
-    $Self->{CustomerPanelSubjectNewAccount} = 'New OTOBO Account!';
-    $Self->{CustomerPanelBodyNewAccount}    = 'Hi <OTOBO_USERFIRSTNAME>,
+    $Self->{CustomerPanelSubjectNewAccount} = 'New CareOnCloud ESM Account!';
+    $Self->{CustomerPanelBodyNewAccount}    = 'Hi <CareOnCloud_USERFIRSTNAME>,
 
-You or someone impersonating you has created a new OTOBO account for
+You or someone impersonating you has created a new CareOnCloud ESM account for
 you.
 
-Full name: <OTOBO_USERFIRSTNAME> <OTOBO_USERLASTNAME>
-User name: <OTOBO_USERLOGIN>
-Password : <OTOBO_USERPASSWORD>
+Full name: <CareOnCloud_USERFIRSTNAME> <CareOnCloud_USERLASTNAME>
+User name: <CareOnCloud_USERLOGIN>
+Password : <CareOnCloud_USERPASSWORD>
 
 You can log in via the following URL. We encourage you to change your password
 via the Preferences button after logging in.
 
-<OTOBO_CONFIG_HttpType>://<OTOBO_CONFIG_FQDN>/<OTOBO_CONFIG_ScriptAlias>customer.pl
+<CareOnCloud_CONFIG_HttpType>://<CareOnCloud_CONFIG_FQDN>/<CareOnCloud_CONFIG_ScriptAlias>customer.pl
             ';
 
     # --------------------------------------------------- #
     # customer authentication settings                    #
-    # (enable what you need, auth against otobo db,       #
+    # (enable what you need, auth against careoncloud db,       #
     # against a LDAP directory, against HTTP basic        #
     # authentication, using OpenIDConnect,                #
     # and against Radius server)                          #
     # --------------------------------------------------- #
-    # This is the auth. module for the otobo db
+    # This is the auth. module for the careoncloud db
     # you can also configure it using a remote database
     $Self->{'Customer::AuthModule'}                       = 'Kernel::System::CustomerAuth::DB';
     $Self->{'Customer::AuthModule::DB::Table'}            = 'customer_user';
     $Self->{'Customer::AuthModule::DB::CustomerKey'}      = 'login';
     $Self->{'Customer::AuthModule::DB::CustomerPassword'} = 'pw';
 
-#    $Self->{'Customer::AuthModule::DB::DSN'} = "DBI:mysql:database=customerdb;host=customerdbhost";
+#    $Self->{'Customer::AuthModule::DB::DSN'} = "DBI:MariaDB:database=customerdb;host=customerdbhost";
 #    $Self->{'Customer::AuthModule::DB::User'} = "some_user";
 #    $Self->{'Customer::AuthModule::DB::Password'} = "some_password";
 
     # if you use odbc or you want to define a database type (without autodetection)
 #    $Self->{'Customer::AuthModule::DB::Type'} = 'mysql';
 
-    # password crypt type (bcrypt|sha2|sha1|md5|apr1|crypt|plain)
+    # crypt type of customer passwords in the database (bcrypt|sha2|sha1|md5|apr1|crypt|plain)
+    # It is discouraged to change this setting. The internally used default is 'sha2'.
+    # At least 'md5', 'apr1', 'crypt', and 'plain' are considered to be not really secure.
 #    $Self->{'Customer::AuthModule::DB::CryptType'} = 'sha2';
 
     # This is an example configuration for an LDAP auth. backend.
     # (take care that Net::LDAP is installed!)
 #    $Self->{'Customer::AuthModule'} = 'Kernel::System::CustomerAuth::LDAP';
 #    $Self->{'Customer::AuthModule::LDAP::Host'} = 'ldap.example.com';
+#        to use ldaps protocol, specify url with ldaps:// scheme
+#            for example 'ldaps://ldap.example.com'
+#        to use a port different from ldaps default (636)
+#        specify the port as part of the URL:
+#            for example 'ldaps://ldap.example.com:737'
+
+# to verify TLS certificates with ldaps protocol, configure
+#    $Self->{'Customer::AuthModule::LDAP::Params'} = {
+#        verify => 'require',
+#    };
+
+# alternatively to using ldaps, you can also use StartTLS
+#    $Self->{'Customer::AuthModule::LDAP::StartTLS'} = 'required';
+
 #    $Self->{'Customer::AuthModule::LDAP::BaseDN'} = 'dc=example,dc=com';
 #    $Self->{'Customer::AuthModule::LDAP::UID'} = 'uid';
 
     # Check if the user is allowed to auth in a posixGroup
-    # (e. g. user needs to be in a group xyz to use otobo)
-#    $Self->{'Customer::AuthModule::LDAP::GroupDN'} = 'cn=otoboallow,ou=posixGroups,dc=example,dc=com';
+    # (e. g. user needs to be in a group xyz to use careoncloud)
+#    $Self->{'Customer::AuthModule::LDAP::GroupDN'} = 'cn=careoncloudallow,ou=posixGroups,dc=example,dc=com';
 #    $Self->{'Customer::AuthModule::LDAP::AccessAttr'} = 'memberUid';
     # for ldap posixGroups objectclass (just uid)
 #    $Self->{'Customer::AuthModule::LDAP::UserAttr'} = 'UID';
@@ -1499,7 +1619,7 @@ via the Preferences button after logging in.
     # for the latter the Action must be "Login"
 #    $Self->{'Customer::AuthModule::OpenIDConnect::Config'}{ClientSettings} = {
 #        ClientID    => 'abc123',
-#        RedirectURI => 'https://my.otobo.server/otobo/customer.pl?Action=Login',
+#        RedirectURI => 'https://my.careoncloud.server/careoncloud/customer.pl?Action=Login',
 #    };
     # For the authorization code flow the client secret has to be provided
 #    $Self->{'Customer::AuthModule::OpenIDConnect::Config'}{ClientSettings}{ClientSecret} = 's3cr3t';
@@ -1508,7 +1628,7 @@ via the Preferences button after logging in.
 #        OpenIDConfiguration => 'https://keycloak:8080/auth/realms/MyRealm/.well-known/openid-configuration',
 #        TTL                 => 60 * 30,      # optional: time period the extracted openid-configuration is cached
 #        Name                => 'Intern4',    # optional: necessary only if one needs to differentiate between User and CustomerUser configuration e.g.
-#        SSLOptions          => {             # if special ssl options are needed; SSLVerifyHostname => 0 is also possible but should only be used for testing purposes
+#        SSLOptions          => {             # if special ssl options are needed; SSLVerifyHostname => 0 and SSLVerifyMode => 0 are also possible but should only be used for testing purposes
 #            SSLCertificate => 'SSL_cert_file',     # client certificate
 #            SSLKey         => 'SSL_key_file',      # client cert key
 #            SSLPassword    => 'SSL_passwd_cb',     # password for client cert key
@@ -1523,7 +1643,7 @@ via the Preferences button after logging in.
 #        UseNonce   => 1,      # add a nonce to request and token (this is primarily important for the implicit flow where it is enabled by default)
 #        RandLength => 22,     # length for state and nonce random strings - default: 22
 #        RandTTL    => 60 * 5, # valid time period for state and nonce (roughly the time a user can take to authenticate) - default: 300 s
-#        Leeway     => 2,      # leeway for small time differences between the OTOBO server and the OpenID provier - default: 2 s
+#        Leeway     => 2,      # leeway for small time differences between the CareOnCloud ESM server and the OpenID provider - default: 2 s
 #    };
     # For debugging purposes you can dump all IDTokens received to the log
 #    $Self->{'Customer::AuthModule::OpenIDConnect::Debug'}->{'LogIDToken'} = 1;
@@ -1542,8 +1662,8 @@ via the Preferences button after logging in.
 #    $Self->{'Customer::AuthModule::HTTPBasicAuth::ReplaceRegExp'} = '^(.+?)@.+?$';
     # If you use this module, you should use as fallback the following
     # config settings if user isn't login through apache ($ENV{REMOTE_USER})
-#    $Self->{CustomerPanelLoginURL} = 'http://host.example.com/not-authorised-for-otobo.html';
-#    $Self->{CustomerPanelLogoutURL} = 'http://host.example.com/thanks-for-using-otobo.html';
+#    $Self->{CustomerPanelLoginURL} = 'http://host.example.com/not-authorised-for-careoncloud.html';
+#    $Self->{CustomerPanelLogoutURL} = 'http://host.example.com/thanks-for-using-careoncloud.html';
 
     # This is example configuration to auth. agents against a radius server
 #    $Self->{'Customer::AuthModule'} = 'Kernel::System::Auth::Radius';
@@ -1555,6 +1675,14 @@ via the Preferences button after logging in.
     # check a otp (one-time password)                     #
     # after successful authentication                     #
     # as an extra security measure                        #
+    #                                                     #
+    # if customers should be able to change their own     #
+    # secret you need to enable it in the system          #
+    # configuration (go to                                #
+    # frontend->customer->view->preferences and set       #
+    # active to 1 in                                      #
+    # CustomerPreferencesGroups###GoogleAuthenticatorSecretKey) #
+    # --------------------------------------------------- #
     # --------------------------------------------------- #
     # This is the auth module using the google authenticator mechanism
 #    $Self->{'Customer::AuthTwoFactorModule'} = 'Kernel::System::CustomerAuth::TwoFactor::GoogleAuthenticator';
@@ -1587,7 +1715,14 @@ via the Preferences button after logging in.
             # required settings
 #            DSN  => 'DBI:odbc:yourdsn',
 #            Type => 'mssql', # only for ODBC connections
-#            DSN => 'DBI:mysql:database=customerdb;host=customerdbhost',
+#            DSN => 'DBI:MariaDB:database=customerdb;host=customerdbhost',
+#            # Extra connect attributes can be used for secured connections
+#            Attribute => {
+#                mysql_ssl             => 1,
+#                mysql_ssl_client_cert => '/opt/careoncloud/tls/client-cert.pem',
+#                mysql_ssl_client_key  => '/opt/careoncloud/tls/client-key.pem',
+#                mysql_ssl_optional    => 1,
+#            },
 #            User => '',
 #            Password => '',
             Table => 'customer_user',
@@ -1662,7 +1797,7 @@ via the Preferences button after logging in.
             [ 'UserLogin',        Translatable('Username'),            'login',          1, 1, 'var', '', 0, undef, undef ],
             [ 'UserPassword',     Translatable('Password'),            'pw',             0, 0, 'var', '', 0, undef, undef ],
             [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '', 0, undef, undef ],
-#            [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '[% Env("CGIHandle") %]?Action=AgentTicketCompose;ResponseID=1;TicketID=[% Data.TicketID | uri %];ArticleID=[% Data.ArticleID | uri %]', 0, '', 'AsPopup OTOBOPopup_TicketAction' ],
+#            [ 'UserEmail',        Translatable('Email'),               'email',          1, 1, 'var', '[% Env("CGIHandle") %]?Action=AgentTicketCompose;ResponseID=1;TicketID=[% Data.TicketID | uri %];ArticleID=[% Data.ArticleID | uri %]', 0, '', 'AsPopup CareOnCloudPopup_TicketAction' ],
             [ 'UserCustomerID',   Translatable('CustomerID'),          'customer_id',    0, 1, 'var', '', 0, undef, undef ],
 #            [ 'UserCustomerIDs',  Translatable('CustomerIDs'),         'customer_ids',   1, 0, 'var', '', 0, undef, undef ],
             [ 'UserPhone',        Translatable('Phone'),               'phone',          1, 0, 'var', '', 0, undef, undef ],
@@ -1696,7 +1831,7 @@ via the Preferences button after logging in.
 #        Module => 'Kernel::System::CustomerUser::LDAP',
 #        Params => {
 #            # ldap host
-#            Host => 'bay.csuhayward.edu',
+#            Host => 'ldaps://bay.csuhayward.edu',
 #            # ldap base dn
 #            BaseDN => 'ou=seas,o=csuh',
 #            # search scope (one|sub)
@@ -1718,12 +1853,15 @@ via the Preferences button after logging in.
 #                timeout => 120,
 #                async   => 0,
 #                version => 3,
+#                verify  => 'require',
 #            },
 #        },
 #        # customer unique id
 #        CustomerKey => 'uid',
 #        # customer #
 #        CustomerID => 'mail',
+#        # The last field must always be the email address so that a valid
+#        #   email address like "John Doe" <john.doe@domain.com> can be constructed from the fields.
 #        CustomerUserListFields => ['cn', 'mail'],
 #        CustomerUserSearchFields => ['uid', 'cn', 'mail'],
 #        CustomerUserSearchPrefix => '',
@@ -1737,7 +1875,7 @@ via the Preferences button after logging in.
 #        CustomerUserExcludePrimaryCustomerID => 0,
 #        # add a ldap filter for valid users (expert setting)
 #        # CustomerUserValidFilter => '(!(description=gesperrt))',
-#        # Translate manager flag in mapping to mail, uid, SamAccountName etc...
+#        # Translate manager flag in mapping from its Distinguished Name to cn, sAMAccountName, uid, mail, etc.
 #        TranslateManagerTo => 'sAMAccountName',
 #        # admin can't change customer preferences
 #        AdminSetPreferences => 0,
@@ -1753,16 +1891,16 @@ via the Preferences button after logging in.
 #            [ 'UserEmail',       Translatable('Email'),               'mail',                1, 1, 'var', '', 1, undef, undef ],
 #            [ 'UserCustomerID',  Translatable('CustomerID'),          'mail',                0, 1, 'var', '', 1, undef, undef ],
 #            # [ 'UserCustomerIDs', Translatable('CustomerIDs'),         'second_customer_ids', 1, 0, 'var', '', 1, undef, undef ],
-#            # [ 'UserManager',       Translatable('Manager'),               'manager',     1, 0, 'var', '', 1, undef, undef ],
+#            # [ 'UserManager',       Translatable('Manager'),           'manager',             1, 0, 'var', '', 1, undef, undef ],
 #            [ 'UserPhone',       Translatable('Phone'),               'telephonenumber',     1, 0, 'var', '', 1, undef, undef ],
 #            [ 'UserAddress',     Translatable('Address'),             'postaladdress',       1, 0, 'var', '', 1, undef, undef ],
 #            [ 'UserComment',     Translatable('Comment'),             'description',         1, 0, 'var', '', 1, undef, undef ],
 #
 #            # this is needed, if "SMIME::FetchFromCustomer" is active
-#            # [ 'UserSMIMECertificate', 'SMIMECertificate', 'userSMIMECertificate', 0, 1, 'var', '', 1, undef, undef ],
+#            # [ 'UserSMIMECertificate', 'SMIMECertificate',             'userSMIMECertificate', 0, 1, 'var', '', 1, undef, undef ],
 #
 #            # Dynamic field example
-#            # [ 'DynamicField_Name_X', undef, 'Name_X', 0, 0, 'dynamic_field', undef, 0, undef, undef ],
+#            # [ 'DynamicField_Name_X',   undef,                          'Name_X',              0, 0, 'dynamic_field', undef, 0, undef, undef ],
 #        ],
 #    };
 
@@ -1774,7 +1912,14 @@ via the Preferences button after logging in.
             # required settings
 #            DSN  => 'DBI:odbc:yourdsn',
 #            Type => 'mssql', # only for ODBC connections
-#            DSN => 'DBI:mysql:database=customerdb;host=customerdbhost',
+#            DSN => 'DBI:MariaDB:database=customerdb;host=customerdbhost',
+#            # Extra connect attributes can be used for secured connections
+#            Attribute => {
+#                mysql_ssl             => 1,
+#                mysql_ssl_client_cert => '/opt/careoncloud/tls/client-cert.pem',
+#                mysql_ssl_client_key  => '/opt/careoncloud/tls/client-key.pem',
+#                mysql_ssl_optional    => 1,
+#            },
 #            User => '',
 #            Password => '',
             Table => 'customer_company',
@@ -2063,11 +2208,11 @@ via the Preferences button after logging in.
     # --------------------------------------------------- #
     #                                                     #
     #             Start of config options!!!              #
-    #              OTOBO admin Priviledges                #
+    #              CareOnCloud ESM admin Priviledges                #
     #                                                     #
     # --------------------------------------------------- #
 
-    # WARNING!! Enabling these settings allows the OTOBO admin to execute any system call.
+    # WARNING!! Enabling these settings allows the CareOnCloud ESM admin to execute any system call.
     # This can be a security issue!
 
     # Allow syscalls via generic agent
@@ -2082,12 +2227,12 @@ via the Preferences button after logging in.
     # ---------------------------------------------------- #
     #$Self->{'Storage::S3::Active'}         = 1;
     #$Self->{'Storage::S3::Region'}         = 'eu-central-1';
-    #$Self->{'Storage::S3::Bucket'}         = 'otobo-bucket-testing';
-    #$Self->{'Storage::S3::HomePrefix'}     = 'OTOBO';
-    #$Self->{'Storage::S3::AccessKey'}      = 'minio-otobo';
-    #$Self->{'Storage::S3::SecretKey'}      = 'minio-otobo'; # more than 8 chars
+    #$Self->{'Storage::S3::Bucket'}         = 'careoncloud-bucket-testing';
+    #$Self->{'Storage::S3::HomePrefix'}     = 'CareOnCloud ESM';
+    #$Self->{'Storage::S3::AccessKey'}      = 'minio-careoncloud';
+    #$Self->{'Storage::S3::SecretKey'}      = 'minio-careoncloud'; # more than 8 chars
     #$Self->{'Storage::S3::MetadataPrefix'} = 'x-amz-meta-';
-    #$Self->{'Storage::S3::Delimiter'}      = '/'; # do not change this, as OTOBO relies on the delimiter being '/'
+    #$Self->{'Storage::S3::Delimiter'}      = '/'; # do not change this, as CareOnCloud ESM relies on the delimiter being '/'
 
     ## Some settings are specific for localstack and MinIO.
     #if ( 1 ) {
@@ -2135,7 +2280,8 @@ sub new {
     # load default settings from Kernel/Config/Defaults.pm
     $Self->LoadDefaults();
 
-    # load specific settings from Kernel/Config.pm
+    # Load specific settings from Kernel/Config.pm.
+    # Overriding settings from Kernel/Config/Defaults.pm.
     $Self->Load();
 
     # when in cluster mode, we must consider that files in Kernel/Config/Files
@@ -2208,7 +2354,7 @@ sub new {
     # load RELEASE file
     if ( -e !"$Self->{Home}/RELEASE" ) {
         print STDERR
-            "ERROR: $Self->{Home}/RELEASE does not exist! This file is needed by central system parts of OTOBO, the system will not work without this file.\n";
+            "ERROR: $Self->{Home}/RELEASE does not exist! This file is needed by central system parts of CareOnCloud ESM, the system will not work without this file.\n";
         die;
     }
 
@@ -2232,7 +2378,7 @@ sub new {
     }
     else {
         print STDERR
-            "ERROR: Can't read $Self->{Home}/RELEASE: $! This file is needed by central system parts of OTOBO, the system will not work without this file.\n";
+            "ERROR: Can't read $Self->{Home}/RELEASE: $! This file is needed by central system parts of CareOnCloud ESM, the system will not work without this file.\n";
         die;
     }
 
@@ -2242,14 +2388,18 @@ sub new {
     # do not use ZZZ files
     if ( !$Param{Level} ) {
 
-        # replace config variables in config variables
+        # replace config variables in variables that contain the '<CareOnCloud_CONFIG_SettingName> pattern
         KEY:
         for my $Key ( sort keys %{$Self} ) {
 
-            next KEY if !defined $Key;
+            next KEY unless defined $Key;
 
             if ( defined $Self->{$Key} ) {
-                $Self->{$Key} =~ s/\<OTOBO_CONFIG_(.+?)\>/$Self->{$1}/g;
+
+                # do the replacements only on top level string values
+                next KEY unless ref $Self->{$Key} eq '';
+
+                $Self->{$Key} =~ s/\<CareOnCloud_CONFIG_(.+?)\>/$Self->{$1}/g;
             }
             else {
                 print STDERR "ERROR: $Key not defined!\n";
@@ -2268,7 +2418,7 @@ sub Get {
 
     # debug
     if ( $Self->{Debug} > 1 ) {
-        my $Value = defined $Self->{$What} ? $Self->{$What} : '<undef>';
+        my $Value = $Self->{$What} // '<undef>';
         print STDERR "Debug: Config.pm ->Get('$What') --> $Value\n";
     }
 
@@ -2286,7 +2436,7 @@ sub Set {
 
     # debug
     if ( $Self->{Debug} > 1 ) {
-        my $Value = defined $Param{Value} ? $Param{Value} : '<undef>';
+        my $Value = $Param{Value} // '<undef>';
         print STDERR "Debug: Config.pm ->Set(Key => $Param{Key}, Value => $Value)\n";
     }
 
@@ -2316,14 +2466,15 @@ sub Set {
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::Translatable)
 
 # This is a no-op to mark a text as translatable in the Perl code.
-#   We use our own version here instead of importing Language::Translatable to not add a dependency.
+# We use our own version of Translatable() here instead of importing Kernel::Language::Translatable(). This
+# avoids the need to add a dependency.
 
 sub Translatable {
     return shift;
 }
 
 # Please see the documentation in Kernel/Config.pod.dist.
-# Not used in OTOBO core.
+# Not used in CareOnCloud ESM core.
 sub ConfigChecksum {
     my $Self = shift;
 
@@ -2367,7 +2518,7 @@ sub AutoloadPerlPackages {
 
         my $ConfigValue = $AutoloadConfiguration{$ConfigKey};
 
-        next CONFIGKEY if ref $ConfigValue ne 'ARRAY';
+        next CONFIGKEY unless ref $ConfigValue eq 'ARRAY';
 
         PACKAGE:
         for my $Package ( @{$ConfigValue} ) {
@@ -2385,7 +2536,10 @@ sub AutoloadPerlPackages {
                 my $FileName = $Package =~ s{::}{/}smxgr;
 
                 require $FileName . '.pm'; ## nofilter(TidyAll::Plugin::OTOBO::Perl::Require)
-            };
+            }
+            catch {
+                say STDERR "ERROR: $_";
+            }
         }
     }
 
@@ -2417,7 +2571,7 @@ sub SyncWithS3 {
     while (1) {
 
         # run a blocking GET request to S3, getting all keys below the prefix
-        # The keys are the pathes of files relative to Kernel/Config/Files
+        # The keys are the paths of files relative to Kernel/Config/Files
         my %SubPath2Properties = $StorageS3Object->ListObjects(
             Prefix    => "$FilesPrefix/",
             Delimiter => '',

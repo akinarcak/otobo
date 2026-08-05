@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,7 +27,7 @@ our $Self;
 my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
 # check the function Ascii2Html
-my $TestString = << 'END_STRING';
+my $TestString = <<'END_STRING';
 Created:
 02/19/2008 12:17:03
 http://localhost/otrs-22-utf8/index.pl?Action=AgentTicketPhone

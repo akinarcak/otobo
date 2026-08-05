@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,6 +19,12 @@ package Kernel::System::ProcessManagement::DB::Transition;
 use strict;
 use warnings;
 
+# core modules
+use List::Util qw(none);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -26,6 +32,8 @@ our @ObjectDependencies = (
     'Kernel::System::Cache',
     'Kernel::System::DB',
     'Kernel::System::Log',
+    'Kernel::System::Namespace',
+    'Kernel::System::ProcessManagement::DB::Process',
     'Kernel::System::YAML',
 );
 
@@ -73,11 +81,13 @@ add new Trnsition
 returns the id of the created Transition if success or undef otherwise
 
     my $ID = $TransitionObject->TransitionAdd(
-        EntityID    => 'T1'                   # mandatory, exportable unique identifier
-        Name        => 'NameOfTransition',     # mandatory
-        Config      => $ConfigHashRef,         # mandatory, transition configuration to be stored in
-                                               #   YAML format
-        UserID      => 123,                    # mandatory
+        EntityID        => 'T1'                    # mandatory, exportable unique identifier
+        Name            => 'NameOfTransition',     # mandatory
+        Config          => $ConfigHashRef,         # mandatory, transition configuration to be stored in
+                                                   #   YAML format
+        Namespace       => 'Namespace',            # optional
+        ProcessEntityID => 'P1',                   # optional
+        UserID          => 123,                    # mandatory
     );
 
 Returns:
@@ -100,8 +110,48 @@ sub TransitionAdd {
         }
     }
 
+    # validate namespace
+    if ( $Param{Namespace} ) {
+        my @ProcessNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+            Scope => 'ProcessManagement',
+        );
+
+        if ( none { $Param{Namespace} eq $_ } @ProcessNamespaces ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Namespace '$Param{Namespace}' is not a valid namespace for process elements!",
+            );
+            return;
+        }
+    }
+
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+
+    # validate ProcessEntityID
+    if ( $Param{ProcessEntityID} ) {
+        return if !$DBObject->Prepare(
+            SQL => '
+                SELECT id
+                FROM pm_process
+                WHERE entity_id = ?',
+            Bind  => [ \$Param{ProcessEntityID} ],
+            Limit => 1,
+        );
+
+        my $ProcessEntityExists;
+        while ( $DBObject->FetchrowArray() ) {
+            $ProcessEntityExists = 1;
+        }
+
+        if ( !$ProcessEntityExists ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Failed to add process-specific element to '$Param{ProcessEntityID}': No such process!",
+            );
+            return;
+        }
+    }
 
     # check if EntityID already exists
     return if !$DBObject->Prepare(
@@ -114,7 +164,7 @@ sub TransitionAdd {
     );
 
     my $EntityExists;
-    while ( my @Data = $DBObject->FetchrowArray() ) {
+    while ( $DBObject->FetchrowArray() ) {
         $EntityExists = 1;
     }
 
@@ -160,11 +210,12 @@ sub TransitionAdd {
     # sql
     return if !$DBObject->Do(
         SQL => '
-            INSERT INTO pm_transition ( entity_id, name, config, create_time,
-                create_by, change_time, change_by )
-            VALUES (?, ?, ?, current_timestamp, ?, current_timestamp, ?)',
+            INSERT INTO pm_transition ( entity_id, name, config, namespace, process_entity_id,
+                create_time, create_by, change_time, change_by )
+            VALUES (?, ?, ?, ?, ?, current_timestamp, ?, current_timestamp, ?)',
         Bind => [
-            \$Param{EntityID}, \$Param{Name}, \$Config, \$Param{UserID}, \$Param{UserID},
+            \$Param{EntityID}, \$Param{Name}, \$Config, \$Param{Namespace}, \$Param{ProcessEntityID},
+            \$Param{UserID},   \$Param{UserID},
         ],
     );
 
@@ -249,12 +300,14 @@ get Transition attributes
 Returns:
 
     $Transition = {
-        ID           => 123,
-        EntityID     => 'T1',
-        Name         => 'some name',
-        Config       => $ConfigHashRef,
-        CreateTime   => '2012-07-04 15:08:00',
-        ChangeTime   => '2012-07-04 15:08:00',
+        ID              => 123,
+        EntityID        => 'T1',
+        Name            => 'some name',
+        Config          => $ConfigHashRef,
+        Namespace       => 'Namespace',
+        ProcessEntityID => 'P1',
+        CreateTime      => '2012-07-04 15:08:00',
+        ChangeTime      => '2012-07-04 15:08:00',
     };
 
 =cut
@@ -304,7 +357,7 @@ sub TransitionGet {
     if ( $Param{ID} ) {
         return if !$DBObject->Prepare(
             SQL => '
-                SELECT id, entity_id, name, config, create_time, change_time
+                SELECT id, entity_id, name, config, namespace, process_entity_id, create_time, change_time
                 FROM pm_transition
                 WHERE id = ?',
             Bind  => [ \$Param{ID} ],
@@ -314,7 +367,7 @@ sub TransitionGet {
     else {
         return if !$DBObject->Prepare(
             SQL => '
-                SELECT id, entity_id, name, config, create_time, change_time
+                SELECT id, entity_id, name, config, namespace, process_entity_id, create_time, change_time
                 FROM pm_transition
                 WHERE entity_id = ?',
             Bind  => [ \$Param{EntityID} ],
@@ -331,12 +384,14 @@ sub TransitionGet {
         my $Config = $YAMLObject->Load( Data => $Data[3] );
 
         %Data = (
-            ID         => $Data[0],
-            EntityID   => $Data[1],
-            Name       => $Data[2],
-            Config     => $Config,
-            CreateTime => $Data[4],
-            ChangeTime => $Data[5],
+            ID              => $Data[0],
+            EntityID        => $Data[1],
+            Name            => $Data[2],
+            Config          => $Config,
+            Namespace       => $Data[4],
+            ProcessEntityID => $Data[5],
+            CreateTime      => $Data[6],
+            ChangeTime      => $Data[7],
 
         );
     }
@@ -361,12 +416,14 @@ update Transition attributes
 returns 1 if success or undef otherwise
 
     my $Success = $TransitionObject->TransitionUpdate(
-        ID          => 123,                # mandatory
-        EntityID    => 'T1'                # mandatory, exportable unique identifier
-        Name        => 'NameOfTransition', # mandatory
-        Config      => $ConfigHashRef,     # mandatory, transition configuration to be stored in
-                                           #   YAML format
-        UserID      => 123,                # mandatory
+        ID              => 123,                # mandatory
+        EntityID        => 'T1'                # mandatory, exportable unique identifier
+        Name            => 'NameOfTransition', # mandatory
+        Config          => $ConfigHashRef,     # mandatory, transition configuration to be stored in
+                                               #   YAML format
+        Namespace       => 'Namespace',        # optional
+        ProcessEntityID => 'P1',               # optional
+        UserID          => 123,                # mandatory
     );
 
 =cut
@@ -385,8 +442,48 @@ sub TransitionUpdate {
         }
     }
 
+    # validate namespace
+    if ( $Param{Namespace} ) {
+        my @ProcessNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+            Scope => 'ProcessManagement',
+        );
+
+        if ( none { $Param{Namespace} eq $_ } @ProcessNamespaces ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Namespace '$Param{Namespace}' is not a valid namespace for process elements!",
+            );
+            return;
+        }
+    }
+
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+
+    # validate ProcessEntityID
+    if ( $Param{ProcessEntityID} ) {
+        return if !$DBObject->Prepare(
+            SQL => '
+                SELECT id
+                FROM pm_process
+                WHERE entity_id = ?',
+            Bind  => [ \$Param{ProcessEntityID} ],
+            Limit => 1,
+        );
+
+        my $ProcessEntityExists;
+        while ( $DBObject->FetchrowArray() ) {
+            $ProcessEntityExists = 1;
+        }
+
+        if ( !$ProcessEntityExists ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Failed to add process-specific element to '$Param{ProcessEntityID}': No such process!",
+            );
+            return;
+        }
+    }
 
     # check if EntityID already exists
     return if !$DBObject->Prepare(
@@ -399,7 +496,7 @@ sub TransitionUpdate {
     );
 
     my $EntityExists;
-    while ( my @Data = $DBObject->FetchrowArray() ) {
+    while ( $DBObject->FetchrowArray() ) {
         $EntityExists = 1;
     }
 
@@ -444,7 +541,7 @@ sub TransitionUpdate {
     # check if need to update db
     return if !$DBObject->Prepare(
         SQL => '
-            SELECT entity_id, name, config
+            SELECT entity_id, name, config, namespace, process_entity_id
             FROM pm_transition
             WHERE id = ?',
         Bind  => [ \$Param{ID} ],
@@ -454,28 +551,35 @@ sub TransitionUpdate {
     my $CurrentEntityID;
     my $CurrentName;
     my $CurrentConfig;
+    my $CurrentNamespace;
+    my $CurrentProcessEntityID;
     while ( my @Data = $DBObject->FetchrowArray() ) {
-        $CurrentEntityID = $Data[0];
-        $CurrentName     = $Data[1];
-        $CurrentConfig   = $Data[2];
+        $CurrentEntityID        = $Data[0];
+        $CurrentName            = $Data[1];
+        $CurrentConfig          = $Data[2];
+        $CurrentNamespace       = $Data[3] // '';
+        $CurrentProcessEntityID = $Data[4] // '';
     }
 
     if ($CurrentEntityID) {
 
         return 1 if $CurrentEntityID eq $Param{EntityID}
             && $CurrentName eq $Param{Name}
-            && $CurrentConfig eq $Config;
+            && $CurrentConfig eq $Config
+            && $CurrentNamespace eq $Param{Namespace}
+            && $CurrentProcessEntityID eq ( $Param{ProcessEntityID} // '' );
     }
 
     # sql
     return if !$DBObject->Do(
         SQL => '
             UPDATE pm_transition
-            SET entity_id = ?, name = ?,  config = ?, change_time = current_timestamp,
-                change_by = ?
+            SET entity_id = ?, name = ?,  config = ?, namespace = ?,
+                process_entity_id = ?, change_time = current_timestamp, change_by = ?
             WHERE id = ?',
         Bind => [
-            \$Param{EntityID}, \$Param{Name}, \$Config, \$Param{UserID}, \$Param{ID},
+            \$Param{EntityID}, \$Param{Name}, \$Config, \$Param{Namespace}, \$Param{ProcessEntityID},
+            \$Param{UserID},   \$Param{ID},
         ],
     );
 
@@ -582,20 +686,24 @@ Returns:
 
     $List = [
         {
-            ID             => 123,
-            EntityID       => 'T1',
-            Name           => 'some name',
-            Config         => $ConfigHashRef,
-            CreateTime     => '2012-07-04 15:08:00',
-            ChangeTime     => '2012-07-04 15:08:00',
+            ID              => 123,
+            EntityID        => 'T1',
+            Name            => 'some name',
+            Config          => $ConfigHashRef,
+            Namespace       => 'Namespace',
+            ProcessEntityID => 'P1',
+            CreateTime      => '2012-07-04 15:08:00',
+            ChangeTime      => '2012-07-04 15:08:00',
         }
         {
-            ID             => 456,
-            EntityID       => 'T2',
-            Name           => 'some name',
-            Config         => $ConfigHashRef,
-            CreateTime     => '2012-07-04 15:09:00',
-            ChangeTime     => '2012-07-04 15:09:00',
+            ID              => 456,
+            EntityID        => 'T2',
+            Name            => 'some name',
+            Config          => $ConfigHashRef,
+            Namespace       => 'Namespace',
+            ProcessEntityID => 'P1',
+            CreateTime      => '2012-07-04 15:09:00',
+            ChangeTime      => '2012-07-04 15:09:00',
         }
     ];
 
@@ -660,6 +768,52 @@ sub TransitionListGet {
     );
 
     return \@Data;
+}
+
+=head2 TransitionUsage()
+
+    Get a list of all Processes using this Transition
+
+    my $List = $TransitionObject->TransitionUsage(
+        EntityID => 'T1',
+    );
+
+    Returns:
+
+    $List = {
+        'P1' => 'Process 1',
+        'P2' => 'Process 2',
+        'P3' => 'Process 3',
+    };
+
+=cut
+
+sub TransitionUsage {
+    my ( $Self, %Param ) = @_;
+
+    # get a list of parents with all the details
+    my $List = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Process')->ProcessListGet(
+        UserID => 1,
+    );
+
+    my %Usage;
+
+    # search entity id in all parents
+    PARENT:
+    for my $ParentData ( @{$List} ) {
+        next PARENT if !$ParentData;
+        next PARENT if !$ParentData->{Transitions};
+
+        ENTITY:
+        for my $EntityID ( @{ $ParentData->{Transitions} } ) {
+            if ( $EntityID eq $Param{EntityID} ) {
+                $Usage{ $ParentData->{EntityID} } = $ParentData->{Name};
+                last ENTITY;
+            }
+        }
+    }
+
+    return \%Usage;
 }
 
 1;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,7 +21,7 @@ use warnings;
 
 use parent qw(Kernel::System::Console::BaseCommand);
 
-use Time::HiRes qw();
+use Time::HiRes ();
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -80,13 +80,13 @@ sub Configure {
     $Self->AdditionalHelp(<<"EOF");
 The <green>$Name</green> command migrates article data from one storage backend to another on the fly, for example from DB to FS:
 
- <green>otobo.Console.pl $Self->{Name} --target ArticleStorageFS</green>
+ <green>careoncloud.Console.pl $Self->{Name} --target ArticleStorageFS</green>
 
 You can specify limits for the tickets migrated with <yellow>--tickets-closed-before-date</yellow> and <yellow>--tickets-closed-before-days</yellow>.
 
 To reduce load on the database for a running system, you can use the <yellow>--micro-sleep</yellow> parameter. The command will pause for the specified amount of microseconds after each ticket.
 
- <green>otobo.Console.pl $Self->{Name} --target ArticleStorageFS --micro-sleep 1000</green>
+ <green>careoncloud.Console.pl $Self->{Name} --target ArticleStorageFS --micro-sleep 1000</green>
 EOF
 
     return;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 our $Self;
 
 # get selenium object
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -55,7 +55,7 @@ $Selenium->RunTest(
         # Make sure system is based on UTC.
         $Helper->ConfigSettingChange(
             Valid => 1,
-            Key   => 'OTOBOTimeZone',
+            Key   => 'CareOnCloudTimeZone',
             Value => 'UTC',
         );
 
@@ -102,7 +102,7 @@ $Selenium->RunTest(
         my $ScriptAlias = $Kernel::OM->Get('Kernel::Config')->Get('ScriptAlias');
 
         # navigate to AdminSystemMaintenance screen
-        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminSystemMaintenance");
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminSystemMaintenance;IncludeInvalid=1");
 
         # check overview screen
         $Selenium->find_element( "table",             'css' );
@@ -388,6 +388,8 @@ $Selenium->RunTest(
             "$Notification - notification is found."
         );
 
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminSystemMaintenance");
+
         # check class of invalid SystemMaintenance in the overview table
         $Self->True(
             $Selenium->execute_script(
@@ -416,8 +418,8 @@ $Selenium->RunTest(
             "#ValidID updated value",
         );
 
-        # click 'Go to overview'
-        $Selenium->find_element("//a[contains(\@href, 'AdminSystemMaintenance')]")->VerifiedClick();
+        # go to overview
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminSystemMaintenance");
 
         # click to delete test SystemMaintenance
         $Selenium->find_element("//a[contains(\@href, 'Subaction=Delete;SystemMaintenanceID=$SysMainID')]")->click();

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -52,7 +52,7 @@ sub Run {
 
     my %NotificationDetails = (
         Priority => 'Error',
-        Data     => $LayoutObject->{LanguageObject}->Translate("OTOBO Daemon is not running."),
+        Data     => $LayoutObject->{LanguageObject}->Translate("CareOnCloud ESM Daemon is not running."),
     );
 
     # check if user needs to be notified
@@ -67,6 +67,7 @@ sub Run {
 
     # check if the user is in the Admin group
     # if that is the case, extend the error with a link
+    # Note that Core.Agent.Daemon.js grabs the onclick event of the link and opens a popup
     if ( $Groups{admin} ) {
         $NotificationDetails{Link}      = $LayoutObject->{Baselink} . '#';
         $NotificationDetails{LinkClass} = 'DaemonInfo';

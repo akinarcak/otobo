@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,6 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
@@ -22,7 +23,7 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and $Self
 use Kernel::System::UnitTest::Selenium;
 
@@ -36,14 +37,6 @@ $Selenium->RunTest(
         my $Helper       = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
         my $StatsObject  = $Kernel::OM->Get('Kernel::System::Stats');
         my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-
-        my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
-
-        $Helper->ConfigSettingChange(
-            Valid => 0,
-            Key   => 'PhantomJS::Bin',
-            Value => '',
-        );
 
         # Define needed variable.
         my $RandomID = $Helper->GetRandomID();
@@ -161,7 +154,7 @@ $Selenium->RunTest(
             $Count++;
         }
 
-        my $BrowserFound = $ConfigObject->Get('PhantomJS::Bin') || $ConfigObject->Get('GoogleChrome::Bin') ? 1 : 0;
+        my $BrowserFound = $ConfigObject->Get('GoogleChrome::Bin') ? 1 : 0;
 
         if ($BrowserFound) {
             $Self->True(
@@ -189,13 +182,7 @@ $Selenium->RunTest(
                 $Count++;
             }
 
-            # Verify button for 'Configure PhanotmJS' and 'Configure GoogleChrome'.
-            $Self->True(
-                $Selenium->find_element(
-                    "//a[contains(\@href, 'Action=AdminSystemConfigurationGroup;RootNavigation=Core::PhantomJS')]"
-                ),
-                "SidebarColumn note button for 'Configure PhantomJS' is found"
-            );
+            # Verify button for 'Configure GoogleChrome'.
             $Self->True(
                 $Selenium->find_element(
                     "//a[contains(\@href, 'Action=AdminSystemConfigurationGroup;RootNavigation=Core::GoogleChrome')]"

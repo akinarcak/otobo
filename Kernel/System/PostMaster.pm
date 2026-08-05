@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,13 +19,17 @@ package Kernel::System::PostMaster;
 use strict;
 use warnings;
 
-use Kernel::System::EmailParser;
-use Kernel::System::PostMaster::DestQueue;
-use Kernel::System::PostMaster::NewTicket;
-use Kernel::System::PostMaster::FollowUp;
-use Kernel::System::PostMaster::Reject;
+# core modules
 
-use Kernel::System::VariableCheck qw(IsHashRefWithData);
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::EmailParser           ();
+use Kernel::System::PostMaster::DestQueue ();
+use Kernel::System::PostMaster::NewTicket ();
+use Kernel::System::PostMaster::FollowUp  ();
+use Kernel::System::PostMaster::Reject    ();
+use Kernel::System::VariableCheck         qw(IsHashRefWithData);
 
 our %ObjectManagerFlags = (
     NonSingleton => 1,
@@ -39,6 +43,7 @@ our @ObjectDependencies = (
     'Kernel::System::State',
     'Kernel::System::Ticket',
     'Kernel::System::Ticket::Article',
+    'Kernel::System::EmailAddress',
 );
 
 =head1 NAME
@@ -59,7 +64,7 @@ Don't use the constructor directly, use the ObjectManager instead:
         'Kernel::System::PostMaster',
         ObjectParams => {
             Email        => \@ArrayOfEmailContent,
-            Trusted      => 1, # 1|0 ignore X-OTOBO header if false
+            Trusted      => 1, # 1|0 ignore X-CareOnCloud ESM header if false
         },
     );
 
@@ -69,34 +74,30 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
-    # check needed objects
+    # check needed parameters
     $Self->{Email}                  = $Param{Email}                  || die "Got no Email!";
     $Self->{CommunicationLogObject} = $Param{CommunicationLogObject} || die "Got no CommunicationLogObject!";
 
+    # create needed objects
     $Self->{ParserObject} = Kernel::System::EmailParser->new(
         Email => $Param{Email},
     );
-
-    # create needed objects
     $Self->{DestQueueObject} = Kernel::System::PostMaster::DestQueue->new( %{$Self} );
     $Self->{NewTicketObject} = Kernel::System::PostMaster::NewTicket->new( %{$Self} );
     $Self->{FollowUpObject}  = Kernel::System::PostMaster::FollowUp->new( %{$Self} );
     $Self->{RejectObject}    = Kernel::System::PostMaster::Reject->new( %{$Self} );
 
-    # get config object
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-
     # check needed config options
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
     for my $Option (qw(PostmasterUserID PostmasterX-Header)) {
         $Self->{$Option} = $ConfigObject->Get($Option)
             || die "Found no '$Option' option in configuration!";
     }
 
-    # should I use x-otobo headers?
-    $Self->{Trusted} = defined $Param{Trusted} ? $Param{Trusted} : 1;
+    # should I use X-CareOnCloud ESM headers?
+    $Self->{Trusted} = $Param{Trusted} // 1;
 
     if ( $Self->{Trusted} ) {
 
@@ -115,8 +116,8 @@ sub new {
 
         for my $DynamicField ( values %$DynamicFields ) {
             for my $Header (
-                'X-OTOBO-DynamicField-' . $DynamicField,
-                'X-OTOBO-FollowUp-DynamicField-' . $DynamicField,
+                'X-CareOnCloud-DynamicField-' . $DynamicField,
+                'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicField,
                 )
             {
 
@@ -135,19 +136,23 @@ sub new {
 
 to execute the run process
 
-    $PostMasterObject->Run(
+    my ($RetCode, $TicketID) = $PostMasterObject->Run(
         Queue   => 'Junk',  # optional, specify target queue for new tickets
         QueueID => 1,       # optional, specify target queue for new tickets
     );
 
-return params
+An empty list is returned in case of an error.
 
-    0 = error (also false)
+The first returned value indicates what has been done.
+
+    0 = error (also undefined)
     1 = new ticket created
     2 = follow up / open/reopen
     3 = follow up / close -> new ticket
     4 = follow up / close -> reject
-    5 = ignored (because of X-OTOBO-Ignore header)
+    5 = ignored (because of X-CareOnCloud-Ignore header)
+
+When there is a new or followup ticket then this ticket id is returned as the second value.
 
 =cut
 
@@ -165,7 +170,9 @@ sub Run {
     # get config objects
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    # run all PreFilterModules (modify email params)
+    # Run the PreFilterModules.
+    # These filter modules may modify the email parameters in %GetParam, including
+    # the body and the attachments.
     if ( ref $ConfigObject->Get('PostMaster::PreFilterModule') eq 'HASH' ) {
 
         my %Jobs = %{ $ConfigObject->Get('PostMaster::PreFilterModule') };
@@ -176,8 +183,10 @@ sub Run {
         JOB:
         for my $Job ( sort keys %Jobs ) {
 
-            return if !$MainObject->Require( $Jobs{$Job}->{Module} );
+            return unless $MainObject->Require( $Jobs{$Job}->{Module} );
 
+            # Note that passing ParserObject to the constructor of the filter object
+            # allows the filter to modify the message itself. This is used in SMIME decryption.
             my $FilterObject = $Jobs{$Job}->{Module}->new(
                 %{$Self},
             );
@@ -211,15 +220,16 @@ sub Run {
     }
 
     # should I ignore the incoming mail?
-    if ( $GetParam->{'X-OTOBO-Ignore'} && $GetParam->{'X-OTOBO-Ignore'} =~ /(yes|true)/i ) {
+    if ( $GetParam->{'X-CareOnCloud-Ignore'} && $GetParam->{'X-CareOnCloud-Ignore'} =~ /(yes|true)/i ) {
         $Self->{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
             Priority      => 'Info',
             Key           => 'Kernel::System::PostMaster',
             Value         =>
                 "Ignored Email (From: $GetParam->{'From'}, Message-ID: $GetParam->{'Message-ID'}) "
-                . "because the X-OTOBO-Ignore is set (X-OTOBO-Ignore: $GetParam->{'X-OTOBO-Ignore'}).",
+                . "because the X-CareOnCloud-Ignore is set (X-CareOnCloud-Ignore: $GetParam->{'X-CareOnCloud-Ignore'}).",
         );
+
         return (5);
     }
 
@@ -240,7 +250,7 @@ sub Run {
         JOB:
         for my $Job ( sort keys %Jobs ) {
 
-            return if !$MainObject->Require( $Jobs{$Job}->{Module} );
+            return unless $MainObject->Require( $Jobs{$Job}->{Module} );
 
             my $FilterObject = $Jobs{$Job}->{Module}->new(
                 %{$Self},
@@ -307,7 +317,7 @@ sub Run {
 
         # Check if we need to treat a bounce e-mail always as a normal follow-up (to reopen the ticket if needed).
         my $BounceEmailAsFollowUp = 0;
-        if ( $GetParam->{'X-OTOBO-Bounce'} ) {
+        if ( $GetParam->{'X-CareOnCloud-Bounce'} ) {
             $BounceEmailAsFollowUp = $ConfigObject->Get('PostmasterBounceEmailAsFollowUp');
         }
 
@@ -356,9 +366,7 @@ sub Run {
                 LinkToTicketID   => $TicketID,
             );
 
-            if ( !$TicketID ) {
-                return;
-            }
+            return unless $TicketID;
 
             @Return = ( 3, $TicketID );
         }
@@ -384,9 +392,7 @@ sub Run {
                 AutoResponseType => 'auto reject',
             );
 
-            if ( !$Run ) {
-                return;
-            }
+            return unless $Run;
 
             @Return = ( 4, $TicketID );
         }
@@ -403,9 +409,7 @@ sub Run {
                 AutoResponseType => 'auto follow up',
             );
 
-            if ( !$Run ) {
-                return;
-            }
+            return unless $Run;
 
             @Return = ( 2, $TicketID );
         }
@@ -441,7 +445,7 @@ sub Run {
             AutoResponseType => 'auto reply',
         );
 
-        return if !$TicketID;
+        return unless $TicketID;
 
         @Return = ( 1, $TicketID );
     }
@@ -457,7 +461,7 @@ sub Run {
         JOB:
         for my $Job ( sort keys %Jobs ) {
 
-            return if !$MainObject->Require( $Jobs{$Job}->{Module} );
+            return unless $MainObject->Require( $Jobs{$Job}->{Module} );
 
             my $FilterObject = $Jobs{$Job}->{Module}->new(
                 %{$Self},
@@ -470,6 +474,7 @@ sub Run {
                     Key           => 'Kernel::System::PostMaster',
                     Value         => "new() of PostFilterModule $Jobs{$Job}->{Module} not successfully!",
                 );
+
                 next JOB;
             }
 
@@ -584,8 +589,8 @@ sub GetEmailParams {
     HEADER:
     for my $Param ( @{ $Self->{'PostmasterX-Header'} } ) {
 
-        # do not scan x-otobo headers if mailbox is not marked as trusted
-        next HEADER if ( !$Self->{Trusted} && $Param =~ /^x-otobo/i );
+        # do not scan x-careoncloud headers if mailbox is not marked as trusted
+        next HEADER if ( !$Self->{Trusted} && $Param =~ /^x-careoncloud/i );
 
         $GetParam{$Param} = $Self->{ParserObject}->GetParam( WHAT => $Param );
 
@@ -611,38 +616,37 @@ sub GetEmailParams {
         || $GetParam{'Precedence'}
         || $GetParam{'X-Loop'}
         || $GetParam{'X-No-Loop'}
-        || $GetParam{'X-OTOBO-Loop'}
+        || $GetParam{'X-CareOnCloud-Loop'}
         || (
             $GetParam{'Auto-Submitted'}
             && substr( $GetParam{'Auto-Submitted'}, 0, 5 ) eq 'auto-'
         )
         )
     {
-        $GetParam{'X-OTOBO-Loop'} = 'yes';
+        $GetParam{'X-CareOnCloud-Loop'} = 'yes';
     }
     if ( !$GetParam{'X-Sender'} ) {
 
         # get sender email
-        my @EmailAddresses = $Self->{ParserObject}->SplitAddressLine(
+        my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+        my @EmailAddresses     = $EmailAddressObject->ParseAddressLine(
             Line => $GetParam{From},
         );
         for my $Email (@EmailAddresses) {
-            $GetParam{'X-Sender'} = $Self->{ParserObject}->GetEmailAddress(
-                Email => $Email,
-            );
+            $GetParam{'X-Sender'} = $EmailAddressObject->GetAddress( AddressObject => $Email );
         }
     }
 
     my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
 
     # set sender type if not given
-    for my $Key (qw(X-OTOBO-SenderType X-OTOBO-FollowUp-SenderType)) {
+    for my $Key (qw(X-CareOnCloud-SenderType X-CareOnCloud-FollowUp-SenderType)) {
 
         if ( !$GetParam{$Key} ) {
             $GetParam{$Key} = 'customer';
         }
 
-        # check if X-OTOBO-SenderType exists, if not, set customer
+        # check if X-CareOnCloud-SenderType exists, if not, set customer
         if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{$Key} ) ) {
             $Self->{CommunicationLogObject}->ObjectLog(
                 ObjectLogType => 'Message',
@@ -655,7 +659,7 @@ sub GetEmailParams {
     }
 
     # Set article customer visibility if not given.
-    for my $Key (qw(X-OTOBO-IsVisibleForCustomer X-OTOBO-FollowUp-IsVisibleForCustomer)) {
+    for my $Key (qw(X-CareOnCloud-IsVisibleForCustomer X-CareOnCloud-FollowUp-IsVisibleForCustomer)) {
         if ( !defined $GetParam{$Key} ) {
             $GetParam{$Key} = 1;
         }

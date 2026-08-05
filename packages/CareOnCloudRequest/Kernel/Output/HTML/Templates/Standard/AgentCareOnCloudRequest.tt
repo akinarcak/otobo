@@ -1,0 +1,44 @@
+<div class="MainBox ARIARole MainContent">
+  <h1>[% Translate("CareOnCloud Requests") | html %]</h1>
+  <form action="[% Env("CGIHandle") %]" method="get">
+    <input type="hidden" name="Action" value="AgentCareOnCloudRequest"/>
+    <label for="TenantID">[% Translate("Tenant") | html %]</label>
+    <select id="TenantID" name="TenantID" onchange="this.form.submit()">
+[% RenderBlockStart("TenantOption") %]<option value="[% Data.TenantID | html %]" [% Data.Selected | html %]>[% Data.TenantID | html %]</option>[% RenderBlockEnd("TenantOption") %]
+    </select>
+  </form>
+[% RenderBlockStart("Request") %]
+  <section class="WidgetSimple">
+    <div class="Header"><h2>[% Data.RequestNumber | html %] — [% Data.Status | html %]</h2></div>
+    <div class="Content"><p>[% Translate("Requester") | html %]: [% Data.RequesterID | html %]</p>
+[% RenderBlockStart("Commitment") %]
+      <p><strong>[% Data.ObjectiveType | html %] / [% Data.ObjectiveKey | html %]: [% Data.Status | html %]</strong> — [% Translate("Warning") | html %]: [% Data.WarningTime | html %] — [% Translate("Due") | html %]: [% Data.DueTime | html %]</p>
+[% RenderBlockEnd("Commitment") %]
+[% RenderBlockStart("ResponseAction") %]
+      <form action="[% Env("CGIHandle") %]" method="post"><input type="hidden" name="Action" value="AgentCareOnCloudRequest"/><input type="hidden" name="Subaction" value="ResponseRecord"/><input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/><input type="hidden" name="RequestID" value="[% Data.RequestID | html %]"/><input name="Comment" maxlength="4000" placeholder="[% Translate("Response note") | html %]"/><button type="submit">[% Translate("Record first response") | html %]</button></form>
+[% RenderBlockEnd("ResponseAction") %]
+[% RenderBlockStart("Approval") %]
+      <form action="[% Env("CGIHandle") %]" method="post">
+        <input type="hidden" name="Action" value="AgentCareOnCloudRequest"/><input type="hidden" name="Subaction" value="ApprovalDecide"/>
+        <input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+        <input type="hidden" name="RequestID" value="[% Data.RequestID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
+        <input name="Comment" maxlength="4000" placeholder="[% Translate("Decision comment") | html %]"/>
+        <button name="Decision" value="approved" type="submit">[% Translate("Approve") | html %]</button>
+        <button name="Decision" value="rejected" type="submit">[% Translate("Reject") | html %]</button>
+      </form>
+[% RenderBlockEnd("Approval") %]
+[% RenderBlockStart("Task") %]
+      <form action="[% Env("CGIHandle") %]" method="post">
+        <input type="hidden" name="Action" value="AgentCareOnCloudRequest"/><input type="hidden" name="Subaction" value="TaskUpdate"/>
+        <input type="hidden" name="TenantID" value="[% Data.TenantID | html %]"/>
+        <input type="hidden" name="TaskID" value="[% Data.TaskID | html %]"/><input type="hidden" name="ExpectedVersion" value="[% Data.Version | html %]"/>
+        <strong>[% Data.Name | html %]</strong> ([% Data.Status | html %])[% IF Data.AssignedGroup %] — assigned: [% Data.AssignedGroup | html %][% END %] <input name="Comment" maxlength="4000" placeholder="[% Translate("Result comment") | html %]"/>
+        <button name="Status" value="in_progress" type="submit">[% Translate("Start") | html %]</button>
+        <button name="Status" value="completed" type="submit">[% Translate("Complete") | html %]</button>
+        <button name="Status" value="failed" type="submit">[% Translate("Fail") | html %]</button>
+      </form>
+[% RenderBlockEnd("Task") %]
+    </div>
+  </section>
+[% RenderBlockEnd("Request") %]
+</div>

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -442,16 +442,16 @@ $ExportContent = $StatsObject->Export(
 
 # the following line are because of different spelling 'ISO-8859' or 'iso-8859'
 # but this is no solution for the problem if one string is iso and the other utf!
-$ImportContent =~ s/^<\?xml.*?>.*?<otobo_stats/<otobo_stats/ms;
+$ImportContent =~ s/^<\?xml.*?>.*?<careoncloud_stats/<careoncloud_stats/ms;
 
 # this line is for Windows check-out
 $ImportContent =~ s{\r\n}{\n}smxg;
 
-$ExportContent->{Content} =~ s/^<\?xml.*?>.*?<otobo_stats/<otobo_stats/ms;
+$ExportContent->{Content} =~ s/^<\?xml.*?>.*?<careoncloud_stats/<careoncloud_stats/ms;
 $Self->Is(
     $ImportContent,
     $ExportContent->{Content},
-    "Export-Importcheck - check if import file content equal export file content.\n Be careful, if it gives errors if you run OTOBO with default charset utf-8,\n because the examplefile is iso-8859-1, but at my test there a no problems to compare a utf-8 string with an iso string?!\n",
+    "Export-Importcheck - check if import file content equal export file content.\n Be careful, if it gives errors if you run CareOnCloud ESM with default charset utf-8,\n because the examplefile is iso-8859-1, but at my test there a no problems to compare a utf-8 string with an iso string?!\n",
 );
 
 # Import a static statistic with not exsting object module
@@ -480,7 +480,7 @@ $Self->False(
     'Import() statistic with not existing object module must fail',
 );
 
-# try to use otobo.Console.pl Maint::Stats::Generate
+# try to use careoncloud.Console.pl Maint::Stats::Generate
 
 # check the imported stat
 my $Stat4 = $StatsObject->StatsGet( StatID => $StatID );
@@ -609,27 +609,27 @@ $Self->True(
     'StatsCleanUp() - clean up stats',
 );
 
-# Check _ToOTOBOTimeZone for invalid date (Daylight Saving Time).
+# Check _ToCareOnCloudTimeZone for invalid date (Daylight Saving Time).
 # See bug#14511 for more information.
-my $String = $StatsObject->_ToOTOBOTimeZone(
+my $String = $StatsObject->_ToCareOnCloudTimeZone(
     String   => '2019-03-31 02:30:00',
     TimeZone => 'Europe/Berlin',
 );
 
 $Self->False(
     $String,
-    '_ToOTOBOTimeZone() - invalid date',
+    '_ToCareOnCloudTimeZone() - invalid date',
 );
 
-# Check _ToOTOBOTimeZone for valid date.
-$String = $StatsObject->_ToOTOBOTimeZone(
+# Check _ToCareOnCloudTimeZone for valid date.
+$String = $StatsObject->_ToCareOnCloudTimeZone(
     String   => '2019-03-31 12:30:00',
     TimeZone => 'Europe/Berlin',
 );
 
 $Self->True(
     $String,
-    '_ToOTOBOTimeZone() - valid date',
+    '_ToCareOnCloudTimeZone() - valid date',
 );
 
 # cleanup is done by RestoreDatabase

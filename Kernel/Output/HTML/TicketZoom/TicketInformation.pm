@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,8 +28,8 @@ use parent 'Kernel::Output::HTML::Base';
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(IsHashRefWithData);
 
 our $ObjectManagerDisabled = 1;
@@ -344,40 +344,24 @@ sub Run {
     # overwrite display options for process ticket
     if ($IsProcessTicket) {
         $Param{WidgetTitle} = $Self->{DisplaySettings}->{ProcessDisplay}->{WidgetTitle};
-
-        # get the DF where the ProcessEntityID is stored
-        my $ProcessEntityIDField = 'DynamicField_'
-            . $ConfigObject->Get("Process::DynamicFieldProcessManagementProcessID");
-
-        # get the DF where the AtivityEntityID is stored
-        my $ActivityEntityIDField = 'DynamicField_'
-            . $ConfigObject->Get("Process::DynamicFieldProcessManagementActivityID");
-
-        my $ProcessData = $Kernel::OM->Get('Kernel::System::ProcessManagement::Process')->ProcessGet(
-            ProcessEntityID => $Ticket{$ProcessEntityIDField},
-        );
-        my $ActivityData = $Kernel::OM->Get('Kernel::System::ProcessManagement::Activity')->ActivityGet(
-            Interface        => 'AgentInterface',
-            ActivityEntityID => $Ticket{$ActivityEntityIDField},
-        );
-
-        # output process information in the sidebar
-        $LayoutObject->Block(
-            Name => 'ProcessData',
-            Data => {
-                Process  => $ProcessData->{Name}  || '',
-                Activity => $ActivityData->{Name} || '',
-            },
-        );
     }
 
     # get dynamic field config for frontend module
     my $DynamicFieldFilter = {
-        %{
+        IsHashRefWithData( $Self->{DisplaySettings}{DynamicFieldWidgetDisplay} )
+        ? %{
+            $ConfigObject->Get("Ticket::Frontend::AgentTicketZoom")
+                ->{DynamicFieldWidgetDynamicField}
+                || {}
+            }
+        : (),
+        $IsProcessTicket
+        ? %{
             $ConfigObject->Get("Ticket::Frontend::AgentTicketZoom")
                 ->{ProcessWidgetDynamicField}
                 || {}
-        },
+            }
+        : (),
         %{ $ConfigObject->Get("Ticket::Frontend::AgentTicketZoom")->{DynamicField} || {} },
     };
 
@@ -426,6 +410,7 @@ sub Run {
                 Label                       => $Label,
                 Link                        => $ValueStrg->{Link},
                 LinkPreview                 => $ValueStrg->{LinkPreview},
+                FieldType                   => $DynamicFieldConfig->{FieldType},
                 TitleFieldConfig            => ( $DynamicFieldConfig->{FieldType} eq 'Title' ) ? $DynamicFieldConfig->{Config} : undef,
 
                 # Include unique parameter with dynamic field name in case of collision with others.
@@ -455,6 +440,15 @@ sub Run {
     FIELD:
     for my $Field (@FieldsSidebar) {
 
+        # check Set field behavior to include lenses on Sets
+        my $FieldConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+            Name => $Field->{Name},
+        );
+        my $IsSetField = $DynamicFieldBackendObject->HasBehavior(
+            DynamicFieldConfig => $FieldConfig,
+            Behavior           => 'IsSetField',
+        );
+
         # handle titles separately
         if ( $Field->{TitleFieldConfig} ) {
             my $Style = "padding-left:4px;font-size:$Field->{TitleFieldConfig}{FontSize}px;color:$Field->{TitleFieldConfig}{FontColor};";
@@ -475,6 +469,19 @@ sub Run {
                     Text       => $Field->{Label},
                     Style      => $Style,
                     TitleField => 1,
+                },
+            );
+
+            next FIELD;
+        }
+        elsif ($IsSetField) {
+
+            $LayoutObject->Block(
+                Name => 'TicketDynamicField',
+                Data => {
+                    Label     => $Field->{Label},
+                    Value     => $Field->{Value},
+                    HTMLValue => 1,
                 },
             );
 

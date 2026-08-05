@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,10 +19,13 @@ package Kernel::GenericInterface::Operation::Ticket::Common;
 use strict;
 use warnings;
 
-use MIME::Base64();
-use Mail::Address;
-use Encode;
+# core modules
+use MIME::Base64 qw(decode_base64);
+use Encode       qw(resolve_alias);
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our $ObjectManagerDisabled = 1;
@@ -40,6 +43,8 @@ initialize the operation by checking the web service configuration and gather of
     my $Return = $CommonObject->Init(
         WebserviceID => 1,
     );
+
+returns:
 
     $Return = {
         Success => 1,                       # or 0 in case of failure,
@@ -102,12 +107,15 @@ checks if the given queue or queue ID is valid.
         QueueID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateQueue(
         Queue   => 'some queue',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -166,12 +174,15 @@ checks if the given lock or lock ID is valid.
         LockID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateLock(
         Lock   => 'some lock',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -216,12 +227,15 @@ checks if the given type or type ID is valid.
         TypeID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateType(
         Type   => 'some type',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -278,12 +292,15 @@ checks if the given customer user or customer ID is valid.
         CustomerID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateCustomer(
         CustomerUser   => 'some type',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -338,13 +355,16 @@ checks if the given service or service ID is valid.
         CustomerUser => 'Test',
     );
 
+or
+
     my $Success = $CommonObject->ValidateService(
         Service      => 'some service',
         CustomerUser => 'Test',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -418,13 +438,16 @@ checks if the given service or service ID is valid.
         ServiceID => 123,       # || Service => 'some service'
     );
 
+or
+
     my $Success = $CommonObject->ValidateService(
         SLA       => 'some SLA',
         ServiceID => 123,       # || Service => 'some service'
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -522,12 +545,15 @@ checks if the given state or state ID is valid.
         StateID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateState(
         State   => 'some state',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -585,12 +611,15 @@ checks if the given priority or priority ID is valid.
         PriorityID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidatePriority(
         Priority   => 'some priority',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -655,12 +684,15 @@ checks if the given owner or owner ID is valid.
         OwnerID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateOwner(
         Owner   => 'some user',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -684,12 +716,15 @@ checks if the given responsible or responsible ID is valid.
         ResponsibleID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateResponsible(
         Responsible   => 'some user',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -719,14 +754,17 @@ checks if the given pending time is valid.
         },
     );
 
+or
+
     my $Success = $CommonObject->ValidatePendingTime(
         PendingTime => {
             Diff => 10080,
         },
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -740,7 +778,7 @@ sub ValidatePendingTime {
     # if only the Diff attribute is present, check if it's a valid number and return.
     # Nothing else needs to be checked in that case.
     if ( keys %{ $Param{PendingTime} } == 1 && defined $Param{PendingTime}->{Diff} ) {
-        return if $Param{PendingTime}->{Diff} !~ m{\A \d+ \z}msx;
+        return if $Param{PendingTime}->{Diff} !~ m{\A [0-9]+ \z}msx;
         return 1;
     }
     elsif ( defined $Param{PendingTime}->{Diff} ) {
@@ -776,8 +814,9 @@ checks if the given AutoResponseType is valid.
         AutoResponseType => 'Some AutoRespobse',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -806,8 +845,9 @@ checks if the given from is valid.
         From => 'user@domain.com',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -818,15 +858,14 @@ sub ValidateFrom {
     return if !$Param{From};
 
     # check email address
-    for my $Email ( Mail::Address->parse( $Param{From} ) ) {
-        if (
-            !$Kernel::OM->Get('Kernel::System::CheckItem')->CheckEmail( Address => $Email->address() )
-            )
-        {
-            return;
-        }
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    for my $Email ( $EmailAddressObject->ParseAddressLine( Line => $Param{From} ) ) {
+        return unless $Kernel::OM->Get('Kernel::System::CheckItem')->CheckEmail(
+            AddressObject => $Email
+        );
     }
 
+    # no problems found
     return 1;
 }
 
@@ -840,8 +879,9 @@ checks if provided Communication Channel is valid.
         CommunicationChannelID => 1,            # optional
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -874,12 +914,15 @@ checks if the given SenderType or SenderType ID is valid.
         SenderTypeID => 123,
     );
 
+or
+
     my $Success = $CommonObject->ValidateenderType(
         SenderType => 'some SenderType',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -936,8 +979,9 @@ checks if the given MimeType is valid.
         MimeTypeID => 'some MimeType',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -960,8 +1004,9 @@ checks if the given Charset is valid.
         Charset => 'some charset',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -972,7 +1017,7 @@ sub ValidateCharset {
     return unless $Param{Charset};
 
     # check validity of the charset
-    return unless Encode::resolve_alias( $Param{Charset} );
+    return unless resolve_alias( $Param{Charset} );
 
     # charset is valid
     return 1;
@@ -983,7 +1028,7 @@ sub ValidateCharset {
 checks the validity of the content type.
 
 Valid values for the MIME header I<Content-Type> are specified in L<RFC 2045|https://www.rfc-editor.org/rfc/rfc2045#section-5.1>.
-This spec allows e.g. bare carriage return and backslash quoted line feed characters in the value. But in OTOBO we
+This spec allows e.g. bare carriage return and backslash quoted line feed characters in the value. But in CareOnCloud ESM we
 can be more strict. This is because usually we are only interested in the media type and in the charset.
 Thus the following, somewhat arbitrary, conditions are imposed:
 
@@ -1048,8 +1093,9 @@ checks if the given HistoryType is valid.
         HistoryType => 'some HostoryType',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -1085,8 +1131,9 @@ checks if the given TimeUnit is valid.
         TimeUnit => 1,
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -1097,7 +1144,7 @@ sub ValidateTimeUnit {
     return if !$Param{TimeUnit};
 
     # TimeUnit must be positive
-    return if $Param{TimeUnit} !~ m{\A \d+([.,]\d+)? \z}xms;
+    return if $Param{TimeUnit} !~ m{\A [0-9]+([.,][0-9]+)? \z}xms;
 
     return 1;
 }
@@ -1110,8 +1157,9 @@ checks if the given user ID is valid.
         UserID => 123,
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -1134,8 +1182,9 @@ checks if the given dynamic field name is valid.
         Name => 'some name',
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -1161,15 +1210,30 @@ checks if the given dynamic field value is valid.
         Value => 'some value',          # String or Integer or DateTime format
     );
 
+or
+
     my $Success = $CommonObject->ValidateDynamicFieldValue(
+        Name  => 'some name',
         Value => [                      # Only for fields that can handle multiple values like
             'some value',               #   Multiselect
             'some other value',
         ],
     );
 
-    returns
-    $Success = 1                        # or 0
+or
+
+    my $Success = $CommonObject->ValidateDynamicFieldValue(
+        Name  => 'some name',
+        Value => [                      # two dimensional for Sets
+            [ 'va1_Slot1_1', 'val_Slot2_1, ... ],
+            [ 'va1_Slot1_2', 'val_Slot2_2, ... ],
+            [ 'va1_Slot1_3', 'val_Slot2_3, ... ],
+        ],
+    );
+
+returns
+
+    $Success = 1                        # or undef
 
 =cut
 
@@ -1191,6 +1255,7 @@ sub ValidateDynamicFieldValue {
     my $ValidateValue = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->FieldValueValidate(
         DynamicFieldConfig => $DynamicFieldConfig,
         Value              => $Param{Value},
+        ExternalSource     => $Param{ExternalSource},
         UserID             => 1,
     );
 
@@ -1206,8 +1271,9 @@ checks if the given dynamic field name is valid.
         Article => 1,               # if article exists
     );
 
-    returns
-    $Success = 1            # or 0
+returns
+
+    $Success = 1            # or undef
 
 =cut
 
@@ -1239,6 +1305,8 @@ sets the value of a dynamic field.
         UserID    => 123,
     );
 
+or
+
     my $Result = $CommonObject->SetDynamicFieldValue(
         Name   => 'some name',           # the name of the dynamic field
         Value => [
@@ -1248,10 +1316,13 @@ sets the value of a dynamic field.
         UserID => 123,
     );
 
-    returns
+returns
+
     $Result = {
         Success => 1,                        # if everything is ok
     }
+
+or
 
     $Result = {
         Success      => 0,
@@ -1305,6 +1376,7 @@ sub SetDynamicFieldValue {
         DynamicFieldConfig => $DynamicFieldConfig,
         ObjectID           => $ObjectID,
         Value              => $Param{Value},
+        ExternalSource     => 1,
         UserID             => $Param{UserID},
     );
 
@@ -1324,10 +1396,13 @@ creates a new attachment for the given article.
         UserID     => 123,
     );
 
-    returns
+returns
+
     $Result = {
         Success => 1,                        # if everything is ok
     }
+
+or
 
     $Result = {
         Success      => 0,
@@ -1357,7 +1432,7 @@ sub CreateAttachment {
     # write attachment
     my $Success = $ArticleBackendObject->ArticleWriteAttachment(
         %{ $Param{Attachment} },
-        Content   => MIME::Base64::decode_base64( $Param{Attachment}->{Content} ),
+        Content   => decode_base64( $Param{Attachment}->{Content} ),
         ArticleID => $Param{ArticleID},
         UserID    => $Param{UserID},
     );
@@ -1378,7 +1453,8 @@ Tests if the user have the permissions to create a ticket on a determined queue
     );
 
 returns:
-    $Success = 1                                # if everything is OK
+
+    $Result = 1                                # if everything is OK
 
 =cut
 
@@ -1434,6 +1510,7 @@ Tests if the user have access permissions over a ticket
     );
 
 returns:
+
     $Success = 1                                # if everything is OK
 
 =cut
@@ -1472,11 +1549,14 @@ checks if the given user or user ID is valid.
         UserID => 123,
     );
 
+or
+
     my $Success = $CommonObject->_ValidateUser(
         User   => 'some user',
     );
 
-    returns
+returns
+
     $Success = 1            # or 0
 
 =cut

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Self and $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
@@ -117,9 +117,12 @@ $Selenium->RunTest(
             "return \$(window).height();"
         );
 
-        # two sizes are acceptable, as under Chrome that is a message about remote control
+        # Two sizes are acceptable, as under Chrome that is a message about remote control
+        # plus another one since switch to chrom 141. Note the checked value can
+        # change if you watch the test via VNC because the actual size depends on the
+        # screen being used, different sized screens actually can return different values!
         ok(
-            ( $PopupWindowHeight == 700 || $PopupWindowHeight == 655 ),
+            ( $PopupWindowHeight == 700 || $PopupWindowHeight == 655 || $PopupWindowHeight == 647 ),
             "Default popup window height, considering the remote control warning"
         );
 

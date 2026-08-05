@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 use HTTP::Request::Common qw(GET);
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # Get helper object
@@ -75,7 +75,7 @@ my $ObjectID = $Kernel::OM->Get('Kernel::System::DynamicField')->ObjectMappingCr
     ObjectType => 'CustomerUser',
 );
 my $WrongObjectID = $Kernel::OM->Get('Kernel::System::DynamicField')->ObjectMappingCreate(
-    ObjectName => 'OTOBOwrongid',
+    ObjectName => 'CareOnCloudwrongid',
     ObjectType => 'CustomerUser',
 );
 
@@ -124,7 +124,7 @@ my @Tests = (
             DynamicFieldConfig => $DynamicFieldConfig,
             UserID             => 1,
         },
-        Request       => "Action=someaction;Subaction=somesubaction;ID=OTOBOwrongid",
+        Request       => "Action=someaction;Subaction=somesubaction;ID=CareOnCloudwrongid",
         Success       => 1,
         ExectedResult => {
             ObjectID => $WrongObjectID,

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,8 +24,8 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::RegisterDriver;    # set up $Self (unused) and $Kernel::PL
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
@@ -54,7 +54,7 @@ $Selenium->RunTest(
         # This test is a leftover from the old costomer login page,
         # as in the current version there is no check for Secure::DisabledBanner.
         my %SourceChecks = (
-            PoweredBy => qr{powered by.{5,30}https://otobo\.de}s,
+            PoweredBy => qr{powered by.{5,30}https://careoncloud\.io}s,
         );
         my $Product = $Kernel::OM->Get('Kernel::Config')->Get('Product');
         my $Version = $Kernel::OM->Get('Kernel::Config')->Get('Version');
@@ -115,11 +115,8 @@ $Selenium->RunTest(
 
         # check if login is successful
         $Selenium->WaitFor(
-            ElementExists => q{//div[@class='oooLogout']/a[@title='Logout']}
+            ElementExists => q{//div[@class='oooNavBarAvatarDesc']/a[@title='Logout']}
         );
-
-        my $ButtonLogout = $Selenium->find_element_by_xpath(q{//a[@id='oooAvatar']});
-        ok( $ButtonLogout, 'logout button found' );
 
         # Check for footer, even though it is not visible
         my $PageSource = $Selenium->get_page_source();
@@ -131,6 +128,19 @@ $Selenium->RunTest(
         $Helper->ConfigSettingChange(
             Key   => 'DisableLoginAutocomplete',
             Value => 0,
+        );
+
+        # expand navigation bar
+        $Selenium->WaitFor(
+            ElementExists => q{//div[@id='oooNavBarExpand']}
+        );
+        $Selenium->find_element( "#oooNavBarExpand", 'css' )->click();
+
+        my $ButtonLogout = $Selenium->find_element_by_xpath(q{//div[@class='oooNavBarAvatarDesc']/a[@title='Logout']});
+
+        # check if expand is successful
+        $Selenium->WaitFor(
+            JavaScript => q{return document.querySelector('.oooNavBarAvatarDesc a[title="Logout"]').offsetWidth > 0;}
         );
 
         # logout again

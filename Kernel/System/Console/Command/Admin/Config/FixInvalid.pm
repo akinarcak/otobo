@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,7 @@ package Kernel::System::Console::Command::Admin::Config::FixInvalid;
 use strict;
 use warnings;
 
-use parent qw(Kernel::System::Console::BaseCommand);
+use parent                        qw(Kernel::System::Console::BaseCommand);
 use Kernel::System::VariableCheck qw( :all );
 
 our @ObjectDependencies = (
@@ -248,7 +248,7 @@ sub Run {
         $Self->Print(
             "\nFollowing settings were not fixed:\n"
                 . join( ",\n", map {"  - $_"} @NotFixedSettings ) . "\n"
-                . "\nPlease use console command (bin/otobo.Console.pl Admin::Config::Update --help) or GUI to fix them.\n\n"
+                . "\nPlease use console command (bin/careoncloud.Console.pl Admin::Config::Update --help) or GUI to fix them.\n\n"
         );
     }
 
@@ -278,6 +278,14 @@ sub _TryUpdateSetting {
         push @{ $Param{NotFixedSettings} }, $Param{SettingName};
     }
     return if !$ExclusiveLockGUID;
+
+    # determine value structure of setting
+    my %Setting = $SysConfigObject->SettingGet(
+        Name => $Param{SettingName},
+    );
+    if ( ( ref $Setting{EffectiveValue} eq 'ARRAY' ) && ( ref $Param{Value} ne 'ARRAY' ) ) {
+        $Param{Value} = [ $Param{Value} ];
+    }
 
     my %Update = $SysConfigObject->SettingUpdate(
         Name              => $Param{SettingName},

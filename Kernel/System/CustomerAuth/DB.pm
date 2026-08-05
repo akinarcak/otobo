@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,17 @@ package Kernel::System::CustomerAuth::DB;
 
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::ParamObject)
 
+use v5.24;
 use strict;
 use warnings;
 
-use Crypt::PasswdMD5 qw(unix_md5_crypt apache_md5_crypt);
-use Digest::SHA;
+# core modules
+use Digest::SHA ();
+
+# CPAN modules
+use Crypt::PasswdMD5 qw(apache_md5_crypt unix_md5_crypt);
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -39,16 +45,8 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
-    # get database object
-    $Self->{DBObject} = $Kernel::OM->Get('Kernel::System::DB');
-
-    # Debug 0=off 1=on
-    $Self->{Debug} = 0;
-
-    # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # config options
@@ -62,21 +60,25 @@ sub new {
         || '';
 
     if ( $ConfigObject->Get( 'Customer::AuthModule::DB::DSN' . $Param{Count} ) ) {
-        $Self->{DBObject} = Kernel::System::DB->new(
-            DatabaseDSN =>
-                $ConfigObject->Get( 'Customer::AuthModule::DB::DSN' . $Param{Count} ),
-            DatabaseUser =>
-                $ConfigObject->Get( 'Customer::AuthModule::DB::User' . $Param{Count} ),
-            DatabasePw =>
-                $ConfigObject->Get( 'Customer::AuthModule::DB::Password' . $Param{Count} ),
-            Type => $ConfigObject->Get( 'Customer::AuthModule::DB::Type' . $Param{Count} )
-                || '',
-            )
-            || die "Can't connect to "
-            . $ConfigObject->Get( 'Customer::AuthModule::DB::DSN' . $Param{Count} );
 
-        # remember that we have the DBObject not from parent call
+        # use a dedicated database connection
+        $Self->{DBObject} = Kernel::System::DB->new(
+            DatabaseDSN             => $ConfigObject->Get( 'Customer::AuthModule::DB::DSN' . $Param{Count} ),
+            Attribute               => $ConfigObject->Get( 'Customer::AuthModule::DB::Attribute' . $Param{Count} ) // {},
+            DatabaseUser            => $ConfigObject->Get( 'Customer::AuthModule::DB::User' . $Param{Count} ),
+            DatabasePw              => $ConfigObject->Get( 'Customer::AuthModule::DB::Password' . $Param{Count} ),
+            Type                    => $ConfigObject->Get( 'Customer::AuthModule::DB::Type' . $Param{Count} ) || '',
+            DisconnectOnDestruction => 1,
+        ) || die "Can't connect to " . $ConfigObject->Get( 'Customer::AuthModule::DB::DSN' . $Param{Count} );
+
+        # Remember that the DBObject is not taken from object manager.
+        # The cleanup must be done seperately.
         $Self->{NotParentDBObject} = 1;
+    }
+    else {
+
+        # use the main database connection per default
+        $Self->{DBObject} = $Kernel::OM->Get('Kernel::System::DB');
     }
 
     return $Self;
@@ -112,6 +114,7 @@ sub Auth {
             Priority => 'error',
             Message  => "Need User!"
         );
+
         return;
     }
 
@@ -121,7 +124,8 @@ sub Auth {
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $RemoteAddr  = $ParamObject->RemoteAddr() || 'Got no REMOTE_ADDR env!';
     my $UserID      = '';
-    my $GetPw       = '';
+    my $GetPw       = '';                                                        # the hashed password, may include salt and other settings
+    my $Method      = '';
 
     # sql query
     $Self->{DBObject}->Prepare(
@@ -147,7 +151,7 @@ sub Auth {
         return;
     }
 
-    # get encode object
+    # get needed objects
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
     # crypt given pw
@@ -156,9 +160,10 @@ sub Auth {
 
     if ( $Self->{CryptType} eq 'plain' ) {
         $CryptedPw = $Pw;
+        $Method    = 'plain';
     }
 
-    # md5 or sha pw
+    # md5, bcrypt or sha pw
     elsif ( $GetPw !~ /^.{13}$/ ) {
 
         # md5 pw
@@ -176,9 +181,11 @@ sub Auth {
 
             if ( $Magic eq '$apr1$' ) {
                 $CryptedPw = apache_md5_crypt( $Pw, $Salt );
+                $Method    = 'apache_md5_crypt';
             }
             else {
                 $CryptedPw = unix_md5_crypt( $Pw, $Salt );
+                $Method    = 'unix_md5_crypt';
             }
             $EncodeObject->EncodeInput( \$CryptedPw );
         }
@@ -190,6 +197,7 @@ sub Auth {
             $EncodeObject->EncodeOutput( \$Pw );
             $SHAObject->add($Pw);
             $CryptedPw = $SHAObject->hexdigest();
+            $Method    = 'sha256';
             $EncodeObject->EncodeInput( \$CryptedPw );
         }
 
@@ -200,19 +208,20 @@ sub Auth {
             $EncodeObject->EncodeOutput( \$Pw );
             $SHAObject->add($Pw);
             $CryptedPw = $SHAObject->hexdigest();
+            $Method    = 'sha512';
             $EncodeObject->EncodeInput( \$CryptedPw );
         }
 
         elsif ( $GetPw =~ m{^BCRYPT:} ) {
 
             # require module, log errors if module was not found
-            if ( !$Kernel::OM->Get('Kernel::System::Main')->Require('Crypt::Eksblowfish::Bcrypt') )
-            {
+            if ( !$Kernel::OM->Get('Kernel::System::Main')->Require('Crypt::Eksblowfish::Bcrypt') ) {
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
                     Priority => 'error',
                     Message  =>
-                        "User: '$User' tried to authenticate with bcrypt but 'Crypt::Eksblowfish::Bcrypt' is not installed!",
+                        "CustomerUser: $User tried to authenticate with bcrypt but 'Crypt::Eksblowfish::Bcrypt' is not installed!",
                 );
+
                 return;
             }
 
@@ -233,6 +242,7 @@ sub Auth {
             );
 
             $CryptedPw = "BCRYPT:$Cost:$Salt:" . Crypt::Eksblowfish::Bcrypt::en_base64($Octets);
+            $Method    = 'bcrypt';
         }
 
         # sha1 pw
@@ -245,6 +255,7 @@ sub Auth {
 
             $SHAObject->add($Pw);
             $CryptedPw = $SHAObject->hexdigest();
+            $Method    = 'sha1';
             $EncodeObject->EncodeInput( \$CryptedPw );
         }
 
@@ -257,31 +268,43 @@ sub Auth {
             # Encode output, needed by crypt() only non utf8 signs.
             $CryptedPw = crypt( $Pw, $SaltUser );
             $EncodeObject->EncodeInput( \$CryptedPw );
+            $Method = 'crypt';
         }
     }
 
     # crypt pw
     else {
 
-        # strip salt only for (Extended) DES, not for any of modular crypt's
+        # strip salt only for (Extended) DES, not for any of modular crypts
         if ( $Salt !~ /^\$\d\$/ ) {
             $Salt =~ s/^(..).*/$1/;
         }
 
+        # encode output, needed by crypt() only non utf8 signs
         $EncodeObject->EncodeOutput( \$Pw );
         $EncodeObject->EncodeOutput( \$Salt );
-
-        # encode output, needed by crypt() only non utf8 signs
         $CryptedPw = crypt( $Pw, $Salt );
+        $Method    = 'crypt';
         $EncodeObject->EncodeInput( \$CryptedPw );
     }
 
-    # just in case!
-    if ( $Self->{Debug} > 0 ) {
+    # Debugging can only be activated in the source code,
+    # so that sensitive information is not inadvertently leaked.
+    my $Debug = 0;
+    if ($Debug) {
+        my $EnteredPw  = $CryptedPw;
+        my $ExpectedPw = $GetPw;
+
+        # Don't log plaintext passwords.
+        if ( $Method eq 'plain' ) {
+            $EnteredPw  = 'xxx';
+            $ExpectedPw = 'xxx';
+        }
+
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  => "CustomerUser: '$User' tried to authenticate with Pw: '$Pw' "
-                . "($UserID/$CryptedPw/$GetPw/$Salt/$RemoteAddr)",
+            Message  =>
+                "CustomerUser: $User tried to authenticate (User ID: $UserID, method: $Method, entered password: $EnteredPw, expected password: $ExpectedPw, salt: $Salt, remote address: $RemoteAddr)",
         );
     }
 
@@ -289,18 +312,19 @@ sub Auth {
     if ( !$Pw ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  =>
-                "CustomerUser: $User authentication without Pw!!! (REMOTE_ADDR: $RemoteAddr)",
+            Message  => "CustomerUser: $User authentication without Pw!!! (REMOTE_ADDR: $RemoteAddr)",
         );
+
         return;
     }
 
     # login note
-    elsif ( ( $GetPw && $User && $UserID ) && $CryptedPw eq $GetPw ) {
+    elsif ( $GetPw && $User && $UserID && $CryptedPw eq $GetPw ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
             Message  => "CustomerUser: $User Authentication ok (REMOTE_ADDR: $RemoteAddr).",
         );
+
         return $User;
     }
 
@@ -311,6 +335,7 @@ sub Auth {
             Message  =>
                 "CustomerUser: $User Authentication with wrong Pw!!! (REMOTE_ADDR: $RemoteAddr)"
         );
+
         return;
     }
 
@@ -318,9 +343,9 @@ sub Auth {
     else {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  =>
-                "CustomerUser: $User doesn't exist or is invalid!!! (REMOTE_ADDR: $RemoteAddr)"
+            Message  => "CustomerUser: $User doesn't exist or is invalid!!! (REMOTE_ADDR: $RemoteAddr)"
         );
+
         return;
     }
 }
@@ -328,7 +353,7 @@ sub Auth {
 sub DESTROY {
     my $Self = shift;
 
-    # disconnect if it's not a parent DBObject
+    # disconnect if the DB object is not handled by the object manager
     if ( $Self->{NotParentDBObject} ) {
         if ( $Self->{DBObject} ) {
             $Self->{DBObject}->Disconnect();

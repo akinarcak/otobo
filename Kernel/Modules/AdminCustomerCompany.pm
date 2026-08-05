@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,16 +16,18 @@
 
 package Kernel::Modules::AdminCustomerCompany;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
 
 # core modules
 use List::Util qw(any);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our $ObjectManagerDisabled = 1;
@@ -39,6 +41,15 @@ sub new {
     my $DynamicFieldConfigs = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldListGet(
         ObjectType => 'CustomerCompany',
     );
+
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
 
     $Self->{DynamicFieldLookup} = { map { $_->{Name} => $_ } @{$DynamicFieldConfigs} };
 
@@ -60,7 +71,18 @@ sub Run {
     my $CustomerCompanyObject = $Kernel::OM->Get('Kernel::System::CustomerCompany');
 
     my %GetParam;
-    $GetParam{Source} = $ParamObject->GetParam( Param => 'Source' ) || 'CustomerCompany';
+    $GetParam{Source}         = $ParamObject->GetParam( Param => 'Source' ) || 'CustomerCompany';
+    $GetParam{IncludeInvalid} = $ParamObject->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $GetParam{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $GetParam{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $GetParam{IncludeInvalid};
+    }
 
     # ------------------------------------------------------------ #
     # change
@@ -197,8 +219,6 @@ sub Run {
                 my $SetDFError;
 
                 # set dynamic field values
-                my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
-
                 ENTRY:
                 for my $Entry (@CustomerCompanyMap) {
                     next ENTRY if $Entry->[5] ne 'dynamic_field';
@@ -210,8 +230,9 @@ sub Run {
                             Info => $LayoutObject->{LanguageObject}->Translate(
                                 'Dynamic field %s not found!',
                                 $Entry->[2],
-                            )
+                            ),
                         );
+
                         next ENTRY;
                     }
 
@@ -223,13 +244,13 @@ sub Run {
                     );
 
                     if ( !$ValueSet ) {
-                        $SetDFError
-                            .= $LayoutObject->Notify(
-                                Info => $LayoutObject->{LanguageObject}->Translate(
-                                    'Unable to set value for dynamic field %s!',
-                                    $Entry->[2],
-                                ),
-                            );
+                        $SetDFError .= $LayoutObject->Notify(
+                            Info => $LayoutObject->{LanguageObject}->Translate(
+                                'Unable to set value for dynamic field %s!',
+                                $Entry->[2],
+                            ),
+                        );
+
                         next ENTRY;
                     }
                 }
@@ -444,8 +465,6 @@ sub Run {
                     );
 
                 # set dynamic field values
-                my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
-
                 ENTRY:
                 for my $Entry ( @{ $ConfigObject->Get( $GetParam{Source} )->{Map} } ) {
                     next ENTRY if $Entry->[5] ne 'dynamic_field';
@@ -459,6 +478,7 @@ sub Run {
                                 $Entry->[2],
                             ),
                         );
+
                         next ENTRY;
                     }
 
@@ -470,13 +490,13 @@ sub Run {
                     );
 
                     if ( !$ValueSet ) {
-                        $Output
-                            .= $LayoutObject->Notify(
-                                Info => $LayoutObject->{LanguageObject}->Translate(
-                                    'Unable to set value for dynamic field %s!',
-                                    $Entry->[2],
-                                ),
-                            );
+                        $Output .= $LayoutObject->Notify(
+                            Info => $LayoutObject->{LanguageObject}->Translate(
+                                'Unable to set value for dynamic field %s!',
+                                $Entry->[2],
+                            ),
+                        );
+
                         next ENTRY;
                     }
                 }
@@ -486,6 +506,7 @@ sub Run {
                     Data         => \%Param,
                 );
                 $Output .= $LayoutObject->Footer();
+
                 return $Output;
             }
         }
@@ -554,6 +575,7 @@ sub _Edit {
     my ( $Self, %Param ) = @_;
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     $LayoutObject->Block(
         Name => 'Overview',
@@ -570,9 +592,6 @@ sub _Edit {
         Name => 'OverviewUpdate',
         Data => \%Param,
     );
-
-    # get config object
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # send parameter ReadOnly to JS object
     $LayoutObject->AddJSData(
@@ -656,22 +675,37 @@ sub _Edit {
                     Class => "$OptionRequired Modernize " .
                         ( $Param{Errors}->{ $Entry->[0] . 'Invalid' } || '' ),
                     Translation => 1,
-                    Sort => 'AlphanumericKey',
+                    Sort        => 'AlphanumericKey',
                     SelectedID  => $Param{ $Entry->[0] },
                     Max         => 35,
                 );
 
             }
-            elsif ( $Entry->[0] =~ /^CustomerCompanyCountry/i ) {
-                my $OptionRequired = '';
-                if ( $Entry->[4] ) {
-                    $OptionRequired = 'Validate_Required';
+            elsif ( $Entry->[0] =~ m/^CustomerCompanyCountry/i ) {
+
+                # build Country selection with English names
+                $Block = 'Option';
+                my $OptionRequired = $Entry->[4] ? 'Validate_Required' : '';
+                my $CountryList;
+                if ( $ConfigObject->Get('ReferenceData::TranslatedCountryNames') ) {
+
+                    # Flag+Name => code
+                    $CountryList = $Kernel::OM->Get('Kernel::System::ReferenceData')->CLDRCountryList(
+                        Language => $LayoutObject->{UserLanguage},
+                    );
+
+                    # Make sure that the previous value exists in the selection list even if it isn't a country code.
+                    my $PreviousCountry = $Param{ $Entry->[0] };
+                    if ($PreviousCountry) {
+                        $CountryList->{$PreviousCountry} //= $PreviousCountry;
+                    }
+                }
+                else {
+
+                    # English name => English name
+                    $CountryList = $Kernel::OM->Get('Kernel::System::ReferenceData')->CountryList;
                 }
 
-                # build Country string
-                my $CountryList = $Kernel::OM->Get('Kernel::System::ReferenceData')->CountryList();
-
-                $Block = 'Option';
                 $Param{Option} = $LayoutObject->BuildSelection(
                     Data         => $CountryList,
                     PossibleNone => 1,
@@ -679,17 +713,14 @@ sub _Edit {
                     Name         => $Entry->[0],
                     Class        => "$OptionRequired Modernize " .
                         ( $Param{Errors}->{ $Entry->[0] . 'Invalid' } || '' ),
-                    SelectedID => defined( $Param{ $Entry->[0] } ) ? $Param{ $Entry->[0] } : 1,
+                    SelectedID => ( $Param{ $Entry->[0] } // 1 ),
                 );
             }
-            elsif ( $Entry->[0] =~ /^ValidID/i ) {
-                my $OptionRequired = '';
-                if ( $Entry->[4] ) {
-                    $OptionRequired = 'Validate_Required';
-                }
+            elsif ( $Entry->[0] =~ m/^ValidID/i ) {
 
                 # build ValidID string
                 $Block = 'Option';
+                my $OptionRequired = $Entry->[4] ? 'Validate_Required' : '';
                 $Param{Option} = $LayoutObject->BuildSelection(
                     Data  => { $ValidObject->ValidList(), },
                     Name  => $Entry->[0],
@@ -714,7 +745,7 @@ sub _Edit {
                 $Param{RequiredClass}  = '';
             }
 
-            # show required flag
+            # show readonly flag
             if ( $Entry->[7] ) {
                 $Param{ReadOnlyType} = 'readonly';
             }
@@ -755,6 +786,7 @@ sub _Edit {
             }
         }
     }
+
     return 1;
 }
 
@@ -768,6 +800,13 @@ sub _Overview {
         Data => \%Param,
     );
 
+    $LayoutObject->Block(
+        Name => 'IncludeInvalid',
+        Data => {
+            IncludeInvalid        => $Self->{IncludeInvalid},
+            IncludeInvalidChecked => $Self->{IncludeInvalid} ? 'checked' : '',
+        },
+    );
     $LayoutObject->Block( Name => 'ActionList' );
     $LayoutObject->Block(
         Name => 'ActionSearch',
@@ -837,7 +876,7 @@ sub _Overview {
 
         my %List = $CustomerCompanyObject->CustomerCompanyList(
             Search => $Param{Search},
-            Valid  => 0,
+            Valid  => $Self->{IncludeInvalid} ? 0 : 1,
         );
 
         if ( keys %ListAllItems > $Limit ) {

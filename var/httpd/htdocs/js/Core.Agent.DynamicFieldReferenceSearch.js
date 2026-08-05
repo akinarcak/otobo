@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -101,22 +101,37 @@ Core.Agent.DynamicFieldReferenceSearch = (function(TargetNS) {
             $Element.unbind('keyup.Validate').bind('keyup.Validate', function() {
                 var Value = $Element.val();
                 if($Element.hasClass('ServerError') && Value.length) {
-                    $('#OTOBO_UI_Tooltips_ErrorTooltip').hide();
+                    $('#CareOnCloud_UI_Tooltips_ErrorTooltip').hide();
                 }
             });
 
             $Element.autocomplete({
                 minLength: AutoCompleteActive ? AutoCompleteConfig.MinQueryLength : 500,
                 delay: AutoCompleteConfig.QueryDelay,
+                open: function() {
+                    $(this).autocomplete("widget").width($(this).innerWidth());
+                },
                 source: function(Request, Response) {
 
+                    // check for surrounding set and if so, send setindex as request param
+                    var SetIndexStrg = '';
+                    var SetOuterFieldList = $Element.parents('.DFSetOuterField');
+                    if ( SetOuterFieldList.length ) {
+                        var MultiValueClass = Array.from(SetOuterFieldList[0].parentElement.classList).find(c => c.startsWith('MultiValue'));
+                        if (MultiValueClass !== undefined && MultiValueClass != '') {
+                            var SetIndexRegExp = new RegExp(/^MultiValue_(\d+)$/);
+                            var MatchResults = SetIndexRegExp.exec(MultiValueClass);
+                            SetIndexStrg = ';SetIndex=' + MatchResults[1];
+                        }
+                    }
+
                     var URL = Core.Config.Get('Baselink'),
-                        Data = {
-                            Action: 'AgentReferenceSearch',
-                            Term: Request.term,
-                            Field: $Element.attr('id'),
-                            MaxResults: AutoCompleteConfig.MaxResultsDisplayed
-                        };
+                        QueryString = "Action=AgentReferenceSearch;Term=" + Request.term
+                            + ";Field=" + $Element.attr('id')
+                            + SetIndexStrg
+                            + ";MaxResults=" + AutoCompleteConfig.MaxResultsDisplayed + ";";
+
+                    QueryString += Core.AJAX.SerializeForm($Element.closest('form'), {'Action': 1, 'Subaction': 1, 'Term': 1, 'Field': 1, 'MaxResults': 1});
 
                     // If an old ajax request is already running, stop the old request and start the new one.
                     if($Element.data('AutoCompleteXHR')) {
@@ -126,7 +141,7 @@ Core.Agent.DynamicFieldReferenceSearch = (function(TargetNS) {
                         Response({});
                     }
 
-                    $Element.data('AutoCompleteXHR', Core.AJAX.FunctionCall(URL, Data, function(Result) {
+                    $Element.data('AutoCompleteXHR', Core.AJAX.FunctionCall(URL, QueryString, function(Result) {
                         var ValueData = [];
                         $Element.removeData('AutoCompleteXHR');
                         $.each(Result, function() {
@@ -152,10 +167,12 @@ Core.Agent.DynamicFieldReferenceSearch = (function(TargetNS) {
 
             $Element.blur(function() {
                 var Visible = false;
+                let $ValueField = $(this).siblings('input[type=hidden]');
 
+                // If the field is empty, remove the hidden field value and the contact info.
                 if (!$(this).val()) {
-                    $(this).prevAll('input[type=hidden]').val('');
-                    $('.' + $(this).prevAll('input[type=hidden]').attr('id')).fadeOut('fast', function() {
+                    $ValueField.val('');
+                    $('.' + $ValueField.attr('id')).fadeOut('fast', function() {
 
                         if (!$(this).find('.Reference').hasClass('Hidden')) {
                             Visible = true;
@@ -177,6 +194,8 @@ Core.Agent.DynamicFieldReferenceSearch = (function(TargetNS) {
                                 .removeClass('Hidden');
                         }
                     });
+                } else if (!$ValueField.val()) {
+                    $(this).val('');
                 }
             });
 
@@ -199,7 +218,7 @@ Core.Agent.DynamicFieldReferenceSearch = (function(TargetNS) {
 
     /**
      * @function
-     * @param {String} Field
+     * @param {String} Field The HTML id of the input field with autocomplete.
      * @param {String} ContactValue The readable customer identifier.
      * @param {String} ContactKey on system.
      * @description This function add a new ticket contact

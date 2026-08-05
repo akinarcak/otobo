@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,16 +14,19 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::EmailParser;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::EmailParser ();
 
 # get config object
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -94,7 +97,7 @@ my @Tests = (
         },
     },
     {
-        Name => 'DefaultHeader - X-Header',
+        Name => 'X-Header',
         Data => {
             From    => 'john.smith@example.com',
             To      => 'john.smith2@example.com',
@@ -104,16 +107,12 @@ my @Tests = (
             Charset => 'utf8',
         },
         Check => {
-            'X-OTOBO-Test' => 'DefaultHeader',
+            'X-CareOnCloud-Test' => 'DefaultHeader',
         },
     },
 );
 
-my $Count = 1;
 for my $Test (@Tests) {
-
-    my $Name = "#$Count $Test->{Name}";
-
     $Kernel::OM->ObjectsDiscard( Objects => ['Kernel::System::Email'] );
     my $EmailObject = $Kernel::OM->Get('Kernel::System::Email');
 
@@ -129,25 +128,23 @@ for my $Test (@Tests) {
 
     # end MIME::Tools workaround
     my $Email = ${$Header} . "\n" . ${$Body};
-    my @Array = split /\n/, $Email;
 
     # parse email
     my $ParserObject = Kernel::System::EmailParser->new(
-        Email => \@Array,
+        Email => $Email,
     );
 
     # check header
     KEY:
     for my $Key ( sort keys %{ $Test->{Check} || {} } ) {
-        next KEY if !$Test->{Check}->{$Key};
-        $Self->Is(
+        next KEY unless $Test->{Check}->{$Key};
+
+        is(
             $ParserObject->GetParam( WHAT => $Key ),
             $Test->{Check}->{$Key},
-            "$Name GetParam(WHAT => '$Key')",
+            "$Test->{Name}: GetParam(WHAT => '$Key')",
         );
     }
 }
 
-# cleanup is done by RestoreDatabase
-
-$Self->DoneTesting();
+done_testing;

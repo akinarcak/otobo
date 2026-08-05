@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,11 +19,11 @@ use warnings;
 use utf8;
 
 # core modules
-use Time::HiRes qw();
+use Time::HiRes ();
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 
 our $Self;
@@ -32,10 +32,8 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
-my $CacheType = 'UnitTestRebuildConfig';
-
-my $ChildCount = $Kernel::OM->Get('Kernel::Config')->Get('UnitTest::TicketCreateNumber::ChildCount') || 5;
-
+my $CacheType  = 'UnitTestRebuildConfig';
+my $ChildCount = 5;
 for my $ChildIndex ( 1 .. $ChildCount ) {
 
     # Disconnect database before fork.
@@ -56,7 +54,7 @@ for my $ChildIndex ( 1 .. $ChildCount ) {
         $Kernel::OM->ObjectsDiscard();
 
         # Execute console command.
-        `$^X bin/otobo.Console.pl Maint::Config::Rebuild --time 180`;
+        `$^X bin/careoncloud.Console.pl Maint::Config::Rebuild --time 180`;
         my $ExitCode = $? >> 8;
 
         $Kernel::OM->Get('Kernel::System::Cache')->Set(

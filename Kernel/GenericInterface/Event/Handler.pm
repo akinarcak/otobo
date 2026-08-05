@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,11 +21,11 @@ use strict;
 use warnings;
 
 # core modules
-use Storable;
+use Storable qw(dclone);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -211,7 +211,7 @@ sub Run {
                 my $Result = $RequesterObject->Run(
                     WebserviceID => $WebserviceID,
                     Invoker      => $Invoker,
-                    Data         => Storable::dclone( $Param{Data} ),
+                    Data         => dclone( $Param{Data} ),
                 );
 
                 next INVOKEREVENT if $Result->{Success};
@@ -654,7 +654,7 @@ sub _ConditionCheck {
                     next FIELDLNAME;
                 }
 
-                my @ArrayFields = grep { $_ =~ m{ \A \Q$FieldName\E _ \d+ \z }xms } keys %{ $Param{Data} };
+                my @ArrayFields = grep { $_ =~ m{ \A \Q$FieldName\E _ [0-9]+ \z }xms } keys %{ $Param{Data} };
 
                 if ( @ArrayFields && defined $ActualCondition->{Fields}->{$FieldName}->{Match} ) {
                     ARRAYFIELD:
@@ -866,7 +866,7 @@ sub _ConditionCheck {
                     next FIELDLNAME;
                 }
 
-                my @ArrayFields = grep { $_ =~ m{ \A \Q$FieldName\E _ \d+ \z }xms } keys %{ $Param{Data} };
+                my @ArrayFields = grep { $_ =~ m{ \A \Q$FieldName\E _ [0-9]+ \z }xms } keys %{ $Param{Data} };
 
                 if ( @ArrayFields && defined $ActualCondition->{Fields}->{$FieldName}->{Match} ) {
                     ARRAYFIELD:

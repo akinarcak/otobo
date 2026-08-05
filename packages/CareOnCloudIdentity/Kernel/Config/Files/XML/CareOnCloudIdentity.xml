@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_config version="2.0" init="Application">
+    <Setting Name="CareOnCloud::Identity::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enable the CareOnCloud federated identity trust boundary.</Description>
+        <Navigation>Core::CareOnCloud</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Identity::OIDC::RedirectURI" Required="1" Valid="1">
+        <Description Translatable="1">Exact HTTPS callback URI for each CareOnCloud OIDC login surface.</Description>
+        <Navigation>Core::CareOnCloud</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="agent">https://esm.arcak.net/careoncloud/index.pl?Action=Login</Item>
+                <Item Key="customer">https://esm.arcak.net/careoncloud/customer.pl?Action=Login</Item>
+            </Hash>
+        </Value>
+    </Setting>
+</careoncloud_config>

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -58,11 +58,22 @@ sub Run {
         $Target = 'target="attachment" ';
     }
 
+    my $Link = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->{Baselink} .
+        "Action=AgentTicketAttachment;TicketID=$Param{TicketID};ArticleID=$Param{Article}->{ArticleID};FileID=$Param{File}->{FileID}";
+
+    if ( $Param{VersionView} && !$Param{ArticleDeleted} ) {
+        $Link = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->{Baselink} .
+            "Action=AgentTicketAttachment;TicketID=$Param{TicketID};ArticleID=$Param{Article}->{ArticleID};SourceArticleID=$Param{SourceArticleID};VersionView=$Param{VersionView};FileID=$Param{File}->{FileID}";
+    }
+    elsif ( $Param{ArticleDeleted} ) {
+        $Link = $Kernel::OM->Get('Kernel::Output::HTML::Layout')->{Baselink} .
+            "Action=AgentTicketAttachment;TicketID=$Param{TicketID};ArticleID=$Param{Article}->{ArticleID};SourceArticleID=$Param{SourceArticleID};VersionView=0;FileID=$Param{File}->{FileID}";
+    }
+
     return (
         %{ $Param{File} },
         Action => 'Download',
-        Link   => $Kernel::OM->Get('Kernel::Output::HTML::Layout')->{Baselink} .
-            "Action=AgentTicketAttachment;TicketID=$Param{TicketID};ArticleID=$Param{Article}->{ArticleID};FileID=$Param{File}->{FileID}",
+        Link   => $Link,
         Image  => 'disk-s.png',
         Target => $Target,
     );

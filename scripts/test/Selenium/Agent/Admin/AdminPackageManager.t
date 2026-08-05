@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 use Kernel::System::UnitTest::Selenium;
 
@@ -70,8 +70,8 @@ my $XML      = <<'END_XML';
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_repository_list version="1.0">
 <Repository>
-    <Name>OTOBO Addons</Name>
-    <URL>https://otobo.de/</URL>
+    <Name>CareOnCloud ESM Addons</Name>
+    <URL>https://otobo.io/</URL>
 </Repository>
 </otrs_repository_list>
 END_XML
@@ -257,11 +257,11 @@ $Selenium->RunTest(
 
         NavigateToAdminPackageManager();
 
-        # The notification PackageManagerCheckNotVerifiedPackages.pm no longer exists in OTOBO.
+        # The notification PackageManagerCheckNotVerifiedPackages.pm no longer exists in CareOnCloud ESM.
         # This means that there is no warning about unverified packages.
         #$Self->True(
         #    $Selenium->execute_script(
-        #        'return $("div.MessageBox.Error p:contains(\'The installation of packages which are not verified by the OTOBO Team is activated. '
+        #        'return $("div.MessageBox.Error p:contains(\'The installation of packages which are not verified by the CareOnCloud ESM Team is activated. '
         #        . 'These packages could threaten your whole system! It is recommended not to use unverified packages.\')").length',
         #    ),
         #    'Install warning for not verified packages is displayed',
@@ -338,17 +338,17 @@ $Selenium->RunTest(
         # Check if info for incompatible package is shown.
         $Self->True(
             $Selenium->execute_script(
-                "return \$('.WidgetSimple .Content h2:contains(\"Package installation requires a patch level update of OTOBO\")').length;"
+                "return \$('.WidgetSimple .Content h2:contains(\"Package installation requires a patch level update of CareOnCloud ESM\")').length;"
             ),
             'Info for incompatible package is shown'
         );
 
-        # Create a repository list with a broken URL, taking care that the OTOBO repository list is not used
+        # Create a repository list with a broken URL, taking care that the CareOnCloud ESM repository list is not used
         $Helper->ConfigSettingChange(
             Valid => 1,
             Key   => 'Package::RepositoryList',
             Value => {
-                'ftp://ftp.example.com/pub/otobo/misc/packages/' => '[AdminPackageManager.t] ftp://ftp.example.com/'
+                'ftp://ftp.example.com/pub/careoncloud/misc/packages/' => '[AdminPackageManager.t] ftp://ftp.example.com/'
             },
         );
         $Helper->ConfigSettingChange(
@@ -357,7 +357,7 @@ $Selenium->RunTest(
         );
 
         # Try to load packages from the single entry in the repository list.
-        # No packages should be loaded, as ftp.example.com isn't an OTOBO package repository.
+        # No packages should be loaded, as ftp.example.com isn't a CareOnCloud ESM package repository.
         NavigateToAdminPackageManager();
         ClickAction("//button[\@name=\'GetRepositoryList']");
 
@@ -385,5 +385,8 @@ if ($TestPackage) {
         'Test package is cleaned up'
     );
 }
+
+$Selenium->close;
+$Selenium->quit;
 
 done_testing();

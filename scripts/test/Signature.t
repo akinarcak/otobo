@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -36,9 +36,9 @@ my $SignatureObject = $Kernel::OM->Get('Kernel::System::Signature');
 
 # add signature
 my $SignatureName = $Helper->GetRandomID();
-my $SignatureText = "Your OTOBO-Team
+my $SignatureText = "Your CareOnCloud ESM-Team
 
-<OTOBO_CURRENT_UserFirstname> <OTOBO_CURRENT_UserLastname>
+<CareOnCloud_CURRENT_UserFirstname> <CareOnCloud_CURRENT_UserLastname>
 
 --
 Super Support Company Inc. - Waterford Business Park

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,10 +21,13 @@ package Kernel::Output::HTML::Statistics::View;
 use strict;
 use warnings;
 
-use List::Util qw( first );
+# core modules
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::System::DateTime;
+use Kernel::System::DateTime      ();
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -146,8 +149,6 @@ sub StatsParamsWidget {
     my $Stat   = $Param{Stat};
     my $StatID = $Stat->{StatID};
 
-    my $Output;
-
     # get the object name
     if ( $Stat->{StatType} eq 'static' ) {
         $Stat->{ObjectName} = $Stat->{File};
@@ -194,7 +195,7 @@ sub StatsParamsWidget {
     if ( $Stat->{StatType} eq 'dynamic' ) {
         my $SelectedTimeZone = $Self->_GetValidTimeZone( TimeZone => $LocalGetParam->( Param => 'TimeZone' ) )
             // $Stat->{TimeZone}
-            // Kernel::System::DateTime->OTOBOTimeZoneGet();
+            // Kernel::System::DateTime->CareOnCloudTimeZoneGet();
 
         my %TimeZoneBuildSelection = $Self->_TimeZoneBuildSelection();
 
@@ -615,7 +616,7 @@ sub StatsParamsWidget {
         );
     }
 
-    $Output .= $LayoutObject->Output(
+    return $LayoutObject->Output(
         TemplateFile => 'Statistics/StatsParamsWidget',
         Data         => {
             %{$Stat},
@@ -623,7 +624,6 @@ sub StatsParamsWidget {
         },
         AJAX => $Param{AJAX},
     );
-    return $Output;
 }
 
 sub GeneralSpecificationsWidget {
@@ -827,7 +827,7 @@ sub GeneralSpecificationsWidget {
                 UserID => $Param{UserID}
             );
             $SelectedTimeZone = $Self->_GetValidTimeZone( TimeZone => $UserPreferences{UserTimeZone} )
-                // Kernel::System::DateTime->OTOBOTimeZoneGet();
+                // Kernel::System::DateTime->CareOnCloudTimeZoneGet();
         }
 
         my %TimeZoneBuildSelection = $Self->_TimeZoneBuildSelection();
@@ -858,7 +858,6 @@ sub XAxisWidget {
 
     # get needed objects
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # if only one value is available select this value
     if ( !$Stat->{UseAsXvalue}[0]{Selected} && scalar( @{ $Stat->{UseAsXvalue} } ) == 1 ) {
@@ -966,7 +965,6 @@ sub YAxisWidget {
 
     # get needed objects
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     my @YAxisElements;
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -43,13 +43,10 @@ Don't use the constructor directly, use the ObjectManager instead:
 =cut
 
 sub new {
-    my ( $Type, %Param ) = @_;
+    my ($Type) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {}, $Type;
 }
 
 =head2 EventList()
@@ -72,9 +69,9 @@ sub EventList {
     my ( $Self, %Param ) = @_;
 
     my %ObjectTypes = map { $_ => 1 } @{ $Param{ObjectTypes} || [] };
-
     my %EventConfig = %{ $Kernel::OM->Get('Kernel::Config')->Get('Events') || {} };
 
+    # filter by ObjectType, an empty filter means that no filtering is done
     my %Result;
     for my $ObjectType ( sort keys %EventConfig ) {
 
@@ -97,16 +94,17 @@ sub EventList {
 
         my @DynamicFieldEvents = map {"TicketDynamicFieldUpdate_$_"} sort values %{$DynamicFields};
 
-        push @{ $Result{'Ticket'} || [] }, @DynamicFieldEvents;
+        $Result{Ticket} ||= [];
+        push $Result{Ticket}->@*, @DynamicFieldEvents;
     }
 
     # there is currently only one article df event
     if ( !%ObjectTypes || $ObjectTypes{'Article'} ) {
-        push @{ $Result{'Article'} || [] }, 'ArticleDynamicFieldUpdate';
+        $Result{Article} ||= [];
+        push $Result{'Article'}->@*, 'ArticleDynamicFieldUpdate';
     }
 
     return %Result;
-
 }
 
 1;

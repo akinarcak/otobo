@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,6 +20,8 @@ use utf8;
 
 # Set up the test driver $Self when we are running as a standalone script.
 use Kernel::System::UnitTest::RegisterDriver;
+
+## nofilter(TidyAll::Plugin::OTOBO::Perl::UnitTestConfigChanges)
 
 our $Self;
 
@@ -42,9 +44,9 @@ my %DefaultSettingAddTemplate = (
     XMLFilename    => 'UnitTest.xml',
 );
 
-my $SetingsXML = << 'END_XML';
+my $SetingsXML = <<'END_XML';
 <?xml version="1.0" encoding="utf-8"?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="Test0" Required="1" Valid="1">
         <Description Translatable="1">Test.</Description>
         <Navigation>Core::Test</Navigation>
@@ -66,7 +68,7 @@ my $SetingsXML = << 'END_XML';
             <Item ValueType="String" ValueRegex="\d+">1</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
 END_XML
 
 # Get SysConfig XML object.

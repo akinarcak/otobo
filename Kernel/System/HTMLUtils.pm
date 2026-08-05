@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,26 +16,37 @@
 
 package Kernel::System::HTMLUtils;
 
+use v5.24;
 use strict;
 use warnings;
-
+use namespace::autoclean;
 use utf8;
 
-use MIME::Base64;
+# core modules
+use MIME::Base64 qw(decode_base64);    ## no perlimports
+
+# CPAN modules
+use HTML::Scrubber 0.20 ();
+use HTML::Entities 3.75 qw(decode_entities);
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::Encode',
     'Kernel::System::Log',
+    'Kernel::System::Main',
+    'Kernel::System::Cache',
+    'Kernel::System::Loader'
 );
 
 =head1 NAME
 
-Kernel::System::HTMLUtils - creating and modifying html strings
+Kernel::System::HTMLUtils - creating and modifying HTML strings
 
 =head1 DESCRIPTION
 
-A module for creating and modifying html strings.
+A module for creating and modifying HTML strings.
 
 =head1 PUBLIC INTERFACE
 
@@ -51,10 +62,9 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
-    # get debug level from parent
+    # get debug level from caller
     $Self->{Debug} = $Param{Debug} || 0;
 
     return $Self;
@@ -72,12 +82,13 @@ sub ToAscii {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(String)) {
-        if ( !defined $Param{$_} ) {
+    for my $Needed (qw(String)) {
+        if ( !defined $Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -89,67 +100,97 @@ sub ToAscii {
     # get length of line for forcing line breakes
     my $LineLength = $Kernel::OM->Get('Kernel::Config')->Get('Ticket::Frontend::TextAreaNote') || 78;
 
+    # remove style tags
+    $Param{String} =~ s{<style [^>]*? />}{}xgsi;
+    $Param{String} =~ s{<style [^>]*? > .*? </style[^>]*>}{}xgsi;
+
     # find <a href=....> and replace it with [x]
-    my $LinkList = '';
-    my $Counter  = 0;
+    my @Links;
+    my $LinkCounter = 0;
     $Param{String} =~ s{
-        <a\s.*?href=("|')(.+?)("|').*?>
+        <a\s.*?href\s*=\s*("|')(.+?)\1.*?>
     }
     {
         my $Link = $2;
-        $Counter++;
-        $LinkList .= "[$Counter] $Link\n";
-        "[$Counter]";
+
+        my %SafeLink = $Self->Safety(
+            String       => $Link,
+            NoApplet     => 1,
+            NoObject     => 1,
+            NoEmbed      => 1,
+            NoSVG        => 1,
+            NoImg        => 1,
+            NoIntSrcLoad => 1,
+            NoExtSrcLoad => 1,
+            NoJavaScript => 1,
+        );
+
+        $Link = $SafeLink{String} // '';
+
+        $LinkCounter++;
+        push @Links, "[$LinkCounter] $Link\n";
+        "[$LinkCounter]";
     }egxi;
 
     # pre-process <blockquote> and <div style=\"cite\"
     my %Cite;
-    $Counter = 0;
+    my $CiteCounter = 0;
     $Param{String} =~ s{
-        <blockquote(.*?)>(.+?)</blockquote>
+        <blockquote [^>]*> (?<element_content>.+?) </blockquote>
     }
     {
-        my $Ascii = $Self->ToAscii(
-            String => $2,
-        );
-        # force line breaking
+        my $Ascii = $Self->ToAscii( String => $+{element_content} );
+
+        # force line breaking, note that below there is a different $1 than above
         if ( length $Ascii > $LineLength ) {
             $Ascii =~ s/(.{4,$LineLength})(?:\s|\z)/$1\n/gm;
         }
+
+        # add the leading '> ' to the lines
         $Ascii =~ s/^(.*?)$/> $1/gm;
-        $Counter++;
-        my $Key     = "######Cite::$Counter######";
+
+        # start the replacement on a new line
+        $Ascii = "\n" . $Ascii;
+
+        # do not substitute the adapted string, but a key so that the actual substitution can be done later
+        $CiteCounter++;
+        my $Key     = "######Cite::$CiteCounter######";
         $Cite{$Key} = $Ascii;
         $Key;
     }segxmi;
     $Param{String} =~ s{
-        <div[^>]+type="cite"[^>]*>(.+?)</div>
+        <div[^>]+type="cite"[^>]*>(?<element_content>.+?)</div>
     }
     {
-        my $Ascii = $Self->ToAscii(
-            String => $1,
-        );
-        # force line breaking
+        my $Ascii = $Self->ToAscii( String => $+{element_content} );
+
+        # force line breaking, note that below there is a different $1 than above
         if ( length $Ascii > $LineLength ) {
             $Ascii =~ s/(.{4,$LineLength})(?:\s|\z)/$1\n/gm;
         }
+
+        # add the leading '> ' to the lines
         $Ascii =~ s/^(.*?)$/> $1/gm;
-        $Counter++;
-        my $Key     = "######Cite::$Counter######";
+
+        # start the replacement on a new line
+        $Ascii = "\n" . $Ascii;
+
+        $CiteCounter++;
+        my $Key     = "######Cite::$CiteCounter######";
         $Cite{$Key} = $Ascii;
         $Key;
     }segxmi;
 
     # remember <pre> and <code> tags
     my %One2One;
-    $Counter = 0;
+    my $OneCounter = 0;
     $Param{String} =~ s{
         <(pre|code)(.*?)>(.+?)</(pre|code)(.*?)>
     }
     {
         my $Content = $3;
-        $Counter++;
-        my $Key        = "######One2One::$Counter######";
+        $OneCounter++;
+        my $Key        = "######One2One::$OneCounter######";
         $One2One{$Key} = $Content;
         $Key;
     }segxmi;
@@ -170,10 +211,6 @@ sub ToAscii {
     # replace new lines with one space
     $Param{String} =~ s/\n/ /gs;
     $Param{String} =~ s/\r/ /gs;
-
-    # remove style tags
-    $Param{String} =~ s{<style [^>]*? />}{}xgsi;
-    $Param{String} =~ s{<style [^>]*? > .*? </style[^>]*>}{}xgsi;
 
     # remove <br>,<br/>,<br />, <br class="name"/>, tags and replace it with \n
     $Param{String} =~ s/\<br(\s{0,3}|\s{1,3}.+?)(\/|)\>/\n/gsi;
@@ -210,365 +247,8 @@ sub ToAscii {
     # strip all other tags
     $Param{String} =~ s/\<.+?\>//gs;
 
-    # html encode based on cpan's HTML::Entities v1.35
-    my %Entity = (
-
-        # Some normal chars that have special meaning in SGML context
-        amp  => '&',    # ampersand
-        'gt' => '>',    # greater than
-        'lt' => '<',    # less than
-        quot => '"',    # double quote
-        apos => "'",    # single quote
-
-        # PUBLIC ISO 8879-1986//ENTITIES Added Latin 1//EN//HTML
-        AElig  => chr(198),    # capital AE diphthong (ligature)
-        Aacute => chr(193),    # capital A, acute accent
-        Acirc  => chr(194),    # capital A, circumflex accent
-        Agrave => chr(192),    # capital A, grave accent
-        Aring  => chr(197),    # capital A, ring
-        Atilde => chr(195),    # capital A, tilde
-        Auml   => chr(196),    # capital A, dieresis or umlaut mark
-        Ccedil => chr(199),    # capital C, cedilla
-        ETH    => chr(208),    # capital Eth, Icelandic
-        Eacute => chr(201),    # capital E, acute accent
-        Ecirc  => chr(202),    # capital E, circumflex accent
-        Egrave => chr(200),    # capital E, grave accent
-        Euml   => chr(203),    # capital E, dieresis or umlaut mark
-        Iacute => chr(205),    # capital I, acute accent
-        Icirc  => chr(206),    # capital I, circumflex accent
-        Igrave => chr(204),    # capital I, grave accent
-        Iuml   => chr(207),    # capital I, dieresis or umlaut mark
-        Ntilde => chr(209),    # capital N, tilde
-        Oacute => chr(211),    # capital O, acute accent
-        Ocirc  => chr(212),    # capital O, circumflex accent
-        Ograve => chr(210),    # capital O, grave accent
-        Oslash => chr(216),    # capital O, slash
-        Otilde => chr(213),    # capital O, tilde
-        Ouml   => chr(214),    # capital O, dieresis or umlaut mark
-        THORN  => chr(222),    # capital THORN, Icelandic
-        Uacute => chr(218),    # capital U, acute accent
-        Ucirc  => chr(219),    # capital U, circumflex accent
-        Ugrave => chr(217),    # capital U, grave accent
-        Uuml   => chr(220),    # capital U, dieresis or umlaut mark
-        Yacute => chr(221),    # capital Y, acute accent
-        aacute => chr(225),    # small a, acute accent
-        acirc  => chr(226),    # small a, circumflex accent
-        aelig  => chr(230),    # small ae diphthong (ligature)
-        agrave => chr(224),    # small a, grave accent
-        aring  => chr(229),    # small a, ring
-        atilde => chr(227),    # small a, tilde
-        auml   => chr(228),    # small a, dieresis or umlaut mark
-        ccedil => chr(231),    # small c, cedilla
-        eacute => chr(233),    # small e, acute accent
-        ecirc  => chr(234),    # small e, circumflex accent
-        egrave => chr(232),    # small e, grave accent
-        eth    => chr(240),    # small eth, Icelandic
-        euml   => chr(235),    # small e, dieresis or umlaut mark
-        iacute => chr(237),    # small i, acute accent
-        icirc  => chr(238),    # small i, circumflex accent
-        igrave => chr(236),    # small i, grave accent
-        iuml   => chr(239),    # small i, dieresis or umlaut mark
-        ntilde => chr(241),    # small n, tilde
-        oacute => chr(243),    # small o, acute accent
-        ocirc  => chr(244),    # small o, circumflex accent
-        ograve => chr(242),    # small o, grave accent
-        oslash => chr(248),    # small o, slash
-        otilde => chr(245),    # small o, tilde
-        ouml   => chr(246),    # small o, dieresis or umlaut mark
-        szlig  => chr(223),    # small sharp s, German (sz ligature)
-        thorn  => chr(254),    # small thorn, Icelandic
-        uacute => chr(250),    # small u, acute accent
-        ucirc  => chr(251),    # small u, circumflex accent
-        ugrave => chr(249),    # small u, grave accent
-        uuml   => chr(252),    # small u, dieresis or umlaut mark
-        yacute => chr(253),    # small y, acute accent
-        yuml   => chr(255),    # small y, dieresis or umlaut mark
-
-        # Some extra Latin 1 chars that are listed in the HTML3.2 draft (21-May-96)
-        copy => chr(169),      # copyright sign
-        reg  => chr(174),      # registered sign
-        nbsp => chr(160),      # non breaking space
-
-        # Additional ISO-8859/1 entities listed in rfc1866 (section 14)
-        iexcl   => chr(161),
-        cent    => chr(162),
-        pound   => chr(163),
-        curren  => chr(164),
-        yen     => chr(165),
-        brvbar  => chr(166),
-        sect    => chr(167),
-        uml     => chr(168),
-        ordf    => chr(170),
-        laquo   => chr(171),
-        'not'   => chr(172),    # not is a keyword in perl
-        shy     => chr(173),
-        macr    => chr(175),
-        deg     => chr(176),
-        plusmn  => chr(177),
-        sup1    => chr(185),
-        sup2    => chr(178),
-        sup3    => chr(179),
-        acute   => chr(180),
-        micro   => chr(181),
-        para    => chr(182),
-        middot  => chr(183),
-        cedil   => chr(184),
-        ordm    => chr(186),
-        raquo   => chr(187),
-        frac14  => chr(188),
-        frac12  => chr(189),
-        frac34  => chr(190),
-        iquest  => chr(191),
-        'times' => chr(215),    # times is a keyword in perl
-        divide  => chr(247),
-
-        (
-            $] > 5.007
-            ? (
-                OElig    => chr(338),
-                oelig    => chr(339),
-                Scaron   => chr(352),
-                scaron   => chr(353),
-                Yuml     => chr(376),
-                fnof     => chr(402),
-                circ     => chr(710),
-                tilde    => chr(732),
-                Alpha    => chr(913),
-                Beta     => chr(914),
-                Gamma    => chr(915),
-                Delta    => chr(916),
-                Epsilon  => chr(917),
-                Zeta     => chr(918),
-                Eta      => chr(919),
-                Theta    => chr(920),
-                Iota     => chr(921),
-                Kappa    => chr(922),
-                Lambda   => chr(923),
-                Mu       => chr(924),
-                Nu       => chr(925),
-                Xi       => chr(926),
-                Omicron  => chr(927),
-                Pi       => chr(928),
-                Rho      => chr(929),
-                Sigma    => chr(931),
-                Tau      => chr(932),
-                Upsilon  => chr(933),
-                Phi      => chr(934),
-                Chi      => chr(935),
-                Psi      => chr(936),
-                Omega    => chr(937),
-                alpha    => chr(945),
-                beta     => chr(946),
-                gamma    => chr(947),
-                delta    => chr(948),
-                epsilon  => chr(949),
-                zeta     => chr(950),
-                eta      => chr(951),
-                theta    => chr(952),
-                iota     => chr(953),
-                kappa    => chr(954),
-                lambda   => chr(955),
-                mu       => chr(956),
-                nu       => chr(957),
-                xi       => chr(958),
-                omicron  => chr(959),
-                pi       => chr(960),
-                rho      => chr(961),
-                sigmaf   => chr(962),
-                sigma    => chr(963),
-                tau      => chr(964),
-                upsilon  => chr(965),
-                phi      => chr(966),
-                chi      => chr(967),
-                psi      => chr(968),
-                omega    => chr(969),
-                thetasym => chr(977),
-                upsih    => chr(978),
-                piv      => chr(982),
-                ensp     => chr(8194),
-                emsp     => chr(8195),
-                thinsp   => chr(8201),
-                zwnj     => chr(8204),
-                zwj      => chr(8205),
-                lrm      => chr(8206),
-                rlm      => chr(8207),
-                ndash    => chr(8211),
-                mdash    => chr(8212),
-                lsquo    => chr(8216),
-                rsquo    => chr(8217),
-                sbquo    => chr(8218),
-                ldquo    => chr(8220),
-                rdquo    => chr(8221),
-                bdquo    => chr(8222),
-                dagger   => chr(8224),
-                Dagger   => chr(8225),
-                bull     => chr(8226),
-                hellip   => chr(8230),
-                permil   => chr(8240),
-                prime    => chr(8242),
-                Prime    => chr(8243),
-                lsaquo   => chr(8249),
-                rsaquo   => chr(8250),
-                oline    => chr(8254),
-                frasl    => chr(8260),
-                euro     => chr(8364),
-                image    => chr(8465),
-                weierp   => chr(8472),
-                real     => chr(8476),
-                trade    => chr(8482),
-                alefsym  => chr(8501),
-                larr     => chr(8592),
-                uarr     => chr(8593),
-                rarr     => chr(8594),
-                darr     => chr(8595),
-                harr     => chr(8596),
-                crarr    => chr(8629),
-                lArr     => chr(8656),
-                uArr     => chr(8657),
-                rArr     => chr(8658),
-                dArr     => chr(8659),
-                hArr     => chr(8660),
-                forall   => chr(8704),
-                part     => chr(8706),
-                exist    => chr(8707),
-                empty    => chr(8709),
-                nabla    => chr(8711),
-                isin     => chr(8712),
-                notin    => chr(8713),
-                ni       => chr(8715),
-                prod     => chr(8719),
-                sum      => chr(8721),
-                minus    => chr(8722),
-                lowast   => chr(8727),
-                radic    => chr(8730),
-                prop     => chr(8733),
-                infin    => chr(8734),
-                ang      => chr(8736),
-                'and'    => chr(8743),
-                'or'     => chr(8744),
-                cap      => chr(8745),
-                cup      => chr(8746),
-                'int'    => chr(8747),
-                there4   => chr(8756),
-                sim      => chr(8764),
-                cong     => chr(8773),
-                asymp    => chr(8776),
-                'ne'     => chr(8800),
-                equiv    => chr(8801),
-                'le'     => chr(8804),
-                'ge'     => chr(8805),
-                'sub'    => chr(8834),
-                sup      => chr(8835),
-                nsub     => chr(8836),
-                sube     => chr(8838),
-                supe     => chr(8839),
-                oplus    => chr(8853),
-                otimes   => chr(8855),
-                perp     => chr(8869),
-                sdot     => chr(8901),
-                lceil    => chr(8968),
-                rceil    => chr(8969),
-                lfloor   => chr(8970),
-                rfloor   => chr(8971),
-                lang     => chr(9001),
-                rang     => chr(9002),
-                loz      => chr(9674),
-                spades   => chr(9824),
-                clubs    => chr(9827),
-                hearts   => chr(9829),
-                diams    => chr(9830),
-                )
-            : ()
-        )
-    );
-
-    # encode html entities like "&#8211;"
-    $Param{String} =~ s{
-        (&\#(\d+);?)
-    }
-    {
-        my $ChrOrig = $1;
-        my $Dec = $2;
-
-        # Don't process UTF-16 surrogate pairs. Used on their own, these are not valid UTF-8 code
-        # points and can result in errors in old Perl versions. See bug#12588 for more information.
-        # - High Surrogate codes (U+D800-U+DBFF)
-        # - Low Surrogate codes (U+DC00-U+DFFF)
-        if ( $Dec >= 55296 && $Dec <= 57343 ) {
-            $ChrOrig;
-        }
-        else {
-            my $Chr = chr($Dec);
-
-            # Make sure we get valid UTF8 code points, but skip characters from 128 to 255
-            #   (inclusive), since they are by default internally not encoded as UTF-8 for
-            #   backward compatibility reasons. See bug#12457 for more information.
-            if ( $Dec < 128 || $Dec> 255 ) {
-                Encode::_utf8_off($Chr);
-                $Chr = Encode::decode('utf-8', $Chr, 0);
-            }
-
-            if ( $Chr ) {
-                $Chr;
-            }
-            else {
-                $ChrOrig;
-            }
-        }
-    }egx;
-
-    # encode html entities like "&#x3d;"
-    $Param{String} =~ s{
-        (&\#[xX]([0-9a-fA-F]+);?)
-    }
-    {
-        my $ChrOrig = $1;
-        my $Dec = hex( $2 );
-
-        # Don't process UTF-16 surrogate pairs. Used on their own, these are not valid UTF-8 code
-        # points and can result in errors in old Perl versions. See bug#12588 for more information.
-        # - High Surrogate codes (U+D800-U+DBFF)
-        # - Low Surrogate codes (U+DC00-U+DFFF)
-        if ( $Dec >= 55296 && $Dec <= 57343 ) {
-            $ChrOrig;
-        }
-        else {
-            if ( $Dec ) {
-                my $Chr = chr( $Dec );
-
-                # Make sure we get valid UTF8 code points, but skip characters from 128 to 255
-                #   (inclusive), since they are by default internally not encoded as UTF-8 for
-                #   backward compatibility reasons. See bug#12457 for more information.
-                if ( $Dec < 128 || $Dec > 255 ) {
-                    Encode::_utf8_off($Chr);
-                    $Chr = Encode::decode('utf-8', $Chr, 0);
-                }
-
-                if ( $Chr ) {
-                    $Chr;
-                }
-                else {
-                    $ChrOrig;
-                }
-            }
-            else {
-                $ChrOrig;
-            }
-        }
-    }egx;
-
-    # encode html entities like "&amp;"
-    $Param{String} =~ s{
-        (&(\w+);?)
-    }
-    {
-        if ( $Entity{$2} ) {
-            $Entity{$2};
-        }
-        else {
-            $1;
-        }
-    }egx;
+    # Decode HTML entities
+    decode_entities( $Param{String} );
 
     # remove empty lines
     $Param{String} =~ s/^\s*\n\s*\n/\n/mg;
@@ -584,9 +264,12 @@ sub ToAscii {
     }
 
     # add extracted links
-    if ($LinkList) {
-        $Param{String} .= "\n\n" . $LinkList;
+    if (@Links) {
+        $Param{String} .= "\n\n" . join '', @Links;
     }
+
+    # remove leading newlines that might have been added by the previous replacements
+    $Param{String} =~ s/^\n+//;
 
     return $Param{String};
 }
@@ -606,12 +289,13 @@ sub ToHTML {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(String)) {
-        if ( !defined $Param{$_} ) {
+    for my $Needed (qw(String)) {
+        if ( !defined $Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -631,12 +315,15 @@ sub ToHTML {
 
 =head2 DocumentComplete()
 
-check and e. g. add <html> and <body> tags to given html string
+check and e. g. add <html> and <body> tags to given HTML string
 
     my $HTMLDocument = $HTMLUtilsObject->DocumentComplete(
-        String  => $String,
-        Charset => $Charset,
+        String            => $String,
+        CustomerInterface => 0, # optional 0|1, default is 0
+        CustomerUIStyles  => 0, # optional 0|1, default is 0
     );
+
+The input is return unchanged if it already looks like a complete HTML document.
 
 =cut
 
@@ -644,20 +331,22 @@ sub DocumentComplete {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(String Charset)) {
-        if ( !defined $Param{$_} ) {
+    for my $Needed (qw(String)) {
+        if ( !defined $Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
 
-    return $Param{String} if $Param{String} =~ /<html>/i;
+    # TODO: the regex would also match the string q{<b id='<HTML>'>HTML</b>}
+    return $Param{String} if $Param{String} =~ m/<html>/i;
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my $Css          = 'font-size: 12px; font-family:Courier,monospace,fixed;';
+    my $Css          = '';
 
     if ( $Param{CustomerInterface} ) {
         $Css = $ConfigObject->Get('CustomerFrontend::RichText::DefaultCSS') // $Css;
@@ -671,16 +360,101 @@ sub DocumentComplete {
 
     # Use the HTML5 doctype because it is compatible with HTML4 and causes the browsers
     #   to render the content in standards mode, which is more safe than quirks mode.
-    my $Body = '<!DOCTYPE html><html><head>';
-    $Body
-        .= '<meta http-equiv="Content-Type" content="text/html; charset=' . $Param{Charset} . '"/>';
+    my $Body = join '',
+        q{<!DOCTYPE html><html><head>},
+        q{<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>};
     if ( $Param{CustomerInterface} ) {
 
         # include quicksand and default css
         $Body .= '<link rel="stylesheet" type="text/css" href="' . $ConfigObject->Get('Frontend::WebPath') . 'common/css/quicksand.css">';
         $Body .= '<link rel="stylesheet" type="text/css" href="' . $ConfigObject->Get('Frontend::WebPath') . 'skins/Customer/default/css/Core.Default.css">';
+
     }
-    $Body .= '</head><body style="' . $Css . '">' . $Param{String} . '</body></html>';
+
+    my $CKEditorContentStylesPath
+        = $Param{CustomerInterface} ? $ConfigObject->Get('CustomerFrontend::RichTextArticleStyles') : $ConfigObject->Get('Frontend::RichTextArticleStyles');
+
+    my $ArticleContentStylesPath
+        = $Param{CustomerInterface} ? 'skins/Customer/default/css/RichTextArticleContent.css' : 'skins/Agent/default/css/RichTextArticleContent.css';
+
+    my $TargetDirectory
+        = $Param{CustomerInterface}
+        ? $ConfigObject->Get('Home') . '/var/httpd/htdocs/skins/Customer/default/css-cache/'
+        : $ConfigObject->Get('Home') . '/var/httpd/htdocs/skins/Agent/default/css-cache/';
+
+    my $FilePrefix = $Param{CustomerInterface} ? 'CustomerRichTextCSS' : 'AgentRichTextCSS';
+
+    # minify files uses caching internally, so files are really only minified again if needed
+    my $TargetFilename = $Kernel::OM->Get('Kernel::System::Loader')->MinifyFiles(
+        List => [
+            $ConfigObject->Get('Home') . "/var/httpd/htdocs/$CKEditorContentStylesPath",
+            $ConfigObject->Get('Home') . "/var/httpd/htdocs/$ArticleContentStylesPath",
+        ],
+        Type                 => 'CSS',
+        TargetDirectory      => $TargetDirectory,
+        TargetFilenamePrefix => $FilePrefix,
+    );
+
+    my $CacheObject    = $Kernel::OM->Get('Kernel::System::Cache');
+    my $CachedFilename = $CacheObject->Get(
+        Type => 'HTMLUtils',
+        Key  => $FilePrefix . 'Filename',
+    );
+    my $ArticleStyles = "";
+
+    if ( !$TargetFilename ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error',
+            Message  => 'error minifying content css files',
+        );
+    }
+    else {
+        # file not cached, old or changed
+        if ( !$CachedFilename || $TargetFilename ne $CachedFilename ) {
+            $CacheObject->Set(
+                Type  => 'HTMLUtils',
+                Key   => $FilePrefix . 'Filename',
+                Value => $TargetFilename
+            );
+            $ArticleStyles = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
+                Location        => "$TargetDirectory/$TargetFilename",
+                Type            => 'Local',
+                DisableWarnings => 1,
+            );
+            $CacheObject->Set(
+                Type  => 'HTMLUtils',
+                Key   => $FilePrefix,
+                Value => $ArticleStyles
+            );
+            if ($CachedFilename) {
+                $Kernel::OM->Get('Kernel::System::Main')->FileDelete(
+                    Location        => "$TargetDirectory/$CachedFilename",
+                    Type            => 'Local',
+                    DisableWarnings => 1,
+                );
+            }
+
+            # file in cache
+        }
+        else {
+            $ArticleStyles = $CacheObject->Get(
+                Type => 'HTMLUtils',
+                Key  => $FilePrefix
+            );
+        }
+
+        if ( $ArticleStyles ne "" ) {
+            $Body .= "<style>" . ${$ArticleStyles} . ".ck-content {" . $Css . "}</style>";
+        }
+    }
+
+    my $CSSClasses = 'ck-content';
+    if ( $Param{CustomerUIStyles} ) {
+        $CSSClasses .= ' CustomerUI ';
+    }
+
+    $Body .= '</head><body class="' . $CSSClasses . '">' . $Param{String} . '</body></html>';
+
     return $Body;
 }
 
@@ -698,12 +472,13 @@ sub DocumentStrip {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(String)) {
-        if ( !defined $Param{$_} ) {
+    for my $Needed (qw(String)) {
+        if ( !defined $Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -720,15 +495,14 @@ sub DocumentStrip {
 
 perform some sanity checks on HTML content.
 
- -  Replace MS Word 12 <p|div> with class "MsoNormal" by using <br/> because
-    it's not used as <p><div> (margin:0cm; margin-bottom:.0001pt;).
+=over 4
 
- -  Replace <blockquote> by using
-    "<div style="border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm 4.0pt" type="cite">"
-    because of cross mail client and browser compatibility.
+=item  If there is no HTML document type present, inject the HTML5 document type
 
- -  If there is no HTML doctype present, inject the HTML5 doctype, because it is compatible with HTML4
-    and causes the browsers to render the content in standards mode, which is safer.
+Because it is compatible with HTML4
+and causes the browsers to render the content in standards mode, which is safer.
+
+=back
 
     $HTMLBody = $HTMLUtilsObject->DocumentCleanup(
         String => $HTMLBody,
@@ -740,12 +514,13 @@ sub DocumentCleanup {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(String)) {
-        if ( !defined $Param{$_} ) {
+    for my $Needed (qw(String)) {
+        if ( !defined $Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -755,35 +530,6 @@ sub DocumentCleanup {
 
     # remove <base> tags - see bug#8880
     $Param{String} =~ s{<base .*?>}{}xmsi;
-
-    # replace MS Word 12 <p|div> with class "MsoNormal" by using <br/> because
-    # it's not used as <p><div> (margin:0cm; margin-bottom:.0001pt;)
-    $Param{String} =~ s{
-        <p\s{1,3}class=(|"|')MsoNormal(|"|')(.*?)>(.+?)</p>
-    }
-    {
-        $4 . '<br/>';
-    }segxmi;
-
-    $Param{String} =~ s{
-        <div\s{1,3}class=(|"|')MsoNormal(|"|')(.*?)>(.+?)</div>
-    }
-    {
-        $4 . '<br/>';
-    }segxmi;
-
-    # replace <blockquote> by using
-    # "<div style="border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm 4.0pt" type="cite">"
-    # because of cross mail client and browser compatability
-    my $Style = "border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm 4.0pt";
-    for ( 1 .. 10 ) {
-        $Param{String} =~ s{
-            <blockquote(.*?)>(.+?)</blockquote>
-        }
-        {
-            "<div $1 style=\"$Style\">$2</div>";
-        }segxmi;
-    }
 
     return $Param{String};
 }
@@ -809,16 +555,15 @@ also string ref is possible
 sub LinkQuote {
     my ( $Self, %Param ) = @_;
 
+    # $String is confusingly a reference to a string
     my $String = $Param{String} || '';
-
-    # check ref
-    my $StringScalar;
+    my $StringNonref;
     if ( !ref $String ) {
-        $StringScalar = $String;
-        $String       = \$StringScalar;
+        $StringNonref = $String;
+        $String       = \$StringNonref;
 
         # return if string is not a ref and it is empty
-        return $StringScalar if !$StringScalar;
+        return $StringNonref unless $StringNonref;
     }
 
     # add target to already existing url of html string
@@ -950,16 +695,13 @@ sub LinkQuote {
     ${$String} =~ s{${Marker}TagHash-(\d+)${Marker}}{$TagHash{$1}}egsxim;
 
     # check ref && return result like called
-    if ( defined $StringScalar ) {
-        return ${$String};
-    }
-    return $String;
+    return defined $StringNonref ? $String->$* : $String;
 }
 
 =head2 Safety()
 
 To remove/strip active html tags/addons (javascript, C<applet>s, C<embed>s and C<object>s)
-from html strings.
+from HTML strings. All options are turned off by default
 
     my %Safe = $HTMLUtilsObject->Safety(
         String         => $HTMLString,
@@ -971,7 +713,6 @@ from html strings.
         NoIntSrcLoad   => 0,
         NoExtSrcLoad   => 1,
         NoJavaScript   => 1,
-        ReplacementStr => 'string',          # optional, string to show instead of applet, object, embed, svg and img tags
     );
 
 also string ref is possible
@@ -992,7 +733,7 @@ returns
 
     my %Safe = (
         String  => $HTMLString, # modified html string (scalar or ref)
-        Replace => 1,           # info if something got replaced
+        Replace => 1,           # info if something got replaced (not really reliable)
     );
 
 =cut
@@ -1001,36 +742,39 @@ sub Safety {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(String)) {
-        if ( !defined $Param{$_} ) {
+    for my $Needed (qw(String)) {
+        if ( !defined $Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
 
-    my $String = $Param{String} // '';
-
     # check ref
-    my $StringScalar;
+    # $String is confusingly a reference to a string
+    my $String = $Param{String} // '';
+    my $StringNonref;
     if ( !ref $String ) {
-        $StringScalar = $String;
-        $String       = \$StringScalar;
+        $StringNonref = $String;
+        $String       = \$StringNonref;
     }
 
-    my %Safety;
+    # Detection of UTF-7 encoded '<' and '>' is no longer needed,
+    # as only ancient versions of IE were vulnerable.
+    # See https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html#utf-7-encoding
+    # my $TagStart = '(?:<|[+]ADw-)';
+    # my $TagEnd   = '(?:>|[+]AD4-)';
 
-    my $Replaced;
-
-    # In UTF-7, < and > can be encoded to mask them from security filters like this one.
-    my $TagStart = '(?:<|[+]ADw-)';
-    my $TagEnd   = '(?:>|[+]AD4-)';
+    my %Safety = (
+        Replace => 0,
+    );
 
     # This can also be entity-encoded to hide it from the parser.
     #   Browsers seem to tolerate an omitted ";".
-    my $JavaScriptPrefixRegex = '
+    my $JavaScriptPrefixRegex = qr/
         (?: j | &\#106[;]? | &\#x6a[;]? )
         (?: a | &\#97[;]?  | &\#x61[;]? )
         (?: v | &\#118[;]? | &\#x76[;]? )
@@ -1041,196 +785,203 @@ sub Safety {
         (?: i | &\#105[;]? | &\#x69[;]? )
         (?: p | &\#112[;]? | &\#x70[;]? )
         (?: t | &\#116[;]? | &\#x74[;]? )
-    ';
+    /ix;
 
-    my $ExpressionPrefixRegex = '
-        (?: e | &\#101[;]? | &\#x65[;]? )
-        (?: x | &\#120[;]? | &\#x78[;]? )
-        (?: p | &\#112[;]? | &\#x70[;]? )
-        (?: r | &\#114[;]? | &\#x72[;]? )
-        (?: e | &\#101[;]? | &\#x65[;]? )
-        (?: s | &\#115[;]? | &\#x73[;]? )
-        (?: s | &\#115[;]? | &\#x73[;]? )
-        (?: i | &\#105[;]? | &\#x69[;]? )
-        (?: o | &\#111[;]? | &\#x6f[;]? )
-        (?: n | &\#110[;]? | &\#x6e[;]? )
-    ';
+    # The scrubber can be used to remove tags and attributes. Using the module
+    # avoids using error prone regexes. However there are some downsides. HTML::Scrubber
+    # can't drop a tag based on the existence of an attribute.
+    # Also note that the scrupper normalizes the HTML, e.g. consistently double quotes,
+    # lower case tags and attr names.
 
-    # Replace as many times as it is needed to avoid nesting tag attacks.
-    do {
-        $Replaced = undef;
+    # Drop the attributes 'src' and 'poster' depending on NoIntSrcLoad and NoExtSrcLoad.
+    my $ScrubberReplaced = 0;
+    my $TagHandler       = sub {
+        my ( $Event, $Tag, $Attr, $AttrSeq, $Text ) = @_;
 
-        # remove script tags
-        if ( $Param{NoJavaScript} ) {
-            $Replaced += ${$String} =~ s{
-                $TagStart script.*? $TagEnd .*?  $TagStart /script \s* $TagEnd
-            }
-            {}sgxim;
-            $Replaced += ${$String} =~ s{
-                $TagStart script.*? $TagEnd .+? ($TagStart|$TagEnd)
-            }
-            {}sgxim;
+        # only inspect start tags
+        return unless $Event eq 'start';
 
-            # remove style/javascript parts
-            $Replaced += ${$String} =~ s{
-                $TagStart style[^>]+? $JavaScriptPrefixRegex (.+?|) $TagEnd (.*?) $TagStart /style \s* $TagEnd
-            }
-            {}sgxim;
+        # Consider non-alpha, non-digit chars in the tag as suspicious
+        # e.g. <SCRIPT/XSS SRC="http://xss.rocks/xss.js"></SCRIPT>
+        # This filter is always active.
+        if ( $Tag =~ m/[^a-zA-Z0-9]/ ) {
+            $ScrubberReplaced++;
 
-            # remove MS CSS expressions (JavaScript embedded in CSS)
-            ${$String} =~ s{
-                ($TagStart style[^>]+? $TagEnd .*? $TagStart /style \s* $TagEnd)
-            }
-            {
-                if ( index($1, 'expression(' ) > -1 ) {
-                    $Replaced = 1;
-                    '';
+            return '';    # discard the tag
+        }
+
+        if ( $Param{NoIntSrcLoad} || $Param{NoExtSrcLoad} ) {
+            BLACK_LISTED:
+            for my $Blacklisted (qw(src poster)) {
+
+                next BLACK_LISTED unless $Attr->{$Blacklisted};
+
+                if ( $Param{NoIntSrcLoad} ) {
+
+                    # drop the start tag;
+                    $ScrubberReplaced++;
+
+                    return '';    # discard the tag
                 }
-                else {
-                    $1;
-                }
-            }egsxim;
-        }
 
-        # remove HTTP redirects
-        $Replaced += ${$String} =~ s{
-            $TagStart meta [^>]+? http-equiv=('|"|)refresh [^>]+? $TagEnd
-        }
-        {}sgxim;
-
-        my $ReplacementStr = $Param{ReplacementStr} // '';
-
-        # remove <applet> tags
-        if ( $Param{NoApplet} ) {
-            $Replaced += ${$String} =~ s{
-                $TagStart applet.*? $TagEnd (.*?) $TagStart /applet \s* $TagEnd
-            }
-            {$ReplacementStr}sgxim;
-        }
-
-        # remove <Object> tags
-        if ( $Param{NoObject} ) {
-            $Replaced += ${$String} =~ s{
-                $TagStart object.*? $TagEnd (.*?) $TagStart /object \s* $TagEnd
-            }
-            {$ReplacementStr}sgxim;
-        }
-
-        # remove <svg> tags
-        if ( $Param{NoSVG} ) {
-            $Replaced += ${$String} =~ s{
-                $TagStart svg.*? $TagEnd (.*?) $TagStart /svg \s* $TagEnd
-            }
-            {$ReplacementStr}sgxim;
-        }
-
-        # remove <img> tags
-        if ( $Param{NoImg} ) {
-            $Replaced += ${$String} =~ s{
-                $TagStart img.*? (.*?) \s* $TagEnd
-            }
-            {$ReplacementStr}sgxim;
-        }
-
-        # remove <embed> tags
-        if ( $Param{NoEmbed} ) {
-            $Replaced += ${$String} =~ s{
-                $TagStart embed.*? $TagEnd
-            }
-            {$ReplacementStr}sgxim;
-        }
-
-        # check each html tag
-        ${$String} =~ s{
-            ($TagStart.+?$TagEnd)
-        }
-        {
-            my $Tag = $1;
-            if ($Param{NoJavaScript}) {
-
-                # remove on action attributes
-                $Replaced += $Tag =~ s{
-                    (?:\s|/) on[a-z]+\s*=("[^"]+"|'[^']+'|.+?)($TagEnd|\s)
-                }
-                {$2}sgxim;
-
-                # remove javascript in a href links or src links
-                $Replaced += $Tag =~ s{
-                    ((?:\s|;|/)(?:background|url|src|href)\s*=\s*)
-                    ('|"|)                                  # delimiter, can be empty
-                    (?:\s* $JavaScriptPrefixRegex .*?)      # javascript, followed by anything but the delimiter
-                    \2                                      # delimiter again
-                    (\s|$TagEnd)
-                }
-                {
-                    "$1\"\"$3";
-                }sgxime;
-
-                # remove link javascript tags
-                $Replaced += $Tag =~ s{
-                    ($TagStart link .+? $JavaScriptPrefixRegex (.+?|) $TagEnd)
-                }
-                {}sgxim;
-
-                # remove MS CSS expressions (JavaScript embedded in CSS)
-                $Replaced += $Tag =~ s{
-                    \sstyle=("|')[^\1]*? $ExpressionPrefixRegex [(].*?\1($TagEnd|\s)
-                }
-                {
-                    $2;
-                }egsxim;
-            }
-
-            # Remove malicious CSS content
-            $Tag =~ s{
-                (\s)style=("|') (.*?) \2
-            }
-            {
-                my ($Space, $Delimiter, $Content) = ($1, $2, $3);
-
+                # the NoExtSrcLoad case
                 if (
-                    ($Param{NoIntSrcLoad} && $Content =~ m{url\(})
-                    || ($Param{NoExtSrcLoad} && $Content =~ m/(http|ftp|https):\//i)) {
-                    $Replaced = 1;
-                    '';
-                }
-                else {
-                    "${Space}style=${Delimiter}${Content}${Delimiter}";
-                }
-            }egsxim;
-
-            # remove load tags
-            if ($Param{NoIntSrcLoad} || $Param{NoExtSrcLoad}) {
-                $Tag =~ s{
-                    ($TagStart (.+?) (?: \s | /) (?:src|poster)=(.+?) (\s.+?|) $TagEnd)
-                }
+                    $Attr->{$Blacklisted} =~ m/(?:http|ftp|https):/i    # external URL
+                    ||
+                    $Attr->{$Blacklisted} =~ m!//!                      # protocol relative external URL
+                    )
                 {
-                    my $URL = $3;
-                    if ($Param{NoIntSrcLoad} || ($Param{NoExtSrcLoad} && $URL =~ /(http|ftp|https):\//i)) {
-                        $Replaced = 1;
-                        '';
-                    }
-                    else {
-                        $1;
-                    }
-                }segxim;
+                    # drop the start tag;
+                    # The replace count is used for confirmation of external source load
+                    $ScrubberReplaced++;
+
+                    return '';    # discard the tag
+                }
+            }
+        }
+
+        if ( $Param{NoJavaScript} ) {
+
+            # remove HTTP redirects in meta tags
+            if ( $Tag eq 'meta' && $Attr->{'http-equiv'} && $Attr->{'http-equiv'} =~ m/refresh/i ) {
+                $ScrubberReplaced++;
+
+                return '';    # discard the tag
             }
 
-            # replace original tag with clean tag
-            $Tag;
-        }segxim;
+            # <SCRIPT/SRC="http://ha.ckers.org/xss.js"></SCRIPT>
+            # is parsed by HTML::Parser as the tag "script/src=\"http://ha.ckers.org/xss.js\""
+            # but browser might interpret it as a script tag
+            if ( $Tag =~ m/script/i ) {
+                $ScrubberReplaced++;
 
-        $Safety{Replace} += $Replaced;
+                return '';    # discard the tag
+            }
 
-    } while ($Replaced);
+            if ( $Tag =~ m/link/i && $Text =~ $JavaScriptPrefixRegex ) {
+                $ScrubberReplaced++;
+
+                return '';    # discard the tag
+            }
+        }
+
+        return;               # continue processing with the rule based scrubbing
+    };
+
+    # HTML::Scrubber works with callback subs. The callbacks for attributes
+    # receive the following arguments: the current object, tag name, attribute name, and attribute value.
+
+    my $DefaultAttributeHandler = sub {
+        my ( undef, undef, $AttrName, $AttrValue ) = @_;
+
+        # TODO: disregard strange attribute names like '-st\0range'
+
+        if ( $Param{NoJavaScript} ) {
+
+            # remove on event attributes, even when preceeded by nonsense
+            if ( $AttrName =~ m/^ [^a-zA-Z0-9]* on/ix ) {
+                $ScrubberReplaced++;
+
+                return ();    # empty list drops the attribute
+            }
+        }
+
+        # otherwise keep the unchanged value
+        return $AttrValue;
+    };
+
+    my $StyleHandler = sub {
+        my ( undef, undef, undef, $AttrValue ) = @_;
+
+        if (
+            ( $Param{NoIntSrcLoad} && $AttrValue =~ m{url\(}i )
+            ||
+            ( $Param{NoExtSrcLoad} && $AttrValue =~ m/(http|ftp|https):/i )    # external URLs
+            ||
+            ( $Param{NoExtSrcLoad} && $AttrValue =~ m!//!i )                   # protocol relative URLs
+            )
+        {
+            $ScrubberReplaced++;
+
+            return ();                                                         # empty list drops the attribute
+        }
+
+        # keep the unchanged value
+        return $AttrValue;
+    };
+
+    my $CheckJavaScriptHander = sub {
+        my ( undef, undef, undef, $AttrValue ) = @_;
+
+        if ( $Param{NoJavaScript} ) {
+
+            # javascript at beginning of attribute value
+            if ( $AttrValue =~ m/^\s* $JavaScriptPrefixRegex/ix ) {
+                $ScrubberReplaced++;
+
+                return '';    # return empty string as this reproduces the legacy behavior
+            }
+        }
+
+        # keep the unchanged value
+        return $AttrValue;
+    };
+
+    my $Scrubber = HTML::Scrubber->new(
+        preempt => $TagHandler,
+        default => [
+
+            # allow all tags per default
+            1,
+
+            # special handling for the 'style' attribute, otherwise keep all attributes
+            #
+            {
+                '*'        => $DefaultAttributeHandler,    # filter out the onEVENT handlers
+                style      => $StyleHandler,
+                background => $CheckJavaScriptHander,
+                url        => $CheckJavaScriptHander,
+                src        => $CheckJavaScriptHander,
+                href       => $CheckJavaScriptHander,
+            }
+        ],
+    );
+
+    # for some reason the tags 'style' and 'script' are not handled by new()
+    $Scrubber->style(1);                                  # style tags should not be filtered by HTML::Parser
+    $Scrubber->script( $Param{NoJavaScript} ? 0 : 1 );    # let HTML::Parser filter script tags
+
+    # remove <applet> tags
+    if ( $Param{NoApplet} ) {
+        $Scrubber->deny('applet');
+    }
+
+    # remove <Object> tags
+    if ( $Param{NoObject} ) {
+        $Scrubber->deny( 'object', 'param' );
+    }
+
+    # remove <svg> tags
+    if ( $Param{NoSVG} ) {
+        $Scrubber->deny('svg');
+    }
+
+    # remove <img> tags
+    if ( $Param{NoImg} ) {
+        $Scrubber->deny('img');
+    }
+
+    # remove <embed> tags
+    if ( $Param{NoEmbed} ) {
+        $Scrubber->deny('embed');
+    }
+
+    $String->$* = $Scrubber->scrub( $String->$* );
+    $Safety{Replace} += $ScrubberReplaced;    # total count
 
     # check ref && return result like called
-    if ( defined $StringScalar ) {
-        $Safety{String} = ${$String};
-    }
-    else {
-        $Safety{String} = $String;
-    }
+    $Safety{String} = defined $StringNonref ? $String->$* : $String;
+
     return %Safety;
 }
 
@@ -1257,6 +1008,7 @@ sub EmbeddedImagesExtract {
             Priority => 'error',
             Message  => "Need DocumentRef!"
         );
+
         return;
     }
     if ( ref $Param{AttachmentsRef} ne 'ARRAY' ) {
@@ -1264,6 +1016,7 @@ sub EmbeddedImagesExtract {
             Priority => 'error',
             Message  => "Need AttachmentsRef!"
         );
+
         return;
     }
 

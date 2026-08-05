@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,6 +30,15 @@ sub new {
     my $Self = {%Param};
     bless( $Self, $Type );
 
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
+
     return $Self;
 }
 
@@ -42,10 +51,20 @@ sub Run {
 
     my %GetParam = ();
     my @Params   = (
-        qw(ID Login Password Host Type TypeAdd Comment ValidID QueueID IMAPFolder Trusted DispatchingBy)
+        qw(ID Login Password Host Type TypeAdd Comment ValidID QueueID IMAPFolder Trusted DispatchingBy IncludeInvalid Auth AccountName)
     );
     for my $Parameter (@Params) {
         $GetParam{$Parameter} = $ParamObject->GetParam( Param => $Parameter );
+    }
+
+    if ( defined $GetParam{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $GetParam{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $GetParam{IncludeInvalid};
     }
 
     # ------------------------------------------------------------ #
@@ -57,7 +76,7 @@ sub Run {
         $LayoutObject->ChallengeTokenCheck();
 
         # Lock process with PID to prevent race conditions with console command
-        # Maint::PostMaster::MailAccountFetch executed by the OTOBO daemon or manually.
+        # Maint::PostMaster::MailAccountFetch executed by the CareOnCloud ESM daemon or manually.
         # Please see bug#13235
         my $PIDObject = $Kernel::OM->Get('Kernel::System::PID');
 
@@ -145,7 +164,7 @@ sub Run {
         my %Errors;
 
         # check needed data
-        for my $Needed (qw(Login Password Host)) {
+        for my $Needed (qw(Login Auth Host)) {
             if ( !$GetParam{$Needed} ) {
                 $Errors{ $Needed . 'AddInvalid' } = 'ServerError';
             }
@@ -153,6 +172,19 @@ sub Run {
         for my $Needed (qw(TypeAdd ValidID)) {
             if ( !$GetParam{$Needed} ) {
                 $Errors{ $Needed . 'Invalid' } = 'ServerError';
+            }
+        }
+
+        if ( $GetParam{Auth} eq 'Basic' ) {
+
+            if ( !$GetParam{Password} ) {
+                $Errors{'PasswordAddInvalid'} = 'ServerError';
+            }
+        }
+        else {
+
+            if ( !$GetParam{AccountName} ) {
+                $Errors{'AccountNameAddInvalid'} = 'ServerError';
             }
         }
 
@@ -165,6 +197,7 @@ sub Run {
                 Type   => $GetParam{'TypeAdd'},
                 UserID => $Self->{UserID},
             );
+
             if ($ID) {
                 $Self->_Overview();
                 my $Output = $LayoutObject->Header();
@@ -226,7 +259,7 @@ sub Run {
         my %Errors;
 
         # check needed data
-        for my $Needed (qw(Login Password Host)) {
+        for my $Needed (qw(Login Auth Host)) {
             if ( !$GetParam{$Needed} ) {
                 $Errors{ $Needed . 'EditInvalid' } = 'ServerError';
             }
@@ -240,10 +273,23 @@ sub Run {
             $Errors{TrustedInvalid} = 'ServerError' if ( $GetParam{Trusted} != 0 );
         }
 
+        if ( $GetParam{Auth} eq 'Basic' ) {
+
+            if ( !$GetParam{Password} ) {
+                $Errors{'PasswordEditInvalid'} = 'ServerError';
+            }
+        }
+        else {
+
+            if ( !$GetParam{AccountName} ) {
+                $Errors{'AccountNameEditInvalid'} = 'ServerError';
+            }
+        }
+
         # if no errors occurred
         if ( !%Errors ) {
 
-            if ( $GetParam{Password} eq 'otobo-dummy-password-placeholder' ) {
+            if ( $GetParam{Password} eq 'careoncloud-dummy-password-placeholder' ) {
                 my %OriginalData = $MailAccount->MailAccountGet(%GetParam);
                 $GetParam{Password} = $OriginalData{Password};
             }
@@ -336,6 +382,13 @@ sub _Overview {
 
     $LayoutObject->Block( Name => 'ActionList' );
     $LayoutObject->Block( Name => 'ActionAdd' );
+    $LayoutObject->Block(
+        Name => 'IncludeInvalid',
+        Data => {
+            IncludeInvalid        => $Self->{IncludeInvalid},
+            IncludeInvalidChecked => $Self->{IncludeInvalid} ? 'checked' : '',
+        },
+    );
     $LayoutObject->Block( Name => 'Filter' );
 
     $LayoutObject->Block(
@@ -343,7 +396,9 @@ sub _Overview {
         Data => \%Param,
     );
 
-    my %List = $MailAccount->MailAccountList( Valid => 0 );
+    my %List = $MailAccount->MailAccountList(
+        Valid => $Self->{IncludeInvalid} ? 0 : 1,
+    );
 
     # if there are any mail accounts, they are shown
     if (%List) {
@@ -360,7 +415,9 @@ sub _Overview {
 
             $LayoutObject->Block(
                 Name => 'OverviewResultRow',
-                Data => \%Data,
+                Data => {
+                    %Data,
+                },
             );
         }
     }
@@ -397,6 +454,33 @@ sub _MaskUpdateMailAccount {
         Name       => 'Type',
         SelectedID => $Param{Type} || $Param{TypeAdd} || '',
         Class      => 'Modernize Validate_Required ' . ( $Param{Errors}->{'TypeInvalid'} || '' ),
+    );
+
+    $Param{AuthOption} = $LayoutObject->BuildSelection(
+        Data => {
+            Basic       => 'Basic Auth',
+            XOAUTH2     => 'XOAUTH2',
+            OAUTHBEARER => 'OAUTHBEARER',
+        },
+        Name       => 'Auth',
+        SelectedID => $Param{Auth},
+        Class      => 'Modernize Validate_Required MailAuth' . ( $Param{Errors}->{'AuthEditInvalid'} || '' ),
+    );
+
+    my $FunctionalAccountsObject = $Kernel::OM->Get('Kernel::System::OpenIDConnect::FunctionalAccounts');
+
+    my @OAuthAccountNames;
+    my $OAuthAccounts = $FunctionalAccountsObject->GetAccounts();
+
+    for my $Account (@$OAuthAccounts) {
+        push @OAuthAccountNames, $Account->{Name};
+    }
+
+    $Param{AccountOption} = $LayoutObject->BuildSelection(
+        Data       => \@OAuthAccountNames,
+        Name       => 'AccountName',
+        Class      => 'Modernize Validate_Required ' . ( $Param{Errors}->{'AccountEditInvalid'} || '' ),
+        SelectedID => $Param{AccountName},
     );
 
     $Param{TrustedOption} = $LayoutObject->BuildSelection(
@@ -466,6 +550,32 @@ sub _MaskAddMailAccount {
         Name       => 'TypeAdd',
         SelectedID => $Param{Type} || $Param{TypeAdd} || '',
         Class      => 'Modernize Validate_Required ' . ( $Param{Errors}->{'TypeAddInvalid'} || '' ),
+    );
+
+    $Param{AuthOptionAdd} = $LayoutObject->BuildSelection(
+        Data => {
+            Basic       => 'Basic Auth',
+            XOAUTH2     => 'XOAUTH2',
+            OAUTHBEARER => 'OAUTHBEARER',
+        },
+        Name       => 'Auth',
+        SelectedID => 'Basic',
+        Class      => 'Modernize Validate_Required MailAuth' . ( $Param{Errors}->{'AuthAddInvalid'} || '' ),
+    );
+
+    my $FunctionalAccountsObject = $Kernel::OM->Get('Kernel::System::OpenIDConnect::FunctionalAccounts');
+
+    my @OAuthAccountNames;
+    my $OAuthAccounts = $FunctionalAccountsObject->GetAccounts();
+
+    for my $Account (@$OAuthAccounts) {
+        push @OAuthAccountNames, $Account->{Name};
+    }
+
+    $Param{AccountOptionAdd} = $LayoutObject->BuildSelection(
+        Data  => \@OAuthAccountNames,
+        Name  => 'AccountName',
+        Class => 'Modernize Validate_Required ' . ( $Param{Errors}->{'AccountAddInvalid'} || '' ),
     );
 
     $Param{TrustedOption} = $LayoutObject->BuildSelection(

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,12 +24,12 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # set up $Kernel::OM
 
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-# added for OTOBOTicketInvoker
+# added for CareOnCloudTicketInvoker
 # Set fixed header blacklists.
 for my $Type (qw(Invoker Operation)) {
     $ConfigObject->Set(
@@ -539,6 +539,82 @@ my @BasicTests = (
         },
     },
     {
+        Name           => 'Correct Basic Transport Mapping POST array data',
+        SuccessRequest => '1',
+        RequestData    => [
+            {
+                Other   => 'Data',
+                Other1  => 'One',
+                Other2  => 'Two',
+                Other3  => 'Three',
+                Other4  => 'Four',
+                Complex => {
+                    ComplexData => 'Data',
+                },
+            },
+        ],
+        ExpectedReturnData => [
+            {
+                Other   => 'Data',
+                Other1  => 'One',
+                Other2  => 'Two',
+                Other3  => 'Three',
+                Other4  => 'Four',
+                Complex => {
+                    ComplexData => 'Data',
+                },
+            },
+        ],
+        WebserviceConfig => {
+            Name        => 'TestSimple1',
+            Description => '',
+            Debugger    => {
+                DebugThreshold => 'debug',
+                TestMode       => 1,
+            },
+            Provider => {
+                Transport => {
+                    Type   => 'HTTP::REST',
+                    Config => {
+                        KeepAlive             => '',
+                        MaxLength             => '100000000',
+                        RouteOperationMapping => {
+                            TestSimple => {
+                                RequestMethod => ['POST'],
+                                Route         => '/Test',
+                            },
+                        },
+                    },
+                },
+                Operation => {
+                    TestSimple => {
+                        Type => 'Test::Test',
+                    },
+                },
+            },
+            Requester => {
+                Transport => {
+                    Type   => 'HTTP::REST',
+                    Config => {
+                        DefaultCommand           => 'POST',
+                        Host                     => $RemoteSystem,
+                        Timeout                  => 120,
+                        InvokerControllerMapping => {
+                            TestSimple => {
+                                Controller => '/Test',
+                            },
+                        },
+                    },
+                },
+                Invoker => {
+                    TestSimple => {
+                        Type => 'Test::TestSimple',
+                    },
+                },
+            },
+        },
+    },
+    {
         Name           => 'Correct Basic Transport Mapping GET',
         SuccessRequest => '1',
         RequestData    => {
@@ -592,6 +668,75 @@ my @BasicTests = (
                         InvokerControllerMapping => {
                             TestSimple => {
                                 Controller => '/Test',
+                            },
+                        },
+                    },
+                },
+                Invoker => {
+                    TestSimple => {
+                        Type => 'Test::TestSimple',
+                    },
+                },
+            },
+        },
+    },
+    {
+        Name           => 'Correct Basic Transport Mapping GET array data',
+        SuccessRequest => '1',
+        RequestData    => [
+            {
+                Other  => 'Data',
+                Other1 => 'One',
+                Other2 => 'Two',
+                Other3 => 'Three',
+                Other4 => 'Four',
+            },
+        ],
+        ExpectedReturnData => {
+            Other  => 'Data',
+            Other1 => 'One',
+            Other2 => 'Two',
+            Other3 => 'Three',
+            Other4 => 'Four',
+        },
+        WebserviceConfig => {
+            Name        => 'TestSimple1',
+            Description => '',
+            Debugger    => {
+                DebugThreshold => 'debug',
+                TestMode       => 1,
+            },
+            Provider => {
+                Transport => {
+                    Type   => 'HTTP::REST',
+                    Config => {
+                        KeepAlive             => '',
+                        MaxLength             => '100000000',
+                        RouteOperationMapping => {
+                            TestSimple => {
+                                RequestMethod => ['GET'],
+                                Route         => '/Test',
+                            },
+                        },
+                    },
+                },
+                Operation => {
+                    TestSimple => {
+                        Type => 'Test::Test',
+                    },
+                },
+            },
+            Requester => {
+                Transport => {
+                    Type   => 'HTTP::REST',
+                    Config => {
+                        DefaultCommand           => 'GET',
+                        Host                     => $RemoteSystem,
+                        Timeout                  => 120,
+                        InvokerControllerMapping => {
+                            TestSimple => {
+                                Controller => '/Test',
+                                Command    => 'GET',
                             },
                         },
                     },
@@ -1232,8 +1377,9 @@ for my $Test (@BasicTests) {
             # The RequestMethod is set when the request method is GET or when
             # the POST content is empty. For some reason the RequestMethod is not
             # set up in the expected data.
-            delete $RequesterResult->{Data}->{RequestMethod};
-
+            if ( ref $RequesterResult->{Data} eq 'HASH' ) {
+                delete $RequesterResult->{Data}->{RequestMethod};
+            }
             is(
                 $RequesterResult->{Data},
                 $Test->{ExpectedReturnData},
@@ -1362,7 +1508,7 @@ for my $Test (@DirectTests) {
     };
 }
 
-# adapted for OTOBOTicketInvoker
+# adapted for CareOnCloudTicketInvoker
 # Check operation request and response headers.
 # The string $ResponseHeaderPrefix is 25 chars long. It marks the headers that should be returned by RequesterPerformRequest()
 my $ResponseHeaderPrefix = 'Unittest' . $Helper->GetRandomNumber() . '-';

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ Core.Form.ErrorTooltips = (function (Namespace) {
         QUnit.test('Core.Form.ErrorTooltip()', function(Assert){
             var $TestForm = $('<form id="TestForm" class="Validate"></form>'),
                 ErrorTooltipMessage = 'UT Error Tooltip message',
-                ErrorTooltipID = '#OTOBO_UI_Tooltips_ErrorTooltip',
+                ErrorTooltipID = '#CareOnCloud_UI_Tooltips_ErrorTooltip',
                 TestFieldElement;
 
             Assert.expect(9);

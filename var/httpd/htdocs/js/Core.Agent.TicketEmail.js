@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -38,24 +38,19 @@ Core.Agent.TicketEmail = (function (TargetNS) {
     TargetNS.Init = function () {
         var CustomerKey,
             ArticleComposeOptions = Core.Config.Get('ArticleComposeOptions'),
-            DynamicFieldNames = Core.Config.Get('DynamicFieldNames'),
             DataEmail = Core.Config.Get('DataEmail'),
             DataCustomer = Core.Config.Get('DataCustomer'),
-            Fields = ['TypeID', 'Dest', 'NewUserID', 'NewResponsibleID', 'NextStateID', 'PriorityID', 'ServiceID', 'SLAID'],
-            ModifiedFields;
+            Fields = ['TypeID', 'Dest', 'NewUserID', 'NewResponsibleID', 'NextStateID', 'PriorityID', 'ServiceID', 'SLAID'];
 
         // Bind events to specific fields
         $.each(Fields, function(Index, Value) {
-            ModifiedFields = Core.Data.CopyObject(Fields).concat(DynamicFieldNames);
-            ModifiedFields.splice(Index, 1);
-
-            FieldUpdate(Value, ModifiedFields);
+            FieldUpdate(Value);
         });
 
         // get all owners
         $('#OwnerSelectionGetAll').on('click', function () {
             $('#OwnerAll').val('1');
-            Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', 'OwnerAll', ['NewUserID'], function() {
+            Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', 'OwnerAll', function() {
                 $('#NewUserID').focus();
             });
             return false;
@@ -64,7 +59,7 @@ Core.Agent.TicketEmail = (function (TargetNS) {
         // get all responsibles
         $('#ResponsibleSelectionGetAll').on('click', function () {
             $('#ResponsibleAll').val('1');
-            Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', 'ResponsibleAll', ['NewResponsibleID'], function() {
+            Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', 'ResponsibleAll', function() {
                 $('#NewResponsibleID').focus();
             });
             return false;
@@ -73,7 +68,7 @@ Core.Agent.TicketEmail = (function (TargetNS) {
         // change standard template
         $('#StandardTemplateID').on('change', function () {
             Core.Agent.TicketAction.ConfirmTemplateOverwrite('RichText', $(this), function () {
-                Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', 'StandardTemplateID', ['RichTextField']);
+                Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', 'StandardTemplateID');
             });
             return false;
         });
@@ -117,7 +112,7 @@ Core.Agent.TicketEmail = (function (TargetNS) {
         if (typeof ArticleComposeOptions !== 'undefined') {
             $.each(ArticleComposeOptions, function (Key, Value) {
                 $('#'+Value.Name).on('change', function () {
-                    Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', Value.Name, Value.Fields);
+                    Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', Value.Name);
                 });
             });
         }
@@ -129,22 +124,17 @@ Core.Agent.TicketEmail = (function (TargetNS) {
      * @memberof Core.Agent.TicketEmail
      * @function
      * @param {String} Value - FieldID
-     * @param {Array} ModifiedFields - Fields
      * @description
      *      Create on change event handler
      */
-    function FieldUpdate (Value, ModifiedFields) {
+    function FieldUpdate (Value) {
         var SignatureURL, FieldValue, CustomerUser;
         $('#' + Value).on('change', function () {
-            Core.AJAX.FormUpdate($('#NewEmailTicket'), 'AJAXUpdate', Value, ModifiedFields);
 
             if (Value === 'Dest') {
                 FieldValue = $(this).val() || '';
                 CustomerUser = $('#SelectedCustomerUser').val() || '';
                 SignatureURL = Core.Config.Get('Baselink') + 'Action=' + Core.Config.Get('Action') + ';Subaction=Signature;Dest=' + FieldValue + ';SelectedCustomerUser=' + CustomerUser;
-                if (!Core.Config.Get('SessionIDCookie')) {
-                    SignatureURL += ';' + Core.Config.Get('SessionName') + '=' + Core.Config.Get('SessionID');
-                }
                 $('#Signature').attr('src', SignatureURL);
             }
         });

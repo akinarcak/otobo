@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,7 @@ package Kernel::System::Ticket::Article::Backend::MIMEBase::Base;
 
 use strict;
 use warnings;
+use File::Path qw(remove_tree);
 
 our $ObjectManagerDisabled = 1;
 
@@ -96,6 +97,8 @@ Get article attachment index as hash.
         ExcludeHTMLBody  => 1,       # (optional) Exclude HTML body attachment
         ExcludeInline    => 1,       # (optional) Exclude inline attachments
         OnlyHTMLBody     => 1,       # (optional) Return only HTML body attachment, return nothing if not found
+        ShowDeletedArticles => 1,    # (optional) To deleted articles.
+        VersionView   => 1,          # (optional) To get edited version info.
     );
 
 Returns:
@@ -141,6 +144,12 @@ sub ArticleAttachmentIndex {
         return;
     }
 
+    if ( $Param{ArticleDeleted} ) {
+        my $Temp = $Param{SourceArticleID};
+        $Param{SourceArticleID} = $Param{ArticleID};
+        $Param{ArticleID}       = $Temp;
+    }
+
     # Get complete attachment index from backend.
     my %Attachments = $Self->ArticleAttachmentIndexRaw(%Param);
 
@@ -153,6 +162,12 @@ sub ArticleAttachmentIndex {
         ATTACHMENT_ID:
         for my $AttachmentID ( sort keys %Attachments ) {
             my %File = %{ $Attachments{$AttachmentID} };
+
+            #Discard directories
+            if ( !$File{ContentType} && !$File{Disposition} ) {
+                delete $Attachments{$AttachmentID};
+                next ATTACHMENT_ID;
+            }
 
             # Identify plain text attachment.
             if (
@@ -210,8 +225,10 @@ sub ArticleAttachmentIndex {
 
             # Get HTML article body.
             my %HTMLBody = $Self->ArticleAttachment(
-                ArticleID => $Param{ArticleID},
-                FileID    => $AttachmentIDHTML,
+                ArticleID       => $Param{ArticleID},
+                FileID          => $AttachmentIDHTML,
+                VersionView     => $Param{VersionView},
+                SourceArticleID => $Param{SourceArticleID},
             );
 
             if ( %HTMLBody && $HTMLBody{Content} ) {
@@ -285,7 +302,11 @@ sub _ArticleDeleteDirectory {
     );
     my $Path = "$Self->{ArticleDataDir}/$ContentPath/$Param{ArticleID}";
     if ( -d $Path ) {
-        if ( !rmdir $Path ) {
+        for my $VersionID ( @{ $Param{VersionIDs} } ) {
+            remove_tree( $Path . '/' . $VersionID, { safe => 1 } );
+        }
+
+        if ( !rmdir($Path) ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  => "Can't remove '$Path': $!.",
@@ -302,6 +323,8 @@ Get the stored content path of an article.
 
     my $Path = $BackendObject->_ArticleContentPatGeth(
         ArticleID => 123,
+        ShowDeletedArticles => 1, # (optional) To deleted articles.
+        VersionView   => 1,       # (optional) To get edited version info.
     );
 
 =cut
@@ -327,16 +350,42 @@ sub _ArticleContentPathGet {
         Type => $Self->{CacheType},
         Key  => $CacheKey,
     );
-    return $Cache if $Cache;
+
+    if ( !$Param{VersionView} ) {
+        return $Cache if $Cache;
+    }
 
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
-    # sql query
-    return if !$DBObject->Prepare(
-        SQL  => 'SELECT content_path FROM article_data_mime WHERE article_id = ?',
-        Bind => [ \$Param{ArticleID} ],
+    my $IsArticleDeleted = $Kernel::OM->Get('Kernel::System::Ticket::ArticleFeatures')->IsArticleDeleted(
+        ArticleID => $Param{ArticleID}
     );
+
+    if ( !$IsArticleDeleted && !$Param{VersionView} ) {
+
+        # sql query for normal articles
+        return if !$DBObject->Prepare(
+            SQL  => 'SELECT content_path FROM article_data_mime WHERE article_id = ?',
+            Bind => [ \$Param{ArticleID} ],
+        );
+    }
+    elsif ( $Param{VersionView} && !$IsArticleDeleted ) {
+
+        # sql query for Version View
+        return if !$DBObject->Prepare(
+            SQL  => 'SELECT content_path FROM article_data_mime_version WHERE article_id IN (SELECT id FROM article_version WHERE article_id = ?)',
+            Bind => [ \$Param{ArticleID} ],
+        );
+    }
+    else {
+        # sql query for Deleted Articles
+        return if !$DBObject->Prepare(
+            SQL =>
+                'SELECT content_path FROM article_data_mime_version WHERE article_id IN (SELECT id FROM article_version WHERE source_article_id = ? AND article_delete = 1)',
+            Bind => [ \$Param{ArticleID} ],
+        );
+    }
 
     my $Result;
     while ( my @Row = $DBObject->FetchrowArray() ) {

@@ -1,7 +1,7 @@
-/* OTOBO is a web-based ticketing system for service organisations.
+/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -13,13 +13,38 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
+/** 
+ * @subsection Fallback Color Definitions 
+ */
+
+ :root {
+    --colMainDark: #00023c;
+    --colMainLight: #001bff;
+    --colMainHover: #000099;
+    --colBGLight: #f7f7f9;
+    --colBGDark: #bfbfce;
+    --colTextLight: #7f809d;
+    --colTextDark: #00023c;
+    --colHighlight: #fef235;
+    --colNotifyOK: #c4cdfa;
+    --colNotifyWarn: #fffccc;
+    --colNotifyErr: #f9bcb2;
+    --colHoverLight: #c4cdfa;
+    --colHoverDark: #6d83f2;
+    --colShadowMain: rgba(0,27,255,0.24);
+    --colShadowDark: rgba(0, 2, 71, 0.16);
+}
+
 body {
+    --DefaultLineHeight: 1.5;
+    --DefaultFontSize: 14px;
+
     font-family: 'Quicksand', sans-serif;
-    font-size: 14px;
+    font-size: var(--DefaultFontSize);
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
-    line-height: 1.5;
+    line-height: var(--DefaultLineHeight);
     letter-spacing: 0.35px;
     color: #00023c;
     color: var(--colTextDark);
@@ -30,6 +55,10 @@ span,
 h1,
 h3 {
     color: inherit;
+}
+
+a.DisabledLink {
+    pointer-events: none;
 }
 
 @media only screen and (max-width: 767px) {
@@ -112,7 +141,7 @@ button {
 button:hover,
 button:focus {
     background-color: #000099;
-    background-color: var(--colHoverDark);
+    background-color: var(--colMainHover);
 }
 
 button,
@@ -173,11 +202,11 @@ ul.ui-autocomplete {
 .ui-autocomplete .ui-widget-content,
 .ui-autocomplete .ui-menu-item {
     font-family: 'Quicksand', sans-serif;
-    font-size: 14px;
+    font-size: var(--DefaultFontSize);
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;
-    line-height: 1.5;
+    line-height: var(--DefaultLineHeight);
     letter-spacing: 0.35px;
     color: #00023c;
     color: var(--colTextDark);
@@ -213,4 +242,20 @@ ul.ui-autocomplete {
     background: var(--colBGLight);
     border: none;
     margin: 0;
+}
+
+/* WebKit Scrollbar for fixing ugly scrollbars in Chrome */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+  
+::-webkit-scrollbar-thumb {
+    background-color: #c9c9c9;
+    border-radius: 4px;
+}
+  
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
 }

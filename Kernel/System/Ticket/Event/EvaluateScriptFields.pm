@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -77,15 +77,39 @@ sub Run {
         my $DynamicField = $DynamicFieldObject->DynamicFieldGet(
             ID => $FieldID,
         );
-        my $Result = $DynamicFieldBackendObject->Evaluate(
-            DynamicFieldConfig => $DynamicField,
-            Object             => \%Ticket,
-        );
+
+        # if we store set values, store as many values as there are in ticket data for the set
+        my $Value;
+        if ( $DynamicField->{Config}{PartOfSet} ) {
+            my @Values;
+            my $SetConfig = $DynamicFieldObject->DynamicFieldGet(
+                ID => $DynamicField->{Config}{PartOfSet},
+            );
+
+            for my $SetValue ( $Ticket{"DynamicField_$SetConfig->{Name}"}->@* ) {
+                my %SetValuesMapped = map { ( "DynamicField_$_" => $SetValue->{$_} ) } keys $SetValue->%*;
+                push @Values, $DynamicFieldBackendObject->Evaluate(
+                    DynamicFieldConfig => $DynamicField,
+                    Object             => {
+                        %Ticket,
+                        %SetValuesMapped,
+                    },
+                );
+            }
+            $Value = \@Values;
+        }
+        else {
+            $Value = $DynamicFieldBackendObject->Evaluate(
+                DynamicFieldConfig => $DynamicField,
+                Object             => \%Ticket,
+            );
+        }
 
         $DynamicFieldBackendObject->ValueSet(
             DynamicFieldConfig => $DynamicField,
             ObjectID           => $Param{Data}{TicketID},
-            Value              => $Result,
+            Value              => $Value,
+            Set                => $DynamicField->{Config}{PartOfSet},
             UserID             => 1,
             Store              => 1,
         );

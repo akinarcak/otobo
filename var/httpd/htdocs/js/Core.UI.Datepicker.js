@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -113,10 +113,12 @@ Core.UI.Datepicker = (function (TargetNS) {
      * @returns {Boolean} false, if Parameter Element is not of the correct type.
      * @param {jQueryObject|Object} Element - The jQuery object of a text input field which should get a datepicker.
      *                                        Or a hash with the Keys 'Year', 'Month' and 'Day' and as values the jQueryObjects of the select drop downs.
+     * @param {Object} [Attributes] - Optional Attributes to be passed to the datepicker. Possible Attributes:
+     *                                     - Disabled: Set to true to disable the datepicker.
      * @description
      *      This function initializes the datepicker on the defined elements.
      */
-    TargetNS.Init = function (Element) {
+    TargetNS.Init = function (Element, Attributes={}) {
 
         var $DatepickerElement,
             HasDateSelectBoxes = false,
@@ -146,8 +148,10 @@ Core.UI.Datepicker = (function (TargetNS) {
             }
         }
 
-        // Increment number of initialized datepickers on this site
+        // Increment number of initialized date pickers on this site
         DatepickerCount++;
+
+        let Disabled = Attributes.Disabled || false;
 
         // Check, if datepicker is used with three input element or with three select boxes
         if (typeof Element === 'object' &&
@@ -159,24 +163,49 @@ Core.UI.Datepicker = (function (TargetNS) {
             //  Ignore in this case.
             Element.Day.length
         ) {
-
             $DatepickerElement = $('<input>').attr('type', 'hidden').attr('id', 'Datepicker' + DatepickerCount);
             // insert DatepickerElement
             if ( Core.Config.Get('SessionName') === Core.Config.Get('CustomerPanelSessionName') ) {
-                // CustomerInterface (otobo style)
-                var Container = $(Element.Day).parent();
+                // CustomerInterface (careoncloud style)
+                let Container, $DateDiv;
+                let $Parent = $(Element.Day).parent();
+                if ($Parent.hasClass('oooDate')) {
+                    $DateDiv = $Parent;
+                    Container = $Parent.parent();
 
-                // reorder dynamic fields
-                Container.wrapInner("<div class='oooDate'></div>");
-                Container.addClass('oooDateContainer');
+                    //reorder elements
+                    if (!Container.hasClass('oooDateContainer')) {
+                        let $Label = Container.parent().siblings('label');
+                        $Label = $Label.detach();
+                        let $Checkbox = $('input[type=checkbox]', Container);
+                        $Checkbox = $Checkbox.detach();
+                        let $Icon = $("<i class='oooAltCheck ooofo'></i>").on('click', function() {
+                            $Checkbox.click();
+                        });
+                        Container.prepend( $Checkbox, $Icon, $Label );
 
-                var Label = $('label', Container.parent().parent());
-                var Checkbox = $('.oooDate > input[type=checkbox]', Container);
-                var Icon = $("<i class='oooAltCheck ooofo'></i>").on('click', function() {
-                    Checkbox.click();
-                });
+                        Container.addClass('oooDateContainer');
+                    }
 
-                Container.prepend( Checkbox, Icon, $DatepickerElement, Label );
+                    $DateDiv.before($DatepickerElement);
+                } else {
+                    Container = $Parent;
+                    // TODO: remove useless assignment?
+                    //$DateDiv = Container.wrapInner("<div class='oooDate'></div>");
+
+                    // reorder dynamic fields
+                    Container.wrapInner("<div class='oooDate'></div>");
+                    Container.addClass('oooDateContainer');
+
+                    let Label = $('label', Container.parent().parent());
+                    let Checkbox = $('.oooDate > input[type=checkbox]', Container);
+                    let Icon = $("<i class='oooAltCheck ooofo'></i>").on('click', function() {
+                        Checkbox.click();
+                    });
+
+                    Container.prepend( Checkbox, Icon, $DatepickerElement, Label );
+
+                }
             } else {
                 // AgentInterface
                 Element.Year.after($DatepickerElement);
@@ -255,10 +284,10 @@ Core.UI.Datepicker = (function (TargetNS) {
                 Core.Language.Translate('Fr'),
                 Core.Language.Translate('Sa')
             ],
-            isRTL: Core.Config.Get('Datepicker.IsRTL')
+            isRTL: (Core.Config.Get('Datepicker.IsRTL') == 1) // Config value has type string, '0' evaluates to true
         };
 
-        Options.onSelect = function (DateText, Instance) {
+        Options.onSelect = function (_DateText, Instance) {
             var Year = Instance.selectedYear,
                 Month = Instance.selectedMonth + 1,
                 Day = Instance.selectedDay;
@@ -288,14 +317,17 @@ Core.UI.Datepicker = (function (TargetNS) {
         //      Check if one additional DOM node is already present.
         if (!$('#' + Core.App.EscapeSelector(Element.Day.attr('id')) + 'DatepickerIcon').length) {
 
+            let disableDatepickerHTML = Disabled ? ' DisabledLink' : '';
+
             // add datepicker icon and click event
             if ( Core.Config.Get('SessionName') === Core.Config.Get('CustomerPanelSessionName') ) {
-                var Icon = $('<a href="#" class="DatepickerIcon" id="' + Element.Day.attr('id') + 'DatepickerIcon" title="' + Core.Language.Translate('Open date selection') + '"><i class="ooofo ooofo-calendar"></i></a>');
+                var Icon = $('<a href="#" class="DatepickerIcon' + disableDatepickerHTML + '" id="' + Element.Day.attr('id') + 'DatepickerIcon" title="' + Core.Language.Translate('Open date selection') + '"><i class="ooofo ooofo-calendar"></i></a>');
 
                 // auto activate dynamic field on click on Datepicker
                 var DateContainer = $DatepickerElement.parent();
                 if ( DateContainer.hasClass('oooDateContainer') ) {
-                    var Checkbox = DateContainer.children('input[type=checkbox]').first();
+                    // TODO: remove useless assignment?
+                    //var Checkbox = DateContainer.children('input[type=checkbox]').first();
                     Icon.on('click', function() {
                         DateContainer.children('input[type=checkbox]').first().prop('checked', true);
                     });
@@ -304,7 +336,7 @@ Core.UI.Datepicker = (function (TargetNS) {
                 $DatepickerElement.after(Icon);
 
             } else {
-                $DatepickerElement.after('<a href="#" class="DatepickerIcon" id="' + Element.Day.attr('id') + 'DatepickerIcon" title="' + Core.Language.Translate('Open date selection') + '"><i class="ooofo ooofo-calendar" style="font-size: 20px;"></i></a>');
+                $DatepickerElement.after('<a href="#" class="DatepickerIcon' + disableDatepickerHTML + '" id="' + Element.Day.attr('id') + 'DatepickerIcon" title="' + Core.Language.Translate('Open date selection') + '"><i class="ooofo ooofo-calendar" style="font-size: 20px;"></i></a>');
             }
 
             if (Element.DateInFuture) {
@@ -317,7 +349,7 @@ Core.UI.Datepicker = (function (TargetNS) {
                 ErrorMessage = Core.Language.Translate('Invalid date!');
             }
 
-            // Add validation error messages for all dateselection elements
+            // Add validation error messages for all date selection elements
             Element.Year
             .after('<div id="' + Element.Day.attr('id') + 'Error" class="TooltipErrorMessage"><p>' + ErrorMessage + '</p></div>')
             .after('<div id="' + Element.Month.attr('id') + 'Error" class="TooltipErrorMessage"><p>' + ErrorMessage + '</p></div>')
@@ -331,12 +363,19 @@ Core.UI.Datepicker = (function (TargetNS) {
             }
         }
 
-        $('#' + Core.App.EscapeSelector(Element.Day.attr('id')) + 'DatepickerIcon').off('click.Datepicker').on('click.Datepicker', function () {
-            $DatepickerElement.datepicker('show');
-            return false;
-        });
 
-        // prevent click events on date picker from bubbling to supress unintended closing
+        if (!Disabled) {
+            $('#' + Core.App.EscapeSelector(Element.Day.attr('id')) + 'DatepickerIcon').off('click.Datepicker').on('click.Datepicker', function () {
+                $DatepickerElement.datepicker('show');
+                return false;
+            });
+        };
+
+        //adjust z-index of date picker to prevent overlapping with richtext editors
+        $DatepickerElement.css('position', 'relative');
+        $DatepickerElement.css('z-index', 20);
+
+        // prevent click events on date picker from bubbling to suppress unintended closing
         $('#ui-datepicker-div').on('click', function (event) {
             event.stopPropagation();
         });

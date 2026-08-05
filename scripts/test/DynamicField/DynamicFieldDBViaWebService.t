@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,6 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
@@ -23,13 +24,13 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::GenericInterface::Debugger;
-use Kernel::GenericInterface::Operation::Session::SessionCreate;
-use Kernel::GenericInterface::Operation::Ticket::TicketUpdate;
-use Kernel::GenericInterface::Requester;
-use Kernel::System::VariableCheck qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;                                   # Set up $Kernel::OM
+use Kernel::GenericInterface::Debugger                          ();
+use Kernel::GenericInterface::Operation::Session::SessionCreate ();         ## no perlimports, new() from string
+use Kernel::GenericInterface::Operation::Ticket::TicketUpdate   ();         ## no perlimports, new() from string
+use Kernel::GenericInterface::Requester                         ();
+use Kernel::System::VariableCheck                               qw(:all);
 
 # Skip SSL certificate verification.
 $Kernel::OM->ObjectParamAdd(
@@ -60,19 +61,19 @@ my $DatabaseDSN    = $ConfigObject->Get('DatabaseDSN');
 
 # Get database type.
 my $DatabaseType;
-if ( $DatabaseDSN =~ /:mysql/i ) {
+if ( $DatabaseDSN =~ m/^DBI:(?:mariadb|mysql)/i ) {
     $DatabaseType = 'mysql';
 }
-elsif ( $DatabaseDSN =~ /:pg/i ) {
+elsif ( $DatabaseDSN =~ m/^DBI:pg/i ) {
     $DatabaseType = 'postgresql';
 }
-elsif ( $DatabaseDSN =~ /:oracle/i ) {
+elsif ( $DatabaseDSN =~ m/^DBI:oracle/i ) {
     $DatabaseType = 'oracle';
 }
-elsif ( $DatabaseDSN =~ /:db2/i ) {
+elsif ( $DatabaseDSN =~ m/^DBI:db2/i ) {
     $DatabaseType = 'db2';
 }
-elsif ( $DatabaseDSN =~ /(mssql|sybase|sql server)/i ) {
+elsif ( $DatabaseDSN =~ m/^DBI:(?:mssql|sybase|sql server)/i ) {
     $DatabaseType = 'mssql';
 }
 

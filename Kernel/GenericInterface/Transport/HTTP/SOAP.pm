@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,17 +22,17 @@ use warnings;
 use namespace::autoclean;
 
 # core modules
-use MIME::Base64;
-use PerlIO;
+use PerlIO;    ## no perlimports, not sure whether this is needed
 
 # CPAN modules
-use HTTP::Status;
-use Plack::Response;
+use HTTP::Status    qw(status_message);
+use Plack::Response ();
 use SOAP::Lite;    # for enabling debugging import +trace => 'all'
+use Text::Trim qw(rtrim);
 
-# OTOBO modules
-use Kernel::System::VariableCheck qw(:all);
-use Kernel::System::Web::Exception;
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck  qw(:all);
+use Kernel::System::Web::Exception ();
 
 our $ObjectManagerDisabled = 1;
 
@@ -153,8 +153,8 @@ sub ProviderProcessRequest {
     # No length provided.
     if ( !$Length ) {
         return $Self->_Error(
-            Summary   => HTTP::Status::status_message(411),    # 'Length required'
-            HTTPError => 411,                                  # HTTP_LENGTH_REQUIRED
+            Summary   => status_message(411),    # 'Length required'
+            HTTPError => 411,                    # HTTP_LENGTH_REQUIRED
         );
     }
 
@@ -162,7 +162,7 @@ sub ProviderProcessRequest {
     if ( IsInteger( $Config->{MaxLength} ) && $Length > $Config->{MaxLength} ) {
         return $Self->_Error(
             Summary   => HTTP::Status::status_message(413),
-            HTTPError => 413,                                  # HTTP_PAYLOAD_TOO_LARGE
+            HTTPError => 413,                                 # HTTP_PAYLOAD_TOO_LARGE
         );
     }
 
@@ -211,6 +211,10 @@ sub ProviderProcessRequest {
         Summary => 'Received data by provider from remote system',
         Data    => $Content,
     );
+
+    # Normalize Content by removing trailing white space.
+    # This make SOAP::Lite work with XML::Parser >= 1.48.
+    rtrim($Content);
 
     # Deserialize data.
     my $Deserialized      = eval { SOAP::Deserializer->deserialize($Content); };
@@ -467,7 +471,7 @@ sub ProviderGenerateResponse {
         );
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloudTicketInvoker
     # Gather additional headers.
     my %ResponseHeaders = $Self->_HeadersGet(
         Type      => 'Operation',
@@ -477,7 +481,7 @@ sub ProviderGenerateResponse {
     # Mirror some HTTP headers when the request comes from a test script
     # that has temporarily set GenericInterface::Transport::UnitTestHeaders.
     # This feature allows to check outgoing HTTP headers of the generic interface.
-    # It was introduced by OTOBOTicketInvoker.
+    # It was introduced by CareOnCloudTicketInvoker.
     if ( $Kernel::OM->Get('Kernel::Config')->Get('GenericInterface::Transport::MirrorUnitTestHTTPHeaders') ) {
 
         # The HTTP::REST support works with a request object.
@@ -525,7 +529,7 @@ sub ProviderGenerateResponse {
     $Self->_ThrowWebException(
         HTTPCode => $HTTPCode,
         Content  => $Serialized,
-        Headers  => \%ResponseHeaders,    # added by OTOBOTicketInvoker
+        Headers  => \%ResponseHeaders,    # added by CareOnCloudTicketInvoker
     );
 
     return;                               # actually not reached
@@ -826,7 +830,7 @@ sub RequesterPerformRequest {
         }
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloudTicketInvoker
 
     # Gather additional headers.
     my %Headers = (
@@ -969,7 +973,7 @@ sub RequesterPerformRequest {
         };
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloudTicketInvoker
 
     # Export mirrored headers (only used for UnitTests)
     my %UnitTestHeaders;
@@ -989,7 +993,7 @@ sub RequesterPerformRequest {
     return {
         Success         => 1,
         Data            => $Body->{$OperationResponse} || undef,
-        UnitTestHeaders => \%UnitTestHeaders,                      # added for OTOBOTicketInvoker
+        UnitTestHeaders => \%UnitTestHeaders,                      # added for CareOnCloudTicketInvoker
     };
 }
 
@@ -1117,7 +1121,7 @@ sub _ThrowWebException {
         }
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloudTicketInvoker
     # Set additional headers.
     if ( $Param{Headers} ) {
         for my $Header ( sort keys %{ $Param{Headers} } ) {
@@ -1148,42 +1152,43 @@ If entries exist that are not mentioned in sorting config,
 they will be added after the sorted entries in ascending alphanumerical order.
 
 Example:
-$Data = {
-    Key1 => 'Value',
-    Key2 => {
-        Key3 => 'Value',
-        Key4 => [
-            'Value',
-            'Value',
-            {
-                Key5 => 'Value',
-            },
-        ],
-    },
-};
-$Sort = [                                  # wrapper for level 1
-    {                                      # first entry for level 1
-        Key2 => [                          # wrapper for level 2
-            {                              # first entry for level 2
-                Key4 => [
-                    undef,
-                    undef,
-                    [                      # wrapper for level 3
-                        {
-                            Key5 => undef, # first entry for level 3
-                        },
-                    ],                     # wrapper for level 3
-                ],
-            },                             # first entry for level 2
-            {                              # second entry for level 2
-                Key3 => undef,
-            },                             # second entry for level 2
-        ],                                 # wrapper for level 2
-    }                                      # first entry for level 1
-    {                                      # second entry for level 1
-        Key1 => undef,
-    }                                      # second entry for level 1
-];                                         # wrapper for level 1
+
+    $Data = {
+        Key1 => 'Value',
+        Key2 => {
+            Key3 => 'Value',
+            Key4 => [
+                'Value',
+                'Value',
+                {
+                    Key5 => 'Value',
+                },
+            ],
+        },
+    };
+    $Sort = [                                  # wrapper for level 1
+        {                                      # first entry for level 1
+            Key2 => [                          # wrapper for level 2
+                {                              # first entry for level 2
+                    Key4 => [
+                        undef,
+                        undef,
+                        [                      # wrapper for level 3
+                            {
+                                Key5 => undef, # first entry for level 3
+                            },
+                        ],                     # wrapper for level 3
+                    ],
+                },                             # first entry for level 2
+                {                              # second entry for level 2
+                    Key3 => undef,
+                },                             # second entry for level 2
+            ],                                 # wrapper for level 2
+        }                                      # first entry for level 1
+        {                                      # second entry for level 1
+            Key1 => undef,
+        }                                      # second entry for level 1
+    ];                                         # wrapper for level 1
 
     my $Result = $TransportObject->_SOAPOutputRecursion(
         Data => {           # data payload
@@ -1209,7 +1214,8 @@ sub _SOAPOutputRecursion {
 
     # Get and check types of data and sort elements.
     my $Type = $Self->_SOAPOutputTypesGet(%Param);
-    return $Type if !$Type->{Success};
+
+    return $Type unless $Type->{Success};
 
     # Process undefined data.
     if ( $Type->{Data} eq 'UNDEFINED' ) {
@@ -1543,7 +1549,7 @@ sub _SOAPOutputTypesGet {
     };
 }
 
-# introduced for OTOBOTicketInvoker
+# introduced for CareOnCloudTicketInvoker
 sub _HeadersGet {
     my ( $Self, %Param ) = @_;
 

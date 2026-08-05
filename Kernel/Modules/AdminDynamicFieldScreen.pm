@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2012-2020 Znuny GmbH, http://znuny.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,6 +19,14 @@ package Kernel::Modules::AdminDynamicFieldScreen;
 use strict;
 use warnings;
 
+# core modules
+use List::Util qw(any none);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(:all);
+
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::Language',
@@ -26,26 +34,132 @@ our @ObjectDependencies = (
     'Kernel::System::DynamicField',
     'Kernel::System::Log',
     'Kernel::System::SysConfig',
+    'Kernel::System::User',
     'Kernel::System::Web::Request',
     'Kernel::System::ZnunyHelper',
 );
 
-use Kernel::System::VariableCheck qw(:all);
-
 sub new {
     my ( $Type, %Param ) = @_;
 
-    my $Self = {%Param};
-    bless( $Self, $Type );
+    my $Self = bless {%Param}, $Type;
 
     my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
     my $ZnunyHelperObject  = $Kernel::OM->Get('Kernel::System::ZnunyHelper');
 
-    my $DynamicFields = $DynamicFieldObject->GetValidDynamicFields();
+    # set pref for selected object type key
+    $Self->{PrefKeySelectedObjectType} = 'SelectedObjectType' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{SelectedObjectType} = $Preferences{ $Self->{PrefKeySelectedObjectType} } || '';
+
+    # fetch selected object type from frontend and see if change is needed
+    my $ParamObject        = $Kernel::OM->Get('Kernel::System::Web::Request');
+    my $SelectedObjectType = $ParamObject->GetParam( Param => 'SelectedObjectType' );
+    if ( defined $SelectedObjectType ) {
+
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeySelectedObjectType},
+            Value  => $SelectedObjectType,
+        );
+
+        $Self->{SelectedObjectType} = $SelectedObjectType;
+    }
+
+    # check if object type restrictions need to be derived from selected dynamic field or screen
+    my $ConfigObject               = $Kernel::OM->Get('Kernel::Config');
+    my $DFScreensObjectTypesConfig = $ConfigObject->Get('DynamicFieldScreens::ObjectTypes');
+    my $ActionType                 = $ParamObject->GetParam( Param => 'Type' );
+    my $DerivedObjectType;
+    my @ObjectTypesFilter;
+    if ($ActionType) {
+        my $Element = $ParamObject->GetParam( Param => 'Element' );
+
+        if ( $ActionType eq 'DynamicFieldScreen' ) {
+            my $DFScreensConfig = $ConfigObject->Get('DynamicFieldScreens');
+            CONFIGKEY:
+            for my $ConfigKey ( keys $DFScreensConfig->%* ) {
+                if ( $DFScreensConfig->{$ConfigKey}{$Element} ) {
+
+                    if ( $ConfigKey eq 'Framework' ) {
+                        @ObjectTypesFilter = qw(Ticket Article);
+                    }
+                    else {
+                        @ObjectTypesFilter = @{ $DFScreensObjectTypesConfig->{$ConfigKey} // [] };
+                    }
+                    last CONFIGKEY;
+                }
+            }
+        }
+        elsif ( $ActionType eq 'DefaultColumnsScreen' ) {
+            my $DefaultScreensConfig = $ConfigObject->Get('DefaultColumnsScreens');
+            CONFIGKEY:
+            for my $ConfigKey ( keys $DefaultScreensConfig->%* ) {
+                if ( $DefaultScreensConfig->{$ConfigKey}{$Element} ) {
+
+                    if ( $ConfigKey eq 'Framework' ) {
+                        @ObjectTypesFilter = qw(Ticket Article);
+                    }
+                    else {
+                        @ObjectTypesFilter = @{ $DFScreensObjectTypesConfig->{$ConfigKey} // [] };
+                    }
+                    last CONFIGKEY;
+                }
+            }
+        }
+        elsif ( $ActionType eq 'DynamicField' ) {
+            my $DynamicFieldConfig = $DynamicFieldObject->DynamicFieldGet(
+                Name => $Element,
+            );
+            $DerivedObjectType = $DynamicFieldConfig->{ObjectType};
+            @ObjectTypesFilter = ($DerivedObjectType);
+            if ( $DerivedObjectType eq 'Ticket' ) {
+                push @ObjectTypesFilter, 'Article';
+            }
+        }
+    }
+    else {
+        my $DFObjectTypesConfig = $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::ObjectType');
+        if ( IsHashRefWithData($DFScreensObjectTypesConfig) ) {
+            DFSCREENSOBJECTTYPE:
+            for my $DFScreenObjectType ( map { $DFScreensObjectTypesConfig->{$_}->@* } keys $DFScreensObjectTypesConfig->%* ) {
+
+                next DFSCREENSOBJECTTYPE unless $DFObjectTypesConfig->{$DFScreenObjectType};
+
+                $Self->{EnabledObjectTypes} //= [];
+                push $Self->{EnabledObjectTypes}->@*, $DFScreenObjectType;
+
+                if (
+                    $DFScreenObjectType eq $Self->{SelectedObjectType}
+                    || ( $DFScreenObjectType eq 'Article' && $Self->{SelectedObjectType} eq 'Ticket' )
+                    )
+                {
+                    push @ObjectTypesFilter, $DFScreenObjectType;
+                }
+            }
+        }
+
+        if ( none { $_ eq 'Ticket' } $Self->{EnabledObjectTypes}->@* ) {
+            $Self->{EnabledObjectTypes} //= [];
+            push $Self->{EnabledObjectTypes}->@*, 'Ticket';
+        }
+        if ( $Self->{SelectedObjectType} eq 'Ticket' && !( any { $_ eq 'Ticket' } @ObjectTypesFilter ) ) {
+            push @ObjectTypesFilter, qw(Ticket Article);
+        }
+    }
+
+    my $DynamicFields = $DynamicFieldObject->GetValidDynamicFields(
+        ObjectType => \@ObjectTypesFilter,
+    );
     $Self->{DynamicFields} = $DynamicFields;
 
     my $ValidDynamicFieldScreenList = $ZnunyHelperObject->_ValidDynamicFieldScreenListGet(
-        Result => 'HASH',
+        ObjectType => $DerivedObjectType || $Self->{SelectedObjectType},
+        Result     => 'HASH',
     );
 
     $Self->{DynamicFieldScreens}   = $ValidDynamicFieldScreenList->{DynamicFieldScreens};
@@ -58,26 +172,19 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     # get objects
-    my $ConfigObject       = $Kernel::OM->Get('Kernel::Config');
-    my $LogObject          = $Kernel::OM->Get('Kernel::System::Log');
-    my $SysConfigObject    = $Kernel::OM->Get('Kernel::System::SysConfig');
-    my $ZnunyHelperObject  = $Kernel::OM->Get('Kernel::System::ZnunyHelper');
-    my $LayoutObject       = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $ParamObject        = $Kernel::OM->Get('Kernel::System::Web::Request');
-    my $LanguageObject     = $Kernel::OM->Get('Kernel::Language');
-    my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
+    my $SysConfigObject   = $Kernel::OM->Get('Kernel::System::SysConfig');
+    my $ZnunyHelperObject = $Kernel::OM->Get('Kernel::System::ZnunyHelper');
+    my $LayoutObject      = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $ParamObject       = $Kernel::OM->Get('Kernel::System::Web::Request');
+    my $LanguageObject    = $Kernel::OM->Get('Kernel::Language');
 
     $Self->{Subaction} = $ParamObject->GetParam( Param => 'Subaction' ) || '';
-
-    my %DynamicFields         = %{ $Self->{DynamicFields} };
-    my %DynamicFieldScreens   = %{ $Self->{DynamicFieldScreens} };
-    my %DefaultColumnsScreens = %{ $Self->{DefaultColumnsScreens} };
 
     # check needed stuff
     NEEDED:
     for my $Needed (qw(Element Type)) {
-
         $Param{$Needed} = $ParamObject->GetParam( Param => $Needed );
+
         next NEEDED if $Param{$Needed};
     }
 
@@ -87,7 +194,6 @@ sub Run {
     # Edit
     # ------------------------------------------------------------ #
     if ( $Self->{Subaction} eq 'Edit' ) {
-
         return $Self->_ShowEdit(
             %Param,
             Data => \%Config,
@@ -95,7 +201,7 @@ sub Run {
     }
 
     # ------------------------------------------------------------ #
-    # ActvityDialogEditAction
+    # ActivityDialogEditAction
     # ------------------------------------------------------------ #
     elsif ( $Self->{Subaction} eq 'EditAction' ) {
 
@@ -278,7 +384,6 @@ sub _ShowOverview {
     my ( $Self, %Param ) = @_;
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     my %DynamicFields         = %{ $Self->{DynamicFields} };
     my %DynamicFieldScreens   = %{ $Self->{DynamicFieldScreens} };
@@ -286,6 +391,23 @@ sub _ShowOverview {
 
     # show output
     $LayoutObject->Block( Name => 'Overview' );
+
+    # show object type selection
+    my $DynamicFieldObjectTypeStrg = $LayoutObject->BuildSelection(
+        Name         => 'DynamicFieldSelectedObjectType',
+        Data         => $Self->{EnabledObjectTypes},
+        PossibleNone => 1,
+        Translation  => 0,
+        SelectedID   => $Self->{SelectedObjectType},
+        Class        => 'Modernize W75pc',
+    );
+
+    $LayoutObject->Block(
+        Name => 'DynamicFieldObjectType',
+        Data => {
+            DynamicFieldObjectTypeStrg => $DynamicFieldObjectTypeStrg,
+        }
+    );
 
     for my $DynamicFieldScreen ( sort { $DynamicFieldScreens{$a} cmp $DynamicFieldScreens{$b} } keys %DynamicFieldScreens ) {
 

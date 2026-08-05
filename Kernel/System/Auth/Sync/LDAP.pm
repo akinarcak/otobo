@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,9 +27,9 @@ use warnings;
 # CPAN modules
 use Net::LDAP;
 use Net::LDAP::Util qw(escape_filter_value);
-use URI;
+use URI             ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -90,7 +90,6 @@ sub new {
     $Self->{GroupDN}           = $ConfigObject->Get( 'AuthSyncModule::LDAP::GroupDN' . $Param{Count} )           || '';
     $Self->{AccessAttr}        = $ConfigObject->Get( 'AuthSyncModule::LDAP::AccessAttr' . $Param{Count} )        || 'memberUid';
     $Self->{UserAttr}          = $ConfigObject->Get( 'AuthSyncModule::LDAP::UserAttr' . $Param{Count} )          || 'DN';
-    $Self->{DestCharset}       = $ConfigObject->Get( 'AuthSyncModule::LDAP::Charset' . $Param{Count} )           || 'utf-8';
     $Self->{NestedGroupSearch} = $ConfigObject->Get( 'AuthSyncModule::LDAP::NestedGroupSearch' . $Param{Count} ) || '';
 
     # ldap filter always used
@@ -104,7 +103,7 @@ sub new {
         $Self->{Params} = {};
     }
 
-    $Self->{StartTLS} = $ConfigObject->Get( 'AuthModule::LDAP::StartTLS' . $Param{Count} ) || '';
+    $Self->{StartTLS} = $ConfigObject->Get( 'AuthSyncModule::LDAP::StartTLS' . $Param{Count} ) || '';
 
     return $Self;
 }
@@ -457,7 +456,7 @@ sub Sync {
     # variable to store group permissions from ldap
     my %GroupPermissionsFromLDAP;
 
-    # sync ldap group 2 otobo group permissions
+    # sync ldap group 2 careoncloud group permissions
     my $UserSyncGroupsDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncGroupsDefinition' . $Self->{Count}
     );
@@ -572,7 +571,7 @@ sub Sync {
         }
     }
 
-    # sync ldap attribute 2 otobo group permissions
+    # sync ldap attribute 2 careoncloud group permissions
     my $UserSyncAttributeGroupsDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncAttributeGroupsDefinition' . $Self->{Count}
     );
@@ -707,7 +706,7 @@ sub Sync {
     # variable to store role permissions from ldap
     my %RolePermissionsFromLDAP;
 
-    # sync ldap group 2 otobo role permissions
+    # sync ldap group 2 careoncloud role permissions
     my $UserSyncRolesDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncRolesDefinition' . $Self->{Count}
     );
@@ -779,7 +778,7 @@ sub Sync {
         }
     }
 
-    # sync ldap attribute 2 otobo role permissions
+    # sync ldap attribute 2 careoncloud role permissions
     my $UserSyncAttributeRolesDefinition = $ConfigObject->Get(
         'AuthSyncModule::LDAP::UserSyncAttributeRolesDefinition' . $Self->{Count}
     );
@@ -888,6 +887,7 @@ sub Sync {
     return $Param{User};
 }
 
+# TODO: this could be simplified because $Charset is always utf-8
 sub _ConvertTo {
     my ( $Self, $Text, $Charset ) = @_;
 
@@ -896,20 +896,21 @@ sub _ConvertTo {
     # get encode object
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
-    if ( !$Charset || !$Self->{DestCharset} ) {
+    if ( !$Charset ) {
         $EncodeObject->EncodeInput( \$Text );
 
         return $Text;
     }
 
-    # convert from input charset ($Charset) to directory charset ($Self->{DestCharset})
+    # convert from input charset ($Charset) to directory charset (utf-8)
     return $EncodeObject->Convert(
         Text => $Text,
         From => $Charset,
-        To   => $Self->{DestCharset},
+        To   => 'utf-8',
     );
 }
 
+# TODO: this could be simplified because $Charset is always utf-8
 sub _ConvertFrom {
     my ( $Self, $Text, $Charset ) = @_;
 
@@ -918,16 +919,16 @@ sub _ConvertFrom {
     # get encode object
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
-    if ( !$Charset || !$Self->{DestCharset} ) {
+    if ( !$Charset ) {
         $EncodeObject->EncodeInput( \$Text );
 
         return $Text;
     }
 
-    # convert from directory charset ($Self->{DestCharset}) to input charset ($Charset)
+    # convert from directory charset (utf-8) to input charset ($Charset)
     return $EncodeObject->Convert(
         Text => $Text,
-        From => $Self->{DestCharset},
+        From => 'utf-8',
         To   => $Charset,
     );
 }
@@ -1008,12 +1009,17 @@ sub _FindMember {
             filter => '(|(objectclass=groupOfUniqueNames)(objectclass=groupOfUrls))',
         );
 
-        # pop_entry() dies when no entry was found. This is fine as further search
-        # depends on having an entry
-        my $Entry = $Result->pop_entry();
+        # pop_entry() returns either a search result item or undef
+        my $Entry = $Result->pop_entry;
+
+        # nothing to do when no result was found
+        return unless defined $Entry;
+
+        # It is safe to call $Entry->dn as we already checked whether $Entry is defined.
+        # No exception is expected.
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'debug',
-            Message  => 'Nested group search in GroupDN: ' . $Entry->dn(),
+            Message  => 'Nested group search in GroupDN: ' . $Entry->dn,
         );
 
         # add group to list; if we see it again we will ignore it to avoid an infinite loop
@@ -1033,13 +1039,14 @@ sub _FindMember {
             );
 
             # check if we found an entry
-            eval {
-                my $Entry = $Result->pop_entry();    # dies when no entry was found
-                $MemberConfirmedRef->$* = 1;         # entry found as there was no exception
-            };
+            # pop_entry() returns either a search result item or undef
+            my $Entry = $Result->pop_entry;
+            if ($Entry) {
+                $MemberConfirmedRef->$* = 1;
 
-            # return from the eval if we found a match
-            return if $MemberConfirmedRef->$*;
+                # return from the eval if we found a match
+                return;
+            }
         }
 
         # nothing found in dynamic groups

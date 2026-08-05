@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -135,7 +135,7 @@ sub SystemDataAdd {
 get system data for key
 
     my $SystemData = $SystemDataObject->SystemDataGet(
-        Key => 'OTOBO Version',
+        Key => 'CareOnCloud ESM Version',
     );
 
 returns value as a simple scalar, or undef if the key does not exist.
@@ -281,7 +281,7 @@ Returns true if update was successful or false if otherwise - for instance
 if key did not exist.
 
     my $Result = $SystemDataObject->SystemDataUpdate(
-        Key    => 'OTOBO Version',
+        Key    => 'CareOnCloud ESM Version',
         Value  => 'Some New Value',
         UserID => 123,
     );
@@ -348,7 +348,7 @@ Returns true if delete was successful or false if otherwise - for instance
 if key did not exist.
 
     $SystemDataObject->SystemDataDelete(
-        Key    => 'OTOBO Version',
+        Key    => 'CareOnCloud ESM Version',
         UserID => 123,
     );
 

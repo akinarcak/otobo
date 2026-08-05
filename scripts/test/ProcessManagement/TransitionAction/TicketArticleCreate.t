@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,16 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+use Storable qw(dclone);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::System::VariableCheck qw(:all);
 
 our $Self;
-
-use Kernel::System::VariableCheck qw(:all);
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -77,7 +81,7 @@ my $ArticleID1 = $ArticleBackendObject->ArticleCreate(
     TicketID             => $TicketID,
     IsVisibleForCustomer => 0,
     SenderType           => 'agent',
-    From                 => 'Some Agent <otobo@example.com>',
+    From                 => 'Some Agent <careoncloud@example.com>',
     To                   => 'Suplier<suplier@example.com>',
     Subject              => 'Email for suplier',
     Body                 => "the message text\nthe message text\nthe message text\nthe message text\nthe message text\n",
@@ -245,11 +249,11 @@ my @Tests = (
                 CommunicationChannel => 'Internal',
                 IsVisibleForCustomer => 1,
                 SenderType           => 'agent',
-                From                 => 'Admin OTOBO',
+                From                 => 'Admin CareOnCloud ESM',
                 HistoryComment       => 'Info',
                 HistoryType          => 'AddNote',
-                Body                 => '<OTOBO_AGENT_BODY[2]>',
-                Subject              => '<OTOBO_AGENT_SUBJECT[10]>'
+                Body                 => '<CareOnCloud_AGENT_BODY[2]>',
+                Subject              => '<CareOnCloud_AGENT_SUBJECT[10]>'
             },
         },
         Success => 1,
@@ -429,7 +433,7 @@ my @Tests = (
                 SenderType           => 'agent',
                 ContentType          => 'text/plain; charset=ISO-8859-15',
                 Subject              =>
-                    '<OTOBO_TICKET_Title>',
+                    '<CareOnCloud_TICKET_Title>',
                 Body =>
                     'äöüßÄÖÜ€исáéíúóúÁÉÍÓÚñÑ-カスタ-用迎使用-Язык',
                 HistoryType    => 'OwnerUpdate',
@@ -460,7 +464,7 @@ my @Tests = (
                 SenderType           => 'agent',
                 ContentType          => 'text/plain; charset=ISO-8859-15',
                 Subject              =>
-                    '<OTOBO_TICKET_NotExisting> - tag not found',
+                    '<CareOnCloud_TICKET_NotExisting> - tag not found',
                 Body =>
                     'äöüßÄÖÜ€исáéíúóúÁÉÍÓÚñÑ-カスタ-用迎使用-Язык',
                 HistoryType    => 'OwnerUpdate',
@@ -491,7 +495,7 @@ my @Tests = (
                 SenderType           => 'agent',
                 ContentType          => 'text/plain; charset=ISO-8859-15',
                 Subject              =>
-                    '<OTOBO_TICKET_NotExisting> - tag not found',
+                    '<CareOnCloud_TICKET_NotExisting> - tag not found',
                 Body =>
                     'äöüßÄÖÜ€исáéíúóúÁÉÍÓÚñÑ-カスタ-用迎使用-Язык',
                 HistoryType    => 'OwnerUpdate',
@@ -522,7 +526,7 @@ my @Tests = (
                 SenderType           => 'agent',
                 ContentType          => 'text/plain; charset=ISO-8859-15',
                 Subject              =>
-                    '<OTOBO_TICKET_DynamicField_' . $TextFieldName . '_Value>',
+                    '<CareOnCloud_TICKET_DynamicField_' . $TextFieldName . '_Value>',
                 Body =>
                     'äöüßÄÖÜ€исáéíúóúÁÉÍÓÚñÑ-カスタ-用迎使用-Язык',
                 HistoryType    => 'OwnerUpdate',
@@ -553,7 +557,7 @@ my @Tests = (
                 SenderType           => 'agent',
                 ContentType          => 'text/plain; charset=ISO-8859-15',
                 Subject              =>
-                    '<OTOBO_TICKET_DynamicField_' . $DropDownFieldName . '>',
+                    '<CareOnCloud_TICKET_DynamicField_' . $DropDownFieldName . '>',
                 Body =>
                     'äöüßÄÖÜ€исáéíúóúÁÉÍÓÚñÑ-カスタ-用迎使用-Язык',
                 HistoryType    => 'OwnerUpdate',
@@ -584,7 +588,7 @@ my @Tests = (
                 SenderType           => 'agent',
                 ContentType          => 'text/plain; charset=ISO-8859-15',
                 Subject              =>
-                    '<OTOBO_TICKET_DynamicField_' . $MultiSelectFieldName . '_Value>',
+                    '<CareOnCloud_TICKET_DynamicField_' . $MultiSelectFieldName . '_Value>',
                 Body =>
                     'äöüßÄÖÜ€исáéíúóúÁÉÍÓÚñÑ-カスタ-用迎使用-Язык',
                 HistoryType    => 'OwnerUpdate',
@@ -743,7 +747,7 @@ my $CommunicationChannelObject = $Kernel::OM->Get('Kernel::System::Communication
 for my $Test (@Tests) {
 
     # make a deep copy to avoid changing the definition
-    my $OrigTest = Storable::dclone($Test);
+    my $OrigTest = dclone($Test);
 
     my $Success = $Kernel::OM->Get('Kernel::System::ProcessManagement::TransitionAction::TicketArticleCreate')->Run(
         %{ $Test->{Config} },
@@ -781,27 +785,27 @@ for my $Test (@Tests) {
             next ATTRIBUTE if $ExcludedArtributes{$Attribute};
 
             if (
-                $OrigTest->{Config}->{Config}->{$Attribute} eq '<OTOBO_TICKET_NotExisting>'
+                $OrigTest->{Config}->{Config}->{$Attribute} eq '<CareOnCloud_TICKET_NotExisting>'
                 && $Kernel::OM->Get('Kernel::System::DB')->GetDatabaseFunction('Type') eq 'oracle'
                 )
             {
                 $Article{$Attribute} //= '';
             }
 
-            if ( $OrigTest->{Config}->{Config}->{$Attribute} eq '<OTOBO_AGENT_BODY[2]>' ) {
+            if ( $OrigTest->{Config}->{Config}->{$Attribute} eq '<CareOnCloud_AGENT_BODY[2]>' ) {
                 my @Count = ( $Article{$Attribute} =~ /the message text/g );
                 $Self->Is(
                     scalar @Count,
                     2,
-                    'Smart tag <OTOBO_AGENT_BODY[2]> is replaced right'
+                    'Smart tag <CareOnCloud_AGENT_BODY[2]> is replaced right'
                 );
             }
 
-            if ( $OrigTest->{Config}->{Config}->{$Attribute} eq '<OTOBO_AGENT_SUBJECT[10]>' ) {
+            if ( $OrigTest->{Config}->{Config}->{$Attribute} eq '<CareOnCloud_AGENT_SUBJECT[10]>' ) {
                 $Self->Is(
                     $Article{$Attribute},
                     'Email for  [...]',
-                    'Smart tag <OTOBO_AGENT_SUBJECT[10]> is replaced right'
+                    'Smart tag <CareOnCloud_AGENT_SUBJECT[10]> is replaced right'
                 );
             }
 
@@ -837,14 +841,14 @@ for my $Test (@Tests) {
 
             if (
                 $OrigTest->{Config}->{Config}->{$Attribute}
-                =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+                =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
                 )
             {
                 $ExpectedValue = $Ticket{$1} // '';
 
                 if (
                     $OrigTest->{Config}->{Config}->{$Attribute}
-                    =~ m{\A<OTOBO_TICKET_DynamicField_([A-Za-z0-9_]+)_Value>\z}msx
+                    =~ m{\A<CareOnCloud_TICKET_DynamicField_([A-Za-z0-9_]+)_Value>\z}msx
                     )
                 {
                     my $DynamicFieldConfig = $DynamicFieldObject->DynamicFieldGet(

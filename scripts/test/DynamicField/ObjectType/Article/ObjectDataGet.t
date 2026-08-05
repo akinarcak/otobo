@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,8 +23,9 @@ use utf8;
 # CPAN modules
 use HTTP::Request::Common qw(GET);
 use Test2::V0;
+use Try::Tiny;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # Get helper object
@@ -142,12 +143,8 @@ my @Tests = (
             DynamicFieldConfig => $DynamicFieldConfig,
             UserID             => 1,
         },
-        Request       => "Action=someaction;Subaction=somesubaction;ArticleID=-1",
-        Success       => 1,
-        ExectedResult => {
-            ObjectID => -1,
-            Data     => {},
-        },
+        Request => "Action=someaction;Subaction=somesubaction;ArticleID=-1",
+        Throws  => 1,
     },
     {
         Name   => 'Wrong ArticleID and TicketID in the request',
@@ -155,12 +152,8 @@ my @Tests = (
             DynamicFieldConfig => $DynamicFieldConfig,
             UserID             => 1,
         },
-        Request       => "Action=someaction;Subaction=somesubaction;ArticleID=-1;TicketID=-1",
-        Success       => 1,
-        ExectedResult => {
-            ObjectID => -1,
-            Data     => {},
-        },
+        Request => "Action=someaction;Subaction=somesubaction;ArticleID=-1;TicketID=-1",
+        Throws  => 1,
     },
     {
         Name   => 'Correct Article with wrong TicketID in the request',
@@ -168,12 +161,8 @@ my @Tests = (
             DynamicFieldConfig => $DynamicFieldConfig,
             UserID             => 1,
         },
-        Request       => "Action=someaction;Subaction=somesubaction;ArticleID=$ArticleID;TicketID=-1",
-        Success       => 1,
-        ExectedResult => {
-            ObjectID => $ArticleID,
-            Data     => {},
-        },
+        Request => "Action=someaction;Subaction=somesubaction;ArticleID=$ArticleID;TicketID=-1",
+        Throws  => 1,
     },
     {
         Name   => 'Correct Article without TicketID in the request',
@@ -217,7 +206,23 @@ for my $Test (@Tests) {
     );
 
     # implicitly call Kernel::System::Web::Request->new();
-    my %ObjectData = $ObjectHandlerObject->ObjectDataGet( %{ $Test->{Config} } );
+    my %ObjectData;
+    my $HasThrown;
+    try {
+        %ObjectData = $ObjectHandlerObject->ObjectDataGet( %{ $Test->{Config} } );
+    }
+    catch {
+        $HasThrown = 1;
+
+        if ( $Test->{Throws} ) {
+            pass("$Test->{Name} should throw");
+        }
+        else {
+            fail("$Test->{Name} should not throw");
+        }
+    };
+
+    next TEST if $HasThrown;
 
     if ( !$Test->{Success} ) {
         is(

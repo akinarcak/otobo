@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,19 +16,19 @@
 
 package Kernel::System::Loader;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use namespace::autoclean;
 use utf8;
 
 # core modules
 
 # CPAN modules
-use CSS::Minifier::XS qw();
-use JavaScript::Minifier::XS qw();
+use CSS::Minifier::XS        ();
+use JavaScript::Minifier::XS ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -82,7 +82,7 @@ Uses caching internally.
 
 With S3 support the returned value is the last part of the key of the object that is stored in S3.
 
-It is expected that the TargetDirectory is a directory below the OTOBO home directory.
+It is expected that the TargetDirectory is a directory below the CareOnCloud ESM home directory.
 
     my $TargetFilename = $LoaderObject->MinifyFiles(
         List  => [                                 # optional,  minify list of files
@@ -199,10 +199,10 @@ sub MinifyFiles {
     else {
         my $StorageS3Object = $Kernel::OM->Get('Kernel::System::Storage::S3');
 
-        # the target directory is below the OTOBO home dir, adapt that to S3
+        # the target directory is below the CareOnCloud ESM home dir, adapt that to S3
         my $FilePath = join '/', $TargetDirectory, $Filename;
         my $Home     = $Kernel::OM->Get('Kernel::Config')->Get('Home');    # without trailing slash
-        my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/otobo/var/httpd becomes var/httpd
+        my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/careoncloud/var/httpd becomes var/httpd
 
         $LoaderFileExists = $StorageS3Object->ObjectExists(
             Key => $Key,
@@ -273,10 +273,10 @@ sub MinifyFiles {
 
             my $StorageS3Object = $Kernel::OM->Get('Kernel::System::Storage::S3');
 
-            # the target directory is below the OTOBO home dir, adapt that to S3
+            # the target directory is below the CareOnCloud ESM home dir, adapt that to S3
             my $FilePath = join '/', $TargetDirectory, $Filename;
             my $Home     = $Kernel::OM->Get('Kernel::Config')->Get('Home');    # without trailing slash
-            my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/otobo/var/httpd becomes var/httpd
+            my $Key      = $FilePath =~ s!^$Home/!!r;                          # /opt/careoncloud/var/httpd becomes var/httpd
             $StorageS3Object->StoreObject(
                 Key     => $Key,
                 Content => $Content,
@@ -308,6 +308,10 @@ Uses caching internally.
         Location => $Filename,
         Type     => 'CSS',      # CSS | JavaScript
     );
+
+When a file appears to already be a minified file then there is no attempt
+to reduce the file size a second time. A file is assumed to be already minified
+when it ends in F<.min.css> or F<.min.js> respectively.
 
 Warning: this function may cause a die() if there are errors in the file,
 protect against that with eval().
@@ -372,10 +376,20 @@ sub GetMinifiedFile {
 
     my $Result;
     if ( $Param{Type} eq 'CSS' ) {
-        $Result = $Self->MinifyCSS( Code => $$FileContents );
+        if ( $Location =~ m/\.min\.css$/ ) {
+            $Result = $FileContents->$*;
+        }
+        else {
+            $Result = $Self->MinifyCSS( Code => $FileContents->$* );
+        }
     }
     elsif ( $Param{Type} eq 'JavaScript' ) {
-        $Result = $Self->MinifyJavaScript( Code => $$FileContents );
+        if ( $Location =~ m/\.min\.js$/ ) {
+            $Result = $FileContents->$*;
+        }
+        else {
+            $Result = $Self->MinifyJavaScript( Code => $FileContents->$* );
+        }
     }
 
     # and put it in the cache
@@ -426,15 +440,6 @@ Warning: this function may cause a die() if there are errors in the file,
 protect against that with eval().
 
 This function internally uses the CPAN module JavaScript::Minifier::XS.
-As of version 1.05 of that module, there is an issue with regular expressions:
-
-This will cause a die:
-
-    function test(s) { return /\d{1,2}/.test(s); }
-
-A workaround is to enclose the regular expression in parentheses:
-
-    function test(s) { return (/\d{1,2}/).test(s); }
 
 =cut
 
@@ -447,6 +452,7 @@ sub MinifyJavaScript {
             Priority => 'error',
             Message  => 'Need Code Param!',
         );
+
         return;
     }
 
@@ -467,6 +473,7 @@ sub CacheGenerate {
     my @Result;
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
     ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
@@ -519,7 +526,7 @@ Returns a list of deleted files.
 sub CacheDelete {
     my ($Self) = @_;
 
-    # the file system cache files are located below the OTOBO home dir
+    # the file system cache files are located below the CareOnCloud ESM home dir
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
     # for JavaScript there is only one cache folder
@@ -557,8 +564,7 @@ sub CacheDelete {
 
     # now go through the cache folders and delete all .js and .css files
     my @Result;
-    my @FileTypes    = ( '*.js', '*.css' );
-    my $TotalCounter = 0;
+    my @FileTypes = ( '*.js', '*.css' );
     FOLDERTODELETE:
     for my $FolderToDelete (@CacheFoldersList) {
         next FOLDERTODELETE unless -d $FolderToDelete;
@@ -597,7 +603,7 @@ sub CacheDelete {
 deletes all the loader cache files. That is all files with the prefix I<var/httpd/htdocs>
 where the key contains neither I</js-cache/> nor I</css-cache>.
 
-Returns the success of the the discard operations.
+Returns the success of the discard operations.
 
     my $Success = $LoaderObject->_S3CacheDelete();
 

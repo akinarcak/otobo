@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -84,7 +84,7 @@ $Self->True(
 # Prepare two new file-type config settings.
 my $ValidSettingXML = <<"END_XML";
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Framework">
+<careoncloud_config version="2.0" init="Framework">
     <Setting Name="Test1" Required="1" Valid="1">
         <Description Translatable="1">Test 1.</Description>
         <Navigation>Core::Ticket</Navigation>
@@ -99,7 +99,7 @@ my $ValidSettingXML = <<"END_XML";
             <Item ValueType="File">$TestFileLocation</Item>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>
 END_XML
 
 my $ConfigFileLocation = $ConfigObject->Get('Home') . '/Kernel/Config/Files/XML/UnitTest' . $HelperObject->GetRandomNumber() . '.xml';

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -79,8 +79,8 @@ Core.Agent.TicketZoom = (function (TargetNS) {
      * @name MarkAsSeen
      * @memberof Core.Agent.TicketZoom
      * @function
-     * @param {String} TicketID - TicketID of ticket which get's shown.
-     * @param {String} ArticleID - ArticleID of article which get's shown.
+     * @param {String} TicketID - TicketID of ticket which gets shown.
+     * @param {String} ArticleID - ArticleID of article which gets shown.
      * @param {String} [Timeout=3000] - Timeout in milliseconds
      * @description
      *      Mark an article as seen in frontend and backend.
@@ -100,17 +100,19 @@ Core.Agent.TicketZoom = (function (TargetNS) {
                 ArticleID: ArticleID
             };
 
-            // Mark old row as readed
-            $('#ArticleTable .ArticleID[value=' + ArticleID + ']').closest('tr').removeClass('UnreadArticles').find('span.UnreadArticles').remove();
-            $('.TimelineView li#ArticleID_' + ArticleID).find('.UnreadArticles').fadeOut(function() {
-                $(this).closest('li').addClass('Seen');
-            });
-
             // Mark article as seen in backend
             Core.AJAX.FunctionCall(
                 Core.Config.Get('CGIHandle'),
                 Data,
-                function () {}
+                function (Response) {
+                    if ( Response == 1 ) {
+                        // Mark old row as read
+                        $('#ArticleTable .ArticleID[value=' + ArticleID + ']').closest('tr').removeClass('UnreadArticles').find('span.UnreadArticles').remove();
+                        $('.TimelineView li#ArticleID_' + ArticleID).find('.UnreadArticles').fadeOut(function() {
+                            $(this).closest('li').addClass('Seen');
+                        });
+                    }
+                }
             );
         }, parseInt(Timeout, 10));
     };
@@ -119,7 +121,7 @@ Core.Agent.TicketZoom = (function (TargetNS) {
      * @name IframeAutoHeight
      * @memberof Core.Agent.TicketZoom
      * @function
-     * @param {jQueryObject} $Iframe - The iframe which should be auto-heighted
+     * @param {jQueryObject} $Iframe - The iframe of which the height should be calculated and set automatically
      * @description
      *      Set iframe height automatically based on real content height and default config setting.
      */
@@ -230,12 +232,12 @@ Core.Agent.TicketZoom = (function (TargetNS) {
 
             // Scroll to new active article
             // if article is not visible and is above the visible area, move the visible area
-            // add 5px of delta for better usability (top border is definetly visible)
+            // add 5px of delta for better usability (top border is definitely visible)
             if (ActiveArticlePosY < ScrollerY) {
                 $('div.Scroller').get(0).scrollTop = ScrollerOffset + (ActiveArticlePosY - ScrollerY) - 5;
             }
             // if article is not visible and is below the visible area, move the visible area
-            // add 5px of delta for better usability (bottom border is definetly visible)
+            // add 5px of delta for better usability (bottom border is definitely visible)
             else if (ScrollerBottomY < ActiveArticleBottomY) {
                 $('div.Scroller').get(0).scrollTop = ScrollerOffset + (ActiveArticleBottomY - ScrollerBottomY) + 5;
             }
@@ -258,6 +260,13 @@ Core.Agent.TicketZoom = (function (TargetNS) {
                             else if (MenuItems[ArticleIndex][Index].DropdownType === 'Reply') {
                                 Core.Agent.TicketZoom.ArticleActionMenuDropdown(MenuItems[ArticleIndex][Index].FormID, "ResponseID");
                             }
+                        }
+                        else if ( MenuItems[ArticleIndex][Index].ItemType === 'FormPost' ) {
+
+                            // bind onclick submit
+                            $('#' + MenuItems[ArticleIndex][Index].FormID + ' > a').on('click', function() {
+                                $(this).closest('form').submit();
+                            });
                         }
                     }
                 }
@@ -297,7 +306,7 @@ Core.Agent.TicketZoom = (function (TargetNS) {
      * @param {String} ArticleID - The article number of the loaded article
      * @param {Object} WindowObject
      * @description
-     *      Used in OTOBO Community Edition (TM). Loads an article in the Zoom from another window context (e.g. popup).
+     *      Used in CareOnCloud ESM Community Edition (TM). Loads an article in the Zoom from another window context (e.g. popup).
      */
     TargetNS.LoadArticleFromExternal = function (ArticleID, WindowObject) {
         var $Element = $('#ArticleTable td.No input.ArticleID[value=' + ArticleID + ']'),
@@ -503,13 +512,13 @@ Core.Agent.TicketZoom = (function (TargetNS) {
 
     /**
      * @private
-     * @name InitProcessWidget
+     * @name InitOverviewWidget
      * @memberof Core.Agent.TicketZoom
      * @function
      * @description
      *      This function initializes events for process widget.
      */
-     function InitProcessWidget() {
+     function InitOverviewWidget() {
         var WidgetWidth, FieldsPerRow, FieldMargin, FieldWidth;
 
         if ($('.DynamicFieldAutoResize').length > 0) {
@@ -647,7 +656,7 @@ Core.Agent.TicketZoom = (function (TargetNS) {
             ArticleFilterDialog = parseInt(Core.Config.Get('ArticleFilterDialog'), 10),
             AsyncWidgetActions = Core.Config.Get('AsyncWidgetActions') || {},
             TimelineView = Core.Config.Get('TimelineView'),
-            ProcessWidget = Core.Config.Get('ProcessWidget');
+            OverviewWidget = Core.Config.Get('OverviewWidget');
 
         // create open popup event for dropdown elements
         if (MenuItems.length > 0) {
@@ -661,6 +670,13 @@ Core.Agent.TicketZoom = (function (TargetNS) {
                             TargetNS.ArticleActionMenuDropdown(MenuItems[ArticleIndex][Index].FormID, "ResponseID");
                         }
                     }
+                    else if ( MenuItems[ArticleIndex][Index].ItemType === 'FormPost' ) {
+
+                        // bind onclick submit
+                        $('#' + MenuItems[ArticleIndex][Index].FormID + ' > a').on('click', function() {
+                            $(this).closest('form').submit();
+                        });
+                    }
                 }
             }
         }
@@ -673,7 +689,7 @@ Core.Agent.TicketZoom = (function (TargetNS) {
         //   !! + "0"   evaluates to false;
         ZoomExpand = !! + Core.Config.Get('ZoomExpand');
 
-        Core.UI.Resizable.Init($('#ArticleTableBody'), ArticleTableHeight, function (Event, UI, Height) {
+        Core.UI.Resizable.Init($('#ArticleTableBody'), ArticleTableHeight, function (_Event, _UI, Height) {
             // remember new height for next reload
             window.clearTimeout(ResizeTimeoutScroller);
             ResizeTimeoutScroller = window.setTimeout(function () {
@@ -734,9 +750,6 @@ Core.Agent.TicketZoom = (function (TargetNS) {
             if (!ZoomExpand) {
                 // Add active state to new row
                 $(this).closest('table').find('tr').removeClass('Active').end().end().addClass('Active');
-
-                // Mark old row as readed
-                $(this).closest('tr').removeClass('UnreadArticles').find('span.UnreadArticles').remove();
 
                 // Load content of new article
                 LoadArticle($(this).find('input.ArticleInfo').val(), $(this).find('input.ArticleID').val());
@@ -811,6 +824,11 @@ Core.Agent.TicketZoom = (function (TargetNS) {
             }
         });
 
+        // event on generic form
+        $('a.TicketMenuFormAction').on('click', function() {
+            $(this).closest('form').submit();
+        });
+
         // Add event bindings to all article widgets.
         ArticleDetailsEvents();
 
@@ -828,8 +846,8 @@ Core.Agent.TicketZoom = (function (TargetNS) {
         }
 
         // initialize events for process widget
-        if (typeof ProcessWidget !== 'undefined' && parseInt(ProcessWidget, 10) === 1) {
-            InitProcessWidget();
+        if (typeof OverviewWidget !== 'undefined' && parseInt(OverviewWidget, 10) === 1) {
+            InitOverviewWidget();
         }
 
         Core.App.Subscribe('Event.AJAX.ContentUpdate.Callback', function() {
@@ -842,6 +860,46 @@ Core.Agent.TicketZoom = (function (TargetNS) {
         $('a.SplitSelection').unbind('click.SplitSelection').bind('click.SplitSelection', function() {
             Core.Agent.TicketSplit.OpenSplitSelection($(this).attr('href'));
             return false;
+        });
+
+        Core.App.Subscribe('Event.AJAX.ContentUpdate.Callback', function() {
+            $('a.ArticleDelete').unbind('click.ArticleDelete').bind('click.ArticleDelete', function() {
+                Core.Agent.ArticleFeatures.OpenDeleteConfirmDialog($(this).attr('href'));
+                return false;
+            });
+        });
+
+        $('a.ArticleDelete').unbind('click.ArticleDelete').bind('click.ArticleDelete', function() {
+            Core.Agent.ArticleFeatures.OpenDeleteConfirmDialog($(this).attr('href'));
+            return false;
+        });
+
+        Core.App.Subscribe('Event.AJAX.ContentUpdate.Callback', function() {
+            $('a.ArticleRestore').unbind('click.ArticleRestore').bind('click.ArticleRestore', function() {
+                Core.Agent.ArticleFeatures.OpenUndoDeleteConfirmDialog($(this).attr('href'));
+                return false;
+            });
+        });
+
+        $('a.ArticleRestore').unbind('click.ArticleRestore').bind('click.ArticleRestore', function() {
+            Core.Agent.ArticleFeatures.OpenUndoDeleteConfirmDialog($(this).attr('href'));
+            return false;
+        });
+
+        Core.App.Subscribe('Event.AJAX.ContentUpdate.Callback', function() {
+            $('#ArticleVersion').on('change', function () {
+                var PopupType = 'TicketAction';
+                var VersionID = $("#ArticleVersion").prop('selectedIndex');
+
+                if ( $('#ArticleVersion').val() != "" ) {
+                    var URL = Core.Config.Get('CGIHandle') + '?Action=AgentTicketArticleVersionView;TicketID='+$("input[name='TicketID']").val() + ';VersionID=' + VersionID +
+                                ';ArticleID='+$('#ArticleVersion').val()+';SourceArticleID='+$("input[name='ArticleID']").val()+';VersionView=1;CareOnCloudAgentInterface='+$("input[name='CareOnCloudAgentInterface']").val();
+
+                    Core.UI.Popup.OpenPopup(URL, PopupType);
+                    $('#ArticleVersion').val('');
+                }
+                return false;
+            });
         });
     };
 

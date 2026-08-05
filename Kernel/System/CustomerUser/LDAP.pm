@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -287,7 +287,7 @@ sub CustomerName {
         if ( $Result->code() == 4 ) {
 
             # Result code 4 (LDAP_SIZELIMIT_EXCEEDED) is normal if there
-            # are more items in LDAP than search limit defined in OTOBO or
+            # are more items in LDAP than search limit defined in CareOnCloud ESM or
             # in LDAP server. Avoid spamming logs with such errors.
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'debug',
@@ -524,7 +524,7 @@ sub CustomerSearch {
         if ( $Result->code() == 4 ) {
 
             # Result code 4 (LDAP_SIZELIMIT_EXCEEDED) is normal if there
-            # are more items in LDAP than search limit defined in OTOBO or
+            # are more items in LDAP than search limit defined in CareOnCloud ESM or
             # in LDAP server. Avoid spamming logs with such errors.
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'debug',
@@ -1233,7 +1233,7 @@ sub CustomerIDList {
         if ( $Result->code() == 4 ) {
 
             # Result code 4 (LDAP_SIZELIMIT_EXCEEDED) is normal if there
-            # are more items in LDAP than search limit defined in OTOBO or
+            # are more items in LDAP than search limit defined in CareOnCloud ESM or
             # in LDAP server. Avoid spamming logs with such errors.
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'debug',

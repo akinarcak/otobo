@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,19 +14,21 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
-
-# OTOBO modules
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 use Kernel::System::UnitTest::Selenium;
+
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
 $Selenium->RunTest(
@@ -111,12 +113,12 @@ $Selenium->RunTest(
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AgentTicketZoom;TicketID=$TicketID");
 
         # Check are there Download and Viewer links for test attachment.
-        $Self->True(
+        ok(
             $Selenium->find_element("//a[contains(\@title, \'Download' )]"),
             "Download link for attachment is found"
         );
 
-        $Self->True(
+        ok(
             $Selenium->find_element("//a[contains(\@title, \'View' )]"),
             "View link for attachment is found"
         );
@@ -135,7 +137,7 @@ $Selenium->RunTest(
 
         # Check expected values in PDF test attachment.
         for my $ExpectedValue (qw(OTOBO.org TEST)) {
-            $Self->True(
+            ok(
                 index( $Selenium->get_page_source(), $ExpectedValue ) > -1,
                 "Value is found on screen - $ExpectedValue"
             );
@@ -198,14 +200,14 @@ $Selenium->RunTest(
         }
 
         # Check we actually got a follow-up.
-        $Self->Is(
+        is(
             $Return[0] || 0,
             2,
             "PostMaster::Run() - FollowUp",
         );
 
         # Check we actually got the same ticket ID.
-        $Self->Is(
+        is(
             $Return[1] || 0,
             $TicketID,
             "PostMaster::Run() - FollowUp/TicketID",
@@ -233,7 +235,7 @@ $Selenium->RunTest(
         $Selenium->WaitFor( JavaScript => 'return document.readyState === "complete";' );
 
         # Check if article is displayed in expected encoding.
-        $Self->True(
+        ok(
             index( $Selenium->get_page_source(), 'Munguía' ) > -1,
             'Article displayed using correct encoding'
         );
@@ -252,7 +254,7 @@ $Selenium->RunTest(
                 UserID   => 1,
             );
         }
-        $Self->True(
+        ok(
             $Success,
             "Ticket with ticket id $TicketID is deleted"
         );
@@ -264,4 +266,4 @@ $Selenium->RunTest(
     }
 );
 
-$Self->DoneTesting();
+done_testing;

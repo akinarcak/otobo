@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,18 +20,22 @@ use warnings;
 use utf8;
 
 # use ../ as lib location
-use File::Basename;
-use FindBin qw($RealBin);
+use File::Basename qw(dirname);
+use FindBin        qw($RealBin);
 use lib dirname($RealBin);
 use lib dirname($RealBin) . '/Kernel/cpan-lib';
 
-use Kernel::System::ObjectManager;
+# core modules
+use Getopt::Long qw(GetOptions);
 
-use Getopt::Long;
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::ObjectManager ();
 
 local $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-Migrate-From-OTRS.pl',
+        LogPrefix => 'CareOnCloud ESM-Migrate-From-OTRS.pl',
     },
 );
 
@@ -43,7 +47,7 @@ my %Options = (
     Verbose        => 0,
     OTRS6path      => '/opt/otrs/',
 );
-Getopt::Long::GetOptions(
+GetOptions(
     'help',            \$Options{Help},
     'non-interactive', \$Options{NonInteractive},
     'OTRS-6-path',     \$Options{OTRS6path},
@@ -56,7 +60,7 @@ Getopt::Long::GetOptions(
         print <<"EOF";
 
 Migrate-From-OTRS.pl - Upgrade script for OTRS 5 to 6 migration.
-Copyright (C) 2019-2021 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2024 Rother OSS GmbH, https://otobo.io/
 
 Usage: $0
     Options are as follows:
@@ -74,14 +78,14 @@ EOF
     if ( $> == 0 ) {    # $EFFECTIVE_USER_ID
         die "
 Cannot run this program as root.
-Please run it as the 'otobo' user or with the help of su:
-    su -c \"$0\" -s /bin/bash otobo
+Please run it as the 'careoncloud' user or with the help of su:
+    su -c \"$0\" -s /bin/bash careoncloud
 ";
     }
 
     my $Result = $Kernel::OM->Create('Kernel::System::MigrateFromOTRS')->Run(
         OTRSHomePath       => '/opt/otrs/',
-        Task               => 'OTOBOPerlModulesCheck',
+        Task               => 'CareOnCloudPerlModulesCheck',
         CommandlineOptions => \%Options,
         UserID             => 1,
     );

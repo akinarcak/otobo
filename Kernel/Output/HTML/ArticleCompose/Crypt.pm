@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,14 +16,17 @@
 
 package Kernel::Output::HTML::ArticleCompose::Crypt;
 
-use parent 'Kernel::Output::HTML::Base';
-
 use strict;
 use warnings;
 
-use Mail::Address;
-use Kernel::Language qw(Translatable);
+use parent 'Kernel::Output::HTML::Base';
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -31,6 +34,7 @@ our @ObjectDependencies = (
     'Kernel::System::Crypt::PGP',
     'Kernel::System::Crypt::SMIME',
     'Kernel::Output::HTML::Layout',
+    'Kernel::System::EmailAddress',
 );
 
 sub Option {
@@ -79,18 +83,6 @@ sub Run {
             }
             delete $KeyList{$UniqueEncryptKeyIDToRemove};
         }
-    }
-
-    # Find recipient list.
-    my $Recipient = '';
-    for (qw(To Cc Bcc)) {
-        if ( $Param{$_} ) {
-            $Recipient .= ', ' . $Param{$_};
-        }
-    }
-    my @SearchAddress = ();
-    if ($Recipient) {
-        @SearchAddress = Mail::Address->parse($Recipient);
     }
 
     if (
@@ -214,15 +206,16 @@ sub Data {
         }
     }
 
-    my @SearchAddress = ();
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    my @SearchAddresses;
     if ($Recipient) {
-        @SearchAddress = Mail::Address->parse($Recipient);
+        @SearchAddresses = $EmailAddressObject->ParseAddressLine( Line => $Recipient );
     }
 
     # Generate key list.
     my %KeyList;
 
-    return %KeyList if !@SearchAddress;
+    return %KeyList if !@SearchAddresses;
     return %KeyList if !$Param{EmailSecurityOptions};
 
     # Get email security options.
@@ -248,9 +241,9 @@ sub Data {
             || ( $PGPMethod eq 'Inline' && !$Kernel::OM->Get('Kernel::Output::HTML::Layout')->{BrowserRichText} )
             )
         {
-            for my $SearchAddress (@SearchAddress) {
+            for my $SearchAddress (@SearchAddresses) {
                 my @PublicKeys = $PGPObject->PublicKeySearch(
-                    Search => $SearchAddress->address(),
+                    Search => $EmailAddressObject->GetAddress( AddressObject => $SearchAddress ),
                 );
 
                 for my $DataRef (@PublicKeys) {
@@ -280,9 +273,9 @@ sub Data {
 
         return %KeyList if !$SMIMEObject;
 
-        for my $SearchAddress (@SearchAddress) {
+        for my $SearchAddress (@SearchAddresses) {
             my @PublicKeys = $SMIMEObject->CertificateSearch(
-                Search => $SearchAddress->address(),
+                Search => $EmailAddressObject->GetAddress( AddressObject => $SearchAddress ),
             );
             for my $DataRef (@PublicKeys) {
                 my $Expired = '';
@@ -373,20 +366,21 @@ sub _CheckRecipient {
     my $MissingKeysFlag;
 
     # Check each recipient type.
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
     RECIPIENTTYPE:
     for my $RecipientType (qw(To Cc Bcc)) {
 
         # Get all addresses for each recipient type.
-        my @SearchAddress;
+        my @SearchAddresses;
         if ( $Param{$RecipientType} ) {
-            @SearchAddress = Mail::Address->parse( $Param{$RecipientType} );
+            @SearchAddresses = $EmailAddressObject->ParseAddressLine( Line => $Param{$RecipientType} );
         }
 
         # Get all certificates/public keys for each address.
         ADDRESS:
-        for my $Address (@SearchAddress) {
+        for my $Address (@SearchAddresses) {
 
-            my $EmailAddress = $Address->address();
+            my $EmailAddress = $EmailAddressObject->GetAddress( AddressObject => $Address );
 
             my @PublicKeys;
             if ( $Backend eq 'PGP' ) {
@@ -473,29 +467,31 @@ sub _PickEncryptKeyIDs {
     # Return nothing if encrypt object was not created
     return [] if !$EncryptObject;
 
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+
     # Check each recipient type.
     for my $RecipientType (qw(To Cc Bcc)) {
 
         # Get all addresses for each recipient type.
-        my @SearchAddress;
+        my @SearchAddresses;
         if ( $Param{$RecipientType} ) {
-            @SearchAddress = Mail::Address->parse( $Param{$RecipientType} );
+            @SearchAddresses = $EmailAddressObject->ParseAddressLine( Line => $Param{$RecipientType} );
         }
 
         ADDRESS:
-        for my $Address (@SearchAddress) {
+        for my $Address (@SearchAddresses) {
 
             my @PublicKeys;
             if ( $Backend eq 'PGP' ) {
                 @PublicKeys = $EncryptObject->PublicKeySearch(
-                    Search => $Address->address(),
+                    Search => $EmailAddressObject->GetAddress( AddressObject => $Address ),
                 );
 
                 @PublicKeys = sort { $a->{Expires} cmp $b->{Expires} } grep { $_->{Status} eq 'good' } @PublicKeys;
             }
             else {
                 @PublicKeys = $EncryptObject->CertificateSearch(
-                    Search => $Address->address(),
+                    Search => $EmailAddressObject->GetAddress( AddressObject => $Address ),
                     Valid  => 1,
                 );
 
@@ -568,27 +564,29 @@ sub _GetUniqueEncryptKeyIDsToRemove {
 
     my %UniqueEncryptKeyIDsToRemove;
 
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+
     # Check each recipient type.
     for my $RecipientType (qw(To Cc Bcc)) {
 
         # Get all addresses for each recipient type.
-        my @SearchAddress;
+        my @SearchAddresses;
         if ( $Param{$RecipientType} ) {
-            @SearchAddress = Mail::Address->parse( $Param{$RecipientType} );
+            @SearchAddresses = $EmailAddressObject->ParseAddressLine( Line => $Param{$RecipientType} );
         }
 
         ADDRESS:
-        for my $Address (@SearchAddress) {
+        for my $Address (@SearchAddresses) {
 
             my @PublicKeys;
             if ( $Backend eq 'PGP' ) {
                 @PublicKeys = $EncryptObject->PublicKeySearch(
-                    Search => $Address->address(),
+                    Search => $EmailAddressObject->GetAddress( AddressObject => $Address ),
                 );
             }
             else {
                 @PublicKeys = $EncryptObject->CertificateSearch(
-                    Search => $Address->address(),
+                    Search => $EmailAddressObject->GetAddress( AddressObject => $Address ),
                 );
             }
 

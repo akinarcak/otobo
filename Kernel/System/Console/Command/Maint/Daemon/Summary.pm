@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,9 +19,14 @@ package Kernel::System::Console::Command::Maint::Daemon::Summary;
 use strict;
 use warnings;
 
-use Kernel::System::VariableCheck qw(IsArrayRefWithData);
-
 use parent qw(Kernel::System::Console::BaseCommand);
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsArrayRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -34,7 +39,7 @@ sub Configure {
 
     $Self->AddArgument(
         Name        => 'daemon-name',
-        Description => "The name of a registered daemon.",
+        Description => 'The name of a registered daemon.',
         Required    => 0,
         ValueRegex  => qr/.*/smx,
     );
@@ -42,9 +47,11 @@ sub Configure {
     $Self->AdditionalHelp(<<"EOF");
 If no daemon-name is specified as:
 
- <green>otobo.Console.pl $Self->{Name}</green>
+ <green>careoncloud.Console.pl $Self->{Name}</green>
 
 The command will get the summary of all daemon modules available.
+
+The list of daemon modules can be retrieved with the console command Maint::Daemon::List.
 EOF
 
     return;

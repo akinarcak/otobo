@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,13 +21,13 @@ use strict;
 use warnings;
 
 # core modules
-use Digest::MD5;
+use Digest::MD5 ();
 
 # CPAN modules
-use XML::LibXML;
-use XML::LibXML::SAX::Parser;
+use XML::LibXML              ();
+use XML::LibXML::SAX::Parser ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::System::Cache',
@@ -842,7 +842,6 @@ sub XMLParse {
         $Param{String} = ${ $Param{String} };
     }
 
-    # get encode object
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
     # create checksum
@@ -1095,8 +1094,6 @@ sub _XMLHash2D {
 
 sub _XMLStructure2XMLHash {
     my ( $Self, %Param ) = @_;
-
-    my $Output = '';
 
     if ( !defined $Param{Item} ) {
         return;
@@ -1499,7 +1496,6 @@ sub _XMLStructure2XMLHash {
 sub _Decode {
     my ( $Self, $A ) = @_;
 
-    # get encode object
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
     for ( sort keys %{$A} ) {

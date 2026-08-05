@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -39,6 +39,17 @@
     <div class="Clear"></div>
     <div class="SidebarColumn">
 
+[% RenderBlockStart("IncludeInvalid") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include invalid Mail Accounts") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include invalid Mail Accounts") | html %]</label>
+            </div>
+        </div>
+[% RenderBlockEnd("IncludeInvalid") %]
 [% RenderBlockStart("ActionList") %]
         <div class="WidgetSimple">
             <div class="Header">
@@ -79,7 +90,7 @@
                     [% Translate("All incoming emails with one account will be dispatched in the selected queue.") | html %]
                 </p>
                 <p class="FieldExplanation">
-                    [% Translate("If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.") | html %]
+                    [% Translate("If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.") | html %]
                 </p>
                 <p class="FieldExplanation">
                     [% Translate("Outgoing email can be configured via the Sendmail* settings in %s.",
@@ -170,7 +181,17 @@
                             </div>
                         </div>
                         <div class="Clear"></div>
-
+                        <label class="Mandatory" for="AuthAdd"><span class="Marker">*</span> [% Translate("Authentication") | html %]:</label>
+                        <div class="Field">
+                            [% Data.AuthOptionAdd %]
+                            <div id="AuthAddError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="AuthAddServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
                         <label class="Mandatory" for="LoginAdd"><span class="Marker">*</span> [% Translate("Username") | html %]:</label>
                         <div class="Field">
                             <input type="text" class="W50pc Validate_Required [% Data.LoginAddInvalid | html %]" name="Login" id="LoginAdd" value="" maxlength="200" autocomplete="off" />
@@ -182,10 +203,26 @@
                             </div>
                         </div>
                         <div class="Clear"></div>
+                        <label class="Mandatory MailAccount" for="AccountName"><span class="Marker">*</span> [% Translate("OIDC Account") | html %]:</label>
+                        <div class="Field MailAccount">
+                            [% Data.AccountOptionAdd %]
+                            <p class="FieldExplanation">
+                            [% Translate("Select the") | html %]
+                            <a target="_blank" href="?Action=AdminOAuthTokenStore">OIDC</a>
+                            [% Translate("Account to use for OAuth2 authentication.") | html %]
+                            </p>
 
-                        <label class="Mandatory" for="PasswordAdd"><span class="Marker">*</span> [% Translate("Password") | html %]:</label>
-                        <div class="Field">
-                            <input type="password" class="W50pc Validate_Required [% Data.PasswordAddInvalid | html %]" name="Password" id="PasswordAdd" value="" maxlength="200" autocomplete="off" />
+                            <div id="AccountAddError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="AccountAddServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
+                        <label class="Mandatory MailPassword" for="PasswordAdd"><span class="Marker">*</span> [% Translate("Password") | html %]:</label>
+                        <div class="Field MailPassword">
+                            <input type="password" class="W50pc MailPassword Validate_Required [% Data.PasswordAddInvalid | html %]" name="Password" id="PasswordAdd" value="" maxlength="200" autocomplete="off" />
                             <div id="PasswordAddError" class="TooltipErrorMessage">
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>
@@ -290,7 +327,17 @@
                             </div>
                         </div>
                         <div class="Clear"></div>
-
+                        <label class="Mandatory" for="Auth"><span class="Marker">*</span> [% Translate("Authentication") | html %]:</label>
+                        <div class="Field">
+                            [% Data.AuthOption %]
+                            <div id="AuthAddError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="AuthAddServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
                         <label class="Mandatory" for="LoginEdit"><span class="Marker">*</span> [% Translate("Username") | html %]:</label>
                         <div class="Field">
                             <input type="text" class="W50pc Validate_Required [% Data.LoginEditInvalid | html %]" name="Login" id="LoginEdit" value="[% Data.Login | html %]" maxlength="200" autocomplete="off" />
@@ -302,10 +349,25 @@
                             </div>
                         </div>
                         <div class="Clear"></div>
-
-                        <label class="Mandatory" for="PasswordEdit"><span class="Marker">*</span> [% Translate("Password") | html %]:</label>
-                        <div class="Field">
-                            <input type="password" class="W50pc Validate_Required [% Data.PasswordEditInvalid | html %]" name="Password" id="PasswordEdit" value="[% IF Data.Password %]otobo-dummy-password-placeholder[% END %]" maxlength="200" autocomplete="off" />
+                        <label class="Mandatory MailAccount" for="AccountName"><span class="Marker">*</span> [% Translate("OIDC Account") | html %]:</label>
+                        <div class="Field MailAccount">
+                            [% Data.AccountOption %]
+                            <p class="FieldExplanation">
+                            [% Translate("Select the") | html %]
+                            <a target="_blank" href="?Action=AdminOAuthTokenStore">OIDC</a>
+                            [% Translate("Account to use for OAuth2 authentication.") | html %]
+                            </p>
+                            <div id="AccountAddError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                            <div id="AccountAddServerError" class="TooltipErrorMessage">
+                                <p>[% Translate("This field is required.") | html %]</p>
+                            </div>
+                        </div>
+                        <div class="Clear"></div>
+                        <label class="Mandatory MailPassword" for="PasswordEdit"><span class="Marker">*</span> [% Translate("Password") | html %]:</label>
+                        <div class="Field MailPassword">
+                            <input type="password" class="W50pc MailPassword Validate_Required [% Data.PasswordEditInvalid | html %]" name="Password" id="PasswordEdit" value="[% IF Data.Password %]careoncloud-dummy-password-placeholder[% END %]" maxlength="200" autocomplete="off" />
                             <div id="PasswordEditError" class="TooltipErrorMessage">
                                 <p>[% Translate("This field is required.") | html %]</p>
                             </div>

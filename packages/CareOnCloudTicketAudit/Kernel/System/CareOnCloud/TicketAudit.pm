@@ -1,0 +1,677 @@
+# --
+# Copyright (C) 2026 Data Market Bilgi Hizmetleri A.S.
+# SPDX-License-Identifier: GPL-3.0-only
+# --
+package Kernel::System::CareOnCloud::TicketAudit;
+
+use v5.24;
+use strict;
+use warnings;
+use Digest::SHA qw(sha256_hex);
+
+our $VERSION = '0.8.19';
+our $NestedMutationFailure;
+our @ObjectDependencies = (
+    'Kernel::Config',
+    'Kernel::System::CareOnCloud::Audit',
+    'Kernel::System::CareOnCloud::TenantDirectory',
+    'Kernel::System::DB',
+    'Kernel::System::Log',
+);
+
+sub new { return bless {}, $_[0] }
+
+sub TicketCreateRun {
+    my ( $Self, %Param ) = @_;
+    return $Param{Original}->( $Param{TicketObject}, %{ $Param{Param} } ) if !$Self->_Enabled();
+    my $Call = $Param{Param};
+    my $TenantID = $Call->{CustomerNo} // $Call->{CustomerID} // q{};
+    if ( !$Self->_TenantActive($TenantID) ) {
+        $Self->_Log("CareOnCloud ticket create rejected: tenant missing or inactive ($TenantID)");
+        return;
+    }
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub { $Self->_CacheClear( TicketObject => $Param{TicketObject} ) },
+        Code => sub {
+            local $Param{TicketObject}->{CareOnCloudTicketAuditSuppress} = 1;
+            my $TicketID = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            return $Self->_Error('TICKET_CREATE_FAILED') if !$TicketID;
+            my $UserID = $Call->{UserID};
+            my @Values = ( $TicketID, $TenantID, $UserID, $UserID );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('TICKET_SCOPE_WRITE_FAILED') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => "INSERT INTO careoncloud_ticket_scope (ticket_id, tenant_id, version, status, create_time, create_by, change_time, change_by) VALUES (?, ?, 1, 'active', current_timestamp, ?, current_timestamp, ?)",
+                Bind => \@Bind,
+            );
+            my %Ticket = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $UserID );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $TenantID, TicketID => $TicketID, UserID => $UserID,
+                Action => 'ticket.created', Version => 1, FromState => q{}, ToState => $Ticket{State} // q{},
+                Details => { ticket_number => $Ticket{TicketNumber} // q{}, title => $Ticket{Title} // q{}, queue => $Ticket{Queue} // q{} },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $TicketID };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub TicketDeleteRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{TicketObject}, %{$Call} ) if !$Self->_Enabled();
+    my $TicketID = $Call->{TicketID};
+    return if !$TicketID;
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub { $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $TicketID ) },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope || $Scope->{Status} ne 'active';
+            my %Ticket = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            return $Self->_Error('TICKET_NOT_FOUND') if !$Ticket{TicketID};
+            local $Param{TicketObject}->{CareOnCloudTicketAuditSuppress} = 1;
+            my $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            return $Self->_Error('TICKET_DELETE_FAILED') if !$Value;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => "UPDATE careoncloud_ticket_scope SET status = 'deleted', version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?",
+                Bind => \@Bind,
+            );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => 'ticket.deleted', Version => $Version, FromState => 'active', ToState => 'deleted',
+                Details => { ticket_number => $Ticket{TicketNumber} // q{}, title => $Ticket{Title} // q{}, version => $Version },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $Value };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub TicketMergeRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{TicketObject}, %{$Call} ) if !$Self->_Enabled();
+    my ( $MainTicketID, $MergeTicketID ) = @{$Call}{qw(MainTicketID MergeTicketID)};
+    return if !$MainTicketID || !$MergeTicketID || $MainTicketID == $MergeTicketID;
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $MainTicketID );
+            $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $MergeTicketID );
+        },
+        Code => sub {
+            my @IDs = sort { $a <=> $b } ( $MainTicketID, $MergeTicketID );
+            my %Scope;
+            for my $TicketID (@IDs) {
+                $Scope{$TicketID} = $Self->_ScopeLock( TicketID => $TicketID );
+                return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope{$TicketID} || $Scope{$TicketID}->{Status} ne 'active';
+            }
+            return $Self->_Error('CROSS_TENANT_MERGE_FORBIDDEN') if $Scope{$MainTicketID}->{TenantID} ne $Scope{$MergeTicketID}->{TenantID};
+            my %Main = $Param{TicketObject}->TicketGet( TicketID => $MainTicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my %Merge = $Param{TicketObject}->TicketGet( TicketID => $MergeTicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            return $Self->_Error('TICKET_NOT_FOUND') if !$Main{TicketID} || !$Merge{TicketID};
+            local $Param{TicketObject}->{CareOnCloudTicketAuditSuppress} = 1;
+            local $Kernel::System::Ticket::CareOnCloudAuditCustom::CareOnCloudTicketAuditMergeSuppress = 1;
+            my $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            return $Self->_Error('TICKET_MERGE_FAILED') if !$Value || $Value eq 'NoValidMergeStates';
+            my $TenantID = $Scope{$MainTicketID}->{TenantID};
+            for my $TicketID ( $MainTicketID, $MergeTicketID ) {
+                my $Version = $Scope{$TicketID}->{Version} + 1;
+                my @Values = ( $Call->{UserID}, $TicketID, $Scope{$TicketID}->{Version} );
+                my @Bind = map { \$_ } @Values;
+                return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                    SQL => 'UPDATE careoncloud_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+                );
+                my $IsMain = $TicketID == $MainTicketID;
+                my $Audit = $Self->_AuditRecord(
+                    TenantID => $TenantID, TicketID => $TicketID, UserID => $Call->{UserID}, Version => $Version,
+                    Action => $IsMain ? 'ticket.merge.received' : 'ticket.merged', FromState => $IsMain ? 'active' : 'active', ToState => $IsMain ? 'merged_content_received' : 'merged',
+                    Details => {
+                        ticket_number => $IsMain ? $Main{TicketNumber} // q{} : $Merge{TicketNumber} // q{},
+                        counterpart_ticket_id => $IsMain ? $MergeTicketID : $MainTicketID,
+                        counterpart_ticket_number => $IsMain ? $Merge{TicketNumber} // q{} : $Main{TicketNumber} // q{}, version => $Version,
+                    },
+                );
+                return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            }
+            return { Success => 1, Value => $Value };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub MutationRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{TicketObject}, %{$Call} ) if !$Self->_Enabled();
+    my $TicketID = $Call->{TicketID};
+    return if !$TicketID;
+    my $ParentFailure = $NestedMutationFailure;
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub { $Self->_CacheClear( TicketObject => $Param{TicketObject}, TicketID => $TicketID ) },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            if ( $Param{Field} eq 'Customer' ) {
+                my $RequestedTenant = $Call->{No} // $Call->{CustomerID} // q{};
+                return $Self->_Error('TENANT_CHANGE_FORBIDDEN') if length $RequestedTenant && $RequestedTenant ne $Scope->{TenantID};
+            }
+            my %Before = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $NestedFailure = 0;
+            my $Value;
+            if ( $Param{AllowNested} ) {
+                local $NestedMutationFailure = \$NestedFailure;
+                $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            }
+            else {
+                local $Param{TicketObject}->{CareOnCloudTicketAuditSuppress} = 1;
+                $Value = $Param{Original}->( $Param{TicketObject}, %{$Call} );
+            }
+            return $Self->_Error('TICKET_MUTATION_FAILED') if !$Value;
+            return $Self->_Error('NESTED_TICKET_MUTATION_FAILED') if $NestedFailure;
+            if ( $Param{AllowNested} ) {
+                $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+                return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            }
+            my %After = $Param{TicketObject}->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $From = $Param{Field} eq 'Customer'
+                ? join( q{|}, $Before{CustomerID} // q{}, $Before{CustomerUserID} // q{} )
+                : defined $Before{ $Param{Field} } ? "$Before{$Param{Field}}" : q{};
+            my $To = $Param{Field} eq 'Customer'
+                ? join( q{|}, $After{CustomerID} // q{}, $After{CustomerUserID} // q{} )
+                : defined $After{ $Param{Field} } ? "$After{$Param{Field}}" : q{};
+            return { Success => 1, Value => $Value } if $From eq $To;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE careoncloud_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => $Param{Action}, Version => $Version,
+                FromState => $Self->_StateToken($From), ToState => $Self->_StateToken($To),
+                Details => {
+                    field => lc $Param{Field}, ticket_number => $After{TicketNumber} // q{}, version => $Version,
+                    from_value => $From, to_value => $To,
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $Value };
+        },
+    );
+    ${$ParentFailure} = 1 if ref $ParentFailure eq 'SCALAR' && !$Result->{Success};
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub ArticleCreateRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{ArticleBackend}, %{$Call} ) if !$Self->_Enabled();
+    my $TicketID = $Call->{TicketID};
+    return if !$TicketID;
+    if ( ( $Param{ArticleBackend}->{ArticleStorageModule} // q{} ) ne 'Kernel::System::Ticket::Article::Backend::MIMEBase::ArticleStorageDB' ) {
+        $Self->_Log('CareOnCloud article create rejected: transactional ArticleStorageDB is required');
+        return;
+    }
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            local $Param{ArticleBackend}->{CareOnCloudTicketAuditSuppress} = 1;
+            my $NestedFailure = 0;
+            local $NestedMutationFailure = \$NestedFailure;
+            my $ArticleID = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
+            return $Self->_Error('ARTICLE_CREATE_FAILED') if !$ArticleID;
+            return $Self->_Error('NESTED_TICKET_MUTATION_FAILED') if $NestedFailure;
+            $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE careoncloud_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => 'ticket.article.created', Version => $Version, FromState => q{}, ToState => 'created',
+                ObjectType => 'ticket_article', ObjectID => $ArticleID,
+                Details => {
+                    ticket_number => $Ticket{TicketNumber} // q{}, version => $Version,
+                    sender_type => $Call->{SenderType} // q{}, visible_for_customer => $Call->{IsVisibleForCustomer} ? 1 : 0,
+                    subject => $Call->{Subject} // q{}, storage => 'database',
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $ArticleID };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub ChatArticleCreateRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{ArticleBackend}, %{$Call} ) if !$Self->_Enabled();
+    my $TicketID = $Call->{TicketID};
+    return if !$TicketID;
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            local $Param{ArticleBackend}->{CareOnCloudTicketAuditSuppress} = 1;
+            my $NestedFailure = 0;
+            local $NestedMutationFailure = \$NestedFailure;
+            my $ArticleID = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
+            return $Self->_Error('CHAT_ARTICLE_CREATE_FAILED') if !$ArticleID;
+            return $Self->_Error('NESTED_TICKET_MUTATION_FAILED') if $NestedFailure;
+            $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE careoncloud_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => 'ticket.chat_article.created', Version => $Version, FromState => q{}, ToState => 'created',
+                ObjectType => 'ticket_article', ObjectID => $ArticleID,
+                Details => {
+                    ticket_number => $Ticket{TicketNumber} // q{}, version => $Version,
+                    sender_type => $Call->{SenderType} // q{}, visible_for_customer => $Call->{IsVisibleForCustomer} ? 1 : 0,
+                    chat_message_count => scalar @{ $Call->{ChatMessageList} // [] }, storage => 'database',
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $ArticleID };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub ChatArticleUpdateRun {
+    my ( $Self, %Param ) = @_;
+    return $Param{Original}->( $Param{ArticleBackend}, %{ $Param{Param} } ) if !$Self->_Enabled();
+    return $Self->_ChatArticleMutationRun( %Param, Action => 'ticket.chat_article.updated', ToState => 'updated' );
+}
+
+sub ChatArticleDeleteRun {
+    my ( $Self, %Param ) = @_;
+    return $Param{Original}->( $Param{ArticleBackend}, %{ $Param{Param} } ) if !$Self->_Enabled();
+    return $Self->_ChatArticleMutationRun( %Param, Action => 'ticket.chat_article.deleted', ToState => 'deleted' );
+}
+
+sub InvalidArticleDeleteRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    return $Param{Original}->( $Param{ArticleBackend}, %{$Call} ) if !$Self->_Enabled();
+    my ( $TicketID, $ArticleID ) = @{$Call}{qw(TicketID ArticleID)};
+    return if !$TicketID || !$ArticleID;
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            local $Param{ArticleBackend}->{CareOnCloudTicketAuditSuppress} = 1;
+            my $Success = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
+            return $Self->_Error('INVALID_ARTICLE_DELETE_FAILED') if !$Success;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE careoncloud_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => 'ticket.unknown_channel_article.deleted', Version => $Version, FromState => q{}, ToState => 'deleted',
+                ObjectType => 'ticket_article', ObjectID => $ArticleID,
+                Details => {
+                    ticket_number => $Ticket{TicketNumber} // q{}, version => $Version,
+                    communication_channel_id => $Call->{CommunicationChannelID} // q{}, storage => 'unknown_channel',
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $Success };
+        },
+    );
+    if ( $Result->{Success} ) {
+        eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+        eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+    }
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub GenericInterfaceTicketUpdateRun {
+    my ( $Self, %Param ) = @_;
+    my $TicketID = $Param{Param}->{Data}->{TicketID};
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            return if !$TicketID;
+            eval { $Kernel::OM->Get('Kernel::System::Ticket')->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Response = $Param{Original}->( $Param{Operation}, %{ $Param{Param} } );
+            return { Success => 1, Value => $Response } if ref $Response eq 'HASH' && $Response->{Success};
+            return { Success => 0, Error => 'GENERIC_INTERFACE_TICKET_UPDATE_FAILED', Response => $Response };
+        },
+    );
+    return $Result->{Value} if $Result->{Success};
+    return $Result->{Response} if ref $Result->{Response} eq 'HASH';
+    return { Success => 0, ErrorMessage => 'TicketUpdate transaction rolled back' };
+}
+
+sub GenericInterfaceTicketCreateRun {
+    my ( $Self, %Param ) = @_;
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $Kernel::OM->Get('Kernel::System::Cache')->CleanUp( Type => 'Ticket' ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear() };
+        },
+        Code => sub {
+            my $Response = $Param{Original}->( $Param{Operation}, %{ $Param{Param} } );
+            return { Success => 1, Value => $Response } if ref $Response eq 'HASH' && $Response->{Success};
+            return { Success => 0, Error => 'GENERIC_INTERFACE_TICKET_CREATE_FAILED', Response => $Response };
+        },
+    );
+    return $Result->{Value} if $Result->{Success};
+    return $Result->{Response} if ref $Result->{Response} eq 'HASH';
+    return { Success => 0, ErrorMessage => 'TicketCreate transaction rolled back' };
+}
+
+sub SchedulerPendingCheckReconcile {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('TICKET_ID_INVALID') if ( $Param{TicketID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return { Success => 1 } if ( $Param{BeforeState} // q{} ) eq ( $Param{AfterState} // q{} );
+    return $Self->_TransactionRun(
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $Param{TicketID} );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope || $Scope->{Status} ne 'active';
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Param{UserID}, $Param{TicketID}, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE careoncloud_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $Param{TicketID}, UserID => $Param{UserID},
+                Action => 'ticket.state.updated', Version => $Version,
+                FromState => $Self->_StateToken( $Param{BeforeState} ), ToState => $Self->_StateToken( $Param{AfterState} ),
+                Details => { field => 'state', source => 'scheduler.pending_check', version => $Version },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1 };
+        },
+    );
+}
+
+sub _ChatArticleMutationRun {
+    my ( $Self, %Param ) = @_;
+    my $Call = $Param{Param};
+    my ( $TicketID, $ArticleID ) = @{$Call}{qw(TicketID ArticleID)};
+    return if !$TicketID || !$ArticleID;
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $Result = $Self->_TransactionRun(
+        OnFailure => sub {
+            eval { $TicketObject->_TicketCacheClear( TicketID => $TicketID ) };
+            eval { $Kernel::OM->Get('Kernel::System::Ticket::Article')->_ArticleCacheClear( TicketID => $TicketID ) };
+        },
+        Code => sub {
+            my $Scope = $Self->_ScopeLock( TicketID => $TicketID );
+            return $Self->_Error('TICKET_SCOPE_MISSING') if !$Scope;
+            local $Param{ArticleBackend}->{CareOnCloudTicketAuditSuppress} = 1;
+            my $Success = $Param{Original}->( $Param{ArticleBackend}, %{$Call} );
+            return $Self->_Error('CHAT_ARTICLE_MUTATION_FAILED') if !$Success;
+            my $Version = $Scope->{Version} + 1;
+            my @Values = ( $Call->{UserID}, $TicketID, $Scope->{Version} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('VERSION_CONFLICT') if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+                SQL => 'UPDATE careoncloud_ticket_scope SET version = version + 1, change_time = current_timestamp, change_by = ? WHERE ticket_id = ? AND version = ?', Bind => \@Bind,
+            );
+            my %Ticket = $TicketObject->TicketGet( TicketID => $TicketID, DynamicFields => 0, UserID => $Call->{UserID} );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Scope->{TenantID}, TicketID => $TicketID, UserID => $Call->{UserID},
+                Action => $Param{Action}, Version => $Version, FromState => q{}, ToState => $Param{ToState},
+                ObjectType => 'ticket_article', ObjectID => $ArticleID,
+                Details => {
+                    ticket_number => $Ticket{TicketNumber} // q{}, version => $Version,
+                    key => $Call->{Key} // q{}, chat_message_count => ref $Call->{Value} eq 'ARRAY' ? scalar @{ $Call->{Value} } : 0, storage => 'database',
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Value => $Success };
+        },
+    );
+    return $Result->{Success} ? $Result->{Value} : undef;
+}
+
+sub ScopeGet {
+    my ( $Self, %Param ) = @_;
+    my $TicketID = $Param{TicketID};
+    $Kernel::OM->Get('Kernel::System::DB')->Prepare(
+        SQL => 'SELECT tenant_id, version, status FROM careoncloud_ticket_scope WHERE ticket_id = ?', Bind => [ \$TicketID ], Limit => 1,
+    );
+    my @Row = $Kernel::OM->Get('Kernel::System::DB')->FetchrowArray();
+    return if !defined $Row[0];
+    return { TicketID => $TicketID, TenantID => $Row[0], Version => $Row[1], Status => $Row[2] };
+}
+
+sub Backfill {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('CONFIRMATION_REQUIRED') if !$Param{Confirm};
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('TENANT_INVALID')
+        if defined $Param{TenantID} && $Param{TenantID} !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    my $Limit = $Param{Limit} // 1000;
+    return $Self->_Error('LIMIT_INVALID') if $Limit !~ m{\A[1-9][0-9]*\z}smx || $Limit > 10_000;
+    return $Self->_TransactionRun(
+        Code => sub {
+            my $DB = $Kernel::OM->Get('Kernel::System::DB');
+            my $TenantFilter = defined $Param{TenantID} ? ' AND t.customer_id = ?' : q{};
+            my @Bind = defined $Param{TenantID} ? ( \$Param{TenantID} ) : ();
+            $DB->Prepare(
+                SQL => 'SELECT t.id, t.tn, t.customer_id FROM ticket t '
+                    . 'JOIN careoncloud_tenant d ON d.key_name = t.customer_id AND d.status = \'active\' '
+                    . 'LEFT JOIN careoncloud_ticket_scope s ON s.ticket_id = t.id '
+                    . "WHERE s.ticket_id IS NULL$TenantFilter ORDER BY t.id LIMIT $Limit FOR UPDATE",
+                Bind => \@Bind,
+            );
+            my @Rows;
+            while ( my @Row = $DB->FetchrowArray() ) { push @Rows, \@Row }
+            for my $Row (@Rows) {
+                my @Values = ( $Row->[0], $Row->[2], $Param{UserID}, $Param{UserID} );
+                my @InsertBind = map { \$_ } @Values;
+                return $Self->_Error('TICKET_SCOPE_WRITE_FAILED') if !$DB->Do(
+                    SQL => "INSERT INTO careoncloud_ticket_scope (ticket_id, tenant_id, version, status, create_time, create_by, change_time, change_by) VALUES (?, ?, 1, 'active', current_timestamp, ?, current_timestamp, ?)",
+                    Bind => \@InsertBind,
+                );
+                my $Audit = $Self->_AuditRecord(
+                    TenantID => $Row->[2], TicketID => $Row->[0], UserID => $Param{UserID},
+                    Action => 'ticket.scope.backfilled', Version => 1, FromState => q{}, ToState => 'active',
+                    Details => { ticket_number => $Row->[1], version => 1, migration => 1 },
+                );
+                return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            }
+            return { Success => 1, Data => { Backfilled => scalar @Rows, Limit => $Limit } };
+        },
+    );
+}
+
+sub AssignLegacy {
+    my ( $Self, %Param ) = @_;
+    return $Self->_Error('CONFIRMATION_REQUIRED') if !$Param{Confirm};
+    return $Self->_Error('TICKET_ID_INVALID') if ( $Param{TicketID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('USER_ID_INVALID') if ( $Param{UserID} // q{} ) !~ m{\A[1-9][0-9]*\z}smx;
+    return $Self->_Error('TENANT_INVALID') if ( $Param{TenantID} // q{} ) !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    return $Self->_Error('TENANT_NOT_ACTIVE') if !$Self->_TenantActive( $Param{TenantID} );
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    return $Self->_TransactionRun(
+        OnFailure => sub { eval { $TicketObject->_TicketCacheClear( TicketID => $Param{TicketID} ) } },
+        Code => sub {
+            my $DB = $Kernel::OM->Get('Kernel::System::DB');
+            my $TicketID = $Param{TicketID};
+            $DB->Prepare( SQL => 'SELECT tn, customer_id FROM ticket WHERE id = ? FOR UPDATE', Bind => [ \$TicketID ] );
+            my ( $TicketNumber, $OriginalCustomerID ) = $DB->FetchrowArray();
+            return $Self->_Error('TICKET_NOT_FOUND') if !defined $TicketNumber;
+            return $Self->_Error('TICKET_SCOPE_EXISTS') if $Self->ScopeGet( TicketID => $TicketID );
+            my $Mismatch = ( $OriginalCustomerID // q{} ) ne $Param{TenantID};
+            return $Self->_Error('CUSTOMER_TENANT_MISMATCH') if $Mismatch && !$Param{ReplaceCustomerID};
+            if ($Mismatch) {
+                local $TicketObject->{CareOnCloudTicketAuditSuppress} = 1;
+                return $Self->_Error('CUSTOMER_UPDATE_FAILED') if !$TicketObject->TicketCustomerSet(
+                    TicketID => $TicketID, No => $Param{TenantID}, UserID => $Param{UserID},
+                );
+            }
+            my @Values = ( $TicketID, $Param{TenantID}, $Param{UserID}, $Param{UserID} );
+            my @Bind = map { \$_ } @Values;
+            return $Self->_Error('TICKET_SCOPE_WRITE_FAILED') if !$DB->Do(
+                SQL => "INSERT INTO careoncloud_ticket_scope (ticket_id, tenant_id, version, status, create_time, create_by, change_time, change_by) VALUES (?, ?, 1, 'active', current_timestamp, ?, current_timestamp, ?)",
+                Bind => \@Bind,
+            );
+            my $Audit = $Self->_AuditRecord(
+                TenantID => $Param{TenantID}, TicketID => $TicketID, UserID => $Param{UserID},
+                Action => 'ticket.scope.assigned', Version => 1, FromState => q{}, ToState => 'active',
+                Details => {
+                    ticket_number => $TicketNumber, version => 1, migration => 1,
+                    original_customer_id => $OriginalCustomerID // q{}, customer_id_replaced => $Mismatch ? 1 : 0,
+                },
+            );
+            return $Self->_Error('AUDIT_WRITE_FAILED') if !$Audit->{Success};
+            return { Success => 1, Data => { TicketID => $TicketID, TenantID => $Param{TenantID}, CustomerIDReplaced => $Mismatch ? 1 : 0 } };
+        },
+    );
+}
+
+sub _ScopeLock {
+    my ( $Self, %Param ) = @_;
+    my $TicketID = $Param{TicketID};
+    $Kernel::OM->Get('Kernel::System::DB')->Prepare(
+        SQL => 'SELECT tenant_id, version, status FROM careoncloud_ticket_scope WHERE ticket_id = ? FOR UPDATE', Bind => [ \$TicketID ],
+    );
+    my @Row = $Kernel::OM->Get('Kernel::System::DB')->FetchrowArray();
+    return if !defined $Row[0];
+    return { TicketID => $TicketID, TenantID => $Row[0], Version => $Row[1], Status => $Row[2] };
+}
+
+sub _TenantActive {
+    my ( $Self, $TenantID ) = @_;
+    return if ( $TenantID // q{} ) !~ m{\A[a-z0-9][a-z0-9_-]{1,127}\z}smx;
+    $Kernel::OM->Get('Kernel::System::DB')->Prepare(
+        SQL => "SELECT id FROM careoncloud_tenant WHERE key_name = ? AND status = 'active'", Bind => [ \$TenantID ], Limit => 1,
+    );
+    my ($ID) = $Kernel::OM->Get('Kernel::System::DB')->FetchrowArray();
+    return $ID;
+}
+
+sub _AuditRecord {
+    my ( $Self, %Param ) = @_;
+    my ( $ActorType, $ActorID ) = $Self->_Actor( UserID => $Param{UserID}, TenantID => $Param{TenantID} );
+    return $Kernel::OM->Get('Kernel::System::CareOnCloud::Audit')->Record(
+        TenantID => $Param{TenantID}, ActorType => $ActorType, ActorID => $ActorID,
+        Action => $Param{Action}, ObjectType => $Param{ObjectType} // 'ticket', ObjectID => defined $Param{ObjectID} ? "$Param{ObjectID}" : "$Param{TicketID}",
+        CorrelationID => "ticket:$Param{TicketID}", DedupeKey => "ticket:$Param{TicketID}:version:$Param{Version}",
+        FromState => $Param{FromState}, ToState => $Param{ToState}, Outcome => 'success', Details => $Param{Details},
+    );
+}
+
+sub _Actor {
+    my ( $Self, %Param ) = @_;
+    my $Context = $Kernel::OM->Get('Kernel::System::CareOnCloud::TenantDirectory')->ContextGet( UserID => $Param{UserID} );
+    if ( $Context->{Success} && grep { $_ eq $Param{TenantID} } @{ $Context->{Subject}->{TenantIDs} // [] } ) {
+        return ( 'agent', "agent:$Param{UserID}" );
+    }
+    return ( 'system', "careoncloud-user:$Param{UserID}" );
+}
+
+sub _TransactionRun {
+    my ( $Self, %Param ) = @_;
+    my $DB = $Kernel::OM->Get('Kernel::System::DB');
+    my $Handle = $DB->Connect();
+    return $Self->_Error('TRANSACTION_CONNECTION_FAILED') if !$Handle;
+    if ( !$Handle->{AutoCommit} ) {
+        my $Savepoint = 'careoncloud_ticket_audit_' . int( rand 1_000_000_000 );
+        my $Result;
+        my $OK = eval {
+            die "TRANSACTION_SAVEPOINT_FAILED\n" if !$DB->Do( SQL => "SAVEPOINT $Savepoint" );
+            $Result = $Param{Code}->();
+            die "TRANSACTION_RESULT_INVALID\n" if ref $Result ne 'HASH' || !exists $Result->{Success};
+            my $SQL = $Result->{Success} ? "RELEASE SAVEPOINT $Savepoint" : "ROLLBACK TO SAVEPOINT $Savepoint";
+            die "TRANSACTION_SAVEPOINT_FINALIZE_FAILED\n" if !$DB->Do( SQL => $SQL );
+            1;
+        };
+        if ( !$OK ) {
+            my $Failure = $@ || 'TRANSACTION_FAILED';
+            eval { $DB->Do( SQL => "ROLLBACK TO SAVEPOINT $Savepoint" ) };
+            $Self->_Log("CareOnCloud ticket audit nested transaction failed: $Failure");
+            $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
+            return $Self->_Error('TRANSACTION_FAILED');
+        }
+        if ( !$Result->{Success} ) {
+            $Self->_Log("CareOnCloud ticket audit mutation rejected: $Result->{Error}");
+            $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
+        }
+        return $Result;
+    }
+    my $Result;
+    my $OK = eval {
+        die "TRANSACTION_START_FAILED\n" if !$DB->BeginWork();
+        $Result = $Param{Code}->();
+        die "TRANSACTION_RESULT_INVALID\n" if ref $Result ne 'HASH' || !exists $Result->{Success};
+        if ( $Result->{Success} ) { die "TRANSACTION_COMMIT_FAILED\n" if !$Handle->commit() }
+        else { die "TRANSACTION_ROLLBACK_FAILED\n" if !$DB->Rollback() }
+        1;
+    };
+    if ( !$OK ) {
+        my $Failure = $@ || 'TRANSACTION_FAILED';
+        eval { $DB->Rollback() } if !$Handle->{AutoCommit};
+        $Self->_Log("CareOnCloud ticket audit transaction failed: $Failure");
+        $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
+        return $Self->_Error('TRANSACTION_FAILED');
+    }
+    if ( !$Result->{Success} ) {
+        $Self->_Log("CareOnCloud ticket audit mutation rejected: $Result->{Error}");
+        $Param{OnFailure}->() if ref $Param{OnFailure} eq 'CODE';
+    }
+    return $Result;
+}
+
+sub _CacheClear {
+    my ( $Self, %Param ) = @_;
+    if ( $Param{TicketID} ) { eval { $Param{TicketObject}->_TicketCacheClear( TicketID => $Param{TicketID} ) } }
+    else { eval { $Kernel::OM->Get('Kernel::System::Cache')->CleanUp( Type => 'Ticket' ) } }
+    return;
+}
+
+sub _Enabled { return $Kernel::OM->Get('Kernel::Config')->Get('CareOnCloud::TicketAudit::Enabled') ? 1 : 0 }
+sub _StateToken {
+    my ( $Self, $Value ) = @_;
+    $Value //= q{};
+    return $Value if length $Value <= 50;
+    return 'sha256:' . substr( sha256_hex($Value), 0, 40 );
+}
+sub _Log { my ( $Self, $Message ) = @_; $Kernel::OM->Get('Kernel::System::Log')->Log( Priority => 'error', Message => $Message ); return }
+sub _Error { my ( $Self, $Error ) = @_; return { Success => 0, Error => $Error } }
+
+1;

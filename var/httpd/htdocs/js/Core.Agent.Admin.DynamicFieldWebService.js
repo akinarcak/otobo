@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -42,7 +42,7 @@ Core.Agent.Admin.DynamicFieldWebService = (function (TargetNS) {
         });
 
         $('#WebserviceID').on('change', function () {
-            Core.AJAX.FormUpdate($('#EntityUpdate'), 'AJAXUpdate', 'WebserviceID', ['Invoker']);
+            Core.AJAX.FormUpdate($('#EntityUpdate'), 'AJAXUpdate', 'WebserviceID');
         });
 
         // Appropriately hide or show Link and Link Preview fields based on Multiselect value.

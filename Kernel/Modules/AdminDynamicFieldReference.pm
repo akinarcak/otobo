@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2023 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,12 +23,13 @@ use namespace::autoclean;
 use utf8;
 
 # core modules
+use List::Util qw(any none);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -55,24 +56,73 @@ sub Run {
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
-    # Get the field specific setting during the runtime as the
+    # Get the field specific settings and attributes during the runtime as the
     # complete list depends on the previous selection of ReferencedObjectType.
-    # TODO: this is specifc to the dynamic field type Reference
-    # TODO: add GetFieldTypeSettings() to the backend object
     my @FieldTypeSettings;
+    my %EqualsObjectFilterableAttributes;
+    my %ReferenceObjectFilterableAttributes;
     {
-        my $FieldType = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'FieldType' );
-
+        my $ObjectType = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ObjectType' );
+        my $FieldType  = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'FieldType' );
         if ($FieldType) {
             my $DriverObject = $Kernel::OM->Get( 'Kernel::System::DynamicField::Driver::' . $FieldType );
-            @FieldTypeSettings = $DriverObject->GetFieldTypeSettings();
+
+            # The available settings may depend on the type of the referencing object.
+            @FieldTypeSettings = $DriverObject->GetFieldTypeSettings(
+                ObjectType => $ObjectType,
+            );
+
+            # fetch field type filterable attributes
+            my $FieldTypeObjectName =
+                $FieldType eq 'Agent'      ? 'User' :
+                $FieldType =~ /ConfigItem/ ? 'ITSMConfigItem' :
+                $FieldType;
+            my $FieldTypeObject = $Kernel::OM->Get( 'Kernel::System::' . $FieldTypeObjectName );
+
+            # try ObjectAttributesGet as Agent, ConfigItem and Ticket provide this method
+            if ( $FieldTypeObject->can('ObjectAttributesGet') ) {
+                my %FieldTypeAttributes = $FieldTypeObject->ObjectAttributesGet(
+                    DynamicFields => 1,
+                );
+                %ReferenceObjectFilterableAttributes = map { $FieldTypeAttributes{$_} ? ( $_ => $_ ) : () } keys %FieldTypeAttributes;
+            }
+            else {
+                %ReferenceObjectFilterableAttributes = _ObjectAttributesGet( ObjectName => $FieldTypeObjectName );
+            }
+        }
+
+        # fetch reference object attributes depending on df object type
+        if ($ObjectType) {
+
+            # fetch object type filterable attributes
+            my $ObjectTypeObjectName =
+                $ObjectType eq 'Agent'      ? 'User' :
+                $ObjectType =~ /ConfigItem/ ? 'ITSMConfigItem' :
+                $ObjectType eq 'Article'    ? 'Ticket' :
+                $ObjectType;
+            my $ObjectTypeObject = $Kernel::OM->Get( 'Kernel::System::' . $ObjectTypeObjectName );
+
+            # try ObjectAttributesGet as Agent, ConfigItem and Ticket provide this method
+            if ( $ObjectTypeObject->can('ObjectAttributesGet') ) {
+                my %ObjectTypeAttributes = $ObjectTypeObject->ObjectAttributesGet(
+                    EditMask      => 1,
+                    DynamicFields => 1,
+                );
+                %EqualsObjectFilterableAttributes = map { $ObjectTypeAttributes{$_} ? ( $_ => $_ ) : () } keys %ObjectTypeAttributes;
+            }
+            else {
+                %EqualsObjectFilterableAttributes = _ObjectAttributesGet( ObjectName => $ObjectTypeObjectName );
+            }
+            $EqualsObjectFilterableAttributes{UserID} = 'UserID';
         }
     }
 
     if ( $Self->{Subaction} eq 'Add' ) {
         return $Self->_Add(
             %Param,
-            FieldTypeSettings => \@FieldTypeSettings,
+            FieldTypeSettings                   => \@FieldTypeSettings,
+            EqualsObjectFilterableAttributes    => \%EqualsObjectFilterableAttributes,
+            ReferenceObjectFilterableAttributes => \%ReferenceObjectFilterableAttributes,
         );
     }
 
@@ -83,14 +133,18 @@ sub Run {
 
         return $Self->_AddAction(
             %Param,
-            FieldTypeSettings => \@FieldTypeSettings,
+            FieldTypeSettings                   => \@FieldTypeSettings,
+            EqualsObjectFilterableAttributes    => \%EqualsObjectFilterableAttributes,
+            ReferenceObjectFilterableAttributes => \%ReferenceObjectFilterableAttributes,
         );
     }
 
     if ( $Self->{Subaction} eq 'Change' ) {
         return $Self->_Change(
             %Param,
-            FieldTypeSettings => \@FieldTypeSettings,
+            FieldTypeSettings                   => \@FieldTypeSettings,
+            EqualsObjectFilterableAttributes    => \%EqualsObjectFilterableAttributes,
+            ReferenceObjectFilterableAttributes => \%ReferenceObjectFilterableAttributes,
         );
     }
 
@@ -101,7 +155,9 @@ sub Run {
 
         return $Self->_ChangeAction(
             %Param,
-            FieldTypeSettings => \@FieldTypeSettings,
+            FieldTypeSettings                   => \@FieldTypeSettings,
+            EqualsObjectFilterableAttributes    => \%EqualsObjectFilterableAttributes,
+            ReferenceObjectFilterableAttributes => \%ReferenceObjectFilterableAttributes,
         );
     }
 
@@ -117,8 +173,36 @@ sub _Add {
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     my %GetParam;
+
+    # check if we clone from an existing field
+    my $CloneFieldID = $ParamObject->GetParam( Param => "CloneFieldID" );
+    if ($CloneFieldID) {
+        my $FieldConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+            ID => $CloneFieldID,
+        );
+
+        # if we found a field config, copy its content for usage in _ShowScreen
+        if ( IsHashRefWithData($FieldConfig) ) {
+
+            # copy standard stuff
+            for my $Key (qw(ObjectType FieldType Label Name ValidID)) {
+                $GetParam{$Key} = $FieldConfig->{$Key};
+            }
+
+            # iterate over special stuff and copy in-depth content as flat list
+            CONFIGKEY:
+            for my $ConfigKey ( keys $FieldConfig->{Config}->%* ) {
+                next CONFIGKEY if $ConfigKey eq 'PartOfSet';
+
+                my $DFDetails = $FieldConfig->{Config};
+                $GetParam{$ConfigKey} = $DFDetails->{$ConfigKey};
+            }
+        }
+        $GetParam{CloneFieldID} = $CloneFieldID;
+    }
+
     for my $Needed (qw(ObjectType FieldType FieldOrder)) {
-        $GetParam{$Needed} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => $Needed );
+        $GetParam{$Needed} //= $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => $Needed );
         if ( !$GetParam{$Needed} ) {
             return $LayoutObject->ErrorScreen(
                 Message => $LayoutObject->{LanguageObject}->Translate( 'Need %s', $Needed ),
@@ -126,18 +210,26 @@ sub _Add {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # extract field type specific parameters, e.g. MultiValue
+    SETTING:
     for my $Setting ( $Param{FieldTypeSettings}->@* ) {
+
+        # skip custom inputs which are handled separately
+        # currently only used for reference filter list
+        next SETTING if !$Setting->{InputType};
+
         my $Name = $Setting->{ConfigParamName};
-        if ( $Setting->{Multiple} ) {
-            $GetParam{$Name}->@* = $ParamObject->GetArray( Param => $Name );
+        if ( $Setting->{Multiple} && !defined $GetParam{$Name} ) {
+
+            # prevent storing an array with empty string
+            $GetParam{$Name}->@* = grep { IsStringWithData($_) } $ParamObject->GetArray( Param => $Name );
         }
         else {
-            $GetParam{$Name} = $ParamObject->GetParam( Param => $Name );
+            $GetParam{$Name} //= $ParamObject->GetParam( Param => $Name );
         }
 
         # validate input if necessary
@@ -156,10 +248,12 @@ sub _Add {
     my $FieldTypeName  = $ConfigObject->Get('DynamicFields::Driver')->{ $GetParam{FieldType} }->{DisplayName}      || '';
 
     # check namespace validity
-    my $Namespaces = $ConfigObject->Get('DynamicField::Namespaces');
-    my $Namespace  = '';
-    if ( IsArrayRefWithData($Namespaces) && $GetParam{NamespaceFilter} ) {
-        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } $Namespaces->@* ) ? $GetParam{NamespaceFilter} : '';
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
+    my $Namespace = '';
+    if ( @DFNamespaces && $GetParam{NamespaceFilter} ) {
+        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } @DFNamespaces ) ? $GetParam{NamespaceFilter} : '';
     }
 
     return $Self->_ShowScreen(
@@ -169,6 +263,7 @@ sub _Add {
         BreadcrumbText => $LayoutObject->{LanguageObject}->Translate( 'Add %s field', $LayoutObject->{LanguageObject}->Translate($FieldTypeName) ),
         ObjectTypeName => $ObjectTypeName,
         FieldTypeName  => $FieldTypeName,
+        Namespace      => $Namespace,
     );
 }
 
@@ -188,10 +283,18 @@ sub _AddAction {
     }
 
     # extract field type specific parameters, e.g. MultiValue
+    SETTING:
     for my $Setting ( $Param{FieldTypeSettings}->@* ) {
+
+        # skip custom inputs which are handled separately
+        # currently only used for reference filter list
+        next SETTING if !$Setting->{InputType};
+
         my $Name = $Setting->{ConfigParamName};
         if ( $Setting->{Multiple} ) {
-            $GetParam{$Name}->@* = $ParamObject->GetArray( Param => $Name );
+
+            # prevent storing an array with empty string
+            $GetParam{$Name}->@* = grep { IsStringWithData($_) } $ParamObject->GetArray( Param => $Name );
         }
         else {
             $GetParam{$Name} = $ParamObject->GetParam( Param => $Name );
@@ -227,8 +330,8 @@ sub _AddAction {
         $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     if ( $GetParam{Name} ) {
@@ -287,7 +390,13 @@ sub _AddAction {
     );
 
     # extract field type specific parameters, e.g. MultiValue
+    SETTING:
     for my $Setting ( $Param{FieldTypeSettings}->@* ) {
+
+        # skip custom inputs which are handled separately
+        # currently only used for reference filter list
+        next SETTING if !$Setting->{InputType};
+
         my $Name = $Setting->{ConfigParamName};
         $FieldConfig{$Name} = $GetParam{$Name};
     }
@@ -298,18 +407,24 @@ sub _AddAction {
 
     # differentiate only between autocomplete and dropdown
     $FieldConfig{EditFieldMode} = $FieldConfig{EditFieldMode} eq 'AutoComplete' ? 'AutoComplete' : 'Dropdown';
+    $FieldConfig{PossibleNone}  = $FieldConfig{EditFieldMode} eq 'AutoComplete' ? 1              : $FieldConfig{PossibleNone};
 
     # multiselect excludes multivalue
     $FieldConfig{MultiValue} = $FieldConfig{Multiselect} ? 0 : $FieldConfig{MultiValue};
 
-    $GetParam{ReferenceFilterCounter} = $ParamObject->GetParam( Param => 'ReferenceFilterCounter' ) || 0;
+    # TreeView is not allowed for AutoComplete
+    $FieldConfig{TreeView} = $FieldConfig{EditFieldMode} eq 'AutoComplete' ? 0 : $FieldConfig{TreeView};
 
-    my @ReferenceFilterList = $Self->_GetParamReferenceFilterList(
-        GetParam => \%GetParam,
-        Errors   => \%Errors,
-    );
+    if ( any { $_->{ConfigParamName} eq 'ReferenceFilterList' } $Param{FieldTypeSettings}->@* ) {
+        $GetParam{ReferenceFilterCounter} = $ParamObject->GetParam( Param => 'ReferenceFilterCounter' ) || 0;
 
-    $FieldConfig{ReferenceFilterList} = \@ReferenceFilterList;
+        my @ReferenceFilterList = $Self->_GetParamReferenceFilterList(
+            GetParam => \%GetParam,
+            Errors   => \%Errors,
+        );
+
+        $FieldConfig{ReferenceFilterList} = \@ReferenceFilterList;
+    }
 
     # create a new field
     my $FieldID = $DynamicFieldObject->DynamicFieldAdd(
@@ -367,8 +482,8 @@ sub _Change {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # get the object type and field type display name
@@ -440,10 +555,18 @@ sub _ChangeAction {
     }
 
     # extract field type specific parameters, e.g. MultiValue
+    SETTING:
     for my $Setting ( $Param{FieldTypeSettings}->@* ) {
+
+        # skip custom inputs which are handled separately
+        # currently only used for reference filter list
+        next SETTING if !$Setting->{InputType};
+
         my $Name = $Setting->{ConfigParamName};
         if ( $Setting->{Multiple} ) {
-            $GetParam{$Name}->@* = $ParamObject->GetArray( Param => $Name );
+
+            # prevent storing an array with empty string
+            $GetParam{$Name}->@* = grep { IsStringWithData($_) } $ParamObject->GetArray( Param => $Name );
         }
         else {
             $GetParam{$Name} = $ParamObject->GetParam( Param => $Name );
@@ -491,8 +614,8 @@ sub _ChangeAction {
         $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     if ( $GetParam{Name} ) {
@@ -594,7 +717,13 @@ sub _ChangeAction {
     );
 
     # extract field type specific parameters, e.g. MultiValue
+    SETTING:
     for my $Setting ( $Param{FieldTypeSettings}->@* ) {
+
+        # skip custom inputs which are handled separately
+        # currently only used for reference filter list
+        next SETTING if !$Setting->{InputType};
+
         my $Name = $Setting->{ConfigParamName};
         $FieldConfig{$Name} = $GetParam{$Name};
     }
@@ -605,18 +734,24 @@ sub _ChangeAction {
 
     # differentiate only between autocomplete and dropdown
     $FieldConfig{EditFieldMode} = $FieldConfig{EditFieldMode} eq 'AutoComplete' ? 'AutoComplete' : 'Dropdown';
+    $FieldConfig{PossibleNone}  = $FieldConfig{EditFieldMode} eq 'AutoComplete' ? 1              : $FieldConfig{PossibleNone};
 
     # multiselect excludes multivalue
     $FieldConfig{MultiValue} = $FieldConfig{Multiselect} ? 0 : $FieldConfig{MultiValue};
 
-    $GetParam{ReferenceFilterCounter} = $ParamObject->GetParam( Param => 'ReferenceFilterCounter' ) || 0;
+    # TreeView is not allowed for AutoComplete
+    $FieldConfig{TreeView} = $FieldConfig{EditFieldMode} eq 'AutoComplete' ? 0 : $FieldConfig{TreeView};
 
-    my @ReferenceFilterList = $Self->_GetParamReferenceFilterList(
-        GetParam => \%GetParam,
-        Errors   => \%Errors,
-    );
+    if ( any { $_->{ConfigParamName} eq 'ReferenceFilterList' } $Param{FieldTypeSettings}->@* ) {
+        $GetParam{ReferenceFilterCounter} = $ParamObject->GetParam( Param => 'ReferenceFilterCounter' ) || 0;
 
-    $FieldConfig{ReferenceFilterList} = \@ReferenceFilterList;
+        my @ReferenceFilterList = $Self->_GetParamReferenceFilterList(
+            GetParam => \%GetParam,
+            Errors   => \%Errors,
+        );
+
+        $FieldConfig{ReferenceFilterList} = \@ReferenceFilterList;
+    }
 
     # update dynamic field (FieldType and ObjectType cannot be changed; use old values)
     my $UpdateSuccess = $DynamicFieldObject->DynamicFieldUpdate(
@@ -715,12 +850,15 @@ sub _ChangeAction {
 sub _ShowScreen {
     my ( $Self, %Param ) = @_;
 
+    my $Namespace = $Param{Namespace};
     $Param{DisplayFieldName} = 'New';
 
-    my $Namespace;
     if ( $Param{Mode} eq 'Change' || $Param{Name} ) {
-        $Param{ShowWarning}      = 'ShowWarning';
-        $Param{DisplayFieldName} = $Param{Name};
+
+        if ( !$Param{CloneFieldID} ) {
+            $Param{ShowWarning}      = 'ShowWarning';
+            $Param{DisplayFieldName} = $Param{Name};
+        }
 
         # check for namespace
         if ( $Param{Name} =~ /(.*)-(.*)/ ) {
@@ -785,35 +923,53 @@ sub _ShowScreen {
     $Param{EditFieldMode} //= '';
     $Param{EditFieldMode} = $Param{EditFieldMode} eq 'AutoComplete' ? 'AutoComplete' : ( $Param{Multiselect} ? 'Multiselect' : 'Dropdown' );
 
-    # Selections may be set up in a declaritive way
+    # Add field type specific inputs. Currently only Selections are supported.
+    # Selections may be set up in a declarative way.
+    SETTING:
     for my $Setting ( $Param{FieldTypeSettings}->@* ) {
+        next SETTING unless $Setting->{InputType};
+
         if ( $Setting->{InputType} eq 'Selection' ) {
-            my $Name      = $Setting->{ConfigParamName};
+            my $Name       = $Setting->{ConfigParamName};
+            my @CssClasses = qw(Modernize W50pc);
+            push @CssClasses, $Setting->{Mandatory}           ? 'Validate_Required' : ();
+            push @CssClasses, $Param{ $Name . 'ServerError' } ? 'ServerError'       : ();
             my $FieldStrg = $LayoutObject->BuildSelection(
-                Name         => $Name,
-                Data         => $Setting->{SelectionData},
-                PossibleNone => ( $Setting->{PossibleNone} // 0 ),
-                Disabled     => ( $Setting->{Disabled}     // 0 ),
-                SelectedID   => $Param{$Name} || '0',
-                Class        => 'Modernize W50pc' . ( $Setting->{Mandatory} ? ' Validate_Required' : '' ),
-                Multiple     => ( $Setting->{Multiple} // 0 ),
+                Name           => $Name,
+                Data           => $Setting->{SelectionData},
+                PossibleNone   => ( $Setting->{PossibleNone} // 0 ),
+                Disabled       => ( $Setting->{Disabled}     // 0 ),
+                SelectedID     => $Param{$Name} || '0',
+                Class          => ( join ' ', @CssClasses ),
+                Multiple       => ( $Setting->{Multiple}    // 0 ),
+                TreeView       => ( $Setting->{TreeView}    // 0 ),
+                Sort           => ( $Setting->{Sort}        // 0 ),
+                SortReverse    => ( $Setting->{SortReverse} // 0 ),
+                SortIndividual => $Setting->{SortIndividual},
             );
             $LayoutObject->Block(
                 Name => 'ConfigParamRow',
                 Data => {
-                    ConfigParamName => $Name,
-                    Label           => $Setting->{Label},
-                    FieldStrg       => $FieldStrg,
-                    Explanation     => $Setting->{Explanation},
+                    ConfigParamName    => $Name,
+                    Label              => $Setting->{Label},
+                    FieldStrg          => $FieldStrg,
+                    Explanation        => $Setting->{Explanation},
+                    ServerErrorMessage => $Param{ $Name . 'ServerErrorMessage' },
                 },
             );
+
+            next SETTING;
         }
+
+        # more input types might be supported in future
     }
 
-    my $NamespaceList = $Kernel::OM->Get('Kernel::Config')->Get('DynamicField::Namespaces');
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
+    if (@DFNamespaces) {
         my $NamespaceStrg = $LayoutObject->BuildSelection(
-            Data          => $NamespaceList,
+            Data          => \@DFNamespaces,
             Name          => 'Namespace',
             SelectedValue => $Namespace || '',
             PossibleNone  => 1,
@@ -867,33 +1023,73 @@ sub _ShowScreen {
         $ReadonlyInternalField = 'readonly';
     }
 
-    # get the dynamic field id
-    my $FieldID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ID' );
+    # render reference filter list only if enabled
+    if (
+        any {
+            $_->{ConfigParamName} eq 'ReferenceFilterList'
+        }
+        $Param{FieldTypeSettings}->@*
+        )
+    {
 
-    # only if the dymamic field exists and should be edited,
-    # not if the field is added for the first time
-    if ($FieldID) {
-
-        my $DynamicField = $DynamicFieldObject->DynamicFieldGet(
-            ID => $FieldID,
+        # build attributes selections for template filter row
+        $Param{'ReferenceFilter_EqualsObjectAttributeStrg'} = $LayoutObject->BuildSelection(
+            Data         => $Param{EqualsObjectFilterableAttributes},
+            Name         => 'ReferenceFilter_EqualsObjectAttribute',
+            PossibleNone => 1,
+            Translation  => 0,
+            Sort         => 'AlphanumericValue',
+            Class        => 'Modernize W75pc',
         );
-
-        my $FieldConfig = $DynamicField->{Config};
+        $Param{'ReferenceFilter_ReferenceObjectAttributeStrg'} = $LayoutObject->BuildSelection(
+            Data         => $Param{ReferenceObjectFilterableAttributes},
+            Name         => 'ReferenceFilter_ReferenceObjectAttribute',
+            PossibleNone => 1,
+            Translation  => 0,
+            Sort         => 'AlphanumericValue',
+            Class        => 'Modernize W75pc',
+        );
 
         if ( !$Param{ReferenceFilterCounter} ) {
 
             my $ReferenceFilterCounter = 0;
-            for my $ReferenceFilter ( @{ $FieldConfig->{ReferenceFilterList} } ) {
+            for my $ReferenceFilter ( @{ $Param{ReferenceFilterList} } ) {
 
                 $ReferenceFilterCounter++;
                 for my $FilterItem (qw(ReferenceObjectAttribute EqualsObjectAttribute EqualsString)) {
                     $Param{ 'ReferenceFilter_' . $FilterItem . '_' . $ReferenceFilterCounter } = $ReferenceFilter->{$FilterItem};
-
                 }
+
+                # NOTE SelectedID is necessary because e.g. for tickets key and value are different
+                $Param{ 'ReferenceFilter_EqualsObjectAttributeStrg_' . $ReferenceFilterCounter } = $LayoutObject->BuildSelection(
+                    Data         => $Param{EqualsObjectFilterableAttributes},
+                    Name         => 'ReferenceFilter_EqualsObjectAttribute_' . $ReferenceFilterCounter,
+                    SelectedID   => $Param{ 'ReferenceFilter_EqualsObjectAttribute_' . $ReferenceFilterCounter } || '',
+                    PossibleNone => 1,
+                    Translation  => 0,
+                    Sort         => 'AlphanumericValue',
+                    Class        => 'Modernize W75pc',
+                );
+                $Param{ 'ReferenceFilter_ReferenceObjectAttributeStrg_' . $ReferenceFilterCounter } = $LayoutObject->BuildSelection(
+                    Data         => $Param{ReferenceObjectFilterableAttributes},
+                    Name         => 'ReferenceFilter_ReferenceObjectAttribute_' . $ReferenceFilterCounter,
+                    SelectedID   => $Param{ 'ReferenceFilter_ReferenceObjectAttribute_' . $ReferenceFilterCounter } || '',
+                    PossibleNone => 1,
+                    Translation  => 0,
+                    Sort         => 'AlphanumericValue',
+                    Class        => 'Modernize W75pc',
+                );
             }
 
             $Param{ReferenceFilterCounter} = $ReferenceFilterCounter;
         }
+
+        $LayoutObject->Block(
+            Name => 'ReferenceFilterList',
+            Data => {
+                %Param,
+            },
+        );
 
         if ( $Param{ReferenceFilterCounter} ) {
 
@@ -903,12 +1099,12 @@ sub _ShowScreen {
                 # check existing filter
                 my %FilterRow;
                 my %Errors;
-                for my $FilterItem (qw(ReferenceObjectAttribute EqualsObjectAttribute EqualsString)) {
+                for my $FilterItem (qw(ReferenceObjectAttribute ReferenceObjectAttributeStrg EqualsObjectAttribute EqualsObjectAttributeStrg EqualsString)) {
                     $FilterRow{ 'ReferenceFilter_' . $FilterItem } = $Param{ 'ReferenceFilter_' . $FilterItem . '_' . $CurrentReferenceFilterEntryID };
                 }
 
                 # skip if values are undef
-                next REFERENCEFILTERENTRY if !grep { defined $_ } values %FilterRow;
+                next REFERENCEFILTERENTRY if none { defined $_ } values %FilterRow;
 
                 $LayoutObject->Block(
                     Name => 'ReferenceFilterRow',
@@ -920,6 +1116,18 @@ sub _ShowScreen {
                 );
             }
         }
+    }
+
+    # get the dynamic field id
+    my $FieldID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ID' );
+
+    # only if the dynamic field exists and should be edited,
+    # not if the field is added for the first time
+    if ($FieldID) {
+
+        my $DynamicField = $DynamicFieldObject->DynamicFieldGet(
+            ID => $FieldID,
+        );
 
         my $DynamicFieldName = $DynamicField->{Name};
 
@@ -962,7 +1170,7 @@ sub _ShowScreen {
         if ($IsDirtyConfig) {
             $LayoutObject->Block(
                 Name => 'DynamicFieldInSysConfigDirty',
-                ,
+
             );
         }
     }
@@ -977,7 +1185,7 @@ sub _ShowScreen {
         );
     }
 
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    if (@DFNamespaces) {
         if ( IsStringWithData( $Param{NamespaceFilter} ) ) {
             $FilterStrg .= ";NamespaceFilter=" . $LayoutObject->Output(
                 Template => '[% Data.Filter | uri %]',
@@ -1010,7 +1218,6 @@ sub _GetParamReferenceFilterList {
     my ( $Self, %Param ) = @_;
 
     my $GetParam = $Param{GetParam};
-    my $Errors   = $Param{Errors};
     my @ReferenceFilterList;
 
     # Check reference filter list
@@ -1030,7 +1237,7 @@ sub _GetParamReferenceFilterList {
             }
 
             # skip if filter values are undef
-            next REFERENCEFILTERENTRY if !grep { defined $_ } values %FilterRow;
+            next REFERENCEFILTERENTRY if none { defined $_ } values %FilterRow;
 
             # is the reference filter valid?
             # TODO Check selects also
@@ -1046,7 +1253,7 @@ sub _GetParamReferenceFilterList {
             #     # cut last part of regex error
             #     # 'Invalid regular expression (Unmatched [ in regex; marked by
             #     # <-- HERE in m/aaa[ <-- HERE / at
-            #     # /opt/otobo/bin/cgi-bin/../../Kernel/Modules/AdminDynamicFieldText.pm line 452..
+            #     # /opt/careoncloud/bin/cgi-bin/../../Kernel/Modules/AdminDynamicFieldText.pm line 452..
             #     my $ServerErrorMessage = $@;
             #     $ServerErrorMessage =~ s{ (in \s regex); .*$ }{ $1 }xms;
             #     $Errors->{ 'ReferenceFilter_' . $CurrentReferenceFilterEntryID . 'ServerErrorMessage' } = $ServerErrorMessage;
@@ -1073,6 +1280,25 @@ sub _GetParamReferenceFilterList {
     }
 
     return @ReferenceFilterList;
+}
+
+# fallback method to fetch attributes for objects which do not provide sub ObjectAttributesGet()
+sub _ObjectAttributesGet {
+    my (%Param) = @_;
+
+    return unless $Param{ObjectName};
+
+    my @ObjectData;
+    if ( $Param{ObjectName} eq 'CustomerCompany' ) {
+        @ObjectData = $Kernel::OM->Get('Kernel::System::CustomerCompany')->CustomerCompanySearchFields();
+    }
+    elsif ( $Param{ObjectName} eq 'CustomerUser' ) {
+        @ObjectData = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserSearchFields();
+    }
+
+    my %MappedData = map { $_->{Name} => $_->{Label} } @ObjectData;
+
+    return %MappedData;
 }
 
 1;

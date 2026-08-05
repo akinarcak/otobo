@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,9 +23,9 @@ use warnings;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -303,7 +303,12 @@ sub _DefinitionDynamicFieldGet {
             return {
                 Success => 0,
                 Error   => sprintf( Translatable('Dynamic field "%s" not valid.'), $Name ),
-            } if !$DynamicField->{ValidID} eq '1';
+            } if ( !$DynamicField->{ValidID} ) eq '1';
+
+            return {
+                Success => 0,
+                Error   => sprintf( Translatable('Dynamic field "%s" already in use in a Set.'), $Name ),
+            } if $DynamicField->{Config}{PartOfSet};
 
             # Dynamic field has to be listed even without parameters
             $ReturnDynamicFields{$Name} = undef;

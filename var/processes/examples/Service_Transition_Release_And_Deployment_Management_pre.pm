@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package var::processes::examples::Service_Transition_Release_And_Deployment_Management_pre;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::PerlCritic)
 
 use strict;
@@ -48,8 +49,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-no'  => 'No, I still have to issue necessary Work Orders and Purchase Requests',
-                    'otobo5s-yes' => 'Yes, all necessary Work Orders and Purchase Requests are issued',
+                    'careoncloud5s-no'  => 'No, I still have to issue necessary Work Orders and Purchase Requests',
+                    'careoncloud5s-yes' => 'Yes, all necessary Work Orders and Purchase Requests are issued',
                 },
                 TranslatableValues => 0,
             },
@@ -63,8 +64,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-no'  => 'No, 1 or more Release components are not deployed',
-                    'otobo5s-yes' => 'Yes, all Release components are deployed',
+                    'careoncloud5s-no'  => 'No, 1 or more Release components are not deployed',
+                    'careoncloud5s-yes' => 'Yes, all Release components are deployed',
                 },
                 TranslatableValues => 0,
             },
@@ -78,8 +79,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-no'  => 'No, 1 or more user documentation is not created',
-                    'otobo5s-yes' => 'Yes, all required user documentation is created',
+                    'careoncloud5s-no'  => 'No, 1 or more user documentation is not created',
+                    'careoncloud5s-yes' => 'Yes, all required user documentation is created',
                 },
                 TranslatableValues => 0,
             },
@@ -93,8 +94,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-no'  => 'No, 1 or more user trainings are not completed',
-                    'otobo5s-yes' => 'Yes, all user trainings are completed',
+                    'careoncloud5s-no'  => 'No, 1 or more user trainings are not completed',
+                    'careoncloud5s-yes' => 'Yes, all user trainings are completed',
                 },
                 TranslatableValues => 0,
             },
@@ -108,9 +109,9 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-invalid' => 'Release deployed without errors',
-                    'otobo5s-no'      => 'No, 1 or more Release errors are not fixed',
-                    'otobo5s-yes'     => 'Yes, all Release errors are fixed',
+                    'careoncloud5s-invalid' => 'Release deployed without errors',
+                    'careoncloud5s-no'      => 'No, 1 or more Release errors are not fixed',
+                    'careoncloud5s-yes'     => 'Yes, all Release errors are fixed',
                 },
                 TranslatableValues => 0,
             },
@@ -124,8 +125,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-no'  => 'No, the Early Life period is not completed',
-                    'otobo5s-yes' => 'Yes, the Early Life period is completed',
+                    'careoncloud5s-no'  => 'No, the Early Life period is not completed',
+                    'careoncloud5s-yes' => 'Yes, the Early Life period is completed',
                 },
                 TranslatableValues => 0,
             },
@@ -139,8 +140,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-no'  => 'No, 1 or more Configuration Items are not updated',
-                    'otobo5s-yes' => 'Yes, all relevant Configuration Items are updated',
+                    'careoncloud5s-no'  => 'No, 1 or more Configuration Items are not updated',
+                    'careoncloud5s-yes' => 'Yes, all relevant Configuration Items are updated',
                 },
                 TranslatableValues => 0,
             },
@@ -154,8 +155,8 @@ sub Run {
             Config     => {
                 DefaultValue   => '',
                 PossibleValues => {
-                    'otobo5s-no'  => 'No, I still have to reference (link) relevant Change Records',
-                    'otobo5s-yes' => 'Yes, all relevant Change Records are referenced (linked)',
+                    'careoncloud5s-no'  => 'No, I still have to reference (link) relevant Change Records',
+                    'careoncloud5s-yes' => 'Yes, all relevant Change Records are referenced (linked)',
                 },
                 TranslatableValues => 0,
             },

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,9 +16,9 @@
 
 <div id="Footer" class="ARIARoleContentinfo">
 [% IF !Config("Secure::DisableBanner") %]
-    <a href="https://www.otobo.de" title="[% Config("Product") | html %][% IF !Data.IsLoginPage %] [% Config("Version") | html %][% END %]" target="_blank">
+    <a href="https://esm.arcak.net" title="[% Config("ProductName") | html %]" target="_blank">
         <span></span>
-        [% Translate("Powered by %s", "Rother OSS") | html %]
+        [% Translate("Powered by %s", "CareOnCloud ESM") | html %]
     </a>
 [% END %]
 </div>

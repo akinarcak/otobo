@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,10 +19,14 @@ package Kernel::System::Calendar::Export::ICal;
 use strict;
 use warnings;
 
-use Data::ICal;
-use Data::ICal::Entry::Event;
-use Date::ICal;
+# core modules
 
+# CPAN modules
+use Data::ICal               ();
+use Data::ICal::Entry::Event ();
+use Date::ICal               ();
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -354,7 +358,7 @@ sub Export {
                 }
                 if (@Teams) {
                     $ICalEvent->add_properties(
-                        "x-otobo-team" => join( ',', @Teams ),
+                        "x-careoncloud-team" => join( ',', @Teams ),
                     );
                 }
             }
@@ -379,7 +383,7 @@ sub Export {
                 }
                 if (@Users) {
                     $ICalEvent->add_properties(
-                        "x-otobo-resource" => join( ',', @Users ),
+                        "x-careoncloud-resource" => join( ',', @Users ),
                     );
                 }
             }
@@ -400,7 +404,7 @@ sub Export {
 
             if (@LinkArray) {
                 $ICalEvent->add_properties(
-                    "x-otobo-plugin-$PluginKey" => join( ',', @LinkArray ),
+                    "x-careoncloud-plugin-$PluginKey" => join( ',', @LinkArray ),
                 );
             }
         }
@@ -435,7 +439,7 @@ sub Export {
     # Include product name and version in product ID property for debugging purposes, by redefining
     #   external library method.
     sub Data::ICal::product_id {    ## no critic qw(OTOBO::RequireCamelCase)
-        return 'OTOBO ' . $Kernel::OM->Get('Kernel::Config')->Get('Version');
+        return 'CareOnCloud ESM ' . $Kernel::OM->Get('Kernel::Config')->Get('Version');
     }
 }
 

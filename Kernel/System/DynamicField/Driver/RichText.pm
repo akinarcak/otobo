@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,8 +30,8 @@ use parent qw(Kernel::System::DynamicField::Driver::BaseText);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -78,7 +78,7 @@ sub new {
 
     # set Text specific field behaviors unless an extension already set it
     $Self->{Behaviors}->{IsSortable}    //= 0;
-    $Self->{Behaviors}->{IsHTMLContent} //= 0;
+    $Self->{Behaviors}->{IsHTMLContent} //= 1;
 
     return $Self;
 }
@@ -121,9 +121,17 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
+    }
+
+    # set readonly css class
+    if ( $Param{Readonly} ) {
+        $FieldClass .= ' Readonly';
     }
 
     # set error css class
@@ -135,11 +143,11 @@ sub EditFieldRender {
     $FieldClass .= ' Validate_MaxLength';
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     # TODO ask about this
-    # TODO maybe the following whould be a good idea?
+    # TODO maybe the following would be a good idea?
     #   use List::Util qw(min);
     #   my $MaxLength = min ( $Param{MaxLength, $Self->{MaxLength} );
     # create field HTML
@@ -155,7 +163,6 @@ sub EditFieldRender {
     my $ErrorMessage3 = $Param{LayoutObject}->{LanguageObject}->Translate( "Maximum size is %s characters.", $MaxLength );
 
     # TODO ask about column config
-    my $ColsTextAreaNote  = $Kernel::OM->Get('Kernel::Config')->Get('Ticket::Frontend::TextAreaNote');
     my %FieldTemplateData = (
         FieldClass        => $FieldClass,
         FieldName         => $FieldName,
@@ -180,11 +187,11 @@ sub EditFieldRender {
         'DynamicField/Agent/RichText';
 
     if ( $Param{ServerError} ) {
-        $FieldTemplateData{DivIDServerError} = $FieldTemplateData{FieldID} . 'ServerError';
+        $FieldTemplateData{DivIDServerError} = $FieldTemplateData{FieldName} . 'ServerError';
         $FieldTemplateData{ErrorMessage}     = Translatable( $Param{ErrorMessage} || 'This field is required.' );
     }
     if ( $Param{Mandatory} ) {
-        $FieldTemplateData{DivIDMandatory}       = $FieldTemplateData{FieldID} . 'Error';
+        $FieldTemplateData{DivIDMandatory}       = $FieldTemplateData{FieldName} . 'Error';
         $FieldTemplateData{FieldRequiredMessage} = Translatable('This field is required.');
     }
 
@@ -313,14 +320,17 @@ sub DisplayValueRender {
         };
     }
 
-    # prepare html rendering informations
+    # prepare html rendering information
     my $FieldName  = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
     my $FieldLabel = $Param{DynamicFieldConfig}->{Label};
 
     # get agents preferences
-    my %UserPreferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
-        UserID => $Param{LayoutObject}->{UserID},
-    );
+    my %UserPreferences;
+    if ( $Param{LayoutObject}{SessionSource} eq 'AgentInterface' ) {
+        %UserPreferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+            UserID => $Param{LayoutObject}->{UserID},
+        );
+    }
 
     # remember if user already closed message about links in iframes
     if ( !defined $Self->{DoNotShowBrowserLinkMessage} ) {
@@ -367,10 +377,8 @@ EOF
         NoJavaScript => 1,
     );
 
-    # take the safe content if neccessary
-    if ( $SafeContent{Replace} ) {
-        $Value = $SafeContent{String};
-    }
+    # take the safe content
+    $Value = $SafeContent{String};
 
     # detect all plain text links and put them into an HTML <a> tag
     $Value = $HTMLUtilsObject->LinkQuote(
@@ -386,12 +394,14 @@ EOF
 
     # add needed HTML headers
     $Value = $HTMLUtilsObject->DocumentComplete(
-        String  => $Value,
-        Charset => 'utf-8',
+        String => $Value,
     );
 
-    # add js to call FormUpdate()
+    # add js to call ShowContentDialog()
     $Param{LayoutObject}->AddJSOnDocumentComplete( Code => $JSCode );
+
+    # escape single quotes
+    $Value =~ s/'/&#39;/g;
 
     my $RenderedTemplate = $Param{LayoutObject}->Output(
         TemplateFile => 'DynamicField/Agent/RichTextDisplayValue',
@@ -413,9 +423,8 @@ sub SearchFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
-    my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName   = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
+    my $FieldName  = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
+    my $FieldLabel = $Param{DynamicFieldConfig}->{Label};
 
     # set the field value
     my $Value = ( defined $Param{DefaultValue} ? $Param{DefaultValue} : '' );
@@ -441,7 +450,7 @@ sub SearchFieldRender {
     );
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     my $HTMLString = <<"EOF";

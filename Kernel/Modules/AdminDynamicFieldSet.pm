@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ use warnings;
 our $ObjectManagerDisabled = 1;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 sub new {
     my ( $Type, %Param ) = @_;
@@ -85,8 +85,44 @@ sub _Add {
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     my %GetParam;
+
+    # check if we clone from an existing field
+    my $CloneFieldID = $ParamObject->GetParam( Param => "CloneFieldID" );
+    if ($CloneFieldID) {
+        my $FieldConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+            ID => $CloneFieldID,
+        );
+
+        # if we found a field config, copy its content for usage in _ShowScreen
+        if ( IsHashRefWithData($FieldConfig) ) {
+
+            # copy standard stuff
+            for my $Key (qw(ObjectType FieldType Label Name ValidID)) {
+                $GetParam{$Key} = $FieldConfig->{$Key};
+            }
+
+            # iterate over special stuff and copy in-depth content as flat list
+            CONFIGKEY:
+            for my $ConfigKey ( keys $FieldConfig->{Config}->%* ) {
+                next CONFIGKEY if $ConfigKey eq 'PartOfSet';
+
+                my $DFDetails = $FieldConfig->{Config};
+                if ( IsHashRefWithData( $DFDetails->{$ConfigKey} ) ) {
+                    my $ConfigContent = $DFDetails->{$ConfigKey};
+                    for my $ContentKey ( keys $ConfigContent->%* ) {
+                        $GetParam{$ContentKey} = $ConfigContent->{$ContentKey};
+                    }
+                }
+                else {
+                    $GetParam{$ConfigKey} = $DFDetails->{$ConfigKey};
+                }
+            }
+        }
+        $GetParam{CloneFieldID} = $CloneFieldID;
+    }
+
     for my $Needed (qw(ObjectType FieldType FieldOrder)) {
-        $GetParam{$Needed} = $ParamObject->GetParam( Param => $Needed );
+        $GetParam{$Needed} //= $ParamObject->GetParam( Param => $Needed );
         if ( !$GetParam{$Needed} ) {
             return $LayoutObject->ErrorScreen(
                 Message => $LayoutObject->{LanguageObject}->Translate( 'Need %s', $Needed ),
@@ -94,8 +130,8 @@ sub _Add {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # get the object type and field type display name
@@ -105,10 +141,12 @@ sub _Add {
     my $FieldTypeName = $ConfigObject->Get('DynamicFields::Driver')->{ $GetParam{FieldType} }->{DisplayName} || '';
 
     # check namespace validity
-    my $Namespaces = $ConfigObject->Get('DynamicField::Namespaces');
-    my $Namespace  = '';
-    if ( IsArrayRefWithData($Namespaces) && $GetParam{NamespaceFilter} ) {
-        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } $Namespaces->@* ) ? $GetParam{NamespaceFilter} : '';
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
+    my $Namespace = '';
+    if ( @DFNamespaces && $GetParam{NamespaceFilter} ) {
+        $Namespace = ( grep { $_ eq $GetParam{NamespaceFilter} } @DFNamespaces ) ? $GetParam{NamespaceFilter} : '';
     }
 
     return $Self->_ShowScreen(
@@ -120,6 +158,170 @@ sub _Add {
         FieldTypeName  => $FieldTypeName,
         Namespace      => $Namespace,
     );
+}
+
+sub _CheckInclude {
+    my ( $Self, %Param ) = @_;
+
+    my %Errors;
+    my @Include;
+
+    my $DynamicFieldObject        = $Param{DynamicFieldObject};
+    my $DynamicFieldBackendObject = $Param{DynamicFieldBackendObject};
+    my $ObjectType                = $Param{ObjectType};
+    my $TicketMaskObject          = $Kernel::OM->Get('Kernel::System::Ticket::Mask');
+
+    my @Masks = $TicketMaskObject->ConfiguredMasksList();
+    my %MaskDynamicFields;
+
+    MASK:
+    for my $Mask (@Masks) {
+        my $Definition = $TicketMaskObject->DefinitionGet(
+            Mask => $Mask,
+        );
+        %MaskDynamicFields = (
+            %MaskDynamicFields,
+            map { $_ => 1 } keys $Definition->{DynamicFields}->%*,
+        );
+    }
+
+    # returns 1 if Dynamic Field entry is valid to be used in a set, undef otherwise
+    my $CheckDFElement = sub {
+        my ($DFElement) = @_;
+
+        if ( !$DFElement ) {
+
+            $Errors{IncludeServerError}        = 'ServerError';
+            $Errors{IncludeServerErrorMessage} = Translatable('Missing Dynamic Field.');
+
+            return;
+        }
+
+        # DF definition for this name exists in DB
+        my $DynamicField = $DynamicFieldObject->DynamicFieldGet(
+            Name => $DFElement,
+        );
+        if ( !IsHashRefWithData($DynamicField) ) {
+            $Errors{IncludeServerError}        = 'ServerError';
+            $Errors{IncludeServerErrorMessage} = sprintf( Translatable('No valid dynamic field "%s".'), $DFElement );
+
+            return;
+        }
+
+        # DF may be used in sets
+        my $IsSetCapable = $DynamicFieldBackendObject->HasBehavior(
+            DynamicFieldConfig => $DynamicField,
+            Behavior           => 'IsSetCapable',
+        );
+        if ( !$IsSetCapable ) {
+            $Errors{IncludeServerError} = 'ServerError';
+            $Errors{IncludeServerErrorMessage}
+                = sprintf( Translatable('The dynamic field type "%s" of dynamic field "%s" can not be used in sets.'), $DynamicField->{FieldType}, $DFElement );
+
+            return;
+        }
+
+        # check if field is a lens which points to a Set
+        #   to prevent use of nested Sets
+        my $IsSetField = $DynamicFieldBackendObject->HasBehavior(
+            DynamicFieldConfig => $DynamicField,
+            Behavior           => 'IsSetField',
+        );
+        if ($IsSetField) {
+            $Errors{IncludeServerError} = 'ServerError';
+            $Errors{IncludeServerErrorMessage}
+                = sprintf(
+                    Translatable('The dynamic field "%s" can not be used in sets as it is either a Set field or a Lens field pointing to a Set field.'),
+                    $DFElement
+                );
+
+            return;
+        }
+
+        # DF may already be in use in a ticket mask
+        if ( $MaskDynamicFields{ $DynamicField->{Name} } ) {
+            $Errors{IncludeServerError}        = 'ServerError';
+            $Errors{IncludeServerErrorMessage} = sprintf( Translatable('The dynamic field "%s" is already in use in a ticket mask.'), $DFElement );
+
+            return;
+        }
+
+        # DF is of same object type as Set itself
+        if ( $DynamicField->{ObjectType} ne $ObjectType ) {
+            $Errors{IncludeServerError} = 'ServerError';
+            $Errors{IncludeServerErrorMessage}
+                = sprintf( Translatable('The object type of the dynamic field "%s" does not match the object type of the Set field.'), $DFElement );
+
+            return;
+        }
+
+        return 1;
+    };
+
+    LINE:
+    for my $Line ( $Param{IncludeFrontend}->@* ) {
+        if ( IsHashRefWithData( $Line->{Grid} ) ) {
+
+            if ( !IsArrayRefWithData( $Line->{Grid}{Rows} ) ) {
+                $Errors{IncludeServerError}        = 'ServerError';
+                $Errors{IncludeServerErrorMessage} = Translatable('Misconfigured Grid - need Rows as Array!');
+
+                last LINE;
+            }
+            if ( $Line->{Grid}{Columns} !~ /^0*[1-9]\d*$/ ) {
+                $Errors{IncludeServerError}        = 'ServerError';
+                $Errors{IncludeServerErrorMessage} = Translatable('Misconfigured Grid - need Columns as integer > 0!');
+
+                last LINE;
+            }
+
+            # make sure all DF Entries in the Grid are valid and usable
+            for my $Row ( @{ $Line->{Grid}{Rows} } ) {
+
+                if ( !IsArrayRefWithData($Row) ) {
+                    $Errors{IncludeServerError}        = 'ServerError';
+                    $Errors{IncludeServerErrorMessage} = Translatable('Misconfigured Grid - Rows can\'t be empty!');
+
+                    last LINE;
+                }
+
+                for my $DFEntry ( $Row->@* ) {
+
+                    if ( !IsHashRefWithData($DFEntry) || !$DFEntry->{DF} ) {
+                        $Errors{IncludeServerError}        = 'ServerError';
+                        $Errors{IncludeServerErrorMessage} = Translatable('Misconfigured Grid - Rows must contain entries with key \'DF\'!');
+                        last LINE;
+                    }
+
+                    if ( !$CheckDFElement->( $DFEntry->{DF} ) ) {
+                        last LINE;
+                    }
+                }
+
+            }
+
+            push @Include, { Grid => $Line->{Grid} };
+
+        }
+        elsif ( $Line->{DF} ) {
+
+            if ( !$CheckDFElement->( $Line->{DF} ) ) {
+                last LINE;
+            }
+
+            push @Include, { $Line->%* };
+        }
+        else {
+            $Errors{IncludeServerError}        = 'ServerError';
+            $Errors{IncludeServerErrorMessage} = Translatable('Missing Dynamic Field or Grid.');
+            last LINE;
+        }
+    }
+
+    return {
+        Include => \@Include,
+        Errors  => \%Errors,
+    };
 }
 
 sub _AddAction {
@@ -148,6 +350,13 @@ sub _AddAction {
         }
     }
 
+    for my $ConfigParam (
+        qw(ObjectType ObjectTypeName FieldType FieldTypeName ValidID Tooltip MultiValue Namespace)
+        )
+    {
+        $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
+    }
+
     my $DynamicFieldObject        = $Kernel::OM->Get('Kernel::System::DynamicField');
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
@@ -158,38 +367,24 @@ sub _AddAction {
         );
 
         if ( IsArrayRefWithData($IncludeFrontend) ) {
-            LINE:
-            for my $Line ( $IncludeFrontend->@* ) {
-                if ( !$Line->{DF} ) {
-                    $Errors{IncludeServerError}        = 'ServerError';
-                    $Errors{IncludeServerErrorMessage} = Translatable('Each array element must contain a dynamic field (DF).');
 
-                    last LINE;
+            my %YAMLErrors;
+            my $CheckResult = $Self->_CheckInclude(
+                DynamicFieldObject        => $DynamicFieldObject,
+                DynamicFieldBackendObject => $DynamicFieldBackendObject,
+                IncludeFrontend           => $IncludeFrontend,
+                ObjectType                => $GetParam{ObjectType},
+            );
+
+            if ( IsHashRefWithData($CheckResult) ) {
+                %YAMLErrors = $CheckResult->{Errors}->%*;
+                @Include    = $CheckResult->{Include}->@*;
+            }
+
+            if (%YAMLErrors) {
+                while ( my ( $Key, $Value ) = each(%YAMLErrors) ) {
+                    $Errors{$Key} = $Value;
                 }
-
-                my $DynamicField = $DynamicFieldObject->DynamicFieldGet(
-                    Name => $Line->{DF},
-                );
-                if ( !IsHashRefWithData($DynamicField) ) {
-                    $Errors{IncludeServerError}        = 'ServerError';
-                    $Errors{IncludeServerErrorMessage} = Translatable( 'No valid dynamic field "' . $Line->{DF} . '".' );
-
-                    last LINE;
-                }
-
-                my $IsSetCapable = $DynamicFieldBackendObject->HasBehavior(
-                    DynamicFieldConfig => $DynamicField,
-                    Behavior           => 'IsSetCapable',
-                );
-                if ( !$IsSetCapable ) {
-                    $Errors{IncludeServerError} = 'ServerError';
-                    $Errors{IncludeServerErrorMessage}
-                        = Translatable( 'The dynamic field type "' . $DynamicField->{FieldType} . '" of dynamic field "' . $Line->{DF} . '" can not be used in sets.' );
-
-                    last LINE;
-                }
-
-                push @Include, { DF => $Line->{DF} };
             }
         }
         else {
@@ -198,15 +393,8 @@ sub _AddAction {
         }
     }
 
-    for my $ConfigParam (
-        qw(ObjectType ObjectTypeName FieldType FieldTypeName ValidID Tooltip MultiValue Namespace)
-        )
-    {
-        $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
-    }
-
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     if ( $GetParam{Name} ) {
@@ -322,8 +510,8 @@ sub _Change {
         }
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     # get the object type and field type display name
@@ -363,7 +551,7 @@ sub _Change {
     return $Self->_ShowScreen(
         %Param,
         %GetParam,
-        %${DynamicFieldData},
+        $DynamicFieldData->%*,
         %Config,
         ID             => $FieldID,
         Mode           => 'Change',
@@ -423,53 +611,6 @@ sub _ChangeAction {
         }
     }
 
-    my @Include;
-    if ( $GetParam{Include} ) {
-        my $IncludeFrontend = $Kernel::OM->Get('Kernel::System::YAML')->Load(
-            Data => $GetParam{Include},
-        );
-
-        if ( IsArrayRefWithData($IncludeFrontend) ) {
-            LINE:
-            for my $Line ( $IncludeFrontend->@* ) {
-                if ( !$Line->{DF} ) {
-                    $Errors{IncludeServerError}        = 'ServerError';
-                    $Errors{IncludeServerErrorMessage} = Translatable('Each array element must contain a dynamic field (DF).');
-
-                    last LINE;
-                }
-
-                my $DynamicField = $DynamicFieldObject->DynamicFieldGet(
-                    Name => $Line->{DF},
-                );
-                if ( !$DynamicField ) {
-                    $Errors{IncludeServerError}        = 'ServerError';
-                    $Errors{IncludeServerErrorMessage} = Translatable( 'No dynamic field "' . $Line->{DF} . '".' );
-
-                    last LINE;
-                }
-
-                my $IsSetCapable = $DynamicFieldBackendObject->HasBehavior(
-                    DynamicFieldConfig => $DynamicField,
-                    Behavior           => 'IsSetCapable',
-                );
-                if ( !$IsSetCapable ) {
-                    $Errors{IncludeServerError} = 'ServerError';
-                    $Errors{IncludeServerErrorMessage}
-                        = Translatable( 'The dynamic field type "' . $DynamicField->{FieldType} . '" of dynamic field "' . $Line->{DF} . '" can not be used in sets.' );
-
-                    last LINE;
-                }
-
-                push @Include, { DF => $Line->{DF} };
-            }
-        }
-        else {
-            $Errors{IncludeServerError}        = 'ServerError';
-            $Errors{IncludeServerErrorMessage} = Translatable('The field must be a valid YAML containing an array of dynamic fields.');
-        }
-    }
-
     for my $ConfigParam (
         qw(ObjectType ObjectTypeName FieldType FieldTypeName ValidID Tooltip MultiValue Namespace)
         )
@@ -477,8 +618,42 @@ sub _ChangeAction {
         $GetParam{$ConfigParam} = $ParamObject->GetParam( Param => $ConfigParam );
     }
 
-    for my $FilterParam (qw(ObjectType Namespace)) {
-        $GetParam{ $FilterParam . 'Filter' } = $ParamObject->GetParam( Param => $FilterParam . 'Filter' );
+    my @Include;
+    if ( $GetParam{Include} ) {
+        my $IncludeFrontend = $Kernel::OM->Get('Kernel::System::YAML')->Load(
+            Data => $GetParam{Include},
+        );
+
+        if ( IsArrayRefWithData($IncludeFrontend) ) {
+
+            my %YAMLErrors;
+            my $CheckResult = $Self->_CheckInclude(
+                DynamicFieldObject        => $DynamicFieldObject,
+                DynamicFieldBackendObject => $DynamicFieldBackendObject,
+                IncludeFrontend           => $IncludeFrontend,
+                ObjectType                => $GetParam{ObjectType},
+            );
+
+            if ( IsHashRefWithData($CheckResult) ) {
+                %YAMLErrors = $CheckResult->{Errors}->%*;
+                @Include    = $CheckResult->{Include}->@*;
+            }
+
+            if (%YAMLErrors) {
+                while ( my ( $Key, $Value ) = each(%YAMLErrors) ) {
+                    $Errors{$Key} = $Value;
+                }
+            }
+
+        }
+        else {
+            $Errors{IncludeServerError}        = 'ServerError';
+            $Errors{IncludeServerErrorMessage} = Translatable('The field must be a valid YAML containing an array of dynamic fields.');
+        }
+    }
+
+    for my $FilterParam (qw(ObjectTypeFilter NamespaceFilter)) {
+        $GetParam{$FilterParam} = $ParamObject->GetParam( Param => $FilterParam );
     }
 
     if ( $GetParam{Name} ) {
@@ -679,12 +854,15 @@ sub _ChangeAction {
 sub _ShowScreen {
     my ( $Self, %Param ) = @_;
 
+    my $Namespace = $Param{Namespace};
     $Param{DisplayFieldName} = 'New';
 
-    my $Namespace;
     if ( $Param{Mode} eq 'Change' || $Param{Name} ) {
-        $Param{ShowWarning}      = 'ShowWarning';
-        $Param{DisplayFieldName} = $Param{Name};
+
+        if ( !$Param{CloneFieldID} ) {
+            $Param{ShowWarning}      = 'ShowWarning';
+            $Param{DisplayFieldName} = $Param{Name};
+        }
 
         # check for namespace
         if ( $Param{Name} =~ /(.*)-(.*)/ ) {
@@ -760,10 +938,12 @@ sub _ShowScreen {
         Class      => 'Modernize W50pc',
     );
 
-    my $NamespaceList = $Kernel::OM->Get('Kernel::Config')->Get('DynamicField::Namespaces');
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    my @DFNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
+    if (@DFNamespaces) {
         my $NamespaceStrg = $LayoutObject->BuildSelection(
-            Data          => $NamespaceList,
+            Data          => \@DFNamespaces,
             Name          => 'Namespace',
             SelectedValue => $Namespace || '',
             PossibleNone  => 1,
@@ -819,7 +999,7 @@ sub _ShowScreen {
     # get the field id
     my $FieldID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ID' );
 
-    # only if the dymamic field exists and should be edited,
+    # only if the dynamic field exists and should be edited,
     # not if the field is added for the first time
     if ($FieldID) {
 
@@ -832,7 +1012,7 @@ sub _ShowScreen {
         if ( !$Param{Include} && $FieldConfig->{Include} ) {
             $Param{Include} = $FieldConfig->{Include};
         }
-        if ( $Param{Include} ) {
+        if ( IsArrayRefWithData( $Param{Include} ) ) {
             $Param{Include} = $Kernel::OM->Get('Kernel::System::YAML')->Dump(
                 Data => $Param{Include},
             );
@@ -883,6 +1063,12 @@ sub _ShowScreen {
         }
 
     }
+    elsif ( $Param{CloneFieldID} && IsArrayRefWithData( $Param{Include} ) ) {
+
+        $Param{Include} = $Kernel::OM->Get('Kernel::System::YAML')->Dump(
+            Data => $Param{Include},
+        );
+    }
 
     my $FilterStrg = '';
     if ( IsStringWithData( $Param{ObjectTypeFilter} ) ) {
@@ -894,7 +1080,7 @@ sub _ShowScreen {
         );
     }
 
-    if ( IsArrayRefWithData($NamespaceList) ) {
+    if (@DFNamespaces) {
         if ( IsStringWithData( $Param{NamespaceFilter} ) ) {
             $FilterStrg .= ";NamespaceFilter=" . $LayoutObject->Output(
                 Template => '[% Data.Filter | uri %]',
@@ -903,6 +1089,14 @@ sub _ShowScreen {
                 },
             );
         }
+    }
+
+    # Add code mirror language mode.
+    if ( $LayoutObject->{BrowserRichText} ) {
+        $LayoutObject->AddJSData(
+            Key   => 'EditorLanguageMode',
+            Value => 'text/x-yaml',
+        );
     }
 
     # generate output

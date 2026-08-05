@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ use File::Copy qw(copy);
 # CPAN modules
 use Test2::V0;
 
-# OTOBO moduled
+# CareOnCloud ESM moduled
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Self and $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
@@ -52,7 +52,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
             # Parse the TestDatabase hash from configuration to variables.
             my $TestDatabase = $ConfigObject->Get('TestDatabase');
             my ( $DBType, $DBName, $DBPort, $DBHost );
-            if ( $TestDatabase->{DatabaseDSN} =~ /^DBI:mysql/ ) {
+            if ( $TestDatabase->{DatabaseDSN} =~ m/^DBI:(?:mariadb|mysql):/ ) {
                 $DBType = 'mysql';
                 ( $DBName, $DBHost ) = ( $TestDatabase->{DatabaseDSN} =~ /database=(.*);host=(.*);?/ );
             }
@@ -125,7 +125,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
                     Value   => $DBType,
                 );
 
-                # Choose to use existing database for OTOBO.
+                # Choose to use existing database for CareOnCloud ESM.
                 if ( $DBType ne 'oracle' ) {
                     $Selenium->find_element( '#DBInstallTypeUseDB', 'css' )->click();
                     $Selenium->WaitFor(
@@ -209,7 +209,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
                         'return typeof($) === "function" && $(".Header h2").text().trim() === "System Settings (3/4)";'
                 );
 
-                # Verify we are on the the third screen.
+                # verify that we are on the third screen.
                 $Self->Is(
                     $Selenium->execute_script("return \$('.Header h2').text().trim()"),
                     'System Settings (3/4)',
@@ -232,7 +232,7 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
                         'return typeof($) === "function" && $(".Header h2").text().trim() === "Mail Configuration (3/4)";'
                 );
 
-                # Verify we are on the the third screen.
+                # verify that we are on the third screen.
                 $Self->Is(
                     $Selenium->execute_script("return \$('.Header h2').text().trim()"),
                     'Mail Configuration (3/4)',
@@ -260,15 +260,15 @@ my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive 
 
                 my @Tables = $Kernel::OM->Get('Kernel::System::DB')->ListTables();
 
-                # Count number of table elements in OTOBO schema for comparison.
+                # Count number of table elements in CareOnCloud ESM schema for comparison.
                 my $XMLString = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
-                    Location => "$Home/scripts/database/otobo-schema.xml",
+                    Location => "$Home/scripts/database/careoncloud-schema.xml",
                 );
                 my $TableCount = () = ( ${$XMLString} =~ /<Table/g );
                 $Self->Is(
                     scalar @Tables,
                     $TableCount,
-                    'OTOBO tables are found'
+                    'CareOnCloud ESM tables are found'
                 );
 
                 # Try to login in new installed system.

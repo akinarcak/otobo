@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,11 +22,11 @@ use warnings;
 use parent qw(Kernel::System::EventHandler);
 
 # core modules
-use Digest::MD5;
+use Digest::MD5 ();
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -326,8 +326,8 @@ sub AppointmentCreate {
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
     my @Bind;
 
-    # parent ID supplied
-    my $ParentIDCol = my $ParentIDVal = '';
+    # the parent_id is only supplied for recurring events
+    my ( $ParentIDCol, $ParentIDVal ) = ( '', '' );
     if ( $Param{ParentID} ) {
         $ParentIDCol = 'parent_id,';
         $ParentIDVal = '?,';
@@ -377,20 +377,24 @@ sub AppointmentCreate {
         $AppointmentID = $Param{ParentID};
     }
 
-    # get appointment id for parent appointment
+    # get appointment id for the appointment that was just added
     else {
-        return if !$DBObject->Prepare(
-            SQL => '
-                SELECT id FROM calendar_appointment
-                WHERE unique_id = ? AND parent_id IS NULL
-            ',
-            Bind  => [ \$Param{UniqueID} ],
-            Limit => 1,
+        ($AppointmentID) = $DBObject->SelectRowArray(
+            SQL => <<'END_SQL',
+SELECT id
+  FROM calendar_appointment
+  WHERE calendar_id = ?
+    AND unique_id   = ?
+    AND title       = ?
+    AND parent_id   IS NULL
+  ORDER BY id DESC
+END_SQL
+            Bind => [
+                \$Param{CalendarID},
+                \$Param{UniqueID},
+                \$Param{Title},
+            ],
         );
-
-        while ( my @Row = $DBObject->FetchrowArray() ) {
-            $AppointmentID = $Row[0] || '';
-        }
 
         # return if there is not appointment created
         if ( !$AppointmentID ) {
@@ -402,7 +406,8 @@ sub AppointmentCreate {
         }
     }
 
-    # add recurring appointments
+    # Add recurring appointments. The AppointmentCreate event
+    # will be triggered for each added appointment.
     if ( $Param{Recurring} && !$Param{RecurringRaw} ) {
         return if !$Self->_AppointmentRecurringCreate(
             ParentID    => $AppointmentID,
@@ -1778,7 +1783,7 @@ sub AppointmentFutureTasksDelete {
 
 =head2 AppointmentFutureTasksUpdate()
 
-Update OTOBO daemon future task list for upcoming appointments.
+Update CareOnCloud ESM daemon future task list for upcoming appointments.
 
     my $Success = $AppointmentObject->AppointmentFutureTasksUpdate();
 
@@ -2122,7 +2127,7 @@ sub _AppointmentNotificationPrepare {
 
 =head2 AppointmentNotification()
 
-Will be triggered by the OTOBO daemon to fire events for appointments,
+Will be triggered by the CareOnCloud ESM daemon to fire events for appointments,
 that reaches it's reminder (notification) time.
 
     my $Success = $AppointmentObject->AppointmentNotification();
@@ -2268,6 +2273,7 @@ sub _AppointmentRecurringCreate {
             # skip excluded appointments
             next UNTIL_TIME if grep { $StartTime eq $_ } @RecurrenceExclude;
 
+            # the AppointmentCreate event will be triggered
             $Self->AppointmentCreate(
                 %{ $Param{Appointment} },
                 ParentID     => $Param{ParentID},

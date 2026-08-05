@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 use Kernel::System::UnitTest::Selenium;
 
@@ -267,7 +267,7 @@ $Selenium->RunTest(
             'CopyToClipboard URL present'
         );
 
-        # URL should not contain OTOBO specific URL delimiter of semicolon (;).
+        # URL should not contain CareOnCloud ESM specific URL delimiter of semicolon (;).
         #   For better compatibility, use standard ampersand (&) instead.
         #   Please see bug#12667 for more information.
         $Self->False(

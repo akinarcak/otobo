@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -66,7 +66,7 @@ sub Run {
 
         # Here we use a system call because Maint::PostMaster::Read has special exception handling
         #   and will die if certain problems occur.
-        my $Result = system("$^X $Home/bin/otobo.Console.pl Maint::PostMaster::Read <  $File ");
+        my $Result = system("$^X $Home/bin/careoncloud.Console.pl Maint::PostMaster::Read <  $File ");
 
         # Exit code 0 == success
         if ( !$Result ) {

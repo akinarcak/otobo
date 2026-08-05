@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,6 +19,12 @@ package Kernel::System::ProcessManagement::Process;
 use strict;
 use warnings;
 
+# core modules
+use List::Util qw(any);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -193,7 +199,7 @@ sub ProcessList {
     # get only processes with the requested ProcessState(s)
     my %ProcessList;
     for my $ProcessEntityID ( sort keys %{$Processes} ) {
-        if ( grep { $_ eq $Processes->{$ProcessEntityID}->{State} } @{ $Param{ProcessState} } ) {
+        if ( any { $_ eq $Processes->{$ProcessEntityID}->{State} } @{ $Param{ProcessState} } ) {
             $ProcessList{$ProcessEntityID} = $Processes->{$ProcessEntityID}->{Name} || '';
         }
     }
@@ -419,7 +425,7 @@ sub ProcessTransition {
     }
 
     # Check if our ActivitySet has a path configured
-    # if it hasn't we got nothing to do -> print debuglog if desired and return
+    # if it hasn't we got nothing to do -> print debug log if desired and return
     if ( !IsHashRefWithData( $Process->{Path}->{ $Param{ActivityEntityID} } ) ) {
         if ( $Self->{Debug} > 0 ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
@@ -534,7 +540,7 @@ sub ProcessTransition {
     if ( !IsArrayRefWithData( $Transitions{$TransitionEntityID}->{TransitionAction} ) ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
-            Message  => "Defective Process configuration: 'TrasitionAction' must be an array in "
+            Message  => "Defective Process configuration: 'TransitionAction' must be an array in "
                 . "Process: $Param{ProcessEntityID} -> Path -> "
                 . "ActivityEntityID: $Param{ActivityEntityID} -> Transition: $TransitionEntityID!",
         );
@@ -767,7 +773,7 @@ sub ProcessTicketProcessSet {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Need DynamicFieldProcessManagementProcessID config "
-                . "for storing of ProcesID on TicketID: $Param{TicketID}!",
+                . "for storing of ProcessID on TicketID: $Param{TicketID}!",
         );
         return;
     }

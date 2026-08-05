@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,13 +19,15 @@ package Kernel::System::PostMaster::Filter::DetectBounceEmail;
 use strict;
 use warnings;
 
-use Sisimai::Data;
-use Sisimai::Message;
+# core modules
 
-our @ObjectDependencies = (
-    'Kernel::Config',
-    'Kernel::System::Log',
-);
+# CPAN modules
+use Sisimai::Data    ();
+use Sisimai::Message ();
+
+# CareOnCloud ESM modules
+
+our @ObjectDependencies = ();
 
 sub new {
     my ( $Type, %Param ) = @_;
@@ -45,8 +47,8 @@ sub new {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    # Ensure that the flag X-OTOBO-Bounce doesn't exist if we didn't analysed it yet.
-    delete $Param{GetParam}->{'X-OTOBO-Bounce'};
+    # Ensure that the flag X-CareOnCloud-Bounce doesn't exist if we didn't analysed it yet.
+    delete $Param{GetParam}->{'X-CareOnCloud-Bounce'};
 
     $Self->{CommunicationLogObject}->ObjectLog(
         ObjectLogType => 'Message',
@@ -69,10 +71,10 @@ sub Run {
 
     $MessageID = sprintf '<%s>', $MessageID;
 
-    $Param{GetParam}->{'X-OTOBO-Bounce'}                   = 1;
-    $Param{GetParam}->{'X-OTOBO-Bounce-OriginalMessageID'} = $MessageID;
-    $Param{GetParam}->{'X-OTOBO-Bounce-ErrorMessage'}      = $Param{GetParam}->{Body};
-    $Param{GetParam}->{'X-OTOBO-Loop'}                     = 1;
+    $Param{GetParam}->{'X-CareOnCloud-Bounce'}                   = 1;
+    $Param{GetParam}->{'X-CareOnCloud-Bounce-OriginalMessageID'} = $MessageID;
+    $Param{GetParam}->{'X-CareOnCloud-Bounce-ErrorMessage'}      = $Param{GetParam}->{Body};
+    $Param{GetParam}->{'X-CareOnCloud-Loop'}                     = 1;
 
     $Self->{CommunicationLogObject}->ObjectLog(
         ObjectLogType => 'Message',

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,10 +21,14 @@ use warnings;
 
 use parent qw(Kernel::System::Console::BaseCommand);
 
-use POSIX qw(ceil);
-use Time::HiRes qw();
-use Kernel::System::PostMaster;
-use Kernel::System::MailAccount::IMAP;
+# core modules
+use POSIX       qw(ceil);
+use Time::HiRes ();
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::PostMaster ();    ## no perlimports, Kernel::System::PostMaster::Run will be overridden
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -316,11 +320,11 @@ sub _CleanSpoolFiles {
     my $StartAt = $Param{StartAt};
     my $StopAt  = $Param{StopAt};
 
-    my $OTOBODir = __FILE__;
-    $OTOBODir =~ s/\/Kernel.*$//i;
+    my $CareOnCloudDir = __FILE__;
+    $CareOnCloudDir =~ s/\/Kernel.*$//i;
 
     my @SpoolFilesFailedUnlink = ();
-    my @SpoolFiles             = glob "${ OTOBODir }/var/spool/problem-email-*";
+    my @SpoolFiles             = glob "${ CareOnCloudDir }/var/spool/problem-email-*";
     for my $SpoolFile (@SpoolFiles) {
         my @FileStat = stat $SpoolFile;
 

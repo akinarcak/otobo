@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -48,7 +48,7 @@ Core.UI.InputFields = (function (TargetNS) {
         ResizeEvent: 'onorientationchange' in window ? 'orientationchange' : 'resize',
         ResizeTimeout: 0,
         SafeMargin: 30,
-        MaxNumberOfOptions: 1000,
+        MaxNumberOfOptions: 10000,
         MinQueryLength: 4,
         Diacritics: {
             "\u24B6":"A", "\uFF21":"A", "\u00C0":"A", "\u00C1":"A", "\u00C2":"A", "\u1EA6":"A",
@@ -219,17 +219,6 @@ Core.UI.InputFields = (function (TargetNS) {
             // Initialize select fields on all applicable fields
             TargetNS.InitSelect($('select.Modernize', $Context));
 
-            // Initialize customer user dynamic fields
-            $('.DynamicFieldCustomerUser').each(function () {
-                var Value = $(this).val();
-                $(this).off("focusout").on("focusout", function (Event) {
-                    if ( $(this).val() != Value ) {
-                        $(this).val('');
-                    }
-                });
-                Core.Agent.CustomerSearch.InitSimple($(this));
-            });
-
             // Initialize reference dynamic fields
             var AutoComplete = Core.Config.Get('Autocomplete'),
                 AutoCompleteActive = false;
@@ -249,7 +238,15 @@ Core.UI.InputFields = (function (TargetNS) {
             });
 
             //Add an extra class to Fields containing a Dynamic Field Set
-            $('.DynamicFieldSet', $Context).parent().addClass('DFSetOuterField')
+            $('.DynamicFieldSet', $Context).parent().addClass('DFSetOuterField');
+
+            // initialize FormUpdate fields
+            $('.FormUpdate', $Context).each(function() {
+                $(this).off('change.FormUpdate').on('change.FormUpdate', function () {
+                    Core.AJAX.FormUpdate($(this).parents('form'), 'AJAXUpdate', $(this).attr('name'));
+                });
+            });
+
         }
     };
 
@@ -264,7 +261,7 @@ Core.UI.InputFields = (function (TargetNS) {
     TargetNS.Deactivate = function ($Context) {
 
         // Restore select fields
-        $('select.Modernize', $Context).each(function (Index, SelectObj) {
+        $('select.Modernize', $Context).each(function (_Index, SelectObj) {
             var $SelectObj = $(SelectObj),
                 $ShowTreeObj = $SelectObj.next('.ShowTreeSelection');
 
@@ -319,15 +316,31 @@ Core.UI.InputFields = (function (TargetNS) {
                 TargetNS.InitCustomerField( this );
             });
         }
+
+        $('form').on('submit', function() {
+            $('.DynamicFieldText').attr('disabled', false);
+        });
     };
 
+
     TargetNS.InitCustomerField = function ( Element ) {
+
+        if ( $(Element).children('.DFSetOuterField').length > 0 ) {
+            return;
+        }
+
+        // add readonly class to fields
+        $(Element).find('input, textarea, select').filter('[readonly]').each(function() {
+            $(this).closest('.Field').addClass('oooReadonly');
+        });
+
         var Label = $(Element).children('label').first(),
             Checkbox = $('.Field > input[type=checkbox]', Element),
             Select = $('.Field > select', Element),
-            Textarea = $('textarea:not(.HasCKEInstance)', Element),
-            // TODO suggestion, DB fields return two elements here (correct one and resultelementtext)
-            TextInput = $('input[type="text"]', Element).first(),
+            Textarea = $('.Field > textarea:not(.HasCKEInstance)', Element),
+
+            // DB fields return two elements here (correct one and resultelementtext)
+            TextInput = $('input[type="text"], input[type="password"]', Element).first(),
             TextValue;
 
         // move labels for checkboxes
@@ -341,12 +354,6 @@ Core.UI.InputFields = (function (TargetNS) {
 
         // change label css for textareas
         else if ( Textarea.length > 0 ) {
-            Label.css({
-                'display': 'inline-block',
-                'vertical-align': 'top',
-                'margin-top': '24px',
-            });
-
             TextInput = Textarea;
             TextValue = Textarea.text();
         }
@@ -367,9 +374,10 @@ Core.UI.InputFields = (function (TargetNS) {
             $(".Field", Element).addClass('oooFull');
         }
 
-        var Label = $(Element).children('label').first();
-
         TextInput.focus( function() {
+            if ( $(this).prop('readonly') ) {
+                return 1;
+            }
             Label.addClass('oooFocus');
         });
         TextInput.blur( function() {
@@ -426,6 +434,9 @@ Core.UI.InputFields = (function (TargetNS) {
 
         $SearchObj.prop('readonly', false);
         $InputContainerObj.removeClass('AlreadyDisabled');
+        if ( Config.CustomerInterface === true ) {
+            $SearchObj.closest('.Field').removeClass('oooReadonly');
+        }
 
         // Check if there are only empty and disabled options
         if ($SelectObj.find('option')
@@ -440,6 +451,9 @@ Core.UI.InputFields = (function (TargetNS) {
             $SearchObj
                 .attr('readonly', true)
                 .attr('title', Core.Language.Translate('Not available'));
+            if ( Config.CustomerInterface === true ) {
+                $SearchObj.closest('.Field').addClass('oooReadonly');
+            }
 
             // when the original field does no longer provide any valid options,
             // we also want to remove existing selections
@@ -453,6 +467,9 @@ Core.UI.InputFields = (function (TargetNS) {
                 .removeAttr('title')
                 .prop('readonly', false)
                 .val('');
+            if ( Config.CustomerInterface === true ) {
+                $SearchObj.closest('.Field').removeClass('oooReadonly');
+            }
         }
     }
 
@@ -524,9 +541,6 @@ Core.UI.InputFields = (function (TargetNS) {
         // Give up if field is expanded
         if ($SearchObj.attr('aria-expanded')) return;
 
-        // Give up is field is disabled
-        if ($SearchObj.attr('readonly')) return;
-
         // Remove any existing boxes in supplied container
         $InputContainerObj.find('.InputField_Selection').remove();
         $InputContainerObj.find('.InputField_SelectionFilter').remove();
@@ -539,7 +553,7 @@ Core.UI.InputFields = (function (TargetNS) {
 
 
         // Check for empty values (allow field clearing).
-        $SelectObj.find('option').each(function (Index, Option) {
+        $SelectObj.find('option').each(function (_Index, Option) {
             if ($(Option).attr('value') === '' || $(Option).attr('value') === '||-') {
                 PossibleNone = true;
                 return true;
@@ -582,7 +596,7 @@ Core.UI.InputFields = (function (TargetNS) {
             }
 
             // Iterate through all selected values
-            $.each(Selection, function (Index, Value) {
+            $.each(Selection, function (_Index, Value) {
                 var $SelectionObj,
                     Text,
                     $TextObj,
@@ -982,7 +996,7 @@ Core.UI.InputFields = (function (TargetNS) {
             FilterIndex = parseInt($SelectObj.data('filtered'), 10) - 1;
 
             // Insert filtered data
-            $.each($SelectObj.data('filters').Filters[FilterIndex].Data, function (Index, Option) {
+            $.each($SelectObj.data('filters').Filters[FilterIndex].Data, function (_Index, Option) {
                 var $OptionObj = $('<option />');
                 $OptionObj.attr('value', Option.Key)
                     .text(Option.Value);
@@ -1073,7 +1087,7 @@ Core.UI.InputFields = (function (TargetNS) {
                 $FilterObj.off('click.InputField').on('click.InputField', function (Event) {
 
                     // Allow selection of only one filter
-                    $FilterObj.siblings('input').each(function (Index, Filter) {
+                    $FilterObj.siblings('input').each(function (_Index, Filter) {
                         if ($(Filter).attr('id') !== $FilterObj.attr('id')) {
                             $(Filter).attr('checked', false);
                         }
@@ -1208,7 +1222,7 @@ Core.UI.InputFields = (function (TargetNS) {
             if (Data === undefined) {
                 Data = new Array();
             }
-            $.each(Elements, function (Index, Element) {
+            $.each(Elements, function (_Index, Element) {
                 if (typeof Element === 'object') {
                     if (Element.state) {
                         if (Element.state.selected) {
@@ -1307,7 +1321,7 @@ Core.UI.InputFields = (function (TargetNS) {
             Ch;
         for (; i >= 0; i--) {
             Ch = Chars[i];
-            if (Config.Diacritics.hasOwnProperty(Ch)) {
+            if ( Object.prototype.hasOwnProperty.call(Config.Diacritics, Ch) ) {
                 Chars[i] = Config.Diacritics[Ch];
                 Alter = true;
             }
@@ -1322,7 +1336,7 @@ Core.UI.InputFields = (function (TargetNS) {
      * @name InitSelect
      * @memberof Core.UI.InputFields
      * @function
-     * @returns {Boolean} Returns true if successfull, false otherwise
+     * @returns {Boolean} Returns true if successfully, false otherwise
      * @param {jQueryObject} $SelectFields - Fields to initialize.
      * @description
      *      This function initializes select input fields, based on supplied CSS selector.
@@ -1335,7 +1349,7 @@ Core.UI.InputFields = (function (TargetNS) {
         }
 
         // Iterate over all found fields
-        $SelectFields.each(function (Index, SelectObj) {
+        $SelectFields.each(function (_Index, SelectObj) {
 
             // Global variables
             var $ToolbarContainerObj,
@@ -1363,6 +1377,19 @@ Core.UI.InputFields = (function (TargetNS) {
                 WholeRowClicked,
                 ScrollEventListener;
 
+            // Set width of search field to that of the select field
+            function UpdateFieldWidth() {
+
+                //setting the size via css breaks form styling
+                if ($SelectObj.closest('fieldset').hasClass('ModularForm'))
+                    return;
+
+                $SearchObj.blur().hide();
+                SelectWidth = $SelectObj.show().outerWidth();
+                $SelectObj.hide();
+                $SearchObj.outerWidth(SelectWidth).show();
+            }
+
             // For performance reasons:
             // Do not initialize modern inputfields on selects with many entries
             if ($(SelectObj).children('option').length > Config.MaxNumberOfOptions) {
@@ -1383,7 +1410,6 @@ Core.UI.InputFields = (function (TargetNS) {
                 Focused = null;
 
                 // Get width now, since we will hide the element
-                // TODO: Angucken
                 if (!$SelectObj.closest('.Row').hasClass('Row_DynamicField')) {
                     SelectWidth = $SelectObj.outerWidth();
                 }
@@ -1442,17 +1468,19 @@ Core.UI.InputFields = (function (TargetNS) {
                     $SearchObj.addClass('Small');
                 }
 
-                // Set width of search field to that of the select field
-                $SearchObj.width(SelectWidth);
+                // skip if in a form, setting the size via css breaks form styling
+                if (!$SelectObj.closest('fieldset').hasClass('ModularForm'))
+                    // Set width of search field to that of the select field
+                    $SearchObj.outerWidth(SelectWidth);
 
                 // Subscribe on window resize event
                 Core.App.Subscribe('Event.UI.InputFields.Resize', function() {
+                    UpdateFieldWidth();
+                });
 
-                    // Set width of search field to that of the select field
-                    $SearchObj.blur().hide();
-                    SelectWidth = $SelectObj.show().outerWidth();
-                    $SelectObj.hide();
-                    $SearchObj.width(SelectWidth).show();
+                // set width after page and layout are fully loaded
+                window.addEventListener = ("load", () => {
+                    UpdateFieldWidth();
                 });
 
                 // Handle clicks on related label
@@ -1466,7 +1494,7 @@ Core.UI.InputFields = (function (TargetNS) {
                     }
                 }
 
-                // Set the earch field label attribute if there was no label element.
+                // Set the search field label attribute if there was no label element.
                 if (!$LabelObj || $LabelObj.length === 0) {
                     if ($SelectObj.attr('aria-label')) {
                         SearchLabel = $SelectObj.attr('aria-label');
@@ -1599,14 +1627,26 @@ Core.UI.InputFields = (function (TargetNS) {
                         // calculate available height to top of page
                         AvailableHeightTop = parseInt($InputContainerObj.offset().top - $(window).scrollTop() - Config.SafeMargin, 10);
 
-                        // set left position
-                        $ListContainerObj
-                            .css({
-                                left: $InputContainerObj.offset().left
-                            });
-                        if ( Config.CustomerInterface === true ) {
+                        if ($SelectObj.hasClass('AlignDropdownRight')) {
+                            // set right position
                             $ListContainerObj
-                                .css('margin-left', '16px');
+                                .css({
+                                    right: window.innerWidth-($InputContainerObj.offset().left + $InputContainerObj.outerWidth())
+                                });
+                            if ( Config.CustomerInterface === true ) {
+                                $ListContainerObj
+                                    .css('margin-right', '16px');
+                            }
+                        } else {
+                            // set left position
+                            $ListContainerObj
+                                .css({
+                                    left: $InputContainerObj.offset().left
+                                });
+                            if ( Config.CustomerInterface === true ) {
+                                $ListContainerObj
+                                    .css('margin-left', '16px');
+                            }
                         }
 
                         // decide whether list should be positioned on top or at the bottom of the input field
@@ -1663,7 +1703,7 @@ Core.UI.InputFields = (function (TargetNS) {
                         }
                     }
 
-                    $SelectObj.find('option').each(function (Index, Option) {
+                    $SelectObj.find('option').each(function (_Index, Option) {
                         if ($(Option).attr('value') === '' || $(Option).attr('value') === '||-') {
                             PossibleNone = true;
                             return true;
@@ -1823,7 +1863,6 @@ Core.UI.InputFields = (function (TargetNS) {
                     // jsTree init
                     $TreeObj = $('<div id="' + Core.App.EscapeSelector(TreeID) + '"><ul></ul></div>');
                     SelectedID = $SelectObj.val();
-                    Elements = {};
                     SelectedNodes = [];
 
                     // Generate JSON structure based on select field options
@@ -1935,7 +1974,7 @@ Core.UI.InputFields = (function (TargetNS) {
 
                     // Handle node selection in tree list
                     // Skip eslint check on next line for unused vars (it's actually event)
-                    .on('select_node.jstree', function (Node, Selected, Event) {  //eslint-disable-line no-unused-vars
+                    .on('select_node.jstree', function (_Node, Selected) {
                         var $SelectedNode = $('#' + Selected.node.id),
                             SelectedNodesIDs;
 
@@ -1977,7 +2016,7 @@ Core.UI.InputFields = (function (TargetNS) {
 
                     // click is also triggered (besides select_node), which
                     // could result in a bubbled-up event
-                    // prevents dialogs from accidently closing
+                    // prevents dialogs from accidentally closing
                     // jstree triggers a click event for pressing the enter key
                     // so we try to handle this here
                     .on('click.jstree', function (Event) {
@@ -2166,7 +2205,7 @@ Core.UI.InputFields = (function (TargetNS) {
                     .on('loaded.jstree', function () {
                         if (SelectedID) {
                             if (typeof SelectedID === 'object') {
-                                $.each(SelectedID, function (NodeIndex, Data) {
+                                $.each(SelectedID, function (_NodeIndex, Data) {
                                     $TreeObj.jstree('select_node', $TreeObj.find('li[data-id="' + Core.App.EscapeSelector(Data) + '"]'));
                                 });
                             }
@@ -2398,13 +2437,12 @@ Core.UI.InputFields = (function (TargetNS) {
 
                         var SearchValue = $SearchObj.val().trim(),
                             NoMatchNodeJSON,
-                            $ClearSearchObj,
-                            SearchTimeout;
+                            $ClearSearchObj;
 
                         // Clear search timeout
-                        window.clearTimeout(SearchTimeout);
+                        window.clearTimeout();
 
-                        SearchTimeout = window.setTimeout(function () {
+                        window.setTimeout(function () {
 
                             // Abandon search if empty string
                             if (SearchValue === '') {
@@ -2655,7 +2693,7 @@ Core.UI.InputFields = (function (TargetNS) {
                     CloseOpenSelections();
                 });
 
-                // TODO: Fix - the first multicalue id now has _0 and thus is different, too - what is the initial event?
+                // TODO: Fix - the first multivalue id now has _0 and thus is different, too - what is the initial event?
                 /*if ( $SelectObj.closest('.Row_DynamicField').hasClass('MultiValue') && $SelectObj.attr('id') != $SelectObj.attr('name') ) {
                     $SelectObj.off('change.multivalue').on('change.multivalue', function() {
                         $('[name=' + $SelectObj.attr('name') + ']').first().trigger('change');
@@ -2684,11 +2722,7 @@ Core.UI.InputFields = (function (TargetNS) {
                     }
                     CheckAvailability($SelectObj, $SearchObj, $InputContainerObj);
 
-                    // before fetching the outer width, the select element has to be displayed
-                    // because outerWidth() does not work correctly on hidden elements
-                    SelectWidth = $SelectObj.show().outerWidth();
-                    $SelectObj.hide();
-                    $SearchObj.width(SelectWidth);
+                    UpdateFieldWidth();
                     ShowSelectionBoxes($SelectObj, $InputContainerObj);
                 })
 
@@ -2708,6 +2742,13 @@ Core.UI.InputFields = (function (TargetNS) {
                         $SearchObj.removeClass(Config.ServerErrorClass);
                     }
                 });
+
+                // initialize FormUpdate
+                if ( $SelectObj.hasClass('FormUpdate') ) {
+                    $SelectObj.off('change.FormUpdate').on('change.FormUpdate', function () {
+                        Core.AJAX.FormUpdate($SelectObj.parents('form'), 'AJAXUpdate', $SelectObj.attr('name'));
+                    });
+                }
 
             }
         });
@@ -2731,153 +2772,330 @@ Core.UI.InputFields = (function (TargetNS) {
     };
 
     /**
+     * @name AddEmptyMultiValueCells
+     * @memberof Core.UI.InputFields
+     * @function
+     * @returns {Boolean} Returns true if successfully, false otherwise
+     * @param {Array} keys of multivalue fields coming from backend
+     * @param {Object} value counts for Set fields
+     * @description
+     *      Adds empty multivalue fields to match count of values
+     */
+    TargetNS.AddEmptyMultiValueCells = function ( MultiValueKeys, SetValueCounts ) {
+
+        // iterate Set field deletion
+        if ( Object.keys(SetValueCounts).length ) {
+            Object.keys(SetValueCounts).forEach(function (SetFieldName) {
+                let { ShortSetName } = /^DynamicField_(?<ShortSetName>[A-Za-z0-9-]+(_[a-f0-9]{32})?)/.exec(SetFieldName).groups;
+                $('[name=SetIndex_' + ShortSetName + ']').parents('.FieldCell[class*=MultiValue]').each(function (_Index, Element) {
+                    if ( $(Element).is(':visible') ) {
+                        RemoveCell($(Element));
+                    }
+                });
+            });
+        }
+
+        let DeletionDone = {};
+
+        // check if field exists in general
+        MultiValueKeys.forEach(function (MultiValueKey) {
+
+            let { PlainFieldName, Index } = /^(?<PlainFieldName>DynamicField_[A-Za-z0-9-]+(_[a-f0-9]{32})?)(?<Index>_\d+)?/.exec(MultiValueKey).groups;
+
+            if ( typeof Index != 'undefined' && DeletionDone[PlainFieldName] != 1 ) {
+
+                let CellsToRemove = {};
+
+                $('[name^=' + PlainFieldName +']').not('[id*="_Template"]').each(function(Index, Element) {
+
+                    if ( !$(Element).length ) {
+                        return;
+                    }
+
+                    CellsToRemove[Index] = $(Element).closest('.FieldCell');
+                    DeletionDone[PlainFieldName] = 1;
+                });
+                Object.keys(CellsToRemove).forEach(function(Index) {
+                    if ( CellsToRemove[Index].is(':visible') ) {
+                        RemoveCell(CellsToRemove[Index]);
+                    }
+                });
+            }
+        });
+
+        // create Set field cells if needed
+        if ( Object.keys(SetValueCounts).length ) {
+            $.each(SetValueCounts, function (SetName, SetCount) {
+
+                // starting at 1 as 0 should always exist
+                for ( let CurIndex = 1; CurIndex < SetCount; CurIndex++ ) {
+                    let HiddenInput = $('#' + SetName + '_' + CurIndex);
+
+                    // hidden input with this index already exists, skip
+                    if ( HiddenInput.length ) {
+                        return;
+                    }
+
+                    // create new Set cell based on previous index
+                    AddCell( $('#' + SetName + '_' + (CurIndex - 1)).closest('.FieldCell') );
+                }
+            });
+        }
+
+        MultiValueKeys.forEach(function (MultiValueKey) {
+
+            // check if element itself already exists
+            //  if so, nothing to do
+            let $MVElement = $('#' + MultiValueKey);
+            if ($MVElement.length || $MVElement.is('textarea')) {
+                return;
+            }
+
+            // check if field in general is present
+            let { FieldName } = /^(?<FieldName>DynamicField_.+(_[a-f0-9]{32})?)_\d+$/.exec(MultiValueKey).groups;
+            let $MVField = $('[name=' + FieldName + ']').not('[id*="_Template"]');
+            if ( !$MVField.length && !$MVField.is('textarea') ) {
+
+                // special case: for field with additional 0, do nothing
+                $MVField = $('[name="' + FieldName + '_0"]').not('[id*="_Template"]');
+                if ( $MVField.length || $MVField.is('textarea') ) {
+                    return;
+                }
+
+                $MVField = $('[name^="' + FieldName + '_"]').not('[id*="_Template"]');
+
+                if ( !$MVField.length && !$MVField.is('textarea') ) {
+                    return;
+                }
+            }
+
+            // field does exist and new multivalue element needs to be created
+            AddCell($MVField.last().closest('.FieldCell[class*="MultiValue_"]'));
+        });
+    }
+
+    /**
      * @name InitMultiValueDynamicFields
      * @memberof Core.UI.InputFields
-     * @param {jQueryObject} [$Context] - jQuery object for context (optional)
      * @description
      *      Initiates all multivalue dynamic fields Add/Remove ValueRow functionality
      */
-    TargetNS.InitMultiValueDynamicFields = function ( $Context ) {
-        $('.Row.MultiValue', $Context).each( function() {
-            var $Row = $(this);
-
-            InitMultiValueFieldRow( $Row );
-
-            if ( $Row.hasClass('MultiColumn') ) {
-                TargetNS.HideMultiAddRemoveButtons( $Row );
-            }
+    TargetNS.InitMultiValueDynamicFields = function () {
+        $('.Row.MultiValue > .FieldCell', $('body')).each( function() {
+            var $Cell = $(this);
+            $Cell.attr('class').split(' ').forEach( CellClassName => {
+                if ( CellClassName.startsWith('MultiValue_') ) {
+                    InitMultiValueCell( $Cell );
+                }
+            });
         });
     };
 
     /**
-     * @private
-     * @name InitMultiValueFieldRow
-     * @memberof Core.UI.InputFields
-     * @param {jQueryObject} $Row - the dynamic field row to initiate
-     * @param {Integer} Start     - optional: the first index to (re)initiate (default: 0)
-     * @param {Integer} Shift     - optional: shift values in case of added or removed value rows (default: 0)
-     * @description
-     *      Assigns each FieldCell to a ValueRow, optionally shifts the index of those ValueRows
-     *      and triggers setting indices used in the fields to the correct values
+     * Initialize a multi-value cell.
+     *
+     * @param {JQuery} $Cell - the jQuery element representing the cell
+     * @return {void}
      */
-    function InitMultiValueFieldRow( $Row, Start = 0, Shift = 0 ) {
-        var ValueRowIndex = 0,
-            ValueRowCells = [];
+    function InitMultiValueCell( $Cell ) {
 
-        $Row.children('.FieldCell').each( function() {
-            var $Cell = $(this);
+        var CellGridPosition = GetGridPosition($Cell);
 
-            // gather value rows and initiate them
-            if ( $Cell.hasClass( 'MultiValue_' + ValueRowIndex ) ) {
-                if ( ValueRowIndex < Start ) {
-                    return;
-                }
-                if ( Shift !== 0 ) {
-                    ReplaceCellIndex( $Cell, ValueRowIndex, ValueRowIndex + Shift );
-                }
-                ValueRowCells.push( $Cell );
+        // set correct grid row
+        $Cell.css('grid-row-start', CellGridPosition.Row+1);
+
+        let $AddRemoveValueRow = $Cell.children('.AddRemoveValueRow');
+        $( '.AddValueRow', $AddRemoveValueRow ).off('click').on('click', function() {
+            AddCell($Cell)
+        });
+        $( '.RemoveValueRow', $AddRemoveValueRow ).off('click').on('click', function() {
+            RemoveCell($Cell)
+        });
+
+        // process field label initialization
+        $('.FieldHelpContainer', $Cell).each(function () {
+            if (!$(this).next('label').find('.Marker').length) {
+                $(this).prependTo($(this).next('label'));
             }
-            else if ( $Cell.hasClass( 'MultiValue_' + (ValueRowIndex + 1) ) ) {
-                if ( ValueRowIndex + 1 < Start ) {
-                    ValueRowIndex++;
-                    return;
-                }
-
-                InitValueRow( ValueRowCells, ValueRowIndex + Shift );
-
-                ValueRowIndex++;
-                if ( Shift !== 0 ) {
-                    ReplaceCellIndex( $Cell, ValueRowIndex, ValueRowIndex + Shift );
-                }
-                ValueRowCells = [ $Cell ];
+            else {
+                $(this).insertAfter($(this).next('label').find('.Marker'));
             }
         });
 
-        InitValueRow( ValueRowCells, ValueRowIndex + Shift );
+        // Some dynamic fields might not show the label for the added dynamic fields.
+        // TODO: if labels are included in the HTML, then that should refer to the appropriate field.
+        // TODO: replace by a nice css-only version (MultiValue_0 vs MultiValue_X, respecting non multi value, possibly in multi value multicolumn grid)
+        if ( CellGridPosition.Row === 0 ) {
+            $Cell.children('label').show();
+        }
+        else {
+            $Cell.children('label').hide();
+        }
+
+        // for date(time) dynamic fields: append row index to validation classes
+        var $DateTime = $Cell.children('.Field').children('.DynamicFieldDate');
+        if ( $DateTime.length ) {
+            var TimeStrings = ['Day', 'Month', 'Year', 'Hour', 'Minute'];
+            TimeStrings.forEach(TimeString => {
+                    var $DateTimeElement = $DateTime.find('.Validate_Date' + TimeString);
+                    if ( $DateTimeElement.length ) {
+                        var DateTimeFieldName = $DateTimeElement.attr('name').substring(0, $DateTimeElement.attr('name').lastIndexOf(TimeString));
+                        TimeStrings.forEach(ClassTimeString => {
+                            var ClassString = 'Validate_Date' + ClassTimeString + '_' + DateTimeFieldName + ClassTimeString;
+                            $DateTimeElement.hasClass(ClassString) && $DateTimeElement.removeClass(ClassString) && $DateTimeElement.addClass(ClassString + '_' + CellGridPosition.Row);
+                        });
+                    }
+            });
+        }
+
+        // increase index by 1 to avoid running into 0 vs. '' vs. undef problems in backend
+        $('input[type="checkbox"]', $Cell).val(CellGridPosition.Row + 1);
     }
 
     /**
-     * @private
-     * @name InitValueRow
-     * @memberof Core.UI.InputFields
-     * @param {Array} ValueRowCells   - the field cells in this value row
-     * @param {Integer} ValueRowIndex - the index of the value row
-     * @description
-     *      Sets the add and remove events for the -/+ buttons of this value row
+     * AddCell function to add a new cell after the given cell and shift neighbouring cells appropriately.
+     *
+     * @param {JQuery} $Cell - The cell after which a new cell should be inserted
      */
-    function InitValueRow( ValueRowCells, ValueRowIndex ) {
-        var DynamicFields = Core.Config.Get('DynamicFieldNames');
-
-        ValueRowCells.forEach( function( $Cell ) {
-            $( '.AddValueRow', $Cell.children('.AddRemoveValueRow') ).off('click').on('click', function() {
-                var $Row = $Cell.closest('.Row');
-
-                // shift all higher values forward to make space
-                InitMultiValueFieldRow( $Row, ValueRowIndex + 1, 1 );
-                // insert a new ValueRow
-                InsertRow( $Row, ValueRowIndex + 1 );
-            });
-            $( '.RemoveValueRow', $Cell.children('.AddRemoveValueRow') ).off('click').on('click', function() {
-                var $Row         = $Cell.closest('.Row'),
-                    LastValueRow = ValueRowIndex === 0 && $Row.children('.MultiValue_1').length === 0;
-
-                // delete current row
-                ValueRowCells.forEach( function( $ToRemove ) { $ToRemove.remove() } );
-
-                if ( LastValueRow ) {
-                    // insert an empty Value row again
-                    InsertRow( $Row, 0 );
-                }
-                else {
-                    // shift all higher values back to close the gap
-                    InitMultiValueFieldRow( $Row, ValueRowIndex + 1, -1 );
-                }
-            });
-
-            // Some dynamic fields might not show the label for the added dynamic fields.
-            // TODO: it labels are included in the HTML, then that should refer to the appropriate field.
-            // TODO: replace by a nice css-only version (MultiValue_0 vs MultiValue_X, respecting non multi value, possibly in multi value multicolumn grid)
-            if ( ValueRowIndex === 0 ) {
-                $Cell.children('label').show();
-            }
-            else {
-                $Cell.children('label').hide();
-            }
-
-            // for date(time) dynamic fields: append ValueRowIndex to validation classes
-            var TimeStrings = ['Day', 'Month', 'Year', 'Hour', 'Minute'];
-            TimeStrings.forEach(TimeString => {
-                var $TimeElement = $Cell.find('.Validate_Date' + TimeString);
-                if ( $TimeElement.length > 0 ) {
-                    var DateTimeFieldName = $TimeElement.attr('name').substr(0, $TimeElement.attr('name').lastIndexOf(TimeString));
-                    TimeStrings.forEach(ClassTimeString => {
-                        var ClassString = 'Validate_Date' + ClassTimeString + '_' + DateTimeFieldName + ClassTimeString;
-                        $TimeElement.hasClass(ClassString) && $TimeElement.removeClass(ClassString) && $TimeElement.addClass(ClassString + '_' + ValueRowIndex);
-                    });
-                }
-            });
-
-            $('input[type="checkbox"]', $Cell).val(ValueRowIndex);
-
-            // TODO Iterate only over fields in ValueRowCells
-            // add ajax update handler to fields
-            $.each( DynamicFields, function( Index, DynamicFieldName ) {
-                $( '#'  + DynamicFieldName + '_' + ValueRowIndex ).on( 'change', function () {
-                    var FieldsToUpdate = Core.Data.CopyObject(DynamicFields);
-                    FieldsToUpdate.splice(Index, 1);
-                    Core.AJAX.FormUpdate( $Cell.closest('form'), 'AJAXUpdate', $(this).attr('name'), FieldsToUpdate );
-                });
-            });
+    function AddCell( $Cell ) {
+        var CellGridPosition = GetGridPosition($Cell);
+        var $TemplateCell = $();
+        $Cell.siblings('.MultiValue_Template').each( function () {
+            if (Number($(this).css('grid-column').split(' ')[0]) == CellGridPosition.Column) {
+                $TemplateCell = $(this);
+            };
         });
+
+        var $NewCell = $TemplateCell.clone().addClass('FieldCell');
+
+        // standard multivalue field
+        if ( $NewCell.children('.Field').children('.DynamicFieldSet').length === 0 ) {
+            $('[name^=DynamicField_]', $NewCell).each( function() {
+                if ( $('[name=' + $(this).attr('name') + ']').first().hasClass('Validate_Required') ) {
+                    $(this).addClass('Validate_Required');
+                    $(this).removeClass('ValidationIgnore');
+                }
+            });
+        }
+        // multivalue set
+        else {
+            // Set template uses the ValidationIgnore class to skip validation
+            $('.ValidationIgnore', $NewCell).each( function() {
+                if ( $('[name=' + $(this).attr('name') + ']').first().hasClass('Validate_Required') ) {
+                    $(this).removeClass('ValidationIgnore');
+                }
+            });
+        }
+
+        //shift ValueRowIndex of all following cells in this column
+        $Cell.siblings('.FieldCell').each( function () {
+            let $FollowingCell = $(this);
+            let GridPosition = GetGridPosition( $FollowingCell );
+            if ( GridPosition &&GridPosition.Column == CellGridPosition.Column
+                && GridPosition.Row > CellGridPosition.Row )
+            {
+                ReplaceCellIndex( $FollowingCell, GridPosition.Row, GridPosition.Row+1 );
+            }
+        })
+
+        ReplaceCellIndex( $NewCell, 'Template', CellGridPosition.Row+1 );
+        $Cell.after($NewCell);
+        InitMultiValueCell( $NewCell );
+        let $SubCells = $('.DynamicFieldSet .FieldCell', $NewCell);
+        if ($SubCells.length == 0) {
+            DynamicFieldInit($NewCell);
+        } else {
+            $SubCells.each( function() {
+                let $SubCell = $(this);
+                DynamicFieldInit( $SubCell );
+                if ($SubCell[0] .className.split(' ').find( ClassName =>
+                                ClassName.startsWith('MultiValue_')))
+                {
+                    InitMultiValueCell( $SubCell );
+                }
+            })
+        }
+
+    }
+
+    /**
+     * Remove the given cell and shift and shift neighbouring cells appropriately.
+     *
+     * @param {JQuery} $Cell - The cell to be removed.
+     * @return {void}
+     */
+    function RemoveCell( $Cell ) {
+        var CellGridPosition = GetGridPosition($Cell);
+        var IsLastCell = true;
+        $Cell.siblings('.FieldCell').each(function () {
+            let $SiblingCell = $(this);
+            let GridPosition = GetGridPosition( $SiblingCell );
+            if (GridPosition && GridPosition.Column == CellGridPosition.Column) {
+                IsLastCell = false;
+                if (GridPosition.Row > CellGridPosition.Row) {
+                    ReplaceCellIndex( $SiblingCell, GridPosition.Row, GridPosition.Row-1 );
+                    if (GridPosition.Row == 1) {
+                        $SiblingCell.children('label').show();
+                    }
+                }
+            }
+        });
+
+        //instead of simply removing the last remaining cell, 'reset' it to the template
+        if ( IsLastCell ) {
+            var $TemplateCell = $();
+            $Cell.siblings('.MultiValue_Template').each( function () {
+                if (Number($(this).css('grid-column').split(' ')[0]) == CellGridPosition.Column) {
+                    $TemplateCell = $(this);
+                };
+            });
+
+            var $ResetCell = $TemplateCell.clone().addClass('FieldCell');
+
+            // standard multivalue field
+            if ( $ResetCell.children('.Field').children('.DynamicFieldSet').length === 0 ) {
+                $('[name^=DynamicField_]', $ResetCell).each( function() {
+                    if ( $('[name=' + $(this).attr('name') + ']').first().hasClass('Validate_Required') ) {
+                        $(this).addClass('Validate_Required');
+                    }
+                });
+            }
+            // multivalue set
+            else {
+                // TODO: We need a solution for sets here
+                /*$('[name^=DynamicField_]', $NewCell).each( function() {
+                    if ( $('[name=' + $(this).attr('name') + ']').first().hasClass('Validate_Required') ) {
+                        $(this).addClass('Validate_Required');
+                    }
+                });*/
+            }
+
+            ReplaceCellIndex( $ResetCell, 'Template', CellGridPosition.Row );
+            $Cell.after($ResetCell);
+            InitMultiValueCell( $ResetCell );
+            DynamicFieldInit( $ResetCell );
+
+            $('.DynamicFieldSet .FieldCell', $ResetCell).each( function() {
+                let $SubCell = $(this);
+                DynamicFieldInit( $SubCell );
+                if ($SubCell[0] .className.split(' ').find( ClassName =>
+                                ClassName.startsWith('MultiValue_')))
+                {
+                    InitMultiValueCell( $SubCell );
+                }
+            })
+        }
+
+        $Cell.remove();
     }
 
     /**
      * @private
      * @name ReplaceCellIndex
      * @memberof Core.UI.InputFields
-     * @param {jQueryObject} $Cell - the field cell
-     * @param {Integer} From       - current index
-     * @param {Integer} To         - new index
+     * @param {JQuery} $Cell - the field cell
+     * @param {Number} From - current index
+     * @param {Number | String} To - new index or 'Template'
      * @description
      *      Replaces multivalue and set indices after adding or deleting rows
      */
@@ -2885,6 +3103,9 @@ Core.UI.InputFields = (function (TargetNS) {
         // replace fix stuff
         $Cell.removeClass( 'MultiValue_' + From );
         $Cell.addClass( 'MultiValue_' + To );
+
+        // set correct grid row
+        $Cell.css('grid-row-start', To+1);
 
         // replace DynamicField specifics
         var ReplaceRegEx = new RegExp( '(DynamicField_[\\w\\d_-]+_)'  + From + '((Data|Container)?)', 'g' );
@@ -2922,7 +3143,7 @@ Core.UI.InputFields = (function (TargetNS) {
             // change the hidden SetIndex
             $Cell.children('.Field').children('input[name^=SetIndex]').first().val(To);
 
-            $('[id^=DynamicField_], [id^=DynamicFieldDBDetailedSearch_]', $Cell).each( function() {
+            $('[id^=DynamicField_], [id^=DynamicFieldDBDetailedSearch_], [id^=Autocomplete_DynamicField_]', $Cell).each( function() {
                 ['name'].forEach( Attribute => {
                     var Attr = $(this).attr(Attribute);
                     if ( Attr && Attr.match( ReplaceRegEx ) ) {
@@ -2932,9 +3153,9 @@ Core.UI.InputFields = (function (TargetNS) {
             });
 
             // for attributes which can also contain multivalue data, we have to target the second to last index if two are present
-            ReplaceRegEx = new RegExp( '(DynamicField_[\\w\\d_-]+?_)' + From + '((_\d+)?(Data|Container)?)', 'g' );
+            ReplaceRegEx = new RegExp( '(DynamicField_[\\w\\d_-]+?_)' + From + '((_\\d+)?(Data|Container)?)', 'g' );
 
-            $('[id^=DynamicField_], [id^=DynamicFieldDBDetailedSearch_]', $Cell).each( function() {
+            $('[id^=DynamicField_], [id^=DynamicFieldDBDetailedSearch_], [id^=Autocomplete_DynamicField_]', $Cell).each( function() {
                 ['id', 'field'].forEach( Attribute => {
                     var Attr = $(this).attr(Attribute);
                     if ( Attr && Attr.match( ReplaceRegEx ) ) {
@@ -2962,76 +3183,30 @@ Core.UI.InputFields = (function (TargetNS) {
     }
 
     /**
-     * @private
-     * @name InsertRow
-     * @memberof Core.UI.InputFields
-     * @param {jQueryObject} $Row     - the dynamic field row
-     * @param {Integer} ValueRowIndex - the index at which to insert
-     * @description
-     *      Inserts a new value row at a given index
+     * Get the grid position of the given cell.
+     *
+     * @param {JQuery} $Cell - the cell to get the grid position of
+     * @return {{ Row: Number, Column: Number} | false} the grid position of the cell
      */
-    function InsertRow( $Row, ValueRowIndex ) {
-        var ValueRowCells = [],
-            $NextCell     = $Row.children('.MultiValue_' + ( ValueRowIndex + 1 )).first(),
-            $LastCell     = $Row.children('.FieldCell').last();
+    function GetGridPosition( $Cell ) {
 
-        $Row.children('.MultiValue_Template').each( function() {
-            var $NewCell = $(this).clone().addClass('FieldCell');
+        let MultiValueClass = $Cell[0].className.split(' ').find((ClassName) => ClassName.startsWith('MultiValue_'))
 
-            // standard multivalue field
-            if ( $NewCell.children('.Field').children('.DynamicFieldSet').length === 0 ) {
-                $('[name^=DynamicField_]', $NewCell).each( function() {
-                    if ( $('[name=' + $(this).attr('name') + ']').first().hasClass('Validate_Required') ) {
-                        $(this).addClass('Validate_Required');
-                    }
-                });
-            }
+        if (!MultiValueClass)
+            return false;
 
-            // multivalue set
-            else {
-                // TODO: We need a solution for sets here
-                /*$('[name^=DynamicField_]', $NewCell).each( function() {
-                    if ( $('[name=' + $(this).attr('name') + ']').first().hasClass('Validate_Required') ) {
-                        $(this).addClass('Validate_Required');
-                    }
-                });*/
-            }
-
-            ReplaceCellIndex( $NewCell, 'Template', ValueRowIndex );
-
-            if ( $NextCell.length ) {
-                ValueRowCells.push( $NewCell );
-            }
-            else {
-                ValueRowCells.unshift( $NewCell );
-            }
-        });
-
-        ValueRowCells.forEach( function( $NewCell ) {
-            if ( $NextCell.length ) {
-                $NextCell.before( $NewCell );
-            }
-            else if( $LastCell.length ) {
-                $LastCell.after( $NewCell );
-            }
-            else {
-                // TODO: this is too simple for multivalue-multicolumn with multivalue fields trailing non multivalue fields
-                $Row.prepend( $NewCell );
-            }
-
-            DynamicFieldInit( $NewCell );
-
-            // init multivalue fields in sets
-            TargetNS.InitMultiValueDynamicFields( $NewCell );
-        });
-
-        InitValueRow( ValueRowCells, ValueRowIndex );
-
-        if ( $Row.hasClass('MultiColumn') ) {
-            TargetNS.HideMultiAddRemoveButtons( $Row, ValueRowIndex );
-        }
+        let ValueRowIndex = MultiValueClass.split('_')[1];
+        var ValueColumnIndex = $Cell.css('grid-column').split(' ')[0];
+        return { Row: Number(ValueRowIndex), Column: Number(ValueColumnIndex) };
     }
 
+
+    /**
+     * DynamicFieldInit function initializes dynamic fields in the given cell.
+     *
+     * @param {JQuery} $Cell - the cell to initialize dynamic fields in
+     * @return {void}
+     */
     function DynamicFieldInit( $Cell ) {
         // DatabaseDynamicField
         $('.DynamicFieldDB[name]', $Cell).each(function () {
@@ -3039,7 +3214,7 @@ Core.UI.InputFields = (function (TargetNS) {
             return;
         });
 
-        //DateTimeDynamicField
+        // DateTimeDynamicField
         $('.Validate_DateYear', $Cell).each(function () {
             var DateDiv = $(this).parent();
             var Prefix = $('[name$="Year"]', $(DateDiv)).attr('name').replace('Year', '');
@@ -3061,28 +3236,6 @@ Core.UI.InputFields = (function (TargetNS) {
         Core.UI.InputFields.Activate( $Cell );
     }
 
-    TargetNS.HideMultiAddRemoveButtons = function ( $Row, InitialIndex ) {
-        var Index = InitialIndex || 0,
-            ValueRow = $Row.children( '.MultiValue_' + Index + ':visible').toArray();
-
-        while ( ValueRow.length ) {
-            var $LastCell;
-
-            ValueRow.forEach( function( $Cell ) {
-                $LastCell = $Cell;
-                $( '.AddRemoveValueRow', $Cell ).hide();
-            });
-            $( '.AddRemoveValueRow', $LastCell ).show();
-
-            if ( InitialIndex ) {
-                return;
-            }
-
-            Index++;
-            ValueRow = $( '.MultiValue_' + Index + ':visible', $Row ).toArray();
-        }
-    }
-
     /**
      * @name IsEnabled
      * @memberof Core.UI.InputFields
@@ -3100,11 +3253,53 @@ Core.UI.InputFields = (function (TargetNS) {
         return false;
     };
 
+    /**
+     * @name SetDate
+     * @memberof Core.UI.InputFields
+     * @function
+     * @returns {Boolean} false
+     * @param {$Parent} jQuery div element containing a date selection
+     * @param {DateString} string with date to set
+     * @description
+     *      This function sets a given date for a given date selection
+     */
+    TargetNS.SetDate = function ($Parent, DateString) {
+        var DateObj;
+        if ( DateString ) {
+            DateObj = new Date(DateString);
+        }
+        else {
+            DateObj = new Date();
+        }
+
+        // set used checkbox
+        $Parent.find('input[type=checkbox][id$=Used]').attr('checked', DateString ? true : false);
+
+        // set date elements
+        var $YearElement = $Parent.find('select[id$=Year]');
+        $YearElement.val(DateObj.getFullYear());
+        var $MonthElement = $Parent.find('select[id$=Month]');
+        $MonthElement.val(DateObj.getMonth() + 1);
+        var $DayElement = $Parent.find('select[id$=Day]');
+        $DayElement.val(DateObj.getDate());
+
+        // set time elements
+        var $HourElement = $Parent.find('select[id$=Hour]');
+        if ( $HourElement.length ) {
+            $HourElement.val(DateObj.getHours());
+        }
+        var $MinuteElement = $Parent.find('select[id$=Minute]');
+        if ( $MinuteElement.length ) {
+            $MinuteElement.val(DateObj.getMinutes());
+        }
+        return true;
+    };
+
     // jsTree plugin for multi selection without modifier key
     // Skip ESLint check below for no camelcase property, we are overriding an existing one!
     $.jstree.defaults.multiselect = {};
-    $.jstree.plugins.multiselect = function (options, parent) {
-        this.activate_node = function (obj, e) { //eslint-disable-line camelcase
+    $.jstree.plugins.multiselect = function (_options, parent) {
+        this.activate_node = function (obj, e) {
             e.ctrlKey = true;
             parent.activate_node.call(this, obj, e);
         };

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,7 +27,7 @@ use parent qw(Kernel::System::Console::BaseCommand);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -40,11 +40,12 @@ sub Configure {
     $Self->Description('Execute unit test scripts in scripts/test using TAP::Harness.');
     $Self->AddOption(
         Name        => 'directory',
-        Description => 'Can be specified several times. Run only test files in the specified sub directories of scripts/test.',
-        Required    => 0,
-        HasValue    => 1,
-        Multiple    => 1,
-        ValueRegex  => qr/.*/smx,
+        Description =>
+            'Can be specified several times. Run only test files in the specified sub directories of scripts/test. The path is relative to scripts/test/.',
+        Required   => 0,
+        HasValue   => 1,
+        Multiple   => 1,
+        ValueRegex => qr/.*/smx,
     );
     $Self->AddOption(
         Name        => 'test',
@@ -65,11 +66,12 @@ sub Configure {
     );
     $Self->AddOption(
         Name        => 'package',
-        Description => 'Filter file list, allow to run scripts mentioned in the Filelist of the installed package.',
-        Required    => 0,
-        HasValue    => 1,
-        Multiple    => 1,
-        ValueRegex  => qr/^\w/smx,
+        Description =>
+            q{Filter file list, allow to run scripts mentioned in the FileList of the installed package. The package 'core' indicates the core files listed in ARCHIVE. },
+        Required   => 0,
+        HasValue   => 1,
+        Multiple   => 1,
+        ValueRegex => qr/^\w/smx,
     );
     $Self->AddOption(
         Name        => 'verbose',
@@ -97,11 +99,14 @@ sub Configure {
         ValueRegex  => qr/.*/smx,
         Multiple    => 1
     );
+
+    # none, one or multiple directories or scripts can be passed
     $Self->AddArgument(
         Name        => 'test-script-path',
-        Description => "Path to a directory with test scripts or to a single test script. All other test selection options will be ignored.",
+        Description => "Paths to directories with test scripts or to single test scripts. All other test selection options will be ignored.",
         Required    => 0,
         ValueRegex  => qr/.*/smx,
+        Slurpy      => 1,
     );
 
     return;
@@ -124,7 +129,7 @@ sub Run {
 
     my $FunctionResult = $Kernel::OM->Get('Kernel::System::UnitTest')->Run(
         Tests           => $Self->GetOption('test'),
-        TestScriptPath  => $Self->GetArgument('test-script-path'),
+        TestScriptPaths => $Self->GetArgument('test-script-path'),
         Directory       => $Self->GetOption('directory'),
         SOPMFiles       => $Self->GetOption('sopm'),
         Packages        => $Self->GetOption('package'),

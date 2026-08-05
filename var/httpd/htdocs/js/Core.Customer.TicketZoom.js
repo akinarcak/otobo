@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -250,13 +250,10 @@ Core.Customer.TicketZoom = (function (TargetNS) {
             $FollowUp = $('#FollowUp'),
             $RTE = $('#RichText'),
             ZoomExpand = $('#ZoomExpand').val(),
-            $Form,
-            FieldID,
-            DynamicFieldNames = Core.Config.Get('DynamicFieldNames'),
             ActivityCount = $('#oooArticleListExpanded > .Activity').length;
 
 
-        // otobo
+        // careoncloud
         BuildArticles();
         $('#ReplyButton').on('click', function(Event){
             Event.preventDefault();
@@ -272,8 +269,7 @@ Core.Customer.TicketZoom = (function (TargetNS) {
             if ( $(window).width() < 768 ) {
                 $('#ReplyButton').hide();
             }
-            // set the position of the RTE label (Core.UI.RichTextEditor.js)
-            $(window).trigger('resize');
+
         });
 
         $('.ActivityStartButton').on('click', function(Event){
@@ -318,7 +314,7 @@ Core.Customer.TicketZoom = (function (TargetNS) {
         });
 
         // scroll events
-        if ( $('#oooArticleList > li').length ) {
+        if ( $('#oooArticleList > li').length || $('.oooTicketInfoPermanent').length ) {
             $(window).scroll( function() {
                 // change Header on scroll
                 if ( $(window).width() > 767 ) {
@@ -346,7 +342,6 @@ Core.Customer.TicketZoom = (function (TargetNS) {
                     if ( ActiveChild.offset().top < $(window).scrollTop() + 240 ) {
                         var NextChild = $('#oooArticleListExpanded > li:nth-child(' + ( ActiveIndex + 1 ) + ')');
                         while ( NextChild.length && NextChild.offset().top < $(window).scrollTop() + 240 ) {
-                            ActiveChild = NextChild;
                             ActiveIndex++;
                             NextChild = $('#oooArticleListExpanded > li:nth-child(' + ( ActiveIndex + 1 ) + ')');
                         }
@@ -394,7 +389,7 @@ Core.Customer.TicketZoom = (function (TargetNS) {
             }
         });
 
-        // eo otobo
+        // eo careoncloud
 
         /*        $('#Messages > li > .MessageHeader').on('click', function(Event){
             ToggleMessage($(this).parent());
@@ -449,20 +444,17 @@ Core.Customer.TicketZoom = (function (TargetNS) {
             Core.UI.InputFields.Activate();
         }
 
-        // Bind event to State field.
-        $('#StateID').on('change', function () {
-            Core.AJAX.FormUpdate($('#ReplyCustomerTicket'), 'AJAXUpdate', 'StateID', ['PriorityID', 'TicketID'].concat(DynamicFieldNames));
-        });
-
-        // Bind event to Priority field.
-        $('#PriorityID').on('change', function () {
-            Core.AJAX.FormUpdate($('#ReplyCustomerTicket'), 'AJAXUpdate', 'PriorityID', ['StateID', 'TicketID'].concat(DynamicFieldNames));
-        });
-
         $('a.AsPopup').on('click', function () {
             Core.UI.Popup.OpenPopup($(this).attr('href'), 'TicketAction');
             return false;
         });
+
+        /*
+         * Set necessary CSS values for TicketInfo
+         */
+        if ( $('#oooArticleList').children().length == 0 ) {
+            $('#oooTicketInfo.oooTicketInfoPermanent').css('margin-top', '0px').css('top', '89px').css('max-height', 'revert');
+        }
     };
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');

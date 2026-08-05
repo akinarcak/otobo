@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,13 +24,19 @@ use namespace::autoclean;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our $ObjectManagerDisabled = 1;
 
 =head1 NAME
 
 Kernel::Output::HTML::Layout::CustomerUser - all CustomerUser related HTML functions
+
+=head1 SYNOPSIS
+
+    # No instances of this class should be created directly.
+    # Instead the module is loaded implicitly by Kernel::Output::HTML::Layout
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
 =head1 PUBLIC INTERFACE
 
@@ -151,8 +157,8 @@ sub CustomerUserAddressBookListShow {
     }
 
     # build html content
-    # As of OTOBO 10.0.x some content was printed early.
-    # This has changed in OTOBO 10.1.1.
+    # As of CareOnCloud ESM 10.0.x some content was printed early.
+    # This has changed in CareOnCloud ESM 10.1.1.
     my $Output = $Self->Output(
         TemplateFile => 'AgentCustomerUserAddressBookOverviewNavBar',
         Data         => {%Param},

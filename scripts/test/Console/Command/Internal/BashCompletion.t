@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,26 +14,30 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 my @Tests = (
     {
         Name      => 'Command completion',
-        COMP_LINE => 'bin/otobo.Console.pl Hel',
-        Arguments => [ 'bin/otobo.Console.pl', 'Hel', 'bin/otobo.Console.pl' ],
+        COMP_LINE => 'bin/careoncloud.Console.pl Hel',
+        Arguments => [ 'bin/careoncloud.Console.pl', 'Hel', 'bin/careoncloud.Console.pl' ],
         Result    => "Help",
     },
     {
         Name      => 'Argument list',
-        COMP_LINE => 'bin/otobo.Console.pl Admin::Article::StorageSwitch ',
-        Arguments => [ 'bin/otobo.Console.pl', '', 'Admin::Article::SwitchStorage' ],
+        COMP_LINE => 'bin/careoncloud.Console.pl Admin::Article::StorageSwitch ',
+        Arguments => [ 'bin/careoncloud.Console.pl', '', 'Admin::Article::SwitchStorage' ],
         Result    => "--target
 --tickets-closed-before-date
 --tickets-closed-before-days
@@ -43,8 +47,8 @@ my @Tests = (
     },
     {
         Name      => 'Argument list limitted',
-        COMP_LINE => 'bin/otobo.Console.pl Admin::Article::StorageSwitch --to',
-        Arguments => [ 'bin/otobo.Console.pl', '--to', 'Admin::Article::SwitchStorage' ],
+        COMP_LINE => 'bin/careoncloud.Console.pl Admin::Article::StorageSwitch --to',
+        Arguments => [ 'bin/careoncloud.Console.pl', '--to', 'Admin::Article::SwitchStorage' ],
         Result    => "--tolerant",
     },
 );
@@ -62,18 +66,17 @@ for my $Test (@Tests) {
         $ExitCode = $CommandObject->Execute( @{ $Test->{Arguments} } );
     }
 
-    $Self->Is(
+    is(
         $ExitCode,
         0,
         "$Test->{Name} exit code",
     );
 
-    $Self->Is(
+    is(
         $Result,
         $Test->{Result},
         "$Test->{Name} result",
     );
-
 }
 
-$Self->DoneTesting();
+done_testing;

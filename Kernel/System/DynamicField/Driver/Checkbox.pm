@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -31,8 +31,8 @@ use List::Util qw(sum);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -70,6 +70,10 @@ sub new {
     # allocate new hash for object
     my $Self = bless {}, $Type;
 
+    # Checkbox dynamic fields are stored in the database table attribute dynamic_field_value.value_int
+    $Self->{ValueKey}       = 'ValueInt';
+    $Self->{TableAttribute} = 'value_int';
+
     # set field behaviors
     $Self->{Behaviors} = {
         'IsACLReducible'               => 0,
@@ -78,6 +82,7 @@ sub new {
         'IsFiltrable'                  => 1,
         'IsStatsCondition'             => 1,
         'IsCustomerInterfaceCapable'   => 1,
+        'IsSetCapable'                 => 1,
     };
 
     # get the Dynamic Field Backend custom extensions
@@ -126,47 +131,70 @@ sub ValueGet {
 
     return $Self->ValueStructureFromDB(
         ValueDB    => $DFValue,
-        ValueKey   => 'ValueInt',
+        ValueKey   => $Self->{ValueKey},
         MultiValue => $Param{DynamicFieldConfig}{Config}{MultiValue},
+        Set        => $Param{Set},
     );
 }
 
 sub ValueSet {
     my ( $Self, %Param ) = @_;
 
-    # transform value data type
-    my @Values;
-    if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
-        @Values = @{ $Param{Value} };
+    # transform empty values into 0 to be able to use ValueStructureToDB
+    if ( $Param{Set} && $Param{DynamicFieldConfig}{Config}{MultiValue} ) {
+        for my $i ( 0 .. $#{ $Param{Value} } ) {
+            for my $j ( 0 .. $#{ $Param{Value}[$i] } ) {
+                if ( defined $Param{Value}[$i][$j] && !$Param{Value}[$i][$j] ) {
+                    $Param{Value}[$i][$j] = 0;
+                }
+                elsif ( $Param{Value}[$i][$j] && $Param{Value}[$i][$j] !~ m{\A [0|1]? \z}xms ) {
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'error',
+                        Message  => "Value $Param{Value}[$i][$j] is invalid for Checkbox fields!",
+                    );
+                    return;
+                }
+            }
+        }
+    }
+    elsif ( $Param{Set} || $Param{DynamicFieldConfig}{Config}{MultiValue} ) {
+        for my $i ( 0 .. $#{ $Param{Value} } ) {
+            if ( defined $Param{Value}[$i] && !$Param{Value}[$i] ) {
+                $Param{Value}[$i] = 0;
+            }
+            elsif ( $Param{Value}[$i] && $Param{Value}[$i] !~ m{\A [0|1]? \z}xms ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => "Value $Param{Value}[$i] is invalid for Checkbox fields!",
+                );
+                return;
+            }
+        }
     }
     else {
-        @Values = ( $Param{Value} );
-    }
-
-    # check values for sanity and transform into final structure
-    my @ValueInt;
-    for my $ValueIndex ( 0 .. $#Values ) {
-        my $ValueItem = $Values[$ValueIndex];
-        if ( defined $ValueItem && !$ValueItem ) {
-            $ValueItem = 0;
+        if ( defined $Param{Value} && !$Param{Value} ) {
+            $Param{Value} = 0;
         }
-        elsif ( $ValueItem && $ValueItem !~ m{\A [0|1]? \z}xms ) {
+        elsif ( $Param{Value} && $Param{Value} !~ m{\A [0|1]? \z}xms ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Value $ValueItem is invalid for Checkbox fields!",
+                Message  => "Value $Param{Value} is invalid for Checkbox fields!",
             );
             return;
         }
-        push @ValueInt, {
-            ValueInt   => $ValueItem,
-            IndexValue => $ValueIndex,
-        };
     }
+
+    my $DBValue = $Self->ValueStructureToDB(
+        Value      => $Param{Value},
+        ValueKey   => $Self->{ValueKey},
+        Set        => $Param{Set},
+        MultiValue => $Param{DynamicFieldConfig}{Config}{MultiValue},
+    );
 
     return $Kernel::OM->Get('Kernel::System::DynamicFieldValue')->ValueSet(
         FieldID  => $Param{DynamicFieldConfig}->{ID},
         ObjectID => $Param{ObjectID},
-        Value    => \@ValueInt,
+        Value    => $DBValue,
         UserID   => $Param{UserID},
     );
 }
@@ -202,7 +230,7 @@ sub ValueValidate {
     for my $Value (@Values) {
         $Success = $Kernel::OM->Get('Kernel::System::DynamicFieldValue')->ValueValidate(
             Value => {
-                ValueInt => $Value,
+                $Self->{ValueKey} => $Value,
             },
             UserID => $Param{UserID},
         );
@@ -337,14 +365,27 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
+    }
+
+    # set readonly css class
+    if ( $Param{Readonly} ) {
+        $FieldClass .= ' Readonly';
     }
 
     # set error css class
     if ( $Param{ServerError} ) {
         $FieldClass .= ' ServerError';
+    }
+
+    # set ajaxupdate class
+    if ( $Param{AJAXUpdate} ) {
+        $FieldClass .= ' FormUpdate';
     }
 
     my %FieldTemplateData = (
@@ -358,10 +399,11 @@ sub EditFieldRender {
     );
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     $FieldTemplateData{FieldLabelEscaped} = $FieldLabelEscaped;
+    $FieldTemplateData{Readonly}          = $Param{Readonly} ? 1 : 0;
 
     my $FieldTemplateFile = $Param{CustomerInterface}
         ?
@@ -416,7 +458,9 @@ sub EditFieldRender {
         }
 
         # set as checked if necessary
-        my $FieldChecked = ( defined $Value->{UsedValue} ? $Value->{UsedValue} eq 1 : 1 ) && defined $Value->{FieldValue} && $Value->{FieldValue} eq 1;
+        my $FieldChecked =
+            ( defined $Value->{UsedValue} ? $Value->{UsedValue} eq 1 : 1 )
+            && defined $Value->{FieldValue} && $Value->{FieldValue} eq 1;
         $FieldTemplateData{FieldChecked} = $FieldChecked ? 'checked ' : '';
 
         push @ResultHTML, $Param{LayoutObject}->Output(
@@ -458,28 +502,6 @@ sub EditFieldRender {
                 %Confirmation,
             },
         );
-    }
-
-    if ( $Param{AJAXUpdate} ) {
-
-        my $FieldSelector = '#' . $FieldName;
-
-        my $FieldsToUpdate = '';
-        if ( IsArrayRefWithData( $Param{UpdatableFields} ) ) {
-
-            # Remove current field from updatable fields list
-            my @FieldsToUpdate = grep { $_ ne $FieldName } @{ $Param{UpdatableFields} };
-
-            # quote all fields, put commas in between them
-            $FieldsToUpdate = join( ', ', map {"'$_'"} @FieldsToUpdate );
-        }
-
-        # add js to call FormUpdate()
-        $Param{LayoutObject}->AddJSOnDocumentComplete( Code => <<"EOF");
-\$('$FieldSelector').bind('change', function (Event) {
-    Core.AJAX.FormUpdate(\$(this).parents('form'), 'AJAXUpdate', '$FieldName', [ $FieldsToUpdate ]);
-});
-EOF
     }
 
     # call EditLabelRender on the common Driver
@@ -544,8 +566,11 @@ sub EditFieldValueGet {
             }
 
             my @CheckedValues;
+            INDEX:
             for my $Index (@DataValues) {
-                $CheckedValues[$Index] = 1;
+                next INDEX unless $Index;
+
+                $CheckedValues[ $Index - 1 ] = 1;
             }
 
             for my $ValueIndex ( 0 .. $#DataUsed ) {
@@ -601,10 +626,10 @@ sub EditFieldValueGet {
 
     # set the correct return value
     if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
-        return [ map { $_->{FieldValue} ? 1 : 0 } $Value->@* ];
+        return [ map { ( defined $_->{FieldValue} ) ? 1 : 0 } $Value->@* ];
     }
     else {
-        return $Value->{FieldValue} ? 1 : 0;
+        return ( defined $Value->{FieldValue} ) ? 1 : 0;
     }
 }
 
@@ -680,13 +705,9 @@ sub DisplayValueRender {
 sub SearchFieldRender {
     my ( $Self, %Param ) = @_;
 
-    # take config from field config
-    my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName   = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
+    my $FieldName = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
 
     my $Value;
-
     my @DefaultValue;
 
     if ( defined $Param{DefaultValue} ) {
@@ -707,38 +728,27 @@ sub SearchFieldRender {
         $Value = $FieldValues;
     }
 
+    # since search field is multiple => 1, do value transformation on array basis
+    if ( !IsArrayRefWithData($Value) ) {
+        $Value = [$Value];
+    }
+
     # check and set class if necessary
     my $FieldClass = 'DynamicFieldDropdown Modernize';
 
-    if ( $FieldConfig->{MultiValue} ) {
-        for my $Item ( @{$Value} ) {
-
-            # value must be 1, '' or -1
-            if ( !defined $Item || !$Item ) {
-                $Item = '';
-            }
-            elsif ( $Item && $Item >= 1 ) {
-                $Item = 1;
-            }
-            else {
-                $Item = -1;
-            }
-
-        }
-
-    }
-    else {
+    for my $Item ( @{$Value} ) {
 
         # value must be 1, '' or -1
-        if ( !defined $Value || !$Value ) {
-            $Value = '';
+        if ( !defined $Item || !$Item ) {
+            $Item = '';
         }
-        elsif ( $Value && $Value >= 1 ) {
-            $Value = 1;
+        elsif ( $Item && $Item >= 1 ) {
+            $Item = 1;
         }
         else {
-            $Value = -1;
+            $Item = -1;
         }
+
     }
 
     my $HTMLString = $Param{LayoutObject}->BuildSelection(

@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,17 +22,24 @@ use utf8;
 
 # CPAN modules
 use Test2::V0;
-use Test2::Tools::HTTP;
-use HTTP::Request::Common;
+use Test2::Tools::HTTP qw(
+    http_header
+    http_is_redirect
+    http_is_success
+    http_isnt_success
+    http_request
+    http_response
+);
+use HTTP::Request::Common qw(GET);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # This test checks whether the redirect to the default interface works
 
 # For now test only when running under Docker,
 # even though this route could also be available outside Docker.
-skip_all 'not running under Docker' unless $ENV{OTOBO_RUNS_UNDER_DOCKER};
+skip_all 'not running under Docker' unless $ENV{CareOnCloud_RUNS_UNDER_DOCKER};
 
 # get needed singletons
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -43,15 +50,15 @@ my $BaseURL = join '',
     '://',
     $Helper->GetTestHTTPHostname;
 
-diag('otobo/index.pl and otobo/customer.pl are not redirected');
+diag('careoncloud/index.pl and careoncloud/customer.pl are not redirected');
 http_request(
-    [ GET("$BaseURL/otobo/index.pl") ],
+    [ GET("$BaseURL/careoncloud/index.pl") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/customer.pl") ],
+    [ GET("$BaseURL/careoncloud/customer.pl") ],
     http_response {
         http_is_success();
     },
@@ -59,13 +66,13 @@ http_request(
 
 diag('trailing slash is accepted too');
 http_request(
-    [ GET("$BaseURL/otobo/index.pl/") ],
+    [ GET("$BaseURL/careoncloud/index.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/customer.pl/") ],
+    [ GET("$BaseURL/careoncloud/customer.pl/") ],
     http_response {
         http_is_success();
     },
@@ -73,37 +80,37 @@ http_request(
 
 diag('double slash is fine');
 http_request(
-    [ GET("$BaseURL/otobo//index.pl/") ],
+    [ GET("$BaseURL/careoncloud//index.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo//customer.pl/") ],
+    [ GET("$BaseURL/careoncloud//customer.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL//otobo/index.pl/") ],
+    [ GET("$BaseURL//careoncloud/index.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL//otobo/customer.pl/") ],
+    [ GET("$BaseURL//careoncloud/customer.pl/") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/index.pl//") ],
+    [ GET("$BaseURL/careoncloud/index.pl//") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL/otobo/customer.pl//") ],
+    [ GET("$BaseURL/careoncloud/customer.pl//") ],
     http_response {
         http_is_success();
     },
@@ -111,13 +118,13 @@ http_request(
 
 diag('many slashes are squashed too');
 http_request(
-    [ GET("$BaseURL////otobo//////////index.pl////////////") ],
+    [ GET("$BaseURL////careoncloud//////////index.pl////////////") ],
     http_response {
         http_is_success();
     },
 );
 http_request(
-    [ GET("$BaseURL////otobo//////////customer.pl////////////") ],
+    [ GET("$BaseURL////careoncloud//////////customer.pl////////////") ],
     http_response {
         http_is_success();
     },
@@ -125,7 +132,7 @@ http_request(
 
 # a counter example
 http_request(
-    [ GET("$BaseURL/otobo/ /customer.pl") ],
+    [ GET("$BaseURL/careoncloud/ /customer.pl") ],
     http_response {
         http_isnt_success();
         http_is_redirect();

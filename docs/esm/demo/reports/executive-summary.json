@@ -1,0 +1,302 @@
+{
+   "disclaimer" : "Tamamen sentetik satış demosudur; gerçek müşteri veya referans değildir.",
+   "from" : "2026-07-01",
+   "overall" : {
+      "breached_commitments" : 0,
+      "commitments" : 99,
+      "requests" : 36
+   },
+   "product" : "CareOnCloud ESM",
+   "slogan" : "Hizmet Bulutta, Kontrol Sizde.",
+   "tenants" : [
+      {
+         "catalog_capacity" : {
+            "active_items" : 53,
+            "offerings" : 52,
+            "services" : 7
+         },
+         "catalog_usage" : [
+            {
+               "Count" : 6,
+               "Key" : "bank-app-access",
+               "Name" : "Kritik Uygulama Erişimi"
+            },
+            {
+               "Count" : 6,
+               "Key" : "branch-device",
+               "Name" : "Şube Çalışanı Cihazı"
+            }
+         ],
+         "commitment_status" : [
+            {
+               "Count" : 6,
+               "ObjectiveType" : "ola",
+               "Status" : "met"
+            },
+            {
+               "Count" : 3,
+               "ObjectiveType" : "ola",
+               "Status" : "running"
+            },
+            {
+               "Count" : 1,
+               "ObjectiveType" : "resolution",
+               "Status" : "cancelled"
+            },
+            {
+               "Count" : 6,
+               "ObjectiveType" : "resolution",
+               "Status" : "met"
+            },
+            {
+               "Count" : 2,
+               "ObjectiveType" : "resolution",
+               "Status" : "paused"
+            },
+            {
+               "Count" : 3,
+               "ObjectiveType" : "resolution",
+               "Status" : "running"
+            },
+            {
+               "Count" : 1,
+               "ObjectiveType" : "response",
+               "Status" : "cancelled"
+            },
+            {
+               "Count" : 9,
+               "ObjectiveType" : "response",
+               "Status" : "met"
+            },
+            {
+               "Count" : 2,
+               "ObjectiveType" : "response",
+               "Status" : "paused"
+            }
+         ],
+         "request_status" : [
+            {
+               "Count" : 2,
+               "Status" : "awaiting_approval"
+            },
+            {
+               "Count" : 6,
+               "Status" : "fulfilled"
+            },
+            {
+               "Count" : 1,
+               "Status" : "fulfillment_failed"
+            },
+            {
+               "Count" : 2,
+               "Status" : "in_fulfillment"
+            },
+            {
+               "Count" : 1,
+               "Status" : "rejected"
+            }
+         ],
+         "synthetic" : true,
+         "tenant_id" : "showcase-bank",
+         "tenant_name" : "Marmara Bank Demo",
+         "totals" : {
+            "BreachedCommitments" : 0,
+            "Commitments" : 33,
+            "Requests" : 12
+         }
+      },
+      {
+         "catalog_capacity" : {
+            "active_items" : 53,
+            "offerings" : 52,
+            "services" : 7
+         },
+         "catalog_usage" : [
+            {
+               "Count" : 6,
+               "Key" : "design-workstation",
+               "Name" : "Tasarım İş İstasyonu"
+            },
+            {
+               "Count" : 6,
+               "Key" : "product-publish",
+               "Name" : "E-Ticaret Ürün Yayını"
+            }
+         ],
+         "commitment_status" : [
+            {
+               "Count" : 6,
+               "ObjectiveType" : "ola",
+               "Status" : "met"
+            },
+            {
+               "Count" : 3,
+               "ObjectiveType" : "ola",
+               "Status" : "running"
+            },
+            {
+               "Count" : 1,
+               "ObjectiveType" : "resolution",
+               "Status" : "cancelled"
+            },
+            {
+               "Count" : 6,
+               "ObjectiveType" : "resolution",
+               "Status" : "met"
+            },
+            {
+               "Count" : 2,
+               "ObjectiveType" : "resolution",
+               "Status" : "paused"
+            },
+            {
+               "Count" : 3,
+               "ObjectiveType" : "resolution",
+               "Status" : "running"
+            },
+            {
+               "Count" : 1,
+               "ObjectiveType" : "response",
+               "Status" : "cancelled"
+            },
+            {
+               "Count" : 9,
+               "ObjectiveType" : "response",
+               "Status" : "met"
+            },
+            {
+               "Count" : 2,
+               "ObjectiveType" : "response",
+               "Status" : "paused"
+            }
+         ],
+         "request_status" : [
+            {
+               "Count" : 2,
+               "Status" : "awaiting_approval"
+            },
+            {
+               "Count" : 6,
+               "Status" : "fulfilled"
+            },
+            {
+               "Count" : 1,
+               "Status" : "fulfillment_failed"
+            },
+            {
+               "Count" : 2,
+               "Status" : "in_fulfillment"
+            },
+            {
+               "Count" : 1,
+               "Status" : "rejected"
+            }
+         ],
+         "synthetic" : true,
+         "tenant_id" : "showcase-fashion",
+         "tenant_name" : "Anadolu Moda Demo",
+         "totals" : {
+            "BreachedCommitments" : 0,
+            "Commitments" : 33,
+            "Requests" : 12
+         }
+      },
+      {
+         "catalog_capacity" : {
+            "active_items" : 53,
+            "offerings" : 52,
+            "services" : 7
+         },
+         "catalog_usage" : [
+            {
+               "Count" : 6,
+               "Key" : "new-store-opening",
+               "Name" : "Yeni Mağaza Açılışı"
+            },
+            {
+               "Count" : 6,
+               "Key" : "pos-incident",
+               "Name" : "POS Arızası ve Değişimi"
+            }
+         ],
+         "commitment_status" : [
+            {
+               "Count" : 6,
+               "ObjectiveType" : "ola",
+               "Status" : "met"
+            },
+            {
+               "Count" : 3,
+               "ObjectiveType" : "ola",
+               "Status" : "running"
+            },
+            {
+               "Count" : 1,
+               "ObjectiveType" : "resolution",
+               "Status" : "cancelled"
+            },
+            {
+               "Count" : 6,
+               "ObjectiveType" : "resolution",
+               "Status" : "met"
+            },
+            {
+               "Count" : 2,
+               "ObjectiveType" : "resolution",
+               "Status" : "paused"
+            },
+            {
+               "Count" : 3,
+               "ObjectiveType" : "resolution",
+               "Status" : "running"
+            },
+            {
+               "Count" : 1,
+               "ObjectiveType" : "response",
+               "Status" : "cancelled"
+            },
+            {
+               "Count" : 9,
+               "ObjectiveType" : "response",
+               "Status" : "met"
+            },
+            {
+               "Count" : 2,
+               "ObjectiveType" : "response",
+               "Status" : "paused"
+            }
+         ],
+         "request_status" : [
+            {
+               "Count" : 2,
+               "Status" : "awaiting_approval"
+            },
+            {
+               "Count" : 6,
+               "Status" : "fulfilled"
+            },
+            {
+               "Count" : 1,
+               "Status" : "fulfillment_failed"
+            },
+            {
+               "Count" : 2,
+               "Status" : "in_fulfillment"
+            },
+            {
+               "Count" : 1,
+               "Status" : "rejected"
+            }
+         ],
+         "synthetic" : true,
+         "tenant_id" : "showcase-retail",
+         "tenant_name" : "Perakende360 Demo",
+         "totals" : {
+            "BreachedCommitments" : 0,
+            "Commitments" : 33,
+            "Requests" : 12
+         }
+      }
+   ],
+   "to" : "2026-07-31"
+}

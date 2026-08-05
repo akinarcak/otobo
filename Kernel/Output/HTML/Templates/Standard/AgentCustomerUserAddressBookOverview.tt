@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -40,7 +40,7 @@
             [% FOR Entry IN Data.RecordDataColumns %]
                 <tr class="MasterAction[% IF Entry.Disabled %] Disabled[% END %]"[% IF Entry.Disabled %] title="[% Translate("The customer user is already selected in the ticket mask.") | html %]"[% END %]>
                     <td class="Checkbox NonTextContent">
-                        <input class="Checkbox" type="checkbox" [% IF !Entry.Disabled %]name="RecipientUserLogin"[% END %] title="[% Translate("Select this customer user") | html %]" value="[% Entry.UserLogin | html %]"  data-customer-ticket-text="[% Entry.${Data.CustomerTicketTextField} | html %]" autocomplete="off"[% IF Data.Recipients.item(Entry.UserLogin) || Entry.AlreadySelected %] checked[% END %][% IF Entry.Disabled %] disabled="disabled"[% END %]>
+                        <input class="Checkbox" type="checkbox" [% IF !Entry.Disabled %]name="RecipientUserLogin"[% END %] title="[% Translate("Select this customer user") | html %]" value="[% Entry.UserLogin | html %]"  data-customer-ticket-text="[% Entry.${Data.CustomerTicketTextField} | html %]" autocomplete="off"[% IF Data.Recipients.item(Entry.UserLogin) || Entry.AlreadySelected %] checked[% END %][% IF Entry.Disabled %] disabled[% END %]>
                     </td>
                 [% FOR Column IN Data.ShowColumns %]
                     <td>

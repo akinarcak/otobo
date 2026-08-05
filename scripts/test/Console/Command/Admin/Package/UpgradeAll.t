@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,11 +27,11 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-# Initialize test database based on fresh OTOBO 10 schema.
+# Initialize test database based on fresh CareOnCloud ESM 10 schema.
 my $Success = $Helper->ProvideTestDatabase(
     DatabaseXMLFiles => [
-        "$Home/scripts/database/otobo-schema.xml",
-        "$Home/scripts/database/otobo-initial_insert.xml",
+        "$Home/scripts/database/careoncloud-schema.xml",
+        "$Home/scripts/database/careoncloud-initial_insert.xml",
     ],
 );
 
@@ -44,7 +44,7 @@ if ( !$Success ) {
 else {
     $Self->True(
         $Success,
-        'ProvideTestDatabase - Load and execute OTOBO 10 XML files',
+        'ProvideTestDatabase - Load and execute CareOnCloud ESM 10 XML files',
     );
 
     my @List = $Kernel::OM->Get('Kernel::System::Package')->RepositoryList(

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,7 +16,7 @@
 
 package Kernel::System::Package;
 
-use v5.24;
+use v5.26;
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -25,16 +25,17 @@ use utf8;
 use parent qw(Kernel::System::EventHandler);
 
 # core modules
-use MIME::Base64 qw(encode_base64 decode_base64);
-use File::Copy qw(copy move);
+use List::Util   qw (any);
+use MIME::Base64 qw(decode_base64 encode_base64);
+use File::Copy   qw(copy move);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::SysConfig;
-use Kernel::System::WebUserAgent;
+# CareOnCloud ESM modules
+use Kernel::System::SysConfig     ();
+use Kernel::System::WebUserAgent  ();
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -56,11 +57,11 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::Package - to manage OTOBO packages and repositories
+Kernel::System::Package - to manage CareOnCloud ESM packages and repositories
 
 =head1 DESCRIPTION
 
-All functions to manage OTOBO packages and repositories.
+All functions to manage CareOnCloud ESM packages and repositories.
 
 =head1 PUBLIC INTERFACE
 
@@ -330,11 +331,10 @@ sub RepositoryGet {
 
 =head2 RepositoryAdd()
 
-add a package to local repository
+add a package to the local repository, that is the database table I<package_repository>.
 
     $PackageObject->RepositoryAdd(
         String    => $FileString,
-        FromCloud => 0,             # optional 1 or 0, it indicates if package came from Cloud or not
     );
 
 =cut
@@ -351,9 +351,6 @@ sub RepositoryAdd {
         return;
     }
 
-    # get from cloud flag
-    $Param{FromCloud} //= 0;
-
     # get package attributes
     my %Structure = $Self->PackageParse(%Param);
 
@@ -362,6 +359,7 @@ sub RepositoryAdd {
             Priority => 'error',
             Message  => 'Invalid Package!',
         );
+
         return;
     }
     if ( !$Structure{Name} ) {
@@ -404,7 +402,14 @@ sub RepositoryAdd {
     my $FileName = $Structure{Name}->{Content} . '-' . $Structure{Version}->{Content} . '.xml';
 
     my $Content = $Param{String};
-    if ( !$DBObject->GetDatabaseFunction('DirectBlob') ) {
+    my %ExtraDoParams;
+    if ( $DBObject->GetDatabaseFunction('DirectBlob') ) {
+
+        # Make sure that the content is passed as a byte array and is bound as binary
+        $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Content );
+        $ExtraDoParams{BindAsBinary} = [ 0, 0, 0, 0, 1 ];
+    }
+    else {
         $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Content );
         $Content = encode_base64($Content);
     }
@@ -417,9 +422,13 @@ sub RepositoryAdd {
             . Translatable('not installed') . '\', '
             . ' current_timestamp, 1, current_timestamp, 1)',
         Bind => [
-            \$Structure{Name}->{Content},   \$Structure{Version}->{Content},
-            \$Structure{Vendor}->{Content}, \$FileName, \$Content,
+            \$Structure{Name}->{Content},
+            \$Structure{Version}->{Content},
+            \$Structure{Vendor}->{Content},
+            \$FileName,
+            \$Content,
         ],
+        %ExtraDoParams,
     );
 
     # cleanup cache
@@ -474,12 +483,11 @@ sub RepositoryRemove {
 
 =head2 PackageInstall()
 
-install a package
+installs a package when it is not installed yet. Upgrades a package when it is already installed.
 
     $PackageObject->PackageInstall(
         String    => $FileString,
         Force     => 1,             # optional 1 or 0, for to install package even if validation fails
-        FromCloud => 1,             # optional 1 or 0, it indicates if package's origin is Cloud or not
     );
 
 =cut
@@ -493,15 +501,13 @@ sub PackageInstall {
             Priority => 'error',
             Message  => 'String not defined!',
         );
+
         return;
     }
 
     # Cleanup the repository cache before the package installation to have the current state
     #   during the installation.
     $Self->_RepositoryCacheClear();
-
-    # get from cloud flag
-    my $FromCloud = $Param{FromCloud} || 0;
 
     # conflict check
     my %Structure = $Self->PackageParse(%Param);
@@ -513,6 +519,7 @@ sub PackageInstall {
                 Priority => 'notice',
                 Message  => 'Package already installed, try upgrade!',
             );
+
             return $Self->PackageUpgrade(%Param);
         }
     }
@@ -552,26 +559,16 @@ sub PackageInstall {
     # check merged packages
     if ( $Structure{PackageMerge} ) {
 
-        # upgrade merged packages (no files)
+        # upgrade merged packages (no files), remove from package list
         return if !$Self->_MergedPackages(
             %Param,
             Structure => \%Structure,
         );
     }
 
-    # check files
-    my $FileCheckOk = 1;
-    if ( !$FileCheckOk && !$Param{Force} ) {
-        $Kernel::OM->Get('Kernel::System::Log')->Log(
-            Priority => 'error',
-            Message  => 'File conflict, can\'t install package!',
-        );
-        return;
-    }
-
-    # check if one of this files is already intalled by an other package
+    # check if one of those files is already installed by an other package
     if ( %Structure && !$Param{Force} ) {
-        return if !$Self->_PackageFileCheck(
+        return unless $Self->_PackageFileCheck(
             Structure => \%Structure,
         );
     }
@@ -603,13 +600,12 @@ sub PackageInstall {
     }
 
     # add package
-    return if !$Self->RepositoryAdd(
-        String    => $Param{String},
-        FromCloud => $FromCloud,
+    return unless $Self->RepositoryAdd(
+        String => $Param{String},
     );
 
     # update package status
-    return if !$Kernel::OM->Get('Kernel::System::DB')->Do(
+    return unless $Kernel::OM->Get('Kernel::System::DB')->Do(
         SQL => 'UPDATE package_repository SET install_status = \''
             . Translatable('installed') . '\''
             . ' WHERE name = ? AND version = ?',
@@ -779,7 +775,7 @@ sub PackageReinstall {
 
 =head2 PackageUpgrade()
 
-upgrade a package
+upgrades a package. Installs the package when it is not installed yet.
 
     $PackageObject->PackageUpgrade(
         String => $FileString,
@@ -797,6 +793,7 @@ sub PackageUpgrade {
             Priority => 'error',
             Message  => 'String not defined!',
         );
+
         return;
     }
 
@@ -828,6 +825,7 @@ sub PackageUpgrade {
             Priority => 'notice',
             Message  => 'Package is not installed, try a installation!',
         );
+
         return $Self->PackageInstall(%Param);
     }
 
@@ -868,7 +866,7 @@ sub PackageUpgrade {
     # check merged packages
     if ( $Structure{PackageMerge} ) {
 
-        # upgrade merged packages (no files)
+        # upgrade merged packages (no files), remove from package list
         return if !$Self->_MergedPackages(
             %Param,
             Structure => \%Structure,
@@ -906,7 +904,7 @@ sub PackageUpgrade {
 
     # check if one of this files is already installed by an other package
     if ( %Structure && !$Param{Force} ) {
-        return if !$Self->_PackageFileCheck(
+        return unless $Self->_PackageFileCheck(
             Structure => \%Structure,
         );
     }
@@ -915,7 +913,7 @@ sub PackageUpgrade {
     return if !$Self->RepositoryRemove( Name => $Structure{Name}->{Content} );
 
     # add new package
-    return if !$Self->RepositoryAdd( String => $Param{String} );
+    return unless $Self->RepositoryAdd( String => $Param{String} );
 
     # update package status
     return if !$Kernel::OM->Get('Kernel::System::DB')->Do(
@@ -1257,7 +1255,6 @@ sub PackageUninstall {
     }
 
     # files
-    my $FileCheckOk = 1;
     if ( $Structure{Filelist} && ref $Structure{Filelist} eq 'ARRAY' ) {
         for my $File ( @{ $Structure{Filelist} } ) {
 
@@ -1346,7 +1343,9 @@ sub PackageOnlineRepositories {
 
     return if !$XML;
 
-    my @XMLARRAY = $Kernel::OM->Get('Kernel::System::XML')->XMLParse( String => $XML );
+    my @XMLARRAY = $Kernel::OM->Get('Kernel::System::XML')->XMLParse(
+        String => $XML
+    );
 
     my %List;
     my $Name = '';
@@ -1404,7 +1403,7 @@ sub PackageOnlineList {
     }
     if ( !defined $Param{Cache} ) {
 
-        if ( $Param{URL} =~ m{ \.otobo\.org\/ }xms ) {
+        if ( $Param{URL} =~ m{ \.careoncloud\.org\/ }xms ) {
             $Param{Cache} = 1;
         }
         else {
@@ -1432,7 +1431,7 @@ sub PackageOnlineList {
     my $Filelist;
     if ( !$Param{FromCloud} ) {
 
-        my $XML = $Self->_Download( URL => $Param{URL} . '/otobo.xml' );
+        my $XML = $Self->_Download( URL => $Param{URL} . '/careoncloud.xml' );
         return if !$XML;
 
         my @XMLARRAY = $Kernel::OM->Get('Kernel::System::XML')->XMLParse( String => $XML );
@@ -1507,7 +1506,7 @@ sub PackageOnlineList {
         );
 
         # check result structure
-        return if !IsHashRefWithData($ListResult);
+        return unless IsHashRefWithData($ListResult);
 
         my $CurrentFramework = $Kernel::OM->Get('Kernel::Config')->Get('Version');
         FRAMEWORKVERSION:
@@ -1692,11 +1691,7 @@ sub PackageOnlineGet {
             },
         );
 
-        if (
-            IsHashRefWithData($PackageResult)
-            && $PackageResult->{Package}
-            )
-        {
+        if ( IsHashRefWithData($PackageResult) && $PackageResult->{Package} ) {
             $PackageFromCloud = $PackageResult->{Package};
         }
         elsif ( IsStringWithData($PackageResult) ) {
@@ -1732,13 +1727,12 @@ sub DeployCheck {
                 Priority => 'error',
                 Message  => "$Needed not defined!",
             );
+
             return;
         }
     }
 
-    if ( !defined $Param{Log} ) {
-        $Param{Log} = 1;
-    }
+    $Param{Log} //= 1;
 
     my $Package   = $Self->RepositoryGet( %Param, Result => 'SCALAR' );
     my %Structure = $Self->PackageParse( String => $Package );
@@ -1875,10 +1869,10 @@ sub PackageVerify {
         $PackageVerifyInfo = {
             Description =>
                 Translatable(
-                    "<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>"
+                "<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>"
                 ),
             Title =>
-                Translatable('Package not verified by the OTOBO community!'),
+                Translatable('Package not verified by the CareOnCloud ESM community!'),
             PackageInstallPossible => 1,
         };
     }
@@ -1887,10 +1881,10 @@ sub PackageVerify {
         $PackageVerifyInfo = {
             Description =>
                 Translatable(
-                    '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>'
+                '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>'
                 ),
             Title =>
-                Translatable('Package not verified by the OTOBO community!'),
+                Translatable('Package not verified by the CareOnCloud ESM community!'),
             PackageInstallPossible => 0,
         };
     }
@@ -1973,7 +1967,7 @@ sub PackageVerify {
             $Self->{PackageVerifyInfo} = {
                 Description =>
                     Translatable(
-                        "<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>"
+                    "<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>"
                     ),
                 Title =>
                     Translatable('Verification not possible (e.g. no internet connection)!'),
@@ -1985,7 +1979,7 @@ sub PackageVerify {
             $Self->{PackageVerifyInfo} = {
                 Description =>
                     Translatable(
-                        '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>'
+                    '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>'
                     ),
                 Title =>
                     Translatable('Verification not possible (e.g. no internet connection)!'),
@@ -2246,7 +2240,7 @@ sub PackageBuild {
     if ( !$Param{Type} ) {
         $XML .= '<?xml version="1.0" encoding="utf-8" ?>';
         $XML .= "\n";
-        $XML .= '<otobo_package version="1.1">';
+        $XML .= '<careoncloud_package version="1.1">';
         $XML .= "\n";
     }
 
@@ -2380,88 +2374,83 @@ sub PackageBuild {
     TAG:
     for my $Item (qw(DatabaseInstall DatabaseUpgrade DatabaseReinstall DatabaseUninstall)) {
 
-        if ( ref $Param{$Item} ne 'HASH' ) {
-            next TAG;
-        }
+        next TAG unless ref $Param{$Item} eq 'HASH';
 
-        for my $Type ( sort %{ $Param{$Item} } ) {
+        for my $Type ( sort keys %{ $Param{$Item} } ) {
 
-            if ( $Param{$Item}->{$Type} ) {
+            my $Counter = 1;
+            for my $Tag ( @{ $Param{$Item}->{$Type} } ) {
 
-                my $Counter = 1;
-                for my $Tag ( @{ $Param{$Item}->{$Type} } ) {
+                if ( $Tag->{TagType} eq 'Start' ) {
 
-                    if ( $Tag->{TagType} eq 'Start' ) {
+                    my $Space = '';
+                    for ( 1 .. $Counter ) {
+                        $Space .= '    ';
+                    }
+
+                    $Counter++;
+                    $XML .= $Space . "<$Tag->{Tag}";
+
+                    if ( $Tag->{TagLevel} == 3 ) {
+                        $XML .= " Type=\"$Type\"";
+                    }
+
+                    KEY:
+                    for my $Key ( sort keys %{$Tag} ) {
+
+                        next KEY if $Key eq 'Tag';
+                        next KEY if $Key eq 'Content';
+                        next KEY if $Key eq 'TagType';
+                        next KEY if $Key eq 'TagLevel';
+                        next KEY if $Key eq 'TagCount';
+                        next KEY if $Key eq 'TagKey';
+                        next KEY if $Key eq 'TagLastLevel';
+
+                        next KEY if !defined $Tag->{$Key};
+
+                        next KEY if $Tag->{TagLevel} == 3 && lc $Key eq 'type';
+
+                        $XML .= ' '
+                            . $Self->_Encode($Key) . '="'
+                            . $Self->_Encode( $Tag->{$Key} ) . '"';
+                    }
+
+                    $XML .= ">";
+
+                    if ( $Tag->{TagLevel} <= 3 || $Tag->{Tag} =~ /(Foreign|Reference|Index)/ ) {
+                        $XML .= "\n";
+                    }
+                }
+                if (
+                    defined( $Tag->{Content} )
+                    && $Tag->{TagLevel} >= 4
+                    && $Tag->{Tag} !~ /(Foreign|Reference|Index)/
+                    )
+                {
+                    $XML .= $Self->_Encode( $Tag->{Content} );
+                }
+                if ( $Tag->{TagType} eq 'End' ) {
+
+                    $Counter = $Counter - 1;
+                    if ( $Tag->{TagLevel} > 3 && $Tag->{Tag} !~ /(Foreign|Reference|Index)/ ) {
+                        $XML .= "</$Tag->{Tag}>\n";
+                    }
+                    else {
 
                         my $Space = '';
+
                         for ( 1 .. $Counter ) {
                             $Space .= '    ';
                         }
 
-                        $Counter++;
-                        $XML .= $Space . "<$Tag->{Tag}";
-
-                        if ( $Tag->{TagLevel} == 3 ) {
-                            $XML .= " Type=\"$Type\"";
-                        }
-
-                        KEY:
-                        for my $Key ( sort keys %{$Tag} ) {
-
-                            next KEY if $Key eq 'Tag';
-                            next KEY if $Key eq 'Content';
-                            next KEY if $Key eq 'TagType';
-                            next KEY if $Key eq 'TagLevel';
-                            next KEY if $Key eq 'TagCount';
-                            next KEY if $Key eq 'TagKey';
-                            next KEY if $Key eq 'TagLastLevel';
-
-                            next KEY if !defined $Tag->{$Key};
-
-                            next KEY if $Tag->{TagLevel} == 3 && lc $Key eq 'type';
-
-                            $XML .= ' '
-                                . $Self->_Encode($Key) . '="'
-                                . $Self->_Encode( $Tag->{$Key} ) . '"';
-                        }
-
-                        $XML .= ">";
-
-                        if ( $Tag->{TagLevel} <= 3 || $Tag->{Tag} =~ /(Foreign|Reference|Index)/ ) {
-                            $XML .= "\n";
-                        }
-                    }
-                    if (
-                        defined( $Tag->{Content} )
-                        && $Tag->{TagLevel} >= 4
-                        && $Tag->{Tag} !~ /(Foreign|Reference|Index)/
-                        )
-                    {
-                        $XML .= $Self->_Encode( $Tag->{Content} );
-                    }
-                    if ( $Tag->{TagType} eq 'End' ) {
-
-                        $Counter = $Counter - 1;
-                        if ( $Tag->{TagLevel} > 3 && $Tag->{Tag} !~ /(Foreign|Reference|Index)/ ) {
-                            $XML .= "</$Tag->{Tag}>\n";
-                        }
-                        else {
-
-                            my $Space = '';
-
-                            for ( 1 .. $Counter ) {
-                                $Space .= '    ';
-                            }
-
-                            $XML .= $Space . "</$Tag->{Tag}>\n";
-                        }
+                        $XML .= $Space . "</$Tag->{Tag}>\n";
                     }
                 }
             }
         }
     }
 
-    $XML .= '</otobo_package>';
+    $XML .= '</careoncloud_package>';
 
     return $XML;
 }
@@ -2594,9 +2583,6 @@ sub PackageParse {
             # get attachment size
             {
                 if ( $Tag->{Content} ) {
-
-                    my $ContentPlain = 0;
-
                     if ( $Tag->{Encode} && $Tag->{Encode} eq 'Base64' ) {
                         $Tag->{Encode}  = '';
                         $Tag->{Content} = decode_base64( $Tag->{Content} );
@@ -2706,12 +2692,17 @@ sub PackageExport {
 
 =head2 PackageIsInstalled()
 
-returns true if the package is already installed
+returns true if the package is already installed.
 
-    $PackageObject->PackageIsInstalled(
+    my $IsInstalled = $PackageObject->PackageIsInstalled(
         String => $PackageString,    # Attribute String or Name is required
         Name   => $NameOfThePackage,
     );
+
+The answer is based on information from the database table I<package_repository>.
+During upgrades it is not guaranteed that the package files actually exist.
+
+Returns 0 or 1.
 
 =cut
 
@@ -2724,6 +2715,7 @@ sub PackageIsInstalled {
             Priority => 'error',
             Message  => 'Need String (PackageString) or Name (Name of the package)!',
         );
+
         return;
     }
 
@@ -2735,19 +2727,17 @@ sub PackageIsInstalled {
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
-    $DBObject->Prepare(
-        SQL => "SELECT name FROM package_repository "
-            . "WHERE name = ? AND install_status = 'installed'",
-        Bind  => [ \$Param{Name} ],
-        Limit => 1,
+    my ($Name) = $DBObject->SelectRowArray(
+        SQL => <<~'END_SQL',
+            SELECT name
+              FROM package_repository
+              WHERE name           = ?
+                AND install_status = 'installed'
+            END_SQL
+        Bind => [ \$Param{Name} ],
     );
 
-    my $Flag = 0;
-    while ( my @Row = $DBObject->FetchrowArray() ) {
-        $Flag = 1;
-    }
-
-    return $Flag;
+    return defined $Name ? 1 : 0;
 }
 
 =head2 PackageInstallDefaultFiles()
@@ -2879,7 +2869,7 @@ sub PackageFileGetMD5Sum {
         Type  => 'PackageFileGetMD5Sum',
         Key   => $CacheKey,
         Value => \%MD5SumLookup,
-        TTL   => 6 * 30 * 24 * 60 * 60,    # 6 Months (Aprox)
+        TTL   => 6 * 30 * 24 * 60 * 60,    # 6 Months (approximately)
     );
 
     return \%MD5SumLookup;
@@ -2966,11 +2956,11 @@ sub AnalyzePackageFrameworkRequirements {
                 # check for minimum or maximum required framework, if it was defined
                 if ( $FrameworkMinimum || $FrameworkMaximum ) {
 
-                    # prepare hash for framework comparsion
-                    my %FrameworkComparsion;
-                    $FrameworkComparsion{MinimumFrameworkRequired} = $FrameworkMinimum;
-                    $FrameworkComparsion{MaximumFrameworkRequired} = $FrameworkMaximum;
-                    $FrameworkComparsion{CurrentFramework}         = $CurrentFramework;
+                    # prepare hash for framework comparison
+                    my %FrameworkComparison;
+                    $FrameworkComparison{MinimumFrameworkRequired} = $FrameworkMinimum;
+                    $FrameworkComparison{MaximumFrameworkRequired} = $FrameworkMaximum;
+                    $FrameworkComparison{CurrentFramework}         = $CurrentFramework;
 
                     # prepare version parts hash
                     my %VersionParts;
@@ -2979,7 +2969,7 @@ sub AnalyzePackageFrameworkRequirements {
                     for my $Type (qw(MinimumFrameworkRequired MaximumFrameworkRequired CurrentFramework)) {
 
                         # split version string
-                        my @ThisVersionParts = split /\./, $FrameworkComparsion{$Type};
+                        my @ThisVersionParts = split /\./, $FrameworkComparison{$Type};
                         $VersionParts{$Type} = \@ThisVersionParts;
                     }
 
@@ -2997,7 +2987,7 @@ sub AnalyzePackageFrameworkRequirements {
                                 if $VersionParts{MinimumFrameworkRequired}->[$Count] eq
                                 $VersionParts{CurrentFramework}->[$Count];
 
-                            # skip current framework verion parts containing "x"
+                            # skip current framework version parts containing "x"
                             next COUNT if $VersionParts{CurrentFramework}->[$Count] =~ /x/;
 
                             if (
@@ -3034,7 +3024,7 @@ sub AnalyzePackageFrameworkRequirements {
                                 if $VersionParts{MaximumFrameworkRequired}->[$Count] eq
                                 $VersionParts{CurrentFramework}->[$Count];
 
-                            # skip current framework verion parts containing "x"
+                            # skip current framework version parts containing "x"
                             next COUNT if $VersionParts{CurrentFramework}->[$Count] =~ /x/;
 
                             if (
@@ -3139,9 +3129,10 @@ sub PackageUpgradeAll {
     );
     if (%SystemData) {
         KEY:
-        for my $Key (qw(StartTime UpdateTime InstalledPackages UpgradeResult Status Success))
-        {    # remove any existing information
-            next KEY if !defined $SystemData{$Key};
+        for my $Key (qw(StartTime UpdateTime InstalledPackages UpgradeResult Status Success)) {
+
+            # remove any existing information
+            next KEY unless defined $SystemData{$Key};
 
             my $Success = $SystemDataObject->SystemDataDelete(
                 Key    => "${DataGroup}::${Key}",
@@ -3181,19 +3172,20 @@ sub PackageUpgradeAll {
         Result => 'short',
     );
 
-    # Modify @PackageInstalledList if ITSM packages are installed from Bundle (see bug#13778).
-    if ( grep { $_->{Name} eq 'ITSM' } @PackageInstalledList && grep { $_->{Name} eq 'ITSM' } @PackageOnlineList ) {
-        my @TmpPackages = (
-            'GeneralCatalog',
-            'ITSMCore',
-            'ITSMChangeManagement',
-            'ITSMConfigurationManagement',
-            'ITSMIncidentProblemManagement',
-            'ITSMServiceLevelManagement',
-            'ImportExport'
-        );
-        my %Values = map { $_ => 1 } @TmpPackages;
-        @PackageInstalledList = grep { !$Values{ $_->{Name} } } @PackageInstalledList;
+    # Do not upgrade the packages that are integrated in CareOnCloud ESM core now.
+    # This is relevant for upgrading from CareOnCloud ESM 10 to CareOnCloud ESM 11.
+    #
+    # The special case of the 'ITSM' bundle package is also handled here. This means
+    # that 'ITSM' in not upgraded, but the individual parts are updated.
+    {
+        # Get the complete list, irrespective of major or minor version
+        my %IsIntegrated =
+            map { $_ => 1 }
+            map { $_->@* }
+            map { values $_->%* }                 # all minor versions
+            map { values $_->%* }                 # all major versions
+            ( $Self->_GetIntegratedPackages );    # nested hashref
+        @PackageInstalledList = grep { !$IsIntegrated{ $_->{Name} } } @PackageInstalledList;
     }
 
     my $JSONObject = $Kernel::OM->Get('Kernel::System::JSON');
@@ -3234,12 +3226,14 @@ sub PackageUpgradeAll {
     for my $PackageName ( sort { $InstallOrder{$b} <=> $InstallOrder{$a} } keys %InstallOrder ) {
 
         my $MetaPackage = $PackageSourceLookup{$PackageName};
-        next PACKAGENAME if !$MetaPackage;
+
+        next PACKAGENAME unless $MetaPackage;
 
         if ( $MetaPackage->{Version} eq ( $InstalledVersions{$PackageName} || '' ) ) {
 
             if ( $Param{SkipDeployCheck} ) {
                 $AlreadyUpdated{$PackageName} = 1;
+
                 next PACKAGENAME;
             }
 
@@ -3250,9 +3244,12 @@ sub PackageUpgradeAll {
             );
             if ( !$CheckSuccess ) {
                 $Undeployed{$PackageName} = 1;
+
                 next PACKAGENAME;
             }
+
             $AlreadyUpdated{$PackageName} = 1;
+
             next PACKAGENAME;
         }
 
@@ -3263,16 +3260,18 @@ sub PackageUpgradeAll {
 
         if ( !$InstalledVersions{$PackageName} ) {
             my $InstallSuccess = $Self->PackageInstall(
-                String    => $Package,
-                FromCloud => $MetaPackage->{FromCloud},
-                Force     => $Param{Force} || 0,
+                String => $Package,
+                Force  => $Param{Force} || 0,
             );
             if ( !$InstallSuccess ) {
                 $Success = 0;
                 $Failed{InstallError}->{$PackageName} = 1;
+
                 next PACKAGENAME;
             }
+
             $Installed{$PackageName} = 1;
+
             next PACKAGENAME;
         }
 
@@ -3283,9 +3282,12 @@ sub PackageUpgradeAll {
         if ( !$UpdateSuccess ) {
             $Success = 0;
             $Failed{UpdateError}->{$PackageName} = 1;
+
             next PACKAGENAME;
         }
+
         $Updated{$PackageName} = 1;
+
         next PACKAGENAME;
     }
     continue {
@@ -3331,14 +3333,62 @@ sub PackageUpgradeAll {
     );
 }
 
+=head2 _GetIntegratedPackages()
+
+List of packages the were integrated into CareOnCloud ESM core. Categorized by major and minor versions.
+
+=cut
+
+sub _GetIntegratedPackages {
+    my ($Self) = @_;
+
+    return {
+        11 => {
+            0 => [
+                'Ayte-CustomTranslations',
+                'ExtendedCDBInfoTile',
+                'ImportExport',
+                'LightAdmin',
+                'MarkTicketSeenUnseen',
+                'QuickDateButtons',
+                'ResponseTemplatesStatePreselection',
+                'RotherOSS-LightAdmin',
+                'RotherOSS-InternalTransitionActions',
+                'TicketTimeUnitsMandatoryOnlyWithArticle',
+            ],
+
+            # released in june 2026
+            1 => [
+                'CK5-FullWindowMode',
+                'CustomerAgeShowCreated',
+                'CustomerTicketSearch',
+                'Elasticsearch-Extension',
+                'ExtendedArticleEdit',
+                'HideShowForAgentTicketCompose',
+                'ImportExportCustomerCompany',
+                'ImportExportStandardObjects',
+                'ImportExportTicket',    # integrated when ImportExport console commands were added
+                'PostMasterXFromHeader',
+                'ProcessTicketTemplates',
+                'RestorePendingInformation',
+                'RotherOSS-AccountedTimeInViews',
+                'TicketUpdateOperationExternalIdentifier',
+                'OAuth2',
+                'OAuth2-Mail',
+                'Elasticsearch-FAQ',
+            ],
+        }
+    };
+}
+
 =head2 PackageInstallOrderListGet()
 
 Gets a list of packages and its corresponding install order including is package dependencies. Higher
     install order means to install first.
 
     my %Result = $PackageObject->PackageInstallOrderListGet(
-        InstalledPackages => \@PakageList,      # as returned from RepositoryList(Result => 'short')
-        OnlinePackages    => \@PakageList,      # as returned from PackageOnlineList()
+        InstalledPackages => \@PackageList,      # as returned from RepositoryList(Result => 'short')
+        OnlinePackages    => \@PackageList,      # as returned from PackageOnlineList()
     );
 
     %Result = (
@@ -3471,7 +3521,7 @@ sub PackageUpgradeAllIsRunning {
     my @List = $Kernel::OM->Get('Kernel::System::Scheduler')->TaskList(
         Type => 'AsynchronousExecutor',
     );
-    if ( grep { $_->{Name} eq 'Kernel::System::Package-PackageUpgradeAll()' } @List ) {
+    if ( any { $_->{Name} eq 'Kernel::System::Package-PackageUpgradeAll()' } @List ) {
         $IsRunning = 1;
     }
 
@@ -3888,7 +3938,7 @@ sub _CheckModuleRequired {
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
                     Priority => 'error',
                     Message  => "Sorry, can't install package, because module "
-                        . "$Module->{Content} v$Module->{Version} is required "
+                        . "$Module->{Content}" . ( defined $Module->{Version} ? " v$Module->{Version}" : '' ) . " is required "
                         . "and not installed!",
                 );
                 return;
@@ -3962,6 +4012,12 @@ sub _CheckPackageDepends {
     return 1;
 }
 
+=head2 _PackageFileCheck()
+
+checks if none of the files in a package is already installed by another package.
+
+=cut
+
 sub _PackageFileCheck {
     my ( $Self, %Param ) = @_;
 
@@ -3971,6 +4027,7 @@ sub _PackageFileCheck {
             Priority => 'error',
             Message  => 'Structure not defined!',
         );
+
         return;
     }
 
@@ -3978,6 +4035,7 @@ sub _PackageFileCheck {
     PACKAGE:
     for my $Package ( $Self->RepositoryList() ) {
 
+        # skip the package that is currently being checked
         next PACKAGE if $Param{Structure}->{Name}->{Content} eq $Package->{Name}->{Content};
 
         for my $FileNew ( @{ $Param{Structure}->{Filelist} } ) {
@@ -3996,17 +4054,19 @@ sub _PackageFileCheck {
                         . "used in package $Package->{Name}->{Content}-$Package->{Version}->{Content}!",
                 );
 
+                # found a conflict
                 return;
             }
         }
     }
 
+    # no conflict was found
     return 1;
 }
 
 =head2 _FileInstall()
 
-Update or create files below the OTOBO home directory or below a specified directory.
+Update or create files below the CareOnCloud ESM home directory or below a specified directory.
 
 Additionally this method creates a backup if needed.
 
@@ -4023,7 +4083,7 @@ Return undef on failure, 1 on success.
         Permission  => '644',     # unix file permissions
     };
 
-    # File install below the OTOBO home directory
+    # File install below the CareOnCloud ESM home directory
     my $FileInstallOk = $PackageObject->_FileInstall(
         File => $File,
     );
@@ -4357,7 +4417,7 @@ sub _FileSystemCheck {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "ERROR: Need write permissions for directory $Home$Filepath\n"
-                . " Try: $Home/bin/otobo.SetPermissions.pl!",
+                . " Try: $Home/bin/careoncloud.SetPermissions.pl!",
         );
 
         return;
@@ -4368,12 +4428,18 @@ sub _FileSystemCheck {
     return 1;
 }
 
+=head2 _Encode()
+
+a helper for generating XML. Encode characters that are special in XML as XML entities.
+
+=cut
+
 sub _Encode {
     my ( $Self, $Text ) = @_;
 
-    return $Text if !defined $Text;
+    return $Text unless defined $Text;
 
-    $Text =~ s/&/&amp;/g;
+    $Text =~ s/&/&amp;/g;    # must be the first replacement
     $Text =~ s/</&lt;/g;
     $Text =~ s/>/&gt;/g;
     $Text =~ s/"/&quot;/g;
@@ -4396,7 +4462,7 @@ The sections I<DatabaseUninstall> and I<CodeUninstall> in the SOPM file are igno
 
     $Success = $PackageObject->_PackageUninstallMerged(
         Name        => 'SomePackage',
-        Home        => 'OTOBO Home path',     # Optional
+        Home        => 'CareOnCloud ESM Home path',     # Optional
         DeleteSaved => 1,                     # Either 1 or 0. Optional with the default being 1.
                                               # If set to 1 it also deletes .save files
     );
@@ -4495,7 +4561,7 @@ sub _PackageUninstallMerged {
                     next FILE_HASH;
                 }
 
-                # remove package file that is not in OTOBO core
+                # remove package file that is not in CareOnCloud ESM core
                 if ( !$MainObject->FileDelete( Location => $RealFile ) ) {
                     $Kernel::OM->Get('Kernel::System::Log')->Log(
                         Priority => 'error',
@@ -4529,6 +4595,13 @@ sub _PackageUninstallMerged {
     return $PackageRemove;
 }
 
+=head2 _MergedPackages
+
+handle packages that were subsumed by another package. Potentially run updates.
+Potentially remove the subsumed packages from the list of installed packages.
+
+=cut
+
 sub _MergedPackages {
     my ( $Self, %Param ) = @_;
 
@@ -4549,16 +4622,13 @@ sub _MergedPackages {
     my @RepositoryList    = $Self->RepositoryList();
     my %PackageListLookup = map { $_->{Name}->{Content} => $_ } @RepositoryList;
 
-    # check required packages
+    # check merged packages
     PACKAGE:
-    for my $Package ( @{ $Param{Structure}->{PackageMerge} } ) {
+    for my $Package ( $Param{Structure}->{PackageMerge}->@* ) {
 
-        next PACKAGE if !$Package;
+        next PACKAGE unless $Package;
 
-        my $Installed        = 0;
-        my $InstalledVersion = 0;
-        my $TargetVersion    = $Package->{TargetVersion};
-        my %PackageDetails;
+        my $TargetVersion = $Package->{TargetVersion};
 
         # check if the package is installed, otherwise go next package (nothing to do)
         my $PackageInstalled = $Self->PackageIsInstalled(
@@ -4566,13 +4636,13 @@ sub _MergedPackages {
         );
 
         # do nothing if package is not installed
-        next PACKAGE if !$PackageInstalled;
+        next PACKAGE unless $PackageInstalled;
 
         # get complete package info
-        %PackageDetails = %{ $PackageListLookup{ $Package->{Name} } };
+        my %PackageDetails = %{ $PackageListLookup{ $Package->{Name} } };
 
         # verify package version
-        $InstalledVersion = $PackageDetails{Version}->{Content};
+        my $InstalledVersion = $PackageDetails{Version}->{Content};
 
         # store package name and version for
         # use it on code and database installation
@@ -4725,7 +4795,7 @@ sub _CheckDBInstalledOrMerged {
     PART:
     for my $Part ( @{ $Param{Database} } ) {
 
-        if ( $Use eq 0 ) {
+        if ( $Use == 0 ) {
 
             if (
                 $Part->{TagType} eq 'End'
@@ -4906,7 +4976,6 @@ sub CloudFileGet {
 
     # return repo list
     return $OperationResult->{Data};
-
 }
 
 sub _ConfigurationDeploy {
@@ -5008,7 +5077,7 @@ Helper function for PackageInstallOrderListGet() to process the packages and its
         }
         InstallOrder => {           # current install order
             PackageA => 2,
-            PacakgeB => 1,
+            PackageB => 1,
             # ...
         },
         Failed => {                 # current failed packages or dependencies
@@ -5052,9 +5121,10 @@ sub _PackageInstallOrderListGet {
         my $OnlinePackage = $Param{OnlinePackageLookup}->{$PackageName};
 
         # Check if the package can be obtained on-line.
-        if ( !$OnlinePackage || !IsHashRefWithData($OnlinePackage) ) {
+        if ( !IsHashRefWithData($OnlinePackage) ) {
             $Param{Failed}->{NotFound}->{$PackageName} = 1;
             $Success = 0;
+
             next PACKAGENAME;
         }
 
@@ -5177,10 +5247,7 @@ Returns:
 =cut
 
 sub _PackageOnlineListGet {
-
     my ( $Self, %Param ) = @_;
-
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     my %RepositoryList = $Self->_ConfiguredRepositoryDefinitionGet();
 
@@ -5264,15 +5331,12 @@ sub _ConfiguredRepositoryDefinitionGet {
 
     return () if !%RepositoryList;
 
-    # Make sure ITSM repository matches the current framework version.
-    my @Matches = grep { $_ =~ m{http://ftp\.otobo\.org/pub/otobo/itsm/packages\d+/}msxi } sort keys %RepositoryList;
+    # we will not provide individual repos per version starting with CareOnCloud ESM 11.0 - this section can be removed with CareOnCloud ESM 11.1
+    my @Matches = grep { $_ =~ m{https://ftp\.careoncloud\.org/pub/careoncloud/packages-itsm/bundle\d}msxi } sort keys %RepositoryList;
 
     return %RepositoryList if !@Matches;
 
-    my @FrameworkVersionParts = split /\./, $Self->{ConfigObject}->Get('Version');
-    my $FrameworkVersion      = $FrameworkVersionParts[0];
-
-    my $CurrentITSMRepository = "http://ftp.otobo.org/pub/otobo/itsm/packages$FrameworkVersion/";
+    my $CurrentITSMRepository = "https://ftp.otobo.org/pub/otobo/packages-itsm/";
 
     # Delete all old ITSM repositories, but leave the current if exists
     for my $Repository (@Matches) {
@@ -5284,7 +5348,7 @@ sub _ConfiguredRepositoryDefinitionGet {
     return %RepositoryList if exists $RepositoryList{$CurrentITSMRepository};
 
     # Make sure that current ITSM repository is in the list.
-    $RepositoryList{$CurrentITSMRepository} = "OTOBO::ITSM $FrameworkVersion Master";
+    $RepositoryList{$CurrentITSMRepository} = "OTOBO::ITSM Addons";
 
     return %RepositoryList;
 }

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,15 +18,17 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::Language ();
+use Kernel::System::UnitTest::Selenium;
 
 our $Self;
 
-use Kernel::Language;
-
-# OTOBO modules
-use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
 my $PostMasterFilterSubmit = sub {
@@ -175,7 +177,7 @@ $Selenium->RunTest(
         $Selenium->find_element( "#MatchValue1", 'css' )->send_keys($PostMasterBody);
         $Selenium->InputFieldValueSet(
             Element => '#SetHeader1',
-            Value   => 'X-OTOBO-Priority',
+            Value   => 'X-CareOnCloud-Priority',
         );
         $Selenium->find_element( "#SetValue1", 'css' )->send_keys($PostMasterPriority);
 
@@ -214,7 +216,7 @@ $Selenium->RunTest(
         );
         $Self->Is(
             $Selenium->find_element( '#SetHeader1', 'css' )->get_value(),
-            "X-OTOBO-Priority",
+            "X-CareOnCloud-Priority",
             "#SetHeader1 stored value",
         );
         $Self->Is(
@@ -287,7 +289,7 @@ $Selenium->RunTest(
         $Selenium->find_element( "#MatchValue1", 'css' )->send_keys($PostMasterBody);
         $Selenium->InputFieldValueSet(
             Element => '#SetHeader1',
-            Value   => 'X-OTOBO-Priority',
+            Value   => 'X-CareOnCloud-Priority',
         );
         $Selenium->find_element( "#SetValue1", 'css' )->send_keys($PostMasterPriority);
         $Selenium->execute_script("\$('#Submit').click();");

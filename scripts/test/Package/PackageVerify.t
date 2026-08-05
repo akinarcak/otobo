@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,34 +18,37 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::System::CloudService::Backend::Run ();
 
 our $Self;
 
-use Kernel::System::CloudService::Backend::Run;
-
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
-my $OTOBOVersion  = $Kernel::OM->Get('Kernel::Config')->Get('Version');
+my $CareOnCloudVersion  = $Kernel::OM->Get('Kernel::Config')->Get('Version');
 
 # Leave only major and minor level versions.
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # Add x as patch level version.
-$OTOBOVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
   <ModuleRequired Version="1.112">Encode</ModuleRequired>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <CodeInstall>
@@ -76,28 +79,28 @@ my $String = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $StringSecond = "<?xml version='1.0' encoding='utf-8' ?>
-<otobo_package version='1.0'>
+<careoncloud_package version='1.0'>
   <Name>TestSecond</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang='en'>A test package (some test &lt; &gt; &amp;).\nNew line for testing.</Description>
   <Description Lang='de'>Ein Test Paket (some test &lt; &gt; &amp;).\nNeue Linie zum Testen.</Description>
   <ModuleRequired Version='1.112'>Encode</ModuleRequired>
-  <Framework>$OTOBOVersion</Framework>
+  <Framework>$CareOnCloudVersion</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location='TestSecond' Permission='644' Encode='Base64'>aGVsbG8K</File>
     <File Location='var/TestSecond' Permission='644' Encode='Base64'>aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ";
 
 # Override Request() from K::S::CloudService::Backend::Run to always return expected data without any real web call.

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,32 +16,36 @@
 
 package Kernel::Modules::AgentPreferences;
 
+use v5.24;
 use strict;
 use warnings;
 
-our $ObjectManagerDisabled = 1;
+# core modules
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
+
+our $ObjectManagerDisabled = 1;
 
 sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Type;
 }
 
 sub Run {
     my ( $Self, %Param ) = @_;
 
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $UserObject   = $Kernel::OM->Get('Kernel::System::User');
     my $EditUserID   = $ParamObject->GetParam( Param => 'EditUserID' );
-    my $ConfigLevel  = $Kernel::OM->Get('Kernel::Config')->Get('ConfigLevel') || 0;
+    my $ConfigLevel  = $ConfigObject->Get('ConfigLevel') || 0;
 
     $Self->{CurrentUserID} = $Self->{UserID};
     if (
@@ -64,12 +68,24 @@ sub Run {
         my $Key   = $ParamObject->GetParam( Param => 'Key' );
         my $Value = $ParamObject->GetParam( Param => 'Value' );
 
+        my %AllowedKeys;
+        for my $Config ( values %{ $ConfigObject->Get('Preferences::UpdateAJAX::Allowed') // {} } ) {
+            %AllowedKeys = (
+                %AllowedKeys,
+                $Config->%*,
+            );
+        }
+
+        my $Success = 0;
+
         # update preferences
-        my $Success = $UserObject->SetPreferences(
-            UserID => $Self->{CurrentUserID},
-            Key    => $Key,
-            Value  => $Value,
-        );
+        if ( $AllowedKeys{$Key} ) {
+            $Success = $UserObject->SetPreferences(
+                UserID => $Self->{CurrentUserID},
+                Key    => $Key,
+                Value  => $Value,
+            );
+        }
 
         # update session
         if ($Success) {
@@ -105,12 +121,12 @@ sub Run {
             );
         }
 
-        my $SettingID = $ParamObject->GetParam( Param => 'SettingID' );
+        my $IsPwdReset = 0;
+
+        # check preferences setting
+        my %Preferences = %{ $ConfigObject->Get('PreferencesGroups') };
 
         for my $Group (@Groups) {
-
-            # check preferences setting
-            my %Preferences = %{ $Kernel::OM->Get('Kernel::Config')->Get('PreferencesGroups') };
             if ( !$Preferences{$Group} ) {
                 return $LayoutObject->ErrorScreen(
                     Message => $LayoutObject->{LanguageObject}->Translate( 'No such config for %s', $Group ),
@@ -151,7 +167,10 @@ sub Run {
                 )
             {
                 $Message .= $Object->Message();
-                if ( $Preferences{$Group}->{NeedsReload} ) {
+                if ( $Group eq 'Password' && exists $GetParam{NewPw} && exists $GetParam{CurPw} ) {
+                    $IsPwdReset = 1;
+                }
+                elsif ( $Preferences{$Group}->{NeedsReload} ) {
                     $ConfigNeedsReload = 1;
                 }
             }
@@ -161,11 +180,27 @@ sub Run {
             }
         }
 
+        if ($IsPwdReset) {
+
+            # clear *all* sessions for this user (issue #3440)
+            my %UserData = $UserObject->GetUserData( UserID => $Self->{CurrentUserID} );
+
+            my $AuthSessionObject = $Kernel::OM->Get('Kernel::System::AuthSession');
+            if ( !$AuthSessionObject->RemoveSessionByUser( UserLogin => $UserData{UserLogin} ) ) {
+
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => "Could not delete sessions for user after pwd change.",
+                );
+            }
+        }
+
         return $LayoutObject->JSONReply(
             Data => {
                 'Message'     => $Message,
                 'Priority'    => $Priority,
-                'NeedsReload' => $ConfigNeedsReload
+                'NeedsReload' => $ConfigNeedsReload,
+                'ForceReload' => $IsPwdReset,
             },
         );
     }
@@ -189,10 +224,10 @@ sub Run {
             );
         }
 
-        for my $Group (@Groups) {
+        # check preferences setting
+        my %Preferences = %{ $ConfigObject->Get('PreferencesGroups') };
 
-            # check preferences setting
-            my %Preferences = %{ $Kernel::OM->Get('Kernel::Config')->Get('PreferencesGroups') };
+        for my $Group (@Groups) {
             if ( !$Preferences{$Group} ) {
                 return $LayoutObject->ErrorScreen(
                     Message => $LayoutObject->{LanguageObject}->Translate( 'No such config for %s', $Group ),
@@ -323,7 +358,7 @@ sub Run {
         if ( $UpdateResult{Error} ) {
             $Result{Data}->{Error} = $UpdateResult{Error};
         }
-        elsif ( !$SysConfigObject->can('UserConfigurationDeploy') ) {    # OTOBO Community Solution
+        elsif ( !$SysConfigObject->can('UserConfigurationDeploy') ) {    # CareOnCloud ESM Community Solution
             $Result{Data}->{Error} = $Kernel::OM->Get('Kernel::Language')->Translate(
                 "This feature is not available."
             );
@@ -385,8 +420,6 @@ sub Run {
         # challenge token check for write action
         $LayoutObject->ChallengeTokenCheck();
 
-        my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
-
         my $SettingName = $ParamObject->GetParam( Param => 'SettingName' ) || '';
 
         return $Self->_SettingReset( SettingName => $SettingName );
@@ -413,7 +446,7 @@ sub Run {
             # OverriddenFileName is used only in Admin interface.
             delete $Setting->{OverriddenFileName};
 
-            # If the setting is overriden in the *.pm file, take it as default and update IsModified.
+            # If the setting is overridden in the *.pm file, take it as default and update IsModified.
             my $GlobalEffectiveValue = $SysConfigObject->GlobalEffectiveValueGet(
                 SettingName => $Setting->{Name},
             );
@@ -457,37 +490,37 @@ sub Run {
     # ------------------------------------------------------------ #
     elsif ( $Self->{Subaction} eq 'Group' ) {
 
-        # get header
-        my $Output = $LayoutObject->Header();
-        $Output .= $LayoutObject->NavigationBar();
-
-        # get param
-        my $Message  = $ParamObject->GetParam( Param => 'Message' )  || '';
-        my $Priority = $ParamObject->GetParam( Param => 'Priority' ) || '';
-
         # add notification
-        if ( $Message && $Priority eq 'Error' ) {
-            $Output .= $LayoutObject->Notify(
-                Priority => $Priority,
-                Info     => $Message,
-            );
-        }
-        elsif ($Message) {
-            $Output .= $LayoutObject->Notify(
-                Info => $Message,
-            );
+        my $Notification = '';
+        {
+            my $Message  = $ParamObject->GetParam( Param => 'Message' )  || '';
+            my $Priority = $ParamObject->GetParam( Param => 'Priority' ) || '';
+            if ( $Message && $Priority eq 'Error' ) {
+                $Notification = $LayoutObject->Notify(
+                    Priority => $Priority,
+                    Info     => $Message,
+                );
+            }
+            elsif ($Message) {
+                $Notification = $LayoutObject->Notify(
+                    Info => $Message,
+                );
+            }
         }
 
         # get user data
         my %UserData = $UserObject->GetUserData( UserID => $Self->{CurrentUserID} );
-        $Output .= $Self->AgentPreferencesForm( UserData => \%UserData );
-        $Output .= $LayoutObject->Footer();
 
-        return $Output;
+        return join '',
+            $LayoutObject->Header,
+            $LayoutObject->NavigationBar,
+            $Notification,
+            $Self->AgentPreferencesForm( UserData => \%UserData ),
+            $LayoutObject->Footer;
     }
 
     # ------------------------------------------------------------ #
-    # Return user favourite system configuration settings.
+    # Return user favorite system configuration settings.
     # ------------------------------------------------------------ #
     elsif ( $Self->{Subaction} eq 'UserSystemConfigurationFavourites' ) {
 
@@ -542,12 +575,9 @@ sub Run {
     # ------------------------------------------------------------ #
     else {
 
-        # get header
-        my $Output = $LayoutObject->Header();
-        $Output .= $LayoutObject->NavigationBar();
-
         # get groups
-        my @PreferencesGroups = @{ $Kernel::OM->Get('Kernel::Config')->Get('AgentPreferencesGroups') };
+        my @PreferencesGroups = @{ $ConfigObject->Get('AgentPreferencesGroups') };
+
         if (@PreferencesGroups) {
             @PreferencesGroups = sort { $a->{Prio} <=> $b->{Prio} } @PreferencesGroups;
         }
@@ -556,26 +586,27 @@ sub Run {
             UserID => $Self->{CurrentUserID},
         );
 
-        $Output .= $LayoutObject->Output(
-            TemplateFile => 'AgentPreferencesOverview',
-            Data         => {
-                Items               => \@PreferencesGroups,
-                EditingAnotherAgent => $Self->{EditingAnotherAgent},
-                CurrentUserFullname => $UserObject->UserName( UserID => $Self->{CurrentUserID} ),
-                CurrentUserID       => $Self->{CurrentUserID},
-                View                => $UserPreferences{AgentPreferencesView} || 'Grid',
-            },
-        );
-
-        $Output .= $LayoutObject->Footer();
-
-        return $Output;
+        return join '',
+            $LayoutObject->Header,
+            $LayoutObject->NavigationBar,
+            $LayoutObject->Output(
+                TemplateFile => 'AgentPreferencesOverview',
+                Data         => {
+                    Items               => \@PreferencesGroups,
+                    EditingAnotherAgent => $Self->{EditingAnotherAgent},
+                    CurrentUserFullname => $UserObject->UserName( UserID => $Self->{CurrentUserID} ),
+                    CurrentUserID       => $Self->{CurrentUserID},
+                    View                => $UserPreferences{AgentPreferencesView} || 'Grid',
+                },
+            ),
+            $LayoutObject->Footer;
     }
 }
 
 sub AgentPreferencesForm {
     my ( $Self, %Param ) = @_;
 
+    my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
     my $LayoutObject    = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
     my $ParamObject     = $Kernel::OM->Get('Kernel::System::Web::Request');
@@ -617,7 +648,7 @@ sub AgentPreferencesForm {
             # OverriddenFileName is used only in Admin interface.
             delete $Setting->{OverriddenFileName};
 
-            # If the setting is overriden in the *.pm file, take it as default and update IsModified.
+            # If the setting is overridden in the *.pm file, take it as default and update IsModified.
             my $GlobalEffectiveValue = $SysConfigObject->GlobalEffectiveValueGet(
                 SettingName => $Setting->{Name},
             );
@@ -640,13 +671,20 @@ sub AgentPreferencesForm {
     }
 
     # get group name
-    my @PreferencesGroups = @{ $Kernel::OM->Get('Kernel::Config')->Get('AgentPreferencesGroups') };
+    my @PreferencesGroups = @{ $ConfigObject->Get('AgentPreferencesGroups') };
     my $GroupSelectedName;
 
     PREFERENCESGROUPS:
     for my $Group (@PreferencesGroups) {
-        next PREFERENCESGROUPS if $Group->{Key} ne $GroupSelected;
+        next PREFERENCESGROUPS unless $Group->{Key} eq $GroupSelected;
+
         $GroupSelectedName = $Group->{Name};
+    }
+
+    if ( !$GroupSelectedName ) {
+        return $LayoutObject->Error(
+            Message => $LayoutObject->{LanguageObject}->Translate( 'No such config for %s', $GroupSelected ),
+        );
     }
 
     $LayoutObject->Block(
@@ -658,24 +696,22 @@ sub AgentPreferencesForm {
             CategoriesStrg      => $Self->_GetCategoriesStrg(),
             RootNavigation      => $RootNavigation,
             EditingAnotherAgent => $Self->{EditingAnotherAgent},
-            CurrentUserFullname =>
-                $Kernel::OM->Get('Kernel::System::User')->UserName( UserID => $Self->{CurrentUserID} ),
-            CurrentUserID => $Self->{CurrentUserID},
+            CurrentUserFullname => $Kernel::OM->Get('Kernel::System::User')->UserName( UserID => $Self->{CurrentUserID} ),
+            CurrentUserID       => $Self->{CurrentUserID},
         },
     );
 
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my %Data;
+    my %Data;    # using the priority as key
     my %Preferences = %{ $ConfigObject->Get('PreferencesGroups') };
 
     GROUP:
     for my $Group ( sort keys %Preferences ) {
 
-        next GROUP if !$Group;
-        next GROUP if !$Preferences{$Group};
-        next GROUP if ref $Preferences{$Group} ne 'HASH';
-        next GROUP if !$Preferences{$Group}->{PreferenceGroup};
-        next GROUP if $Preferences{$Group}->{PreferenceGroup} ne $GroupSelected;
+        next GROUP unless $Group;
+        next GROUP unless $Preferences{$Group};
+        next GROUP unless ref $Preferences{$Group} eq 'HASH';
+        next GROUP unless $Preferences{$Group}->{PreferenceGroup};
+        next GROUP unless $Preferences{$Group}->{PreferenceGroup} eq $GroupSelected;
 
         # In case of a priority conflict, increase priority until a free slot is found.
         if ( $Data{ $Preferences{$Group}->{Prio} } ) {
@@ -688,6 +724,7 @@ sub AgentPreferencesForm {
                 next COUNT if $Data{ $Preferences{$Group}->{Prio} };
 
                 $Data{ $Preferences{$Group}->{Prio} } = $Group;
+
                 last COUNT;
             }
         }
@@ -695,17 +732,18 @@ sub AgentPreferencesForm {
         $Data{ $Preferences{$Group}->{Prio} } = $Group;
     }
 
-    # sort
+    # normalize the keys to integers of length 7
     for my $Key ( sort keys %Data ) {
-        $Data{ sprintf( "%07d", $Key ) } = $Data{$Key};
-        delete $Data{$Key};
+        $Data{ sprintf( '%07d', $Key ) } = delete $Data{$Key};
     }
 
     # show each preferences setting
     PRIO:
     for my $Prio ( sort keys %Data ) {
         my $Group = $Data{$Prio};
-        next PRIO if !$ConfigObject->{PreferencesGroups}->{$Group};
+
+        # TODO: why is the ConfigObject accessed directly here?
+        next PRIO unless $ConfigObject->{PreferencesGroups}->{$Group};
 
         my %Preference = %{ $ConfigObject->{PreferencesGroups}->{$Group} };
 
@@ -716,7 +754,7 @@ sub AgentPreferencesForm {
         # load module
         my $Module = $Preference{Module} || 'Kernel::Output::HTML::Preferences::Generic';
         if ( !$Kernel::OM->Get('Kernel::System::Main')->Require($Module) ) {
-            return $LayoutObject->FatalError();
+            return $LayoutObject->FatalError;
         }
 
         # create a new module object
@@ -736,20 +774,23 @@ sub AgentPreferencesForm {
                 Message  => "Could not create a new object for $Group Error: $@",
             );
         }
-        next PRIO if !$Object;
+
+        next PRIO unless $Object;
 
         # get params for the new module object
         my @Params;
         eval {
             @Params = $Object->Param( UserData => $Param{UserData} );
         };
+
         if ($@) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  => "Could not get params from $Group Error: $@",
             );
         }
-        next PRIO if !@Params;
+
+        next PRIO unless @Params;
 
         # show item
         $LayoutObject->Block(
@@ -885,7 +926,7 @@ sub _SettingReset {
     if ( !%Setting ) {
         $Result{Error} = $LayoutObject->{LanguageObject}->Translate("Setting not found!");
     }
-    elsif ( !$SysConfigObject->can('UserSettingValueDelete') ) {    # OTOBO Community Solution
+    elsif ( !$SysConfigObject->can('UserSettingValueDelete') ) {    # CareOnCloud ESM Community Solution
         $Result{Data}->{Error} = $LayoutObject->{LanguageObject}->Translate(
             "This feature is not available."
         );
@@ -907,7 +948,7 @@ sub _SettingReset {
                 TargetUserID => $Self->{CurrentUserID},
             );
 
-            # If the setting is overriden in the *.pm file, take it as default and update IsModified.
+            # If the setting is overridden in the *.pm file, take it as default and update IsModified.
             my $GlobalEffectiveValue = $SysConfigObject->GlobalEffectiveValueGet(
                 SettingName => $SettingName,
             );

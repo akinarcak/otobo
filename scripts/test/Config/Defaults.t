@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,8 +23,9 @@ use utf8;
 
 # CPAN modules
 use Test2::V0;
+use List::AllUtils qw(none);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 =head1 DESCRIPTION
@@ -49,7 +50,7 @@ my $ChecksumFileArrayRef = $MainObject->FileRead(
 );
 
 skip_all(
-    'Default configuration unit test requires the checksum file (ARCHIVE) to be present and valid. Please first call the following command to create it: bin/otobo.CheckSum.pl -a create'
+    'Default configuration unit test requires the checksum file (ARCHIVE) to be present and valid. Please first call the following command to create it: bin/careoncloud.CheckSum.pl -a create'
 ) if !$ChecksumFileArrayRef || !@{$ChecksumFileArrayRef};
 
 # Get list of present config XML files.
@@ -59,11 +60,14 @@ my @ConfigFiles = $MainObject->DirectoryRead(
     Filter    => '*.xml',
 );
 
+# Skip test when there non-standard XML files in the directory
 for my $ConfigFile (@ConfigFiles) {
 
     $ConfigFile =~ s{^${Home}/(.*/[^/]+.xml)$}{$1}xmsg;
 
-    if ( !grep { $_ =~ $ConfigFile } @{$ChecksumFileArrayRef} ) {
+    # This check also works for Kernel/Config/Files/XML/DockerConfig.xml
+    # as in Docker builds the DockerConfig,xml.dist is copied before ARCHIVE is generated.
+    if ( none { $_ =~ $ConfigFile } $ChecksumFileArrayRef->@* ) {
         skip_all("Custom configuration file found ($ConfigFile), skipping test...");
     }
 }
@@ -194,4 +198,4 @@ for my $DefaultConfigEntry ( sort keys %{$DefaultConfig} ) {
     }
 }
 
-done_testing();
+done_testing;

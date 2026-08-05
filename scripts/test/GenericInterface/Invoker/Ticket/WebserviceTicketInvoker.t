@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,19 +20,19 @@ use warnings;
 use utf8;
 
 # core modules
-use Storable;
+use Storable qw(dclone);
 
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
-use Kernel::GenericInterface::Debugger;
-use Kernel::GenericInterface::Invoker;
-use Kernel::GenericInterface::Operation::Ticket::TicketUpdate;
-use Kernel::GenericInterface::Operation::Ticket::TicketCreate;
-use Kernel::System::VariableCheck qw(:all);
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);
+use Kernel::System::UnitTest::RegisterOM;                                 # Set up $Kernel::OM
+use Kernel::GenericInterface::Debugger                        ();
+use Kernel::GenericInterface::Invoker                         ();
+use Kernel::GenericInterface::Operation::Ticket::TicketCreate ();         ## no perlimports, new() invoked from string
+use Kernel::GenericInterface::Operation::Ticket::TicketUpdate ();         ## no perlimports, new() invoked from string
+use Kernel::System::VariableCheck                             qw(:all);
 
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
@@ -47,7 +47,6 @@ FixedTimeSet();
 
 my $ConfigObject         = $Kernel::OM->Get('Kernel::Config');
 my $CustomerUserObject   = $Kernel::OM->Get('Kernel::System::CustomerUser');
-my $UserObject           = $Kernel::OM->Get('Kernel::System::User');
 my $TicketObject         = $Kernel::OM->Get('Kernel::System::Ticket');
 my $ArticleBackendObject = $Kernel::OM->Get('Kernel::System::Ticket::Article::Backend::Internal');
 my $DynamicFieldObject   = $Kernel::OM->Get('Kernel::System::DynamicField');
@@ -55,9 +54,9 @@ my $DFBackendObject      = $Kernel::OM->Get('Kernel::System::DynamicField::Backe
 
 my $WebserviceObject = $Kernel::OM->Get('Kernel::System::GenericInterface::Webservice');
 my $WebserviceID     = $WebserviceObject->WebserviceAdd(
-    Name   => 'OTOBOGenericInterfaceInvokerTicket-' . $RandomID,
+    Name   => 'CareOnCloudGenericInterfaceInvokerTicket-' . $RandomID,
     Config => {
-        Name        => 'OTOBOGenericInterfaceInvokerTicket-' . $RandomID,
+        Name        => 'CareOnCloudGenericInterfaceInvokerTicket-' . $RandomID,
         Description => '',
         Debugger    => {
             DebugThreshold => 'debug',
@@ -214,7 +213,7 @@ my ( $AttachmentDynamicFieldID, $FormID, $AttachmentDynamicFieldConfig );
 
 if ( $ConfigObject->Get('DynamicFields::Driver')->{Attachment} ) {
 
-    # OTOBODynamicFieldAttachment is installed, add new dynamic field.
+    # CareOnCloudDynamicFieldAttachment is installed, add new dynamic field.
     $AttachmentDynamicFieldID = $DynamicFieldObject->DynamicFieldAdd(
         Name   => 'DynamicFieldAttachment' . $RandomID,
         Config => {
@@ -254,17 +253,19 @@ my @Tests = (
         },
         TicketCreate => {
             ExpectedInvokerPrepareRequestResult => {
-                'Article' => {
-                    'Body'                 => $Article{Body},
-                    'Charset'              => 'utf8',
-                    'CommunicationChannel' => 'Internal',
-                    'ContentType'          => 'text/plain; charset=utf8',    # modified explicitly in invoker
-                    'From'                 => $Article{From},
-                    'MimeType'             => $Article{MimeType},
-                    'SenderType'           => $Article{SenderType},
-                    'Subject'              => $Article{Subject},
-                    'TimeUnit'             => $AccountedTime,
-                },
+                'Article' => [
+                    {
+                        'Body'                 => $Article{Body},
+                        'Charset'              => 'utf8',
+                        'CommunicationChannel' => 'Internal',
+                        'ContentType'          => 'text/plain; charset=utf8',    # modified explicitly in invoker
+                        'From'                 => $Article{From},
+                        'MimeType'             => $Article{MimeType},
+                        'SenderType'           => $Article{SenderType},
+                        'Subject'              => $Article{Subject},
+                        'TimeUnit'             => $AccountedTime,
+                    }
+                ],
                 'Attachment' => [
                     {
                         'Content'     => 'Ymx1YiBibHViIGJsdWIgYmx1YiBibHViIGJsdWIgYmx1YiBibHVi' . "\n",
@@ -329,17 +330,19 @@ my @Tests = (
         },
         TicketUpdate => {
             ExpectedInvokerPrepareRequestResult => {
-                'Article' => {
-                    'Body'                 => $Article{Body},
-                    'Charset'              => 'utf8',
-                    'CommunicationChannel' => 'Internal',
-                    'ContentType'          => 'text/plain; charset=utf8',    # modified explicitly in invoker
-                    'From'                 => $Article{From},
-                    'MimeType'             => $Article{MimeType},
-                    'SenderType'           => $Article{SenderType},
-                    'Subject'              => $Article{Subject},
-                    'TimeUnit'             => $AccountedTime,
-                },
+                'Article' => [
+                    {
+                        'Body'                 => $Article{Body},
+                        'Charset'              => 'utf8',
+                        'CommunicationChannel' => 'Internal',
+                        'ContentType'          => 'text/plain; charset=utf8',    # modified explicitly in invoker
+                        'From'                 => $Article{From},
+                        'MimeType'             => $Article{MimeType},
+                        'SenderType'           => $Article{SenderType},
+                        'Subject'              => $Article{Subject},
+                        'TimeUnit'             => $AccountedTime,
+                    }
+                ],
                 'Attachment' => [
                     {
                         'Content'     => 'Ymx1YiBibHViIGJsdWIgYmx1YiBibHViIGJsdWIgYmx1YiBibHVi' . "\n",
@@ -463,24 +466,26 @@ my @Tests = (
         },
         TicketUpdate => {
             ExpectedInvokerPrepareRequestResult => {
-                'Article' => {
-                    'ArticleID'    => $Article{ArticleID},
-                    'Body'         => $Article{Body},
-                    'Cc'           => $Article{Cc},
-                    'Charset'      => 'utf8',                        # modified explicitly in invoker
-                    'ContentType'  => 'text/plain; charset=utf8',    # modified explicitly in invoker
-                    'InReplyTo'    => $Article{InReplyTo},
-                    'IncomingTime' => $Article{IncomingTime},
-                    'MessageID'    => $Article{MessageID},
-                    'From'         => $Article{From},
-                    'MimeType'     => $Article{MimeType},
-                    'References'   => $Article{References},
-                    'ReplyTo'      => $Article{ReplyTo},
-                    'SenderType'   => $Article{SenderType},
-                    'SenderTypeID' => $Article{SenderTypeID},
-                    'Subject'      => $Article{Subject},
-                    'To'           => $Article{To},
-                },
+                'Article' => [
+                    {
+                        'ArticleID'    => $Article{ArticleID},
+                        'Body'         => $Article{Body},
+                        'Cc'           => $Article{Cc},
+                        'Charset'      => 'utf8',                        # modified explicitly in invoker
+                        'ContentType'  => 'text/plain; charset=utf8',    # modified explicitly in invoker
+                        'InReplyTo'    => $Article{InReplyTo},
+                        'IncomingTime' => $Article{IncomingTime},
+                        'MessageID'    => $Article{MessageID},
+                        'From'         => $Article{From},
+                        'MimeType'     => $Article{MimeType},
+                        'References'   => $Article{References},
+                        'ReplyTo'      => $Article{ReplyTo},
+                        'SenderType'   => $Article{SenderType},
+                        'SenderTypeID' => $Article{SenderTypeID},
+                        'Subject'      => $Article{Subject},
+                        'To'           => $Article{To},
+                    }
+                ],
                 'Attachment' => [
                     {
                         'Content'     => 'Ymx1YiBibHViIGJsdWIgYmx1YiBibHViIGJsdWIgYmx1YiBibHVi' . "\n",
@@ -580,7 +585,7 @@ my @Tests = (
         },
         TicketUpdate => {
             ExpectedInvokerPrepareRequestResult => {
-                'Article'    => {},
+                'Article'    => [ {} ],
                 'Attachment' => [
                     {
                         'Content'     => 'Ymx1YiBibHViIGJsdWIgYmx1YiBibHViIGJsdWIgYmx1YiBibHVi' . "\n",
@@ -663,25 +668,27 @@ my @Tests = (
         },
         TicketCreate => {
             ExpectedInvokerPrepareRequestResult => {
-                'Article' => {
-                    'ArticleID'    => $Article{ArticleID},
-                    'Body'         => $Article{Body},
-                    'Cc'           => $Article{Cc},
-                    'Charset'      => 'utf8',                        # modified explicitly in invoker
-                    'ContentType'  => 'text/plain; charset=utf8',    # modified explicitly in invoker
-                    'InReplyTo'    => $Article{InReplyTo},
-                    'IncomingTime' => $Article{IncomingTime},
-                    'MessageID'    => $Article{MessageID},
-                    'From'         => $Article{From},
-                    'MimeType'     => $Article{MimeType},
-                    'References'   => $Article{References},
-                    'ReplyTo'      => $Article{ReplyTo},
-                    'SenderType'   => $Article{SenderType},
-                    'SenderTypeID' => $Article{SenderTypeID},
-                    'Subject'      => $Article{Subject},
-                    'To'           => $Article{To},
-                    'TimeUnit'     => $AccountedTime,
-                },
+                'Article' => [
+                    {
+                        'ArticleID'    => $Article{ArticleID},
+                        'Body'         => $Article{Body},
+                        'Cc'           => $Article{Cc},
+                        'Charset'      => 'utf8',                        # modified explicitly in invoker
+                        'ContentType'  => 'text/plain; charset=utf8',    # modified explicitly in invoker
+                        'InReplyTo'    => $Article{InReplyTo},
+                        'IncomingTime' => $Article{IncomingTime},
+                        'MessageID'    => $Article{MessageID},
+                        'From'         => $Article{From},
+                        'MimeType'     => $Article{MimeType},
+                        'References'   => $Article{References},
+                        'ReplyTo'      => $Article{ReplyTo},
+                        'SenderType'   => $Article{SenderType},
+                        'SenderTypeID' => $Article{SenderTypeID},
+                        'Subject'      => $Article{Subject},
+                        'To'           => $Article{To},
+                        'TimeUnit'     => $AccountedTime,
+                    }
+                ],
                 'Attachment' => [
                     {
                         'Content'     => 'Ymx1YiBibHViIGJsdWIgYmx1YiBibHViIGJsdWIgYmx1YiBibHVi' . "\n",
@@ -831,25 +838,27 @@ my @Tests = (
         },
         TicketUpdate => {
             ExpectedInvokerPrepareRequestResult => {
-                'Article' => {
-                    'ArticleID'    => $Article{ArticleID},
-                    'Body'         => $Article{Body},
-                    'Cc'           => $Article{Cc},
-                    'Charset'      => 'utf8',                        # modified explicitly in invoker
-                    'ContentType'  => 'text/plain; charset=utf8',    # modified explicitly in invoker
-                    'InReplyTo'    => $Article{InReplyTo},
-                    'IncomingTime' => $Article{IncomingTime},
-                    'MessageID'    => $Article{MessageID},
-                    'From'         => $Article{From},
-                    'MimeType'     => $Article{MimeType},
-                    'References'   => $Article{References},
-                    'ReplyTo'      => $Article{ReplyTo},
-                    'SenderType'   => $Article{SenderType},
-                    'SenderTypeID' => $Article{SenderTypeID},
-                    'Subject'      => $Article{Subject},
-                    'To'           => $Article{To},
-                    'TimeUnit'     => $AccountedTime,
-                },
+                'Article' => [
+                    {
+                        'ArticleID'    => $Article{ArticleID},
+                        'Body'         => $Article{Body},
+                        'Cc'           => $Article{Cc},
+                        'Charset'      => 'utf8',                        # modified explicitly in invoker
+                        'ContentType'  => 'text/plain; charset=utf8',    # modified explicitly in invoker
+                        'InReplyTo'    => $Article{InReplyTo},
+                        'IncomingTime' => $Article{IncomingTime},
+                        'MessageID'    => $Article{MessageID},
+                        'From'         => $Article{From},
+                        'MimeType'     => $Article{MimeType},
+                        'References'   => $Article{References},
+                        'ReplyTo'      => $Article{ReplyTo},
+                        'SenderType'   => $Article{SenderType},
+                        'SenderTypeID' => $Article{SenderTypeID},
+                        'Subject'      => $Article{Subject},
+                        'To'           => $Article{To},
+                        'TimeUnit'     => $AccountedTime,
+                    }
+                ],
                 'Attachment' => [
                     {
                         'Content'     => 'Ymx1YiBibHViIGJsdWIgYmx1YiBibHViIGJsdWIgYmx1YiBibHVi' . "\n",
@@ -944,20 +953,22 @@ my @Tests = (
             TicketCreate => {},
             TicketUpdate => {},
         },
-        TestOTOBODynamicField => 1,
+        TestCareOnCloudDynamicField => 1,
         TicketCreate          => {
             ExpectedInvokerPrepareRequestResult => {
-                'Article' => {
-                    'Body'                 => $Article{Body},
-                    'Charset'              => 'utf8',
-                    'CommunicationChannel' => 'Internal',
-                    'ContentType'          => 'text/plain; charset=utf8',    # modified explicitly in invoker
-                    'From'                 => $Article{From},
-                    'MimeType'             => $Article{MimeType},
-                    'SenderType'           => $Article{SenderType},
-                    'Subject'              => $Article{Subject},
-                    'TimeUnit'             => $AccountedTime,
-                },
+                'Article' => [
+                    {
+                        'Body'                 => $Article{Body},
+                        'Charset'              => 'utf8',
+                        'CommunicationChannel' => 'Internal',
+                        'ContentType'          => 'text/plain; charset=utf8',    # modified explicitly in invoker
+                        'From'                 => $Article{From},
+                        'MimeType'             => $Article{MimeType},
+                        'SenderType'           => $Article{SenderType},
+                        'Subject'              => $Article{Subject},
+                        'TimeUnit'             => $AccountedTime,
+                    }
+                ],
                 'Attachment' => [
                     {
                         'Content'     => 'Ymx1YiBibHViIGJsdWIgYmx1YiBibHViIGJsdWIgYmx1YiBibHVi' . "\n",
@@ -1048,7 +1059,7 @@ my @Tests = (
 # run the test cases
 TEST:
 for my $Test (@Tests) {
-    if ( $Test->{TestOTOBODynamicField} && !$AttachmentDynamicFieldID ) {
+    if ( $Test->{TestCareOnCloudDynamicField} && !$AttachmentDynamicFieldID ) {
         diag "Skipping '$Test->{Name}' as there is not attachment dynamic field";
 
         next TEST;
@@ -1078,7 +1089,7 @@ for my $Test (@Tests) {
             "Dynamic field 'DynamicField$RandomID' is set.",
         );
 
-        if ( $Test->{TestOTOBODynamicField} ) {
+        if ( $Test->{TestCareOnCloudDynamicField} ) {
             my $UploadCacheObject = $Kernel::OM->Get('Kernel::System::Web::UploadCache');
 
             $FormID = $UploadCacheObject->FormIDCreate();
@@ -1106,7 +1117,7 @@ for my $Test (@Tests) {
             );
             ok(
                 $AttachmentDynamicFieldSuccess,
-                "Dynamic field 'DynamicFieldAttachemt$RandomID' is set.",
+                "Dynamic field 'DynamicFieldAttachment$RandomID' is set.",
             );
         }
 
@@ -1153,7 +1164,7 @@ for my $Test (@Tests) {
 
             # check content of invoker result
             is(
-                Storable::dclone( $InvokerResult->{Data} ),
+                dclone( $InvokerResult->{Data} ),
                 $Test->{$InvokerType}->{ExpectedInvokerPrepareRequestResult},
                 "Invoker $InvokerType - Invoker PrepareRequest() return data matches expected result",
             );

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,13 +18,15 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::Language ();
 
 our $Self;
-
-use Kernel::System::MailQueue;
-use Kernel::Language;
 
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
@@ -214,7 +216,7 @@ my $NotificationID = $NotificationEventObject->NotificationAdd(
     Message => {
         en => {
             Subject     => 'JobName',
-            Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+            Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
             ContentType => 'text/html',
         },
     },

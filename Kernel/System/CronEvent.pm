@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,8 +19,12 @@ package Kernel::System::CronEvent;
 use strict;
 use warnings;
 
-use Schedule::Cron::Events;
+# core modules
 
+# CPAN modules
+use Schedule::Cron::Events ();
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -91,9 +95,9 @@ sub NextEventGet {
     # would not exist in the given time zone (e. g. on/around daylight saving time switch).
     # CPAN DateTime fails if trying to create a object of a non-existing
     # time in the given time zone. Converting it to UTC and back has the desired effect.
-    my $OTOBOTimeZone = $StartDateTime->OTOBOTimeZoneGet();
+    my $CareOnCloudTimeZone = $StartDateTime->CareOnCloudTimeZoneGet();
     my $TimeZoneChanged;
-    if ( $OTOBOTimeZone ne 'UTC' ) {
+    if ( $CareOnCloudTimeZone ne 'UTC' ) {
         $StartDateTime->ToTimeZone(
             TimeZone => 'UTC'
         );
@@ -125,7 +129,7 @@ sub NextEventGet {
 
     if ($TimeZoneChanged) {
         $EventDateTime->ToTimeZone(
-            TimeZone => $OTOBOTimeZone
+            TimeZone => $CareOnCloudTimeZone
         );
     }
 
@@ -182,9 +186,9 @@ sub NextEventList {
     # would not exist in the given time zone (e. g. on/around daylight saving time switch).
     # CPAN DateTime fails if trying to create a object of a non-existing
     # time in the given time zone. Converting it to UTC and back has the desired effect.
-    my $OTOBOTimeZone = $StartDateTime->OTOBOTimeZoneGet();
+    my $CareOnCloudTimeZone = $StartDateTime->CareOnCloudTimeZoneGet();
     my $TimeZoneChanged;
-    if ( $OTOBOTimeZone ne 'UTC' ) {
+    if ( $CareOnCloudTimeZone ne 'UTC' ) {
         $StartDateTime->ToTimeZone(
             TimeZone => 'UTC'
         );
@@ -227,7 +231,7 @@ sub NextEventList {
 
         if ($TimeZoneChanged) {
             $EventDateTime->ToTimeZone(
-                TimeZone => $OTOBOTimeZone
+                TimeZone => $CareOnCloudTimeZone
             );
         }
 
@@ -275,9 +279,9 @@ sub PreviousEventGet {
     # would not exist in the given time zone (e. g. on/around daylight saving time switch).
     # CPAN DateTime fails if trying to create a object of a non-existing
     # time in the given time zone. Converting it to UTC and back has the desired effect.
-    my $OTOBOTimeZone = $StartDateTime->OTOBOTimeZoneGet();
+    my $CareOnCloudTimeZone = $StartDateTime->CareOnCloudTimeZoneGet();
     my $TimeZoneChanged;
-    if ( $OTOBOTimeZone ne 'UTC' ) {
+    if ( $CareOnCloudTimeZone ne 'UTC' ) {
         $StartDateTime->ToTimeZone(
             TimeZone => 'UTC'
         );
@@ -309,7 +313,7 @@ sub PreviousEventGet {
 
     if ($TimeZoneChanged) {
         $EventDateTime->ToTimeZone(
-            TimeZone => $OTOBOTimeZone
+            TimeZone => $CareOnCloudTimeZone
         );
     }
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,6 +28,15 @@ sub new {
     my $Self = {%Param};
     bless( $Self, $Type );
 
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
+
     return $Self;
 }
 
@@ -38,8 +47,29 @@ sub Run {
     my $ConfigObject   = $Kernel::OM->Get('Kernel::Config');
     my $Name           = $ParamObject->GetParam( Param => 'Name' );
     my $OldName        = $ParamObject->GetParam( Param => 'OldName' );
+    my $ValidID        = $ParamObject->GetParam( Param => 'ValidID' );
     my $StopAfterMatch = $ParamObject->GetParam( Param => 'StopAfterMatch' ) || 0;
     my %GetParam       = ();
+
+    $Param{IncludeInvalid} = $ParamObject->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $Param{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $Param{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $Param{IncludeInvalid};
+    }
+
+    # fetch and pass on filters
+    my %SearchItems;
+    for my $SearchItem (qw(SearchFilter SearchValue)) {
+        $SearchItems{$SearchItem}->@* = split( /,/, $ParamObject->GetParam( Param => $SearchItem ) || '' );
+    }
+
+    $SearchItems{SearchTerm} = $ParamObject->GetParam( Param => 'SearchTerm' ) || undef;
 
     for my $Number ( 1 .. $ConfigObject->Get('PostmasterHeaderFieldCount') ) {
         $GetParam{"MatchHeader$Number"} = $ParamObject->GetParam( Param => "MatchHeader$Number" );
@@ -167,6 +197,11 @@ sub Run {
             $Errors{"NameInvalid"} = 'ServerError';
         }
 
+        # ValidID validation
+        if ( !( $Kernel::OM->Get('Kernel::System::Valid')->ValidLookup( ValidID => $ValidID ) ) ) {
+            $Errors{"ValidOptionInvalid"} = 'ServerError';
+        }
+
         # If it's not edit action, verify there is no filters with same name.
         if ( $Name ne $OldName ) {
             my %Data = $PostMasterFilter->FilterGet( Name => $Name );
@@ -192,6 +227,7 @@ sub Run {
         $PostMasterFilter->FilterDelete( Name => $OldName );
         $PostMasterFilter->FilterAdd(
             Name           => $Name,
+            ValidID        => $ValidID,
             Match          => \@Match,
             Set            => \@Set,
             StopAfterMatch => $StopAfterMatch,
@@ -219,7 +255,18 @@ sub Run {
     # overview
     # ------------------------------------------------------------ #
     else {
-        my %List = $PostMasterFilter->FilterList();
+
+        my %ValidList   = $Kernel::OM->Get('Kernel::System::Valid')->ValidList();
+        my %ValidLookup = reverse %ValidList;
+        my @ValidIDs    = ( $ValidLookup{'valid'}, $ValidLookup{'invalid-temporarily'} );
+        if ( $Self->{IncludeInvalid} ) {
+            push @ValidIDs, $ValidLookup{'invalid'};
+        }
+
+        my %List = $PostMasterFilter->FilterList(
+            %SearchItems,
+            ValidIDs => \@ValidIDs,
+        );
 
         $LayoutObject->Block(
             Name => 'Overview',
@@ -227,7 +274,74 @@ sub Run {
         );
         $LayoutObject->Block( Name => 'ActionList' );
         $LayoutObject->Block( Name => 'ActionAdd' );
+        $LayoutObject->Block(
+            Name => 'IncludeInvalid',
+            Data => {
+                IncludeInvalid        => $Self->{IncludeInvalid},
+                IncludeInvalidChecked => $Self->{IncludeInvalid} ? 'checked' : '',
+            },
+        );
         $LayoutObject->Block( Name => 'Filter' );
+
+        # all headers
+        my @Headers = @{ $ConfigObject->Get('PostmasterX-Header') };
+
+        # add Dynamic Field headers
+        my $DynamicFields = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldList(
+            Valid      => 1,
+            ObjectType => [ 'Ticket', 'Article' ],
+            ResultType => 'HASH',
+        );
+        for my $DynamicField ( values %$DynamicFields ) {
+            push @Headers, 'X-CareOnCloud-DynamicField-' . $DynamicField;
+            push @Headers, 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicField;
+        }
+
+        my %Header = map { $_ => $_ } @Headers;
+        $Header{''}   = '-';
+        $Header{Body} = 'Body';
+
+        # set headers
+        my %SetHeader = ();
+        for my $HeaderKey ( sort keys %Header ) {
+            if ( $HeaderKey =~ /^x-careoncloud/i ) {
+                $SetHeader{$HeaderKey} = $HeaderKey;
+            }
+        }
+        $SetHeader{''} = '-';
+
+        # render filter block
+        my $SearchFilterStrg = $LayoutObject->BuildSelection(
+            Data         => \%Header,
+            Name         => 'SearchFilter',
+            Class        => 'Modernize W100pc FilterBox',
+            SelectedID   => $SearchItems{SearchFilter},
+            Translation  => 0,
+            HTMLQuote    => 1,
+            Multiple     => 1,
+            PossibleNone => 1,
+        );
+
+        # render filter block
+        my $SearchValueStrg = $LayoutObject->BuildSelection(
+            Data         => \%SetHeader,
+            Name         => 'SearchValue',
+            Class        => 'Modernize W100pc FilterBox',
+            SelectedID   => $SearchItems{SearchValue},
+            Translation  => 0,
+            HTMLQuote    => 1,
+            Multiple     => 1,
+            PossibleNone => 1,
+        );
+
+        $LayoutObject->Block(
+            Name => 'Search',
+            Data => {
+                SearchFilterStrg => $SearchFilterStrg,
+                SearchTerm       => $SearchItems{SearchTerm} || '',
+                SearchValueStrg  => $SearchValueStrg,
+            },
+        );
 
         $LayoutObject->Block(
             Name => 'OverviewResult',
@@ -235,11 +349,15 @@ sub Run {
         );
 
         if (%List) {
+            my %ValidList = $Kernel::OM->Get('Kernel::System::Valid')->ValidList();
             for my $Key ( sort keys %List ) {
+                my %Data = $PostMasterFilter->FilterGet( Name => $Key );
                 $LayoutObject->Block(
                     Name => 'OverviewResultRow',
                     Data => {
-                        Name => $Key,
+                        Name           => $Key,
+                        StopAfterMatch => $Data{StopAfterMatch} ? 'Yes' : 'No',
+                        Valid          => $ValidList{ $Data{ValidID} },
                     },
                 );
             }
@@ -315,18 +433,18 @@ sub _MaskUpdate {
         ResultType => 'HASH',
     );
     for my $DynamicField ( values %$DynamicFields ) {
-        push @Headers, 'X-OTOBO-DynamicField-' . $DynamicField;
-        push @Headers, 'X-OTOBO-FollowUp-DynamicField-' . $DynamicField;
+        push @Headers, 'X-CareOnCloud-DynamicField-' . $DynamicField;
+        push @Headers, 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicField;
     }
 
     my %Header = map { $_ => $_ } @Headers;
     $Header{''}   = '-';
     $Header{Body} = 'Body';
 
-    # otobo header
+    # careoncloud header
     my %SetHeader = ();
     for my $HeaderKey ( sort keys %Header ) {
-        if ( $HeaderKey =~ /^x-otobo/i ) {
+        if ( $HeaderKey =~ /^x-careoncloud/i ) {
             $SetHeader{$HeaderKey} = $HeaderKey;
         }
     }
@@ -367,6 +485,17 @@ sub _MaskUpdate {
     if ( $Param{Data}->{NameInvalid} ) {
         $OldName = $Data{OldName};
     }
+
+    # get valid list
+    my %ValidList        = $Kernel::OM->Get('Kernel::System::Valid')->ValidList();
+    my %ValidListReverse = reverse %ValidList;
+
+    $Param{ValidOption} = $LayoutObject->BuildSelection(
+        Data       => \%ValidList,
+        Name       => 'ValidID',
+        SelectedID => $Param{Data}{ValidID} || $ValidListReverse{valid},
+        Class      => 'Modernize Validate_Required ' . ( $Param{Errors}->{'ValidIDInvalid'} || '' ),
+    );
 
     $LayoutObject->Block(
         Name => 'OverviewUpdate',

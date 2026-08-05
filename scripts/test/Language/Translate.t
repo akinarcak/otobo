@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,10 +18,13 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM;
 
 # create language object which contains all translations
 $Kernel::OM->ObjectParamAdd(
@@ -39,43 +42,43 @@ my @Tests = (
         TranslationResult => '0',
     },
     {
-        OriginalString    => 'OTOBOLanguageUnitTest::Test1',
+        OriginalString    => 'CareOnCloudLanguageUnitTest::Test1',
         TranslationString => 'Test1',
         TranslationResult => 'Test1',
         Parameters        => ['Hallo'],                        # test with not needed parameter
     },
     {
-        OriginalString    => 'OTOBOLanguageUnitTest::Test2',
+        OriginalString    => 'CareOnCloudLanguageUnitTest::Test2',
         TranslationString => 'Test2 [%s]',
         TranslationResult => 'Test2 [Hallo]',
         Parameters        => ['Hallo'],
     },
     {
-        OriginalString    => 'OTOBOLanguageUnitTest::Test3',
+        OriginalString    => 'CareOnCloudLanguageUnitTest::Test3',
         TranslationString => 'Test3 [%s] (A=%s)',
         TranslationResult => 'Test3 [Hallo] (A=A)',
         Parameters        => [ 'Hallo', 'A' ],
     },
     {
-        OriginalString    => 'OTOBOLanguageUnitTest::Test4',
+        OriginalString    => 'CareOnCloudLanguageUnitTest::Test4',
         TranslationString => 'Test4 [%s] (A=%s;B=%s)',
         TranslationResult => 'Test4 [Hallo] (A=A;B=B)',
         Parameters        => [ 'Hallo', 'A', 'B' ],
     },
     {
-        OriginalString    => 'OTOBOLanguageUnitTest::Test5',
+        OriginalString    => 'CareOnCloudLanguageUnitTest::Test5',
         TranslationString => 'Test5 [%s] (A=%s;B=%s;C=%s)',
         TranslationResult => 'Test5 [Hallo] (A=A;B=B;C=C)',
         Parameters        => [ 'Hallo', 'A', 'B', 'C' ],
     },
     {
-        OriginalString    => 'OTOBOLanguageUnitTest::Test6',
+        OriginalString    => 'CareOnCloudLanguageUnitTest::Test6',
         TranslationString => 'Test6 [%s] (A=%s;B=%s;C=%s;D=%s)',
         TranslationResult => 'Test6 [Hallo] (A=A;B=B;C=C;D=D)',
         Parameters        => [ 'Hallo', 'A', 'B', 'C', 'D' ],
     },
     {
-        OriginalString    => 'OTOBOLanguageUnitTest::Test7 [% test %] {" special characters %s"}',
+        OriginalString    => 'CareOnCloudLanguageUnitTest::Test7 [% test %] {" special characters %s"}',
         TranslationString => 'Test7 [% test %] {" special characters %s"}',
         TranslationResult => 'Test7 [% test %] {" special characters test"}',
         Parameters        => ['test'],
@@ -107,11 +110,11 @@ for my $Test (@Tests) {
     }
 
     # compare with expected translation
-    $Self->Is(
+    is(
         $TranslatedString // '',
         $Test->{TranslationResult},
         'Translation of ' . $Test->{OriginalString},
     );
 }
 
-$Self->DoneTesting();
+done_testing;

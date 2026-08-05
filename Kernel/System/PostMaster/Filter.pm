@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,10 +16,21 @@
 
 package Kernel::System::PostMaster::Filter;
 
+# for indented heredoc
+use v5.26;
 use strict;
 use warnings;
 
+# core modules
+use List::Util qw(none);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsArrayRefWithData IsStringWithData);
+
 our @ObjectDependencies = (
+    'Kernel::System::Cache',
     'Kernel::System::DB',
     'Kernel::System::Log',
 );
@@ -49,6 +60,9 @@ sub new {
     my $Self = {};
     bless( $Self, $Type );
 
+    $Self->{CacheType} = 'PostMasterFilter';
+    $Self->{CacheTTL}  = 60 * 60 * 24 * 20;
+
     return $Self;
 }
 
@@ -56,7 +70,12 @@ sub new {
 
 get all filter
 
-    my %FilterList = $PMFilterObject->FilterList();
+    my %FilterList = $PMFilterObject->FilterList(
+        SearchTerm   => $SearchTerm,                    # optional - String, term to search by
+        SearchFilter => \@SearchFilter|$SearchFilter,   # optional - Array or string, restrict search to certain match headers
+        SearchValue  => \@SearchValue|$SearchValue,     # optional - Array or string, restrict search to certain set headers
+        ValidIDs     => ['1', '2'],                     # optional: filter by given valid ids
+    );
 
 =cut
 
@@ -66,8 +85,63 @@ sub FilterList {
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
+    # check search items
+    if ( $Param{SearchTerm} && !IsStringWithData( $Param{SearchTerm} ) ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error',
+            Message  => "Value for SearchTerm is not a scalar value!",
+        );
+        return;
+    }
+
+    # More specifically: Should empty array refs be allowed?
+    for my $SearchArrayItem (qw(SearchFilter SearchValue)) {
+
+        # if scalar given, convert to array - check with !ref to prevent [ HASH(0x...) ]
+        if ( $Param{$SearchArrayItem} && !ref $Param{$SearchArrayItem} && ref \$Param{$SearchArrayItem} eq 'SCALAR' ) {
+            $Param{$SearchArrayItem} = [ $Param{$SearchArrayItem} ];
+        }
+
+        if ( $Param{$SearchArrayItem} && ref $Param{$SearchArrayItem} ne 'ARRAY' ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Value for $SearchArrayItem is not an array!",
+            );
+            return;
+        }
+    }
+
+    # check cache
+    my @CacheParts = qw(PostMasterFilterList);
+    for my $Key ( sort keys %Param ) {
+
+        # TODO Think about good practice for maintaining order when one or more keys are empty
+        push @CacheParts, ( $Param{$Key} || '-' );
+    }
+
+    my $CacheKey = join '::', @CacheParts;
+    my $Cache    = $Kernel::OM->Get('Kernel::System::Cache')->Get(
+        Type => $Self->{CacheType},
+        Key  => $CacheKey,
+    );
+    return %{$Cache} if $Cache;
+
+    my $SQL = 'SELECT f_name FROM postmaster_filter';
+
+    my @Bind;
+    if ( IsArrayRefWithData( $Param{ValidIDs} ) ) {
+
+        $SQL .= " WHERE valid_id IN (";
+
+        $SQL .= join( ',', map {'?'} $Param{ValidIDs}->@* );
+        push @Bind, map { \$_ } $Param{ValidIDs}->@*;
+
+        $SQL .= ")";
+    }
+
     return if !$DBObject->Prepare(
-        SQL => 'SELECT f_name FROM postmaster_filter',
+        SQL  => $SQL,
+        Bind => \@Bind,
     );
 
     my %Data;
@@ -75,7 +149,78 @@ sub FilterList {
         $Data{ $Row[0] } = $Row[0];
     }
 
-    return %Data;
+    # apply search restrictions
+    my %Result;
+    if ( $Param{SearchTerm} ) {
+
+        # iterate over filters given from sql select
+        FILTER:
+        for my $FilterName ( keys %Data ) {
+
+            # fetch every single filter
+            my %Filter = $Self->FilterGet( Name => $FilterName );
+            next FILTER unless %Filter;
+
+            # filter for match and set attributes
+            my %SearchRelevantData = map { $_ eq 'Match' || $_ eq 'Set' ? ( $_ => $Filter{$_} ) : () } keys %Filter;
+
+            # iterate over filter attributes
+            FILTERATTRIBUTE:
+            for my $FilterAttribute ( keys %SearchRelevantData ) {
+                next FILTERATTRIBUTE unless $Filter{$FilterAttribute};
+
+                # iterate over filter attribute contents
+                for my $FilterDataIndex ( 0 .. $#{ $Filter{$FilterAttribute} } ) {
+
+                    # fetch filter data and corresponding 'Not' entry
+                    my %FilterData = $Filter{$FilterAttribute}[$FilterDataIndex]->%*;
+
+                    # caution: 'Not' only applies to 'Match', not to 'Set'
+                    my %FilterNot = $FilterAttribute eq 'Match' ? $Filter{Not}[$FilterDataIndex]->%* : ();
+
+                    # skip if search filter or search value does not match
+                    for my $SearchRestriction (qw(SearchFilter SearchValue)) {
+                        if ( $Param{$SearchRestriction}->@* ) {
+                            if ( none { $_ eq $FilterData{Key} } $Param{$SearchRestriction}->@* ) {
+                                next FILTERATTRIBUTE;
+                            }
+                        }
+                    }
+
+                    if ( $FilterAttribute eq 'Match' ) {
+
+                        # check if search term matches
+                        if (
+                            ( !$FilterNot{Value} && $Param{SearchTerm} =~ m{$FilterData{Value}}i )
+                            || ( $FilterNot{Value} && $Param{SearchTerm} !~ m{$FilterData{Value}}i )
+                            )
+                        {
+                            $Result{$FilterName} = $FilterName;
+                        }
+                    }
+                    elsif ( $FilterAttribute eq 'Set' ) {
+                        if ( $FilterData{Value} =~ m{$Param{SearchTerm}}i ) {
+                            $Result{$FilterName} = $FilterName;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+    else {
+        %Result = %Data;
+    }
+
+    # set cache
+    $Kernel::OM->Get('Kernel::System::Cache')->Set(
+        Type  => $Self->{CacheType},
+        TTL   => $Self->{CacheTTL},
+        Key   => $CacheKey,
+        Value => \%Result,
+    );
+
+    return %Result;
 }
 
 =head2 FilterAdd()
@@ -84,6 +229,7 @@ add a filter
 
     $PMFilterObject->FilterAdd(
         Name           => 'some name',
+        ValidID        => 1,
         StopAfterMatch => 0,
         Match = [
             {
@@ -101,7 +247,7 @@ add a filter
         ],
         Set = [
             {
-                Key   => 'X-OTOBO-Queue',
+                Key   => 'X-CareOnCloud-Queue',
                 Value => 'Some::Queue',
             },
             ...
@@ -114,7 +260,7 @@ sub FilterAdd {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(Name StopAfterMatch Match Set)) {
+    for (qw(Name ValidID StopAfterMatch Match Set)) {
         if ( !defined $Param{$_} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -137,15 +283,19 @@ sub FilterAdd {
 
             return if !$DBObject->Do(
                 SQL =>
-                    'INSERT INTO postmaster_filter (f_name, f_stop, f_type, f_key, f_value, f_not)'
-                    . ' VALUES (?, ?, ?, ?, ?, ?)',
+                    'INSERT INTO postmaster_filter (valid_id, f_name, f_stop, f_type, f_key, f_value, f_not)'
+                    . ' VALUES (?, ?, ?, ?, ?, ?, ?)',
                 Bind => [
-                    \$Param{Name},         \$Param{StopAfterMatch}, \$Type,
-                    \$Data[$Index]->{Key}, \$Data[$Index]->{Value}, \$Not[$Index]->{Value},
+                    \$Param{ValidID},    \$Param{Name},         \$Param{StopAfterMatch}, \$Type,
+                    \$Data[$Index]{Key}, \$Data[$Index]{Value}, \$Not[$Index]{Value},
                 ],
             );
         }
     }
+
+    $Kernel::OM->Get('Kernel::System::Cache')->CleanUp(
+        Type => $Self->{CacheType},
+    );
 
     return 1;
 }
@@ -182,6 +332,10 @@ sub FilterDelete {
         Bind => [ \$Param{Name} ],
     );
 
+    $Kernel::OM->Get('Kernel::System::Cache')->CleanUp(
+        Type => $Self->{CacheType},
+    );
+
     return 1;
 }
 
@@ -212,7 +366,7 @@ Returns a hash with the keys Match, Set, and Not.
         ],
         Set = [
             {
-                Key   => 'X-OTOBO-Queue',
+                Key   => 'X-CareOnCloud-Queue',
                 Value => 'Some::Queue',
             },
             ...
@@ -239,12 +393,28 @@ sub FilterGet {
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
+    # ensure that body statements are listed at the very end of matching condition for performance reasons
     return if !$DBObject->Prepare(
-        SQL =>
-            'SELECT f_type, f_key, f_value, f_name, f_stop, f_not'
-            . ' FROM postmaster_filter'
-            . ' WHERE f_name = ?'
-            . ' ORDER BY f_key, f_value',
+        SQL => <<~"POSTMASTER_SELECT",
+            SELECT
+                f_type,
+                f_key,
+                f_value,
+                f_name,
+                valid_id,
+                f_stop,
+                f_not,
+                CASE
+                    WHEN f_key = 'Body' THEN 1
+                    ELSE 0
+                END AS is_body
+            FROM postmaster_filter
+            WHERE f_name = ?
+            ORDER BY
+                is_body,
+                f_key,
+                f_value
+        POSTMASTER_SELECT
         Bind => [ \$Param{Name} ],
     );
 
@@ -255,12 +425,13 @@ sub FilterGet {
             Value => $Row[2],
         };
         $Data{Name}           = $Row[3];
-        $Data{StopAfterMatch} = $Row[4];
+        $Data{ValidID}        = $Row[4];
+        $Data{StopAfterMatch} = $Row[5];
 
         if ( $Row[0] eq 'Match' ) {
             push @{ $Data{Not} }, {
                 Key   => $Row[1],
-                Value => $Row[5],
+                Value => $Row[6],
             };
         }
     }

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -160,12 +160,12 @@ sub ArticleActions {
     # Determine channel name for this Article.
     my $ChannelName = $ArticleBackendObject->ChannelNameGet();
 
-    my $ActionsConfig = $ConfigObject->Get('Ticket::Frontend::Article::Actions');
+    my $ActionsConfig = $ConfigObject->Get("Ticket::Frontend::Article::Actions::$ChannelName");
+    return () if !IsHashRefWithData($ActionsConfig);
 
-    my $Config = {};
-    if ( IsHashRefWithData($ActionsConfig) ) {
-        $Config = $ActionsConfig->{$ChannelName};
-    }
+    # combine different sources
+    # NOTE sorting the keys enables overwriting existing items with packages
+    my $Config = { map { $ActionsConfig->{$_}->%* } sort keys $ActionsConfig->%* };
     return () if !$Config;
 
     # Get ACL restrictions.

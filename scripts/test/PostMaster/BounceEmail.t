@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -199,7 +201,7 @@ my $CheckArticleTransmissionError = sub {
     );
 
     # Check if there is a transmission Error record.
-    $Self->True(
+    ok(
         ($SendError),
         'New article transmission send error exists.',
     );
@@ -210,7 +212,7 @@ my $CheckArticleTransmissionError = sub {
 my $TestCreateNewTicket = sub {
     my ( $ReturnCode, $TicketID, ) = $ProcessEmail->();
 
-    $Self->Is(
+    is(
         $ReturnCode,
         1,
         'New ticket created.',
@@ -260,7 +262,7 @@ my $TestCreateArticleExistentTicket = sub {
 
     my ( $ReturnCode, ) = $ProcessEmail->( MessageID => $Article{MessageID} );
 
-    $Self->Is(
+    is(
         $ReturnCode,
         2,
         'New article created to an existent ticket.',
@@ -281,7 +283,7 @@ my $TestForceNewTicket = sub {
         TicketID => $TicketID,
         UserID   => 1,
     );
-    $Self->True(
+    ok(
         $Result,
         "Ticket ${TicketID} successfully closed.",
     );
@@ -295,14 +297,14 @@ my $TestForceNewTicket = sub {
         UserID     => 1,
     );
 
-    $Self->True(
+    ok(
         $Result,
         "Raw queue successfully changed to follow-up 'new-ticket'.",
     );
 
     # Process the e-mail
     my ( $ReturnCode, $NewTicketID, ) = $ProcessEmail->();
-    $Self->Is(
+    is(
         $ReturnCode,
         3,
         'New ticket created with follow-up "new-ticket".',
@@ -323,14 +325,14 @@ my $TestDontReOpenClosedTicket = sub {
         UserID     => 1,
     );
 
-    $Self->True(
+    ok(
         $Result,
         "Raw queue successfully changed to follow-up 'reject'.",
     );
 
     # Process the e-mail
     my ( $ReturnCode, $TicketID, ) = $ProcessEmail->();
-    $Self->Is(
+    is(
         $ReturnCode,
         4,
         'New article kept the ticket closed.',
@@ -350,7 +352,7 @@ my $TestOriginalEmailAsAttachmentShouldNotBounce = sub {
         UserID     => 1,
     );
 
-    $Self->True(
+    ok(
         $Result,
         "Raw queue successfully changed to follow-up 'possible'.",
     );
@@ -370,7 +372,7 @@ To: =?utf-8?B?eHB0bw?= <dummy2@example.com>
 something},
     );
 
-    $Self->Is(
+    is(
         $ReturnCode,
         1,
         'Original email - New ticket created.',
@@ -498,7 +500,7 @@ something
 --Apple-Mail=_E2B0EF7A-9E43-470C-AC46-2FDA496697AF--},
     );
 
-    $Self->Is(
+    is(
         $ReturnCode,
         1,
         'Original email as attachment - New ticket created.',
@@ -535,6 +537,4 @@ $TestForceNewTicket->(
 $TestDontReOpenClosedTicket->();
 $TestOriginalEmailAsAttachmentShouldNotBounce->();
 
-# cleanup is done by RestoreDatabase.
-
-$Self->DoneTesting();
+done_testing;

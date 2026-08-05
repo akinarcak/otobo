@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,13 +16,18 @@
 
 package Kernel::System::MailQueue;
 
+use v5.24;
 use strict;
 use warnings;
 
 use parent qw(Kernel::System::EventHandler);
 
-use MIME::Base64;
+# core modules
+use MIME::Base64 qw(decode_base64 encode_base64);
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -65,13 +70,17 @@ Create a MailQueue object. Do not use it directly, instead use:
 sub new {
     my ( $Type, %Param ) = @_;
 
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     $Self->{CheckEmailAddresses} = $Param{CheckEmailAddresses} // 1;
 
-    # init of event handler
+    # The events emitted in this class are primarily intended for Kernel::System::Ticket::Event::NotificationEvent.
+    # This subscriber is declared to a transaction subscriber.
+    # But in this case we want to send the notifications immediately. Therefore pretend to be in C<EventHandlerTransaction()>
+    # mode when calling C<EventHandler()>
     $Self->{EventHandlerTransaction} = 1;
+
+    # init of emitter
     $Self->EventHandlerInit(
         Config => 'Ticket::EventModulePost',
     );
@@ -255,7 +264,6 @@ sub Create {
         ArticleID => $Param{ArticleID},
         Status    => 'Queued',
         Message   => $LogMessage,
-        UserID    => $Param{UserID},
     );
 
     $Param{CommunicationLogObject}->ObjectLog(
@@ -372,16 +380,16 @@ sub List {
 
 =head2 Get()
 
-Get a queue element.
+Get a queued mail. At least one of C<ID> or C<ArticleID> is required.
 
-    my $Item = $MailQueue->Get(
-        ID              => '...' # optional
-        ArticleID       => '...' # optional
+    my $QueuedMail = $MailQueue->Get(
+        ID              => '...' # optional when ArticleID is given
+        ArticleID       => '...' # optional when ID is given
     );
 
 This returns something like:
 
-    $Item = {
+    $QueuedMail = {
         ID                        => '...',
         ArticleID                 => '...',
         Attempts                  => '...',
@@ -393,7 +401,7 @@ This returns something like:
         LastSMTPMessage           => '...',
     };
 
-or and empty hashref if element not found.
+or an empty hashref if no element was found.
 
 =cut
 
@@ -467,11 +475,11 @@ sub Update {
         );
     }
 
-    my @SQL   = ( 'UPDATE mail_queue', );
-    my @Binds = ();
+    my @SQL = ( 'UPDATE mail_queue', );
+    my @Binds;
 
     # Build set clause.
-    my @SQLSet = ();
+    my @SQLSet;
     for my $Col ( sort keys %Data ) {
         my $Value = $Data{$Col};
 
@@ -592,17 +600,17 @@ sub Delete {
 
 Send/Process a mail queue element/item.
 
-    my $List = $MailQueue->Send(
-        ID              => '...',
+    my $StatusStruct = $MailQueue->Send(
+        ID              => 495,        # only used in log messages
         Sender          => '...',
-        Recipient       => '...',
+        Recipient       => 'hello@otobo.io, test@gmail.com',      # plain email addresses separated by comma
         Message         => '...',
         Force           => '...' # optional, to force the sending even if isn't time
     );
 
 This returns something like:
 
-    $List = {
+    $StatusStruct = {
         Status  => '(Failed|Pending|Success)',
         Message => '...',                      # undef if success.
     };
@@ -732,9 +740,9 @@ sub Send {
 
 =head2 _SendSuccess()
 
-This method is called after a MailQueue item is successfully sent.
-It clears the item from the MailQueue, closes the communication log and
-triggers a Event Notification.
+This method is called after a MailQueue item has been sent successfully.
+It clears the item from the MailQueue, closes the communication log, and
+triggers an event notification.
 
     my $Result = $Object->_SendSuccess(
         Item => {
@@ -761,12 +769,10 @@ sub _SendSuccess {
         return;
     };
 
-    my $Result;
-
     my $Item = $Param{Item};
 
     # Delete queue element/item.
-    $Result = $Self->Delete(
+    my $Result = $Self->Delete(
         ID => $Item->{ID},
     );
 
@@ -819,7 +825,6 @@ sub _SendSuccess {
             ArticleID => $Item->{ArticleID},
             Status    => 'Sent',
             Message   => 'Mail successfully sent.',
-            UserID    => $Item->{UserID},
         );
     }
 
@@ -1057,7 +1062,6 @@ sub _SetArticleTransmissionError {
                 ArticleID => $ArticleID,
                 Status    => 'Error',
                 Message   => $ErrorMessage,
-                UserID    => $Param{UserID},
             );
 
             return;
@@ -1068,7 +1072,6 @@ sub _SetArticleTransmissionError {
             ArticleID => $ArticleID,
             Status    => 'Error',
             Message   => $Param{Message},
-            UserID    => $Param{UserID},
         );
 
         return 1;
@@ -1104,7 +1107,6 @@ sub _SetArticleTransmissionError {
             ArticleID => $ArticleID,
             Status    => 'Error',
             Message   => $ErrorMessage,
-            UserID    => $Param{UserID},
         );
 
         return;
@@ -1116,14 +1118,20 @@ sub _SetArticleTransmissionError {
         ArticleID => $ArticleID,
         Status    => 'Error',
         Message   => $Param{Message},
-        UserID    => $Param{UserID},
     );
     return 1;
 }
 
 =head2 _SendEventNotification()
 
-Formats a Notification and asks Event Handler to send it.
+This method is misnamed as no notification is sent directly.
+Instead it emits events named like I<ArticleEmailSendingQueued>.
+The last part of the event name is the passed C<Status>.
+
+Currently these events are not used in CareOnCloud ESM core. But they
+may be used by CareOnCloud ESM packages.
+
+The passed user ID is taken from the SysConfig setting I<PostMasterUserID>.
 
     my $Result = $Object->_SendEventNotification(
         ArticleID => ...,
@@ -1184,7 +1192,7 @@ sub _SendEventNotification {
 
 =head2 _FiltersSQLAndBinds()
 
-Build the filter sql and associated binds.
+Build the filter SQL and the associated bind variables.
 
     my ( $FilterSQL, $Binds ) = $MailQueue->_FiltersSQLAndBinds(
         ID              => '...' # optional
@@ -1224,9 +1232,8 @@ sub _FiltersSQLAndBinds {
         },
     );
 
-    my @FilterFields = ();
-    my @Bind         = ();
-
+    my @FilterFields;
+    my @Bind;
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     POSSIBLE_FILTER:
@@ -1277,7 +1284,7 @@ Returns 1 or undef.
 sub _CheckValidEmailAddresses {
     my ( $Self, %Param ) = @_;
 
-    return 1 if !$Self->{CheckEmailAddresses};
+    return 1 unless $Self->{CheckEmailAddresses};
 
     my $ParamName = $Param{ParamName};
     my $Addresses = $Param{Addresses};
@@ -1368,9 +1375,9 @@ sub _CheckValidMessageData {
 
 =head2 _SerializeMessage()
 
-Serialize a simple perl structure to be save in the database.
+Serialize a simple Perl date structure so that it can be stored in the database.
 
-Returns an encoded or a storable string.
+Returns an Base64 encoded or a storable string. The UTF-8 flag is off in both cases.
 
 =cut
 
@@ -1391,7 +1398,7 @@ sub _SerializeMessage {
 
 =head2 _DeserializeMessage()
 
-Deserialize a simple perl structure to the original format.
+Deserialize a simple serialized Perl data structure and get an actual Perl data structure.
 
 =cut
 
@@ -1516,13 +1523,12 @@ sub _DBInsert {
     my $Error   = sub { return { @_, Success => 0 }; };
     my $Success = sub { return { @_, Success => 1 } };
 
-    my $InsertFingerprint = sprintf(
+    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+
+    my $InsertFingerprint = sprintf
         '%s-%s',
         $$,
-        $Kernel::OM->Get('Kernel::System::Main')->GenerateRandomString(
-            Length => 32,
-        ),
-    );
+        $Kernel::OM->Get('Kernel::System::Main')->GenerateRandomString( Length => 32 );
     my @Cols  = qw(article_id attempts sender recipient raw_message insert_fingerprint);
     my @Binds = (
         \$Param{ArticleID},
@@ -1533,26 +1539,34 @@ sub _DBInsert {
         \$InsertFingerprint,
     );
 
+    # When necessary declare the 'raw_message' bind as binary.
+    my %ExtraDoParams;
+    if ( $DBObject->GetDatabaseFunction('DirectBlob') ) {
+        $ExtraDoParams{BindAsBinary} = [ 0, 0, 0, 0, 1 ];
+    }
+
     if ( $Param{ID} ) {
         unshift @Cols,  'id';
         unshift @Binds, \$Param{ID};
+        if ( $DBObject->GetDatabaseFunction('DirectBlob') ) {
+            unshift $ExtraDoParams{BindAsBinary}->@*, 0;
+        }
     }
 
     my @Placeholders = map {'?'} @Cols;
 
     push @Cols, 'create_time';
 
-    my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
-    my $Result   = $DBObject->Do(
+    my $Result = $DBObject->Do(
         SQL => sprintf( '
             INSERT INTO mail_queue(%s)
             VALUES(%s, current_timestamp )
         ', join( ',', @Cols ), join( ',', @Placeholders ) ),
         Bind => \@Binds,
+        %ExtraDoParams,
     );
 
     if ( !$Result ) {
-
         $Param{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
             Priority      => 'Error',
@@ -1584,9 +1598,9 @@ sub _DBInsert {
     );
 }
 
-=head2 _CreateCommunicationLogLookup()
+=head2 _SetCommunicationLogLookup()
 
-Creates the mail-queue item communication-log message association.
+creates the mail-queue item communication-log message association.
 It will also create the association for the article if any ArticleID was passed.
 Returns 1 always.
 

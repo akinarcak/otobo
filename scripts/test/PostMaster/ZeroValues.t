@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
@@ -55,15 +57,15 @@ my $FieldID   = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldAd
 );
 
 # verify dynamic field creation
-$Self->True(
+ok(
     $FieldID,
     "DynamicFieldAdd() successful for Field $FieldName",
 );
 
 # ensure that the appropriate X-Headers are available in the config
 my %NeededXHeaders = (
-    "X-OTOBO-$FieldName"          => 1,
-    "X-OTOBO-FollowUp-$FieldName" => 1,
+    "X-CareOnCloud-$FieldName"          => 1,
+    "X-CareOnCloud-FollowUp-$FieldName" => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -87,7 +89,7 @@ my @Tests = (
         Email => "From: Sender <sender\@example.com>
 To: Some Name <recipient\@example.com>
 Subject: A simple question
-X-OTOBO-DynamicField-$FieldName: 1
+X-CareOnCloud-DynamicField-$FieldName: 1
 
 This is a multiline
 email for server: example.tld
@@ -104,7 +106,7 @@ The IP address: 192.168.0.1
         Email => "From: Sender <sender\@example.com>
 To: Some Name <recipient\@example.com>
 Subject: [#1] Another question
-X-OTOBO-FollowUp-DynamicField-$FieldName: 0
+X-CareOnCloud-FollowUp-DynamicField-$FieldName: 0
 
 This is a multiline
 email for server: example.tld
@@ -121,7 +123,7 @@ The IP address: 192.168.0.1
         Email => "From: Sender <sender\@example.com>
 To: Some Name <recipient\@example.com>
 Subject: A simple question
-X-OTOBO-DynamicField-$FieldName: 0
+X-CareOnCloud-DynamicField-$FieldName: 0
 
 This is a multiline
 email for server: example.tld
@@ -173,12 +175,12 @@ for my $Test (@Tests) {
             Status => 'Successful',
         );
     }
-    $Self->Is(
+    is(
         $Return[0] || 0,
         $Test->{Return},
         "$Name - NewTicket/FollowUp",
     );
-    $Self->True(
+    ok(
         $Return[1] || 0,
         "$Name - TicketID",
     );
@@ -193,7 +195,7 @@ for my $Test (@Tests) {
     );
 
     for my $Key ( sort keys %{ $Test->{Check} } ) {
-        $Self->Is(
+        is(
             $Ticket{$Key},
             $Test->{Check}->{$Key},
             "Run('$Test->{Name}') - $Key",
@@ -206,6 +208,4 @@ for my $Test (@Tests) {
     $Index++;
 }
 
-# cleanup is done by RestoreDatabase
-
-$Self->DoneTesting();
+done_testing;

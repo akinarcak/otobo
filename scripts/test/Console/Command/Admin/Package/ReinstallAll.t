@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # set up $Self and $Kernel::OM
 
 plan(1);
@@ -34,7 +34,7 @@ plan(1);
 # Frontend/Basic.t finds one module to return a 500 internal error (seemingly random).
 # The apache error log shows this message:
 #
-# [perl:error] [pid 908] [client ::1:36519] Use of each() on hash after insertion without resetting hash iterator results in undefined behavior, Perl interpreter: 0x55b01def9a90 at /opt/otobo/Kernel/cpan-lib/Apache2/Reload.pm line 171.
+# [perl:error] [pid 908] [client ::1:36519] Use of each() on hash after insertion without resetting hash iterator results in undefined behavior, Perl interpreter: 0x55b01def9a90 at /opt/careoncloud/Kernel/cpan-lib/Apache2/Reload.pm line 171.
 #
 # This seems to be caused by Apache2::Reload trying to reload modules which in turn triggers an internal mod_perl bug
 #   that we currently don't know.

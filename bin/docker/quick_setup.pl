@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -17,7 +17,7 @@
 
 =head1 NAME
 
-quick_setup.pl - a quick OTOBO setup script for development
+quick_setup.pl - a quick CareOnCloud ESM setup script that is meant for development
 
 =head1 SYNOPSIS
 
@@ -27,14 +27,30 @@ quick_setup.pl - a quick OTOBO setup script for development
     # do it
     bin/docker/quick_setup.pl --db-password 'some-pass'
 
-    # do it when OTOBO runs on a special HTTP Port
+    # set HttpType to http, the default is https
+    bin/docker/quick_setup.pl --db-password 'some-pass' --http-type http
+
+    # do it when CareOnCloud ESM runs on a special HTTP Port
+    # note that this only affect the message printed by this script
     bin/docker/quick_setup.pl --db-password 'some-pass' --http-port 81
+
+    # set FQDN, the default is yourhost.example.com
+    bin/docker/quick_setup.pl --db-password 'some-pass' --fqdn 'localhost'
+
+    # set the SystemID, the default is 10
+    bin/docker/quick_setup.pl --db-password 'some-pass' --system-id 11
 
     # also activate Elasticsearch
     bin/docker/quick_setup.pl --db-password 'some-pass' --activate-elasticsearch
 
+    # create an initial regular agent
+    bin/docker/quick_setup.pl --db-password 'some-pass' --add--user
+
     # create an initial admin agent in addition to root@localhost
     bin/docker/quick_setup.pl --db-password 'some-pass' --add-admin-user
+
+    # Use the timezone of the Antarctic Peninsula for the agents
+    bin/docker/quick_setup.pl --db-password 'some-pass' --add-admin-user --add--user --agent-timezone-rothera
 
     # create an initial customer user
     bin/docker/quick_setup.pl --db-password 'some-pass' --add-customer-user
@@ -44,14 +60,25 @@ quick_setup.pl - a quick OTOBO setup script for development
 
 It might be convenient the call this script via an alias.
 
-    alias otobo_docker_quick_setup='docker exec -t otobo_web_1 bash -c "date ; hostname ; rm -f Kernel/Config/Files/ZZZAAuto.pm ; bin/docker/quick_setup.pl --db-password otobo_root --http-port 81 --activate-elasticsearch --add-user --add-admin-user --add-customer-user --add-calendar"'
+    alias otobo_docker_quick_setup='docker exec -t careoncloud_web_1 bash -c "date ; hostname ; rm -f Kernel/Config/Files/ZZZAAuto.pm ; bin/docker/quick_setup.pl --db-password otobo_root --http-port 81 --activate-elasticsearch --add-user --add-admin-user --add-customer-user --add-calendar --http-type http" --fqdn localhost'
+
+Sometimes it is convenient to specify unique SystemIDs so that different installation can be
+used in the same browser. The convention is to set the SystemID to the same value as the HTTP port.
+This can be achieved with the bash function:
+
+    otobo_docker_quick_setup() {
+        http_port=`perl -ne 'print $1 if m/^CareOnCloud_WEB_HTTP_PORT=(\d+)/' .env`
+        system_id=${1:-$http_port}
+        docker compose exec web bash -c "date ; hostname ; rm -f Kernel/Config/Files/ZZZAAuto.pm ; bin/docker/quick_setup.pl --db-password otobo_root --system-id $system_id --http-type http --http-port $http_port --activate-elasticsearch --add-user --add-admin-user --add-customer-user --add-calendar"
+    }
 
 =head1 DESCRIPTION
 
-Quickly create a running system that is useful for development and for continous integration.
-But please note that this script is not meant as an replacement for the OTOBO installer.
+Quickly create a running system that is useful for development and for continuous integration.
+But please note that this script is not meant as an replacement for the CareOnCloud ESM installer.
 
-Allow to automatically create a sample customer user, admin user, and calendar.
+The script allows to automatically create a sample customer user, admin user, and calendar.
+It allows to set HttpType to http, which is the proven setting for the test suite.
 
 =head1 OPTIONS
 
@@ -65,18 +92,42 @@ Optional. Print out the usage.
 
 The admin password of the database.
 
+=item authentication-plugin
+
+This option is only needed and supported for MariaDB and MySQL databases.
+For MySQL the possible values are 'mysql_native_password' and 'caching_sha2_password'.
+For MariaDB 'mysql_native_password', 'ed25519', and 'parsec' are supported.
+The default is to use the default authentication plugin. The default plugin is currently
+'mysql_native_password' for both MariaDB and MySQL. But the default plugin
+is subject to change in future versions of MariaDB and MySQL.
+
+=item http-type
+
+Set the SysConfig setting 'HttpType'. The value is either 'http' or 'https'. The default is 'https'.
+
 =item http-port
 
 Only used for the message where the newly configured system is available.
-The default value is 80
+The default value is 80.
+
+=item system-id
+
+Allows to set the system id. This is useful for distinguishing between different installation
+running on the same Docker host.
+The default value is 10.
+
+=item fqdn
+
+Set the SysConfig setting 'FQDN'. The value is expected to be a string. The default is 'yourhost.example.com'.
 
 =item activate-elasticsearch
 
-Also set up the the Elasticsearch webservice.
+Also set up the Elasticsearch webservice.
 
 =item add-admin-user
 
-Add the admin I<admin> with the name I<Andy Admin>.
+Add the admin I<admin> with the name I<Andy Admin>. This user will be a member
+of the groups I<admin>, I<stats>, and I<users>.
 
 =item add-customer-user
 
@@ -101,39 +152,51 @@ use lib "$Bin/../../Kernel/cpan-lib";
 use lib "$Bin/../../Custom";
 
 # core modules
-use Getopt::Long;
-use Pod::Usage qw(pod2usage);
-use Sub::Util qw(subname);
+use Getopt::Long qw(GetOptions);
+use Pod::Usage   qw(pod2usage);
+use Sub::Util    qw(subname);
 
 # CPAN modules
-use Path::Class qw(file dir);
-use DBI;
-use Const::Fast qw(const);
+use Path::Class             qw(dir);
+use DBI                     ();
+use DBI::Const::GetInfoType ();          # set up %DBI::Const::GetInfoType::GetInfoType
+use Const::Fast             qw(const);
 
-# OTOBO modules
-use Kernel::System::ObjectManager;
+# CareOnCloud ESM modules
+use Kernel::System::ObjectManager ();
 
 sub Main {
-    my $HelpFlag;                      # print help
-    my $DBPassword;                    # required
-    my $HTTPPort              = 80;    # only used for success message
-    my $ActivateElasticsearch = 0;     # must be explicitly enabled
-    my $AddUser               = 0;     # must be explicitly enabled
-    my $AddAdminUser          = 0;     # must be explicitly enabled
-    my $AddCustomerUser       = 0;     # must be explicitly enabled
-    my $AddCalendar           = 0;     # must be explicitly enabled
-    my $ActivateSyncWithS3    = 0;     # activate S3 in the SysConfig, still experimental
+    my $HelpFlag;                                           # print help
+    my $DBPassword;                                         # required
+    my $AuthenticationPlugin   = 'default';                 # authentication plugin is only supported for MariaDB and MySQL
+                                                            # 'default' indicates that the default plugin of the DBMS is used
+    my $HTTPPort               = 80;                        # only used for success message
+    my $SystemID               = 10;                        # distinguish between different installations
+    my $ActivateElasticsearch  = 0;                         # must be explicitly enabled
+    my $AddUser                = 0;                         # must be explicitly enabled
+    my $AddAdminUser           = 0;                         # must be explicitly enabled
+    my $AgentsAreOnRotheraTime = 0;                         # must be explicitly enabled
+    my $AddCustomerUser        = 0;                         # must be explicitly enabled
+    my $AddCalendar            = 0;                         # must be explicitly enabled
+    my $HttpType               = 'https';                   # the SysConfig setting HttpType
+    my $FQDN                   = 'yourhost.example.com';    # the SysConfig setting FQDN
+    my $ActivateSyncWithS3     = 0;                         # activate S3 in the SysConfig, still experimental
 
-    Getopt::Long::GetOptions(
-        'help'                   => \$HelpFlag,
-        'db-password=s'          => \$DBPassword,
-        'http-port=i'            => \$HTTPPort,
-        'activate-elasticsearch' => \$ActivateElasticsearch,
-        'add-user'               => \$AddUser,
-        'add-admin-user'         => \$AddAdminUser,
-        'add-customer-user'      => \$AddCustomerUser,
-        'add-calendar'           => \$AddCalendar,
-        'activate-sync-with-S3'  => \$ActivateSyncWithS3,
+    GetOptions(
+        'help'                    => \$HelpFlag,
+        'db-password=s'           => \$DBPassword,
+        'authentication-plugin=s' => \$AuthenticationPlugin,
+        'http-port=i'             => \$HTTPPort,
+        'http-type=s'             => \$HttpType,
+        'system-id=i'             => \$SystemID,
+        'fqdn=s'                  => \$FQDN,
+        'activate-elasticsearch'  => \$ActivateElasticsearch,
+        'add-user'                => \$AddUser,
+        'add-admin-user'          => \$AddAdminUser,
+        'agent-timezone-rothera'  => \$AgentsAreOnRotheraTime,
+        'add-customer-user'       => \$AddCustomerUser,
+        'add-calendar'            => \$AddCalendar,
+        'activate-sync-with-S3'   => \$ActivateSyncWithS3,
         )
         || pod2usage(
             {
@@ -168,8 +231,8 @@ sub Main {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     const my $DBName          => $ConfigObject->Get('Database');
-    const my $OTOBODBUser     => $ConfigObject->Get('DatabaseUser');
-    const my $OTOBODBPassword => $ConfigObject->Get('DatabasePw');
+    const my $CareOnCloudDBUser     => $ConfigObject->Get('DatabaseUser');
+    const my $CareOnCloudDBPassword => $ConfigObject->Get('DatabasePw');
     const my $DBType          => 'mysql';
 
     {
@@ -186,10 +249,11 @@ sub Main {
 
     {
         my ( $Success, $Message ) = DBCreateUserAndDatabase(
-            DBName          => $DBName,
-            DBPassword      => $DBPassword,
-            OTOBODBUser     => $OTOBODBUser,
-            OTOBODBPassword => $OTOBODBPassword,
+            DBName               => $DBName,
+            DBPassword           => $DBPassword,
+            AuthenticationPlugin => $AuthenticationPlugin,
+            CareOnCloudDBUser          => $CareOnCloudDBUser,
+            CareOnCloudDBPassword      => $CareOnCloudDBPassword,
         );
 
         say $Message if defined $Message;
@@ -199,8 +263,8 @@ sub Main {
 
     $Kernel::OM->ObjectParamAdd(
         'Kernel::System::DB' => {
-            DatabaseUser => $OTOBODBUser,
-            DatabasePw   => $OTOBODBPassword,
+            DatabaseUser => $CareOnCloudDBUser,
+            DatabasePw   => $CareOnCloudDBPassword,
             Type         => $DBType,
         },
     );
@@ -209,11 +273,11 @@ sub Main {
     {
         my $Home = $ConfigObject->Get('Home');
 
-        # the xml files contain the database name 'otobo' hardcoded
+        # the xml files contain the database name 'careoncloud' hardcoded
         my ( $Success, $Message ) = ExecuteSQL(
             XMLFiles => [
-                "$Home/scripts/database/otobo-schema.xml",
-                "$Home/scripts/database/otobo-initial_insert.xml",
+                "$Home/scripts/database/careoncloud-schema.xml",
+                "$Home/scripts/database/careoncloud-initial_insert.xml",
             ],
         );
 
@@ -224,7 +288,8 @@ sub Main {
 
     {
         my ( $Success, $Message ) = SetRootAtLocalhostPassword(
-            HTTPPort => $HTTPPort
+            HTTPPort => $HTTPPort,
+            FQDN     => $FQDN,
         );
 
         say $Message if defined $Message;
@@ -234,15 +299,24 @@ sub Main {
 
     # create SysConfig and adapt some settings in the SysConfig
     {
-        # These setting are required for running the test suite
+        # These setting are recommended for running the test suite.
+        # HttpType should be set to 'http'.
         my @Settings = (
             [ DefaultLanguage        => 'en' ],
-            [ HttpType               => 'http' ],
+            [ HttpType               => $HttpType ],
+            [ FQDN                   => $FQDN ],
+            [ SystemID               => $SystemID ],
             [ SecureMode             => 1 ],
             [ CheckEmailValidAddress => '^(?:root@localhost|admin@localhost|tina@example.com)$' ],
         );
 
-        # these settings are useful for testing and development
+        # Unique names for session cookies. This allows to run distinct instances on the same host.
+        push @Settings, (
+            [ SessionName              => join( '_', 'CareOnCloudAgentInterface',    $SystemID ) ],
+            [ CustomerPanelSessionName => join( '_', 'CareOnCloudCustomerInterface', $SystemID ) ],
+        );
+
+        # These settings are useful for testing and development
         push @Settings, (
             [ MinimumLogLevel => 'info' ],    # more verbose log output
         );
@@ -296,9 +370,14 @@ sub Main {
         return 0 unless $Success;
     }
 
+    if ($AgentsAreOnRotheraTime) {
+        AgentTimeZone('Antarctica/Rothera');
+    }
+
     if ($AddUser) {
         my ( $Success, $Message ) = AddUser(
-            HTTPPort => $HTTPPort
+            HTTPPort => $HTTPPort,
+            FQDN     => $FQDN,
         );
 
         say $Message if defined $Message;
@@ -308,7 +387,8 @@ sub Main {
 
     if ($AddAdminUser) {
         my ( $Success, $Message ) = AddAdminUser(
-            HTTPPort => $HTTPPort
+            HTTPPort => $HTTPPort,
+            FQDN     => $FQDN,
         );
 
         say $Message if defined $Message;
@@ -318,7 +398,8 @@ sub Main {
 
     if ($AddCustomerUser) {
         my ( $Success, $Message ) = AddCustomerUser(
-            HTTPPort => $HTTPPort
+            HTTPPort => $HTTPPort,
+            FQDN     => $FQDN,
         );
 
         say $Message if defined $Message;
@@ -337,7 +418,7 @@ sub Main {
     # add a blurb about MinIO
 
     # looks good
-    say 'For running the unit tests please stop the OTOBO Daemon.';
+    say 'For running the unit tests please stop the CareOnCloud ESM Daemon.';
     say "Finished running $0";
 
     return 0;
@@ -363,7 +444,7 @@ sub CheckSystemRequirements {
         return 0, "'$HomeDir' is not a directory";
     }
 
-    # verfiy that SecureMode is not active
+    # verify that SecureMode is not active
     if ( $ConfigObject->Get('SecureMode') ) {
         return 0, "SecureMode is active";
     }
@@ -396,7 +477,7 @@ sub CheckSystemRequirements {
         return 0, "'$DatabaseDir' does not exist";
     }
 
-    for my $XmlFile ( map { $DatabaseDir->file($_) } ( 'otobo-schema.xml', 'otobo-initial_insert.xml' ) ) {
+    for my $XmlFile ( map { $DatabaseDir->file($_) } ( 'careoncloud-schema.xml', 'careoncloud-initial_insert.xml' ) ) {
         if ( !-f $XmlFile ) {
             return 0, "'$XmlFile' does not exist";
         }
@@ -419,16 +500,16 @@ sub DBConnectAsRoot {
         return 0, "$SubName: the parameter '$Key' is required";
     }
 
-    # verify that the connection to the DB is possible, password was passed on command line
+    # actually connect as root
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my $DatabaseHost = $ConfigObject->Get('DatabaseHost');
-    my $DSN          = "DBI:mysql:database=mysql;host=$DatabaseHost;";
+    my $DSN          = $ConfigObject->Get('DatabaseDSN');
+
+    # in quick setup we don't want to specify a database that might not exist yet
+    $DSN =~ s/(?<=database=).*?(?=;)//i;
 
     my $DBHandle = DBI->connect( $DSN, 'root', $Param{DBPassword} );
-    if ( !$DBHandle ) {
-        return 0, $DBI::errstr;
-    }
 
+    return 0, $DBI::errstr unless $DBHandle;
     return $DBHandle, "connected to '$DSN' as root";
 }
 
@@ -475,7 +556,7 @@ sub DBCreateUserAndDatabase {
     my %Param = @_;
 
     # check the params
-    for my $Key ( grep { !$Param{$_} } qw(DBPassword DBName OTOBODBUser OTOBODBPassword) ) {
+    for my $Key ( grep { !$Param{$_} } qw(DBPassword AuthenticationPlugin DBName CareOnCloudDBUser CareOnCloudDBPassword) ) {
         my $SubName = subname(__SUB__);
 
         return 0, "$SubName: the parameter '$Key' is required";
@@ -495,28 +576,55 @@ sub DBCreateUserAndDatabase {
     # For now allow the complete network.
     my $Host = '%';
 
-    # SQL for creating the OTOBO user.
+    # SQL for creating the CareOnCloud ESM user.
+    #
     # An explicit statement for user creation is needed because MySQL 8 no longer
     # supports implicit user creation via the 'GRANT PRIVILEGES' statement.
-    # Also note that there are multiple authentication plugins for MySQL/MariaDB.
-    # 'mysql_native_password' works without an encrypted DB connection and is used here.
-    # The advantage is that no encryption keys have to be set up.
-    # The syntax for CREATE USER is not completely the same between MySQL and MariaDB. Therfore
-    # a case switch must be used here.
-    my $CreateUserSQL;
-    {
-        if ( $DBHandle->{mysql_serverinfo} =~ m/mariadb/i ) {
-            $CreateUserSQL .= "CREATE USER `$Param{OTOBODBUser}`\@`$Host` IDENTIFIED BY '$Param{OTOBODBPassword}'";
+    # Also note that there are multiple authentication plugins for MariaDB and MySQLB.
+    #
+    # The syntax for CREATE USER is mostly the same between MySQL and MariaDB.
+    # A case distinction must be made only for MariaDBs ed25519.
+    #
+    # Different authentication plugins are supported for different database systems.
+    my @CreateUserSQLs;
+    if ( !$Param{AuthenticationPlugin} || $Param{AuthenticationPlugin} eq 'default' ) {
+
+        # Use the default authentication plugin, works for MariaDB and MySQL
+        push @CreateUserSQLs,
+            "CREATE USER `$Param{CareOnCloudDBUser}`\@`$Host` IDENTIFIED BY '$Param{CareOnCloudDBPassword}'";
+    }
+    else {
+
+        # Use portable way of getting the name of the database system.
+        # Previously this was done using attributes of the database handle,
+        # but the prefixes of the attributes differ with different database driver modules.
+        #
+        # Quite sensibly, the name 'MariaDB' is returned for a MariaDB database
+        my $DbmsName = $DBHandle->get_info( $DBI::Const::GetInfoType::GetInfoType{SQL_DBMS_NAME} );
+
+        if ( $DbmsName =~ m/mariadb/i ) {
+
+            # This is the regular CREATE USER statement where the authenication plugin is specified.
+            # This SQL statement works for 'ed25519' since MariaDB 10.4. 'mysql_native_password' and 'PARSEC'
+            # are also covered.
+            # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-ed25519
+            # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-parsec
+            push @CreateUserSQLs,
+                "CREATE USER `$Param{CareOnCloudDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} USING PASSWORD('$Param{CareOnCloudDBPassword}')";
         }
         else {
-            $CreateUserSQL .= "CREATE USER `$Param{OTOBODBUser}`\@`$Host` IDENTIFIED WITH mysql_native_password BY '$Param{OTOBODBPassword}'";
+
+            # The MySQL case.
+            # "USING PASSWORD('...')" is not supported
+            push @CreateUserSQLs,
+                "CREATE USER `$Param{CareOnCloudDBUser}`\@`$Host` IDENTIFIED WITH $Param{AuthenticationPlugin} BY '$Param{CareOnCloudDBPassword}'";
         }
     }
 
     my @Statements = (
         "CREATE DATABASE `$Param{DBName}` charset utf8mb4 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci",
-        $CreateUserSQL,
-        "GRANT ALL PRIVILEGES ON `$Param{DBName}`.* TO `$Param{OTOBODBUser}`\@`$Host` WITH GRANT OPTION",
+        @CreateUserSQLs,
+        "GRANT ALL PRIVILEGES ON `$Param{DBName}`.* TO `$Param{CareOnCloudDBUser}`\@`$Host` WITH GRANT OPTION",
     );
 
     for my $Statement (@Statements) {
@@ -571,7 +679,7 @@ sub ExecuteSQL {
 
         # If we parsed the schema, catch post instructions.
         # they will run after the initial insert
-        push @SQLPost, $DBObject->SQLProcessorPost() if $XMLFile =~ m/otobo-schema/;
+        push @SQLPost, $DBObject->SQLProcessorPost() if $XMLFile =~ m/careoncloud-schema/;
     }
 
     # now do the actions that must run after the initial insert
@@ -608,7 +716,7 @@ sub SetRootAtLocalhostPassword {
     return 0, 'Password for root@localhost could not be set' unless $Success;
 
     # Protocol http is fine, as there is an automatic redirect
-    return 1, "Agent: http://localhost:$Param{HTTPPort}/otobo/index.pl user: root\@localhost pw: $Password";
+    return 1, "Agent: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/index.pl user: root\@localhost pw: $Password";
 }
 
 # update sysconfig settings in the database and deploy these settings
@@ -716,7 +824,7 @@ sub ActivateElasticsearch {
     # nothing to do when there is no Elasticsearch webservice
     return 1 unless $ESWebservice;
 
-    # ctivate the Elasticsearch webservice
+    # activate the Elasticsearch webservice
     my $UpdateSuccess = $WebserviceObject->WebserviceUpdate(
         $ESWebservice->%*,
         ValidID => 1,    # valid
@@ -732,11 +840,24 @@ sub ActivateElasticsearch {
         return 0, 'Elasticsearch is not available';
     }
 
-    my ( $SetupSuccess, $FatalError ) = $ESObject->InitialSetup();
+    my ($SetupSuccess) = $ESObject->InitialSetup();
 
     return 0, 'Initial setup of Elasticsearch was not successful' unless $SetupSuccess;
-
     return $SetupSuccess;
+}
+
+# allow to set the time zone,
+# otherwise return the last set time zone or fall back to 'Europe/Berlin'
+sub AgentTimeZone {
+    my ($NewTimeZone) = @_;
+
+    state $TimeZone = 'Europe/Berlin';
+
+    if ($NewTimeZone) {
+        $TimeZone = $NewTimeZone;
+    }
+
+    return $TimeZone;
 }
 
 sub AddUser {
@@ -764,7 +885,7 @@ sub AddUser {
         UserEmail     => 'Toni.Tester@example.com',
         UserComment   => 'sample user created by quick_setup.pl',
         UserLanguage  => 'en',
-        UserTimeZone  => 'Europe/Berlin',
+        UserTimeZone  => AgentTimeZone(),
         UserMobile    => '1①๑໑༡༪၁',
         ValidID       => 1,
         ChangeUserID  => 1,
@@ -800,7 +921,7 @@ sub AddUser {
     }
 
     # looks good
-    return 1, "Sample user: http://localhost:$Param{HTTPPort}/otobo/index.pl user: $Login pw: $Login";
+    return 1, "Sample user: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/index.pl user: $Login pw: $Login";
 }
 
 sub AddAdminUser {
@@ -828,7 +949,7 @@ sub AddAdminUser {
         UserEmail     => 'Andy.Admin@example.com',
         UserComment   => 'admin user created by quick_setup.pl',
         UserLanguage  => 'en',
-        UserTimeZone  => 'Europe/Berlin',
+        UserTimeZone  => AgentTimeZone(),
         UserMobile    => '2②२২৵੨૨',
         ValidID       => 1,
         ChangeUserID  => 1,
@@ -838,7 +959,7 @@ sub AddAdminUser {
 
     # do we have an admin group ?
     my $GroupObject = $Kernel::OM->Get('Kernel::System::Group');
-    for my $Group (qw(admin users)) {
+    for my $Group (qw(admin stats users)) {
         my $GroupID = $GroupObject->GroupLookup(
             Group => $Group,
         );
@@ -872,7 +993,7 @@ sub AddAdminUser {
     );
 
     # looks good
-    return 1, "Admin user: http://localhost:$Param{HTTPPort}/otobo/index.pl user: $Login pw: $Login";
+    return 1, "Admin user: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/index.pl user: $Login pw: $Login";
 }
 
 sub AddCustomerUser {
@@ -934,8 +1055,46 @@ sub AddCustomerUser {
 
     return 0, "Could not set the password for $Login" unless $PasswordSetSuccess;
 
+    # update preferences
+    #   mainly to set the language, but may be extended to someone's needs
+    my $MainObject      = $Kernel::OM->Get('Kernel::System::Main');
+    my %Preferences     = %{ $ConfigObject->Get('CustomerPreferencesGroups') };
+    my %PreferencesData = (
+        Language => ['de'],
+    );
+    GROUP:
+    for my $Group ( sort keys %Preferences ) {
+        next GROUP unless $PreferencesData{$Group};
+
+        # get user data
+        my %UserData = $CustomerUserObject->CustomerUserDataGet(
+            User => $Login,
+        );
+        my $Module = $Preferences{$Group}->{Module};
+        if ( !$MainObject->Require($Module) ) {
+            next GROUP;
+        }
+        my $Object = $Module->new(
+
+            # different user id necessary to prevent modules from attempting to update AuthSession
+            UserID     => 1,
+            ConfigItem => $Preferences{$Group},
+            UserObject => $CustomerUserObject,
+        );
+        if (
+            !$Object->Run(
+                UserID   => $Login,
+                GetParam => \%PreferencesData,
+                UserData => \%UserData
+            )
+            )
+        {
+            return 0, "Could not set $Group for $Login";
+        }
+    }
+
     # looks good
-    return 1, "Customer: http://localhost:$Param{HTTPPort}/otobo/customer.pl user: $Login pw: $Login";
+    return 1, "Customer: http://$Param{FQDN}:$Param{HTTPPort}/careoncloud/customer.pl user: $Login pw: $Login";
 }
 
 sub AddCalendar {
@@ -947,8 +1106,6 @@ sub AddCalendar {
 
         return 0, "$SubName: the parameter '$Key' is required";
     }
-
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # create a calendar
     my $CalendarObject = $Kernel::OM->Get('Kernel::System::Calendar');

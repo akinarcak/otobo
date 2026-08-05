@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,11 +16,19 @@
 
 package Kernel::System::SupportDataCollector::Plugin::OS::PerlModulesAudit;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+use utf8;
 
 use parent qw(Kernel::System::SupportDataCollector::PluginBase);
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
 
 our @ObjectDependencies = (
@@ -38,7 +46,6 @@ sub Run {
     my $CommandObject = $Kernel::OM->Get('Kernel::System::Console::Command::Dev::Code::CPANAudit');
 
     my ( $CommandOutput, $ExitCode );
-
     {
         local *STDOUT;                             ## no critic qw(Variables::RequireInitializationForLocalVars)
         open STDOUT, '>:utf8', \$CommandOutput;    ## no critic qw(OTOBO::ProhibitOpen InputOutput::RequireEncodingWithUTF8Layer)
@@ -49,15 +56,17 @@ sub Run {
         $Self->AddResultWarning(
             Label   => Translatable('Perl Modules Audit'),
             Value   => $CommandOutput,
-            Message => Translatable(
-                'CPAN::Audit reported that one or more installed Perl modules have known vulnerabilities. Please note that there might be false positives for distributions patching Perl modules without changing their version number.'
-            ),
+            Message => Translatable(<<'END_MESSAGE'),
+CPAN::Audit reported that one or more installed Perl modules have known vulnerabilities.
+The report from CPAN::Audit has been annotated with evaluation by the CareOnCloud ESM team.
+Please note that there might be false positives for distributions patching Perl modules without changing their version number.'
+END_MESSAGE
         );
     }
     else {
         $Self->AddResultOk(
             Label   => Translatable('Perl Modules Audit'),
-            Value   => '',
+            Value   => $CommandOutput,
             Message =>
                 Translatable('CPAN::Audit did not report any known vulnerabilities in the installed Perl modules.'),
         );

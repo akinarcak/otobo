@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -84,7 +84,7 @@ Core.Agent.Daemon = (function (TargetNS) {
                 }
 
                 // show main dialog
-                Core.UI.Dialog.ShowContentDialog(HTML, Core.Language.Translate('Information about the OTOBO Daemon'), '240px', 'Center', true);
+                Core.UI.Dialog.ShowContentDialog(HTML, Core.Language.Translate('Information about the CareOnCloud ESM Daemon'), '240px', 'Center', true);
 
                 // set cancel button action
                 $('#DaemonFormCancel').on('click', function() {

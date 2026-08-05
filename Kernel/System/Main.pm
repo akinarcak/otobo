@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,17 +24,18 @@ use warnings;
 use namespace::autoclean;    # hide md5_hex, LOCK_SH, LOCK_EX, LOCK_NB, LOCK_UN, irand, IsStringWithData
 
 # core modules
-use Digest::MD5 qw(md5_hex);
-use Data::Dumper;            ## no critic qw(Modules::ProhibitEvilModules)
-use File::stat;
-use List::Util qw(first);
-use Fcntl qw(:flock);
-use Encode;
+use Digest::MD5  qw(md5_hex);
+use Data::Dumper qw(Dumper);    ## no critic qw(Modules::ProhibitEvilModules)
+use File::Path   qw(mkpath);
+use File::stat   qw(stat);
+use List::Util   qw(first);
+use Fcntl        qw(:flock);    ## no perlimports
+use Encode       qw(encode);
 
 # CPAN modules
 use Math::Random::Secure qw(irand);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsStringWithData);
 
 our @ObjectDependencies = (
@@ -483,6 +484,7 @@ sub FileRead {
                 );
             }
         }
+
         return;
     }
 
@@ -523,7 +525,7 @@ sub FileRead {
 to write data to file system
 
     my $FileLocation = $MainObject->FileWrite(
-        Directory => 'c:\some\location',
+        Directory => '/home/somebody/somelocation',
         Filename  => 'file2write.txt',
         # or Location
         Location  => 'c:\some\location\file2write.txt',
@@ -541,15 +543,21 @@ to write data to file system
         Mode       => 'binmode', # binmode|utf8
         Type       => 'Local',   # optional - Local|Attachment|MD5
         Permission => '644',     # optional - unix file permissions
+        MakePath   => (1|0),     # optional - create given directories if neccessary, default 0
+                                 #      does only take effect if Directory and Filename are provided
     );
 
-Platform note: MacOS (HFS+) stores filenames as Unicode C<NFD> internally,
-and DirectoryRead() will also report them as C<NFD>.
+When successful the parameter C<Filename> or C<Location> is returned,
+depending on which parameter has been passed.
+
+An empty list is returned in the case of failure.
 
 =cut
 
 sub FileWrite {
     my ( $Self, %Param ) = @_;
+
+    $Param{MakePath} = $Param{MakePath} ? 1 : 0;
 
     if ( $Param{Filename} && $Param{Directory} ) {
 
@@ -561,6 +569,22 @@ sub FileWrite {
             NoReplace       => $Param{NoReplace},
         );
         $Param{Location} = "$Param{Directory}/$Param{Filename}";
+
+        # create directory structure if neccessary and allowed
+        if ( $Param{MakePath} && !-d $Param{Directory} ) {
+
+            # create directory
+            mkpath( $Param{Directory}, 0, 0770 );          ## no critic qw(ValuesAndExpressions::ProhibitLeadingZeros)
+
+            if ( !-d $Param{Directory} ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => "Can't create directory '$Param{Directory}': $!",
+                );
+
+                return;
+            }
+        }
     }
     elsif ( $Param{Location} ) {
 
@@ -778,17 +802,17 @@ sub FileGetMTime {
 
 =head2 GetReleaseInfo()
 
-extract the Product and Version from a RELEASE file
+extract the attributes 'Product' and 'Version' from a RELEASE file
 
     # specify either Directory and Filename
     my $ReleaseInfo = $MainObject->GetReleaseInfo(
-        Directory => '/opt/otobo',
+        Directory => '/opt/careoncloud',
         Filename  => 'RELEASE',
     );
 
     # or Location
     my $ReleaseInfo = $MainObject->GetReleaseInfo(
-        Location  => '/opt/otobo/RELEASE'
+        Location  => '/opt/careoncloud/RELEASE'
     );
 
 The returned value is a hashref. There are two possible keys: B<Product> and B<Version>.
@@ -804,7 +828,7 @@ sub GetReleaseInfo {
         # filename clean up
         $Param{Filename} = $Self->FilenameCleanUp(
             Filename => $Param{Filename},
-            Type     => $Param{Type} || 'Local',    # Local|Attachment|MD5
+            Type     => 'Local',
         );
         $Param{Location} = "$Param{Directory}/$Param{Filename}";
     }
@@ -825,6 +849,8 @@ sub GetReleaseInfo {
     if ( open( my $ReleaseFH, '<', $Param{Location} ) ) {    ## no critic qw(InputOutput::RequireBriefOpen OTOBO::ProhibitOpen)
 
         # extract the release info from the file content
+        # trailing whitespace is ignored
+        # comments in the key value lines are not supported
         my %ReleaseInfo;
         LINE:
         while ( my $Line = <$ReleaseFH> ) {
@@ -832,10 +858,10 @@ sub GetReleaseInfo {
             # filtering of comment lines
             next LINE if $Line =~ m/^#/;
 
-            if ( $Line =~ m/^PRODUCT\s{0,2}=\s{0,2}(.*)\s{0,2}$/i ) {
+            if ( $Line =~ m/^PRODUCT\s{0,2}=\s{0,2}(.*?)\s*$/i ) {
                 $ReleaseInfo{Product} = $1;
             }
-            elsif ( $Line =~ m/^VERSION\s{0,2}=\s{0,2}(.*)\s{0,2}$/i ) {
+            elsif ( $Line =~ m/^VERSION\s{0,2}=\s{0,2}(.*?)\s*$/i ) {
                 $ReleaseInfo{Version} = $1;
             }
 
@@ -881,6 +907,7 @@ sub MD5sum {
             Priority => 'error',
             Message  => 'Need Filename or String!',
         );
+
         return;
     }
 
@@ -905,6 +932,7 @@ sub MD5sum {
                     Message  => "Can't read '$Param{Filename}': $Error",
                 );
             }
+
             return;
         }
 
@@ -921,12 +949,14 @@ sub MD5sum {
     # md5sum string
     if ( !ref $Param{String} ) {
         $EncodeObject->EncodeOutput( \$Param{String} );
+
         return md5_hex( $Param{String} );
     }
 
     # md5sum scalar reference
     if ( ref $Param{String} eq 'SCALAR' ) {
         $EncodeObject->EncodeOutput( $Param{String} );
+
         return md5_hex( ${ $Param{String} } );
     }
 
@@ -987,6 +1017,7 @@ sub Dump {
             Priority => 'error',
             Message  => "Need \$String in Dump()!"
         );
+
         return;
     }
 
@@ -997,6 +1028,7 @@ sub Dump {
             Priority => 'error',
             Message  => "Invalid Type '$Type'!"
         );
+
         return;
     }
 
@@ -1022,7 +1054,7 @@ sub Dump {
         $Self->_Dump($DataNew);
 
         # Dump it as binary strings.
-        my $String = Data::Dumper::Dumper( ${$DataNew} );
+        my $String = Dumper( ${$DataNew} );
 
         # Enable utf8 flag.
         Encode::_utf8_on($String);
@@ -1031,7 +1063,7 @@ sub Dump {
     }
 
     # fallback if Storable can not be loaded
-    return Data::Dumper::Dumper($Data);
+    return Dumper($Data);
 }
 
 =head2 DirectoryRead()
@@ -1063,7 +1095,8 @@ You can pass several additional filters at once:
         Filter    => \@MyFilters,
     );
 
-The result strings are absolute paths, and they are converted to utf8.
+The returned strings are either relative or absolute paths, depending on what kind
+of path was passed in as C<Directory>. The returned paths were converted to utf8.
 
 Use the 'Silent' parameter to suppress log messages when a directory
 does not have to exist:
@@ -1073,9 +1106,6 @@ does not have to exist:
         Filter    => '*',
         Silent    => 1,     # will not log errors if the directory does not exist
     );
-
-Platform note: MacOS (HFS+) stores filenames as Unicode C<NFD> internally,
-and DirectoryRead() will also report them as C<NFD>.
 
 =cut
 
@@ -1089,6 +1119,7 @@ sub DirectoryRead {
                 Message  => "Needed $Needed: $!",
                 Priority => 'error',
             );
+
             return;
         }
     }
@@ -1099,6 +1130,7 @@ sub DirectoryRead {
             Message  => "Directory doesn't exist: $Param{Directory}: $!",
             Priority => 'error',
         );
+
         return;
     }
 
@@ -1108,6 +1140,7 @@ sub DirectoryRead {
             Message  => 'Filter param need to be scalar or array ref!',
             Priority => 'error',
         );
+
         return;
     }
 
@@ -1126,8 +1159,8 @@ sub DirectoryRead {
         # look for repeated values
         NAME:
         for my $GlobName (@Glob) {
-
             next NAME if !-e $GlobName;
+
             if ( !$Seen{$GlobName} ) {
                 push @GlobResults, $GlobName;
                 $Seen{$GlobName} = 1;

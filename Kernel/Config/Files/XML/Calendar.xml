@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="PublicFrontend::Module###PublicCalendar" Required="0" Valid="1">
         <Description Translatable="1">Frontend module registration for the public interface.</Description>
         <Navigation>Frontend::Public::ModuleRegistration</Navigation>
@@ -408,7 +408,7 @@
             <Hash>
                 <Item Key="Module">Kernel::System::Calendar::Plugin::Ticket</Item>
                 <Item Key="Name" Translatable="1">Ticket</Item>
-                <Item Key="URL">&lt;OTOBO_CONFIG_HttpType&gt;://&lt;OTOBO_CONFIG_FQDN&gt;/&lt;OTOBO_CONFIG_ScriptAlias&gt;index.pl?Action=AgentTicketZoom;TicketID=%s</Item>
+                <Item Key="URL">&lt;CareOnCloud_CONFIG_HttpType&gt;://&lt;CareOnCloud_CONFIG_FQDN&gt;/&lt;CareOnCloud_CONFIG_ScriptAlias&gt;index.pl?Action=AgentTicketZoom;TicketID=%s</Item>
             </Hash>
         </Value>
     </Setting>
@@ -465,7 +465,7 @@
         </Value>
     </Setting>
     <Setting Name="AppointmentCalendar::Import::RecurringMonthsLimit" Required="1" Valid="1">
-        <Description Translatable="1">OTOBO doesn't support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).</Description>
+        <Description Translatable="1">CareOnCloud ESM doesn't support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).</Description>
         <Navigation>Core::AppointmentCalendar</Navigation>
         <Value>
             <Item ValueType="String" ValueRegex="^\d+$">120</Item>
@@ -621,7 +621,7 @@
                             <Item>admin</Item>
                         </Array>
                     </Item>
-                    <Item Key="Description" Translatable="1">This module is part of the admin area of OTOBO.</Item>
+                    <Item Key="Description" Translatable="1">This module is part of the admin area of CareOnCloud ESM.</Item>
                     <Item Key="Title" Translatable="1">Appointment Notifications</Item>
                     <Item Key="NavBarName">Admin</Item>
                 </Hash>
@@ -696,10 +696,10 @@
         </Value>
     </Setting>
     <Setting Name="Frontend::Admin::AdminAppointmentNotificationEvent###RichTextHeight" Required="0" Valid="1">
-        <Description Translatable="1">Defines the height for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).</Description>
+        <Description Translatable="1">Defines the initial height in pixels for the rich text editor component for this screen.</Description>
         <Navigation>Frontend::Admin::View::NotificationEvent</Navigation>
         <Value>
-            <Item ValueType="String" ValueRegex="^\d+%?$">320</Item>
+            <Item ValueType="String" ValueRegex="^\d+(\.\d+)?$">320</Item>
         </Value>
     </Setting>
     <Setting Name="PreferencesGroups###AppointmentNotificationEvent" Required="0" Valid="1">
@@ -748,7 +748,7 @@
                 <Item Key="Name" Translatable="1">Web View</Item>
                 <Item Key="Icon">fa fa-th-list</Item>
                 <Item Key="Prio">110</Item>
-                <Item Key="IsOTOBOCommunityTransport">1</Item>
+                <Item Key="IsCareOnCloudCommunityTransport">1</Item>
                 <Item Key="AgentEnabledByDefault">0</Item>
             </Hash>
         </Value>
@@ -762,7 +762,7 @@
                 <Item Key="Name" Translatable="1">SMS (Short Message Service)</Item>
                 <Item Key="Icon">fa fa-mobile</Item>
                 <Item Key="Prio">120</Item>
-                <Item Key="IsOTOBOCommunityTransport">1</Item>
+                <Item Key="IsCareOnCloudCommunityTransport">1</Item>
                 <Item Key="AgentEnabledByDefault">0</Item>
             </Hash>
         </Value>
@@ -917,4 +917,4 @@
             </Hash>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

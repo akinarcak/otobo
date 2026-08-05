@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -29,9 +29,10 @@ use parent qw(Kernel::System::DynamicField::Driver::Base);
 # core modules
 
 # CPAN modules
+use List::AllUtils qw(any last_index);
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -104,14 +105,17 @@ sub ValueSet {
             $Value = $Param{Value};
         }
     }
-    else {
+    elsif ( $Param{DynamicFieldConfig}{Config}{Multiselect} ) {
         my @Values = split /,/, $Param{Value} // '';
         if ( IsArrayRefWithData( \@Values ) ) {
             $Value = \@Values;
         }
         else {
-            $Value = $Param{Value};
+            $Value = [ $Param{Value} ];
         }
+    }
+    else {
+        $Value = $Param{Value};
     }
 
     # Make sure that the input is not modified in ValueSet()
@@ -123,7 +127,7 @@ sub ValueSet {
         $DBValue = $Self->ValueStructureToDB(
             Value      => $Value,
             ValueKey   => 'ValueText',
-            MultiValue => $Param{DynamicFieldConfig}{Config}{MultiValue},
+            MultiValue => $Param{DynamicFieldConfig}{Config}{MultiValue} || $Param{DynamicFieldConfig}{Config}{Multiselect},
         );
     }
 
@@ -138,30 +142,50 @@ sub ValueSet {
 sub ValueIsDifferent {
     my ( $Self, %Param ) = @_;
 
-    # Special cases where the values are different but they should be reported as equals.
+    # handle array comparison
+    if ( ref $Param{Value1} eq 'ARRAY' ) {
+
+        # strip trailing empty values and map empty strings to undef
+        #   for comparison of frontend value with database value
+        my @Values = map { ( defined $_ && $_ eq '' ) ? undef : $_ } $Param{Value1}->@*;
+        if ( any { defined $_ } @Values ) {
+            splice( @Values, ( last_index { defined $_ } @Values ) + 1 );
+        }
+        else {
+            @Values = ();
+        }
+        $Param{Value1} = \@Values;
+
+        # special case where the values are different but they should be reported as equals
+        if ( !defined $Param{Value2} && !$Param{Value1}->@* ) {
+            return;
+        }
+    }
+
+    if ( ref $Param{Value2} eq 'ARRAY' ) {
+
+        # strip trailing empty values and map empty strings to undef
+        #   for comparison of frontend value with database value
+        my @Values = map { ( defined $_ && $_ eq '' ) ? undef : $_ } $Param{Value2}->@*;
+        if ( any { defined $_ } @Values ) {
+            splice( @Values, ( last_index { defined $_ } @Values ) + 1 );
+        }
+        else {
+            @Values = ();
+        }
+        $Param{Value2} = \@Values;
+
+        # special case where the values are different but they should be reported as equals
+        if ( !defined $Param{Value1} && !$Param{Value2}->@* ) {
+            return;
+        }
+    }
+
+    # special cases where the values are different but they should be reported as equals
+    # NOTE in case that either Value1 or Value2 is an array ref, we rely on stringified
+    #   array references not being empty for this to work
     return if !defined $Param{Value1} && ( defined $Param{Value2} && $Param{Value2} eq '' );
     return if !defined $Param{Value2} && ( defined $Param{Value1} && $Param{Value1} eq '' );
-
-    # Special cases where one value is a scalar and the other one is an array (see bug#13998).
-    # TODO Causes error message, potentially rewrite this
-    if ( ref \$Param{Value1} eq 'SCALAR' && ref $Param{Value2} eq 'ARRAY' ) {
-        my @TmpArray1 = sort split /,/, $Param{Value1} // '';
-        my @TmpArray2 = sort @{ $Param{Value2} };
-
-        return DataIsDifferent(
-            Data1 => \@TmpArray1,
-            Data2 => \@TmpArray2,
-        );
-    }
-    if ( ref \$Param{Value2} eq 'SCALAR' && ref $Param{Value1} eq 'ARRAY' ) {
-        my @TmpArray2 = sort split /,/, $Param{Value2} // '';
-        my @TmpArray1 = sort @{ $Param{Value1} };
-
-        return DataIsDifferent(
-            Data1 => \@TmpArray1,
-            Data2 => \@TmpArray2,
-        );
-    }
 
     # Compare the results.
     return DataIsDifferent(
@@ -282,9 +306,12 @@ sub EditFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
-    my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName   = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
+    my $FieldConfig       = $Param{DynamicFieldConfig}->{Config};
+    my $FieldName         = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
+    my $FieldLabel        = $Param{DynamicFieldConfig}->{Label};
+    my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
+    );
 
     my $Value = '';
 
@@ -332,8 +359,11 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
     }
 
@@ -355,6 +385,7 @@ sub EditFieldRender {
 
     my %FieldTemplateData = (
         FieldName               => $FieldName,
+        FieldLabel              => $FieldLabelEscaped,
         DetailedSearchMsg       => $DetailedSearchMsg,
         FieldClass              => $FieldClass,
         DetailsMsg              => $DetailsMsg,
@@ -410,10 +441,15 @@ sub EditFieldRender {
     if ( $FieldConfig->{MultiValue} && !$Param{Readonly} ) {
         $FieldTemplateData{FieldID} = $FieldName . '_Template';
 
+        if ( $Param{Mandatory} ) {
+            $FieldClass .= ' ValidationIgnore';
+        }
+
         $TemplateHTML = $Param{LayoutObject}->Output(
             TemplateFile => $FieldTemplateFile,
             Data         => {
                 %FieldTemplateData,
+                FieldClass => $FieldClass,
             },
         );
     }
@@ -464,14 +500,17 @@ sub EditFieldValueGet {
         && ref $Param{ParamObject} eq 'Kernel::System::Web::Request'
         )
     {
-        my @Data = $Param{ParamObject}->GetArray( Param => $FieldName );
-
-        if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
+        if ( $Param{DynamicFieldConfig}{Config}{MultiValue} ) {
+            my @Data = $Param{ParamObject}->GetArray( Param => $FieldName );
 
             # delete the template value
             pop @Data;
+
+            $Value = \@Data;
         }
-        $Value = \@Data;
+        else {
+            $Value = $Param{ParamObject}->GetParam( Param => $FieldName );
+        }
     }
 
     if ( defined $Param{ReturnTemplateStructure} && $Param{ReturnTemplateStructure} eq 1 ) {
@@ -499,7 +538,7 @@ sub EditFieldValueValidate {
     my $ServerError;
 
     # ref comparison because EditFieldValuetet returns an arrayref except when using template value
-    if ( !ref $Value eq 'ARRAY' ) {
+    if ( ref $Value ne 'ARRAY' ) {
         $Value = [$Value];
     }
 
@@ -599,9 +638,11 @@ sub SearchFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
-    my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName   = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
+    my $FieldName         = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
+    my $FieldLabel        = $Param{DynamicFieldConfig}->{Label};
+    my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
+    );
 
     # set the field value
     my $Value = ( defined $Param{DefaultValue} ? $Param{DefaultValue} : '' );
@@ -623,7 +664,7 @@ sub SearchFieldRender {
     my $FieldClass = 'DynamicFieldDB';
 
     my $HTMLString = <<"EOF";
-<input type="text" class="$FieldClass" id="${FieldName}" name="${FieldName}" title="$FieldLabel" value="$Value" />
+<input type="text" class="$FieldClass" id="${FieldName}" name="${FieldName}" title="$FieldLabelEscaped" value="$Value" />
 EOF
 
     my $AdditionalText;

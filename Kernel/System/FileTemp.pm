@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,12 @@ package Kernel::System::FileTemp;
 use strict;
 use warnings;
 
-use File::Temp qw( tempfile tempdir );
+# core modules
+use File::Temp qw(tempdir tempfile);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -47,8 +52,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     $Self->{FileHandleList} = [];
 
@@ -86,7 +90,9 @@ sub TempFile {
 =head2 TempDir()
 
 returns a temp directory. The directory and its contents will be removed
-if the FileTemp object goes out of scope.
+when the File::Temp object goes out of scope.
+
+    my $TempDir = $TempObject->TempDir();
 
 =cut
 

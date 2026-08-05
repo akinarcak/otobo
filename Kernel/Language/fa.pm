@@ -1,10 +1,10 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2006-2009 Amir Shams Parsa <a.parsa at gmail.com>
 # Copyright (C) 2008 Hooman Mesgary <info at mesgary.com>
 # Copyright (C) 2009 Afshar Mohebbi <afshar.mohebbi at gmail.com>
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -34,7 +34,7 @@ sub Data {
     $Self->{DateFormatShort}     = '%D.%M.%Y';
     $Self->{DateInputFormat}     = '%D.%M.%Y';
     $Self->{DateInputFormatLong} = '%D.%M.%Y - %T';
-    $Self->{Completeness}        = 0.626446805137149;
+    $Self->{Completeness}        = 0.560337432084644;
 
     # csv separator
     $Self->{Separator}         = '';
@@ -48,7 +48,10 @@ sub Data {
 
         # Template: AdminACL
         'ACL Management' => 'مدیریت ACL',
+        'Filter by valid state' => '',
+        'Include invalid ACLs' => '',
         'Actions' => 'عملیات‌ها',
+        'Object Type' => '',
         'Create New ACL' => 'ایجاد ACL جدید ',
         'Deploy ACLs' => 'استقرار ACL ها',
         'Export ACLs' => 'صادرات ACL ها',
@@ -66,6 +69,8 @@ sub Data {
             'برای ایجاد یک ACL جدید شما هم می توانید واردات ACL ها که از سیستم دیگری صادر شده و یا ایجاد کنید یک ACL جدید کامل.',
         'Changes to the ACLs here only affect the behavior of the system, if you deploy the ACL data afterwards. By deploying the ACL data, the newly made changes will be written to the configuration.' =>
             'تغییرات به ACL در اینجا تنها رفتار سیستم تاثیر می گذارد، اگر شما اطلاعات ACL اعزام پس از آن. با استقرار داده ACL، تغییرات تازه ساخته شده را به پیکربندی نوشته شده است.',
+        'To delete an existing ACL you have to set the validity to invalid and save it. Afterwards a new button to delete the ACL will appear.' =>
+            '',
         'ACLs' => 'ACL ها',
         'Please note: This table represents the execution order of the ACLs. If you need to change the order in which ACLs are executed, please change the names of the affected ACLs.' =>
             'لطفا توجه داشته باشید: این جدول نشان دهنده حکم اعدام از ACL ها است. اگر شما نیاز به تغییر نظم که در آن ACL ها اجرا می شوند، لطفا نام ACL ها را تحت تاثیر قرار را تغییر دهید.',
@@ -87,8 +92,8 @@ sub Data {
         'Set up matching criteria for this ACL. Use \'Properties\' to match the current screen or \'PropertiesDatabase\' to match attributes of the current ticket that are in the database.' =>
             'تنظیم معیارهای تطبیق برای این ACL است. استفاده از "Properties" را برای مطابقت با صفحه نمایش فعلی یا PropertiesDatabase »برای مطابقت ویژگی بلیط فعلی که در پایگاه داده می باشد.',
         'Change settings' => 'تغییر تنظیمات',
-        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is a white list, \'PossibleNot\' a black list.' =>
-            'تنظیم آنچه که می خواهید تغییر دهید اگر بازی معیارهای. به خاطر داشته باشید که ممکن است یک لیست سفید، \'PossibleNot، یک لیست سیاه است.',
+        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is an exclusive white list, \'PossibleAdd\' a white list, \'PossibleNot\' a black list. \'Possible\' also hides the empty value, which you could add again with \'[empty]\'.' =>
+            '',
         'Check the official %sdocumentation%s.' => '',
         'Show or hide the content' => 'نمایش یا عدم نمایش محتوا',
         'Edit ACL Information' => '',
@@ -124,11 +129,12 @@ sub Data {
         'Calendar Management' => 'مدیریت تقویم',
         'Add Calendar' => 'اضافه‌کردن تقویم',
         'Edit Calendar' => 'ویرایش تقویم',
+        'Include invalid calendars' => '',
         'Calendar Overview' => '',
         'Add new Calendar' => 'اضافه کردن تقویم جدید',
         'Import Appointments' => '',
         'Calendar Import' => '',
-        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by calendar management module.' =>
+        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by the calendar management module.' =>
             '',
         'Overwrite existing entities' => 'بازنویسی نهادهای موجود',
         'Upload calendar configuration' => '',
@@ -157,6 +163,7 @@ sub Data {
         'Calendar with same name already exists.' => '',
         'Color' => '',
         'Permission group' => '',
+        'Insufficient group permissions.' => '',
         'Ticket Appointments' => '',
         'Rule' => 'قاعده',
         'Remove this entry' => 'پاک کردن این ورودی',
@@ -192,6 +199,7 @@ sub Data {
         'Appointment Notification Management' => '',
         'Add Notification' => 'افزودن اعلان',
         'Edit Notification' => 'ویرایش اعلان',
+        'Include invalid appointment notifications' => '',
         'Export Notifications' => 'ارسال اطلاعات',
         'Filter for Notifications' => '',
         'Filter for notifications' => '',
@@ -276,6 +284,7 @@ sub Data {
         'Attachment Management' => 'مدیریت پیوست‌ها',
         'Add Attachment' => 'افزودن پیوست',
         'Edit Attachment' => 'ویرایش پیوست',
+        'Include invalid attachments' => '',
         'Filter for Attachments' => 'فیلتر برای پیوست‌ها',
         'Filter for attachments' => '',
         'Filename' => 'نام فایل',
@@ -288,6 +297,7 @@ sub Data {
         'Auto Response Management' => 'مدیریت پاسخ خودکار',
         'Add Auto Response' => 'افزودن پاسخ خودکار',
         'Edit Auto Response' => 'ویرایش پاسخ خودکار',
+        'Include invalid auto responses' => '',
         'Filter for Auto Responses' => 'فیلتر برای پاسخ‌های خودکار',
         'Filter for auto responses' => '',
         'Response' => 'پاسخ',
@@ -313,25 +323,25 @@ sub Data {
         'Support data collector' => 'پشتیبانی از داده های جمع آوری شده ',
         'Hint' => 'تذکر',
         'Currently support data is only shown in this system.' => 'در حال حاضر اطلاعات پشتیبانی داداه ها فقط در این سیستم نمایش داده شد ه . ',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
             '',
         'Configuration' => 'پیکر بندی',
         'Send support data' => 'ارسال پشتیبانی  داده ها',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
             '',
         'Update' => 'بروزرسانی',
         'System Registration' => 'ثبت نام سیستم',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'Register this System' => 'ثبت نام این سیستم',
         'System Registration is disabled for your system. Please check your configuration.' =>
             'سیستم ثبت نام برای سیستم شما غیر فعال است. لطفا پیکربندی خود را چک کنید.',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
             '',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            'لطفا توجه داشته باشید که استفاده از سیستم های ابری  OTOBO نیاز به این سیستم  ثبت نام دارد . ',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            'لطفا توجه داشته باشید که استفاده از سیستم های ابری  CareOnCloud ESM نیاز به این سیستم  ثبت نام دارد . ',
         'Register this system' => 'ثبت نام این سیستم',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             'در اینجا شما می توانید خدمات ابر در دسترس است که امن برقراری ارتباط با پیکربندی %s .',
@@ -430,12 +440,34 @@ sub Data {
         'Customer Management' => 'مدیریت مشترک',
         'Add Customer' => 'افزودن مشترک',
         'Edit Customer' => 'ویرایش مشترک',
+        'Include invalid customer companies' => '',
         'List (only %s shown - more available)' => 'فهرست (فقط %s نشان داده شده است - در دسترس تر)',
         'total' => 'مجموع',
         'Please enter a search term to look for customers.' => 'لطفا عبارت جستجو را وارد نمایید تا مشترکین را جستجو نمایید.',
         'Customer ID' => 'شناسه مشترک',
         'Please note' => '',
         'This customer backend is read only!' => '',
+
+        # Template: AdminCustomerDashboardInfoTile
+        'Customer Info' => '',
+        'Customer Info Management' => '',
+        'Create new info tile entry' => '',
+        'Filter for info tile entries' => '',
+        'Create a new entry to be displayed on the info tile on the customer dashboard.' =>
+            '',
+        'Stop date' => 'تاریخ توقف',
+        'Delete info tile entry' => '',
+
+        # Template: AdminCustomerDashboardInfoTileEdit
+        'Edit customer dashboard info tile entry' => '',
+        'Date invalid!' => 'تاریخ نامعتبر!',
+        'Tile content' => '',
+        'Content Body' => '',
+        'Marquee content' => '',
+        'Group Selection' => '',
+
+        # Template: AdminCustomerDashboardInfoTileNew
+        'Create new customer dashboard info tile entry' => '',
 
         # Template: AdminCustomerGroup
         'Manage Customer-Group Relations' => 'مدیریت روابط مشترک-گروه',
@@ -471,6 +503,7 @@ sub Data {
         'Customer User Management' => 'مدیریت کاربری مشترک',
         'Add Customer User' => 'اضافه کردن کاربر مشترک',
         'Edit Customer User' => ' ویرایش کاربر مشتری',
+        'Include invalid customer users' => '',
         'Customer user are needed to have a customer history and to login via customer panel.' =>
             'کاربران و ضوابط مورد نیاز برای یک سابقه مشتری و برای ورود به سایت از طریق پنل مشتری می باشد.',
         'List (%s total)' => 'فهرست ( تعداد %s)',
@@ -535,9 +568,14 @@ sub Data {
 
         # Template: AdminDynamicField
         'Dynamic Fields Management' => 'مدیریت پویای زمینه',
-        'Add new field for object' => 'اضافه کردن فیلد جدید برای موضوع',
+        'Include invalid dynamic fields' => '',
         'Filter for Dynamic Fields' => '',
         'Filter for dynamic fields' => '',
+        'Filter field by object type' => '',
+        'Filter field by namespace' => '',
+        'Add new field for object' => 'اضافه کردن فیلد جدید برای موضوع',
+        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
+            'برای اضافه کردن یک رشته جدید، نوع رشته را از یکی موضوع های لیست انتخاب کنید، موضوع مرز رشته را تعریف میکند و نمی توان آن را پس از ایجاد رشته  تغییر داد.',
         'New Dynamic Fields' => '',
         'Would you like to benefit from additional dynamic field types? You have full access to the following field types:' =>
             '',
@@ -549,18 +587,17 @@ sub Data {
             '',
         'This feature allows to add (multiple) contacts with data to tickets.' =>
             '',
-        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
-            'برای اضافه کردن یک رشته جدید، نوع رشته را از یکی موضوع های لیست انتخاب کنید، موضوع مرز رشته را تعریف میکند و نمی توان آن را پس از ایجاد رشته  تغییر داد.',
         'Dynamic Fields List' => ' فهرست زمینه حرکتی',
         'Dynamic fields per page' => 'زمینه های پویا در هر صفحه',
         'Label' => 'برچسب',
         'Order' => 'ترتیب',
         'Object' => 'مورد',
+        'Copy this field' => '',
         'Delete this field' => 'حذف این قسمت',
 
         # Template: AdminDynamicFieldAdvanced
         'Import / Export' => '',
-        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by dynamic field management module.' =>
+        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by the dynamic field management module.' =>
             '',
         'DynamicFields Import' => '',
         'DynamicFields Export' => '',
@@ -584,6 +621,9 @@ sub Data {
         'This field is required and must be numeric.' => 'این فیلد الزامی است و باید عدد باشد.',
         'This is the order in which this field will be shown on the screens where is active.' =>
             'این نظم که در آن این زمینه خواهد شد بر روی صفحه نمایش که در آن فعال است نشان داده شده است.',
+        'Namespace' => 'فضای نام',
+        'This is the namespace in which this field will be used as prefix with the name.' =>
+            '',
         'Tooltip message:' => '',
         'This is the tooltip message shown inside the customer interface.' =>
             '',
@@ -642,6 +682,8 @@ sub Data {
         'Example' => 'مثال',
         'You can reference the field with its own field name. You can also refer to other fields, e.g. with \'DynamicField_OtherFieldName\'.' =>
             '',
+        'If a dynamic field with a namespace is to be referenced, the field name needs to be stored in a variable and called.' =>
+            '',
         'Link for preview' => 'لینک برای پیش نمایش',
         'If filled in, this URL will be used for a preview which is shown when this link is hovered in ticket zoom. Please note that for this to work, the regular URL field above needs to be filled in, too.' =>
             'اگر در پر شده است، این URL خواهد شد برای یک پیش نمایش است که نشان داده شده است که این پیوند در زوم بلیط ماند استفاده می شود. لطفا توجه داشته باشید که برای این کار، زمینه URL به طور منظم بالا نیاز به در شود پر شده است، بیش از حد.',
@@ -660,6 +702,9 @@ sub Data {
         'Searchsuffix' => '',
         'Result Limit' => '',
         'Case Sensitive' => '',
+        'Multiple Values' => '',
+        'Activate this option to allow multiple values for this field.' =>
+            '',
 
         # Template: AdminDynamicFieldDateTime
         'Default date difference' => 'تفاوت تاریخ به طور پیش فرض',
@@ -698,11 +743,28 @@ sub Data {
         'Fields' => 'زمینه های',
         'Screens' => '',
 
+        # Template: AdminDynamicFieldReference
+        'Check ReferenceFilter' => '',
+        'Below you can configure filters to restrict the list of referenced objects. The filters compare an attribute of the referenced object either to an attribute of the mask you are currently editing or to a fixed string.' =>
+            '',
+        'Object attribute' => '',
+        'Select an attribute of the referenced object by which the selectable entries will be filtered.' =>
+            '',
+        'Invalid ReferenceFilter_ReferenceObjectAttribute' => '',
+        'matches mask attribute' => '',
+        'Select an attribute of the edit mask to compare the selected attribute of the referenced object against.' =>
+            '',
+        'matches string' => '',
+        'Type a string to compare the selected attribute of the referenced object against.' =>
+            '',
+        'Add Reference Filter' => '',
+
         # Template: AdminDynamicFieldScreen
         'Management of Dynamic Fields <-> Screens' => '',
+        'Filter by object type' => '',
         'Overview' => 'پیش نمایش',
         'Default Columns Screens' => '',
-        'Add DynamicField' => '',
+        'Add Dynamic Field' => '',
         'You can assign elements to this Screen/Field by dragging the elements with the mouse from the left list to the right list.' =>
             '',
         'Ordering the elements within the list is also possible by drag \'n\' drop.' =>
@@ -724,13 +786,18 @@ sub Data {
         'Assigned Required Elements' => '',
         'Reset' => 'ورود مجدد',
 
-        # Template: AdminDynamicFieldText
-        'Number of rows' => 'تعداد ردیف',
-        'Specify the height (in lines) for this field in the edit mode.' =>
-            'شاخص ارتفاع (در خط) در این زمینه در حالت ویرایش است  . ',
-        'Number of cols' => 'تعداد گذرگاه',
-        'Specify the width (in characters) for this field in the edit mode.' =>
-            'مشخص عرض (در شخصیت) برای این رشته در حالت ویرایش.',
+        # Template: AdminDynamicFieldScript
+        'Expression' => '',
+        'The function which will be evaluated.' => '',
+        'Requirements' => '',
+        'If set, the function will only be evaluated if all chosen attributes are set.' =>
+            '',
+        'Preview Triggers' => '',
+        'If set, the field will be recalculated upon AJAX updates in edit masks.' =>
+            '',
+        'Storage Triggers (Events)' => '',
+        'If set, the field will be recalculated for the following events.' =>
+            '',
         'Check RegEx' => 'بررسی عبارت منظم',
         'Here you can specify a regular expression to check the value. The regex will be executed with the modifiers xms.' =>
             'در اینجا شما می توانید یک عبارت منظم برای بررسی ارزش را مشخص کنید. عبارت منظم خواهد شد با اصلاح XMS اجرا شده است.',
@@ -738,6 +805,23 @@ sub Data {
         'Invalid RegEx' => 'عبارت منظم نامعتبر',
         'Error Message' => 'پیغام خطا',
         'Add RegEx' => 'اضافه کردن عبارت منظم',
+
+        # Template: AdminDynamicFieldSet
+        'Auto Indent Code' => '',
+        'Comment/Uncomment Code' => '',
+        'Search & Replace' => '',
+        'Select All' => '',
+        'Full Screen' => '',
+        'The YAML array of included dynamic fields. Syntax: \'--- [{DF: Name},...]\'' =>
+            '',
+
+        # Template: AdminDynamicFieldText
+        'Number of rows' => 'تعداد ردیف',
+        'Specify the height (in lines) for this field in the edit mode.' =>
+            'شاخص ارتفاع (در خط) در این زمینه در حالت ویرایش است  . ',
+        'Number of cols' => 'تعداد گذرگاه',
+        'Specify the width (in characters) for this field in the edit mode.' =>
+            'مشخص عرض (در شخصیت) برای این رشته در حالت ویرایش.',
 
         # Template: AdminDynamicFieldTitle
         'Template' => 'قالب',
@@ -783,8 +867,13 @@ sub Data {
         'Edit Job' => '',
         'Add Job' => '',
         'Run Job' => '',
+        'Include invalid jobs' => '',
         'Filter for Jobs' => '',
         'Filter for jobs' => '',
+        'Here you can upload a configuration file to import generic agents to your system. The file needs to be in .yml format as exported by the generic agent management module.' =>
+            '',
+        'Generic Agents Import' => '',
+        'Generic Agents Export' => '',
         'Last run' => 'آخرین اجرا',
         'Run Now!' => 'اجرا',
         'Delete this task' => 'حذف این وظیفه',
@@ -909,6 +998,12 @@ sub Data {
         'Affected Tickets' => 'درخواست‌های تاثیر یافته',
         'Age' => 'طول عمر درخواست',
 
+        # Template: AdminGenericAgentImportExport
+        'Generic Agents' => '',
+        'Here you can export a configuration file of generic agents to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Generic Agents List' => '',
+
         # Template: AdminGenericInterfaceDebugger
         'GenericInterface Web Service Management' => 'مدیریت GenericInterface وب سرویس',
         'Web Service Management' => '',
@@ -940,7 +1035,7 @@ sub Data {
             '',
         'Please provide a unique name for this web service.' => 'لطفا یک نام منحصر به فرد برای این وب سرویس ارائه دهید .',
         'Error handling module backend' => '',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
             '',
         'Processing options' => '',
         'Configure filters to control error handling module execution.' =>
@@ -1032,15 +1127,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             'نام معمولا برای پاسخ یک عملیات از یک وب سرویس از راه دور.',
         'Invoker backend' => 'باطن Invoker',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            'این invoker ماژول باطن OTOBO خواهد شد به نام برای آماده سازی داده ها به سیستم از راه دور ارسال می شود، و برای پردازش داده ها پاسخ آن است.',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            'این invoker ماژول باطن CareOnCloud ESM خواهد شد به نام برای آماده سازی داده ها به سیستم از راه دور ارسال می شود، و برای پردازش داده ها پاسخ آن است.',
         'Mapping for outgoing request data' => 'نقشه برداری برای درخواست داده های خروجی',
         'Configure' => 'تنظیمات',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            'داده ها از فراخواننده OTOBO خواهد شد این نقشه برداری پردازش، آن را تبدیل به نوع داده سیستم از راه دور انتظار.',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            'داده ها از فراخواننده CareOnCloud ESM خواهد شد این نقشه برداری پردازش، آن را تبدیل به نوع داده سیستم از راه دور انتظار.',
         'Mapping for incoming response data' => 'نگاشت برای پاسخ داده های ورودی ',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            'پاسخ داده خواهد شد این نقشه برداری پردازش، آن را تبدیل به نوع داده فراخواننده OTOBO انتظار.',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            'پاسخ داده خواهد شد این نقشه برداری پردازش، آن را تبدیل به نوع داده فراخواننده CareOnCloud ESM انتظار.',
         'Asynchronous' => 'ناهمگام',
         'Condition' => 'وضعیت',
         'Edit this event' => '',
@@ -1048,8 +1143,8 @@ sub Data {
         'Add Event' => 'اضافه کردن رویداد',
         'To add a new event select the event object and event name and click on the "+" button' =>
             'برای اضافه کردن یک رویداد جدید انتخاب موضوع رویداد و نام  رویداد و کلیک بر روی  دکمه \ "+ " میباشد',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            'باعث رویداد آسنکرون توسط OTOBO زمانبند شبح در پس زمینه به کار گرفته (توصیه می شود).',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            'باعث رویداد آسنکرون توسط CareOnCloud ESM زمانبند شبح در پس زمینه به کار گرفته (توصیه می شود).',
         'Synchronous event triggers would be processed directly during the web request.' =>
             'باعث رویداد همزمان می تواند به طور مستقیم در طول درخواست وب پردازش شده است.',
 
@@ -1136,15 +1231,15 @@ sub Data {
         # Template: AdminGenericInterfaceMappingXSLT
         'General Shortcuts' => '',
         'MacOS Shortcuts' => '',
-        'Comment code' => '',
-        'Uncomment code' => '',
-        'Auto format code' => '',
-        'Expand/Collapse code block' => '',
+        'Comment/Uncomment code' => '',
+        'Auto indent code' => '',
+        'Jump to line' => '',
+        'Autocomplete' => '',
         'Find' => '',
         'Find next' => '',
         'Find previous' => '',
         'Find and replace' => '',
-        'Find and replace all' => '',
+        'Exit full screen' => '',
         'XSLT Mapping' => '',
         'XSLT stylesheet' => '',
         'The entered data is not a valid XSLT style sheet.' => '',
@@ -1183,6 +1278,11 @@ sub Data {
             '',
         'Regular expressions defined here will be applied after the XSLT mapping.' =>
             '',
+        'Enable Extended XSLT Mapping' => '',
+        'Extended XSLT Mapping' => '',
+        'Enable' => '',
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+            '',
 
         # Template: AdminGenericInterfaceOperationDefault
         'Add Operation' => '',
@@ -1192,11 +1292,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             ' نام بطور معمول از یک سیستم از راه دور برای تماس با این وب سرویس استفاده میشود . ',
         'Operation backend' => 'باطن عمل',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            'این عملیات ماژول باطن OTOBO صورت داخلی نامیده خواهد شد به پردازش درخواست، تولید داده ها را برای پاسخ.',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            'این عملیات ماژول باطن CareOnCloud ESM صورت داخلی نامیده خواهد شد به پردازش درخواست، تولید داده ها را برای پاسخ.',
         'Mapping for incoming request data' => 'نگاشت برای درخواست داده های ورودی',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            'داده درخواست خواهد شد این نقشه برداری پردازش، آن را تبدیل به نوع OTOBO داده انتظار دارد.',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            'داده درخواست خواهد شد این نقشه برداری پردازش، آن را تبدیل به نوع CareOnCloud ESM داده انتظار دارد.',
         'Mapping for outgoing response data' => 'نگاشت برای پاسخ خروجی داده ',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             'پاسخ داده خواهد شد این نقشه برداری پردازش، آن را تبدیل به نوع داده سیستم از راه دور انتظار.',
@@ -1214,8 +1314,8 @@ sub Data {
             'محدود کردن این عملیات به روش درخواست خاص. اگر هیچ روشی انتخاب نشده است همه درخواست ها پذیرفته خواهد شد .',
         'Maximum message length' => 'حداکثر طول پیام',
         'This field should be an integer number.' => 'در این زمینه باید یک عدد صحیح باشد.',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            'اینجا شما می توانید حداکثر اندازه (در بایت) از پیام های REST که OTOBO پردازش را مشخص کنید.',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            'اینجا شما می توانید حداکثر اندازه (در بایت) از پیام های REST که CareOnCloud ESM پردازش را مشخص کنید.',
         'Send Keep-Alive' => 'ارسال حفظ',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             'این تنظیمات را تعریف می کند اگر اتصالات ورودی باید بسته شدن و یا زنده نگه داشت.',
@@ -1224,7 +1324,7 @@ sub Data {
         'Endpoint' => 'نقطه پایانی',
         'URI to indicate specific location for accessing a web service.' =>
             '',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => '',
         'Timeout value for requests.' => '',
@@ -1235,6 +1335,13 @@ sub Data {
         'The user name to be used to access the remote system.' => 'نام کاربری مورد استفاده قرار گیرد برای دسترسی به سیستم از راه دور.',
         'BasicAuth Password' => '',
         'The password for the privileged user.' => 'رمز عبور برای کاربر ممتاز.',
+        'Kerberos User' => '',
+        'Kerberos keytab file' => '',
+        'The Kerberos keytab file for the privileged user.' => '',
+        'OAuth2 Functional Account' => '',
+        'Select the Functional-Account to use for OAuth2 authentication. Functional-Accounts can be configured here:' =>
+            '',
+        'OAuth2 Functional Accounts' => '',
         'Use Proxy Options' => '',
         'Show or hide Proxy options to connect to the remote system.' => '',
         'Proxy Server' => 'سرور پروکسی',
@@ -1251,24 +1358,27 @@ sub Data {
         'Client Certificate' => '',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             '',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => '',
         'Client Certificate Key' => '',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             '',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => '',
         'Client Certificate Key Password' => '',
         'The password to open the SSL certificate if the key is encrypted.' =>
             '',
         'Certification Authority (CA) Certificate' => '',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             'مسیر کامل و نام فایل گواهی اقتدار صدور گواهینامه که تایید گواهینامه SSL.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => 'به عنوان مثال /opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => 'به عنوان مثال /opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => 'مجوز (CA) راهنمای',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             'مسیر کامل دایرکتوری که در آن اقتدار صدور گواهینامه گواهی CA ها در سیستم فایل ذخیره می شود.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => 'به عنوان مثال / انتخاب کردن / OTOBO / ور / گواهی / SOAP / CA',
-        'SSL hostname verification.' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => 'به عنوان مثال / انتخاب کردن / CareOnCloud ESM / ور / گواهی / SOAP / CA',
+        'SSL hostname verification' => '',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
+            '',
+        'SSL verify mode' => '',
+        'Abort the request if SSL verification fails. Disabling skips SSL verification entirely. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             '',
         'Controller mapping for Invoker' => ' برای  کنترل نگاشت Invoker',
         'The controller that the invoker should send requests to. Variables marked by a \':\' will get replaced by the data value and passed along with the request. (e.g. /Ticket/:TicketID?UserLogin=:UserLogin&Password=:Password).' =>
@@ -1278,6 +1388,9 @@ sub Data {
             'فرمان HTTP خاص برای استفاده برای درخواست با این Invoker (اختیاری).',
         'Default command' => 'دستور پیش فرض',
         'The default HTTP command to use for the requests.' => 'دستور HTTP به طور پیش فرض برای استفاده از درخواست.',
+        'Use multipart/form-data:' => '',
+        'Select requesters to send attachments as binary data with content type \'multipart/form-data\' instead of the default Base64 encoded inline JSON.' =>
+            '',
         'Additional request headers (all invokers)' => '',
         'Additional request headers (invoker specific)' => '',
         'Remove all headers for this invoker' => '',
@@ -1310,9 +1423,8 @@ sub Data {
         'Usually .Net web services use "/" as separator.' => '',
         'SOAPAction free text' => '',
         'Text to be used to as SOAPAction.' => '',
-        'Namespace' => 'فضای نام',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI به روش SOAP زمینه ای، کاهش ابهامات.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => ' درخواست پاسخ به طرح نام',
         'Select how SOAP request function wrapper should be constructed.' =>
@@ -1330,8 +1442,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             'انتخاب کنید که چگونه تابع پاسخ SOAP لفاف بسته بندی باید ساخته شود.',
         'Response name free text' => 'نام پاسخ های متنی رایگان',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            'اینجا شما می توانید حداکثر اندازه (در بایت) از پیام های SOAP که OTOBO پردازش می کند را مشخص کنید.',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            'اینجا شما می توانید حداکثر اندازه (در بایت) از پیام های SOAP که CareOnCloud ESM پردازش می کند را مشخص کنید.',
         'Encoding' => 'کدگذاری',
         'The character encoding for the SOAP message contents.' => 'رمزگذاری کاراکتر برای محتویات پیام SOAP.',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => '',
@@ -1344,6 +1456,7 @@ sub Data {
         # Template: AdminGenericInterfaceWebservice
         'Add Web Service' => '',
         'Edit Web Service' => '',
+        'Include invalid webservices' => '',
         'Clone Web Service' => '',
         'The name must be unique.' => 'این نام باید منحصر به فرد باشد.',
         'Clone' => 'کلون',
@@ -1370,10 +1483,10 @@ sub Data {
         'Provider transport' => 'ارائه دهنده حمل و نقل ',
         'Requester transport' => ' درخواست حمل و نقل',
         'Debug threshold' => 'آستانه اشکال زدایی',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            'در حالت ارائه دهنده، OTOBO ارائه می دهد خدمات وب که توسط سیستم های راه دور استفاده می شود.',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            'در حالت درخواست، OTOBO با استفاده از خدمات وب سیستم های از راه دور.',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            'در حالت ارائه دهنده، CareOnCloud ESM ارائه می دهد خدمات وب که توسط سیستم های راه دور استفاده می شود.',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            'در حالت درخواست، CareOnCloud ESM با استفاده از خدمات وب سیستم های از راه دور.',
         'Network transport' => 'انتقال شبکه ای',
         'Error Handling Modules' => '',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1410,11 +1523,61 @@ sub Data {
         'Group Management' => 'مدیریت گروه‌ها',
         'Add Group' => 'ایجاد گروه',
         'Edit Group' => 'ویرایش گروه',
+        'Include invalid groups' => '',
         'The admin group is to get in the admin area and the stats group to get stats area.' =>
             'گروه admin برای دسترسی به بخش مدیریت سیستم و گروه stats برای دسترسی به بخش گزارشات است.',
         'Create new groups to handle access permissions for different groups of agent (e. g. purchasing department, support department, sales department, ...). ' =>
             'گروه‌های جدید بسازید تا دسترسی‌ها را برای گروه‌های مختلف کارشناسان مدیریت کنید (مثال: بخش خرید، بخش پشتیبانی، بخش فروش و ...)',
         'It\'s useful for ASP solutions. ' => 'این برای راه‌حل‌های ASP مفید می‌باشد.',
+        'Here you can upload a configuration file to import groups to your system. The file needs to be in .yml format as exported by the group management module.' =>
+            '',
+        'Groups Import' => '',
+        'Groups Export' => '',
+
+        # Template: AdminGroupImportExport
+        'Here you can export a configuration file of groups to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Groups List' => '',
+
+        # Template: AdminImportExport
+        'Import/Export Management' => 'مدیریت ورود/صدور',
+        'Add template' => 'اضافه کردن قالب',
+        'Create a template to import and export object information.' => 'ساخت قالبی برای ورود و صدور اطلاعات آبجکت',
+        'To use this module, you need to install ITSMConfigurationManagement or any other package that provides back end for objects to be imported and exported.' =>
+            '',
+        'Number' => 'عدد',
+        'Format' => 'فرمت',
+        'Start Import' => 'شروع عملیات ورود',
+        'Start Export' => 'شروع عملیات صدور',
+        'Delete this template' => '',
+        'Step 1 of 5 - Edit common information' => '',
+        'Name is required!' => '',
+        'Object is required!' => 'آبجکت مورد نیاز است!',
+        'Format is required!' => 'قالب‌بندی مورد نیاز است!',
+        'Next' => 'بعدی',
+        'Step 2 of 5 - Edit object information' => '',
+        'Back' => 'بازگشت',
+        'Step 3 of 5 - Edit format information' => '',
+        'is required!' => '',
+        'Step 4 of 5 - Edit mapping information' => '',
+        'No map elements found.' => 'هیچ عنصر نگاشتی یافت نشد.',
+        'Up' => 'بالا',
+        'Down' => 'پائین',
+        'Add Mapping Element' => 'افزودن عنصر نگاشت',
+        'Step 5 of 5 - Edit search information' => '',
+        'Template Name' => 'نام قالب',
+        'Restrict export per search' => 'محدودسازی عملیات صدور به ازای جستجو',
+        'Finish' => 'پایان',
+        'Import information' => 'ورود اطلاعات',
+        'Source File' => 'فایل منبع',
+        'Import summary for %s' => '',
+        'Records' => '',
+        'Success' => '',
+        'Failed' => '',
+        'Duplicate names' => '',
+        'Last processed line number of import file' => '',
+        'Ok' => 'تایید',
+        'Do you really want to delete this template item?' => '',
 
         # Template: AdminLog
         'System Log' => 'وقایع ثبت شده سیستم',
@@ -1429,11 +1592,12 @@ sub Data {
         'Add Mail Account' => 'افزودن حساب ایمیل',
         'Edit Mail Account for host' => '',
         'and user account' => '',
+        'Include invalid Mail Accounts' => '',
         'Filter for Mail Accounts' => '',
         'Filter for mail accounts' => '',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             '',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
             '',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             '',
@@ -1442,6 +1606,9 @@ sub Data {
         'Delete account' => 'حذف حساب',
         'Fetch mail' => 'واکشی ایمیل',
         'Do you really want to delete this mail account?' => '',
+        'OIDC Account' => '',
+        'Select the' => '',
+        'Account to use for OAuth2 authentication.' => '',
         'Example: mail.example.com' => 'مثال: mail.example.com',
         'IMAP Folder' => 'پوشه IMAP',
         'Only modify this if you need to fetch mail from a different folder than INBOX.' =>
@@ -1464,6 +1631,7 @@ sub Data {
 
         # Template: AdminNotificationEvent
         'Ticket Notification Management' => 'درخواست مدیریت اطلاع رسانی',
+        'Include invalid notifications' => '',
         'Here you can upload a configuration file to import Ticket Notifications to your system. The file needs to be in .yml format as exported by the Ticket Notification module.' =>
             'در اینجا شما می توانید یک فایل پیکربندی برای واردات اطلاعیه بلیط را به سیستم خود را بارگذاری کنید. فایل نیاز به در فرمت .yml باشد که توسط ماژول اطلاع رسانی بلیط صادر می شود.',
         'Here you can choose which events will trigger this notification. An additional ticket filter can be applied below to only send for ticket with certain criteria.' =>
@@ -1502,15 +1670,125 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => '',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+        'You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            '',
+
+        # Template: AdminOAuthTokenStore
+        'OAuth2 Token Management (OIDC)' => '',
+        'OpenID Connect Functional OAuth2 Account Management' => '',
+        'Add Account' => '',
+        'Edit Account' => '',
+        'About OIDC Functional Accounts' => '',
+        'This page displays an overview of configured functional OAuth accounts and their corresponding token status.' =>
+            '',
+        'You can test your configuration with a click on the \'Renew\' button, which will try to fetch or refresh a new token.' =>
+            '',
+        'OIDC profiles to link your OIDC functional account to can be created here:' =>
+            '',
+        'OAuth2 OIDC profiles' => '',
+        'Delete Account' => '',
+        'OIDC Functional Accounts and their active OAuth2 Tokens' => '',
+        'Since you do not have any OIDC provider profiles configured, you cannot add an OAuth2 functional account. You have to first configure at least one OIDC provider profile here:' =>
+            '',
+        'OIDC profiles' => '',
+        'There are no OAuth2 accounts defined.' => '',
+        'Account Name' => '',
+        'Profile Name' => '',
+        'Flow' => '',
+        'Has Token?' => '',
+        'Refresh Token Expires' => '',
+        'Renew Token(s)' => '',
+        'Renew' => '',
+        'Add Invoker Account' => '',
+        'Edit Invoker Account' => '',
+        'The unique name for this account.' => '',
+        'OIDC Profile' => '',
+        'The OpenID Connect profile to link to this functional account. OIDC profiles can be configured here:' =>
+            '',
+        'Grant Type' => '',
+        'The OAuth2 grant_type to use for acquiring tokens for this account.' =>
+            '',
+        'Selecting \'authorization_code\' will redirect you to your OpenID Connect provider\'s login page to validate your account once you click \'Save\'.' =>
+            '',
+        'The username if grant type is \'password\'.' => '',
+        'The password to use if grant type is \'password\'.' => '',
+        'OAuth2 Scopes' => '',
+        'Space separate list of OAuth2 scopes to use. Usual values include openid, email, profile, and roles.' =>
+            '',
+        'Advanced Invoker Settings' => '',
+        'Resources' => '',
+        'Optional (space separated list) for the resource parameter if required. Leave empty unless instructed otherwise.' =>
+            '',
+        'Resource Parameter Name' => '',
+        'Name of the resource parameter to use. Defaults to \'resource\'. Do not change unless instructed.' =>
+            '',
+        'Token Type' => '',
+        'The token type to use for external API calls. Usually \'access_token\'.' =>
+            '',
+
+        # Template: AdminOIDCProfiles
+        'OpenID Connect Profiles' => '',
+        'OpenID Connect Provider Profiles Management' => '',
+        'Add Profile' => '',
+        'Edit Profile' => '',
+        'About OIDC Provider Profiles' => '',
+        'This page displays an overview of configured OIDC provider profiles.' =>
+            '',
+        'You can connect OIDC profiles with a OIDC functional account' =>
+            '',
+        'here' => '',
+        'Delete Profile' => '',
+        'OpenID Connect Provider Profiles for Outgoing Web Service Calls (GenericInterface Invoker)' =>
+            '',
+        'There are no OIDC provider profiles defined.' => '',
+        'Client ID' => '',
+        'Provider' => '',
+        'Add OIDC Provider Profile' => '',
+        'Edit OIDC Provider Profile' => '',
+        'Since you are using OIDC as authentication module, these values have been pre-populated with the OIDC provider configuration used for login.' =>
+            '',
+        'The unique name for this profile.' => '',
+        'Metadata URL.' => '',
+        'The well-known provider metadata URL.' => '',
+        'The client ID of your OAuth2 application.' => '',
+        'Client Secret' => '',
+        'The client secret of your OAuth2 application.' => '',
+        'Time in seconds for caching provider data.' => '',
+        'SSL Options (Optional)' => '',
+        'SSL Certificate' => '',
+        'SSL certificate path.' => '',
+        'SSL Certificate Key' => '',
+        'SSL certificate private key path.' => '',
+        'SSL Password' => '',
+        'The SSL password.' => '',
+        'SSL CA File' => '',
+        'SSL certificate authority file path.' => '',
+        'SSL CA Directory' => '',
+        'SSL certificate authority directory path.' => '',
+        'SSL Verify Hostname' => '',
+        'Enable or disable SSL hostname verification. Only disable for debugging purposes!' =>
+            '',
+        'SSL Verify Mode' => '',
+        'Enable or disable SSL verification. Only disable for debugging purposes!' =>
+            '',
+        'Misc Options (Optional)' => '',
+        'Use Nonce' => '',
+        'Rand Length' => '',
+        'Random string length used for state and nonce parameters. Default is \'22\'.' =>
+            '',
+        'Rand TTL' => '',
+        'Time-to-live for state and nonce in seconds. Default is \'300\' (5 min).' =>
+            '',
+        'Leeway' => '',
+        'Time drift allowance between servers to be allowed. Default \'2\' seconds.' =>
             '',
 
         # Template: AdminPGP
         'PGP Management' => 'مدیریت رمزگذاری PGP',
         'Add PGP Key' => 'افزودن کلید PGP',
         'PGP support is disabled' => 'پشتیبانی PGP غیر فعال است',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            'برای اینکه قادر به استفاده از PGP در OTOBO باشید، شما باید برای اولین بار آن را فعال کنید .',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            'برای اینکه قادر به استفاده از PGP در CareOnCloud ESM باشید، شما باید برای اولین بار آن را فعال کنید .',
         'Enable PGP support' => 'فعال کردن پشتیبانی از PGP',
         'Faulty PGP configuration' => 'پیکربندی PGP معیوب',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1535,21 +1813,21 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             'آیا واقعا می‌خواهید این بسته را مجددا نصب نمایید؟ تمام تغییرات دستی از بین خواهد رفت.',
         'Go to updating instructions' => '',
-        'Go to the OTOBO customer portal' => '',
+        'Go to the CareOnCloud ESM customer portal' => '',
         'package information' => '',
-        'Package installation requires a patch level update of OTOBO.' =>
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
             '',
-        'Package update requires a patch level update of OTOBO.' => '',
-        'Please note that your installed OTOBO version is %s.' => '',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
+        'Package update requires a patch level update of CareOnCloud ESM.' => '',
+        'Please note that your installed CareOnCloud ESM version is %s.' => '',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
             '',
-        'This package can only be installed on OTOBO version %s or older.' =>
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
             '',
-        'This package can only be installed on OTOBO version %s or newer.' =>
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
             '',
-        'Why should I keep OTOBO up to date?' => '',
+        'Why should I keep CareOnCloud ESM up to date?' => '',
         'You will receive updates about relevant security issues.' => '',
-        'You will receive updates for all other relevant OTOBO issues.' =>
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
             '',
         'How can I do a patch level update if I don’t have a contract?' =>
             '',
@@ -1566,7 +1844,7 @@ sub Data {
         'Install' => 'نصب',
         'Update repository information' => 'به‌روز رسانی اطلاعات مخزن',
         'Cloud services are currently disabled.' => 'خدمات ابر در حال حاضر غیر فعال است.',
-        'OTOBO Verify can not continue!' => '',
+        'CareOnCloud ESM Verify can not continue!' => '',
         'Enable cloud services' => 'فعال کردن سرویس های ابری',
         'Update all installed packages' => '',
         'Online Repository' => 'مخزن آنلاین بسته‌ها',
@@ -1574,7 +1852,7 @@ sub Data {
         'Action' => 'فعالیت',
         'Module documentation' => 'مستندات ماژول',
         'Local Repository' => 'مخزن محلی بسته‌ها',
-        'This package is verified by OTOBOverify (tm)' => 'این بسته توسط OTOBOverify تایید (TM)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'این بسته توسط CareOnCloud Verify تایید (TM)',
         'Uninstall' => 'حذف بسته',
         'Package not correctly deployed! Please reinstall the package.' =>
             'بسته به درستی قرار نگرفته! لطفا بسته رامجدد نصب کنید .',
@@ -1624,8 +1902,13 @@ sub Data {
         'PostMaster Filter Management' => 'مدیریت فیلتر پستی',
         'Add PostMaster Filter' => 'افزودن فیلتر پستی',
         'Edit PostMaster Filter' => 'ویرایش فیلتر پستی',
+        'Include invalid PostMaster Filters' => '',
         'Filter for PostMaster Filters' => '',
         'Filter for PostMaster filters' => '',
+        'Search through PostMaster filters' => '',
+        'Search all filter attributes' => '',
+        'Limit search to selected header fields' => '',
+        'Limit search to selected set fields' => '',
         'To dispatch or filter incoming emails based on email headers. Matching using Regular Expressions is also possible.' =>
             'برای توزیع یا پالایش ایمیل‌ها وارده بر اساس هدرهای ایمیل. تطابق بر اساس عبارات منظم نیز مجاز است.',
         'If you want to match only the email address, use EMAILADDRESS:info@example.com in From, To or Cc.' =>
@@ -1654,6 +1937,7 @@ sub Data {
         'Priority Management' => 'مدیریت اولویت‌ها',
         'Add Priority' => 'افزودن اولویت',
         'Edit Priority' => 'ویرایش الویت',
+        'Include invalid priorities' => '',
         'Filter for Priorities' => '',
         'Filter for priorities' => '',
         'This priority is present in a SysConfig setting, confirmation for updating settings to point to the new priority is needed!' =>
@@ -1662,12 +1946,13 @@ sub Data {
 
         # Template: AdminProcessManagement
         'Process Management' => 'مدیریت فرآیند',
+        'Include inactive processes' => '',
         'Filter for Processes' => 'فیلتر برای پردازش',
         'Filter for processes' => '',
         'Create New Process' => 'خلق فرآیند جدید',
         'Deploy All Processes' => 'استقرار تمام فرآیندها',
-        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by process management module.' =>
-            'در اینجا شما می توانید یک فایل پیکربندی برای وارد یک فرایند را به سیستم خود را بارگذاری کنید. فایل نیاز به در فرمت .yml باشد که توسط ماژول مدیریت فرایند صادر می شود.',
+        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by the process management module.' =>
+            '',
         'Upload process configuration' => ' روند  بارگذاری پیکربندی',
         'Import process configuration' => ' روند دریافت پیکربندی',
         'Ready2Adopt Processes' => '',
@@ -1691,6 +1976,7 @@ sub Data {
             'لطفا توجه داشته باشید، که در حال تغییر این فعالیت مراحل زیر را تحت تاثیر قرار',
         'Activity' => 'فعالیت',
         'Activity Name' => 'نام فعالیت',
+        'Global' => '',
         'Activity Dialogs' => 'تبادل فعالیت',
         'You can assign Activity Dialogs to this Activity by dragging the elements with the mouse from the left list to the right list.' =>
             'شما می توانید فعالیت تبادل به این فعالیت با کشیدن عناصر با ماوس از لیست سمت چپ به لیست راست اختصاص دهید.',
@@ -1717,6 +2003,10 @@ sub Data {
         'The selected required lock does not exist.' => 'انتخاب قفل مورد نیاز وجود ندارد.',
         'Submit Advice Text' => 'ارسال مشاوره متن',
         'Submit Button Text' => 'ارایه دادن دکمه متن',
+        'Input Field Definition' => '',
+        'Direct submit' => '',
+        'This property won\'t take effect because there are fields configured as visible.' =>
+            '',
         'You can assign Fields to this Activity Dialog by dragging the elements with the mouse from the left list to the right list.' =>
             'شما می توانید زمینه این فعالیت گفت و گو با کشیدن عناصر با ماوس از لیست سمت چپ به لیست راست اختصاص دهید.',
         'Filter available fields' => 'فیلتر زمینه های موجود',
@@ -1724,6 +2014,7 @@ sub Data {
         'Assigned Fields' => 'زمینه اختصاص داده',
         'Communication Channel' => '',
         'Is visible for customer' => '',
+        'Standard Templates' => '',
         'Display' => 'نمایش',
 
         # Template: AdminProcessManagementPath
@@ -1801,10 +2092,43 @@ sub Data {
         'Transition actions are not being used in this process.' => 'اقدامات انتقال هستند که در این فرایند استفاده نمی شود.',
 
         # Template: AdminProcessManagementTransition
-        'Please note that changing this transition will affect the following processes' =>
-            'لطفا توجه داشته باشید که در حال تغییر این انتقال را به مراحل زیر را تحت تاثیر قرار',
+        'Please note that changing this transition will affect the following processes:' =>
+            '',
         'Transition' => 'انتقال',
         'Transition Name' => 'نام انتقال',
+        'Transition Reference for "Fields" Settings' => '',
+        'Name of the ticket attribute that should be used for validation. In general, all attributes returned by the TicketGet function can be used.' =>
+            '',
+        'There are several possibilities to validate whether this transition is valid.' =>
+            '',
+        'Exact match' => 'مطابقت کامل',
+        'Value must exactly match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - negated' => '',
+        'Value must not match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the string specified in "Value".' =>
+            '',
+        'Regular Expression' => '',
+        'Value must contain a matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - negated' => '',
+        'Value must contain a non-matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the regular expression specified in "Value".' =>
+            '',
+        'Transition validation module' => 'انتقال ماژول اعتبار سنجی',
+        '"Name" is currently irrelevant, "Value" must contain the path to the module, usually Kernel::System::Process::Transition::<TA_Name>.' =>
+            '',
+        'Value must always contain a string or a regular expression used for comparison.' =>
+            '',
+        'Examples' => '',
+        'The process ticket should move to the next process step as soon as a status containing "closed" in its name is set. Therefore, configure Name="State", Type="Regular Expression" and Value="closed" (or the long form "^.*closed.*$").' =>
+            '',
+        'If a dynamic field should be used, configure Name="DynamicField_<FieldName>". To access a field inside a dynamic field of type "Set", the following syntax can be used: ' =>
+            '',
 
         # Template: AdminProcessManagementTransitionAction
         'Please note that changing this transition action will affect the following processes' =>
@@ -1820,8 +2144,13 @@ sub Data {
         'Queue Management' => '',
         'Add Queue' => 'افزودن صف درخواست',
         'Edit Queue' => 'ویرایش صف درخواست',
+        'Include invalid queues' => '',
         'Filter for Queues' => 'فیلتر برای صف‌های درخواست',
         'Filter for queues' => '',
+        'Here you can upload a configuration file to import queues to your system. The file needs to be in .yml format as exported by the queue management module.' =>
+            '',
+        'Queues Import' => '',
+        'Queues Export' => '',
         'A queue with this name already exists!' => 'یک صف با این نام وجود دارد.',
         'This queue is present in a SysConfig setting, confirmation for updating settings to point to the new queue is needed!' =>
             '',
@@ -1848,6 +2177,7 @@ sub Data {
             'اگر یک درخواست بسته شده و مشترک یک پیگیری ارسال کند، درخواست تحویل صاحب قدیمی خواهد شد.',
         'System address' => 'آدرس سیستم',
         'Will be the sender address of this queue for email answers.' => 'آدرس ارسال کننده این لیست برای پاسخ به ایمیل استفاده خواهد شد.',
+        'Is defined in Admin > Email Addresses.' => '',
         'Default sign key' => 'کلید امضای پیش‌فرض',
         'To use a sign key, PGP keys or S/MIME certificates need to be added with identifiers for selected queue system address.' =>
             '',
@@ -1855,6 +2185,10 @@ sub Data {
         'The salutation for email answers.' => 'عنوان برای پاسخ‌های ایمیلی',
         'Signature' => 'امضاء',
         'The signature for email answers.' => 'یامضاء برای پاسخ‌های ایمیل ',
+        'The business calendar for unlock time and the escalation times. No selection means that the default calendar is used.' =>
+            '',
+        'Is defined in Admin > SystemConfiguration > Core > Time (default calendar) or in calendars 1 through 9.' =>
+            '',
         'This queue is used in the following config settings:' => '',
 
         # Template: AdminQueueAutoResponse
@@ -1866,38 +2200,52 @@ sub Data {
         'Show All Queues' => '',
         'Auto Responses' => 'پاسخ خودکار',
 
+        # Template: AdminQueueImportExport
+        'Here you can export a configuration file of queues to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Queues List' => '',
+
         # Template: AdminQueueTemplates
         'Manage Template-Queue Relations' => 'مدیریت روابط الگو صف',
         'Filter for Templates' => 'فیلتر برای قالب',
         'Filter for templates' => '',
+        'Here you can upload a configuration file to import queue-template relations to your system. The file needs to be in .yml format as exported by the queue-template management module.' =>
+            '',
+        'Queue-Templates Import' => '',
+        'Queue-Templates Export' => '',
         'Templates' => 'قالب ها',
+
+        # Template: AdminQueueTemplatesImportExport
+        'Queue-Template Relations' => '',
+        'Here you can export a configuration file of queue-template relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
 
         # Template: AdminRegistration
         'System Registration Management' => 'سیستم مدیریت ثبت نام',
         'Edit System Registration' => '',
         'System Registration Overview' => '',
         'Register System' => '',
-        'Validate OTOBO-ID' => '',
+        'Validate CareOnCloud ID' => '',
         'Deregister System' => 'لغو ثبت سیستم',
         'Edit details' => 'جزئیات ویرایش',
         'Show transmitted data' => 'نمایش انتقال داده ها',
         'Deregister system' => 'سیستم لغو ثبت',
         'Overview of registered systems' => 'بررسی اجمالی از سیستم ثبت نام',
-        'This system is registered with OTOBO Team.' => '',
+        'This system is registered with CareOnCloud ESM Team.' => '',
         'System type' => 'نوع سیستم',
         'Unique ID' => 'شناسه منحصر به فرد',
         'Last communication with registration server' => 'ارتباط با سرور و زمان آخرین ثبت نام',
         'System Registration not Possible' => '',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            'لطفا توجه داشته باشید که شما می توانید از سیستم خود را برای ثبت نام اینجا اگر OTOBO دیمون را به درستی اجرا نیست!',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            'لطفا توجه داشته باشید که شما می توانید از سیستم خود را برای ثبت نام اینجا اگر CareOnCloud ESM دیمون را به درستی اجرا نیست!',
         'Instructions' => 'دستورعمل',
         'System Deregistration not Possible' => '',
-        'OTOBO-ID Login' => 'OTOBO-ID ورود',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
+        'CareOnCloud ID Login' => 'CareOnCloud ID ورود',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
             '',
         'Read more' => 'ادامه مطلب',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            'شما نیاز به ورود خود را با OTOBO-ID برای ثبت نام سیستم شما.',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            'شما نیاز به ورود خود را با CareOnCloud ID برای ثبت نام سیستم شما.',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'شما OTOBO-ID آدرس ایمیل شما استفاده می شود به ثبت نام در صفحه وب OTOBO.com است.',
         'Data Protection' => 'حفاظت از داده ها',
@@ -1908,45 +2256,44 @@ sub Data {
         'This is only the beginning!' => 'این تنها آغاز است!',
         'We will inform you about our new services and offerings soon.' =>
             'ما شما را در مورد خدمات و ارائه جدید ما به زودی اطلاع رسانی خواهد شد.',
-        'Can I use OTOBO without being registered?' => 'آیا می توانم از OTOBO  استفاده کنم بدون اینکه ثبت نام کنم؟',
+        'Can I use CareOnCloud ESM without being registered?' => 'آیا می توانم از CareOnCloud ESM  استفاده کنم بدون اینکه ثبت نام کنم؟',
         'System registration is optional.' => 'ثبت نام سیستم اختیاری است.',
-        'You can download and use OTOBO without being registered.' => 'شما می توانید دانلود کنید و استفاده کنید از  OTOBO بدون اینکه ثبت نام کنید .',
+        'You can download and use CareOnCloud ESM without being registered.' => 'شما می توانید دانلود کنید و استفاده کنید از  CareOnCloud ESM بدون اینکه ثبت نام کنید .',
         'Is it possible to deregister?' => 'آیا لغو ثبت ممکن است؟',
         'You can deregister at any time.' => 'شما می توانید در هر زمان لغو ثبت کنید .',
         'Which data is transfered when registering?' => 'که داده منتقل هنگام ثبت نام؟',
-        'A registered system sends the following data to OTOBO Team:' => '',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            'نام کامل دامنه (FQDN)، مدل OTOBO، پایگاه داده، سیستم عامل و نسخه پرل.',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => '',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            'نام کامل دامنه (FQDN)، مدل CareOnCloud ESM، پایگاه داده، سیستم عامل و نسخه پرل.',
         'Why do I have to provide a description for my system?' => 'چرا باید برای ارائه یک توصیف برای سیستم من؟',
         'The description of the system is optional.' => 'شرح سیستم اختیاری است.',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             'توضیحات و سیستم نوع را مشخص می کنید به شما کمک کند برای شناسایی و مدیریت جزئیات سیستم ثبت نام خود را.',
-        'How often does my OTOBO system send updates?' => 'هر چند وقت یکبار سیستم OTOBO من ارسال به روز رسانی؟',
+        'How often does my CareOnCloud ESM system send updates?' => 'هر چند وقت یکبار سیستم CareOnCloud ESM من ارسال به روز رسانی؟',
         'Your system will send updates to the registration server at regular intervals.' =>
             'سیستم خود را به روز رسانی به سرور ثبت نام در فواصل منظم ارسال می کند.',
         'Typically this would be around once every three days.' => 'به طور معمول این امر می تواند حدودا هر سه روز یکبار رخ دهد .',
         'If you deregister your system, you will lose these benefits:' =>
             'اگر شما سیستم خود را لغو ثبت کنید، شما این منافع را ازدست خواهید داد',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            'شما نیاز به ورود خود را با OTOBO-ID به لغو ثبت سیستم شما.',
-        'OTOBO-ID' => 'OTOBO-ID',
-        'You don\'t have an OTOBO-ID yet?' => 'شما هنوز یک OTOBO-ID ندارید؟',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            'شما نیاز به ورود خود را با CareOnCloud ID به لغو ثبت سیستم شما.',
+        'CareOnCloud ID' => 'CareOnCloud ID',
+        'You don\'t have a CareOnCloud ID yet?' => 'شما هنوز یک CareOnCloud ID ندارید؟',
         'Sign up now' => 'اکنون عضو شوید',
         'Forgot your password?' => 'رمز عبور خود را فراموش کرده اید',
         'Retrieve a new one' => ' یک رمز جدید بازیابی کنید',
-        'Next' => 'بعدی',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
             '',
         'Attribute' => 'صفت',
         'FQDN' => 'FQDN',
-        'OTOBO Version' => 'OTOBO نسخه',
+        'CareOnCloud ESM Version' => 'CareOnCloud ESM نسخه',
         'Operating System' => 'سیستم عامل',
         'Perl Version' => 'پرل نسخه',
         'Optional description of this system.' => 'توضیحات اختیاری این سیستم.',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
             '',
         'Register' => 'ثبت نام',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
             '',
         'Deregister' => 'لغو ثبت',
         'You can modify registration settings here.' => 'شما می توانید تنظیمات ثبت نام را اینجا تنظیم کنید.',
@@ -1963,32 +2310,59 @@ sub Data {
         'Role Management' => 'مدیریت نقش',
         'Add Role' => 'افزودن نقش',
         'Edit Role' => 'ویرایش نقش',
+        'Include invalid roles' => '',
         'Filter for Roles' => 'فیلتر برای نقش‌ها',
         'Filter for roles' => '',
         'Create a role and put groups in it. Then add the role to the users.' =>
             'یک نقش بسازید و گروه را در آن قرار دهید سپس نقش را به کاربرها اضافه کنید',
+        'Here you can upload a configuration file to import roles to your system. The file needs to be in .yml format as exported by the role management module.' =>
+            '',
+        'Roles Import' => '',
+        'Roles Export' => '',
         'There are no roles defined. Please use the \'Add\' button to create a new role.' =>
             'هیچ نقشی ساخته نشده است. لطفا از کلید «افزودن» برای ساخت نقش جدید استفاده نمایید.',
 
         # Template: AdminRoleGroup
         'Manage Role-Group Relations' => 'مدیریت روابط نقش-گروه',
+        'Here you can upload a configuration file to import role-group relations to your system. The file needs to be in .yml format as exported by the role-group management module.' =>
+            '',
+        'Role-Group Import' => '',
+        'Role-Group Export' => '',
         'Roles' => 'نقش‌ها',
         'Select the role:group permissions.' => 'نقش را انتخاب کنید: دسترسی‌های گروه.',
         'If nothing is selected, then there are no permissions in this group (tickets will not be available for the role).' =>
             'اگر چیزی انتخاب نشود، هیچ دسترسی در این گروه وجود نخواهد داشت (درخواست‌ها برای نقش در دسترس نخواهند بود)',
         'Toggle %s permission for all' => 'اعمال دسترسی %s برای همه',
+        'Read only access to the ticket in this group/queue. The ticket can be found via a search and its TicketZoom can be accessed. If used for a calendar, users can see and export all appointments in the calendar.' =>
+            '',
         'move_into' => 'انتقال به',
-        'Permissions to move tickets into this group/queue.' => 'مجوز انتقال درخواست به این گروه/لیست.',
+        'Permissions to move tickets into this group/queue. If used for a calendar, users can modify appointments in the calendar, but without changing the calendar selection.' =>
+            '',
         'create' => 'ساختن',
-        'Permissions to create tickets in this group/queue.' => 'مجوز ایجاد درخواست در این گروه/لیست.',
+        'Permissions to create tickets in this group/queue. If used for a calendar, users can create and delete appointments in the calendar.' =>
+            '',
         'note' => 'یادداشت',
-        'Permissions to add notes to tickets in this group/queue.' => 'دسترسی‌ها برای افزودن یادداشت به درخواست‌ها در این گروه/صف درخواست',
+        'Permissions to add notes to tickets in this group/queue. It also allows agents to be informed via the \'Inform Agents\' section in the Notes.' =>
+            '',
         'owner' => 'صاحب',
-        'Permissions to change the owner of tickets in this group/queue.' =>
-            'دسترسی‌ها برای تغییر صاحب درخواست‌ها در این گروه/صف درخواست',
+        'Permissions to be become the owner of tickets in this group/queue. One can be selected as an owner while creating a ticket or changing the owner. Being the owner gives full rw permissions to this ticket.' =>
+            '',
         'priority' => 'الویت',
-        'Permissions to change the ticket priority in this group/queue.' =>
-            'مجوز تغییر اولویت درخواست در این گروه/لیست.',
+        'Permissions to open the priority action in this group/queue.' =>
+            '',
+        'Full read and write access to the tickets in this group/queue. If used for a calendar, users can manage the calendar itself.' =>
+            '',
+
+        # Template: AdminRoleGroupImportExport
+        'Role-Group Relations' => '',
+        'Here you can export a configuration file of role-group relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Role-Group relations List' => '',
+
+        # Template: AdminRoleImportExport
+        'Here you can export a configuration file of roles to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Roles List' => '',
 
         # Template: AdminRoleUser
         'Manage Agent-Role Relations' => 'مدیریت روابط کارشناس-نقش',
@@ -2002,16 +2376,27 @@ sub Data {
         'SLA Management' => 'مدیریت SLA',
         'Edit SLA' => 'ویرایش SLA',
         'Add SLA' => 'افزودن توافقنامه SLA',
+        'Include invalid SLAs' => '',
         'Filter for SLAs' => '',
+        'Here you can upload a configuration file to import SLAs to your system. The file needs to be in .yml format as exported by the SLA management module.' =>
+            '',
+        'SLAs Import' => '',
+        'SLAs Export' => '',
         'Please write only numbers!' => 'لطفا فقط ارقام را بنویسید!',
+
+        # Template: AdminSLAImportExport
+        'SLAs' => '',
+        'Here you can export a configuration file of SLAs to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'SLAs List' => '',
 
         # Template: AdminSMIME
         'S/MIME Management' => 'مدیریت S/MIME',
         'Add Certificate' => 'افزودن گواهینامه',
         'Add Private Key' => 'افزودن کلید خصوصی',
         'SMIME support is disabled' => 'پشتیبانی SMIME غیر فعال است',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            'برای اینکه قادر به استفاده از SMIME در OTOBO، شما باید آن را فعال کنید برای اولین بار.',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            'برای اینکه قادر به استفاده از SMIME در CareOnCloud ESM، شما باید آن را فعال کنید برای اولین بار.',
         'Enable SMIME support' => 'فعال کردن پشتیبانی SMIME',
         'Faulty SMIME configuration' => 'پیکربندی SMIME معیوب',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2049,6 +2434,7 @@ sub Data {
         'Salutation Management' => 'مدیریت عنوان‌ها',
         'Add Salutation' => 'افزودن عنوان',
         'Edit Salutation' => 'ویرایش عنوان',
+        'Include invalid salutations' => '',
         'Filter for Salutations' => '',
         'Filter for salutations' => '',
         'e. g.' => 'به عنوان مثال',
@@ -2084,9 +2470,19 @@ sub Data {
         'Service Management' => 'مدیریت خدمات',
         'Add Service' => 'افزودن خدمت',
         'Edit Service' => 'ویرایش خدمت',
+        'Include invalid services' => '',
+        'Here you can upload a configuration file to import services to your system. The file needs to be in .yml format as exported by the service management module.' =>
+            '',
+        'Services Import' => '',
+        'Services Export' => '',
         'Service name maximum length is 200 characters (with Sub-service).' =>
             '',
         'Sub-service of' => 'زیرمجموعه‌ای از خدمت',
+
+        # Template: AdminServiceImportExport
+        'Here you can export a configuration file of services to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Services List' => '',
 
         # Template: AdminSession
         'Session Management' => 'مدیریت Session‌ها',
@@ -2108,6 +2504,7 @@ sub Data {
         'Signature Management' => 'مدیریت امضاء',
         'Add Signature' => 'افزودن امضاء',
         'Edit Signature' => 'ویرایش امضاء',
+        'Include invalid signatures' => '',
         'Filter for Signatures' => '',
         'Filter for signatures' => '',
         'Example signature' => 'امضای نمونه',
@@ -2116,6 +2513,7 @@ sub Data {
         'State Management' => 'مدیریت وضعیت',
         'Add State' => 'افزودن وضعیت',
         'Edit State' => 'ویرایش وضعیت',
+        'Include invalid states' => '',
         'Filter for States' => '',
         'Filter for states' => '',
         'Attention' => 'توجه',
@@ -2128,17 +2526,17 @@ sub Data {
         'This state is used in the following config settings:' => '',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => '',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => '',
         'Enable Cloud Services' => 'فعال کردن خدمات ابر',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
             '',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             'شما می توانید دستی ماشه داده پشتیبانی از ارسال با فشار دادن این دکمه:',
         'Send Update' => 'ارسال به روز رسانی',
         'Currently this data is only shown in this system.' => 'در حال حاضر این داده ها فقط در این سیستم نشان داده میشوند.',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
             '',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             'بسته نرم افزاری پشتیبانی (از جمله: اطلاعات ثبت نام سیستم، داده پشتیبانی، یک لیست از بسته های نصب شده و تمامی فایل های کد منبع به صورت محلی تغییر) را می توان با فشار دادن این دکمه تولید:',
@@ -2151,10 +2549,10 @@ sub Data {
         'The email address for this user is invalid, this option has been disabled.' =>
             'آدرس ایمیل برای این کاربر نامعتبر است، این گزینه غیرفعال شده است.',
         'Sending' => 'فرستنده',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
             '',
         'Download File' => 'دریافت فایل',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
             '',
         'Error: Support data could not be collected (%s).' => 'خطا: اطلاعات پشتیبانی نمی تواند جمع آوری  شود ( %s ).',
         'Details' => 'جزئیات',
@@ -2163,6 +2561,7 @@ sub Data {
         'System Email Addresses Management' => 'مدیریت آدرس‌های ایمیل سیستم',
         'Add System Email Address' => 'افزودن آدرس ایمیل سیستم',
         'Edit System Email Address' => 'ویرایش آدرس ایمیل سیستم',
+        'Include invalid system addresses' => '',
         'Add System Address' => '',
         'Filter for System Addresses' => '',
         'Filter for system addresses' => '',
@@ -2173,6 +2572,8 @@ sub Data {
         'This email address is already used as system email address.' => '',
         'The display name and email address will be shown on mail you send.' =>
             'نام نمایش داده شده و آدرس ایمیل در ایمیلی که شما می‌فرستید نمایش داده خواهد شد.',
+        'Only relevant if the postmaster mail account is set to dispatching by To-field.' =>
+            '',
         'This system address cannot be set to invalid.' => '',
         'This system address cannot be set to invalid, because it is used in one or more queue(s) or auto response(s).' =>
             '',
@@ -2187,7 +2588,7 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             '',
         'Search in all settings...' => '',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
             '',
 
         # Template: AdminSystemConfigurationDeployment
@@ -2282,6 +2683,7 @@ sub Data {
 
         # Template: AdminSystemMaintenance
         'System Maintenance Management' => 'سیستم مدیریت نگهداری و تعمیرات',
+        'Include invalid system maintenances' => '',
         'Schedule New System Maintenance' => 'برنامه تعمیر و نگهداری سیستم های جدید',
         'Filter for System Maintenances' => '',
         'Filter for system maintenances' => '',
@@ -2289,13 +2691,11 @@ sub Data {
             'برنامه ریزی یک دوره تعمیر و نگهداری سیستم برای اعلام عوامل و مشتریان سیستم پایین است برای یک دوره زمانی.',
         'Some time before this system maintenance starts the users will receive a notification on each screen announcing about this fact.' =>
             'چند وقت پیش از این تعمیر و نگهداری سیستم شروع می شود کاربران یک اطلاع رسانی در هر صفحه نمایش اعلام در مورد این واقعیت دریافت خواهید کرد.',
-        'Stop date' => 'تاریخ توقف',
         'Delete System Maintenance' => 'حذف تعمیر و نگهداری سیستم',
 
         # Template: AdminSystemMaintenanceEdit
         'Edit System Maintenance' => '',
         'Edit System Maintenance Information' => '',
-        'Date invalid!' => 'تاریخ نامعتبر!',
         'Login message' => 'پیام ورود',
         'This field must have less then 250 characters.' => '',
         'Show login message' => 'پیام ورود نمایش',
@@ -2310,9 +2710,15 @@ sub Data {
         'Template Management' => '',
         'Add Template' => 'افزودن قالب',
         'Edit Template' => 'ویرایش قالب',
+        'Include invalid templates' => '',
         'A template is a default text which helps your agents to write faster tickets, answers or forwards.' =>
             'قالب یک متن پیش فرض است که کمک می کند تا عوامل خود را برای ارسال سریعتر بلیط، پاسخ و یا جلو است.',
         'Don\'t forget to add new templates to queues.' => 'فراموش نکنید که برای اضافه کردن قالب جدید به صف.',
+        'Here you can upload a configuration file to import templates to your system. The file needs to be in .yml format as exported by the template management module.' =>
+            '',
+        'Templates Import' => '',
+        'Templates Export' => '',
+        'Pre-selected ticket state' => '',
         'Attachments' => 'پیوست‌ها',
         'Delete this entry' => 'حذف این ورودی',
         'Do you really want to delete this template?' => 'آیا واقعا مایل به حذف این قالب هستید؟',
@@ -2335,20 +2741,75 @@ sub Data {
         'Toggle active for all' => 'اعمال فعال برای همه',
         'Link %s to selected %s' => 'ارتباط %s به %s انتخاب شده',
 
+        # Template: AdminTemplateImportExport
+        'Here you can export a configuration file of templates to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Templates List' => '',
+
+        # Template: AdminTicketMask
+        'Ticket Mask Management' => '',
+        'Edit mask' => '',
+        'Change mask definition' => '',
+        'Ticket Mask' => '',
+        'Change' => '',
+        'Definition' => '',
+
+        # Template: AdminTranslations
+        'Translation Management' => '',
+        'Add Translations' => '',
+        'Edit Translations' => '',
+        'Language' => 'زبان',
+        'Deploy Translations' => '',
+        'Translation States' => '',
+        'New Translation' => '',
+        'Editing Translation' => '',
+        'Translation Marked for Deletion' => '',
+        'Deployed Translation' => '',
+        'Changes made here only affect the system behavior after your draft translations have been deployed. By deploying them, all changes will be written to the language files.' =>
+            '',
+        'Select an object to start adding translations. Depending on your selection, single or multiple translations can be added.' =>
+            '',
+        'Edit active translations using provided text fields!' => '',
+        'List custom translations for' => '',
+        'Draft Translations' => '',
+        'Filter for Draft Translations' => '',
+        'Active Translations' => '',
+        'Filter for Active Translations' => '',
+        'Content' => 'محتوا',
+        'Translation' => '',
+        'Marked for Deletion' => '',
+        'Edit Translation' => '',
+        'Overwrites CareOnCloud ESM translation' => '',
+        'Undo Delete Translation' => '',
+        'Delete Translation' => '',
+        'Translations' => '',
+
         # Template: AdminType
         'Type Management' => 'مدیریت نوع‌ها',
         'Add Type' => 'افزودن نوع',
         'Edit Type' => 'ویرایش درخواست',
+        'Include invalid types' => '',
         'Filter for Types' => '',
         'Filter for types' => '',
+        'Here you can upload a configuration file to import types to your system. The file needs to be in .yml format as exported by the type management module.' =>
+            '',
+        'Types Import' => '',
+        'Types Export' => '',
         'A type with this name already exists!' => 'یک نوع با این نام وجود دارد.',
         'This type is present in a SysConfig setting, confirmation for updating settings to point to the new type is needed!' =>
             '',
         'This type is used in the following config settings:' => '',
 
+        # Template: AdminTypeImportExport
+        'Types' => 'انواع',
+        'Here you can export a configuration file of types to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Types List' => '',
+
         # Template: AdminUser
         'Agent Management' => 'مدیریت کارشناس',
         'Edit Agent' => 'ویرایش کارشناس',
+        'Include invalid users' => '',
         'Edit personal preferences for this agent' => '',
         'Agents will be needed to handle tickets.' => 'کارشناسان نیاز دارند که به درخواست‌ها رسیدگی کنند.',
         'Don\'t forget to add a new agent to groups and/or roles!' => 'فراموش نکنید که یک کارشناس جدید را به گروه‌ها و/یا نقش‌ها بیفزایید!',
@@ -2368,6 +2829,13 @@ sub Data {
 
         # Template: AdminUserGroup
         'Manage Agent-Group Relations' => 'مدیریت روابط کارشناس-گروه',
+        'Permissions to move tickets into this group/queue.' => 'مجوز انتقال درخواست به این گروه/لیست.',
+        'Permissions to create tickets in this group/queue.' => 'مجوز ایجاد درخواست در این گروه/لیست.',
+        'Permissions to add notes to tickets in this group/queue.' => 'دسترسی‌ها برای افزودن یادداشت به درخواست‌ها در این گروه/صف درخواست',
+        'Permissions to change the owner of tickets in this group/queue.' =>
+            'دسترسی‌ها برای تغییر صاحب درخواست‌ها در این گروه/صف درخواست',
+        'Permissions to change the ticket priority in this group/queue.' =>
+            'مجوز تغییر اولویت درخواست در این گروه/لیست.',
 
         # Template: AgentAppointmentAgendaOverview
         'Agenda Overview' => '',
@@ -2483,17 +2951,22 @@ sub Data {
         'Customer User Information Center' => '',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'OTOBO شبح یک فرایند شبح که انجام وظایف ناهمزمان، به عنوان مثال تشدید بلیط تحریک، ارسال ایمیل، و غیره است',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            'یک شبح OTOBO در حال اجرا برای عملیات سیستم درست الزامی است.',
-        'Starting the OTOBO Daemon' => 'شروع OTOBO دیمون',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            'مطمئن شوید که فایل \' %s \' وجود دارد (بدون .dist پسوند). این cron در هر 5 دقیقه اگر OTOBO دیمون در حال اجرا است را بررسی کنید و شروع به آن در صورت نیاز.',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            'اعدام %s شروع به مطمئن شوید که به cron job از کاربر OTOBO، فعال هستند.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            'پس از 5 دقیقه، بررسی کنید که OTOBO دیمون در حال اجرا در سیستم ( \'وضعیت بن / otobo.Daemon.pl\').',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'CareOnCloud ESM شبح یک فرایند شبح که انجام وظایف ناهمزمان، به عنوان مثال تشدید بلیط تحریک، ارسال ایمیل، و غیره است',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            'یک شبح CareOnCloud ESM در حال اجرا برای عملیات سیستم درست الزامی است.',
+        'Starting the CareOnCloud ESM Daemon' => 'شروع CareOnCloud ESM دیمون',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            'مطمئن شوید که فایل \' %s \' وجود دارد (بدون .dist پسوند). این cron در هر 5 دقیقه اگر CareOnCloud ESM دیمون در حال اجرا است را بررسی کنید و شروع به آن در صورت نیاز.',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            'اعدام %s شروع به مطمئن شوید که به cron job از کاربر CareOnCloud ESM، فعال هستند.',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'پس از 5 دقیقه، بررسی کنید که CareOnCloud ESM دیمون در حال اجرا در سیستم ( \'وضعیت بن / careoncloud.Daemon.pl\').',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => '',
+        'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
+            '',
+        'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
+            '',
 
         # Template: AgentDashboard
         'Dashboard' => 'داشبورد',
@@ -2588,16 +3061,19 @@ sub Data {
         'until' => 'تا',
 
         # Template: AgentDynamicFieldDBDetailedSearch
-        'Back' => 'بازگشت',
         'Detailed search' => '',
         'Add an additional attribute' => '',
 
         # Template: AgentDynamicFieldDBDetails
         'Details view' => '',
 
+        # Template: AgentElasticsearchCommon
+        'Elasticsearch Results' => '',
+
         # Template: AgentElasticsearchQuickResult
         'Tickets' => 'درخواست‌ها',
         'ConfigItems' => '',
+        'FAQs' => '',
 
         # Template: AgentInfo
         'To accept some news, a license or some changes.' => 'برای پذیرش برخی اخبار، یک گواهینامه یا برخی تغییرات.',
@@ -2654,7 +3130,7 @@ sub Data {
         'This setting can currently not be saved.' => '',
         'This setting can currently not be saved' => '',
         'Save this setting' => '',
-        'Did you know? You can help translating OTOBO at %s.' => 'آیا میدانستید ؟ شما میتوانید در ترجمه OTOBO در %s به ما کمک کنید.',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => 'آیا میدانستید ؟ شما میتوانید در ترجمه CareOnCloud ESM در %s به ما کمک کنید.',
 
         # Template: SettingsList
         'Reset to default' => '',
@@ -2674,7 +3150,7 @@ sub Data {
         # Template: AgentStatisticsAdd
         'Statistics Management' => '',
         'Add Statistics' => '',
-        'Read more about statistics in OTOBO' => '',
+        'Read more about statistics in CareOnCloud ESM' => '',
         'Dynamic Matrix' => 'ماتریس پویا',
         'Each cell contains a singular data point.' => '',
         'Dynamic List' => 'لیست پویا',
@@ -2713,7 +3189,6 @@ sub Data {
             '',
         'Please note that you can only select charts as statistics output format if you configured one of the renderer binaries on your system.' =>
             '',
-        'Configure PhantomJS' => '',
         'Configure GoogleChrome' => '',
         'General settings' => '',
         'Automatic generation settings' => '',
@@ -2771,12 +3246,14 @@ sub Data {
         'Set Pending Time for %s%s%s' => 'تنظیم انتظار زمان برای %s %s %s',
         'Change Priority of %s%s%s' => 'تغییر اولویت %s %s %s',
         'Change Responsible of %s%s%s' => 'تغییر مسئول %s %s %s',
+        'Edit Article "%s" of %s%s%s' => '',
         'The ticket has been locked' => 'درخواست تحویل گرفته شده است',
         'Undo & close' => 'عملیات را برگردان و پنجره را ببند',
+        'All fields marked with an asterisk (*) are mandatory.' => 'همه فیلدهایی که با ستاره مشخص شده اند (*) الزامی است.',
         'Ticket Settings' => 'تنظیمات درخواست',
-        'Queue invalid.' => '',
         'Service invalid.' => 'سرویس نامعتبر',
         'SLA invalid.' => '',
+        'Queue invalid.' => '',
         'New Owner' => 'صاحب جدید',
         'Please set a new owner!' => 'لطفا یک صاحب جدید مشخص نمایید!',
         'Owner invalid.' => '',
@@ -2796,6 +3273,12 @@ sub Data {
         'Text Template' => 'قالب متن',
         'Setting a template will overwrite any text or attachment.' => 'تنظیم یک قالب هر گونه متن یا پیوست بازنویسی.',
         'Invalid time!' => 'زمان نا معتبر',
+
+        # Template: AgentTicketArticleEdit
+        'Edit Article' => '',
+
+        # Template: AgentTicketArticleVersionView
+        'Viewing Article Version#%s of current Article: #%s %s' => '',
 
         # Template: AgentTicketBounce
         'Bounce %s%s%s' => 'پریدن %s %s %s',
@@ -2846,7 +3329,6 @@ sub Data {
 
         # Template: AgentTicketEmail
         'Create New Email Ticket' => 'ساخت درخواست ایمیلی جدید',
-        'Example Template' => 'به عنوان مثال قالب',
         'To customer user' => 'به کاربران مشتری',
         'Please include at least one customer user for the ticket.' => 'لطفا حداقل یک کاربر مشتری برای درخواست قرار دهید',
         'Select this customer as the main customer.' => 'این مشتری را به عنوان مشتری اصلی انتخاب کنید.',
@@ -2902,6 +3384,7 @@ sub Data {
         'First Response Time' => 'زمان اولین پاسخ',
         'Update Time' => 'زمان بروز رسانی',
         'Solution Time' => 'زمان ارائه راهکار',
+        'Accounted Time' => '',
         'Move ticket to a different queue' => 'انتقال درخواست یه صف درخواست دیگر',
         'Change queue' => 'تغییر لیست درخواست',
 
@@ -2922,8 +3405,6 @@ sub Data {
         'Create New Phone Ticket' => 'ساخت درخواست تلفنی جدید',
         'Please include at least one customer for the ticket.' => 'لطفا حداقل یک مشتری برای درخواست قراردهید',
         'To queue' => 'به صف درخواست',
-        'Chat protocol' => 'موافقت اولیه چت',
-        'The chat will be appended as a separate article.' => 'چت به عنوان یک مقاله جداگانه اضافه خواهد شد.',
 
         # Template: AgentTicketPhoneCommon
         'Phone Call for %s%s%s' => 'تماس بگیرید تلفن تماس برای %s %s %s',
@@ -2990,12 +3471,15 @@ sub Data {
         'No.' => 'خیر',
         'Unread articles' => 'مطالب خوانده نشده',
         'Via' => '',
+        'Article Edited' => '',
+        'Time Units' => '',
         'Important' => 'مهم',
         'Unread Article!' => 'مطلب خوانده نشده!',
         'Incoming message' => 'پیغام وارده',
         'Outgoing message' => 'پیغام ارسالی',
         'Internal message' => 'پیغام داخلی',
         'Sending of this message has failed.' => '',
+        'The article was edited' => '',
         'Resize' => 'تغییر اندازه',
         'Mark this article as read' => 'علامت گذاری  این مقاله به عنوان خوانده شده',
         'Show Full Text' => 'نمایش کامل متن ',
@@ -3067,10 +3551,11 @@ sub Data {
         'Ticket Search' => '',
         'New Ticket' => 'درخواست جدید',
 
+        # Template: CustomerElasticsearchQuickResult
+        'FAQ#' => '',
+
         # Template: CustomerError
         'An Error Occurred' => 'خطا',
-        'Error Details' => 'جزئیات خطا',
-        'Traceback' => 'بازبینی',
 
         # Template: CustomerFooterJS
         '%s detected possible network issues. You could either try reloading this page manually or wait until your browser has re-established the connection on its own.' =>
@@ -3128,7 +3613,7 @@ sub Data {
         'Click here for an unfiltered list of all your tickets.' => '',
 
         # Template: CustomerTicketMessage
-        'Issue a new Ticket' => '',
+        'Create a new Ticket' => '',
         'Service level agreement' => 'توافقنامه سطح سرویس',
 
         # Template: CustomerTicketOverview
@@ -3137,11 +3622,11 @@ sub Data {
         'Sort' => '',
 
         # Template: CustomerTicketSearch
+        'Search for a Ticket' => '',
         'Profile' => 'مشخصات کاربری',
         'e. g. 10*5155 or 105658*' => 'به عنوان مثال 10*5155 یا 105658*',
         'CustomerID' => 'کد اشتراک',
         'Fulltext Search in Tickets (e. g. "John*n" or "Will*")' => '',
-        'Types' => 'انواع',
         'Time Restrictions' => '',
         'No time settings' => 'بدون تنظیمات زمان',
         'All' => 'همه',
@@ -3151,9 +3636,8 @@ sub Data {
         'Only tickets created between' => 'فقط درخواست‌های ساخته شده بین',
         'Ticket Archive System' => '',
         'Save Search as Template?' => '',
-        'Save as Template?' => 'ذخیره به عنوان قالب؟',
         'Save as Template' => 'ذخیره به عنوان الگو',
-        'Template Name' => 'نام قالب',
+        'Save as Template?' => 'ذخیره به عنوان قالب؟',
         'Pick a profile name' => 'انتخاب یک نام مشخصات',
         'Output to' => 'خروجی به',
 
@@ -3165,9 +3649,6 @@ sub Data {
         # Template: CustomerTicketZoom
         'Reply' => 'پاسخ',
         'Discard' => '',
-        'Ticket Information' => 'اطلاعات درخواست',
-        'Categories' => '',
-        'Further actions' => '',
 
         # Template: Chat
         'Expand article' => 'گسترش مطلب',
@@ -3175,18 +3656,22 @@ sub Data {
         # Template: MIMEBase
         'Article Information' => '',
 
+        # Template: TicketInfo
+        'Ticket Information' => 'اطلاعات درخواست',
+        'Categories' => '',
+        'Further actions' => '',
+
         # Template: CustomerWarning
         'Warning' => 'اخطار',
 
         # Template: TileNewTicket
-        'Issue%sa ticket' => '',
+        'Create%sa ticket' => '',
 
         # Template: DashboardEventsTicketCalendar
         'Event Information' => 'اطلاعات رویداد',
 
         # Template: Error
         'Send a bugreport' => 'ارسال گزارش خطا',
-        'Expand' => 'گسترش',
 
         # Template: Footer
         'Powered by %s' => '',
@@ -3217,7 +3702,6 @@ sub Data {
         'License' => 'مجوز بهره برداری سیستم',
         'Database Settings' => 'تنظیمات پایگاه داده',
         'General Specifications and Mail Settings' => 'مشخصات عمومی و تنظیمات ایمیل',
-        'Finish' => 'پایان',
         'Welcome to %s' => 'خوش آمدید به %s',
         'Germany' => '',
         'Phone' => 'تلفن',
@@ -3257,8 +3741,8 @@ sub Data {
 
         # Template: InstallerDBStart
         'Install Type' => ' نوع نصب',
-        'Create a new database for OTOBO' => 'ایجاد یک پایگاه داده جدید برای OTOBO',
-        'Use an existing database for OTOBO' => 'استفاده از یک پایگاه داده موجود برای OTOBO',
+        'Create a new database for CareOnCloud ESM' => 'ایجاد یک پایگاه داده جدید برای CareOnCloud ESM',
+        'Use an existing database for CareOnCloud ESM' => 'استفاده از یک پایگاه داده موجود برای CareOnCloud ESM',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3269,15 +3753,18 @@ sub Data {
         'Database check successful.' => 'کنترل پایگاه داده با موفقیت انجام شد.',
         'Database User' => 'پایگاه داده کاربر',
         'New' => 'جدید',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
             'یک کاربر برای پایگاه داده با دسترسی‌های محدود برای این سیستم ساخته خواهند شد.',
         'Generated password' => 'رمز عبور تولید شده',
         'Repeat Password' => 'تکرار رمز عبور ',
         'Passwords do not match' => 'رمزهای ورود مطابقت ندارند',
 
+        # Template: InstallerDBmysql
+        'Authentication Plugin' => '',
+
         # Template: InstallerFinish
         'Start page' => 'صفحه شروع',
-        'Your OTOBO Team' => 'تیم نرم‌افزار',
+        'Your CareOnCloud ESM Team' => 'تیم نرم‌افزار',
 
         # Template: InstallerLicense
         'Don\'t accept license' => 'عدم تائید مجوز بهره برداری',
@@ -3307,9 +3794,9 @@ sub Data {
             'آدرس‌های ایمیل که به صورت دستی وارده شده در برابر رکوردهای MX یافت شده در DNS کنترل می‌شود. اگر DNS شما کند است و یا آدرس‌های عمومی را عبور نمی‌دهد از این گزینه استفاده نکنید.',
         'Elasticsearch' => '',
         'Initialize Elasticsearch' => '',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
             '',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
             '',
 
         # Template: LinkObject
@@ -3339,15 +3826,15 @@ sub Data {
         'Clean up and finish' => '',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
             '',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
             'برای استفاده از سیستم خط زیر را در Command Prompt اجرا نمائید.',
         'Restart your webserver' => 'سرور وب خود را راه اندازی مجدد نمائید',
-        'After doing so your OTOBO is up and running.' => 'بعد از انجام سیستم قابل استفاده خواهد بود',
+        'After doing so your CareOnCloud ESM is up and running.' => 'بعد از انجام سیستم قابل استفاده خواهد بود',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
             '',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             '',
@@ -3357,21 +3844,19 @@ sub Data {
             '',
         'All entered passwords are cached until the migration is finished.' =>
             '',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
             '',
-        'If you need support, just ask our experts – either at' => '',
-        'OTOBO forum' => '',
-        'or directly via mail to' => '',
+        'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
+            '',
         'Cached data found' => '',
         'You will continue where you aborted the migration last time. If you do not want this, please discard your previous progress.' =>
             '',
-        'An error occured.' => '',
+        'An error occurred.' => '',
         'Discard previous progress' => '',
         'Insecure HTTP connection' => '',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
             '',
         'Continue anyways :(' => '',
-        ' Continue anyways :(' => '',
 
         # Template: OTRSDBSettings
         'DSN' => '',
@@ -3393,8 +3878,8 @@ sub Data {
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => '',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            'با عرض پوزش، اما این ویژگی از OTOBO در حال حاضر برای دستگاه های تلفن همراه در دسترس نیست. اگر شما می خواهم به استفاده از آن، شما می توانید هر دو سوئیچ به حالت دسکتاپ و یا استفاده از دستگاه دسکتاپ خود را به طور منظم.',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            'با عرض پوزش، اما این ویژگی از CareOnCloud ESM در حال حاضر برای دستگاه های تلفن همراه در دسترس نیست. اگر شما می خواهم به استفاده از آن، شما می توانید هر دو سوئیچ به حالت دسکتاپ و یا استفاده از دستگاه دسکتاپ خود را به طور منظم.',
 
         # Template: Motd
         'Message of the Day' => 'پیام روز',
@@ -3434,8 +3919,8 @@ sub Data {
 
         # Template: PublicDefault
         'Welcome' => 'خوش آمدید',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            'این به طور پیش فرض رابط عمومی OTOBO موجود است! هیچ پارامتر action داده شده وجود دارد.',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            'این به طور پیش فرض رابط عمومی CareOnCloud ESM موجود است! هیچ پارامتر action داده شده وجود دارد.',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             'شما می توانید یک ماژول سفارشی عمومی (از طریق مدیر بسته) نصب، به عنوان مثال ماژول پرسش و پاسخ، که دارای یک رابط عمومی است.',
 
@@ -3487,7 +3972,6 @@ sub Data {
             'هنوز تغییرات را به این عنصر اجازه نمی دهد که آمار تولید می شود.',
 
         # Template: StatsParamsWidget
-        'Format' => 'فرمت',
         'Exchange Axis' => 'جابجایی محورها',
         'Configurable Params of Static Stat' => '',
         'No element selected.' => 'هیچ گزینه ای انتخاب نشده است',
@@ -3532,7 +4016,6 @@ sub Data {
         'Disable this setting, so it is no longer effective' => '',
         'Disable' => '',
         'Enable this setting, so it becomes effective' => '',
-        'Enable' => '',
         'Reset this setting to its default state' => '',
         'Reset setting' => '',
         'Allow users to adapt this setting from within their personal preferences' =>
@@ -3593,10 +4076,15 @@ sub Data {
         'Delete user\'s value.' => '',
 
         # Template: Test
-        'OTOBO Test Page' => 'صفحه آزمایش سیستم',
+        'CareOnCloud ESM Test Page' => 'صفحه آزمایش سیستم',
         'Unlock' => 'تحویل دادن',
         'Welcome %s %s' => '%s - %s',
         'Counter' => 'شمارنده',
+
+        # Template: TranslationsTable
+        'Filter Content' => '',
+        'Filter for Translations' => '',
+        'No content available to translate.' => '',
 
         # Template: Warning
         'Go back to the previous page' => 'به صفحه قبل بازگرد',
@@ -3633,7 +4121,7 @@ sub Data {
 
         # JS Template: PackageResolve
         'Package' => '',
-        'Uninstall from OTOBO' => '',
+        'Uninstall from CareOnCloud ESM' => '',
         'Ignore' => '',
         'Migrate' => '',
 
@@ -3681,16 +4169,24 @@ sub Data {
         'Country' => 'کشور',
         'Mr.' => 'آقای',
         'Mrs.' => 'خانم',
+        'Manager' => '',
         'Address' => 'نشانی',
         'View system log messages.' => 'نمایش پیغام‌های ثبت وقایع سیستم',
         'Edit the system configuration settings.' => 'ویرایش تنظیمات پیکربندی سیستم',
         'Update and extend your system with software packages.' => 'به روزرسانی و گسترش سیستم به کمک بسته‌های نرم‌افزاری',
 
+        # Perl Module: Kernel/GenericInterface/Transport/HTTP/REST.pm
+        'Error fetching the OAuth2 Token' => '',
+        'Attached OAuth2 Bearer Token' => '',
+
+        # Perl Module: Kernel/Language.pm
+        '(in process)' => '(در حال انجام)',
+
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             'اطلاعات ACL از پایگاه اطلاع داده  هماهنگی با پیکربندی سیستم نیست، لطفا تمام ACL ها را مستقر کنید . ',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'ACL ها نمی تواند به دلیل یک خطای ناشناخته وارد شود، لطفابرای اطلاعات بیشتر OTOBO سیاهه های مربوط را بررسی کنید ',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'ACL ها نمی تواند به دلیل یک خطای ناشناخته وارد شود، لطفابرای اطلاعات بیشتر CareOnCloud ESM سیاهه های مربوط را بررسی کنید ',
         'The following ACLs have been added successfully: %s' => 'استفاده از ACL زیر با موفقیت اضافه شده است: %s',
         'The following ACLs have been updated successfully: %s' => 'استفاده از ACL زیر با موفقیت به روز شده است: %s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
@@ -3706,7 +4202,6 @@ sub Data {
         '%s (copy) %s' => '',
         'Please note that ACL restrictions will be ignored for the Superuser account (UserID 1).' =>
             '',
-        'Exact match' => 'مطابقت کامل',
         'Negated exact match' => 'مطابقت دقیق نفی',
         'Regular expression' => 'عبارت منظم',
         'Regular expression (ignore case)' => 'عبارت منظم (چشم پوشی مورد)',
@@ -3734,6 +4229,7 @@ sub Data {
         '+15 minutes' => '',
         '+30 minutes' => '',
         '+1 hour' => '',
+        '+1 day' => '',
 
         # Perl Module: Kernel/Modules/AdminAppointmentImport.pm
         'No permissions' => '',
@@ -3748,8 +4244,8 @@ sub Data {
         'Unknown Notification %s!' => 'هشدار نامشخص  از طریق %s !',
         '%s (copy)' => '',
         'There was an error creating the Notification' => 'خطایی در ایجاد هشدار  وجود دارد',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'اطلاعیه نمی تواند به دلیل یک خطای ناشناخته وارد شود، لطفا OTOBO سیاهه های مربوط را بررسی کنید برای اطلاعات بیشتر',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'اطلاعیه نمی تواند به دلیل یک خطای ناشناخته وارد شود، لطفا CareOnCloud ESM سیاهه های مربوط را بررسی کنید برای اطلاعات بیشتر',
         'The following Notifications have been added successfully: %s' =>
             'این اعلانها با موفقیت اضافه شده است: %s',
         'The following Notifications have been updated successfully: %s' =>
@@ -3764,6 +4260,7 @@ sub Data {
             '',
 
         # Perl Module: Kernel/Modules/AdminAttachment.pm
+        'No permission to edit this attachment.' => '',
         'Attachment added!' => 'پیوست افزوده شد!',
 
         # Perl Module: Kernel/Modules/AdminAutoResponse.pm
@@ -3782,7 +4279,6 @@ sub Data {
         'Invalid StartTime: %s!' => '',
         'Successful' => '',
         'Processing' => '',
-        'Failed' => '',
         'Invalid Filter: %s!' => 'فیلتر نامعتبر: %s !',
         'Less than a second' => '',
         'sorted descending' => 'مرتب شده نزولی',
@@ -3820,6 +4316,24 @@ sub Data {
         'Customer Company %s already exists!' => 'ضوابط شرکت %s قبل وجود دارد!',
         'Customer company added!' => 'شرکت مشترک افزوده شد.',
 
+        # Perl Module: Kernel/Modules/AdminCustomerDashboardInfoTile.pm
+        'Start date shouldn\'t be defined after Stop date!' => 'نباید تاریخ شروع  پس از تاریخ توقف تعریف  شود!',
+        'Name is missing!' => '',
+        'Content is missing!' => '',
+        'ValidID is missing!' => '',
+        'Group is missing!' => '',
+        'There was an error creating the info tile entry' => '',
+        'Need ID!' => '',
+        'This Entry does not exist, or you don\'t have permissions to access it in its current state.' =>
+            '',
+        'Could not get data for ID %s' => '',
+        'Info tile entry was added successfully!' => '',
+        'Info tile entry was updated successfully!' => '',
+        'Session has been killed!' => 'جلسه کشته شده است!',
+        'All sessions have been killed, except for your own.' => 'تمام جلسات کشته شده اند، به جز خود شما.',
+        'There was an error updating the info tile entry' => '',
+        'It was not possible to delete the info tile entry: %s!' => '',
+
         # Perl Module: Kernel/Modules/AdminCustomerGroup.pm
         'No configuration for \'CustomerGroupPermissionContext\' found!' =>
             '',
@@ -3854,9 +4368,9 @@ sub Data {
         'Undefined subaction.' => 'subaction تعریف نشده است.',
         'Need %s' => 'نیاز %s',
         'Add %s field' => '',
+        'The field must be numeric.' => 'زمینه باید عدد باشد.',
         'The field does not contain only ASCII letters and numbers.' => 'میدان آیا فقط شامل حروف ASCII و اعداد نیست.',
         'There is another field with the same name.' => ' یکی دیگر از این زمینه با همین نام وجود دارد.',
-        'The field must be numeric.' => 'زمینه باید عدد باشد.',
         'Need ValidID' => 'نیاز ValidID',
         'Could not create the new field' => 'نمی توانید زمینه جدید ایجاد کنید',
         'Need ID' => 'نیاز ID',
@@ -3884,12 +4398,48 @@ sub Data {
         'An element is used as parent element, but not included itself. Please include it.' =>
             '',
 
+        # Perl Module: Kernel/Modules/AdminDynamicFieldLens.pm
+        'The referenced dynamic field' => '',
+        'Select the dynamic field that references an object' => '',
+        'The attribute of the referenced object' => '',
+        'Select the attribute dynamic field that references an object' =>
+            '',
+        'A field of type %s is currently not usable as lens attribute.' =>
+            '',
+        'Field %s is not a reference field.' => '',
+        'Not a valid dynamic field.' => '',
+
         # Perl Module: Kernel/Modules/AdminDynamicFieldScreen.pm
         'Settings were saved.' => '',
         'System was not able to save the setting!' => '',
         'Setting is locked by another user!' => '',
         'System was not able to reset the setting!' => '',
         'Settings were reset.' => '',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldScript.pm
+        'Need valid field driver.' => '',
+        'Erroneous value in RequiredArgs.' => '',
+        'Erroneous value in PreviewTriggers.' => '',
+        'Erroneous value in StorageTriggers.' => '',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldSet.pm
+        'Missing Dynamic Field.' => '',
+        'No valid dynamic field "%s".' => '',
+        'The dynamic field type "%s" of dynamic field "%s" can not be used in sets.' =>
+            '',
+        'The dynamic field "%s" can not be used in sets as it is either a Set field or a Lens field pointing to a Set field.' =>
+            '',
+        'The dynamic field "%s" is already in use in a ticket mask.' => '',
+        'The object type of the dynamic field "%s" does not match the object type of the Set field.' =>
+            '',
+        'Misconfigured Grid - need Rows as Array!' => '',
+        'Misconfigured Grid - need Columns as integer > 0!' => '',
+        'Misconfigured Grid - Rows can\'t be empty!' => '',
+        'Misconfigured Grid - Rows must contain entries with key \'DF\'!' =>
+            '',
+        'Missing Dynamic Field or Grid.' => '',
+        'The field must be a valid YAML containing an array of dynamic fields.' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminEmail.pm
         'Select at least one recipient.' => 'حداقل یک گیرنده را انتخاب کنید.',
@@ -4023,6 +4573,8 @@ sub Data {
             '',
         'Outgoing error handler data after error handling (ProviderErrorHandlingOutput)' =>
             '',
+        'Disabled' => '',
+        'Enabled' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceOperationDefault.pm
         'Could not determine config for operation %s' => 'می تواند پیکربندی برای عملیات مشخص نیست %s',
@@ -4032,6 +4584,8 @@ sub Data {
         'Need valid Subaction!' => '',
         'This field should be an integer.' => '',
         'File or Directory not found.' => '',
+        'This key is already used' => '',
+        'This key is not allowed' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
         'There is another web service with the same name.' => 'یکی دیگر از خدمات وب سایت با همین نام وجود دارد.',
@@ -4043,12 +4597,12 @@ sub Data {
         'Could not load %s.' => '',
         'Could not read %s!' => 'قادر به خواندن نیست %s !',
         'Need a file to import!' => 'نیاز به یک فایل برای دریافت است .',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            'فایل وارد شده است محتوای YAML معتبر نیست! لطفا وارد سیستم شوید OTOBO برای جزئیات بیشتر',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            'فایل وارد شده است محتوای YAML معتبر نیست! لطفا وارد سیستم شوید CareOnCloud ESM برای جزئیات بیشتر',
         'Web service "%s" deleted!' => 'وب سرویس \ " %s " حذف!',
-        'OTOBO as provider' => 'OTOBO به عنوان ارائه دهنده',
+        'CareOnCloud ESM as provider' => 'CareOnCloud ESM به عنوان ارائه دهنده',
         'Operations' => '',
-        'OTOBO as requester' => 'OTOBO به عنوان درخواست',
+        'CareOnCloud ESM as requester' => 'CareOnCloud ESM به عنوان درخواست',
         'Invokers' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4058,6 +4612,23 @@ sub Data {
         # Perl Module: Kernel/Modules/AdminGroup.pm
         'Group updated!' => 'گروه به روزرسانی شد!',
 
+        # Perl Module: Kernel/Modules/AdminImportExport.pm
+        'No object backend found!' => '',
+        'No format backend found!' => '',
+        'Template not found!' => '',
+        'Can\'t insert/update template!' => '',
+        'Needed TemplateID!' => '',
+        'Error occurred. Import impossible! See Syslog for details.' => '',
+        'Error occurred. Export impossible! See Syslog for details.' => '',
+        'Template List' => '',
+        'number' => '',
+        'number bigger than zero' => '',
+        'integer' => '',
+        'integer bigger than zero' => '',
+        'Element required, please insert data' => '',
+        'Invalid data, please insert a valid %s' => '',
+        'Format not found!' => '',
+
         # Perl Module: Kernel/Modules/AdminMailAccount.pm
         'Mail account added!' => 'حساب ایمیل افزوده شد.',
         'Email account fetch already fetched by another process. Please try again later!' =>
@@ -4066,6 +4637,9 @@ sub Data {
         'Dispatching by selected Queue.' => 'ارسال بوسیله لیست انتخاب شده',
 
         # Perl Module: Kernel/Modules/AdminNotificationEvent.pm
+        'No permission to edit this ticket notification.' => '',
+        'You need %s permissions!' => 'شما نیاز %s مجوز!',
+        'Agent who created the first article' => '',
         'Agent who created the ticket' => '',
         'Agent who owns the ticket' => 'عامل کسیکه صاحب درخواست',
         'Agent who is responsible for the ticket' => 'عامل کسیکه مسئول درخواست است',
@@ -4078,8 +4652,35 @@ sub Data {
         'Customer user of the ticket' => '',
         'All recipients of the first article' => '',
         'All recipients of the last article' => '',
+        'Only send within working hours' => '',
+        'Only send outside working hours' => '',
         'Invisible to customer' => '',
         'Visible to customer' => '',
+
+        # Perl Module: Kernel/Modules/AdminOAuthTokenStore.pm
+        'Account Name is missing!' => '',
+        'Username is required!' => '',
+        'Password is required!' => '',
+        'Account Name is taken!' => '',
+        'Error creating/updating %s!' => '',
+        'Unable to generate OIDC provider authentication URL for login. Invalid OIDC configuration!' =>
+            '',
+        'Account %s deleted!' => '',
+        'Token %s updated!' => '',
+        'Invalid OAuth State!' => '',
+        'Invalid Account %s for Token!' => '',
+        'Invalid Issuer %s for Token %s!' => '',
+
+        # Perl Module: Kernel/Modules/AdminOIDCProfiles.pm
+        'Profile Name is missing!' => '',
+        'Provider metadata url is missing!' => '',
+        'Provider client id is missing!' => '',
+        'Provider client secret is missing!' => '',
+        'Profile Name is taken!' => '',
+        'Error creating/updating Profile %s!' => '',
+        'Profile %s deleted!' => '',
+        'Profile %s could not be deleted - do you have any Functional Accounts referencing this Profile?' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminPGP.pm
         'PGP environment is not working. Please check log for more info!' =>
@@ -4095,7 +4696,7 @@ sub Data {
         'Can\'t read %s!' => 'نمی تواند بخواند %s !',
         'File is OK' => 'فایل خوب است',
         'Package has locally modified files.' => 'بسته بندی به صورت محلی فایل های اصلاح شده.',
-        'Package not verified by the OTOBO Team!' => '',
+        'Package not verified by the CareOnCloud ESM Team!' => '',
         'Not Started' => '',
         'Updated' => '',
         'Already up-to-date' => '',
@@ -4116,9 +4717,9 @@ sub Data {
             '',
         'Package not verified due a communication issue with verification server!' =>
             'بسته بندی با توجه به یک موضوع ارتباط با سرور تأیید، تأیید نمی کند!',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => 'نمی توانید به OTOBO ویژگی اضافه کردن در لیست سرور اتصال!',
-        'Can\'t get OTOBO Feature Add-on list from server!' => 'نمی توانید OTOBO ویژگی اضافه کردن در لیست از سرور دریافت کنید!',
-        'Can\'t get OTOBO Feature Add-on from server!' => 'نمی توانید ویژگی OTOBO افزودنی از سرور!',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => 'نمی توانید به CareOnCloud ESM ویژگی اضافه کردن در لیست سرور اتصال!',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => 'نمی توانید CareOnCloud ESM ویژگی اضافه کردن در لیست از سرور دریافت کنید!',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => 'نمی توانید ویژگی CareOnCloud ESM افزودنی از سرور!',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => 'بدون چنین فیلتر: %s',
@@ -4130,6 +4731,8 @@ sub Data {
         'Process Management information from database is not in sync with the system configuration, please synchronize all processes.' =>
             'اطلاعات مدیریت فرآیند از پایگاه اطلاع داده هماهنگ با پیکربندی سیستم نیست، لطفا تمام فرآیندها را همگام سازی کنید.',
         'Need ExampleProcesses!' => 'نیاز ExampleProcesses!',
+        'There was an error setting the entity sync status for Process entity: %s' =>
+            'خطا در تنظیم وضعیت همگام نهاد برای نهاد فرآیند وجود دارد: %s',
         'Need ProcessID!' => 'نیاز ProcessID!',
         'Yes (mandatory)' => 'بله (اجباری)',
         'Unknown Process %s!' => 'فرایند ناشناخته %s !',
@@ -4137,10 +4740,17 @@ sub Data {
             'یک خطای تولید یک EntityID جدید برای این فرایند وجود دارد',
         'The StateEntityID for state Inactive does not exists' => 'StateEntityID برای حالت غیر فعال وجود ندارد',
         'There was an error creating the Process' => 'خطایی در ایجاد این فرآیند وجود دارد',
-        'There was an error setting the entity sync status for Process entity: %s' =>
-            'خطا در تنظیم وضعیت همگام نهاد برای نهاد فرآیند وجود دارد: %s',
-        'Could not get data for ProcessID %s' => 'نمی تواند داده ها را برای ProcessID بگیرد %s',
+        'There was an error generating a new EntityID while copying an associated Element' =>
+            '',
+        'There was an error copying an associated Element' => '',
+        'There was an error setting the entity sync status for an associated Element entity: %s' =>
+            '',
         'There was an error updating the Process' => 'خطایی در به روزرسانی این فرآیند وجود دارد',
+        'Could not get data for ProcessID %s' => 'نمی تواند داده ها را برای ProcessID بگیرد %s',
+        'Process: %s successfully deleted, but failed to delete an associated Element' =>
+            '',
+        'Process: %s successfully deleted, but there was an error setting the entity sync status for an associated Element entity' =>
+            '',
         'Process: %s could not be deleted' => 'فرآیند: %s نمی تواند حذف شود',
         'There was an error synchronizing the processes.' => 'یک خطای هماهنگ سازی فرآیند وجود دارد.',
         'The %s:%s is still in use' => '%s : %s هنوز هم مورد استفاده',
@@ -4149,24 +4759,30 @@ sub Data {
         'There was an error setting the entity sync status for %s entity: %s' =>
             'خطا در تنظیم وضعیت همگام نهاد وجود دارد %s نهاد: %s',
         'Could not get %s' => 'نمی تواند بگیرد%s',
+        'Need ProcessEntityID!' => '',
         'Need %s!' => 'نیاز %s !',
         'Process: %s is not Inactive' => 'فرآیند: %sغیر فعال نیست',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementActivity.pm
-        'There was an error generating a new EntityID for this Activity' =>
-            'یک خطای تولید  EntityID جدید برای این فعالیت وجود دارد',
-        'There was an error creating the Activity' => 'خطایی در ایجاد فعالیت وجود دارد',
-        'There was an error setting the entity sync status for Activity entity: %s' =>
-            'خطا در تنظیم وضعیت همگام نهاد برای نهاد فعالیت وجود دارد: %s',
-        'Need ActivityID!' => 'نیاز ActivityID!',
-        'Could not get data for ActivityID %s' => 'نمی تواند داده ها را برای ActivityID بگیرد %s',
-        'There was an error updating the Activity' => 'خطایی هنگام فعالیت به روزرسانی وجود دارد',
+        'Non-global activity dialogs may not be assigned to global activities.' =>
+            '',
+        'There was an error generating a new entity ID for this activity.' =>
+            '',
+        'There was an error creating the activity.' => '',
+        'There was an error setting the entity sync status for activity entity: %s' =>
+            '',
+        'Need ActivityID and ProcessEntityID!' => '',
+        'Could not get data for activity ID %s' => '',
+        'This activity is not available to the current process.' => '',
+        'Activities currently shared by other processes may not be set to non-global.' =>
+            '',
+        'There was an error updating the activity.' => '',
         'Missing Parameter: Need Activity and ActivityDialog!' => 'پارامتر: نیاز فعالیت و ActivityDialog!',
         'Activity not found!' => 'فعالیت یافت نشد!',
         'ActivityDialog not found!' => 'ActivityDialog یافت نشد!',
-        'ActivityDialog already assigned to Activity. You cannot add an ActivityDialog twice!' =>
-            'ActivityDialog در حال حاضر به فعالیت اختصاص داده است. شما نمی توانید ActivityDialog اضافه دو بار!',
-        'Error while saving the Activity to the database!' => 'خطا در هنگام ذخیره فعالیت ها به پایگاه داده!',
+        'Activity dialog already assigned to activity. You cannot add an activity dialog twice.' =>
+            '',
+        'Error while saving the activity to the database.' => '',
         'This subaction is not valid' => 'این subaction معتبر نیست',
         'Edit Activity "%s"' => 'ویرایش فعالیت \ " %s "',
 
@@ -4176,8 +4792,12 @@ sub Data {
         'There was an error creating the ActivityDialog' => 'یک خطای ایجاد ActivityDialog وجود دارد',
         'There was an error setting the entity sync status for ActivityDialog entity: %s' =>
             'خطا در تنظیم نهاد وضعیت همگام برای نهاد ActivityDialog وجود دارد: %s',
-        'Need ActivityDialogID!' => 'نیاز ActivityDialogID!',
+        'Need ActivityDialogID and ProcessEntityID!' => '',
         'Could not get data for ActivityDialogID %s' => 'نمی تواند داده ها را برای ActivityDialogIDبگیرد %s',
+        'This Activity Dialog is not available to the current Process!' =>
+            '',
+        'ActivityDialogs currently used in gobal ' => '',
+        'ActivityDialogs currently used in non-gobal Activities ' => '',
         'There was an error updating the ActivityDialog' => 'یک خطای به روز رسانی ActivityDialog وجود دارد',
         'Edit Activity Dialog "%s"' => 'ویرایش فعالیت گفت و گو \ " %s "',
         'Agent Interface' => 'رابط عامل',
@@ -4196,11 +4816,15 @@ sub Data {
         'There was an error creating the Transition' => 'خطایی در ایجاد انتقال وجود دارد',
         'There was an error setting the entity sync status for Transition entity: %s' =>
             'خطا در تنظیم نهاد وضعیت همگام برای نهاد گذار وجود دارد: %s',
-        'Need TransitionID!' => 'نیاز TransitionID!',
+        'Need TransitionID and ProcessEntityID!' => '',
         'Could not get data for TransitionID %s' => 'نمی تواند داده ها را برای TransitionID گرفت %s',
+        'This Transition is not available to the current Process!' => '',
+        'Transitions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the Transition' => 'خطایی هنگام انتقال وجود دارد',
         'Edit Transition "%s"' => 'ویرایش گذار \ " %s "',
-        'Transition validation module' => 'انتقال ماژول اعتبار سنجی',
+        'Regular expression - all' => '',
+        'Regular expression - negated' => '',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementTransitionAction.pm
         'At least one valid config parameter is required.' => 'حداقل یک پارامتر پیکربندی معتبر مورد نیاز است.',
@@ -4209,8 +4833,12 @@ sub Data {
         'There was an error creating the TransitionAction' => 'یک خطای ایجاد TransitionAction وجود دارد',
         'There was an error setting the entity sync status for TransitionAction entity: %s' =>
             'خطا در تنظیم نهاد وضعیت همگام برای نهاد TransitionAction وجود دارد: %s',
-        'Need TransitionActionID!' => 'نیاز TransitionActionID!',
+        'Need TransitionActionID and ProcessEntityID!' => '',
         'Could not get data for TransitionActionID %s' => 'نمی تواند داده ها را برای TransitionActionID\'گرفت %s',
+        'This Transition Action is not available to the current Process!' =>
+            '',
+        'TransitionActions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the TransitionAction' => 'یک خطای به روز رسانی TransitionAction وجود دارد',
         'Edit Transition Action "%s"' => 'ویرایش انتقال اقدام \ " %s "',
         'Error: Not all keys seem to have values or vice versa.' => 'خطا: همه کلید به نظر می رسد ارزش و یا بالعکس.',
@@ -4289,12 +4917,12 @@ sub Data {
         'You currently don\'t have any favourite settings.' => '',
         'The following settings could not be found: %s' => '',
         'Import not allowed!' => 'دریافت مجاز نیست!',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
             '',
         'Category Search' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
             '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
@@ -4312,6 +4940,7 @@ sub Data {
         'System was not able to lock the setting!' => '',
         'Missing setting name.' => '',
         'Setting not found.' => '',
+        'Missing setting key!' => '',
         'Missing Settings!' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationSettingHistory.pm
@@ -4327,24 +4956,38 @@ sub Data {
         'System was not able to delete the user setting values!' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemMaintenance.pm
-        'Start date shouldn\'t be defined after Stop date!' => 'نباید تاریخ شروع  پس از تاریخ توقف تعریف  شود!',
         'There was an error creating the System Maintenance' => 'خطایی در ایجاد تعمیر و نگهداری سیستم وجود دارد',
         'Need SystemMaintenanceID!' => 'نیاز SystemMaintenanceID!',
         'Could not get data for SystemMaintenanceID %s' => 'نمی تواند داده ها را برای SystemMaintenanceID گرفت %s',
         'System Maintenance was added successfully!' => '',
         'System Maintenance was updated successfully!' => '',
-        'Session has been killed!' => 'جلسه کشته شده است!',
-        'All sessions have been killed, except for your own.' => 'تمام جلسات کشته شده اند، به جز خود شما.',
         'There was an error updating the System Maintenance' => 'خطایی هنگام تعمیر و نگهداری سیستم وجود دارد',
         'Was not possible to delete the SystemMaintenance entry: %s!' => 'بود ممکن است برای حذف ورود SystemMaintenance نه: %s !',
 
         # Perl Module: Kernel/Modules/AdminTemplate.pm
+        'No permission to edit this template.' => '',
         'Template updated!' => 'الگو به روز شده!',
         'Template added!' => 'قالب اضافه شده است!',
 
         # Perl Module: Kernel/Modules/AdminTemplateAttachment.pm
         'Change Attachment Relations for Template' => 'روابط تغییر فایل پیوست برای الگو',
         'Change Template Relations for Attachment' => 'تغییر روابط الگو برای پیوست',
+
+        # Perl Module: Kernel/Modules/AdminTranslations.pm
+        'Translation unmarked for deletion!' => '',
+        'Error trying unmark translation for delete!' => '',
+        'Translations changed!' => '',
+        'No translations were changed!' => '',
+        'Errors trying to change translations!' => '',
+        'Translations added!' => '',
+        'No translations were given to add!' => '',
+        'Translation already exists!' => '',
+        'Translations deployed successfully!' => '',
+        'Nothing to do!' => '',
+        'Errors occurred when trying to deploy translation. Please check system logs!' =>
+            '',
+        'All Items' => '',
+        'Deployment Results' => '',
 
         # Perl Module: Kernel/Modules/AdminType.pm
         'Need Type!' => 'نیاز تایپ!',
@@ -4464,7 +5107,6 @@ sub Data {
 
         # Perl Module: Kernel/Modules/AgentTicketActionCommon.pm
         'No TicketID is given!' => 'بدون TicketID داده شده است!',
-        'You need %s permissions!' => 'شما نیاز %s مجوز!',
         'Loading draft failed!' => '',
         'Sorry, you need to be the ticket owner to perform this action.' =>
             'با عرض پوزش،برای انجام این عملیات شما نیاز به اطلاعت  صاحب بلیط دارید . ',
@@ -4479,6 +5121,14 @@ sub Data {
         'wrote' => 'نوشته شد',
         'Message from' => 'فرم پیام',
         'End message' => 'پایان پیام',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleEdit.pm
+        'No ArticleID is given!' => '',
+        'This action is not permitted on the article!' => '',
+        'This article is not editable!' => '',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleStatus.pm
+        'Can\'t set this Ticket option, no TicketID is given!' => '',
 
         # Perl Module: Kernel/Modules/AgentTicketBounce.pm
         '%s is needed!' => '%s مورد نیاز است!',
@@ -4517,9 +5167,6 @@ sub Data {
         # Perl Module: Kernel/Modules/AgentTicketEmailOutbound.pm
         'Got no TicketID!' => 'کردم هیچ TicketID!',
         'System Error!' => 'خطای سیستم!',
-
-        # Perl Module: Kernel/Modules/AgentTicketEmailResend.pm
-        'No ArticleID is given!' => '',
 
         # Perl Module: Kernel/Modules/AgentTicketEscalationView.pm
         'Next week' => 'هفته آینده',
@@ -4617,14 +5264,14 @@ sub Data {
         'This step does not belong anymore to the current activity in process for ticket \'%s%s%s\'! Another user changed this ticket in the meantime. Please close this window and reload the ticket.' =>
             '',
         'Missing ProcessEntityID in Ticket %s!' => 'از دست رفته ProcessEntityID دردرخواست %s !',
-        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
-            'می تواند ارزش DynamicField تنظیم نشده برای %s از بلیط با ID \ " %s " در ActivityDialog \ " %s "!',
         'Could not set PendingTime for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             'می تواند PendingTime برای بلیط با ID \ "تنظیم نشده %s " در ActivityDialog \ " %s "!',
         'Wrong ActivityDialog Field config: %s can\'t be Display => 1 / Show field (Please change its configuration to be Display => 0 / Do not show field or Display => 2 / Show field as mandatory)!' =>
             'اشتباه ActivityDialog درست پیکربندی: %s نمی تواند نمایش => 1 نمایش درست / (لطفا تنظیمات آن را تغییر دهید به نمایش => 0 / هنوز درست و یا صفحه نمایش => 2 نشان دادن درست / به عنوان اجباری نشان نمی دهد).',
         'Could not set %s for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             'تنظیم نشد %s برای بلیط با ID \ " %s " در ActivityDialog \ " %s "!',
+        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
+            'می تواند ارزش DynamicField تنظیم نشده برای %s از بلیط با ID \ " %s " در ActivityDialog \ " %s "!',
         'Default Config for Process::Default%s missing!' => 'پیش فرض پیکربندی برای فرآیند :: پیش فرض %s از دست رفته!',
         'Default Config for Process::Default%s invalid!' => 'پیش فرض پیکربندی برای فرآیند :: پیش فرض %s نامعتبر است!',
 
@@ -4712,12 +5359,11 @@ sub Data {
         'Notification Was Sent' => 'اطلاع رسانی فرستاده شد',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state.' =>
             '',
+        'Could not delete form draft.' => '',
         'Missing FormDraftID!' => '',
         'Can\'t get for ArticleID %s!' => ' نمی توانم بگیرم ArticleID از %s !',
         'Article filter settings were saved.' => 'تنظیمات فیلتر مقاله ذخیره شدند.',
         'Event type filter settings were saved.' => 'تنظیمات فیلتر نوع رویداد ذخیره شدند.',
-        'Need ArticleID!' => 'نیاز ArticleID!',
-        'Invalid ArticleID!' => 'ArticleID نامعتبر است!',
         'Forward article via mail' => 'ارسال نوشته از طریق ایمیل',
         'Forward' => 'ارسال به دیگری',
         'Fields with no group' => 'رشته های بی گروه',
@@ -4732,10 +5378,13 @@ sub Data {
         'Error: the file could not be deleted properly. Please contact your administrator (missing FileID).' =>
             '',
 
+        # Perl Module: Kernel/Modules/BasePassword.pm
+        'Can`t remove SessionID.' => 'نمیتواند SESSIONID را حذف کنید.',
+
         # Perl Module: Kernel/Modules/CustomerDashboardCommon.pm
-        'Registration for tile %s of CustomerDashboard is invalid! Either Module or Template needed.' =>
+        'Registration for tile \'%s\' of CustomerDashboard is invalid! Order needs to be a number and unique.' =>
             '',
-        'Registration for tile %s of CustomerDashboard is invalid! Order needs to be a unique number.' =>
+        'Registration for tile %s of customer dashboard is invalid! Either Module or Template needed.' =>
             '',
 
         # Perl Module: Kernel/Modules/CustomerGenericContent.pm
@@ -4743,6 +5392,9 @@ sub Data {
         'Invalid Key!' => '',
         'Failed to load Content!' => '',
         'Destination unknown.' => '',
+
+        # Perl Module: Kernel/Modules/CustomerPreferences.pm
+        'No valid config for %s' => '',
 
         # Perl Module: Kernel/Modules/CustomerTicketArticleContent.pm
         'ArticleID is needed!' => '',
@@ -4763,12 +5415,9 @@ sub Data {
         'Need CustomerID!' => 'نیاز CustomerID!',
         'My Tickets' => 'درخواست‌های من',
         'Company Tickets' => 'درخواست‌های سازمانی/شرکتی',
-        'Untitled!' => 's',
 
         # Perl Module: Kernel/Modules/CustomerTicketSearch.pm
         'Customer Realname' => 'نام واقعی مشترک',
-        'Created within the last' => 'ایجاد شده در آخرین',
-        'Created more than ... ago' => 'ایجاد شده بیشتر از ... قبل',
         'Please remove the following words because they cannot be used for the search:' =>
             'لطفا کلمات زیر را حذف کنید زیرا آنها نمی توانند برای جستجو استفاده  شوند:',
 
@@ -4785,7 +5434,7 @@ sub Data {
         'Configure "Home" in Kernel/Config.pm first!' => 'پیکربندی \ "خانه " در هسته / Config.pm برای اولین بار!',
         'File "%s/Kernel/Config.pm" not found!' => 'فایل \ " %s /Kernel/Config.pm " یافت نشد!',
         'Directory "%s" not found!' => 'راهنمای \ " %s " یافت نشد!',
-        'Install OTOBO' => 'نصب  OTOBO',
+        'Install CareOnCloud ESM' => 'نصب  CareOnCloud ESM',
         'Intro' => 'معرفی',
         'Kernel/Config.pm isn\'t writable!' => 'هسته / Config.pm قابل نوشتن نیست!',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -4802,7 +5451,7 @@ sub Data {
         'Unknown database type "%s".' => 'نامشخص نوع پایگاه داده \ " %s ".',
         'Please go back.' => 'لطفا برگردید.',
         'Create Database' => 'ایجاد بانک',
-        'Install OTOBO - Error' => 'نصب OTOBO - خطا',
+        'Install CareOnCloud ESM - Error' => 'نصب CareOnCloud ESM - خطا',
         'File "%s/%s.xml" not found!' => 'فایل \ " %s / %s .XML " یافت نشد!',
         'Contact your Admin!' => 'تماس با مدیریت خود !',
         'Execution of SQL statement failed: ' => '',
@@ -4817,6 +5466,8 @@ sub Data {
             'نمی توانید به پایگاه داده متصل شوید، پرل و DBD :: %s نصب نشده است!',
         'Can\'t connect to database, read comment!' => 'نمی توانید به پایگاه داده متصل شوید، به عنوان خواننده نظر!',
         'Database already contains data - it should be empty!' => 'پایگاه داده در حال حاضر حاوی اطاعات است  -باید خالی باشد !',
+        'Error: database version requirement not satisfied. Have version: %s Want version: %s' =>
+            '',
         'Error: Please make sure your database accepts packages over %s MB in size (it currently only accepts packages up to %s MB). Please adapt the max_allowed_packet setting of your database in order to avoid errors.' =>
             'خطا: لطفا مطمئن شوید که پایگاه داده خود را بسته بر می پذیرد %s MB در اندازه (در حال حاضر تنها بسته می پذیرد تا %s MB). لطفا تنظیمات max_allowed_packet از پایگاه داده خود را به منظور جلوگیری از اشتباهات وفق دهند.',
         'Error: Please set the value for innodb_log_file_size on your database to at least %s MB (current: %s MB, recommended: %s MB). For more information, please have a look at %s.' =>
@@ -4825,7 +5476,7 @@ sub Data {
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             '',
-        'OTRS to OTOBO migration' => '',
+        'OTRS to CareOnCloud ESM migration' => '',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => '',
@@ -4840,6 +5491,15 @@ sub Data {
 
         # Perl Module: Kernel/Output/HTML/Article/Chat.pm
         'Chat' => 'گپ',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleDelete.pm
+        'Delete this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleEdit.pm
+        'Edit this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleRestore.pm
+        'Restore this article' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketBounce.pm
         'Bounce Article to a different mail address' => 'برگشت زدن نوشته به یک آدرس ایمیل دیگر ',
@@ -4870,8 +5530,12 @@ sub Data {
         'Print this article' => 'چاپ این نوشته ',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/GetHelpLink.pm
-        'Contact us at hello@otobo.de' => '',
+        'Contact us at hello@otobo.io' => '',
         'Get Help' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/MarkArticleSeenUnseen.pm
+        'Mark article as unseen' => '',
+        'Mark as unseen' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/MarkAsImportant.pm
         'Mark' => 'علامت دار',
@@ -4949,8 +5613,8 @@ sub Data {
         'Shown Tickets' => 'درخواست‌های نمایش داده شده',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => 'نمی توانید به سرور OTOBO اخبار اتصال!',
-        'Can\'t get OTOBO News from server!' => 'می توانید OTOBO اخبار از سرور دریافت کنید!',
+        'Can\'t connect to CareOnCloud ESM News server!' => 'نمی توانید به سرور CareOnCloud ESM اخبار اتصال!',
+        'Can\'t get CareOnCloud ESM News from server!' => 'می توانید CareOnCloud ESM اخبار از سرور دریافت کنید!',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => 'نمی توانید به سرور اخبار محصولات اتصال!',
@@ -4972,6 +5636,12 @@ sub Data {
         'User set their status to unavailable.' => 'کاربر وضعیت خود را به در دسترس تنظیم شده است.',
         'Unavailable' => 'در دسترس نیست',
 
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchGeneric.pm
+        'Shown Elasticsearch Results' => '',
+
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchTicketGeneric.pm
+        'Shown Elsticsearch Results' => '',
+
         # Perl Module: Kernel/Output/HTML/Layout.pm
         'Standard' => 'استاندارد',
         'The following tickets are not updated: %s.' => '',
@@ -4980,10 +5650,6 @@ sub Data {
         'd' => 'd',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state. You can take one of the following actions:' =>
             '',
-        'This is a' => 'این یک',
-        'email' => 'ایمیل',
-        'click here' => 'اینجا کلیک کنید',
-        'to open it in a new window.' => 'برای باز شدن در پنجره جدید',
         'Year' => 'سال',
         'Hours' => 'ساعت',
         'Minutes' => 'دقیقه',
@@ -5034,7 +5700,7 @@ sub Data {
             '',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'سرویس OTOBO در حال اجرا نیست.',
+        'CareOnCloud ESM Daemon is not running.' => 'سرویس CareOnCloud ESM در حال اجرا نیست.',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5060,9 +5726,6 @@ sub Data {
         'Please make sure you\'ve chosen at least one transport method for mandatory notifications.' =>
             'لطفا مطمئن شوید که شما حداقل یک روش حمل و نقل برای اطلاعیه اجباری را انتخاب کرده ایم.',
         'Preferences updated successfully!' => 'تنظیمات با موفقیت ثبت شد.!',
-
-        # Perl Module: Kernel/Output/HTML/Preferences/Language.pm
-        '(in process)' => '(در حال انجام)',
 
         # Perl Module: Kernel/Output/HTML/Preferences/OutOfOffice.pm
         'Please specify an end date that is after the start date.' => 'لطفا تاریخ پایان است که بعد از تاریخ شروع را مشخص کنید.',
@@ -5124,11 +5787,16 @@ sub Data {
         'Cancel editing and unlock this setting' => '',
         'Reset this setting to its default value.' => '',
         'Unable to load %s!' => '',
-        'Content' => 'محتوا',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/Lock.pm
         'Unlock to give it back to the queue' => 'ان را برگردان به لیست باز شده . ',
         'Lock it to work on it' => 'قفل آن را بر روی آن کاربگذار ',
+
+        # Perl Module: Kernel/Output/HTML/TicketMenu/ShowHideDeletedArticles.pm
+        'Hide deleted articles' => '',
+        'Click to hide deleted articles' => '',
+        'Show deleted articles' => '',
+        'Click to show deleted articles' => '',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/TicketWatcher.pm
         'Unwatch' => 'عدم پیگیری',
@@ -5138,6 +5806,9 @@ sub Data {
 
         # Perl Module: Kernel/Output/HTML/TicketOverviewMenu/Sort.pm
         'Order by' => 'مرتب‌سازی بر اساس',
+
+        # Perl Module: Kernel/Output/HTML/TicketZoom/SimilarTickets.pm
+        'Similar Tickets' => '',
 
         # Perl Module: Kernel/Output/HTML/ToolBar/TicketLocked.pm
         'Locked Tickets New' => 'درخواست‌های تازه تحویل گرفته شده',
@@ -5212,137 +5883,213 @@ sub Data {
         'This email address is already in use for another customer user.' =>
             '',
 
+        # Perl Module: Kernel/System/DynamicField/Driver/Agent.pm
+        'Group of the agents' => '',
+        'Select the group of the agents.' => '',
+        'External source key' => '',
+        'When set via an external source (e.g. web service or import / export), the value will be interpreted as this attribute.' =>
+            '',
+
         # Perl Module: Kernel/System/DynamicField/Driver/BaseDateTime.pm
         'before/after' => 'قبل/بعد',
         'between' => 'بین',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/BaseText.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseReference.pm
+        'Referenced object type' => '',
+        'Select the type of the referenced object.' => '',
+        'Input mode of edit field' => '',
+        'Select the input mode for the edit field.' => '',
+        'Link type' => '',
+        'Select the link type.' => '',
+        'Forwards: Referencing (Source) -> Referenced (Target)' => '',
+        'Backwards: Referenced (Source) -> Referencing (Target)' => '',
+        'Link Direction' => '',
+        'The referencing object is the one containing this dynamic field, the referenced object is the one selected as value of the dynamic field.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseScript.pm
         'e.g. Text or Te*t' => '',
 
         # Perl Module: Kernel/System/DynamicField/Driver/Checkbox.pm
         'Ignore this field.' => '',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/TextArea.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/CustomerCompany.pm
+        'Attribute which will be searched on autocomplete' => '',
+        'Select the attribute which customer companies will be searched by.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/RichText.pm
         'This field is required or' => 'این فیلد اجباری یا',
         'The field content is too long!' => 'محتویات این فیلد طولانی است!',
         'Maximum size is %s characters.' => 'حداکثر اندازه %s کاراکتر است.',
+        'Full %s Text' => '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/Ticket.pm
+        'Queue of the ticket' => '',
+        'Select the queue of the ticket.' => '',
+        'Type of the ticket' => '',
+        'Select the type of the ticket.' => '',
+        'Select the attribute which tickets will be searched by.' => '',
+        'Attribute which is displayed for values' => '',
+        'Select the type of display.' => '',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/CSV.pm
+        'Column Separator' => 'جداکننده ستون‌ها',
+        'Tabulator (TAB)' => 'جدول ساز (TAB)',
+        'Semicolon (;)' => 'سمی کالن (;)',
+        'Colon (:)' => 'دونقطه (:)',
+        'Dot (.)' => 'نقطه (.)',
+        'Comma (,)' => '',
+        'Charset' => 'کدبندی اطلاعات',
+        'Include Column Headers' => '',
+        'Column' => 'ستون',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/JSON.pm
+        'Pretty print the exported concatenated JSON' => '',
+
+        # Perl Module: Kernel/System/ImportExport/ObjectBackend/Ticket.pm
+        'Default Queue' => '',
+        'Default Type' => '',
+        'Default Service' => '',
+        'Default SLA' => '',
+        'Default state' => '',
+        'Default priority' => '',
+        'Default owner' => '',
+        'Default responsible' => '',
+        'Default lock' => '',
+        'Default CustomerID' => '',
+        'Default CustomerUserID' => '',
+        'Default ArchiveFlag' => '',
+        'Default subject' => '',
+        'Default body' => '',
+        'Default sender type' => '',
+        'Default is visible to customer' => '',
+        'Empty fields indicate that the current values are kept' => '',
+        'Do not update existing tickets' => '',
+        'Only update tickets of this user in the target system' => '',
+        'Import/Export articles' => '',
+        'Default Backend' => '',
+        'Store articles on separate lines indicated by a blank first entry' =>
+            '',
+        'Import/Export attachments (as the last entries per line)' => '',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => '',
         'Deployment completed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => '',
         'Migration failed.' => '',
         'Migrate database table auto_response.' => '',
         'Migration completed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
+        'CareOnCloud ESM Cache cleanup.' => '',
         'Completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => '',
-        'Can\'t access OTRS Home: %s!' => '',
+        'Can\'t access OTRS home directory: %s!' => '',
         'All needed files copied and migrated, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => '',
         'Skipped...' => '',
         'System was unable to connect to OTRS database.' => '',
         'System was unable to complete data transfer.' => '',
         'Data transfer completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => '',
-        'Check if OTOBO and OTRS connect is possible.' => '',
-        'Can\'t open RELEASE file from OTRSHome: %s!' => '',
-        'Check if OTOBO and OTRS version is correct.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
+        'Check if CareOnCloud ESM version is correct.' => '',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => '',
+        'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => '',
         '%s does not exist!' => '',
-        'No OTOBO system found!' => '',
+        'No CareOnCloud ESM system found!' => '',
         'You are trying to run this script on the wrong framework version %s!' =>
             '',
-        'OTOBO Version is correct: %s.' => '',
+        'CareOnCloud ESM Version is correct: %s.' => '',
         'Check if OTRS version is correct.' => '',
         'OTRS RELEASE file %s does not exist!' => '',
         'Can\'t read OTRS RELEASE file: %s' => '',
         'No OTRS system found!' => '',
-        'Unknown PRODUCT found in OTRS RELASE file: %s. Expected values are %s.' =>
+        'Unknown PRODUCT found in OTRS RELEASE file: %s. Expected values are %s.' =>
             '',
         'OTRS Version is correct: %s.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => '',
-        'Nothing to do, as the the table \'%s\' does not exist.' => '',
+        'Nothing to do, as the table \'%s\' does not exist.' => '',
         'UPDATE of the table \'%s\' failed.' => '',
         'Migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => '',
-        'An error occured during SysConfig data migration or no configuration exists.' =>
+        'An error occurred during system configuration data migration or no configuration exists.' =>
             '',
-        'An error occured during SysConfig migration when writing XML to DB.' =>
+        'An error occurred during system configuration migration when writing XML to DB.' =>
             '',
         'SysConfig data migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => '',
         'Failed - see the log!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
-        'Can\'t open Kernel/Config.pm file from OTRSHome: %s!' => '',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => '',
-        'Kernel/Config.pm exists in OTOBO home' => '',
-        'Check if we are able to connect to OTRS Home.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
+        'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
+            '',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => '',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => '',
+        'Check if we are able to connect to OTRS home directory.' => '',
         'Can\'t connect to OTRS file directory.' => '',
         'Connect to OTRS file directory is possible.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => '',
         'Could not create database object.' => '',
         'Database connect and sanity checks completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => '',
         'The following packages are only installed in OTRS:' => '',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             '',
         'The same packages are installed on both systems, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => '',
         'Done -' => '',
         'Failed at -' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => '',
         '%s script does not exist.' => '',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             '',
         'All required Perl modules have been installed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => '',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -5351,18 +6098,33 @@ sub Data {
         'Imported notification has body text with more than 4000 characters.' =>
             '',
 
+        # Perl Module: Kernel/System/OpenIDConnect/OAuth2.pm
+        'Error fetching Token: %s' => '',
+        'Need ClientID and ClientSecret!' => '',
+        'Got no content when requesting Token. Response Code: %s' => '',
+        'Got no JSON object when requesting Token. Response: %s' => '',
+
+        # Perl Module: Kernel/System/OpenIDConnect/TokenProvider.pm
+        'AccountName %s not found!' => '',
+        'No valid refresh_token for Account %s using grant_type \'authorization code\' !' =>
+            '',
+        'Need functional account Invoker settings in System Configuration for %s.' =>
+            '',
+        'Did not receive the desired TokenType \'%s\' in OIDC provider response for Invoker %s!' =>
+            '',
+        'Time left on fresh token is: %s s for Invoker %s!' => '',
+        'Could not get the OAuth2 token_endpoint for Invoker ' => '',
+
         # Perl Module: Kernel/System/Package.pm
         'not installed' => 'نصب نشده',
         'installed' => 'نصب شده',
         'Unable to parse repository index document.' => 'ناتوانی در تجزیه کردن مستند',
-        'No packages for your framework version found in this repository, it only contains packages for other framework versions.' =>
-            'در این مخزن بسته بندی برای چهارچوب نسخه شما پیدا نشده است ، آن فقط شامل دیگر بسته بندی های چهارچوب نسخه ها میشود . ',
         'File is not installed!' => 'فایل نصب نشده است!',
         'File is different!' => 'فایل متفاوت است!',
         'Can\'t read file!' => 'نمی توانید فایل خوانده شده!',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
             '',
-        'Package not verified by the OTOBO community!' => '',
+        'Package not verified by the CareOnCloud ESM community!' => '',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '',
         'Verification not possible (e.g. no internet connection)!' => '',
@@ -5389,13 +6151,20 @@ sub Data {
         'quarter' => 'یک چهارم',
         'half-year' => 'نیمی از سال',
 
-        # Perl Module: Kernel/System/Stats/Dynamic/Ticket.pm
+        # Perl Module: Kernel/System/Stats/Dynamic/ArticleList.pm
+        'unlimited' => 'نا محدود',
+        'Attributes to be printed' => 'خواصی که قرار است چاپ شوند',
+        'Sort sequence' => 'توالی ترتیب',
+        'State Historic' => 'تاریخی ایالتی',
         'State Type' => 'نوع حالت',
+        'State Type Historic' => 'نوع تاریخی ایالتی',
         'Created Priority' => 'اولویت ایجاد',
         'Created State' => 'وضعیت ایجاد',
         'Create Time' => 'زمان ایجاد ',
+        'Article Create Time' => '',
         'Pending until time' => '',
         'Close Time' => 'زمان بسته شدن',
+        'Historic Time Range' => 'تاریخی محدوده زمانی',
         'Escalation' => 'تشدید',
         'Escalation - First Response Time' => 'تشدید -  زمان اولین پاسخ',
         'Escalation - Update Time' => 'تشدید - به روز رسانی زمان',
@@ -5403,6 +6172,7 @@ sub Data {
         'Agent/Owner' => 'کارشناس/صاحب',
         'Created by Agent/Owner' => 'ایجاد شده توسط کارشناس/صاحب',
         'Assigned to Customer User Login' => '',
+        'Last Changed' => '',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketAccountedTime.pm
         'Evaluation by' => 'ارزیابی شده به وسیله',
@@ -5419,16 +6189,6 @@ sub Data {
         'Article Min Time' => 'حداقل زمان نوشته',
         'Article Max Time' => 'حداکثر زمان نوشته',
         'Number of Articles' => 'تعداد نوشته‌ها',
-
-        # Perl Module: Kernel/System/Stats/Dynamic/TicketList.pm
-        'unlimited' => 'نا محدود',
-        'Attributes to be printed' => 'خواصی که قرار است چاپ شوند',
-        'Sort sequence' => 'توالی ترتیب',
-        'State Historic' => 'تاریخی ایالتی',
-        'State Type Historic' => 'نوع تاریخی ایالتی',
-        'Historic Time Range' => 'تاریخی محدوده زمانی',
-        'Number' => 'عدد',
-        'Last Changed' => '',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketSolutionResponseTime.pm
         'Solution Average' => 'راه حل میانگین',
@@ -5473,6 +6233,11 @@ sub Data {
         'Internal Error: Could not read file.' => 'خطای داخلی: فایل خوانده نشد.',
         'Tables found which are not present in the database.' => 'استفاده از جدول موجود که در حال حاضر در پایگاه داده است.',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/Type.pm
+        'Database Type' => '',
+        'The type of the database looks strange as it contain no Latin letters.' =>
+            '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mssql/Size.pm
         'Database Size' => 'اندازه پایگاه داده',
         'Could not determine database size.' => ' اندازه پایگاه داده مشخص نیست.',
@@ -5491,13 +6256,16 @@ sub Data {
         'There were tables found which do not have \'utf8mb4\' as charset.' =>
             '',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Connection.pm
+        'SSL Version' => '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InnoDBLogFileSize.pm
         'InnoDB Log File Size' => 'سازی InnoDB ورود حجم فایل',
         'The setting innodb_log_file_size must be at least 256 MB.' => 'innodb_log_file_size تنظیم باید حداقل 256 مگابایت باشد.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => '',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
             '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
@@ -5517,6 +6285,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Version.pm
         'MySQL 5.x or higher is required.' => '5.x خروجی زیر و یا بالاتر مورد نیاز است.',
+        'Client Info' => '',
+        'Perl Client Info' => '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/oracle/NLS.pm
         'NLS_LANG Setting' => 'تنظیم NLS_LANG',
@@ -5551,8 +6321,8 @@ sub Data {
         'Certificate check' => '',
         'Found obsolete cryptographic function.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'پارتیشن OTOBO دیسک',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
+        'CareOnCloud ESM Disk Partition' => 'پارتیشن CareOnCloud ESM دیسک',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => 'دیسک پارتیشن طریقه استفاده',
@@ -5576,8 +6346,6 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/PerlModulesAudit.pm
         'Perl Modules Audit' => '',
-        'CPAN::Audit reported that one or more installed Perl modules have known vulnerabilities. Please note that there might be false positives for distributions patching Perl modules without changing their version number.' =>
-            '',
         'CPAN::Audit did not report any known vulnerabilities in the installed Perl modules.' =>
             '',
 
@@ -5588,37 +6356,37 @@ sub Data {
         'There should be more than 60% free swap space.' => 'باید بیش از 60٪ فضای swap رایگان وجود داشته باشد.',
         'There should be no more than 200 MB swap space used.' => 'باید فضای swap بیش از 200 MB مورد استفاده وجود داشته باشد.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => '',
         'Indexed Articles' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => '',
         'Outgoing communications' => '',
         'Failed communications' => '',
         'Average processing time of communications (s)' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => '',
         'No connections found.' => '',
         'ok' => '',
         'permanent connection errors' => '',
         'intermittent connection errors' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => 'تنظیمات پیکربندی',
         'Could not determine value.' => 'نمی تواند ارزش را تعیین  کند.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => 'سرویس',
         'Daemon is running.' => 'شبح در حال اجرا است.',
         'Daemon is not running.' => 'سرویس در حال اجرا نیست.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => 'سوابق پایگاه داده',
         'Ticket History Entries' => 'درخواست تاریخچه مطالب',
         'Articles' => 'مقالات',
@@ -5633,26 +6401,26 @@ sub Data {
         'Tickets Per Month (avg)' => 'درخواست در هر ماه (AVG)',
         'Open Tickets' => 'درخواست باز',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => 'به طور پیش فرض کلمه عبور کاربر admin',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             'خطر امنیتی: حساب عامل ریشه @ localhost را هنوز رمز عبور به طور پیش فرض. لطفا آن را تغییر دهید و یا از درجه اعتبار ساقط حساب.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => '',
         'Emails queued for sending' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => 'FQDN (نام دامنه)',
         'Please configure your FQDN setting.' => 'لطفا تنظیمات FQDN خود را پیکربندی کنید.',
         'Domain Name' => 'نام دامنه',
         'Your FQDN setting is invalid.' => 'تنظیم FQDN شما نامعتبر است.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => 'سیستم فایل قابل نوشتن',
-        'The file system on your OTOBO partition is not writable.' => 'سیستم فایل در پارتیشن OTOBO  قابل نوشتن نیست.',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'سیستم فایل در پارتیشن CareOnCloud ESM  قابل نوشتن نیست.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => '',
         'No legacy configuration backup files found.' => '',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -5660,77 +6428,77 @@ sub Data {
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => 'وضعیت بسته نصب و راه اندازی',
         'Some packages have locally modified files.' => 'برخی از بسته های به صورت محلی فایل ها اصلاح شده.',
         'Some packages are not correctly installed.' => 'برخی از بسته ها به درستی نصب نشده است.',
         'Package Verification Status' => 'وضعیت بسته تأیید',
-        'Some packages are not verified by the OTOBO Team.' => '',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => '',
         'Package Framework Version Status' => 'بسته بندی Framework نسخه وضعیت',
         'Some packages are not allowed for the current framework version.' =>
             'برخی از بسته های برای نسخه چارچوب فعلی مجاز نیست.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => 'فهرست پکیج ها',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => 'ایمیل Spooled',
-        'There are emails in var/spool that OTOBO could not process.' => 'هستند ایمیل در مسیر var / قرقره که OTOBO نمی تواند فرآیند وجود دارد.',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => 'هستند ایمیل در مسیر var / قرقره که CareOnCloud ESM نمی تواند فرآیند وجود دارد.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             'تنظیم سیستم شما نامعتبر است، آن تنها باید شامل ارقام باشد.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => 'به طور پیش فرض نوع درخواست',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             'پیکربندی پیش فرض نوع درخواست نامعتبر است و یا از دست رفته است. لطفا تنظیمات درخواست:: نوع :: پیش فرض را تغییر دهید و یک نوع درخواست معتبر را انتخاب کنید.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => 'درخواست شاخص ماژول',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             'شما باید بیش از 60،000درخواست از باطن StaticDB استفاده کنید. کتابچه راهنمای کاربر مدیر (تنظیم عملکرد)  را برای اطلاعات بیشتر ببینید.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => 'کاربران نامعتبر با درخواست قفل شده',
         'There are invalid users with locked tickets.' => 'کاربران نامعتبر با درخواست قفل شده وجود دارد.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             'نباید بیش از 8000 درخواست باز در سیستم شما وجود داشته باشد.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => 'درخواست جستجوی شاخص ماژول',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'سوابق یتیم در جدول ticket_lock_index',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'ticket_lock_index جدول شامل سوابق یتیم. لطفا اجرا بن / otobo.Console.pl \ "سیستم maint :: بلیط :: QueueIndexCleanup " برای تمیز کردن شاخص StaticDB.',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'ticket_lock_index جدول شامل سوابق یتیم. لطفا اجرا بن / careoncloud.Console.pl \ "سیستم maint :: بلیط :: QueueIndexCleanup " برای تمیز کردن شاخص StaticDB.',
         'Orphaned Records In ticket_index Table' => 'سوابق یتیم در جدول ticket_index',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => 'تنظیمات زمان',
         'Server time zone' => 'منطقه زمانی سرور',
-        'OTOBO time zone' => '',
-        'OTOBO time zone is not set.' => '',
+        'CareOnCloud ESM time zone' => '',
+        'CareOnCloud ESM time zone is not set.' => '',
         'User default time zone' => '',
         'User default time zone is not set.' => '',
         'Calendar time zone is not set.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => '',
         'Agents using custom main menu ordering' => '',
         'Agents using favourites for the admin overview' => '',
@@ -5741,8 +6509,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'مدل MPM',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'OTOBO به Apache به با "prefork را مدل MPM اجرا می شود.',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'CareOnCloud ESM به Apache به با "prefork را مدل MPM اجرا می شود.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'CGI استفاده از شتاب دهنده ',
@@ -5772,7 +6540,7 @@ sub Data {
         'Webserver Version' => ' نسخه وب سرور',
         'Could not determine webserver version.' => ' نسخه وب سرور مشخص نیست.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => 'کاربران همزمان اطلاعات',
         'Concurrent Users' => 'کاربران موازی',
 
@@ -5798,16 +6566,12 @@ sub Data {
         'Value is not correct! Please, consider updating this field.' => '',
         'Value doesn\'t satisfy regex (%s).' => '',
 
-        # Perl Module: Kernel/System/SysConfig/ValueType/Checkbox.pm
-        'Enabled' => '',
-        'Disabled' => '',
-
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -5825,13 +6589,20 @@ sub Data {
         'Chat Participant' => '',
         'Chat Message Text' => '',
 
+        # Perl Module: Kernel/System/Ticket/Mask.pm
+        'Base structure is not valid. Please provide an array with data in YAML format.' =>
+            '',
+        'Error parsing dynamic fields.' => '',
+        'No dynamic field "%s".' => '',
+        'Dynamic field "%s" not valid.' => '',
+        'Dynamic field "%s" already in use in a Set.' => '',
+
         # Perl Module: Kernel/System/Web/InterfaceAgent.pm
         'Too many failed login attempts, please retry in %s s.' => '',
         'Login failed! Your user name or password was entered incorrectly.' =>
             'ورود ناموفق! نام کاربری یا کلمه عبور وارد شده اشتباه می‌باشد.',
         'Authentication succeeded, but no user data record is found in the database. Please contact the administrator.' =>
             '',
-        'Can`t remove SessionID.' => 'نمیتواند SESSIONID را حذف کنید.',
         'Logout successful.' => 'خروج موفقیت آمیز.',
         'Feature not active!' => 'این ویژگی فعال نیست.',
         'Sent password reset instructions. Please check your email.' => 'دستورالعمل تنظیم مجدد کلمه عبور ارسال شد. لطفا ایمیل خود را چک نمایید.',
@@ -5867,7 +6638,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => '',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => 'موقتا غیر معتبر',
         'Group for default access.' => 'گروه برای دسترسی پیش فرض.',
         'Group of all administrators.' => 'گروه از همه مدیران.',
@@ -5932,8 +6703,8 @@ sub Data {
         'Auto remove will be sent out after a customer removed the request.' =>
             'حذف خودکار ارسال می شود پس از یک مشتری درخواست حذف شدند.',
         'default reply (after new ticket has been created)' => 'به طور پیش فرض پاسخ (پس از بلیط جدید ایجاد شده است)',
-        'default reject (after follow-up and rejected of a closed ticket)' =>
-            'به طور پیش فرض رد (پس از پیگیری و رد یک بلیط بسته)',
+        'default reject (after follow-up and rejection of a closed ticket)' =>
+            '',
         'default follow-up (after a ticket follow-up has been added)' => 'به طور پیش فرض پیگیری (پس از یک بلیط پیگیری اضافه شده است)',
         'default reject/new ticket created (after closed follow-up with new ticket creation)' =>
             'به طور پیش فرض / بلیط جدید ایجاد رد (پس از بسته پیگیری با ایجاد بلیط جدید)',
@@ -6003,6 +6774,10 @@ sub Data {
         'There was an error deleting the attachment. Please check the logs for more information.' =>
             '',
         'Attachment was deleted successfully.' => '',
+
+        # JS File: Core.Agent.Admin.CustomerDashboardInfoTile
+        'Do you really want to delete this customer dashboard info tile entry?' =>
+            '',
 
         # JS File: Core.Agent.Admin.DynamicField
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!' =>
@@ -6081,7 +6856,7 @@ sub Data {
         'Currently not possible' => '',
         'This is currently disabled because of an ongoing package upgrade.' =>
             '',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
             '',
         'Are you sure you want to update all installed packages?' => '',
         'No response from get package upgrade run status.' => '',
@@ -6114,6 +6889,8 @@ sub Data {
         'This TransitionAction is already used in this Path. You cannot use it twice!' =>
             'این TransitionAction قبلا در این مسیر استفاده می شود. شما می توانید از آن استفاده کنید دو بار!',
         'Hide EntityIDs' => 'مخفی کردن EntityIDs',
+        'Non-global ActivityDialogs may not be assigned to global Activities!' =>
+            '',
         'Edit Field Details' => 'ویرایش اطلاعات درست',
         'Customer interface does not support articles not visible for customers.' =>
             '',
@@ -6175,13 +6952,17 @@ sub Data {
         'Deleting the template and its data. This may take a while...' =>
             '',
 
+        # JS File: Core.Agent.Admin.Translations
+        'Missing Translations' => '',
+        'At least one translation must be filled!' => '',
+        'All translations must be filled!' => '',
+
         # JS File: Core.Agent.AppointmentCalendar
         'Jump' => '',
         'Timeline Month' => '',
         'Timeline Week' => '',
         'Timeline Day' => '',
         'Previous' => 'قبلی',
-        'Resources' => '',
         'Su' => 'یک',
         'Mo' => 'دو',
         'Tu' => 'سه',
@@ -6201,6 +6982,16 @@ sub Data {
         'Are you sure you want to delete this appointment? This operation cannot be undone.' =>
             '',
 
+        # JS File: Core.Agent.ArticleFeatures
+        'Article Delete' => '',
+        'Are you sure you want to delete this article?' => '',
+        'Article deleted successfully!' => '',
+        'Article already marked as deleted.' => '',
+        'Article Restore' => '',
+        'Are you sure you want to restore this article?' => '',
+        'Article restored successfully!' => '',
+        'Article not available for restoring.' => '',
+
         # JS File: Core.Agent.CustomerSearch
         'First select a customer user, then select a customer ID to assign to this ticket.' =>
             '',
@@ -6212,7 +7003,7 @@ sub Data {
             'لطفا حداقل یک مقدار مورد جستجو را وارد کنید یا * به پیدا کردن هر چیزی.',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => 'اطلاعات در مورد OTOBO دیمون',
+        'Information about the CareOnCloud ESM Daemon' => 'اطلاعات در مورد CareOnCloud ESM دیمون',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => 'لطفا فیلدهای مشخص شده به عنوان قرمز برای ورودی های معتبر را بررسی کنید.',
@@ -6318,6 +7109,10 @@ sub Data {
         'Do you really want to revert this setting to its historical value?' =>
             '',
 
+        # JS File: Core.UI.CodeMirrorEditor
+        'Error trying to create CodeMirror instance, please check configuration!' =>
+            '',
+
         # JS File: Core.UI.Datepicker
         'Open date selection' => 'باز کردن انتخاب تاریخ',
         'Invalid date (need a future date)!' => 'تاریخ نامعتبر (نیاز به تاریخی در آینده)!',
@@ -6360,6 +7155,7 @@ sub Data {
         'Sorry, you can only upload one file here.' => '',
         'Sorry, you can only upload %s files.' => '',
         'Please only select at most %s files for upload.' => '',
+        'Upload information' => '',
         'The following files are not allowed to be uploaded: %s' => '',
         'The following files exceed the maximum allowed size per file of %s and were not uploaded: %s' =>
             '',
@@ -6367,9 +7163,14 @@ sub Data {
             '',
         'No space left for the following files: %s' => '',
         'Available space %s of %s.' => '',
-        'Upload information' => '',
         'An unknown error occurred when deleting the attachment. Please try again. If the error persists, please contact your system administrator.' =>
             '',
+
+        # JS File: ITSM.Admin.ImportExport
+        'Deleting template...' => '',
+        'There was an error deleting the template. Please check the logs for more information.' =>
+            '',
+        'Template was deleted successfully.' => '',
 
         # JS File: Core.Language.UnitTest
         'yes' => 'بله',
@@ -6377,22 +7178,18 @@ sub Data {
         'This is %s' => '',
         'Complex %s with %s arguments' => '',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'گروه بندی شده',
         'Stacked' => 'انباشته',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => 'جریان',
         'Expanded' => 'Expanded',
 
         # SysConfig
-        '
-            Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown
-            in an extra table
-        ' => '',
         '
 Dear Customer,
 
@@ -6420,8 +7217,6 @@ Thanks for your help!
         ' 2 minutes' => '۲ دقیقه',
         ' 5 minutes' => '۵ دقیقه',
         ' 7 minutes' => '۷ دقیقه',
-        '"Slim" skin which tries to save screen space for power users.' =>
-            '\ "اسلیم " پوست که تلاش می کند برای صرفه جویی در فضای صفحه نمایش برای کاربران قدرت.',
         '%s' => '٪s',
         '(UserLogin) Firstname Lastname' => '(صفحهی) نام نام خانوادگی',
         '(UserLogin) Lastname Firstname' => '(صفحهی) نام خانوادگی FIRSTNAME',
@@ -6441,10 +7236,13 @@ Thanks for your help!
         '30 Minutes' => '',
         '300 (Beginner)' => '300 (مبتدی)',
         '5 Minutes' => '',
+        '7 days' => '',
         'A TicketWatcher Module.' => 'ماژول TicketWatcher.',
         'A Website' => 'یک وبسایت',
         'A list of dynamic fields that are merged into the main ticket during a merge operation. Only dynamic fields that are empty in the main ticket will be set.' =>
             'یک لیست از زمینه پویا که بلیط اصلی را به در جریان یک عملیات ادغام. تنها زمینه های پویا که بلیط اصلی در خالی هستند مجموعه خواهد شد.',
+        'A list of parameters which can be updated via the UpdateAJAX.' =>
+            '',
         'A picture' => 'یک تصویر',
         'ACL module that allows closing parent tickets only if all its children are already closed ("State" shows which states are not available for the parent ticket until all child tickets are closed).' =>
             'ماژول ACL فقط زمانی که تمام درخواست‌های فرزند بسته شده باشد، اجازه بستن درخواست‌های والد را می‌دهد. ("وضعیت" نان می‌دهد که کدام وضعیت‌ها برای درخواست والدتا زمانی که تمام درخواست‌های فرزند بسته شده است، در دسترس می‌باشد.)',
@@ -6453,13 +7251,13 @@ Thanks for your help!
         'Activate Elasticsearch.' => '',
         'Activate the customer frontend.' => '',
         'Activate the public frontend.' => '',
-        'Activates Rendering of DynamicFields outside of the DynamicField block.' =>
-            '',
         'Activates a blinking mechanism of the queue that contains the oldest ticket.' =>
             'مکانیزم چشمک زدن را برای صف درخواستی که شامل قدیمی‌ترین درخواست می‌باشد فعال می‌کند.',
         'Activates lost password feature for agents, in the agent interface.' =>
             'ویژگی رمز عبور فراموش شده را برای کارشناسان فعال می‌کند.',
         'Activates lost password feature for customers.' => 'ویژگی رمز عبور فراموش شده را برای مشترکین فعال می‌کند.',
+        'Activates rendering of dynamic fields outside of the dynamic field block.' =>
+            '',
         'Activates support for customer and customer user groups.' => '',
         'Activates the article filter in the zoom view to specify which articles should be shown.' =>
             'فیلتر مطلب را در نمای نمایش کامل برای مشخص کردن اینکه کدام مطلب نمایش داده شود، فعال می‌کند.',
@@ -6484,8 +7282,10 @@ Thanks for your help!
         'Added subscription for user "%s".' => 'عضویت اضافه شده برای کاربر "%s".',
         'Added system request (%s).' => '',
         'Added web request from customer.' => '',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
             'پسوند سال و ماه به فایل ثبت وقایع می‌افزاید. برای هر ماه یک فایل ساخته خواهد شد.',
+        'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
+            '',
         'Adds customers email addresses to recipients in the ticket compose screen of the agent interface. The customers email address won\'t be added if the article type is email-internal.' =>
             'می افزاید: مشتریان به آدرس ایمیل به گیرندگان در صفحه نوشتن بلیط رابط عامل. آدرس مشتریان ایمیل اضافه خواهد شد در صورتی که نوع مقاله ایمیل داخلی است.',
         'Adds the one time vacation days for the indicated calendar.' => '',
@@ -6511,6 +7311,7 @@ Thanks for your help!
         'Agent Name' => 'نام نماینده',
         'Agent Name + FromSeparator + System Address Display Name' => 'نام نماینده + FromSeparator + سیستم نام آدرس ها',
         'Agent Preferences.' => 'تنظیمات عامل.',
+        'Agent Reference Dynamic Field With Data Search' => '',
         'Agent Statistics.' => '',
         'Agent User Search' => '',
         'Agent User Search.' => '',
@@ -6539,11 +7340,14 @@ Thanks for your help!
             'عامل ماژول اطلاع رسانی رابط برای دیدن تعدادی از بلیط در سرویس های من. کنترل دسترسی اضافی برای نشان دادن یا این لینک نشان می دهد را نمی توان با استفاده از کلید \ "گروه " و محتوا مانند \ ":؛: GROUP2 \ move_into GROUP1 RW" انجام می شود.',
         'Agent interface notification module to see the number of watched tickets. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'عامل ماژول اطلاع رسانی رابط برای دیدن تعدادی از بلیط تماشا. کنترل دسترسی اضافی برای نشان دادن یا این لینک نشان می دهد را نمی توان با استفاده از کلید \ "گروه " و محتوا مانند \ ":؛: GROUP2 \ move_into GROUP1 RW" انجام می شود.',
+        'Agent reference dynamic field with data search.' => '',
         'AgentTicketZoom widget that displays Contact with data dynamic field in the side bar.' =>
             '',
         'AgentTicketZoom widget that displays a table of objects linked to the ticket.' =>
             '',
         'AgentTicketZoom widget that displays customer information for the ticket in the side bar.' =>
+            '',
+        'AgentTicketZoom widget that displays similar ticket data in the side bar. Elasticsearch needs to be enabled beofre you can enable this widget.' =>
             '',
         'AgentTicketZoom widget that displays ticket data in the side bar.' =>
             '',
@@ -6653,11 +7457,16 @@ Thanks for your help!
         'Appointment notifications' => '',
         'Appointments' => '',
         'Arabic (Saudi Arabia)' => 'عربی (عربستان سعودی)',
+        'Article ID: %s was deleted by "%s" (%s)' => '',
+        'Article ID: %s was edited by "%s" (%s)' => '',
+        'Article ID: %s was restored by "%s" (%s)' => '',
+        'Article Version View' => '',
         'Article attributes that should be available in ticket invoker configuration frontend (0 = visible/selectable, 1 = default/preselected).' =>
             '',
         'ArticleTree' => 'ArticleTree',
+        'As soon as the move queue option dropdown is enabled for example in the AgentTicketZoom dialogue, it is possible to move tickets locked to other agents to another queue by activating this option.' =>
+            '',
         'Attachment Name' => 'نام فایل پیوست',
-        'Autoloading of Znuny4OTOBOPasswordPolicy extensions.' => '',
         'Automated line break in text messages after x number of chars.' =>
             'خط خودکار در پیام های متنی از تعداد X از کاراکتر.',
         'Automatically change the state of a ticket with an invalid owner once it is unlocked. Maps from a state type to a new ticket state.' =>
@@ -6673,13 +7482,13 @@ Thanks for your help!
         'Automatically sets the responsible of a ticket (if it is not set yet) after the first owner update.' =>
             'به طور خودکار مجموعه مسئول یک بلیط (در صورت تنظیم نشده است) پس از به روز رسانی صاحب اول.',
         'Avatar' => '',
-        'Balanced white skin by Felix Niklas (slim version).' => 'پوست سفید متعادل کننده شده توسط فلیکس نیکلاس (نسخه باریک).',
-        'Balanced white skin by Felix Niklas.' => 'پوست سفید متعادل کننده شده توسط فلیکس نیکلاس.',
         'Based on global RichText setting' => 'بر اساس تنظیم RichText جهانی',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+        'Basic Auth' => '',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
             '',
-        'Blocks all the incoming emails that do not have a valid ticket number in subject with From: @example.com address.' =>
-            'بلوک تمام ایمیل های دریافتی است که یک تعداد بلیط معتبر در موضوع با از ندارید: @ example.com آدرس.',
+        'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
+            '',
+        'Both' => '',
         'Bounced to "%s".' => 'لینک ثابت به : "%s"',
         'Bulgarian' => 'بلغاری',
         'Bulk Action' => 'اعمال کلی',
@@ -6736,7 +7545,7 @@ Thanks for your help!
         'Checks for queued outgoing emails to be sent.' => '',
         'Checks if an E-Mail is a followup to an existing ticket by searching the subject for a valid ticket number.' =>
             'چک اگر یک ایمیل پیگیری بلیط های موجود به با جستجو در موضوع برای یک تعداد بلیط معتبر است.',
-        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module.' =>
+        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew. Please define a rule set in the settings "000-ExternalTicketNumberRecognition1" through "000-ExternalTicketNumberRecognition4".' =>
             '',
         'Checks the SystemID in ticket number detection for follow-ups. If not enabled, SystemID will be changed after using the system.' =>
             '',
@@ -6758,6 +7567,11 @@ Thanks for your help!
         'Cloud service admin module registration for the transport layer.' =>
             'ابر مدیر خدمات ثبت نام ماژول برای لایه حمل و نقل.',
         'Collect support data for asynchronous plug-in modules.' => 'جمع آوری داده ها پشتیبانی از پلاگین در ماژول ناهمزمان.',
+        'Color definitions for agent interface high contrast skin.' => '',
+        'Color definitions for customer interface high contrast skin.' =>
+            '',
+        'Color definitions for the agent interface (default skin). MainDark, -Light and Hover are the navigation background, buttons and some other main elements. Highlight are e.g. icons and selected elements in the navbar. BG- and Text colors are various background, and text colors. Hover colors are used in selections and tables. Notify colors are the background of notifications.' =>
+            '',
         'Color definitions for the customer interface.' => '',
         'Column ticket filters for Ticket Overviews type "Small".' => 'فیلتر درخواست ستون برای نوع درخواست مروری \ "کوچک ".',
         'Columns that can be filtered in the escalation view of the agent interface. Note: Only Ticket attributes, Dynamic Fields (DynamicField_NameX) and Customer attributes (e.g. CustomerUserPhone, CustomerCompanyName, ...) are allowed.' =>
@@ -6788,19 +7602,22 @@ Thanks for your help!
         'Company Tickets.' => 'درخواست شرکت.',
         'Company name which will be included in outgoing emails as an X-Header.' =>
             'نام شرکت می باشد که در ایمیل های ارسالی به عنوان یک X-سربرگ شامل خواهد شد.',
-        'Compat module for AgentZoom to AgentTicketZoom.' => 'ماژول Compat برای AgentZoom به AgentTicketZoom.',
         'Complex' => 'پیچیده',
         'Compose' => 'ارسال',
         'Configure Processes.' => ' پردازش پیکربندی .',
         'Configure and manage ACLs.' => 'پیکربندی و مدیریت ACL ها است.',
         'Configure any additional readonly mirror databases that you want to use.' =>
             'پیکربندی هر پایگاه داده آینه فقط خواندنی های اضافی است که شما می خواهید به استفاده از.',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
             '',
         'Configure the About information.' => '',
         'Configure the privacy policy.' => '',
         'Configure which screen should be shown after a new ticket has been created.' =>
             'پیکربندی که صفحه نمایش باید نشان داده شود پس از یک درخواست جدید ایجاد شده است.',
+        'Configure which screen should be shown after a ticket has been marked as seen.' =>
+            '',
+        'Configure which screen should be shown after a ticket has been marked as unseen.' =>
+            '',
         'Configure your own log text for PGP.' => 'پیکربندی متن ورود به سیستم خود  برای PGP.',
         'Configures a default TicketDynamicField setting. "Name" defines the dynamic field which should be used, "Value" is the data that will be set, and "Event" defines the trigger event. Please check the developer manual (https://doc.otobo.org/), chapter "Ticket Event Module".' =>
             '',
@@ -6821,16 +7638,22 @@ Thanks for your help!
             '',
         'Controls if the ticket and article seen flags are removed when a ticket is archived.' =>
             'کنترل اگر پرچم درخواست و مقاله دیده شود آنها حذف می شوند زمانیکه یک بلیط بایگانی شده است.',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'Converts HTML mails into text messages.' => 'تبدیل ایمیل های HTML و به پیام های متنی.',
         'Create New process ticket.' => 'ساختن درخواست روند جدید.',
         'Create Templates for AdminDynamicFieldTitle.' => '',
         'Create Ticket' => '',
         'Create a new calendar appointment linked to this ticket' => '',
         'Create and manage Service Level Agreements (SLAs).' => 'ساخت و مدیریت توافقات سطح سرویس (SLA)',
+        'Create and manage advanced definitions for ticket masks.' => '',
         'Create and manage agents.' => 'ساخت و مدیریت کارشناسان',
         'Create and manage appointment notifications.' => '',
         'Create and manage attachments.' => 'ساخت و مدیریت پیوست‌ها',
         'Create and manage calendars.' => '',
+        'Create and manage custom translations.' => '',
         'Create and manage customer users.' => 'ایجاد و مدیریت کاربران مشتری می باشد.',
         'Create and manage customers.' => 'ساخت و مدیریت مشترکین',
         'Create and manage dynamic fields.' => 'ایجاد و مدیریت زمینه های پویا.',
@@ -6859,12 +7682,15 @@ Thanks for your help!
         'Created ticket [%s] in "%s" with priority "%s" and state "%s".' =>
             '',
         'Croatian' => 'کرواتی',
+        'Custom CSS styles for RichText articles.' => '',
         'Custom RSS Feed' => 'سفارشی خوراک RSS',
         'Custom text for the page shown to customers that have no tickets yet (if you need those text translated add them to a custom translation module).' =>
             'متن دلخواه برای صفحه نشان داده شده به مشتریان است که هیچ بلیط هنوز (اگر شما نیاز به آن متن ترجمه آنها را به یک ماژول ترجمه سفارشی اضافه کنید).',
         'Customer Administration' => 'اداره مشتری',
         'Customer Companies' => 'شرکت/سازمان‌های مشترک',
+        'Customer Company' => '',
         'Customer Dashboard' => '',
+        'Customer Dashboard Info Tile' => '',
         'Customer Dynamic Field Database Detailed Search' => '',
         'Customer Dynamic Field Database Details' => '',
         'Customer Dynamic Field Database Search' => '',
@@ -6873,6 +7699,7 @@ Thanks for your help!
         'Customer Information Center search.' => '',
         'Customer Information Center.' => 'مرکز اطلاعات مشتری.',
         'Customer Password.' => '',
+        'Customer Reference Dynamic Field With Data Search' => '',
         'Customer Ticket Print Module.' => 'درخواست مشتری چاپ ماژول.',
         'Customer User Administration' => 'مشتری اداره کاربری',
         'Customer User Information' => '',
@@ -6890,6 +7717,7 @@ Thanks for your help!
         'Customer item (icon) which shows the open tickets of this customer as info block. Setting CustomerUserLogin to 1 searches for tickets based on login name rather than CustomerID.' =>
             'مورد و ضوابط (آیکون) نشان می دهد که بلیط باز این مشتری را به عنوان بلوک اطلاعات. تنظیم CustomerUserLogin تا 1 جستجو برای بلیط بر اساس نام کاربری به جای CustomerID.',
         'Customer preferences.' => 'ترجیحات مشتری.',
+        'Customer reference dynamic field with data search.' => '',
         'Customer ticket overview' => 'مروری درخواست مشتری',
         'Customer ticket search.' => 'جستجو درخواست مشتری.',
         'Customer ticket zoom' => 'زوم درخواست مشتری',
@@ -6905,7 +7733,6 @@ Thanks for your help!
         'Dashboard overview.' => '',
         'Data used to export the search result in CSV format.' => 'داده استفاده شده برای ارسال نتایج جستجو به قالب CSV',
         'Date / Time' => 'زمان تاریخ',
-        'Default (Slim)' => 'به طور پیش فرض (لاغر)',
         'Default ACL values for ticket actions.' => 'مقادیر ACL پیش‌فرض برای عملیات‌های درخواست',
         'Default ProcessManagement entity prefixes for entity IDs that are automatically generated.' =>
             'به طور پیش فرض پیشوند نهاد مدیریت پردازش برای شناسه های نهاد است که به طور خودکار تولید می شود.',
@@ -6920,7 +7747,6 @@ Thanks for your help!
             'نوع صفحه نمایش به طور پیش فرض برای فرستنده (از) نام در AgentTicketZoom و CustomerTicketZoom.',
         'Default loop protection module.' => 'ماژول جلوگیری از تشکیل حلقه پیش‌فرض',
         'Default queue ID used by the system in the agent interface.' => 'شناسه پیش‌فرض صف استفاده شده برای سیستم در واسط کاربری کارشناس',
-        'Default skin for the agent interface (slim version).' => 'پوست به طور پیش فرض برای رابط عامل (نسخه باریک).',
         'Default skin for the agent interface.' => 'پوست به طور پیش فرض برای رابط عامل.',
         'Default skin for the customer interface.' => 'پوست به طور پیش فرض برای رابط مشتری.',
         'Default ticket ID used by the system in the agent interface.' =>
@@ -6930,8 +7756,8 @@ Thanks for your help!
         'Default value for NameX' => 'مقدار پیش فرض برای NameX',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             'تعریف عملیات که در آن یک دکمه تنظیمات در دسترس است در اشیاء مرتبط ویجت (LinkObject :: ViewMode = \ "پیچیده "). لطفا توجه داشته باشید که این اقدامات باید در بر داشت زیر JS و CSS فایل های ثبت نام کرده اند: Core.AllocationList.css، Core.UI.AllocationList.js، Core.UI.Table.Sort.js، Core.Agent.TableFilters.js.',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'تعریف یک فیلتر برای خروجی HTML برای اضافه کردن لینک پشت یک رشته تعریف شده است. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر OTOBO استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'تعریف یک فیلتر برای خروجی HTML برای اضافه کردن لینک پشت یک رشته تعریف شده است. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر CareOnCloud ESM استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             '',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -6940,6 +7766,12 @@ Thanks for your help!
             'تعریف نام زمینه پویا برای زمان پایان. این فیلد به صورت دستی به سیستم به عنوان بلیط افزود: \ "تاریخ / زمان " و باید در صفحه نمایش ایجاد بلیط و / یا در هر صفحه نمایش عمل بلیط دیگر فعال شود.',
         'Define dynamic field name for start time. This field has to be manually added to the system as Ticket: "Date / Time" and must be activated in ticket creation screens and/or in any other ticket action screens.' =>
             'تعریف نام زمینه پویا برای زمان شروع. این فیلد به صورت دستی به سیستم به عنوان بلیط افزود: \ "تاریخ / زمان " و باید در صفحه نمایش ایجاد بلیط و / یا در هر صفحه نمایش عمل بلیط دیگر فعال شود.',
+        'Define possible namespaces for dynamic fields. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces for global usage (currently dynamic fields and process elements). Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces specifically for process elements. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters.' =>
+            '',
         'Define the max depth of queues.' => 'تعریف عمق حداکثر صف.',
         'Define the queue comment 2.' => 'تعریف نظر صف 2.',
         'Define the service comment 2.' => 'تعریف نظر خدمات 2.',
@@ -6965,14 +7797,14 @@ Thanks for your help!
             'یک Anchor را معرفی مشتری، که تولید یک آیکون گوگل در پایان یک بلوک اطلاعات مشتری.',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             'یک Anchor را معرفی مشتری، که تولید یک آیکون نقشه های گوگل در پایان یک بلوک اطلاعات مشتری.',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک در پشت اعداد CVE. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر OTOBO استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک در پشت اعداد MSBulletin. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر OTOBO استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک پشت یک رشته تعریف شده است. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر OTOBO استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک در پشت اعداد BUGTRAQ. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر OTOBO استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک در پشت اعداد CVE. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر CareOnCloud ESM استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک در پشت اعداد MSBulletin. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر CareOnCloud ESM استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک پشت یک رشته تعریف شده است. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر CareOnCloud ESM استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'تعریف می کند یک فیلتر برای خروجی HTML برای اضافه کردن لینک در پشت اعداد BUGTRAQ. عنصر تصویر اجازه می دهد تا دو نوع ورودی. در یک بار نام یک تصویر (به عنوان مثال faq.png). در این مورد مسیر تصویر CareOnCloud ESM استفاده خواهد شد. احتمال و امکان دوم است برای قرار دادن لینک به تصویر.',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             'تعریف می کند یک فیلتر برای جمع آوری تعداد CVE از متون مقاله در AgentTicketZoom. نتایج خواهد شد در یک جعبه متا بعدی به مقاله نمایش داده شود. را پر کنید در URLPreview اگر شما می خواهم برای دیدن یک پیش نمایش در هنگام حرکت ماوس خود را بالا عنصر link. این می تواند از همان URL که در URL، بلکه یک جایگزین. لطفا توجه داشته باشید که برخی از وب سایت های انکار که در درون یک iframe (مانند گوگل) نمایش داده و به این ترتیب با حالت پیش نمایش کار نمی کند.',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -7004,7 +7836,7 @@ Thanks for your help!
         'Defines all the possible stats output formats.' => 'تعریف می کند همه امکانات فرمت آمار خروجی.',
         'Defines an alternate URL, where the login link refers to.' => 'یک Anchor را معرفی URL متناوب، که در آن لینک ورود به سیستم اشاره به.',
         'Defines an alternate URL, where the logout link refers to.' => 'یک Anchor را معرفی URL متناوب، که در آن لینک خروج از سیستم اشاره به.',
-        'Defines an alternate login URL for the customer panel..' => 'یک Anchor را معرفی URL لاگین دیگر را برای پنل مشتری ..',
+        'Defines an alternate login URL for the customer panel.' => '',
         'Defines an alternate logout URL for the customer panel.' => 'یک Anchor را معرفی URL خروج از سیستم جایگزین برای پنل مشتری می باشد.',
         'Defines an external link to the database of the customer (e.g. \'http://yourhost/customer.php?CID=[% Data.CustomerID %]\' or \'\').' =>
             'لینک های خارجی به پایگاه داده های مشتری (: یا \'\' به عنوان مثال \'؟ //yourhost/customer.php CID = [٪ Data.CustomerID٪] HTTP\') تعریف می کند.',
@@ -7012,15 +7844,16 @@ Thanks for your help!
             '',
         'Defines an overview module to show the address book view of a customer user list.' =>
             '',
-        'Defines available article actions for Chat articles.' => '',
-        'Defines available article actions for Email articles.' => '',
         'Defines available article actions for Internal articles.' => '',
         'Defines available article actions for Phone articles.' => '',
+        'Defines available article actions for e-mail articles.' => '',
         'Defines available article actions for invalid articles.' => '',
         'Defines available groups for the admin overview screen.' => '',
         'Defines chat communication channel.' => '',
         'Defines default headers for outgoing emails.' => '',
         'Defines email communication channel.' => '',
+        'Defines for which article types the editing of subject, body and attachment is enabled. "Both" includes "Phone" and "Internal".' =>
+            '',
         'Defines from which ticket attributes the agent can select the result order.' =>
             'تعریف می کند که از آن بلیط ویژگی های عامل می توانید سفارش نتیجه را انتخاب کنید.',
         'Defines groups for preferences items.' => '',
@@ -7066,14 +7899,17 @@ Thanks for your help!
             'تعریف می کند اگر یک قفل بلیط مورد نیاز برای تغییر مشتری یک بلیط در رابط عامل (اگر بلیط هنوز قفل نشده است، بلیط قفل می شود و عامل فعلی خواهد شد به طور خودکار به عنوان صاحب آن تنظیم).',
         'Defines if agents should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             'تعریف می کند اگر عوامل باید مجاز به ورود در صورتی که هیچ راز به اشتراک گذاشته شده ذخیره شده در تنظیمات خود را و در نتیجه با استفاده از احراز هویت دو عامل است.',
+        'Defines if articles written by the customer are editable.' => '',
         'Defines if customers should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             'تعریف می کند اگر مشتریان باید مجاز به ورود در صورتی که هیچ راز به اشتراک گذاشته شده ذخیره شده در تنظیمات خود را و در نتیجه با استفاده از احراز هویت دو عامل است.',
+        'Defines if parent-child translations for queues and services should be generated automatically.' =>
+            '',
         'Defines if the communication between this system and the servers that provide cloud services is possible. If set to \'Disable cloud services\', some functionality will be lost such as support data sending, Package Verify™ and product News dashboard widgets, among others.' =>
+            '',
+        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in agent interface.' =>
             '',
         'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in customer interface.' =>
             'تعریف می کند اگر حالت پیشرفته استفاده شود (را قادر می سازد استفاده از جدول، جایگزین، زیرنویس، بالانویس، چسباندن از Word، و غیره) در رابط مشتری می باشد.',
-        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.).' =>
-            'تعریف می کند اگر حالت پیشرفته استفاده شود (را قادر می سازد استفاده از جدول، جایگزین، زیرنویس، بالانویس، چسباندن از Word، و غیره).',
         'Defines if the first article should be displayed as expanded, that is visible for the related customer. If nothing defined, latest article will be expanded.' =>
             '',
         'Defines if the message in the email outbound screen of the agent interface is visible for the customer by default.' =>
@@ -7102,20 +7938,24 @@ Thanks for your help!
             '',
         'Defines if the previously valid token should be accepted for authentication. This is slightly less secure but gives users 30 seconds more time to enter their one-time password.' =>
             'تعریف می کند در صورتی که رمز قبلا معتبر باید برای احراز هویت پذیرفته شده است. این است که کمی کمتر امن اما کاربران می دهد 30 ثانیه به زمان بیشتری برای وارد کنید رمز عبور یک بار خود را.',
+        'Defines if the ticket info widget is displayed permanently on the left below the article list or is available via click on the \'Information\' button.' =>
+            '',
         'Defines if the values for filters should be retrieved from all available tickets. If enabled, only values which are actually used in any ticket will be available for filtering. Please note: The list of customers will always be retrieved like this.' =>
             '',
-        'Defines if time accounting is mandatory in the agent interface. If enabled, a note must be entered for all ticket actions (no matter if the note itself is configured as active or is originally mandatory for the individual ticket action screen).' =>
+        'Defines if time accounting is mandatory in the agent interface, if a note is entered.' =>
             '',
         'Defines if time accounting must be set to all tickets in bulk action.' =>
             'تعریف می کند اگر حسابداری هم باید به تمام بلیط در عمل بخش عمده تنظیم شده است.',
+        'Defines if user can modify all possible values/labels of dynamic fields in one data table.' =>
+            '',
         'Defines internal communication channel.' => '',
         'Defines out of office message template. Two string parameters (%s) available: end date and number of days left.' =>
             'تعریف می کند از قالب پیام دفتر. دو پارامتر رشته ( %s ) در دسترس: تاریخ پایان و تعداد روز باقی مانده.',
         'Defines phone communication channel.' => '',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             'تعریف می کند که صف را بلیط برای نمایش به عنوان رویدادهای تقویم استفاده می شود.',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            'تعریف می کند نام میزبان HTTP برای جمع آوری داده ها پشتیبانی با ماژول عمومی PublicSupportDataCollector، (به عنوان مثال استفاده از OTOBO شبح).',
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            'تعریف می کند نام میزبان HTTP برای جمع آوری داده ها پشتیبانی با ماژول عمومی PublicSupportDataCollector، (به عنوان مثال استفاده از CareOnCloud ESM شبح).',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             'تعریف می کند بیان IP به طور منظم برای دسترسی به مخزن محلی. شما نیاز به فعال کردن دسترسی به این دارند به مخزن محلی خود و بسته :: RepositoryList در میزبان راه دور مورد نیاز است.',
         'Defines the PostMaster header to be used on the filter for keeping the current state of the ticket.' =>
@@ -7148,9 +7988,13 @@ Thanks for your help!
         'Defines the close state for quick close.' => '',
         'Defines the column to store the keys for the preferences table.' =>
             'تعریف می کند که ستون برای ذخیره کلید برای جدول تنظیمات است.',
-        'Defines the communication chanel for the quick close article action.' =>
+        'Defines the communication channel for the quick close article action.' =>
             '',
         'Defines the config options for the autocompletion feature.' => 'تعریف می کند که گزینه های پیکربندی برای قابلیت تکمیل خودکار است.',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketSeenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketUnseenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
         'Defines the config parameters of this item, to be shown in the preferences view.' =>
             'تعریف می کند که پارامترهای پیکربندی از این آیتم، به  نظردر تنظیمات نشان داده میشود.',
         'Defines the config parameters of this item, to be shown in the preferences view. \'PasswordRegExp\' allows to match passwords against a regular expression. Define the minimum number of characters using \'PasswordMinSize\'. Define if at least 2 lowercase and 2 uppercase letter characters are needed by setting the appropriate option to \'1\'. \'PasswordMin2Characters\' defines if the password needs to contain at least 2 letter characters (set to 0 or 1). \'PasswordNeedDigit\' controls the need of at least 1 digit (set to 0 or 1 to control). \'PasswordMaxLoginFailed\' allows to set an agent to invalid-temporarily if max failed logins reached. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -7160,9 +8004,9 @@ Thanks for your help!
         'Defines the connections for http/ftp, via a proxy.' => 'تعریف می کند که ارتباطات به HTTP / FTP، از طریق یک پروکسی است.',
         'Defines the customer preferences key where the shared secret key is stored.' =>
             'تعریف می کند کلید ترجیحات مشتری که در آن کلید رمز مشترک ذخیره شده است.',
+        'Defines the data objects available to be translated.' => '',
         'Defines the date input format used in forms (option or input fields).' =>
             'تعریف فرمت تاریخ ورودی مورد استفاده در اشکال (گزینه و یا ورودی زمینه).',
-        'Defines the default CSS used in rich text editors.' => 'تعریف می کند که CSS به طور پیش فرض مورد استفاده در ویرایشگرهای متن غنی است.',
         'Defines the default agent name in the ticket zoom view of the customer interface.' =>
             '',
         'Defines the default auto response type of the article for this operation.' =>
@@ -7171,12 +8015,12 @@ Thanks for your help!
             'تعریف می کند که بدن به طور پیش فرض از توجه داشته باشید در بلیط صفحه نمایش های متنی رایگان از رابط عامل.',
         'Defines the default filter fields in the customer user address book search (CustomerUser or CustomerCompany). For the CustomerCompany fields a prefix \'CustomerCompany_\' must be added.' =>
             '',
-        'Defines the default front-end (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
+        'Defines the default frontend (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
             '',
-        'Defines the default front-end language. All the possible values are determined by the available language files on the system (see the next setting).' =>
-            'زبان پیش فرض جلویی تعریف می کند. همه مقادیر ممکن توسط فایل های زبان موجود بر روی سیستم (تنظیمات بعدی را ببینید) تعیین می شود.',
+        'Defines the default frontend language. All the possible values are determined by the available language files on the system. These values are listed as the keys in the setting \'DefaultUsedLanguages\'.' =>
+            '',
         'Defines the default history type in the customer interface.' => 'تعریف می کند که به طور پیش فرض نوع تاریخ در رابط مشتری.',
-        'Defines the default interface. Unknown pathes below the script alias are redirected to the selected interface.' =>
+        'Defines the default interface. Unknown paths below the script alias are redirected to the selected interface.' =>
             '',
         'Defines the default maximum number of X-axis attributes for the time scale.' =>
             'تعریف می کند که به طور پیش فرض حداکثر تعداد محور X ویژگی برای مقیاس زمانی.',
@@ -7327,6 +8171,8 @@ Thanks for your help!
             '',
         'Defines the displayed style of the From field in notes that are visible for customers. A default agent name can be defined in Ticket::Frontend::CustomerTicketZoom###DefaultAgentName setting.' =>
             '',
+        'Defines the dynamic field to identify tickets by for this operation. Please put in the field name only without the \'DynamicField_\' prefix.' =>
+            '',
         'Defines the dynamic fields that are used for displaying on calendar events.' =>
             'تعریف می کند که زمینه های پویا هستند که برای نمایش بر روی رویدادهای تقویم استفاده می شود.',
         'Defines the event object types that will be handled via AdminAppointmentNotificationEvent.' =>
@@ -7338,18 +8184,14 @@ Thanks for your help!
             'تعریف می کند که فیلتر است که پردازش متن در مقالات، به منظور برجسته آدرس ها.',
         'Defines the format of responses in the ticket compose screen of the agent interface ([% Data.OrigFrom | html %] is From 1:1, [% Data.OrigFromName | html %] is only realname of From).' =>
             'تعریف فرمت پاسخها را در صفحه نوشتن بلیط رابط عامل ([٪ Data.OrigFrom | HTML٪] است از 1: 1، [٪ Data.OrigFromName | HTML٪] تنها realname از از است).',
-        'Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
-            'تعریف می کند که نام مناسب دامنه از سیستم. این تنظیم به عنوان یک متغیر، OTOBO_CONFIG_FQDN است که در تمام اشکال پیام استفاده شده توسط برنامه، برای ساخت لینک به بلیط در سیستم شما یافت استفاده می شود.',
+        'Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
+            'تعریف می کند که نام مناسب دامنه از سیستم. این تنظیم به عنوان یک متغیر، CareOnCloud_CONFIG_FQDN است که در تمام اشکال پیام استفاده شده توسط برنامه، برای ساخت لینک به بلیط در سیستم شما یافت استفاده می شود.',
         'Defines the groups every customer user will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer user for these groups).' =>
             '',
         'Defines the groups every customer will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer for these groups).' =>
             '',
         'Defines the headers which will be shown to generic content for the requested key.' =>
             '',
-        'Defines the height for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
-            'تعریف می کند که ارتفاع برای غنی جزء ویرایشگر متن برای این صفحه نمایش. تعداد (پیکسل) یا ارزش درصد (نسبی) را وارد کنید.',
-        'Defines the height for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            'تعریف می کند که ارتفاع برای غنی جزء ویرایشگر متن. تعداد (پیکسل) یا ارزش درصد (نسبی) را وارد کنید.',
         'Defines the history comment for the close ticket screen action, which gets used for ticket history in the agent interface.' =>
             'تعریف می کند که نظر تاریخ برای عمل روی صفحه نمایش بلیط نزدیک، می شود که برای تاریخ بلیط در رابط عامل استفاده می شود.',
         'Defines the history comment for the email ticket screen action, which gets used for ticket history in the agent interface.' =>
@@ -7405,6 +8247,10 @@ Thanks for your help!
         'Defines the hours and week days of the indicated calendar, to count the working time.' =>
             'تعریف می کند که ساعت و روز هفته  برای شمارش زمان کاردر تقویم نشان داده میشود.',
         'Defines the hours and week days to count the working time.' => 'تعریف می کند که ساعت و روز هفته برای شمارش زمان کار است.',
+        'Defines the initial height for the rich text editor component. Enter number (pixels).' =>
+            '',
+        'Defines the initial height in pixels for the rich text editor component for this screen.' =>
+            '',
         'Defines the key to be checked with Kernel::Modules::AgentInfo module. If this user preferences key is true, the message is accepted by the system.' =>
             'تعریف می کند که کلید با هسته :: :: ماژول AgentInfo بررسی می شود. اگر این تنظیمات کلید کاربر درست است، این پیام است که توسط سیستم پذیرفته شده است.',
         'Defines the key to check with CustomerAccept. If this user preferences key is true, then the message is accepted by the system.' =>
@@ -7415,8 +8261,8 @@ Thanks for your help!
             'تعریف می کند نوع لینک "ParentChild. اگر نام منبع و نام هدف حاوی همان مقدار از لینک در نتیجه غیر جهت است؛ در غیر این صورت، در نتیجه یک لینک جهت است.',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             'تعریف می کند که گروه های نوع لینک. انواع لینک از همان گروه دیگری را لغو نمایید. مثال: اگر بلیط در هر یک لینک \'عادی\' با بلیط B مرتبط است، پس از آن این بلیط را می توان علاوه بر این با لینک رابطه یک ParentChild، مرتبط است.',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            'لیستی از مخازن آنلاین. نصب و راه اندازی دیگری را می توان به عنوان مخزن مورد استفاده برای عنوان مثال: کلید = \ "از http: //example.com/otobo/public.pl اقدام = PublicRepository؛ فایل = " و محتوا = \ "برخی از نام ".',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            'لیستی از مخازن آنلاین. نصب و راه اندازی دیگری را می توان به عنوان مخزن مورد استفاده برای عنوان مثال: کلید = \ "از http: //example.com/careoncloud/public.pl اقدام = PublicRepository؛ فایل = " و محتوا = \ "برخی از نام ".',
         'Defines the list of params that can be passed to ticket search function.' =>
             '',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -7426,8 +8272,8 @@ Thanks for your help!
             'تعریف می کند محل برای دریافت لیست مخزن آنلاین برای بسته های اضافی. اولین نتیجه در دسترس استفاده خواهد شد.',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             'تعریف می کند ماژول ورود به سیستم برای سیستم. \ "فایل " می نویسد: تمام پیام ها در یک فایل تاریخچه ثبت داده می شود، \ "syslog را " با استفاده از شبح syslog را از سیستم، به عنوان مثال و syslogd.',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            'تعریف می کند به اندازه حداکثر (در بایت) برای ارسال فایل از طریق مرورگر. هشدار: تنظیم این گزینه بر یک ارزش است که خیلی کم می تواند از ماسک های بسیاری در مثال OTOBO شما می شود برای جلوگیری از کار (احتمالا هر ماسک که طول می کشد ورودی از کاربر).',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            'تعریف می کند به اندازه حداکثر (در بایت) برای ارسال فایل از طریق مرورگر. هشدار: تنظیم این گزینه بر یک ارزش است که خیلی کم می تواند از ماسک های بسیاری در مثال CareOnCloud ESM شما می شود برای جلوگیری از کار (احتمالا هر ماسک که طول می کشد ورودی از کاربر).',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             'تعریف می کند که حداکثر زمان معتبر (در ثانیه) برای یک ID را وارد نمایید.',
         'Defines the maximum number of affected tickets per job.' => 'تعریف می کند که حداکثر تعداد درخواست های آسیب دیده در هر کاررا اعلام کنید.',
@@ -7448,8 +8294,8 @@ Thanks for your help!
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             'تعریف می کند ماژول که نشان می دهد در حال حاضر در مشتریان در رابط مشتری وارد سایت شوید.',
         'Defines the module to authenticate customers.' => 'تعریف می کند که ماژول برای تأیید هویت مشتریان است.',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            'تعریف می کند که ماژول برای نمایش اطلاع رسانی در رابط عامل اگر OTOBO شبح حال اجرا نیست.',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            'تعریف می کند که ماژول برای نمایش اطلاع رسانی در رابط عامل اگر CareOnCloud ESM شبح حال اجرا نیست.',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             '',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -7470,9 +8316,11 @@ Thanks for your help!
             '',
         'Defines the module to display a notification in the customer interface, if the customer user has not yet selected a time zone.' =>
             '',
+        'Defines the module to display a notification in the customer interface. UseMarquee options: 1/0. NotifyPriority options: Notice/Error/Success/Info.' =>
+            '',
         'Defines the module to generate code for periodic page reloads.' =>
             'تعریف می کند که ماژول تولید کد برای بارگذاری مجدد صفحه تناوبی است.',
-        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
+        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
             '',
         'Defines the module used to store the session data. With "DB" the frontend server can be splitted from the db server. "FS" is faster.' =>
             'تعریف می کند ماژول استفاده می شود برای ذخیره داده ها جلسه. با \ "DB " سرور ظاهر می توانید از سرور دسیبل برابر خرد. \ "FS " سریع تر است.',
@@ -7486,8 +8334,8 @@ Thanks for your help!
             'تعریف می کند که نام ستون برای ذخیره شناسه کاربر در جدول تنظیمات.',
         'Defines the name of the indicated calendar.' => 'تعریف می کند که نام تقویم نشان داد.',
         'Defines the name of the key for customer sessions.' => 'تعریف می کند که نام کلید برای جلسات مشتری می باشد.',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            'تعریف می کند که نام کلید جلسه. به عنوان مثال جلسه، SESSIONID یا OTOBO.',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            'تعریف می کند که نام کلید جلسه. به عنوان مثال جلسه، SESSIONID یا CareOnCloud ESM.',
         'Defines the name of the table where the user preferences are stored.' =>
             'تعریف می کند که نام جدول که در آن تنظیمات کاربر ذخیره می شود.',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -7537,6 +8385,8 @@ Thanks for your help!
             '',
         'Defines the parameters for the dashboard backend. "Limit" defines the number of entries displayed by default. "Group" is used to restrict access to the plugin (e. g. Group: admin;group1;group2;). "Default" indicates if the plugin is enabled by default or if the user needs to enable it manually. "CacheTTLLocal" defines the cache expiration period in minutes for the plugin. "Mandatory" determines if the plugin is always shown and can not be removed by agents.' =>
             '',
+        'Defines the parameters for the elasticsearch widget backend.' =>
+            '',
         'Defines the path and TTF-File to handle bold italic monospaced font in PDF documents.' =>
             'تعریف می کند که مسیر و TTF-فایل که مسئولیت رسیدگی به جسورانه قلم تکفاصله کج در اسناد PDF.',
         'Defines the path and TTF-File to handle bold italic proportional font in PDF documents.' =>
@@ -7558,10 +8408,7 @@ Thanks for your help!
         'Defines the path to PGP binary.' => 'تعریف می کند که مسیر به باینری PGP.',
         'Defines the path to open ssl binary. It may need a HOME env ($ENV{HOME} = \'/var/lib/wwwrun\';).' =>
             'تعریف می کند که مسیر برای باز کردن باینری SSL. این ممکن است یک پاکت HOME نیاز ($ ENV {HOME} = \'/ var / معاونت / wwwrun\'؛).',
-        'Defines the path to the Google Chrome or Chromium binary. If set, this binary will be used instead of PhantomJS::Bin.' =>
-            '',
-        'Defines the path to the PhantomJS binary. You can use a static build from http://phantomjs.org/download.html for an easy installation process.' =>
-            '',
+        'Defines the path to the Google Chrome or Chromium binary.' => '',
         'Defines the period of time (in minutes) before agent is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
             '',
         'Defines the period of time (in minutes) before customer is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
@@ -7573,6 +8420,10 @@ Thanks for your help!
             'تعریف می کند که هدف دریافت کننده بلیط تلفن و فرستنده بلیط ایمیل (\ "صف " را نشان می دهد تمام صف، \ "آدرس سیستم " تمام آدرس های سیستم) در رابط عامل.',
         'Defines the recipient target of the tickets ("Queue" shows all queues, "SystemAddress" shows only the queues which are assigned to system addresses) in the customer interface.' =>
             'تعریف می کند که هدف دریافت کننده بلیط (\ "صف " را نشان می دهد تمام صف، \ "SystemAddress " نشان می دهد تنها صف که به آدرس سیستم اختصاص داده) در رابط مشتری.',
+        'Defines the redirect URL for setting a ticket article to \'seen\'.' =>
+            '',
+        'Defines the redirect URL for setting a ticket article to \'unseen\'.' =>
+            '',
         'Defines the required permission to show a ticket in the escalation view of the agent interface.' =>
             'تعریف می کند که مجوز مورد نیاز برای نشان دادن یک درخواست در نظر تشدید رابط عامل است.',
         'Defines the search limit for the stats.' => ' حد جستجو برای آمار را تعریف می کند.',
@@ -7583,7 +8434,7 @@ Thanks for your help!
             'تعریف می کند که جدا کننده بین عوامل نام واقعی و با توجه به آدرس ایمیل صف.',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             '',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> and <CareOnCloud_CONFIG_ScriptAlias> will be substituted.' =>
             '',
         'Defines the source dynamic field for storing historical data.' =>
             '',
@@ -7609,8 +8460,8 @@ Thanks for your help!
             '',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             'تعریف می کند آدرس ایمیل مدیر سیستم است. از آن خواهد شد در صفحه نمایش خطا از نرم افزار نمایش داده شود.',
-        'Defines the system identifier. Every ticket number and http session string contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO).' =>
-            'تعریف می کند شناسه سیستم. هر عدد بلیط و جلسه HTTP رشته شامل این ID. این تضمین می کند که تنها بلیط که متعلق به سیستم شما خواهد شد به شرح زیر یو پی اس (در هنگام برقراری ارتباط بین دو نمونه از OTOBO مفید) پردازش شده است.',
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
+            '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             'تعریف می کند ویژگی target در لینک به پایگاه داده های مشتری خارجی. به عنوان مثال \'AsPopup PopupType_TicketAction.',
         'Defines the target attribute in the link to external customer database. E.g. \'target="cdb"\'.' =>
@@ -7628,11 +8479,11 @@ Thanks for your help!
         'Defines the ticket plugin for calendar appointments.' => '',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             'تعریف می کند که منطقه زمانی از تقویم نشان داد، که می تواند بعدا به صف خاص اختصاص داده شود.',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
             '',
         'Defines the two-factor module to authenticate agents.' => 'تعریف می کند ماژول دو عامل به اعتبار عوامل.',
         'Defines the two-factor module to authenticate customers.' => 'تعریف می کند ماژول دو عامل به اعتبار مشتریان.',
-        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
+        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
             '',
         'Defines the used character for plaintext email quotes in the ticket compose screen of the agent interface. If this is empty or inactive, original emails will not be quoted but appended to the response.' =>
             'تعریف می کند که کاراکتر استفاده می شود برای نقل قول ایمیل متن در صفحه نوشتن بلیط رابط عامل. اگر این خالی است و یا غیر فعال است، ایمیل اصلی نخواهد نقل شود اما افزوده به پاسخ.',
@@ -7641,14 +8492,16 @@ Thanks for your help!
             '',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            'تعریف می کند که ایالات معتبر برای بلیط باز شده است. برای باز کردن قفل بلیط اسکریپت \ "بن / otobo.Console.pl سیستم maint :: بلیط :: UnlockTimeout " می تواند استفاده شود.',
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+            '',
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            'تعریف می کند که ایالات معتبر برای بلیط باز شده است. برای باز کردن قفل بلیط اسکریپت \ "بن / careoncloud.Console.pl سیستم maint :: بلیط :: UnlockTimeout " می تواند استفاده شود.',
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
+            '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             'تعریف می کند که قفل قابل مشاهده یک بلیط. توجه: وقتی که این تنظیم را تغییر دهید، مطمئن شوید که به حذف کش به منظور استفاده از ارزش های جدید است. به طور پیش فرض: باز کردن، tmp_lock.',
         'Defines the width for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
             'پهنای برای غنی جزء ویرایشگر متن برای این صفحه نمایش. تعداد (پیکسل) یا ارزش درصد (نسبی) را وارد کنید.',
-        'Defines the width for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            'پهنای برای غنی جزء ویرایشگر متن. تعداد (پیکسل) یا ارزش درصد (نسبی) را وارد کنید.',
         'Defines time in minutes since last modification for drafts of specified type before they are considered expired.' =>
             '',
         'Defines whether to index archived tickets for fulltext searches.' =>
@@ -7666,6 +8519,7 @@ Thanks for your help!
         'Defines, which tickets of which ticket state types should not be listed in linked ticket lists.' =>
             'تعریف می کند، که درخواست  که انواع حالت درخواست باید در لیست درخواست مرتبط ذکر شده نخواهد شد.',
         'Delete expired cache from core modules.' => 'حذف کش منقضی شده از ماژول های هسته ای است.',
+        'Delete expired form cache hourly.' => '',
         'Delete expired loader cache weekly (Sunday mornings).' => 'حذف منقضی شده هفتگی کش لودر (صبح یکشنبه).',
         'Delete expired sessions.' => 'حذف جلسات منقضی شده است.',
         'Delete expired ticket draft entries.' => '',
@@ -7683,6 +8537,8 @@ Thanks for your help!
             '',
         'Determines if the list of possible queues to move to ticket into should be displayed in a dropdown list or in a new window in the agent interface. If "New Window" is set you can add a move note to the ticket.' =>
             'تعیین اگر لیستی از صف ممکن به حرکت به بلیط به باید در یک لیست کشویی یا در یک پنجره جدید در رابط عامل نمایش داده میشود. اگر \ "پنجره جدید " قرار است شما می توانید یک یادداشت حرکت بلیط برای اضافه کنید.',
+        'Determines if the statistics module may generate article lists.' =>
+            '',
         'Determines if the statistics module may generate ticket lists.' =>
             'تعیین  ماژول آمار ممکن است لیست درخواست تولید کند.',
         'Determines the next possible ticket states, after the creation of a new email ticket in the agent interface.' =>
@@ -7713,47 +8569,73 @@ Thanks for your help!
             'مشخص است که گزینه های گیرنده (درخواست تلفن) و فرستنده (درخواست ایمیل) در رابط عامل معتبر خواهد بود.',
         'Determines which queues will be valid for ticket\'s recepients in the customer interface.' =>
             'مشخص می کند که صف برای گیرنده های نامه درخواست در رابط مشتری معتبر خواهد بود.',
+        'Dialog to show after marking a ticket as seen' => '',
+        'Dialog to show after marking a ticket as unseen' => '',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             'غیر فعال کردن HTTP هدر "Content-Security-Policy" اجازه می دهد تا بارگذاری محتویات اسکریپت های خارجی. غیر فعال کردن این هدر HTTP می تواند یک مسئله امنیتی! فقط آن را غیر فعال کنید، اگر شما می دانید آنچه شما انجام می دهند!',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
-            'غیر فعال کردن HTTP هدر \ "X-قاب گزینه ها: SAMEORIGIN " اجازه می دهد OTOBO به عنوان یک iframe در وب سایت های دیگر گنجانده شده است. غیر فعال کردن این هدر HTTP می تواند یک مسئله امنیتی! فقط آن را غیر فعال کنید، اگر شما می دانید آنچه شما انجام می دهند!',
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+            'غیر فعال کردن HTTP هدر \ "X-قاب گزینه ها: SAMEORIGIN " اجازه می دهد CareOnCloud ESM به عنوان یک iframe در وب سایت های دیگر گنجانده شده است. غیر فعال کردن این هدر HTTP می تواند یک مسئله امنیتی! فقط آن را غیر فعال کنید، اگر شما می دانید آنچه شما انجام می دهند!',
         'Disable autocomplete in the login screen.' => '',
         'Disable cloud services' => '',
         'Disables sending reminder notifications to the responsible agent of a ticket (Ticket::Responsible needs to be enabled).' =>
             '',
         'Disables the redirection to the last screen overview / dashboard after a ticket is closed.' =>
             '',
+        'Display a message explaining that the asterisk indicates mandatory fields.' =>
+            '',
         'Display a warning and prevent search when using stop words within fulltext search.' =>
             'نمایش اخطار و جلوگیری از جستجو زمانی که با استفاده از کلمات در درون جستجوی متن هست.',
         'Display communication log entries.' => '',
         'Display settings to override defaults for Process Tickets.' => 'تنظیمات پیش فرض صفحه نمایش برای نادیده گرفتن فرایند درخواست هست.',
+        'Display settings to override defaults for dynamic field widget for Tickets.' =>
+            '',
+        'Displayable via click' => '',
         'Displays the accounted time for an article in the ticket zoom view.' =>
             'نمایش زمان به حساب برای یک مقاله در نظر زوم درخواست است.',
         'Displays the number of all tickets with the same CustomerID as current ticket in the ticket zoom view.' =>
             '',
-        'Down' => 'پائین',
         'Dropdown' => 'رها کردن',
         'Dutch' => '',
         'Dutch stop words for fulltext index. These words will be removed from the search index.' =>
             'کلمات توقف هلندی شاخص متن. این کلمات از صفحه اول جستجو حذف خواهند شد.',
+        'Dynamic Field Contents' => '',
+        'Dynamic Field Information' => '',
+        'Dynamic Field Labels' => '',
+        'Dynamic Field Screen' => '',
+        'Dynamic Field Set' => '',
+        'Dynamic Field Set Backend GUI' => '',
         'Dynamic Fields Checkbox Backend GUI' => 'رابط کاربری گرافیکی پویا زمینه جعبه بخش مدیریت',
         'Dynamic Fields Contact Data Backend GUI' => '',
         'Dynamic Fields Database Backend GUI' => '',
         'Dynamic Fields Date Time Backend GUI' => 'پویا زمینه های تاریخ زمان بخش مدیریت رابط کاربری گرافیکی',
         'Dynamic Fields Drop-down Backend GUI' => 'پویا زمینه های کشویی GUI بخش مدیریت',
         'Dynamic Fields GUI' => 'رابط کاربری گرافیکی زمینه پویا ',
+        'Dynamic Fields Lens Backend GUI' => '',
         'Dynamic Fields Multiselect Backend GUI' => 'رابط کاربری گرافیکی زمینه پویا چندین انتخاب بخش مدیریت',
         'Dynamic Fields Overview Limit' => 'زمینه پویا نمای کلی محدود',
+        'Dynamic Fields Reference Backend GUI' => '',
         'Dynamic Fields Text Backend GUI' => ' زمینه های پویا متن بخش مدیریت رابط کاربری گرافیکی',
         'Dynamic Fields Web Service Backend GUI' => '',
         'Dynamic Fields used to export the search result in CSV format.' =>
             ' زمینه های پویا مورد استفاده به صادرات نتیجه جستجو در فرمت CSV.',
+        'Dynamic field event module that deletes script field events if a dynamic field of type script gets deleted.' =>
+            '',
+        'Dynamic field event module that updates PartOfSet attributes of fields which are included in a set.' =>
+            '',
+        'Dynamic field event module that updates the MultiValue attribute of the Lens field configuration to match the MultiValue attribute of the attribute field.' =>
+            '',
+        'Dynamic fields available as attributes for the settings \'Ticket::Frontend::CustomerTicketCategories###DynamicField\', which are shown in the ticket overview screen of the customer interface.' =>
+            '',
+        'Dynamic fields groups for dynamic field widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
+            '',
         'Dynamic fields groups for process widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
             'زمینه گروه پویا برای ویجت روند. کلید نام این گروه است، ارزش شامل زمینه نشان داده شود. به عنوان مثال: \'کلید => من گروه\'، \'مطالب و محتوا: Name_X، NameY.',
         'Dynamic fields limit per page for Dynamic Fields Overview.' => '',
         'Dynamic fields options shown in the ticket message screen of the customer interface. NOTE. If you want to display these fields also in the ticket zoom of the customer interface, you have to enable them in CustomerTicketZoom###DynamicField.' =>
             '',
         'Dynamic fields options shown in the ticket reply section in the ticket zoom screen of the customer interface.' =>
+            '',
+        'Dynamic fields shown in the dynamic field widget in ticket zoom screen of the agent interface.' =>
             '',
         'Dynamic fields shown in the email outbound screen of the agent interface.' =>
             '',
@@ -7776,8 +8658,6 @@ Thanks for your help!
         'Dynamic fields shown in the ticket move screen of the agent interface.' =>
             '',
         'Dynamic fields shown in the ticket note screen of the agent interface.' =>
-            '',
-        'Dynamic fields shown in the ticket overview screen of the customer interface.' =>
             '',
         'Dynamic fields shown in the ticket owner screen of the agent interface.' =>
             '',
@@ -7812,7 +8692,6 @@ Thanks for your help!
         'DynamicField' => 'DynamicField',
         'DynamicField backend registration.' => 'DynamicField ثبت نام باطن.',
         'DynamicField object registration.' => 'DynamicField ثبت نام شی.',
-        'DynamicFieldScreen' => '',
         'DynamicField_%s' => '',
         'E-Mail Outbound' => 'عازم ناحیه دور دست ایمیل',
         'Edit Customer Companies.' => 'ویرایش شرکت و مشتری',
@@ -7821,6 +8700,7 @@ Thanks for your help!
         'Edit contacts with data' => '',
         'Edit contacts with data.' => '',
         'Edit customer company' => 'ویرایش شرکت مشتری',
+        'Elasticsearch (u)' => '',
         'Elasticsearch quick result module.' => '',
         'Email Addresses' => 'آدرس‌های ایمیل',
         'Email Outbound' => 'عازم ناحیه دور دست ایمیل',
@@ -7831,15 +8711,18 @@ Thanks for your help!
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             '',
         'Enabled filters.' => 'فیلتر را فعال کنید.',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            'پشتیبانی PGP را قادر می سازد. زمانی که حمایت PGP برای امضای و رمزنگاری ایمیل فعال، آن را بسیار توصیه می شود که وب سرور به عنوان کاربر OTOBO اجرا می شود. در غیر این صورت، وجود خواهد داشت مشکلات با امتیازات زمانی که دسترسی به .gnupg پوشه.',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            'پشتیبانی PGP را قادر می سازد. زمانی که حمایت PGP برای امضای و رمزنگاری ایمیل فعال، آن را بسیار توصیه می شود که وب سرور به عنوان کاربر CareOnCloud ESM اجرا می شود. در غیر این صورت، وجود خواهد داشت مشکلات با امتیازات زمانی که دسترسی به .gnupg پوشه.',
         'Enables S/MIME support.' => 'پشتیبانی از S / MIME را قادر می سازد.',
         'Enables customers to create their own accounts.' => 'مشتریان را برای ایجاد حساب خود قادر می سازد .',
         'Enables fetch S/MIME from CustomerUser backend support.' => 'را قادر می سازد واکشی S / MIME از پشتیبانی باطن CustomerUser.',
         'Enables file upload in the package manager frontend.' => 'آپلود فایل در ظاهر مدیر بسته را قادر می سازد.',
         'Enables or disables the caching for templates. WARNING: Do NOT disable template caching for production environments for it will cause a massive performance drop! This setting should only be disabled for debugging reasons!' =>
             'فعال یا غیر فعال کش برای قالب. هشدار: الگو ذخیره غیر فعال کردن نیست برای محیط های تولید برای آن یک قطره عملکرد عظیم می شود! این تنظیم فقط باید برای اشکال زدایی دلایل غیر فعال است!',
+        'Enables or disables the debug mode for translations module.' => '',
         'Enables or disables the debug mode over frontend interface.' => 'فعال یا غیر فعال کردن حالت اشکال زدایی بیش از رابط ظاهر.',
+        'Enables or disables the editing of articles which are visible for the customer in general.' =>
+            '',
         'Enables or disables the ticket watcher feature, to keep track of tickets without being the owner nor the responsible.' =>
             'فعال یا غیر فعال از ویژگی های نگهبان درخواست، برای پیگیری درخواست بدون داشتن صاحب و نه مسئول است.',
         'Enables performance log (to log the page response time). It will affect the system performance. Frontend::Module###AdminPerformanceLog must be enabled.' =>
@@ -7854,7 +8737,7 @@ Thanks for your help!
             'درخواست ویژگی مسئول، برای پیگیری یک بلیط خاص را قادر می سازد .',
         'Enables ticket type feature.' => '',
         'Enables ticket watcher feature only for the listed groups.' => ' از ویژگی های نگهبان درخواست تنها برای گروه های ذکر شده را قادر می سازد.',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
             '',
         'English (Canada)' => 'انگلیسی (کانادا)',
         'English (United Kingdom)' => 'انگلیسی (بریتانیایی)',
@@ -7868,6 +8751,7 @@ Thanks for your help!
         'Escalation view' => 'نمای درخواست‌های خیلی مهم',
         'EscalationTime' => 'EscalationTime',
         'Estonian' => 'زبان استونی',
+        'Evaluate all script fields.' => '',
         'Event module registration (store historical data in dynamic fields).' =>
             '',
         'Event module registration. For more performance you can define a trigger event (e. g. Event => TicketCreate).' =>
@@ -7897,7 +8781,7 @@ Thanks for your help!
             'اجرای یک دستور سفارشی و یا ماژول. توجه: اگر ماژول استفاده می شود، تابع مورد نیاز است.',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             'اجرا چک پیگیری در پاسخ به یا مراجع هدر برای ایمیل هایی که شماره درخواست را در موضوع ندارد.',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'.' =>
             '',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             'اجرا چک پیگیری محتویات پیوست برای ایمیل هایی که شماره درخواست را در موضوع ندارد.',
@@ -7916,22 +8800,22 @@ Thanks for your help!
             'بازخوانی بسته از طریق پروکسی. رونویسی \ "WebUserAgent :: پروکسی ".',
         'Fields of the customer company index, used for the company fulltext search. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '',
-        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
+        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
             '',
         'Fields stored in the customer company index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '',
         'Fields stored in the customer user index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '',
-        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
+        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
             '',
         'Fields to be searched in ticket index. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '',
         'File that is displayed in the Kernel::Modules::AgentInfo module, if located under Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.' =>
             'فایل است که در کرنل :: ماژول :: AgentInfo نمایش داده، اگر در هسته / خروجی / HTML / قالب / استاندارد / AgentInfo.tt واقع شده است.',
-        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'فیلتر برای اشکال زدایی ACL ها است. توجه: چند ویژگی بلیط را می توان در قالب <OTOBO_TICKET_Attribute> به عنوان مثال <OTOBO_TICKET_Priority> اضافه شده است.',
-        'Filter for debugging Transitions. Note: More filters can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'فیلتر برای اشکال زدایی انتقال. توجه: بیشتر فیلتر را می توان در قالب <OTOBO_TICKET_Attribute> به عنوان مثال <OTOBO_TICKET_Priority> اضافه شده است.',
+        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'فیلتر برای اشکال زدایی ACL ها است. توجه: چند ویژگی بلیط را می توان در قالب <CareOnCloud_TICKET_Attribute> به عنوان مثال <CareOnCloud_TICKET_Priority> اضافه شده است.',
+        'Filter for debugging Transitions. Note: More filters can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'فیلتر برای اشکال زدایی انتقال. توجه: بیشتر فیلتر را می توان در قالب <CareOnCloud_TICKET_Attribute> به عنوان مثال <CareOnCloud_TICKET_Priority> اضافه شده است.',
         'Filter incoming emails.' => 'فیلتر ایمیل‌های ورودی',
         'Finnish' => 'فنلاندی',
         'First Christmas Day' => 'روز اول کریسمس',
@@ -7962,6 +8846,8 @@ Thanks for your help!
         'French stop words for fulltext index. These words will be removed from the search index.' =>
             'کلمات توقف فرانسه برای شاخص متن. این کلمات از صفحه اول جستجو حذف خواهند شد.',
         'Frontend' => 'ظاهر',
+        'Frontend module for dashboard info tile in customer interface.' =>
+            '',
         'Frontend module registration (disable AgentTicketService link if Ticket Service feature is not used).' =>
             '',
         'Frontend module registration (disable company link if no company feature is used).' =>
@@ -7975,11 +8861,13 @@ Thanks for your help!
         'Frontend module registration for the customer interface.' => 'ظاهر ثبت نام ماژول برای رابط مشتری.',
         'Frontend module registration for the public interface.' => '',
         'Full value' => 'ارزش کامل',
+        'Fulltext Elasticsearch' => '',
         'Fulltext index regex filters to remove parts of the text.' => 'متن فیلتر شاخص عبارت منظم به حذف بخش هایی از متن.',
         'Fulltext search' => 'جستجوی متن',
         'Fulltext search using Elasticsearch.' => '',
-        'FulltextES' => '',
+        'Functional Account and Token Management.' => '',
         'Galician' => 'گاليکي',
+        'General Label' => '',
         'General ticket data shown in the ticket overviews (fall-back). Note that TicketNumber can not be disabled, because it is necessary.' =>
             '',
         'Generate HTML comment hooks for the specified blocks so that filters can use them.' =>
@@ -8027,11 +8915,12 @@ Thanks for your help!
         'Graph: Stacked Area Chart' => 'نمودار: نمودار محیطی پشتهای',
         'Greek' => 'یونانی',
         'Hebrew' => 'عبری',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
             '',
         'High Contrast' => '',
         'High contrast skin for visually impaired users.' => '',
         'Hindi' => 'هندی',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => '',
         'Hungarian' => 'مجارستانی',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             'اگر \ "DB " برای مشتریان :: AuthModule انتخاب شد، یک راننده پایگاه داده (به طور معمول خودکار استفاده می شود) می تواند مشخص شود.',
@@ -8043,7 +8932,7 @@ Thanks for your help!
             'اگر \ "DB " برای مشتریان :: AuthModule انتخاب شد، DSN برای اتصال به جدول مشتری باید مشخص شود.',
         'If "DB" was selected for Customer::AuthModule, the column name for the CustomerPassword in the customer table must be specified.' =>
             'اگر \ "DB " برای مشتریان :: AuthModule انتخاب شد، نام ستون برای CustomerPassword در جدول مشتری باید مشخص شود.',
-        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified.' =>
+        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified. It is discouraged to configure the not really secure algorithms like \'md5\', \'apr1\', \'crypt\', and \'plain\'.' =>
             '',
         'If "DB" was selected for Customer::AuthModule, the name of the column for the CustomerKey in the customer table must be specified.' =>
             'اگر \ "DB " برای مشتریان :: AuthModule انتخاب شد، نام ستون برای CustomerKey در جدول مشتری باید مشخص شود.',
@@ -8079,8 +8968,8 @@ Thanks for your help!
             'اگر \ "LDAP " برای ضوابط AuthModule انتخاب شد ::.، شما می توانید ویژگی های دسترسی، اینجا را مشخص کنید.',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             'اگر \ "LDAP " برای مشتریان :: AuthModule انتخاب شد، شما می توانید مشخص کنید اگر برنامه های کاربردی متوقف خواهد شد اگر به عنوان مثال یک اتصال به یک سرور می تواند به دلیل مشکلات شبکه ایجاد شود.',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            'اگر \ "LDAP " برای ضوابط Authmodule انتخاب شد ::، شما می توانید در صورتی که کاربر مجاز به تصدیق چرا که او در یک posixGroup است، به عنوان مثال کاربر نیاز به در یک XYZ گروه به استفاده از OTOBO شود تیک بزنید. مشخص گروه، که ممکن است سیستم دسترسی داشته باشید.',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            'اگر \ "LDAP " برای ضوابط Authmodule انتخاب شد ::، شما می توانید در صورتی که کاربر مجاز به تصدیق چرا که او در یک posixGroup است، به عنوان مثال کاربر نیاز به در یک XYZ گروه به استفاده از CareOnCloud ESM شود تیک بزنید. مشخص گروه، که ممکن است سیستم دسترسی داشته باشید.',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             'اگر \ "LDAP " انتخاب شد، شما می توانید یک فیلتر برای هر پرس و جو LDAP، به عنوان مثال (ایمیل = *)، (objectclass = کاربر) و یا (! objectclass = کامپیوتر) اضافه کنید.',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -8099,6 +8988,12 @@ Thanks for your help!
             '',
         'If "file" was selected for LogModule, a logfile must be specified. If the file doesn\'t exist, it will be created by the system.' =>
             'اگر \ "فایل " برای LogModule انتخاب شد، یک فایل تاریخچه ثبت باید مشخص شود. اگر فایل وجود ندارد، از آن خواهد شد توسط سیستم ایجاد شده است.',
+        'If \'XOAUTH2\' or \'OAUTHBEARER\' is selected in the \'SendmailModule::OAuth2Method\' setting, then this setting needs to be enabled and set to a valid OIDC Functional Account. OIDC Accounts can be configured in the Admin UI \'OAuth Functional Accounts\' Module.' =>
+            '',
+        'If activated additional data such as the history and links will be read from a foreign DB containing the exported tickets and added to the imported tickets on this system. This is only available for created, not for updated tickets.' =>
+            '',
+        'If activated, a clicked activity button will be hidden in the customer ticket zoom frontend.' =>
+            '',
         'If active, none of the regular expressions may match the user\'s email address to allow registration.' =>
             'اگر فعال، هیچ یک از عبارات منظم ممکن است آدرس ایمیل کاربر اجازه می دهد تا ثبت نام مطابقت.',
         'If active, one of the regular expressions has to match the user\'s email address to allow registration.' =>
@@ -8111,6 +9006,8 @@ Thanks for your help!
             'اگر هر یک از \ "SMTP " مکانیزم به عنوان SendmailModule از mailhost می فرستد که از ایمیل باید مشخص شود انتخاب شد.',
         'If any of the "SMTP" mechanisms was selected as SendmailModule, the port where your mailserver is listening for incoming connections must be specified.' =>
             'اگر هر یک از \ "SMTP " مکانیزم به عنوان SendmailModule انتخاب شد، بندر که در آن mailserver ای خود را برای اتصالات ورودی گوش دادن باید مشخص شود.',
+        'If any of the "SSL" mechanisms was selected as SendmailModule than declare whether the mail server should be verified.' =>
+            '',
         'If enabled debugging information for ACLs is logged.' => 'اگر اطلاعات اشکال زدایی فعال برای ACL ها وارد شده است.',
         'If enabled debugging information for transitions is logged.' => 'در صورت فعال بودن اطلاعات اشکال زدایی برای انتقال به سیستم وارد شده است.',
         'If enabled defines the preselected state for customer follow-up in the customer interface.' =>
@@ -8119,16 +9016,16 @@ Thanks for your help!
             'اگر فعال شبح را به جریان خطای استاندارد را به یک فایل ورود به سیستم تغییر مسیر.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'اگر فعال شبح را به خروجی استاندارد را به یک فایل ورود به سیستم تغییر مسیر.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
             '',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
-            'اگر فعال باشد، OTOBO تمام فایل های جاوا اسکریپت را در فرم های Minified ارائه کرده است.',
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
+            'اگر فعال باشد، CareOnCloud ESM تمام فایل های جاوا اسکریپت را در فرم های Minified ارائه کرده است.',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             'اگر فعال باشد، TicketPhone و TicketEmail در پنجره جدید باز خواهد شد.',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
-            'اگر فعال باشد، نسخه برچسب OTOBO خواهد شد از Webinterface، هدر HTTP و X-هدر از ایمیل های خروجی حذف خواهند شد. توجه: اگر شما این گزینه را تغییر دهید، لطفا مطمئن شوید که به حذف کش.',
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+            'اگر فعال باشد، نسخه برچسب CareOnCloud ESM خواهد شد از Webinterface، هدر HTTP و X-هدر از ایمیل های خروجی حذف خواهند شد. توجه: اگر شما این گزینه را تغییر دهید، لطفا مطمئن شوید که به حذف کش.',
         'If enabled, the cache data be held in memory.' => '',
         'If enabled, the cache data will be stored in cache backend.' => '',
         'If enabled, the customer can search for tickets in all services (regardless what services are assigned to the customer).' =>
@@ -8138,7 +9035,7 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'اگر فعال باشد، در سطح اول از منوی اصلی باز می شود بر روی موس (به جای تنها کلیک کنید).',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             '',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'اگر هیچ SendmailNotificationEnvelopeFrom مشخص شده باشد، این تنظیم را ممکن می سازد به استفاده از ایمیل از جای آدرس فرستنده پاکت خالی (مورد نیاز در برخی از تنظیمات سرور ایمیل).',
@@ -8146,11 +9043,13 @@ Thanks for your help!
             'اگر تعیین شود، این آدرس به عنوان هدر فرستنده پاکت در اطلاعیه های خروجی استفاده می شود. اگر هیچ آدرس مشخص شده باشد، هدر فرستنده پاکت خالی است (مگر اینکه SendmailNotificationEnvelopeFrom :: FallbackToEmailFrom تنظیم شده است).',
         'If set, this address is used as envelope sender in outgoing messages (not notifications - see below). If no address is specified, the envelope sender is equal to queue e-mail address.' =>
             'اگر تعیین شود، این آدرس به عنوان فرستنده پاکت در پیام های خروجی استفاده می شود (اطلاعیه - پایین را ببینید). اگر هیچ آدرس مشخص شده باشد، فرستنده پاکت برابر به صف آدرس ایمیل است.',
+        'If the accounted time units for articles are shown in the article list. Only showing if at least one article has any accounted time.' =>
+            '',
         'If this option is enabled, tickets created via the web interface, via Customers or Agents, will receive an autoresponse if configured. If this option is not enabled, no autoresponses will be sent.' =>
             '',
         'If this regex matches, no message will be send by the autoresponder.' =>
             'اگر این عبارت منظم مسابقات، هیچ پیام خواهد شد توسط پاسخگوی خودکار ارسال می کند.',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
             '',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             '',
@@ -8159,21 +9058,28 @@ Thanks for your help!
         'Ignore system sender article types (e. g. auto responses or email notifications) to be flagged as \'Unread Article\' in AgentTicketZoom or expanded automatically in Large view screens.' =>
             '',
         'Ignores not ticket related attributes.' => '',
+        'Import and export object information.' => 'ورود و صدور اطلاعات آبجکت',
         'Import appointments screen.' => '',
+        'Import/Export' => 'ورود/صدور',
+        'In case only one value in a dropdown is left, (0) you do nothing with the field and show it, (1) that single value is selected automatically but the field is still shown or (2) that single value is selected automatically and the field is hidden (but still has the value). Possible dropdown fields could be e.g. Dest (destination queue), ServiceID, SLAID, TypeID, DynamicFields (list your DF names without "DynamicField_" as a prefix) and more.' =>
+            '',
         'Include tickets of subqueues per default when selecting a queue.' =>
             'شامل بلیط از subqueues در به طور پیش فرض در هنگام انتخاب یک صف.',
         'Include unknown customers in ticket filter.' => 'شامل مشتریان ناشناخته در فیلتر درخواست',
         'Includes article create times in the ticket search of the agent interface.' =>
             'شامل مقاله ایجاد بار در جستجو درخواست رابط عامل.',
         'Incoming Phone Call.' => 'تماس تلفنی ورودی.',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            'IndexAccelerator: برای انتخاب ماژول باطن TicketViewAccelerator خود را. \ "RuntimeDB " تولید هر نظر صف در پرواز از جدول بلیط (بدون مشکل در عملکرد تا حدود 60.000 بلیط در کل و 6.000 بلیط باز در سیستم). \ "StaticDB " است که ماژول قدرتمند ترین، آن را با استفاده از یک جدول بلیط شاخص های اضافی است که مانند یک کار می کند (توصیه می شود اگر بیش از 80.000 و 6.000 بلیط باز در سیستم ذخیره می شود). استفاده از دستور \ "بن / otobo.Console.pl سیستم maint :: بلیط :: QueueIndexRebuild " برای ایجاد شاخص اولیه.',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            'IndexAccelerator: برای انتخاب ماژول باطن TicketViewAccelerator خود را. \ "RuntimeDB " تولید هر نظر صف در پرواز از جدول بلیط (بدون مشکل در عملکرد تا حدود 60.000 بلیط در کل و 6.000 بلیط باز در سیستم). \ "StaticDB " است که ماژول قدرتمند ترین، آن را با استفاده از یک جدول بلیط شاخص های اضافی است که مانند یک کار می کند (توصیه می شود اگر بیش از 80.000 و 6.000 بلیط باز در سیستم ذخیره می شود). استفاده از دستور \ "بن / careoncloud.Console.pl سیستم maint :: بلیط :: QueueIndexRebuild " برای ایجاد شاخص اولیه.',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             '',
         'Indonesian' => 'اندونزی',
         'Inline' => '',
         'Input' => 'ورودی',
         'Interface language' => 'زبان واسط',
+        'Interfaces for which the restoring of pending information is activated.' =>
+            '',
+        'Internal' => '',
         'Internal communication channel.' => '',
         'International Workers\' Day' => 'روز جهانی کارگر',
         'It is possible to configure different skins, for example to distinguish between diferent agents, to be used on a per-domain basis within the application. Using a regular expression (regex), you can configure a Key/Content pair to match a domain. The value in "Key" should match the domain, and the value in "Content" should be a valid skin on your system. Please see the example entries for the proper form of the regex.' =>
@@ -8187,13 +9093,11 @@ Thanks for your help!
         'Italian' => 'ایتالیایی',
         'Italian stop words for fulltext index. These words will be removed from the search index.' =>
             'کلمات توقف ایتالیایی شاخص متن. این کلمات از صفحه اول جستجو حذف خواهند شد.',
-        'Ivory' => 'عاج',
-        'Ivory (Slim)' => 'عاج (لاغر)',
         'Japanese' => 'ژاپنی',
         'JavaScript function for the search frontend.' => 'جاوا اسکریپت تابع برای ظاهر جستجو.',
-        'Jump to OTOBO!' => '',
+        'Jump to CareOnCloud ESM!' => '',
         'Korean' => '',
-        'Language' => 'زبان',
+        'Languages' => '',
         'Large' => 'بزرگ',
         'Last Screen Overview' => '',
         'Last customer subject' => 'آخرین موضوع مشتری',
@@ -8203,7 +9107,9 @@ Thanks for your help!
         'Lastname, Firstname (UserLogin)' => 'نام خانوادگی، نام (صفحهی)',
         'LastnameFirstname' => '',
         'Latvian' => 'لتونی',
+        'Lax' => '',
         'Left' => 'چپ',
+        'Lens' => '',
         'Link Object' => 'لینک',
         'Link Object.' => 'شی لینک.',
         'Link agents to groups.' => 'برقراری ارتباط بین کارشناسان و گروه‌ها',
@@ -8220,6 +9126,10 @@ Thanks for your help!
         'Links 2 tickets with a "Normal" type link.' => 'لینک 2 درخواست با یک \ "عادی " لینک نوع.',
         'Links 2 tickets with a "ParentChild" type link.' => 'لینک 2درخواست با یک \ "ParentChild " لینک نوع.',
         'Links appointments and tickets with a "Normal" type link.' => '',
+        'List of Active CKEditor Plugins. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'List of Active CKEditor Plugins. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'List of CSS files to always be loaded for the agent interface.' =>
             'لیستی از فایل های CSS برای همیشه برای رابط عامل بارگذاری می شود.',
         'List of CSS files to always be loaded for the customer interface.' =>
@@ -8248,8 +9158,12 @@ Thanks for your help!
         'List of responsive CSS files to always be loaded for the customer interface.' =>
             'لیستی از فایل های CSS پاسخگو برای همیشه برای رابط مشتری بارگذاری می شود.',
         'List of states for which escalations should be suspended.' => '',
+        'List of ticket masks which can be altered using AdminTicketMask.' =>
+            '',
         'List view' => 'نمایش لیستی',
         'Lithuanian' => 'زبان لیتوانی',
+        'Loader module for dashboard info tile in customer interface.' =>
+            '',
         'Loader module registration for the agent interface.' => '',
         'Loader module registration for the customer interface.' => '',
         'Lock / unlock this ticket' => 'قفل / باز کردن این درخواست',
@@ -8271,10 +9185,10 @@ Thanks for your help!
         'Makes the application check the MX record of email addresses before sending an email or submitting a telephone or email ticket.' =>
             'باعث می شود نرم افزار چک رکورد MX از آدرس های ایمیل قبل از ارسال ایمیل و یا ارسال یک تلفن و یا ایمیل بلیط.',
         'Makes the application check the syntax of email addresses.' => 'باعث می شود نرم افزار چک نحو آدرس ایمیل.',
-        'Makes the session management use html cookies. If html cookies are disabled or if the client browser disabled html cookies, then the system will work as usual and append the session id to the links.' =>
-            'باعث می شود مدیریت جلسه کوکی استفاده از HTML. اگر کوکی ها اچ غیر فعال و یا اگر کوکی ها مرورگر HTML غیر فعال است مشتری، سپس سیستم به طور معمول کار خواهد کرد و اضافه ID جلسه به لینک ها',
         'Malay' => 'مالایا',
-        'Manage OTOBO Team cloud services.' => '',
+        'Manage Customer Dashboard Info Tile Entries' => '',
+        'Manage CareOnCloud ESM Team cloud services.' => '',
+        'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => 'مدیریت کلیدهای PGP برای رمزنگاری ایمیل',
         'Manage POP3 or IMAP accounts to fetch email from.' => 'مدیریت حساب‌های POP3 و IMAP برای واکشی ایمیل‌ها',
         'Manage S/MIME certificates for email encryption.' => 'مدیریت گواهینامه‌ها برای رمزنگاری ایمیل‌ها',
@@ -8282,11 +9196,17 @@ Thanks for your help!
         'Manage different calendars.' => '',
         'Manage dynamic field in screens.' => '',
         'Manage existing sessions.' => 'مدیریت session های موجود',
+        'Manage import and export of objects.' => '',
         'Manage support data.' => 'مدیریت داده پشتیبانی می کند.',
         'Manage system registration.' => 'مدیریت ثبت نام سیستم.',
         'Manage tasks triggered by event or time based execution.' => 'مدیریت وظایف موجب شده توسط رویداد یا زمان اجرای .',
+        'Mark as (un)seen' => '',
         'Mark as Spam!' => 'به‌عنوان هرزنامه علامت بزن',
+        'Mark as seen' => '',
         'Mark this ticket as junk!' => 'علامت گذاری به عنوان این درخواست به عنوان آشغال!',
+        'Mark ticket as seen' => '',
+        'Mark ticket as unseen' => '',
+        'Mark tickets as seen or unseen via bulk action' => '',
         'Max size (in characters) of the customer information table (phone and email) in the compose screen.' =>
             'حداکثر اندازه (در شخصیت) از جدول اطلاعات مربوط به مشتری (تلفن و ایمیل) در صفحه نوشتن.',
         'Max size (in rows) of the informed agents box in the agent interface.' =>
@@ -8295,6 +9215,8 @@ Thanks for your help!
             'حداکثر اندازه (در ردیف) از جمله عوامل مرتبط در رابط عامل جعبه.',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             'حداکثر اندازه از افراد در یک پاسخ ایمیل و در برخی از صفحه نمایش مرور کلی.',
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+            '',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             'پاسخ به ایمیل خودکار حداکثر به خود آدرس ایمیل در روز (حلقه حفاظت).',
         'Maximal auto email responses to own email-address a day, configurable by email address (Loop-Protection).' =>
@@ -8321,7 +9243,8 @@ Thanks for your help!
         'Medium' => 'متوسط',
         'Merge this ticket and all articles into another ticket' => '',
         'Merged Ticket (%s/%s) to (%s/%s).' => '',
-        'Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>.' => 'با هم ادغام شدند بلیط <OTOBO_TICKET> تا <OTOBO_MERGE_TO_TICKET>.',
+        'Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>.' => 'با هم ادغام شدند بلیط <CareOnCloud_TICKET> تا <CareOnCloud_MERGE_TO_TICKET>.',
+        'Message of the day' => '',
         'Minute' => '',
         'Miscellaneous' => 'تنظیمات اضافی',
         'Module for To-selection in new ticket screen in the customer interface.' =>
@@ -8383,7 +9306,7 @@ Thanks for your help!
         'New Year\'s Day' => 'روز اول ژانویه که آغاز سال نو مسیحیان است',
         'New Year\'s Eve' => 'شب سال نو',
         'New process ticket' => 'درخواست فرآیند جدید',
-        'News about OTOBO.' => '',
+        'News about CareOnCloud ESM.' => '',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             'بعدی ایالات بلیط ممکن است پس از اضافه کردن یک یادداشت تلفن در گوشی بلیط صفحه نمایش بین المللی به درون رابط عامل.',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -8401,26 +9324,35 @@ Thanks for your help!
             'تعداد خطوط (در هر بلیط) که توسط ابزار جستجو در رابط عامل نشان داده شده است.',
         'Number of shards (NS), replicas (NR) and fields limit for the index \'ticket\'.' =>
             '',
+        'Number of shards (NS), replicas (NR) and fields limit for the index \'tmpattachments\'.' =>
+            '',
         'Number of shards (NS), replicas (NR) and fields limit for the index. Note: \'Elasticsearch::ArticleIndexCreationSettings\' is deprecated. For upwards compatibility use \'Elasticsearch::IndexSettings###Default\' instead.' =>
             '',
-        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices.\'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
+        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices. \'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
             '',
         'Number of tickets to be displayed in each page of a search result in the agent interface.' =>
             'تعداد بلیط در هر صفحه از یک نتیجه جستجو در رابط عامل نمایش داده شود.',
         'Number of tickets to be displayed in each page of a search result in the customer interface.' =>
             'تعداد بلیط در هر صفحه از یک نتیجه جستجو در رابط مشتری نمایش داده می شود.',
-        'OTOBO News' => 'اخبار سامانه پشتیبانی',
-        'OTOBO Team Services' => '',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
-            'OTOBO می توانید یک یا چند پایگاه داده آینه فقط خواندنی برای عملیات گران قیمت مانند جستجو و یا آمار نسل متن استفاده کنید. در اینجا شما می توانید DSN برای پایگاه داده آینه اول را مشخص کنید.',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+        'OAUTHBEARER' => '',
+        'OAuth Functional Accounts' => '',
+        'OAuth Tokens' => '',
+        'OIDC Profile Management' => '',
+        'OIDC Profiles' => '',
+        'CareOnCloud ESM News' => 'اخبار سامانه پشتیبانی',
+        'CareOnCloud ESM Team Services' => '',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+            'CareOnCloud ESM می توانید یک یا چند پایگاه داده آینه فقط خواندنی برای عملیات گران قیمت مانند جستجو و یا آمار نسل متن استفاده کنید. در اینجا شما می توانید DSN برای پایگاه داده آینه اول را مشخص کنید.',
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
             '',
-        'Objects to search for, how many entries and which attributs to show.' =>
+        'Object backend module registration for the import/export module.' =>
             '',
-        'Objects to search for, how many entries and which attributs to show. Ticket attributes, except queue, have to explicitely be stored via Elasticsearch.' =>
+        'Objects to search for, how many entries and which attributes to show.' =>
+            '',
+        'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
             '',
         'Open an external link!' => '',
-        'Open the OTOBO home page in a new window' => '',
+        'Open the CareOnCloud ESM home page in a new window' => '',
         'Open tickets (customer user)' => 'درخواست باز (کاربران مشتری)',
         'Open tickets (customer)' => 'درخواست گسترش (مشتری)',
         'Option' => 'انتخاب',
@@ -8528,10 +9460,15 @@ Thanks for your help!
         'ParentChild' => 'ParentChild',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             'راه را برای ورود به سیستم فایل (تنها در صورتی به \ "FS " برای LoopProtectionModule انتخاب شد و آن الزامی است).',
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
         'Pending time' => '',
         'People' => 'کاربران',
         'Performs the configured action for each event (as an Invoker) for each configured web service.' =>
             '',
+        'Permanent' => '',
         'Permitted width for compose email windows.' => 'عرض مجاز برای ویندوز نوشتن ایمیل.',
         'Permitted width for compose note windows.' => 'عرض مجاز برای ویندوز توجه داشته باشید نوشتن.',
         'Persian' => 'فارسی',
@@ -8559,6 +9496,7 @@ Thanks for your help!
         'Process Management Path GUI' => 'روند GUI مسیر مدیریت',
         'Process Management Transition Action GUI' => 'مدیریت فرآیند GUI انتقال اقدام',
         'Process Management Transition GUI' => 'روند GUI انتقال مدیریت',
+        'Process dialog' => '',
         'Process pending tickets.' => 'پردازش درخواست در انتظار.',
         'ProcessID' => 'ProcessID',
         'Processes & Automation' => '',
@@ -8581,11 +9519,23 @@ Thanks for your help!
             '',
         'Rebuilds the ACL preselection cache.' => '',
         'Rebuilds the escalation index.' => '',
-        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value.' =>
+        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew.' =>
             '',
         'Redis server address. Example: 127.0.0.1:6379.' => '',
         'Refresh interval' => 'بارگذاری مجدد ورودی',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as unseen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as unseen.' =>
+            '',
         'Registers a log module, that can be used to log communication related information.' =>
+            '',
+        'Registration of the CSV format backend module for the ImportExport feature.' =>
+            '',
+        'Registration of the JSON format backend module for the ImportExport feature.' =>
             '',
         'Reminder Tickets' => 'درخواست‌های یادآوری شده',
         'Removed subscription for user "%s".' => 'عضویت حذف شده برای کاربر"%s".',
@@ -8647,6 +9597,7 @@ Thanks for your help!
             'بازیابی یک بلیط از آرشیو (فقط در صورتی که این رویداد تغییر دولت به هر حالت باز موجود است).',
         'Retains all services in listings even if they are children of invalid elements.' =>
             'حفظ تمام خدمات در لیست حتی اگر آنها کودکان از عناصر نامعتبر است.',
+        'Richtext' => '',
         'Right' => 'راست',
         'Roles ↔ Groups' => '',
         'Romanian' => '',
@@ -8663,19 +9614,21 @@ Thanks for your help!
             '',
         'Russian' => 'روسی',
         'S/MIME Certificates' => 'گواهینامه‌های S/MIME',
+        'SSL_VERIFY_NONE - no verification of mail server host' => '',
+        'SSL_VERIFY_PEER - verify the mail server host' => '',
         'Salutations' => 'عنوان',
         'Sample command output' => 'خروجی دستور نمونه',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
             '',
         'Schedule a maintenance period.' => 'برنامه ریزی یک دوره تعمیر و نگهداری.',
         'Screen after new ticket' => 'وضعیت نمایش پس از دریافت درخواست جدید',
+        'Script (Template Toolkit)' => '',
         'Search Customer' => 'جستجوی مشترک',
         'Search Ticket.' => 'جستجو درخواست.',
         'Search Tickets.' => 'درخواست های جستجو.',
         'Search User' => 'جستجوی کاربر',
         'Search backend default router.' => 'جستجو باطن روتر به طور پیش فرض.',
         'Search backend router.' => 'جستجو  باطن روتر.',
-        'Search.' => 'جستجو',
         'Second Christmas Day' => 'روز دوم کریسمس',
         'Second Queue' => 'صف دوم',
         'Select after which period ticket overviews should refresh automatically.' =>
@@ -8690,7 +9643,7 @@ Thanks for your help!
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             '',
         'Select your preferred layout for the software.' => '',
-        'Select your preferred theme for OTOBO.' => '',
+        'Select your preferred theme for CareOnCloud ESM.' => '',
         'Selects the cache backend to use.' => 'باطن کش استفاده انتخاب می کند.',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             'ماژول که مسئولیت رسیدگی به ارسال از طریق رابط وب انتخاب می کند. \ "DB " فروشگاه های ارسال همه در پایگاه داده، \ "FS " با استفاده از سیستم فایل.',
@@ -8704,7 +9657,7 @@ Thanks for your help!
         'Sends all outgoing email via bcc to the specified address. Please use this only for backup reasons.' =>
             'می فرستد تمام ایمیل های خروجی از طریق BCC به آدرس مشخص شده. لطفا این تنها به دلایل پشتیبان استفاده کنید.',
         'Sends customer notifications just to the mapped customer.' => 'می فرستد اطلاعیه مشتری فقط به مشتری نقشه برداری.',
-        'Sends registration information to OTOBO group.' => 'ارسال اطلاعات ثبت نام به گروه OTOBO.',
+        'Sends registration information to Rother OSS.' => '',
         'Sends reminder notifications of unlocked ticket after reaching the reminder date (only sent to ticket owner).' =>
             'می فرستد اطلاعیه یادآور بلیط قفل پس از رسیدن به تاریخ یادآوری (فقط به صاحب بلیط ارسال).',
         'Sends the notifications which are configured in the admin interface under "Ticket Notifications".' =>
@@ -8842,8 +9795,8 @@ Thanks for your help!
         'Sets the prefered time units (e.g. work units, hours, minutes).' =>
             'مجموعه واحد زمان مورد نظر (به عنوان مثال واحد کار، ساعت، دقیقه).',
         'Sets the preferred digest to be used for PGP binary.' => '',
-        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
-            'پیشوند به پوشه Scripts بر روی سرور، به عنوان بر روی وب سرور پیکربندی تنظیم می کند. این تنظیم به عنوان یک متغیر، OTOBO_CONFIG_ScriptAlias ​​است که در تمام اشکال پیام استفاده شده توسط برنامه پیدا شده است استفاده می شود، برای ساخت لینک به بلیط در سیستم.',
+        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
+            'پیشوند به پوشه Scripts بر روی سرور، به عنوان بر روی وب سرور پیکربندی تنظیم می کند. این تنظیم به عنوان یک متغیر، CareOnCloud_CONFIG_ScriptAlias ​​است که در تمام اشکال پیام استفاده شده توسط برنامه پیدا شده است استفاده می شود، برای ساخت لینک به بلیط در سیستم.',
         'Sets the queue in the ticket close screen of a zoomed ticket in the agent interface.' =>
             'صف در بلیط صفحه نمایش نزدیک یک بلیط بزرگنمایی در رابط عامل از مجموعه.',
         'Sets the queue in the ticket free text screen of a zoomed ticket in the agent interface.' =>
@@ -8937,13 +9890,16 @@ Thanks for your help!
             '',
         'Sets the ticket type in the ticket responsible screen of the agent interface (Ticket::Type needs to be enabled).' =>
             '',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+        'Sets the time units in the ticket note screen of the agent interface.' =>
             '',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+            '',
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
             '',
         'Sets the timeout (in seconds) for http/ftp downloads.' => 'ایست (در ثانیه) برای دریافت HTTP / FTP تنظیم می کند.',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
             'ایست (در ثانیه) برای دریافت بسته را تنظیم میکند. رونویسی \ "WebUserAgent :: اتمام مهلت ".',
+        'Settings for Similar Ticket Search in ES.' => '',
         'Settings for the customer login screen.' => '',
         'Shared Secret' => 'راز مشترک',
         'Show a responsible selection in phone and email tickets in the agent interface.' =>
@@ -8951,9 +9907,11 @@ Thanks for your help!
         'Show article as rich text even if rich text writing is disabled.' =>
             'مشاهده مقاله به عنوان متن غنی حتی اگر نوشتن متن غنی غیر فعال است.',
         'Show command line output.' => '',
+        'Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown in an extra table.' =>
+            '',
+        'Show or Hide Deleted Articles' => '',
+        'Show or Hide deleted articles.' => '',
         'Show queues even when only locked tickets are in.' => 'نمایش صف حتی زمانی که بلیط تنها قفل شده در هستند.',
-        'Show the current owner in the customer interface.' => 'نمایش مالک فعلی در رابط مشتری.',
-        'Show the current queue in the customer interface.' => 'نمایش صف فعلی در رابط مشتری.',
         'Show the history for this ticket' => 'نشان دادن تاریخ این بلیط برای',
         'Show the ticket history' => 'نمایش تاریخ بلیط',
         'Show various content.' => '',
@@ -9021,6 +9979,8 @@ Thanks for your help!
             'یک لینک در منو برای تنظیم یک بلیط به عنوان انتظار در نظر زوم بلیط رابط عامل نشان می دهد. کنترل دسترسی اضافی برای نشان دادن یا این لینک نشان می دهد را نمی توان با استفاده از کلید \ "گروه " و محتوا مانند \ ":؛: GROUP2 \ move_into GROUP1 RW" انجام می شود. به خوشه آیتم های منو برای کلید \ "CLUSTERNAME " و برای محتوای هر نام شما می خواهید برای دیدن در UI استفاده کنید. استفاده از \ "ClusterPriority " برای پیکربندی سفارش از یک خوشه خاص در نوار ابزار.',
         'Shows a link in the menu to set the priority of a ticket in every ticket overview of the agent interface.' =>
             'یک لینک در منو برای تنظیم اولویت یک بلیط در هر مروری بلیط رابط عامل نشان می دهد.',
+        'Shows a link in the menu to show/hide deleted articles in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2". To cluster menu items use for Key "ClusterName" and for the Content any name you want to see in the UI. Use "ClusterPriority" to configure the order of a certain cluster within the toolbar.' =>
+            '',
         'Shows a link in the menu to zoom a ticket in the ticket overviews of the agent interface.' =>
             'یک لینک در منوی نشان می دهد به زوم یک بلیط در مروری بلیط رابط عامل.',
         'Shows a link to access article attachments via a html online viewer in the zoom view of the article in the agent interface.' =>
@@ -9072,13 +10032,15 @@ Thanks for your help!
             '',
         'Shows an owner selection in phone and email tickets in the agent interface.' =>
             'انتخاب صاحب در تلفن و ایمیل بلیط در رابط عامل نشان می دهد.',
+        'Shows creation date instead of age in the customer interface if ticket is older than configured value (days).' =>
+            '',
         'Shows customer history tickets in AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer.' =>
             'نشان می دهد بلیط تاریخ مشتری در AgentTicketPhone، AgentTicketEmail و AgentTicketCustomer.',
         'Shows either the last customer article\'s subject or the ticket title in the small format overview.' =>
             'هم موضوع آخرین مقاله مشتری و یا به عنوان بلیط در بررسی اجمالی فرمت کوچک نشان می دهد.',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             'نشان می دهد موجود لیست صف والد / فرزند در سیستم در قالب یک درخت یا یک لیست.',
-        'Shows information on how to start OTOBO Daemon' => 'نشان می دهد اطلاعات در مورد چگونگی شروع OTOBO دیمون',
+        'Shows information on how to start CareOnCloud ESM Daemon' => 'نشان می دهد اطلاعات در مورد چگونگی شروع CareOnCloud ESM دیمون',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '',
         'Shows the article head information in the agent zoom view.' => '',
@@ -9130,6 +10092,8 @@ Thanks for your help!
             '',
         'Shows time use complete description (days, hours, minutes), if enabled; or just first letter (d, h, m), if not enabled.' =>
             '',
+        'Shows time with localization indicator (01.01.1970 00:01 (Europe/Berlin)), if enabled; or without (01.01.1970 00:01), if not enabled.' =>
+            '',
         'Signature data.' => '',
         'Signatures' => 'امضاء',
         'Simple' => 'ساده',
@@ -9164,16 +10128,16 @@ Thanks for your help!
         'Specifies the directory where SSL certificates are stored.' => 'دایرکتوری که در آن گواهینامه های SSL ذخیره می شود را مشخص میکند.',
         'Specifies the directory where private SSL certificates are stored.' =>
             ' دایرکتوری که در آن گواهینامه های SSL خصوصی ذخیره شده است را مشخص میکند.',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            'آدرس ایمیل که باید توسط نرم افزار در هنگام ارسال اطلاعیه استفاده می شود مشخص می کند. آدرس ایمیل استفاده می شود برای ساخت نام صفحه نمایش کامل برای کارشناسی ارشد اطلاع رسانی (یعنی \ "OTOBO اطلاعیه " otobo@your.example.com). شما می توانید متغیر OTOBO_CONFIG_FQDN به عنوان مجموعه ای در configuation خود استفاده کنید، یا آدرس ایمیل دیگر را انتخاب کنید.',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            'آدرس ایمیل که باید توسط نرم افزار در هنگام ارسال اطلاعیه استفاده می شود مشخص می کند. آدرس ایمیل استفاده می شود برای ساخت نام صفحه نمایش کامل برای کارشناسی ارشد اطلاع رسانی (یعنی \ "CareOnCloud ESM اطلاعیه " careoncloud@your.example.com). شما می توانید متغیر CareOnCloud_CONFIG_FQDN به عنوان مجموعه ای در configuation خود استفاده کنید، یا آدرس ایمیل دیگر را انتخاب کنید.',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             ' آدرس ایمیل برای دریافت پیام های اطلاع رسانی از وظایف زمانبندی را مشخص میکند.',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
             'گروه که در آن کاربر به مجوز نیاز دارد RW به طوری که او می تواند \ "SwitchToCustomer " از ویژگی های دسترسی مشخص می کند.',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             '',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
-            'نامی است که باید توسط نرم افزار در هنگام ارسال اطلاعیه استفاده می شود مشخص می کند. نام فرستنده استفاده می شود برای ساخت نام صفحه نمایش کامل برای کارشناسی ارشد اطلاع رسانی (یعنی \ "OTOBO اطلاعیه " otobo@your.example.com).',
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
+            'نامی است که باید توسط نرم افزار در هنگام ارسال اطلاعیه استفاده می شود مشخص می کند. نام فرستنده استفاده می شود برای ساخت نام صفحه نمایش کامل برای کارشناسی ارشد اطلاع رسانی (یعنی \ "CareOnCloud ESM اطلاعیه " careoncloud@your.example.com).',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             ' نظمی که در آن نام و نام خانوادگی از عوامل نمایش داده خواهد شد را مشخص میکند.',
         'Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).' =>
@@ -9218,6 +10182,7 @@ Thanks for your help!
         'Stopped solution time escalation.' => '',
         'Stopped update time escalation.' => '',
         'Stores cookies after the browser has been closed.' => 'فروشگاه کوکی ها پس از مرورگر بسته شده است.',
+        'Strict' => '',
         'Strips empty lines on the ticket preview in the queue view.' => 'نوار خطوط خالی بر روی پیش نمایش درخواست در نظر صف.',
         'Strips empty lines on the ticket preview in the service view.' =>
             'نوار خطوط خالی بر روی پیش نمایش درخواست در نظر خدمات.',
@@ -9225,6 +10190,8 @@ Thanks for your help!
         'Suspend already escalated tickets.' => '',
         'Swahili' => 'سواحیلی',
         'Swedish' => 'سوئد',
+        'Switch deleted article status view' => '',
+        'Switch deleted article status view.' => '',
         'System Address Display Name' => 'سیستم آدرس نام ها',
         'System Configuration Deployment' => '',
         'System Configuration Group' => '',
@@ -9243,6 +10210,8 @@ Thanks for your help!
         'The PGP signature with the keyid is good.' => '',
         'The agent skin\'s InternalName which should be used in the agent interface. Please check the available skins in Frontend::Agent::Skins.' =>
             'InternalName پوست عامل است که باید در رابط عامل استفاده شود. لطفا پوسته های موجود در ظاهر :: :: عامل پوسته را تیک بزنید.',
+        'The authentication method to use for SMTP Authentication, defaults to \'Basic Auth\'. If \'XOAUTH2\' or \'OAUTHBEARER\' is selected, then the \'"SendmailModule \'"SendmailModule::OAuth2FunctionalAccount\' setting needs to be enabled and set to a valid OIDC Functional Account.  OIDC Accounts can be configured in the Admin UI  \'OAuth Functional Accounts\' Module.' =>
+            '',
         'The customer skin\'s InternalName which should be used in the customer interface. Please check the available skins in Frontend::Customer::Skins.' =>
             'InternalName پوست مشتری است که باید در رابط مشتری استفاده می شود. لطفا پوسته های موجود در ظاهر :: مشتریان :: پوسته را تیک بزنید.',
         'The daemon registration for sync with S3.' => '',
@@ -9286,6 +10255,8 @@ Thanks for your help!
             'متن در آغاز موضوع هنگامی که یک ایمیل فرستاده است، به عنوان مثال FW، FWD، یا WG.',
         'The value of the From field' => '',
         'Theme' => 'طرح زمینه',
+        'These attributes are passed when connecting to the database. A common use case is a connection which is secured by TLS.' =>
+            '',
         'This configuration defines all possible screens to enable or disable default columns.' =>
             '',
         'This configuration defines all possible screens to enable or disable dynamic fields.' =>
@@ -9293,6 +10264,8 @@ Thanks for your help!
         'This configuration defines if only valids or all (invalids) dynamic fields should be shown.' =>
             '',
         'This configuration defines the number of iterations that should be performed at max for calculating the WorkingTime for a Ticket. Attention: Setting this configuration to high can lead to performance issues.' =>
+            '',
+        'This configuration registers a bulk module to mark tickets as seen or unseen via bulk action.' =>
             '',
         'This configuration registers an OutputFilter module that injects the javascript functionality to remove PendingTime.' =>
             '',
@@ -9307,7 +10280,7 @@ Thanks for your help!
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             'این ماژول و عملکرد PreRun () آن اجرا خواهد شد، اگر تعریف شده است، برای هر درخواست. این ماژول مفید است که برای بررسی برخی از گزینه های کاربران و یا برای نمایش اخبار در مورد برنامه های جدید.',
         'This module is being used to extend the password policy.' => '',
-        'This module is part of the admin area of OTOBO.' => 'این ماژول بخشی از بخش مدیریت OTOBO موجود است.',
+        'This module is part of the admin area of CareOnCloud ESM.' => 'این ماژول بخشی از بخش مدیریت CareOnCloud ESM موجود است.',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             'این گزینه زمینه پویا که در آن یک مدیریت فرآیند نهاد فعالیت شناسه ذخیره شده است تعریف می کند.',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -9316,11 +10289,13 @@ Thanks for your help!
         'This option defines the process tickets default priority.' => 'این گزینه به طور پیش فرض درخواست اولویت فرایند تعریف می کند.',
         'This option defines the process tickets default queue.' => 'این گزینه به طور پیش فرض درخواست روند صف تعریف می کند.',
         'This option defines the process tickets default state.' => 'این گزینه به طور پیش فرض درخواست روند دولت تعریف می کند.',
-        'This option will deny the access to customer company tickets, which are not created by the customer user.' =>
-            'این گزینه دسترسی به بلیط شرکت مشتری، که توسط کاربران مشتری ایجاد نمی انکار کند.',
+        'This option sets additional quick date buttons to pending dates. For ordering purposes one hash entry per array segment has to be set. The key is the button name, value is the value, where a single number n sets the date to n days from now, +n adds n days to the currently set date, and -n subtracts them.' =>
+            '',
+        'This option will deny the access to customer company tickets, which are not created by the customer user. Please also deactivate "CustomerFrontend::Navigation###CustomerTicketOverview###002-Ticket" so that the button is no longer visible.' =>
+            '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'این تنظیم امکان را به نادیده گرفتن ساخته شده است در لیست کشور با لیست خود را از کشور است. این امر به ویژه مفید است اگر شما فقط می خواهید به استفاده از یک گروه را انتخاب کنید کوچکی از کشورها.',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',
@@ -9332,6 +10307,7 @@ Thanks for your help!
         'Ticket FreeText.' => 'گه از FREETEXT درخواست',
         'Ticket History.' => 'تاریخ درخواست.',
         'Ticket Lock.' => 'قفل درخواست',
+        'Ticket Masks' => '',
         'Ticket Merge.' => 'ادغام درخواست',
         'Ticket Move.' => 'درخواست حرکت ',
         'Ticket Note.' => 'توجه درخواست',
@@ -9346,6 +10322,10 @@ Thanks for your help!
         'Ticket Priority.' => 'اولویت درخواست',
         'Ticket Queue Overview' => 'بررسی اجمالی صف درخواست',
         'Ticket Responsible.' => 'درخواست به عهده دارد.',
+        'Ticket Search.' => '',
+        'Ticket States' => '',
+        'Ticket Title' => '',
+        'Ticket Types' => '',
         'Ticket Watcher' => 'نگهبان درخواست',
         'Ticket Zoom' => '',
         'Ticket Zoom.' => 'درخواست زوم.',
@@ -9367,17 +10347,23 @@ Thanks for your help!
         'Tickets in the following queues will not be stored on the Elasticsearch server. To apply this to existing tickets, the ticket migration has to be run via console, after changing this option.' =>
             '',
         'Tickets.' => 'درخواست',
-        'Tile registration for the CustomerDashboard. Module is required.' =>
+        'Tile registration for the customer dashboard. Module is required.' =>
             '',
-        'Time in seconds that gets added to the actual time if setting a pending-state (default: 86400 = 1 day).' =>
-            'زمان در ثانیه است که می شود به زمان واقعی اضافه شده است اگر تنظیم یک انتظار دولت (به طور پیش فرض: 86،400 = 1 روز).',
+        'Tile registration for the customer dashboard. Module is required. Optionally, an order for items can be set. The order must have the name of the item as key and the desired position as integer value.' =>
+            '',
+        'Time in seconds that gets added to the actual time if setting a pending-state. Examples: 86400 = 1 day or 604800 = 1 week.' =>
+            '',
         'To accept login information, such as an EULA or license.' => 'برای قبول اطلاعات ورود به سیستم، مانند EULA یا مجوز.',
         'To download attachments.' => 'برای دانلود فایل پیوست کنید.',
         'To view HTML attachments.' => '',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
-            'نمایش پستی از لیست FeatureAddons OTOBO در سامانه مدیریت بسته.',
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
+            'نمایش پستی از لیست FeatureAddons CareOnCloud ESM در سامانه مدیریت بسته.',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'مورد نوار ابزار برای یک میانبر. کنترل دسترسی اضافی برای نشان دادن یا این لینک نشان می دهد را نمی توان با استفاده از کلید \ "گروه " و محتوا مانند \ ":؛: GROUP2 \ move_into GROUP1 RW" انجام می شود.',
+        'Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
+        'Translate the language names in the language selection. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
         'Transport selection for appointment notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
             '',
         'Transport selection for ticket notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -9394,14 +10380,13 @@ Thanks for your help!
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             '',
         'Tweak the system as you wish.' => '',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
             '',
         'Ukrainian' => 'اوکراینی',
         'Unlock tickets that are past their unlock timeout.' => 'باز کردن درخواست که گذشته ای برای باز کردن خود هستند.',
         'Unlock tickets whenever a note is added and the owner is out of office.' =>
             'باز کردن بلیط هر زمان که یک توجه داشته باشید اضافه شده است و مالک از دفتر.',
         'Unlocked ticket.' => 'سابقه::تحویل دادن درخواست',
-        'Up' => 'بالا',
         'Upcoming Events' => 'رویدادهای پیش رو',
         'Update Ticket "Seen" flag if every article got seen or a new Article got created.' =>
             'به روز رسانی بلیط \ "دیده می شود " پرچم اگر هر مقاله دیده شد و یا یک مقاله جدید ایجاد کردم.',
@@ -9422,8 +10407,13 @@ Thanks for your help!
         'Uses richtext for viewing and editing ticket notification.' => 'استفاده از richtext برای اطلاع رسانی مشاهده و ویرایش درخواست',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             'استفاده از richtext برای مشاهده و ویرایش: مقالات، درود، امضا، قالب استاندارد، پاسخ خودکار و اطلاعیه ها.',
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
+            '',
+        'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
+            '',
         'Vietnam' => 'ویتنام',
         'View performance benchmark results.' => 'نمایش نتایج آزمون کارایی',
+        'View stored article version.' => '',
         'Watch this ticket' => 'سازمان دیده بان این درخواست',
         'Watched Tickets' => 'درخواست‌های مشاهده شده',
         'Watched Tickets.' => 'درخواست تماشا.',
@@ -9432,13 +10422,16 @@ Thanks for your help!
             'ما در حال انجام تعمیر و نگهداری برنامه ریزی شده هستیم. ورود به طور موقت در دسترس نیست.',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             'ما در حال انجام تعمیر و نگهداری برنامه ریزی شده هستیم.ما باید بزودی به حالت آن لاین برگردیم.',
-        'We have changed the default ticket unlock behaviour in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behaviour is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behaviour of OTRS version 2-6 and OTOBO 10..' =>
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
             '',
         'Web Service' => '',
         'Web Services' => 'وب سرویس',
+        'Welcome %s, to your CareOnCloud ESM.' => '',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             '',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
+            '',
+        'When support data is collected via SupportDataCollector, certain SysConfig values marked with ValueType="Password" are automatically masked. This prevents passwords from appearing in plain text in the support data. This setting defines the settings that contain complex configuration hashes that should not be masked when generating the support data.' =>
             '',
         'When tickets are merged, a note will be added automatically to the ticket which is no longer active. Here you can define the body of this note (this text cannot be changed by the agent).' =>
             'هنگامی که بلیط ادغام شدهاند، توجه داشته باشید به طور خودکار بلیط است که دیگر فعال به اضافه شده است. در اینجا شما می توانید بدن از این توجه داشته باشید (این متن را می توسط عامل نمی توان تغییر داد) را تعریف کنیم.',
@@ -9448,24 +10441,29 @@ Thanks for your help!
             'هنگامی که بلیط هم ادغام شدند، مشتری می تواند در هر ایمیل با تنظیم چک باکس \ "اطلاع فرستنده " آگاه است. در این متن، شما می توانید یک متن از قبل فرمت شده که بعدا توسط عوامل اصلاح شود را تعریف کنیم.',
         'Whether extended customer information is shown in the ticket print screen of the customer interface.' =>
             '',
-        'Whether fields should be automatically filled (1), and in that case also be hidden from ticket formulars (2).' =>
-            '',
         'Whether or not to collect meta information from articles using filters configured in Ticket::Frontend::ZoomCollectMetaFilters.' =>
             'یا نه به جمع آوری اطلاعات متا از مقالات با استفاده از فیلتر تنظیم شده در بلیط :: ظاهر :: ZoomCollectMetaFilters.',
         'Whether the execution of TicketACL can be avoided by checking cached field dependencies. This can improve loading times of ticket formulars, but has to be disabled, if ACLModules are to be used for Ticket- and Form-ReturnTypes.' =>
             '',
         'Whether to force redirect all requests from http to https protocol. Please check that your web server is configured correctly for https protocol before enable this option.' =>
             '',
+        'Which units are used and shown in the overview for timeunits?' =>
+            '',
+        'XOAUTH2' => '',
         'Yes, but hide archived tickets' => 'بله، اما آرشیو درخواست پنهان است',
-        'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
-            'ایمیل خود را با تعداد درخواست  \ "<OTOBO_TICKET> " منعکس است با \ "<OTOBO_BOUNCE_TO> ". این آدرس برای کسب اطلاعات بیشتر تماس بگیرید.',
-        'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
-            'Email شما با شماره درخواست  "<OTOBO_TICKET>" با درخواست "<OTOBO_MERGE_TO_TICKET>"  ادغام گردید.',
+        'Your Tickets. Your CareOnCloud ESM.' => '',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is bounced to "<CareOnCloud_BOUNCE_TO>". Contact this address for further information.' =>
+            'ایمیل خود را با تعداد درخواست  \ "<CareOnCloud_TICKET> " منعکس است با \ "<CareOnCloud_BOUNCE_TO> ". این آدرس برای کسب اطلاعات بیشتر تماس بگیرید.',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is merged to "<CareOnCloud_MERGE_TO_TICKET>".' =>
+            'Email شما با شماره درخواست  "<CareOnCloud_TICKET>" با درخواست "<CareOnCloud_MERGE_TO_TICKET>"  ادغام گردید.',
+        'Your external tools' => '',
+        'Your last tickets' => '',
         'Your queue selection of your preferred queues. You also get notified about those queues via email if enabled.' =>
             'انتخاب صف خود را از صف نظر خود را. شما همچنین دریافت در مورد کسانی که صف از طریق ایمیل مطلع اگر فعال باشد.',
         'Your service selection of your preferred services. You also get notified about those services via email if enabled.' =>
             'انتخاب خدمات خود را از خدمات مورد نظر خود را. شما همچنین دریافت در مورد کسانی که خدمات از طریق ایمیل مطلع اگر فعال باشد.',
         'Zoom' => 'نمایش کامل',
+        'always' => '',
         'attachment' => 'ضمیمه',
         'bounce' => '',
         'compose' => '',
@@ -9507,6 +10505,7 @@ Thanks for your help!
         'Add to favourites',
         'Agent',
         'All occurrences',
+        'All translations must be filled!',
         'All-day',
         'An error occurred during communication.',
         'An error occurred! Please check the browser error log for more details!',
@@ -9519,13 +10518,22 @@ Thanks for your help!
         'Apr',
         'April',
         'Are you sure you want to delete this appointment? This operation cannot be undone.',
+        'Are you sure you want to delete this article?',
         'Are you sure you want to remove all user values?',
+        'Are you sure you want to restore this article?',
         'Are you sure you want to update all installed packages?',
         'Are you using a browser plugin like AdBlock or AdBlockPlus? This can cause several issues and we highly recommend you to add an exception for this domain.',
+        'Article Delete',
+        'Article Restore',
+        'Article already marked as deleted.',
+        'Article deleted successfully!',
         'Article display',
         'Article filter',
+        'Article not available for restoring.',
+        'Article restored successfully!',
         'As soon as you use this button or link, you will leave this screen and its current state will be saved automatically. Do you want to continue?',
         'Ascending sort applied, ',
+        'At least one translation must be filled!',
         'Attachment was deleted successfully.',
         'Attachments',
         'Aug',
@@ -9575,8 +10583,10 @@ Thanks for your help!
         'Delete this Operation',
         'Delete this PostMasterFilter',
         'Delete this Template',
+        'Delete this template',
         'Delete web service',
         'Deleting attachment...',
+        'Deleting template...',
         'Deleting the field and its data. This may take a while...',
         'Deleting the mail account and its data. This may take a while...',
         'Deleting the postmaster filter and its data. This may take a while...',
@@ -9593,6 +10603,7 @@ Thanks for your help!
         'Do you really want to continue?',
         'Do you really want to delete "%s"?',
         'Do you really want to delete this certificate?',
+        'Do you really want to delete this customer dashboard info tile entry?',
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!',
         'Do you really want to delete this generic agent job?',
         'Do you really want to delete this key?',
@@ -9617,6 +10628,7 @@ Thanks for your help!
         'Error during AJAX communication',
         'Error during AJAX communication. Status: %s, Error: %s',
         'Error in the mail settings. Please correct and try again.',
+        'Error trying to create CodeMirror instance, please check configuration!',
         'Error: Browser Check failed!',
         'Event Type Filter',
         'Expanded',
@@ -9637,7 +10649,8 @@ Thanks for your help!
         'If you now leave this page, all open popup windows will be closed, too!',
         'Ignore',
         'Import web service',
-        'Information about the OTOBO Daemon',
+        'Information',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -9668,6 +10681,7 @@ Thanks for your help!
         'May',
         'May_long',
         'Migrate',
+        'Missing Translations',
         'Mo',
         'Mon',
         'Monday',
@@ -9687,6 +10701,7 @@ Thanks for your help!
         'No response from package upgrade all.',
         'No sort applied, ',
         'No space left for the following files: %s',
+        'Non-global ActivityDialogs may not be assigned to global Activities!',
         'Not available',
         'Notice',
         'Notification',
@@ -9792,6 +10807,7 @@ Thanks for your help!
         'Switch to mobile mode',
         'System Registration',
         'Team',
+        'Template was deleted successfully.',
         'Th',
         'The browser you are using is too old.',
         'The deployment is already running.',
@@ -9805,6 +10821,7 @@ Thanks for your help!
         'There are no more drafts available.',
         'There is a package upgrade process running, click here to see status information about the upgrade progress.',
         'There was an error deleting the attachment. Please check the logs for more information.',
+        'There was an error deleting the template. Please check the logs for more information.',
         'There was an error. Please save all settings you are editing and check the logs for more information.',
         'This Activity cannot be deleted because it is the Start Activity.',
         'This Activity is already used in the Process. You cannot add it twice!',
@@ -9820,7 +10837,7 @@ Thanks for your help!
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -9837,7 +10854,7 @@ Thanks for your help!
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

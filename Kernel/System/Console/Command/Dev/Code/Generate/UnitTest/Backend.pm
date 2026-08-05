@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,15 +15,21 @@
 # --
 
 package Kernel::System::Console::Command::Dev::Code::Generate::UnitTest::Backend;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
 
 use strict;
 use warnings;
 
-use File::Path     ();
-use File::Basename ();
-
 use parent qw(Kernel::System::Console::BaseCommand);
+
+# core modules
+use File::Path     ();
+use File::Basename qw(dirname);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -38,7 +44,7 @@ sub Configure {
     $Self->AddOption(
         Name        => 'module-directory',
         Description =>
-            "Specify the directory containing the module where the new test should be created (otherwise the OTOBO home directory will be used).",
+            "Specify the directory containing the module where the new test should be created (otherwise the CareOnCloud ESM home directory will be used).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,
@@ -96,7 +102,7 @@ sub Run {
     );
 
     my $TargetLocation  = "$TargetHome/scripts/test/$TargetPath.t";
-    my $TargetDirectory = File::Basename::dirname($TargetLocation);
+    my $TargetDirectory = dirname($TargetLocation);
 
     if ( !-d $TargetDirectory ) {
         File::Path::make_path($TargetDirectory);

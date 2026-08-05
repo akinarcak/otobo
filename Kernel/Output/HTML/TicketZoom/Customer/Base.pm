@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,8 +19,11 @@ package Kernel::Output::HTML::TicketZoom::Customer::Base;
 use strict;
 use warnings;
 
-use Digest::MD5 qw(md5_hex);
+# core modules
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsHashRefWithData);
 
 our @ObjectDependencies = (
@@ -123,12 +126,6 @@ sub ArticleMetaFields {
     # get dynamic field config for frontend module
     my $DynamicFieldFilter = {
         %{ $ConfigObject->Get("Ticket::Frontend::CustomerTicketZoom")->{DynamicField} || {} },
-
-        # TODO: Check if there are process dynamic fields for customer interface
-        # %{
-        #     $ConfigObject->Get("Ticket::Frontend::CustomerTicketZoom")->{ProcessWidgetDynamicField}
-        #         || {}
-        # },
     };
 
     # get the dynamic fields for article object

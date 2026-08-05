@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -265,7 +265,7 @@ for my $TypeID ( sort keys %AutoResponseType ) {
             TicketID             => $TicketID,
             IsVisibleForCustomer => 0,
             SenderType           => 'agent',
-            From                 => 'Some Agent <otobo@example.com>',
+            From                 => 'Some Agent <careoncloud@example.com>',
             To                   => 'Suplier<suplier@example.com>',
             Subject              => 'Email for suplier',
             Body                 => 'the message text',
@@ -292,7 +292,7 @@ for my $TypeID ( sort keys %AutoResponseType ) {
             IsVisibleForCustomer => 0,
             SenderType           => 'customer',
             From                 => 'Suplier<suplier@example.com>',
-            To                   => 'Some Agent <otobo@example.com>',
+            To                   => 'Some Agent <careoncloud@example.com>',
             Subject              => 'some short description',
             Body                 => 'the message text',
             Charset              => 'utf8',
@@ -302,7 +302,7 @@ for my $TypeID ( sort keys %AutoResponseType ) {
             UserID               => 1,
             AutoResponseType     => 'auto reply',
             OrigHeader           => {
-                From    => 'Some Agent <otobo@example.com>',
+                From    => 'Some Agent <careoncloud@example.com>',
                 Subject => 'some short description',
             },
         );
@@ -326,7 +326,7 @@ for my $TypeID ( sort keys %AutoResponseType ) {
         $Self->IsDeeply(
             $MailQueueElement->{Recipient},
             [
-                'otobo@example.com'
+                'careoncloud@example.com'
             ],
             'Check AutoResponse recipients.'
         );

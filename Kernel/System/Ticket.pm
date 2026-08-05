@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # Copyright (C) 2012-2020 Znuny GmbH, http://znuny.com/
 # --
 # This program is free software: you can redistribute it and/or modify it under
@@ -28,13 +28,12 @@ use parent qw(
 );
 
 # core modules
-use File::Path;
 use Encode ();
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -66,6 +65,7 @@ our @ObjectDependencies = (
     'Kernel::System::User',
     'Kernel::System::Valid',
     'Kernel::Language',
+    'Kernel::System::Ticket::ArticleFeatures'
 );
 
 =head1 NAME
@@ -779,6 +779,11 @@ sub TicketDelete {
         TicketID => $Param{TicketID},
     );
 
+    #Delete article version data
+    my @VersionIDs = $Kernel::OM->Get('Kernel::System::Ticket::ArticleFeatures')->DeleteVersionData(
+        TicketID => $Param{TicketID}
+    );
+
     # delete ticket_history
     return if !$Self->HistoryDelete(
         TicketID => $Param{TicketID},
@@ -789,7 +794,8 @@ sub TicketDelete {
     my @Articles = $ArticleObject->ArticleList( TicketID => $Param{TicketID} );
     for my $MetaArticle (@Articles) {
         return if !$ArticleObject->BackendForArticle( %{$MetaArticle} )->ArticleDelete(
-            ArticleID => $MetaArticle->{ArticleID},
+            ArticleID  => $MetaArticle->{ArticleID},
+            VersionIDs => \@VersionIDs,
             %Param,
         );
     }
@@ -951,7 +957,7 @@ sub TicketSubjectBuild {
     my $Subject = $Param{Subject} || '';
     my $Action  = $Param{Action}  || 'Reply';
 
-    # cleanup of subject, remove existing ticket numbers and reply indentifier
+    # cleanup of subject, remove existing ticket numbers and reply identifier
     if ( !$Param{NoCleanup} ) {
         $Subject = $Self->TicketSubjectClean(%Param);
     }
@@ -2992,11 +2998,11 @@ sub TicketEscalationSuspendCalculate {
                     # if we got no working time we are come to an non-working our
                     # so we might want to move in bigger stepts of one hour (3600)
                     # if the steps a currently lower that that.
-                    # if so we need to store the the current time so we can substract
+                    # if so we need to store the current time so we can substract
                     # the difference between it and an full hour later so we come
                     # to the right number as if we would have moved with the smaller
                     # steps.
-                    # otherwise it might happen/has happend that we move in steps of
+                    # otherwise it might happen/has happened that we move in steps of
                     # 1 second over a weekend (and vacation days) which causes nearly
                     # endless loops... oops :)
                     if ( !$WorkingTime && $UpdateDiffTime < 3600 ) {
@@ -3060,7 +3066,7 @@ sub TicketEscalationSuspendCalculate {
 
         # some time left? calculate reminder as usual
 
-        # DateTimeObject using OTOBO time zone per default
+        # DateTimeObject using CareOnCloud ESM time zone per default
         my $DestinationDateTimeObject = $Kernel::OM->Create(
             'Kernel::System::DateTime',
             ObjectParams => {
@@ -3374,7 +3380,7 @@ sub TicketSLAList {
         return;
     }
 
-    # return emty hash, if no service id is given
+    # return empty hash, if no service id is given
     if ( !$Param{ServiceID} ) {
         return ();
     }
@@ -4800,8 +4806,6 @@ or for access control
 sub OwnerCheck {
     my ( $Self, %Param ) = @_;
 
-    my $SQL = '';
-
     # check needed stuff
     if ( !$Param{TicketID} ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
@@ -4833,7 +4837,7 @@ sub OwnerCheck {
             Bind => [ \$Param{TicketID}, \$Param{OwnerID}, \$Param{OwnerID}, ],
         );
         my $Access = 0;
-        while ( my @Row = $DBObject->FetchrowArray() ) {
+        while ( $DBObject->FetchrowArray() ) {
             $Access = 1;
         }
 
@@ -4952,7 +4956,7 @@ sub TicketOwnerSet {
     }
 
     # check if update is needed!
-    my ( $OwnerID, $Owner ) = $Self->OwnerCheck( TicketID => $Param{TicketID} );
+    my ($OwnerID) = $Self->OwnerCheck( TicketID => $Param{TicketID} );
     if ( $OwnerID eq $Param{NewUserID} ) {
 
         # update is "not" needed!
@@ -6356,6 +6360,7 @@ sub TicketAccountTime {
         Data  => {
             TicketID  => $Param{TicketID},
             ArticleID => $Param{ArticleID},
+            TimeUnits => $Param{TimeUnit}
         },
         UserID => $Param{UserID},
     );
@@ -6417,6 +6422,20 @@ sub TicketMerge {
         Bind => [ \$Param{MainTicketID}, \$Param{UserID}, \$Param{MergeTicketID} ],
     );
 
+    # change ticket id of merge ticket to main ticket for article versions
+    return if !$DBObject->Do(
+        SQL => 'UPDATE article_version SET ticket_id = ?, change_time = current_timestamp, '
+            . ' change_by = ? WHERE ticket_id = ?',
+        Bind => [ \$Param{MainTicketID}, \$Param{UserID}, \$Param{MergeTicketID} ],
+    );
+
+    # change ticket id of merge ticket to main ticket for time_accounting versions
+    return if !$DBObject->Do(
+        SQL => 'UPDATE time_accounting_version SET ticket_id = ?, change_time = current_timestamp, '
+            . ' change_by = ? WHERE ticket_id = ?',
+        Bind => [ \$Param{MainTicketID}, \$Param{UserID}, \$Param{MergeTicketID} ],
+    );
+
     # former bug 9635 (with table article_index)
     # do the same with article_search_index (harmless if not used)
     return if !$DBObject->Do(
@@ -6468,8 +6487,8 @@ sub TicketMerge {
 
     my $Body = $ConfigObject->Get('Ticket::Frontend::AutomaticMergeText');
     $Body = $LanguageObject->Translate($Body);
-    $Body =~ s{<OTOBO_TICKET>}{$MergeTicket{TicketNumber}}xms;
-    $Body =~ s{<OTOBO_MERGE_TO_TICKET>}{$MainTicket{TicketNumber}}xms;
+    $Body =~ s{<CareOnCloud_TICKET>}{$MergeTicket{TicketNumber}}xms;
+    $Body =~ s{<CareOnCloud_MERGE_TO_TICKET>}{$MainTicket{TicketNumber}}xms;
 
     my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
 
@@ -6812,6 +6831,11 @@ sub TicketMergeLinkedObjects {
             \$TicketObjectID,
             \$TicketObjectID,
         ],
+    );
+
+    # cleanup cache of link object
+    $Kernel::OM->Get('Kernel::System::Cache')->CleanUp(
+        Type => 'LinkObject',
     );
 
     return 1;
@@ -7425,17 +7449,29 @@ sub TicketArticleStorageSwitch {
 
     # Get articles.
     my @Articles = $ArticleObject->ArticleList(
-        TicketID => $Param{TicketID},
-        UserID   => $Param{UserID},
+        TicketID            => $Param{TicketID},
+        UserID              => $Param{UserID},
+        ShowDeletedArticles => 1
     );
 
     ARTICLE:
     for my $Article (@Articles) {
 
+        # Verify DeletedVersionID against database
+        if ( !$Article->{DeletedVersionID} ) {
+            $Article->{DeletedVersionID} = $Kernel::OM->Get('Kernel::System::Ticket::ArticleFeatures')->IsArticleDeleted(
+                ArticleID => $Article->{ArticleID},
+                ReturnID  => 1
+            );
+        }
+
+        my $DeletedVersionID = $Article->{DeletedVersionID} || 0;
+
         # Handle only MIME based articles.
         my $BackendName = $ArticleObject->BackendForArticle(
-            TicketID  => $Param{TicketID},
-            ArticleID => $Article->{ArticleID}
+            TicketID            => $Param{TicketID},
+            ArticleID           => $Article->{ArticleID},
+            ShowDeletedArticles => 1
         )->ChannelNameGet();
         next ARTICLE if $BackendName !~ /^(Email|Phone|Internal)$/;
 
@@ -7456,10 +7492,87 @@ sub TicketArticleStorageSwitch {
         }
 
         # read source attachments
-        my %InitialSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
-            ArticleID     => $Article->{ArticleID},
-            OnlyMyBackend => 1,
-        );
+        my %InitialSourceAttachmentIndex;
+
+        if ( $Param{Source} eq 'ArticleStorageFS' ) {
+            %InitialSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                ArticleID     => $Article->{ArticleID},
+                OnlyMyBackend => 1,
+            );
+        }
+        else {
+            %InitialSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                ArticleID       => $Article->{ArticleDeleted} ? $Article->{DeletedVersionID} : $Article->{ArticleID},
+                OnlyMyBackend   => 1,
+                VersionView     => $Article->{ArticleDeleted} ? 1                     : undef,
+                SourceArticleID => $Article->{ArticleDeleted} ? $Article->{ArticleID} : undef,
+            );
+        }
+
+        my $AttachmentCount = int( keys %InitialSourceAttachmentIndex );
+        my @InitialVersions;
+
+        # Check versions for FS & DB (S3 not supported)
+        if ( $AttachmentCount && $Param{Source} eq 'ArticleStorageFS' ) {
+            for my $Attachment ( keys %InitialSourceAttachmentIndex ) {
+                if ( $InitialSourceAttachmentIndex{$Attachment}->{Filename} =~ /^\d+$/ && !defined $InitialSourceAttachmentIndex{$Attachment}->{ContentType} ) {
+
+                    # read source attachments for version
+                    my %VersionSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                        ArticleID       => $InitialSourceAttachmentIndex{$Attachment}->{Filename},
+                        SourceArticleID => $Article->{ArticleID},
+                        OnlyMyBackend   => 1,
+                        VersionView     => 1
+                    );
+
+                    if (%VersionSourceAttachmentIndex) {
+                        push @InitialVersions, $InitialSourceAttachmentIndex{$Attachment}->{Filename};
+
+                        for my $VersionIndex ( sort { $a <=> $b } keys %VersionSourceAttachmentIndex ) {
+                            $AttachmentCount++;
+
+                            $InitialSourceAttachmentIndex{$AttachmentCount}                  = $VersionSourceAttachmentIndex{$VersionIndex};
+                            $InitialSourceAttachmentIndex{$AttachmentCount}->{VersionID}     = $InitialSourceAttachmentIndex{$Attachment}->{Filename};
+                            $InitialSourceAttachmentIndex{$AttachmentCount}->{FileVersionID} = $VersionIndex;
+                        }
+                    }
+                }
+            }
+        }
+        elsif ( $Param{Source} eq 'ArticleStorageDB' ) {
+            my %VersionHistory = %{
+                $Kernel::OM->Get('Kernel::System::Ticket::ArticleFeatures')->VersionHistoryGet(
+                    ArticleID => $Article->{ArticleID},
+                    TicketID  => $Param{TicketID}
+                )
+            };
+
+            @InitialVersions = ( keys %VersionHistory );
+
+            if (@InitialVersions) {
+                for my $VersionInitialID ( sort { $a <=> $b } @InitialVersions ) {
+
+                    # read source attachments for version
+                    my %VersionSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                        ArticleID       => $VersionInitialID,
+                        SourceArticleID => $Article->{ArticleID},
+                        OnlyMyBackend   => 1,
+                        VersionView     => 1
+                    );
+
+                    if (%VersionSourceAttachmentIndex) {
+                        for my $VersionIndex ( sort { $a <=> $b } keys %VersionSourceAttachmentIndex ) {
+                            $AttachmentCount++;
+
+                            $InitialSourceAttachmentIndex{$AttachmentCount}                  = $VersionSourceAttachmentIndex{$VersionIndex};
+                            $InitialSourceAttachmentIndex{$AttachmentCount}->{VersionID}     = $VersionInitialID;
+                            $InitialSourceAttachmentIndex{$AttachmentCount}->{FileVersionID} = $VersionIndex;
+                        }
+                    }
+
+                }
+            }
+        }
 
         # read source plain
         my $Plain = $ArticleObjectSource->ArticlePlain(
@@ -7477,13 +7590,46 @@ sub TicketArticleStorageSwitch {
         # read source attachments
         my @Attachments;
         my %MD5Sums;
+
+        MD5SUMFILE:
         for my $FileID ( sort keys %InitialSourceAttachmentIndex ) {
-            my %Attachment = $ArticleObjectSource->ArticleAttachment(
-                ArticleID     => $Article->{ArticleID},
-                FileID        => $FileID,
-                OnlyMyBackend => 1,
-                Force         => 1,
-            );
+
+            next MD5SUMFILE if !$InitialSourceAttachmentIndex{$FileID}->{ContentType};
+
+            my %Attachment;
+
+            my $ArticleID = $Article->{ArticleID};
+
+            if ( $InitialSourceAttachmentIndex{$FileID}->{VersionID} ) {
+                $ArticleID = $InitialSourceAttachmentIndex{$FileID}->{VersionID};
+            }
+            elsif ( $Article->{DeletedVersionID} && !$InitialSourceAttachmentIndex{$FileID}->{VersionID} ) {
+                $ArticleID = $Article->{DeletedVersionID};
+            }
+
+            if ( $Param{Source} eq 'ArticleStorageFS' && !$InitialSourceAttachmentIndex{$FileID}->{VersionID} ) {
+                %Attachment = $ArticleObjectSource->ArticleAttachment(
+                    ArticleID     => $Article->{ArticleID},
+                    FileID        => $FileID,
+                    OnlyMyBackend => 1,
+                    Force         => 1,
+                );
+            }
+            else {
+
+                %Attachment = $ArticleObjectSource->ArticleAttachment(
+                    ArticleID       => $ArticleID,
+                    SourceArticleID => $InitialSourceAttachmentIndex{$FileID}->{VersionID} || $Article->{DeletedVersionID} ? $Article->{ArticleID} : undef,
+                    VersionView     => $InitialSourceAttachmentIndex{$FileID}->{VersionID} || $Article->{DeletedVersionID} ? 1                     : undef,
+                    FileID          => $InitialSourceAttachmentIndex{$FileID}->{VersionID} ? $InitialSourceAttachmentIndex{$FileID}->{FileVersionID} : $FileID,
+                    OnlyMyBackend   => 1,
+                    Force           => 1,
+                );
+
+            }
+
+            $Attachment{VersionID} = $InitialSourceAttachmentIndex{$FileID}->{VersionID} || '';
+
             push @Attachments, \%Attachment;
             my $MD5Sum = $MainObject->MD5sum(
                 String => $Attachment{Content},
@@ -7512,10 +7658,49 @@ sub TicketArticleStorageSwitch {
         }
 
         # read destination attachments
-        my %DestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
-            ArticleID     => $Article->{ArticleID},
-            OnlyMyBackend => 1,
-        );
+        my %DestinationAttachmentIndex;
+
+        if ( !$Article->{ArticleDeleted} ) {
+            %DestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
+                ArticleID     => $Article->{ArticleID},
+                OnlyMyBackend => 1,
+            );
+        }
+        else {
+            %DestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
+                ArticleID       => $Article->{ArticleID},
+                OnlyMyBackend   => 1,
+                ArticleDeleted  => 1,
+                SourceArticleID => $DeletedVersionID,
+                VersionView     => 1
+            );
+        }
+
+        $AttachmentCount = int( keys %DestinationAttachmentIndex );
+
+        if (@InitialVersions) {
+            for my $VersionID (@InitialVersions) {
+
+                # read source attachments for version
+                my %VersionDestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
+                    ArticleID       => $VersionID,
+                    SourceArticleID => $Article->{ArticleID},
+                    OnlyMyBackend   => 1,
+                    VersionView     => 1
+                );
+
+                if (%VersionDestinationAttachmentIndex) {
+
+                    for my $VersionIndex ( sort { $a <=> $b } keys %VersionDestinationAttachmentIndex ) {
+                        $AttachmentCount++;
+
+                        $DestinationAttachmentIndex{$AttachmentCount}                  = $VersionDestinationAttachmentIndex{$VersionIndex};
+                        $DestinationAttachmentIndex{$AttachmentCount}->{VersionID}     = $VersionID;
+                        $DestinationAttachmentIndex{$AttachmentCount}->{FileVersionID} = $VersionIndex;
+                    }
+                }
+            }
+        }
 
         # read source attachments
         if (%DestinationAttachmentIndex) {
@@ -7533,7 +7718,7 @@ sub TicketArticleStorageSwitch {
                 # Check UTF8 string for validity and replace any wrongly encoded characters with _
                 if (
                     utf8::is_utf8( $Attachment->{Filename} )
-                    && !eval { Encode::is_utf8( $Attachment->{Filename}, 1 ) }
+                    && !eval { Encode::is_utf8( $Attachment->{Filename}, 1 ) && $Attachment->{ContentType} }
                     )
                 {
 
@@ -7549,11 +7734,22 @@ sub TicketArticleStorageSwitch {
                     $Attachment->{Filename} =~ s{[\x{FFFD}]}{_}xms;
                 }
 
-                $ArticleObjectDestination->ArticleWriteAttachment(
-                    %{$Attachment},
-                    ArticleID => $Article->{ArticleID},
-                    UserID    => $Param{UserID},
-                );
+                if ( $Param{Source} eq 'ArticleStorageFS' && !$Attachment->{VersionID} && !$Article->{ArticleDeleted} ) {
+                    $ArticleObjectDestination->ArticleWriteAttachment(
+                        %{$Attachment},
+                        ArticleID => $Article->{ArticleID},
+                        UserID    => $Param{UserID}
+                    );
+                }
+                else {
+                    $ArticleObjectDestination->ArticleWriteAttachment(
+                        %{$Attachment},
+                        ArticleID        => $Attachment->{VersionID} || $Article->{ArticleID},
+                        UserID           => $Param{UserID},
+                        DeletedVersionID => $Attachment->{VersionID} || $DeletedVersionID || '',    #Funcionando en DB
+                        SourceArticleID  => $Article->{ArticleID}
+                    );
+                }
             }
 
             # write destination plain
@@ -7561,24 +7757,106 @@ sub TicketArticleStorageSwitch {
                 $ArticleObjectDestination->ArticleWritePlain(
                     Email     => $Plain,
                     ArticleID => $Article->{ArticleID},
-                    UserID    => $Param{UserID},
+                    UserID    => $Param{UserID}
                 );
             }
 
-            # verify destination attachments
-            %DestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
-                ArticleID     => $Article->{ArticleID},
-                OnlyMyBackend => 1,
-            );
+            if ( !$Article->{ArticleDeleted} ) {
+                %DestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
+                    ArticleID     => $Article->{ArticleID},
+                    OnlyMyBackend => 1,
+                );
+            }
+            else {
+                %DestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
+                    ArticleID       => $Article->{ArticleID},
+                    OnlyMyBackend   => 1,
+                    ArticleDeleted  => 1,
+                    SourceArticleID => $DeletedVersionID,
+                    VersionView     => 1
+                );
+            }
+
+            $AttachmentCount = int( keys %DestinationAttachmentIndex );
+
+            if (@InitialVersions) {
+                for my $VersionID (@InitialVersions) {
+
+                    # read destination attachments for version
+                    my %VersionDestinationAttachmentIndex = $ArticleObjectDestination->ArticleAttachmentIndex(
+                        ArticleID       => $VersionID,
+                        SourceArticleID => $Article->{ArticleID},
+                        OnlyMyBackend   => 1,
+                        VersionView     => 1,
+                        Test            => 1
+                    );
+
+                    if (%VersionDestinationAttachmentIndex) {
+
+                        for my $VersionIndex ( sort { $a <=> $b } keys %VersionDestinationAttachmentIndex ) {
+                            $AttachmentCount++;
+
+                            $DestinationAttachmentIndex{$AttachmentCount}                  = $VersionDestinationAttachmentIndex{$VersionIndex};
+                            $DestinationAttachmentIndex{$AttachmentCount}->{VersionID}     = $VersionID;
+                            $DestinationAttachmentIndex{$AttachmentCount}->{FileVersionID} = $VersionIndex;
+                        }
+                    }
+                }
+            }
         }
 
+        MD5CHECK:
         for my $FileID ( sort keys %DestinationAttachmentIndex ) {
-            my %Attachment = $ArticleObjectDestination->ArticleAttachment(
-                ArticleID     => $Article->{ArticleID},
-                FileID        => $FileID,
-                OnlyMyBackend => 1,
-                Force         => 1,
-            );
+
+            my %Attachment;
+
+            next MD5CHECK if $DestinationAttachmentIndex{$FileID}->{Filename} =~ /^\d+$/ && !defined $DestinationAttachmentIndex{$FileID}->{ContentType};
+
+            if ( $Param{Destination} eq 'ArticleStorageFS' && $Article->{ArticleDeleted} && !$DestinationAttachmentIndex{$FileID}->{VersionID} ) {
+                %Attachment = $ArticleObjectDestination->ArticleAttachment(
+                    ArticleID      => $Article->{ArticleID},
+                    VersionView    => 1,
+                    ArticleDeleted => 1,
+                    FileID         => $FileID,
+                    OnlyMyBackend  => 1,
+                    Force          => 1
+                );
+            }
+            elsif ( $Param{Destination} eq 'ArticleStorageFS' && $DestinationAttachmentIndex{$FileID}->{VersionID} ) {
+                %Attachment = $ArticleObjectDestination->ArticleAttachment(
+                    ArticleID       => $DestinationAttachmentIndex{$FileID}->{VersionID},
+                    SourceArticleID => $Article->{ArticleID},
+                    VersionView     => 1,
+                    FileID          => $DestinationAttachmentIndex{$FileID}->{FileVersionID},
+                    OnlyMyBackend   => 1,
+                    Force           => 1
+                );
+            }
+            else {
+                if ( $Param{Source} eq 'ArticleStorageFS' && $DestinationAttachmentIndex{$FileID}->{VersionID} ) {
+                    %Attachment = $ArticleObjectDestination->ArticleAttachment(
+                        ArticleID       => $DestinationAttachmentIndex{$FileID}->{VersionID},
+                        SourceArticleID => $Article->{ArticleID},
+                        VersionView     => 1,
+                        FileID          => $DestinationAttachmentIndex{$FileID}->{FileVersionID},
+                        OnlyMyBackend   => 1,
+                        Force           => 1,
+                    );
+                }
+                else {
+                    %Attachment = $ArticleObjectDestination->ArticleAttachment(
+                        ArticleID        => $DestinationAttachmentIndex{$FileID}->{VersionID} || $Article->{ArticleID},
+                        SourceArticleID  => $DestinationAttachmentIndex{$FileID}->{VersionID} ? $Article->{ArticleID} : $DeletedVersionID || undef,
+                        VersionView      => $DestinationAttachmentIndex{$FileID}->{VersionID} || $DeletedVersionID ? 1 : undef,
+                        ArticleDeleted   => $Article->{ArticleDeleted}                        ? 1                                                     : undef,
+                        FileID           => $DestinationAttachmentIndex{$FileID}->{VersionID} ? $DestinationAttachmentIndex{$FileID}->{FileVersionID} : $FileID,
+                        OnlyMyBackend    => 1,
+                        Force            => 1,
+                        DeletedVersionID => $DestinationAttachmentIndex{$FileID}->{VersionID} || $DeletedVersionID || ''
+                    );
+                }
+            }
+
             my $MD5Sum = $MainObject->MD5sum(
                 String => \$Attachment{Content},
             );
@@ -7597,10 +7875,22 @@ sub TicketArticleStorageSwitch {
 
                 # delete corrupt attachments from destination
                 $ArticleObjectDestination->ArticleDeleteAttachment(
-                    ArticleID     => $Article->{ArticleID},
-                    UserID        => 1,
-                    OnlyMyBackend => 1,
+                    ArticleID        => $Article->{ArticleID},
+                    UserID           => 1,
+                    OnlyMyBackend    => 1,
+                    DeletedVersionID => $DeletedVersionID
                 );
+
+                if (@InitialVersions) {
+                    for my $VersionID (@InitialVersions) {
+                        $ArticleObjectDestination->ArticleDeleteAttachment(
+                            ArticleID        => $Article->{ArticleID},
+                            UserID           => 1,
+                            OnlyMyBackend    => 1,
+                            DeletedVersionID => $VersionID
+                        );
+                    }
+                }
 
                 # set events
                 $ConfigObject->{'Ticket::EventModulePost'} = $EventConfig;
@@ -7618,10 +7908,22 @@ sub TicketArticleStorageSwitch {
 
             # delete incomplete attachments from destination
             $ArticleObjectDestination->ArticleDeleteAttachment(
-                ArticleID     => $Article->{ArticleID},
-                UserID        => 1,
-                OnlyMyBackend => 1,
+                ArticleID        => $Article->{ArticleID},
+                UserID           => 1,
+                OnlyMyBackend    => 1,
+                DeletedVersionID => $DeletedVersionID
             );
+
+            if (@InitialVersions) {
+                for my $VersionID (@InitialVersions) {
+                    $ArticleObjectDestination->ArticleDeleteAttachment(
+                        ArticleID        => $Article->{ArticleID},
+                        UserID           => 1,
+                        OnlyMyBackend    => 1,
+                        DeletedVersionID => $VersionID
+                    );
+                }
+            }
 
             # set events
             $ConfigObject->{'Ticket::EventModulePost'} = $EventConfig;
@@ -7634,6 +7936,7 @@ sub TicketArticleStorageSwitch {
                 ArticleID     => $Article->{ArticleID},
                 OnlyMyBackend => 1,
             );
+
             my $PlainMD5SumVerify = '';
             if ($PlainVerify) {
                 $PlainMD5SumVerify = $MainObject->MD5sum(
@@ -7651,7 +7954,7 @@ sub TicketArticleStorageSwitch {
                 $ArticleObjectDestination->ArticleDeletePlain(
                     ArticleID     => $Article->{ArticleID},
                     UserID        => 1,
-                    OnlyMyBackend => 1,
+                    OnlyMyBackend => 1
                 );
 
                 # set events
@@ -7660,24 +7963,119 @@ sub TicketArticleStorageSwitch {
             }
         }
 
-        $ArticleObjectSource->ArticleDeleteAttachment(
-            ArticleID     => $Article->{ArticleID},
-            UserID        => 1,
-            OnlyMyBackend => 1,
-        );
+        if ( $Param{Source} eq 'ArticleStorageFS' ) {
+            $ArticleObjectSource->ArticleDeleteAttachment(
+                ArticleID     => $Article->{ArticleID},
+                UserID        => 1,
+                OnlyMyBackend => 1,
+            );
+        }
+        else {
+            $ArticleObjectSource->ArticleDeleteAttachment(
+                ArticleID        => $Article->{ArticleID},
+                UserID           => 1,
+                OnlyMyBackend    => 1,
+                DeletedVersionID => $Article->{ArticleDeleted} ? $DeletedVersionID : 0
+            );
+        }
+
+        if (@InitialVersions) {
+            for my $VersionID (@InitialVersions) {
+                $ArticleObjectSource->ArticleDeleteAttachment(
+                    ArticleID        => $Article->{ArticleID},
+                    UserID           => 1,
+                    OnlyMyBackend    => 1,
+                    DeletedVersionID => $VersionID
+                );
+            }
+        }
 
         # remove source plain
         $ArticleObjectSource->ArticleDeletePlain(
             ArticleID     => $Article->{ArticleID},
             UserID        => 1,
-            OnlyMyBackend => 1,
+            OnlyMyBackend => 1
         );
 
         # read source attachments
-        my %FinalSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
-            ArticleID     => $Article->{ArticleID},
-            OnlyMyBackend => 1,
-        );
+        my %FinalSourceAttachmentIndex;
+
+        if ( !$Article->{ArticleDeleted} ) {
+            %FinalSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                ArticleID     => $Article->{ArticleID},
+                OnlyMyBackend => 1,
+            );
+        }
+        else {
+            %FinalSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                ArticleID       => $Article->{ArticleID},
+                OnlyMyBackend   => 1,
+                ArticleDeleted  => 1,
+                SourceArticleID => $DeletedVersionID,
+                VersionView     => 1
+            );
+        }
+
+        $AttachmentCount = int( keys %FinalSourceAttachmentIndex );
+
+        if ( $AttachmentCount && $Param{Source} eq 'ArticleStorageFS' ) {
+            for my $Attachment ( keys %FinalSourceAttachmentIndex ) {
+                if ( $FinalSourceAttachmentIndex{$Attachment}->{Filename} =~ /^\d+$/ && !defined $FinalSourceAttachmentIndex{$Attachment}->{ContentType} ) {
+
+                    # read source attachments for version
+                    my %VersionSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                        ArticleID       => $FinalSourceAttachmentIndex{$Attachment}->{Filename},
+                        SourceArticleID => $Article->{ArticleID},
+                        OnlyMyBackend   => 1,
+                        VersionView     => 1
+                    );
+
+                    if (%VersionSourceAttachmentIndex) {
+                        for my $VersionIndex ( sort { $a <=> $b } keys %VersionSourceAttachmentIndex ) {
+                            $AttachmentCount++;
+
+                            $FinalSourceAttachmentIndex{$AttachmentCount}                  = $VersionSourceAttachmentIndex{$VersionIndex};
+                            $FinalSourceAttachmentIndex{$AttachmentCount}->{VersionID}     = $FinalSourceAttachmentIndex{$Attachment}->{Filename};
+                            $FinalSourceAttachmentIndex{$AttachmentCount}->{FileVersionID} = $VersionIndex;
+                        }
+                    }
+                }
+            }
+        }
+        elsif ( $Param{Source} eq 'ArticleStorageDB' ) {
+            my %VersionHistory = %{
+                $Kernel::OM->Get('Kernel::System::Ticket::ArticleFeatures')->VersionHistoryGet(
+                    ArticleID => $Article->{ArticleID},
+                    TicketID  => $Param{TicketID}
+                )
+            };
+
+            @InitialVersions = ( keys %VersionHistory );
+
+            if (@InitialVersions) {
+                for my $VersionInitialID ( sort { $a <=> $b } @InitialVersions ) {
+
+                    # read source attachments for version
+                    my %VersionSourceAttachmentIndex = $ArticleObjectSource->ArticleAttachmentIndex(
+                        ArticleID       => $VersionInitialID,
+                        SourceArticleID => $Article->{ArticleID},
+                        OnlyMyBackend   => 1,
+                        VersionView     => 1
+                    );
+
+                    if (%VersionSourceAttachmentIndex) {
+                        for my $VersionIndex ( sort { $a <=> $b } keys %VersionSourceAttachmentIndex ) {
+                            $AttachmentCount++;
+
+                            $FinalSourceAttachmentIndex{$AttachmentCount}                  = $VersionSourceAttachmentIndex{$VersionIndex};
+                            $FinalSourceAttachmentIndex{$AttachmentCount}->{VersionID}     = $VersionInitialID;
+                            $FinalSourceAttachmentIndex{$AttachmentCount}->{FileVersionID} = $VersionIndex;
+                        }
+                    }
+
+                }
+            }
+        }
 
         # read source attachments
         if (%FinalSourceAttachmentIndex) {
@@ -7882,6 +8280,137 @@ sub TicketAcceleratorRebuild {
         || 'Kernel::System::Ticket::IndexAccelerator::RuntimeDB';
 
     return $Kernel::OM->Get($TicketIndexModule)->TicketAcceleratorRebuild(%Param);
+}
+
+=head2 ObjectAttributesGet()
+
+returns the attributes a ticket can have on the system.
+
+    my %Attributes = $TicketObject->ObjectAttributesGet(
+        DynamicFields => (0|1),         # (optional) if dynamic field names are included, default 0
+        Extended      => (0|1),         # (optional) if extended information is included, default 1
+        EditMask      => (0|1),         # (optional) if edit mask attributes are returned instead of backend attributes, default 0
+    );
+
+=cut
+
+sub ObjectAttributesGet {
+    my ( $Self, %Param ) = @_;
+
+    # for consistency with TicketGet()
+    $Param{Extended} //= 1;
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    my %TicketAttributes;
+
+    if ( $Param{EditMask} ) {
+
+        # allow certain attributes only of corresponding sysconfig is activated
+        %TicketAttributes = (
+            Queue                  => 1,
+            QueueID                => 1,
+            LinkTicketID           => 1,
+            Owner                  => 1,
+            OwnerID                => 1,
+            State                  => 1,
+            StateID                => 1,
+            Priority               => 1,
+            PriorityID             => 1,
+            Customer               => 1,
+            CustomerID             => 1,
+            CustomerUserID         => 1,
+            IsVisibleForCustomer   => 1,
+            ActivityDialogEntityID => 1,
+            ActivityEntityID       => 1,
+            ProcessEntityID        => 1,
+        );
+
+        # check and set attributes which depend on sysconfig
+        for my $Entity (qw(Responsible Service Type)) {
+            if ( $ConfigObject->Get("Ticket::$Entity") ) {
+
+                $TicketAttributes{"${Entity}ID"} = 1;
+
+                # SLA depends on service
+                if ( $Entity eq 'Service' ) {
+                    $TicketAttributes{SLAID} = 1;
+                }
+            }
+        }
+
+    }
+    else {
+
+        # allow certain attributes only of corresponding sysconfig is activated
+        %TicketAttributes = (
+            TicketID               => 1,
+            Queues                 => 1,
+            QueueID                => 1,
+            States                 => 1,
+            StateID                => 1,
+            Locks                  => 1,
+            LockID                 => 1,
+            Priorities             => 1,
+            PriorityID             => 1,
+            Created                => 1,
+            TicketNumber           => 1,
+            CustomerID             => 1,
+            CustomerUserID         => 1,
+            Owner                  => 1,
+            OwnerID                => 1,
+            Changed                => 1,
+            Title                  => 1,
+            EscalationUpdateTime   => 1,
+            UnlockTimeout          => 1,
+            EscalationResponseTime => 1,
+            EscalationSolutionTime => 1,
+            EscalationTime         => 1,
+            CreateBy               => 1,
+            ChangeBy               => 1,
+        );
+
+        # check and set attributes which depend on sysconfig
+        for my $Entity (qw(Responsible Service Type)) {
+            if ( $ConfigObject->Get("Ticket::$Entity") ) {
+
+                # Responsible can only be searched via IDs
+                if ( $Entity ne 'Responsible' ) {
+                    $TicketAttributes{ $Entity . 's' } = 1;
+                }
+                $TicketAttributes{"${Entity}ID"} = 1;
+
+                # SLA depends on service
+                if ( $Entity eq 'Service' ) {
+                    $TicketAttributes{SLAs}  = 1;
+                    $TicketAttributes{SLAID} = 1;
+                }
+            }
+        }
+
+        # if requested, set extended attributes
+        if ( $Param{Extended} ) {
+            $TicketAttributes{FirstResponse}   = 1;
+            $TicketAttributes{FirstLock}       = 1;
+            $TicketAttributes{TicketGetClosed} = 1;
+        }
+
+    }
+
+    # check if dynamic fields need to be added
+    if ( $Param{DynamicFields} ) {
+        my $DynamicFields = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldList(
+            Valid      => 1,
+            ObjectType => [ 'Ticket', 'Article' ],
+            ResultType => 'HASH',
+        );
+
+        for my $FieldName ( values $DynamicFields->%* ) {
+            $TicketAttributes{"DynamicField_$FieldName"} = 1;
+        }
+    }
+
+    return %TicketAttributes;
 }
 
 sub DESTROY {

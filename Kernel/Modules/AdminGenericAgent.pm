@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -31,6 +31,15 @@ sub new {
     my $Self = {%Param};
     bless( $Self, $Type );
 
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
+
     # get the dynamic fields for ticket object
     my $DynamicField = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldListGet(
         Valid      => 1,
@@ -38,7 +47,13 @@ sub new {
     );
 
     # TODO Adjust GenericAgent module to handle multivalue and set fields correctly
-    $Self->{DynamicField}->@* = grep { !$_->{Config}{MultiValue} && $_->{FieldType} ne 'Set' } $DynamicField->@*;
+    $Self->{DynamicField}->@* = grep {
+        my $IsSetField = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->HasBehavior(
+            DynamicFieldConfig => $_,
+            Behavior           => 'IsSetField',
+        );
+        !$_->{Config}{MultiValue} && !$IsSetField
+    } $DynamicField->@*;
 
     return $Self;
 }
@@ -61,6 +76,18 @@ sub Run {
     $Self->{Profile}    = $ParamObject->GetParam( Param => 'Profile' )    || '';
     $Self->{OldProfile} = $ParamObject->GetParam( Param => 'OldProfile' ) || '';
     $Self->{Subaction}  = $ParamObject->GetParam( Param => 'Subaction' )  || '';
+
+    $Param{IncludeInvalid} = $ParamObject->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $Param{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $Param{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $Param{IncludeInvalid};
+    }
 
     # get needed objects
     my $CheckItemObject    = $Kernel::OM->Get('Kernel::System::CheckItem');
@@ -503,8 +530,16 @@ sub Run {
         Name => 'ActionAdd',
     );
     $LayoutObject->Block(
+        Name => 'IncludeInvalid',
+        Data => {
+            IncludeInvalid        => $Self->{IncludeInvalid},
+            IncludeInvalidChecked => $Self->{IncludeInvalid} ? 'checked' : '',
+        },
+    );
+    $LayoutObject->Block(
         Name => 'Filter',
     );
+    $LayoutObject->Block( Name => 'ImportExportWidget' );
     $LayoutObject->Block(
         Name => 'Overview',
     );
@@ -514,8 +549,11 @@ sub Run {
     # if there are any data, it is shown
     if (%Jobs) {
         my $Counter = 1;
+        JOB:
         for my $JobKey ( sort keys %Jobs ) {
             my %JobData = $GenericAgentObject->JobGet( Name => $JobKey );
+
+            next JOB unless $Self->{IncludeInvalid} || $JobData{Valid};
 
             # css setting and text for valid or invalid jobs
             $JobData{ShownValid} = $JobData{Valid} ? 'valid' : 'invalid';
@@ -523,7 +561,9 @@ sub Run {
             # separate each search result line by using several css
             $LayoutObject->Block(
                 Name => 'Row',
-                Data => {%JobData},
+                Data => {
+                    %JobData,
+                },
             );
         }
     }
@@ -1224,13 +1264,13 @@ sub _MaskUpdate {
     for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
 
-        # Check if field is Attachment type ( from OTOBODynamicFieldAttachment )
+        # Check if field is Attachment type ( from CareOnCloudDynamicFieldAttachment )
         #   this field is not updatable by Generic Agent
-        my $IsAttachement = $DynamicFieldBackendObject->HasBehavior(
+        my $IsAttachment = $DynamicFieldBackendObject->HasBehavior(
             DynamicFieldConfig => $DynamicFieldConfig,
-            Behavior           => 'IsAttachement',
+            Behavior           => 'IsAttachment',
         );
-        next DYNAMICFIELD if $IsAttachement;
+        next DYNAMICFIELD if $IsAttachment;
 
         my $PossibleValuesFilter;
 

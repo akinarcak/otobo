@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,14 +24,15 @@ use namespace::autoclean;
 use parent qw(Kernel::System::Ticket::Article::Backend::MIMEBase::Base);
 
 # core modules
-use File::Path qw(mkpath);
-use Unicode::Normalize qw();
-use Cwd qw(realpath);
+use File::Copy         qw(move);
+use File::Path         qw(mkpath);
+use Unicode::Normalize ();
+use Cwd                qw(realpath);
 
 # CPAN modules
-use Plack::Util;
+use Plack::Util ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsStringWithData);
 
 our @ObjectDependencies = (
@@ -77,9 +78,9 @@ sub new {
 
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'notice',
-            Message  => "Can't write $ArticleDir! try: \$OTOBO_HOME/bin/otobo.SetPermissions.pl!",
+            Message  => "Can't write $ArticleDir! try: \$CareOnCloud_HOME/bin/careoncloud.SetPermissions.pl!",
         );
-        die "Can't write $ArticleDir! try: \$OTOBO_HOME/bin/otobo.SetPermissions.pl!";
+        die "Can't write $ArticleDir! try: \$CareOnCloud_HOME/bin/careoncloud.SetPermissions.pl!";
     }
 
     # Get activated cache backend configuration.
@@ -104,6 +105,69 @@ sub new {
     return $Self;
 }
 
+sub ArticleMoveFiles {
+    my ( $Self, %Param ) = @_;
+
+    my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
+    my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
+
+    # check needed stuff
+    for my $Item (qw(Location NewArticleVersion)) {
+        if ( !$Param{$Item} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Item!",
+            );
+
+            return;
+        }
+    }
+
+    #Search files for moving
+    my @ArticleFiles = $MainObject->DirectoryRead(
+        Directory => $Param{Location},
+        Filter    => "*",
+        Silent    => 1,
+    );
+
+    #Clean path from file list
+    my @TempFiles;
+    for my $File (@ArticleFiles) {
+        $File =~ s{^.*/}{};
+        push @TempFiles, $File;
+    }
+
+    @ArticleFiles = @TempFiles;
+
+    if (@ArticleFiles) {
+        mkdir("$Param{Location}/$Param{NewArticleVersion}");
+
+        MOVE_FILES:
+        for my $File (@ArticleFiles) {
+
+            #Skip directories
+            next MOVE_FILES if ( -d "$Param{Location}/$File" );
+
+            $File = $EncodeObject->Convert2CharsetInternal(
+                Text  => $File,
+                From  => 'utf-8',
+                Check => 1,
+            );
+
+            move( "$Param{Location}/$File", "$Param{Location}/$Param{NewArticleVersion}/$File" );
+
+            $MainObject->FileDelete(
+                Location        => "$Param{Location}/$File",
+                Type            => 'Attachment',
+                NoReplace       => 1,
+                DisableWarnings => 1
+            );
+        }
+    }
+
+    return;
+}
+
 sub ArticleDelete {
     my ( $Self, %Param ) = @_;
 
@@ -121,20 +185,24 @@ sub ArticleDelete {
 
     # delete attachments
     $Self->ArticleDeleteAttachment(
-        ArticleID => $Param{ArticleID},
-        UserID    => $Param{UserID},
+        ArticleID        => $Param{ArticleID},
+        UserID           => $Param{UserID},
+        DeletedVersionID => $Param{DeletedVersionID} || 0
     );
 
     # delete plain message
     $Self->ArticleDeletePlain(
-        ArticleID => $Param{ArticleID},
-        UserID    => $Param{UserID},
+        ArticleID        => $Param{ArticleID},
+        UserID           => $Param{UserID},
+        DeletedVersionID => $Param{DeletedVersionID} || 0
     );
 
     # delete storage directory
     $Self->_ArticleDeleteDirectory(
-        ArticleID => $Param{ArticleID},
-        UserID    => $Param{UserID},
+        ArticleID        => $Param{ArticleID},
+        UserID           => $Param{UserID},
+        DeletedVersionID => $Param{DeletedVersionID} || 0,
+        VersionIDs       => $Param{VersionIDs}       || undef
     );
 
     # Delete special article storage cache.
@@ -215,6 +283,10 @@ sub ArticleDeleteAttachment {
     );
     my $Path = "$Self->{ArticleDataDir}/$ContentPath/$Param{ArticleID}";
 
+    if ( $Param{DeletedVersionID} ) {
+        $Path .= "/$Param{DeletedVersionID}";
+    }
+
     if ( -e $Path ) {
 
         my @List = $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
@@ -224,13 +296,33 @@ sub ArticleDeleteAttachment {
 
         for my $File (@List) {
 
-            if ( $File !~ /(\/|\\)plain.txt$/ ) {
+            if ( $File !~ /(\/|\\)plain.txt$/ && !( -d $File ) ) {
 
                 if ( !unlink "$File" ) {
 
                     $Kernel::OM->Get('Kernel::System::Log')->Log(
                         Priority => 'error',
                         Message  => "Can't remove: $File: $!!",
+                    );
+                }
+            }
+        }
+
+        #Check if version directory is empty to remove it
+        if ( $Param{DeletedVersionID} ) {
+            my @ListVersion = $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
+                Directory => $Path,
+                Filter    => "*",
+            );
+
+            if ( !@ListVersion ) {
+                my $Success = rmdir($Path);
+
+                if ( !$Success ) {
+
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'error',
+                        Message  => "Can't remove version directory: $Path!!",
                     );
                 }
             }
@@ -335,7 +427,12 @@ sub ArticleWriteAttachment {
     );
 
     # define path
-    $Param{Path} = join '/', $Self->{ArticleDataDir}, $ContentPath, $Param{ArticleID};
+    if ( !$Param{VersionID} ) {
+        $Param{Path} = join '/', $Self->{ArticleDataDir}, $ContentPath, $Param{ArticleID};
+    }
+    else {
+        $Param{Path} = join '/', $Self->{ArticleDataDir}, $ContentPath, $Param{SourceArticleID}, $Param{ArticleID};
+    }
 
     # Perform FilenameCleanUp here already to check for
     #   conflicting existing attachment files correctly
@@ -351,7 +448,8 @@ sub ArticleWriteAttachment {
     my $UniqueFilename = $OrigFilename;
     {
         my %Index = $Self->ArticleAttachmentIndex(
-            ArticleID => $Param{ArticleID},
+            ArticleID     => $Param{ArticleID},
+            OnlyMyBackend => 1,
         );
 
         # Normalize filenames to find file names which are identical but in a different unicode form.
@@ -583,20 +681,37 @@ sub ArticleAttachmentIndexRaw {
     }
 
     my $ContentPath = $Self->_ArticleContentPathGet(
-        ArticleID => $Param{ArticleID},
+        ArticleID       => $Param{ArticleID},
+        VersionView     => $Param{VersionView}     || '',
+        SourceArticleID => $Param{SourceArticleID} || ''
     );
     my %Index;
     my $Counter = 0;
 
     # get main object
     my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
+    my @List;
 
     # try fs
-    my @List = $MainObject->DirectoryRead(
-        Directory => "$Self->{ArticleDataDir}/$ContentPath/$Param{ArticleID}",
-        Filter    => "*",
-        Silent    => 1,
-    );
+    if ( $Param{SourceArticleID} && !$Param{ArticleDeleted} ) {
+        @List = $MainObject->DirectoryRead(
+            Directory => "$Self->{ArticleDataDir}/$ContentPath/$Param{SourceArticleID}/$Param{ArticleID}",
+            Filter    => "*",
+            Silent    => 1,
+        );
+    }
+    else {
+
+        if ( $Param{ArticleDeleted} ) {
+            $Param{ArticleID} = $Param{SourceArticleID};
+        }
+
+        @List = $MainObject->DirectoryRead(
+            Directory => "$Self->{ArticleDataDir}/$ContentPath/$Param{ArticleID}",
+            Filter    => "*",
+            Silent    => 1,
+        );
+    }
 
     FILENAME:
     for my $Filename ( sort @List ) {
@@ -683,7 +798,7 @@ sub ArticleAttachmentIndexRaw {
         # strip filename
         $Filename =~ s!^.*/!!;
 
-        # add the info the the hash
+        # add the info to the hash
         $Counter++;
         $Index{$Counter} = {
             Filename           => $Filename,
@@ -771,24 +886,39 @@ sub ArticleAttachment {
 
     # get some data from the attachment index
     my %Index = $Self->ArticleAttachmentIndex(
-        ArticleID => $Param{ArticleID},
+        ArticleID       => $Param{ArticleID},
+        VersionView     => $Param{VersionView},
+        SourceArticleID => $Param{SourceArticleID},
+        ArticleDeleted  => $Param{ArticleDeleted}
     );
     my %Data = %{ $Index{ $Param{FileID} } // {} };
 
     # get content path
     my $ContentPath = $Self->_ArticleContentPathGet(
-        ArticleID => $Param{ArticleID},
+        ArticleID   => $Param{ArticleID},
+        VersionView => $Param{VersionView}
     );
     my $Counter = 0;
 
     # get main object
     my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
 
-    my @List = $MainObject->DirectoryRead(
-        Directory => "$Self->{ArticleDataDir}/$ContentPath/$Param{ArticleID}",
-        Filter    => "*",
-        Silent    => 1,
-    );
+    my @List;
+
+    if ( $Param{SourceArticleID} && $Param{VersionView} ) {
+        @List = $MainObject->DirectoryRead(
+            Directory => "$Self->{ArticleDataDir}/$ContentPath/$Param{SourceArticleID}/$Param{ArticleID}",
+            Filter    => "*",
+            Silent    => 1,
+        );
+    }
+    else {
+        @List = $MainObject->DirectoryRead(
+            Directory => "$Self->{ArticleDataDir}/$ContentPath/$Param{ArticleID}",
+            Filter    => "*",
+            Silent    => 1,
+        );
+    }
 
     if (@List) {
 
@@ -912,6 +1042,8 @@ sub ArticleAttachment {
                     $Counter++;
                 }
             }
+
+            $Data{ContentType} ||= '';
 
             if (
                 $Data{ContentType} =~ /plain\/text/i

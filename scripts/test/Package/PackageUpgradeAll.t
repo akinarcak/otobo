@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,16 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
+use Test2::Tools::Compare qw(array D);
 
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+
+# restore database when $Helper is destroyed
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
         RestoreDatabase => 1,
@@ -33,11 +38,7 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $Cleanup = $Kernel::OM->Get('Kernel::System::DB')->Do(
     SQL => 'DELETE from package_repository',
 );
-
-$Self->True(
-    $Cleanup,
-    "Removed possibly pre-existing packages from the database (transaction)."
-);
+ok( $Cleanup, "Removed possibly pre-existing packages from the database (transaction)." );
 
 $Kernel::OM->Get('Kernel::System::Cache')->CleanUp();
 
@@ -232,19 +233,13 @@ for my $Test (@Tests) {
         if ($ContentRef) {
             $FileString = ${$ContentRef};
         }
-        $Self->True(
-            $FileString,
-            "FileRead() - for package $PackageName",
-        );
+        ok( $FileString, "FileRead() - for package $PackageName" );
 
         my $Success = $PackageObject->PackageInstall(
             String => $FileString,
             Force  => 1,
         );
-        $Self->True(
-            $Success,
-            "PackageInstall() - for package $PackageName",
-        );
+        ok( $Success, "PackageInstall() - for package $PackageName" );
     }
 
     $Kernel::OM->ObjectsDiscard(
@@ -264,6 +259,7 @@ for my $Test (@Tests) {
             Mode     => 'utf8',
             Result   => 'SCALAR',
         );
+
         return ${$ContentRef};
     };
     use warnings;
@@ -276,14 +272,14 @@ for my $Test (@Tests) {
         Result => 'short',
     );
     my %InstalledList = map { $_->{Name} => $_->{Version} } grep { !defined $OrigInstalledList{ $_->{Name} } } @PackageInstalledList;
-    $Self->IsDeeply(
+    is(
         \%InstalledList,
         $Test->{RepositoryListBefore},
         'RepositoryList() - before upgrade',
     );
 
     my %Result = $PackageObject->PackageUpgradeAll();
-    $Self->IsDeeply(
+    is(
         \%Result,
         $Test->{ExpectedResult},
         'PackageUpgradeAll() - result',
@@ -294,7 +290,7 @@ for my $Test (@Tests) {
         Result => 'short',
     );
     %InstalledList = map { $_->{Name} => $_->{Version} } grep { !defined $OrigInstalledList{ $_->{Name} } } @PackageInstalledList;
-    $Self->IsDeeply(
+    is(
         \%InstalledList,
         $Test->{RepositoryListAfter},
         'RepositoryList() - after upgrade',
@@ -307,10 +303,7 @@ for my $Test (@Tests) {
             Name    => $PackageName,
             Version => $PackageVersion,
         );
-        $Self->True(
-            $Success,
-            "RepositoryRemove() - $PackageName $PackageVersion",
-        );
+        ok( $Success, "RepositoryRemove() - $PackageName $PackageVersion" );
     }
 
 }
@@ -320,4 +313,16 @@ continue {
     );
 }
 
-$Self->DoneTesting();
+# sanity test of the internal method _GetIntegratedPackages
+my $IntegratedPackages = $Kernel::OM->Get('Kernel::System::Package')->_GetIntegratedPackages;
+like(
+    $IntegratedPackages,
+    {
+        11 => {
+            0 => array { item D(); },    # at least one item, must be defined
+        }
+    },
+    'list of integrated packages',
+);
+
+done_testing;

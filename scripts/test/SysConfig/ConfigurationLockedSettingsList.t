@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -53,7 +53,7 @@ my $XMLContentRaw = <<'EOF',
 <Description Translatable="1">Test.</Description>
 <Navigation>Core</Navigation>
 <Value>
-    <Item ValueType="String" ValueRegex="">OTOBO 10</Item>
+    <Item ValueType="String" ValueRegex="">CareOnCloud ESM 10</Item>
 </Value>
 </Setting>
 EOF
@@ -79,7 +79,7 @@ EOF
                 Item => [
                     {
                         ValueType  => 'String',
-                        Content    => 'OTOBO 10',
+                        Content    => 'CareOnCloud ESM 10',
                         ValueRegex => '',
                     },
                 ],
@@ -102,7 +102,7 @@ for my $Index ( 1 .. 3 ) {
         XMLContentRaw    => $XMLContentRaw,
         XMLContentParsed => $XMLContentParsed,
         XMLFilename      => 'UnitTest.xml',
-        EffectiveValue   => 'OTOBO 10',
+        EffectiveValue   => 'CareOnCloud ESM 10',
         UserID           => $UserID,
     );
 

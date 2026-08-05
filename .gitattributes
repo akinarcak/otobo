@@ -1,0 +1,15 @@
+cpanfile.docker.snapshot merge=ours
+CHANGES.md merge=ours
+i18n/** merge=ours
+Kernel/Language/** merge=ours
+*.dockerfile text eol=lf
+*.sh text eol=lf
+*.psgi text eol=lf
+*.pl text eol=lf
+*.pm text eol=lf
+*.tt text eol=lf
+*.xml text eol=lf
+*.sopm text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+bin/docker/carton text eol=lf

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -31,6 +31,15 @@
 
     <div class="SidebarColumn">
 
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include invalid dynamic fields") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include invalid dynamic fields") | html %]</label>
+            </div>
+        </div>
         <div class="WidgetSimple">
             <div class="Header">
                 <h2><label for="FilterDynamicFields">[% Translate("Filter for Dynamic Fields") | html %]</label></h2>
@@ -167,6 +176,7 @@
                             <th>[% Translate("Type") | html %]</th>
                             <th>[% Translate("Object") | html %]</th>
                             <th>[% Translate("Validity") | html %]</th>
+                            <th>[% Translate("Copy") | html %]</th>
                             <th>[% Translate("Delete") | html %]</th>
                         </tr>
                     </thead>
@@ -197,6 +207,13 @@
                             </td>
                             <td>
                                 <div>[% Translate(Data.Valid) | html %]</div>
+                            </td>
+                            <td class="Center">
+[% RenderBlockStart("CloneLink") %]
+                                <a class="DynamicFieldClone" href="[% Env("Baselink") %]Action=[% Data.ConfigDialog %];Subaction=Add;CloneFieldID=[% Data.ID | uri %][% Data.FilterStrg %];FieldType=[% Data.FieldType | uri %];ObjectType=[% Data.ObjectTypeName | uri %]" title="[% Translate("Copy this field") | html %]">
+                                    <i class="fa fa-copy"></i>
+                                </a>
+[% RenderBlockEnd("CloneLink") %]
                             </td>
                             <td class="Center">
 [% RenderBlockStart("DeleteLink") %]

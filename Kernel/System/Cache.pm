@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::Cache - Key/value based data cache for OTOBO
+Kernel::System::Cache - Key/value based data cache for CareOnCloud ESM
 
 =head1 DESCRIPTION
 
@@ -178,7 +178,7 @@ store a value in the cache.
     );
 
 The Type here refers to the group of entries that should be cached and cleaned up together,
-usually this will represent the OTOBO object that is supposed to be cached, like 'Ticket'.
+usually this will represent the CareOnCloud ESM object that is supposed to be cached, like 'Ticket'.
 
 The Key identifies the entry (together with the type) for retrieval and deletion of this value.
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,14 +25,14 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
 
-        #RestoreDatabase  => 1,
+        RestoreDatabase  => 1,
         UseTmpArticleDir => 1,
     },
 );
@@ -47,6 +47,27 @@ $ConfigObject->Set(
     Key   => 'CheckEmailAddresses',
     Value => 0,
 );
+
+# Create agents.
+my $AgentObject = $Kernel::OM->Get('Kernel::System::User');
+my @AgentIDs;
+my @AgentLogins;
+for my $Prefix (qw(ɑ β)) {
+    my $AgentFirstName = $Prefix . 'First' . $RandomID;
+    my $AgentLastName  = $Prefix . 'Last' . $RandomID;
+    my $AgentLogin     = 'agent' . $Prefix . $RandomID;
+    my $AgentID        = $AgentObject->UserAdd(
+        UserFirstname => $AgentFirstName,
+        UserLastname  => $AgentLastName,
+        UserLogin     => $AgentLogin,
+        UserEmail     => "agent$Prefix$RandomID" . '@example.test',
+        ValidID       => 1,
+        ChangeUserID  => 1,
+    );
+    ok( $AgentID, "$AgentLogin is created" );
+    push @AgentIDs,    $AgentID;
+    push @AgentLogins, $AgentLogin;
+}
 
 # Create customer companies.
 my $CustomerCompanyObject = $Kernel::OM->Get('Kernel::System::CustomerCompany');
@@ -73,7 +94,7 @@ for my $CustomerCompanyName (@CustomerCompanyNames) {
         my $CustomerUserName  = join '_', $CustomerCompanyName, $Prefix;
         my $CustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
             Source         => 'CustomerUser',
-            UserFirstname  => 'Testee',
+            UserFirstname  => 'Tester',
             UserLastname   => $CustomerUserName,
             UserCustomerID => $CustomerCompanyName,
             UserLogin      => $CustomerUserName,
@@ -103,24 +124,31 @@ ok( $TicketID, "TicketID $TicketID is created" );
 
 my @Tests = (
     {
+        Name   => 'Create Reference to Agent',
+        Config => {
+            ReferencedObjectType => 'Agent',
+            FieldType            => 'Agent',
+        },
+    },
+    {
         Name   => 'Create Reference to CustomerCompany',
         Config => {
             ReferencedObjectType => 'CustomerCompany',
-            FieldType            => 'CustomerCompanyReference',
+            FieldType            => 'CustomerCompany',
         },
     },
     {
         Name   => 'Create Reference to CustomerUser',
         Config => {
             ReferencedObjectType => 'CustomerUser',
-            FieldType            => 'CustomerUserReference',
+            FieldType            => 'CustomerUser',
         },
     },
     {
         Name   => 'Create Reference to Ticket',
         Config => {
             ReferencedObjectType => 'Ticket',
-            FieldType            => 'TicketReference',
+            FieldType            => 'Ticket',
         },
     },
 );

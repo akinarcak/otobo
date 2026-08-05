@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,6 +28,7 @@ our @ObjectDependencies = (
     'Kernel::System::DB',
     'Kernel::System::Log',
     'Kernel::System::Main',
+    'Kernel::System::Translations',
     'Kernel::System::Valid',
 );
 
@@ -294,7 +295,7 @@ sub ServiceListGet {
 
     for my $ServiceData (@ServiceList) {
 
-        # create short name and parentid
+        # create short name and parent id
         $ServiceData->{NameShort} = $ServiceData->{Name};
         if ( $ServiceData->{Name} =~ m{ \A (.*) :: (.+?) \z }xms ) {
             my $ParentName = $1;
@@ -434,7 +435,7 @@ sub ServiceGet {
         return;
     }
 
-    # create short name and parentid
+    # create short name and parent id
     $ServiceData{NameShort} = $ServiceData{Name};
     if ( $ServiceData{Name} =~ m{ \A (.*) :: (.+?) \z }xms ) {
         $ServiceData{NameShort} = $2;
@@ -677,6 +678,15 @@ sub ServiceAdd {
         Type => $Self->{CacheType},
     );
 
+    my %Services = $Self->ServiceList(
+        UserID => $Param{UserID},
+    );
+
+    # generate chained translations automatically
+    $Kernel::OM->Get('Kernel::System::Translations')->TranslateParentChildElements(
+        Strings => [ values %Services ],
+    );
+
     return $ServiceID;
 }
 
@@ -806,7 +816,7 @@ sub ServiceUpdate {
 
     my $LikeService = $DBObject->Quote( $OldServiceName, 'Like' ) . '::%';
 
-    # find all childs
+    # find all children
     $DBObject->Prepare(
         SQL  => "SELECT id, name FROM service WHERE name LIKE ?",
         Bind => [ \$LikeService ],
@@ -820,7 +830,7 @@ sub ServiceUpdate {
         push @Childs, \%Child;
     }
 
-    # update childs
+    # update children
     for my $Child (@Childs) {
         $Child->{Name} =~ s{ \A ( \Q$OldServiceName\E ) :: }{$Param{FullName}::}xms;
         $DBObject->Do(
@@ -832,6 +842,15 @@ sub ServiceUpdate {
     # reset cache
     $Kernel::OM->Get('Kernel::System::Cache')->CleanUp(
         Type => $Self->{CacheType},
+    );
+
+    my %Services = $Self->ServiceList(
+        UserID => $Param{UserID},
+    );
+
+    # generate chained translations automatically
+    $Kernel::OM->Get('Kernel::System::Translations')->TranslateParentChildElements(
+        Strings => [ values %Services ],
     );
 
     return 1;
@@ -1239,7 +1258,7 @@ sub ServiceParentsGet {
     # get the ServiceParentID from the requested service
     my $ServiceParentID = $ServiceLookup{ $Param{ServiceID} }->{ParentID};
 
-    # get all partents for the requested service
+    # get all parents for the requested service
     while ($ServiceParentID) {
 
         # add service parent ID to the return structure
@@ -1320,6 +1339,174 @@ sub GetAllCustomServices {
     );
 
     return @ServiceIDs;
+}
+
+sub ExportServices {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    my %ServiceFilter;
+    if ( IsArrayRefWithData( $Param{Services} ) ) {
+        %ServiceFilter = map { $_ => 1 } $Param{Services}->@*;
+    }
+
+    my %ServiceList = $Self->ServiceList(
+        Valid  => 0,
+        UserID => $UserID,
+    );
+
+    my %ExportData;
+    SERVICEID:
+    for my $ServiceID ( sort keys %ServiceList ) {
+
+        my %ServiceData = $Self->ServiceGet(
+            ServiceID => $ServiceID,
+            UserID    => $UserID,
+        );
+
+        if (%ServiceFilter) {
+            next SERVICEID unless $ServiceFilter{ $ServiceData{Name} };
+        }
+
+        # translate IDs into names or name-like identifiers
+        my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+        ATTRIBUTE:
+        for my $Attribute ( keys %ServiceData ) {
+
+            next ATTRIBUTE unless $Attribute =~ /ID/;
+
+            if ( $Attribute eq 'ParentID' ) {
+                my $ParentService = $Self->ServiceLookup(
+                    ServiceID => $ServiceData{ParentID},
+                );
+                $ServiceData{Parent} = $ParentService;
+                delete $ServiceData{ParentID};
+            }
+            elsif ( $Attribute eq 'ValidID' ) {
+                my $Valid = $ValidObject->ValidLookup(
+                    ValidID => $ServiceData{ValidID},
+                );
+                $ServiceData{Valid} = $Valid;
+                delete $ServiceData{ValidID};
+            }
+        }
+
+        delete $ServiceData{ChangeBy};
+        delete $ServiceData{ChangeTime};
+        delete $ServiceData{CreateBy};
+        delete $ServiceData{CreateTime};
+        delete $ServiceData{ServiceID};
+
+        $ExportData{ $ServiceData{Name} } = \%ServiceData;
+    }
+
+    return \%ExportData;
+}
+
+sub ImportServices {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+    my %ServiceList = $Self->ServiceList(
+        Valid  => 0,
+        UserID => $UserID,
+    );
+    my %ServiceLookup = reverse %ServiceList;
+
+    # sort services by parent attribute
+    my @FirstLevelServices;
+    my @ChildServices;
+    for my $ServiceName ( keys $Param{Services}->%* ) {
+        if ( $Param{Services}{$ServiceName}{Parent} ) {
+            push @ChildServices, $ServiceName;
+        }
+        else {
+            push @FirstLevelServices, $ServiceName;
+        }
+    }
+    my @ChildServicesSorted = sort {
+        if ( ( $Param{Services}{$a}{Parent} // '' ) eq $Param{Services}{$b}{Name} ) {
+            return 1;
+        }
+        elsif ( ( $Param{Services}{$b}{Parent} // '' ) eq $Param{Services}{$a}{Name} ) {
+            return -1;
+        }
+        else {
+            return 0;
+        }
+    } @ChildServices;
+
+    SERVICENAME:
+    for my $ServiceName ( @FirstLevelServices, @ChildServicesSorted ) {
+        my $ServiceData = $Param{Services}{$ServiceName};
+
+        # skip if parent attribute present but no corresponding service
+        if ( $ServiceData->{Parent} ) {
+            my $ParentServiceID = $Self->ServiceLookup(
+                Name => $ServiceData->{Parent},
+            );
+
+            next SERVICENAME unless $ParentServiceID;
+
+            $ServiceData->{ParentID} = $ParentServiceID;
+        }
+
+        # in case of child service, check if all parent services are present
+        #   either in the system or in the import data
+        my @NameElements = split( /::/, $ServiceData->{Name} );
+        if ( scalar @NameElements > 1 ) {
+            my $NameStrg = '';
+            for my $Index ( 0 .. $#NameElements - 1 ) {
+                if ($NameStrg) {
+                    $NameStrg .= '::' . $NameElements[$Index];
+                }
+                else {
+                    $NameStrg .= $NameElements[$Index];
+                }
+
+                if ( !$ServiceLookup{$NameStrg} && !$Param{Services}{$NameStrg} ) {
+
+                    # parent element not found, skipping
+                    next SERVICENAME;
+                }
+            }
+        }
+
+        my $ServiceID = $ServiceLookup{ $ServiceData->{Name} };
+
+        # skip if service with same name exists and overwrite is not set
+        next SERVICENAME if ( !$Param{OverwriteExistingEntities} && $ServiceID );
+
+        # translate named data back to IDs
+        $ServiceData->{ValidID} = $ValidObject->ValidLookup(
+            Valid => $ServiceData->{Valid},
+        );
+
+        if ($ServiceID) {
+
+            my $Success = $Self->ServiceUpdate(
+                $ServiceData->%*,
+                Name      => $ServiceData->{NameShort},
+                ServiceID => $ServiceID,
+                UserID    => $UserID,
+            );
+            return unless $Success;
+        }
+        else {
+            my $ServiceID = $Self->ServiceAdd(
+                $ServiceData->%*,
+                Name   => $ServiceData->{NameShort},
+                UserID => $UserID,
+            );
+            return unless $ServiceID;
+        }
+    }
+
+    return 1;
 }
 
 1;

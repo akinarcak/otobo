@@ -1,9 +1,9 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
 # Copyright (C) 2012-2020 Znuny GmbH, http://znuny.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,6 +22,12 @@ package Kernel::System::ZnunyHelper;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+use List::AllUtils qw(any none);
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -34,9 +40,9 @@ our @ObjectDependencies = (
     'Kernel::System::GenericAgent',
     'Kernel::System::GenericInterface::Webservice',
     'Kernel::System::Group',
-    'Kernel::System::ITSMConfigItem',
     'Kernel::System::Log',
     'Kernel::System::Main',
+    'Kernel::System::Namespace',
     'Kernel::System::NotificationEvent',
     'Kernel::System::Package',
     'Kernel::System::PostMaster::Filter',
@@ -198,7 +204,8 @@ sub _PostmasterXHeaderAdd {
                 EffectiveValue => [ sort keys %ConfiguredHeaders ],
             },
         ],
-        UserID => 1,
+        Comments => 'PostmasterX-Header settings added.',
+        UserID   => 1,
     );
 }
 
@@ -274,7 +281,8 @@ sub _PostmasterXHeaderRemove {
                 EffectiveValue => [ sort keys %ConfiguredHeaders ],
             },
         ],
-        UserID => 1,
+        Comments => 'PostmasterX-Header settings removed.',
+        UserID   => 1,
     );
 }
 
@@ -283,7 +291,7 @@ sub _PostmasterXHeaderRemove {
 This function adds an Event to the list of Events of an Object to the SysConfig.
 
     my $Success = $ZnunyHelperObject->_EventAdd(
-        Object => 'Ticket', # Ticket, Article, Queue...
+        Object => 'Ticket', # Ticket, Article, Queue, ...
         Event  => 'MyCustomEvent'
     );
 
@@ -344,7 +352,7 @@ sub _EventAdd {
 
     EVENT:
     for my $AddEvent (@AddEvents) {
-        next EVENT if grep { $AddEvent eq $_ } @ConfigEvents;
+        next EVENT if any { $AddEvent eq $_ } @ConfigEvents;
         push @ConfigEvents, $AddEvent;
     }
 
@@ -356,7 +364,8 @@ sub _EventAdd {
                 EffectiveValue => \@ConfigEvents,
             },
         ],
-        UserID => 1,
+        Comments => 'Event settings added.',
+        UserID   => 1,
     );
 }
 
@@ -365,7 +374,7 @@ sub _EventAdd {
 This function removes an Event to the list of Events of an Object to the SysConfig.
 
     my $Success = $ZnunyHelperObject->_EventRemove(
-        Object => 'Ticket', # Ticket, Article, Queue...
+        Object => 'Ticket', # Ticket, Article, Queue, ...
         Event  => 'MyCustomEvent'
     );
 
@@ -425,7 +434,7 @@ sub _EventRemove {
     my @ConfigEvents;
     EVENT:
     for my $CurrentEvent ( @{ $Events->{ $Param{Object} } } ) {
-        next EVENT if grep { $CurrentEvent eq $_ } @RemoveEvents;
+        next EVENT if any { $CurrentEvent eq $_ } @RemoveEvents;
         push @ConfigEvents, $CurrentEvent;
     }
 
@@ -437,7 +446,8 @@ sub _EventRemove {
                 EffectiveValue => \@ConfigEvents,
             },
         ],
-        UserID => 1,
+        Comments => 'Event settings removed.',
+        UserID   => 1,
     );
 }
 
@@ -446,6 +456,7 @@ sub _EventRemove {
 Returns a list of valid screens for dynamic fields.
 
     my $ValidDynamicFieldScreenList = $ZnunyHelperObject->_ValidDynamicFieldScreenListGet(
+        ObjectType => [ 'Ticket', 'Article' ],  # ARRAY ref, enables filtering by object type
         Result => 'ARRAY', # HASH or ARRAY, defaults to ARRAY
     );
 
@@ -488,6 +499,20 @@ sub _ValidDynamicFieldScreenListGet {
     my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
 
     $Param{Result} = lc( $Param{Result} // 'array' );
+    my @DFScreensFilterKeys;
+    if ( $Param{ObjectType} ) {
+
+        if ( $Param{ObjectType} eq 'Ticket' ) {
+            push @DFScreensFilterKeys, 'Framework';
+        }
+
+        my $DFScreensObjectTypesConfig = $ConfigObject->Get('DynamicFieldScreens::ObjectTypes');
+        for my $DFScreensKey ( keys $DFScreensObjectTypesConfig->%* ) {
+            if ( any { $_ eq $Param{ObjectType} } $DFScreensObjectTypesConfig->{$DFScreensKey}->@* ) {
+                push @DFScreensFilterKeys, $DFScreensKey;
+            }
+        }
+    }
 
     my $ValidScreens;
     SCREEN:
@@ -504,6 +529,8 @@ sub _ValidDynamicFieldScreenListGet {
                 );
                 next REGISTRATION if !$IsInstalled;
             }
+
+            next REGISTRATION if ( @DFScreensFilterKeys && none { $Registration eq $_ } @DFScreensFilterKeys );
 
             %{ $ValidScreens->{$Screen} } = (
                 %{ $ValidScreens->{$Screen} },
@@ -605,7 +632,7 @@ sub _DefaultColumnsGet {
         }
 
         INDEX:
-        for my $Index ( 1 ... $#Keys ) {
+        for my $Index ( 1 .. $#Keys ) {
             last INDEX if !IsHashRefWithData($Config);
             $Config = $Config->{ $Keys[$Index] };
         }
@@ -685,9 +712,9 @@ sub _DefaultColumnsEnable {
     }
 
     VIEW:
-    for my $View (%ScreenConfig) {
+    for my $View ( sort keys %ScreenConfig ) {
 
-        next VIEW if !IsHashRefWithData( $ScreenConfig{$View} );
+        next VIEW unless IsHashRefWithData( $ScreenConfig{$View} );
 
         my $FrontendPath = $View;
 
@@ -708,7 +735,7 @@ sub _DefaultColumnsEnable {
         }
 
         INDEX:
-        for my $Index ( 1 ... $#Keys ) {
+        for my $Index ( 1 .. $#Keys ) {
             last INDEX if !IsHashRefWithData($Config);
             $Config = $Config->{ $Keys[$Index] };
         }
@@ -764,6 +791,7 @@ sub _DefaultColumnsEnable {
     $SysConfigObject->SettingsSet(
         Settings => \@Settings,
         UserID   => 1,
+        Comments => 'Default columns settings enabled.',
     );
 
     return 1 if $NoConfigRebuild;
@@ -826,9 +854,9 @@ sub _DefaultColumnsDisable {
     my %ScreenConfig = %Param;
 
     VIEW:
-    for my $View (%ScreenConfig) {
+    for my $View ( sort keys %ScreenConfig ) {
 
-        next VIEW if !IsHashRefWithData( $ScreenConfig{$View} );
+        next VIEW unless IsHashRefWithData( $ScreenConfig{$View} );
 
         my $FrontendPath = $View;
 
@@ -849,7 +877,7 @@ sub _DefaultColumnsDisable {
         }
 
         INDEX:
-        for my $Index ( 1 ... $#Keys ) {
+        for my $Index ( 1 .. $#Keys ) {
             last INDEX if !IsHashRefWithData($Config);
             $Config = $Config->{ $Keys[$Index] };
         }
@@ -891,7 +919,8 @@ sub _DefaultColumnsDisable {
                     EffectiveValue => \%NewDynamicFieldConfig,
                 },
             ],
-            UserID => 1,
+            Comments => 'Default columns settings disabled.',
+            UserID   => 1,
         );
     }
 
@@ -1055,7 +1084,7 @@ sub _DynamicFieldsScreenGet {
 
         my $ConfigItemConfig = $ConfigObject->Get( $Keys[0] );
         INDEX:
-        for my $Index ( 1 ... $#Keys ) {
+        for my $Index ( 1 .. $#Keys ) {
             last INDEX if !IsHashRefWithData($ConfigItemConfig);
             $ConfigItemConfig = $ConfigItemConfig->{ $Keys[$Index] };
         }
@@ -1145,7 +1174,7 @@ sub _DynamicFieldsScreenEnable {
         # Ticket::Frontend::CustomerTicketZoom###FollowUpDynamicField
         # Ticket::Frontend::AgentTicketSearch###SearchCSVDynamicField
         #
-        # on regular calls $View contains for examlpe "AgentTicketEmail"
+        # on regular calls $View contains for example "AgentTicketEmail"
         #
         # for the three special cases $View contains:
         # AgentTicketSearch###Defaults###DynamicField
@@ -1174,7 +1203,7 @@ sub _DynamicFieldsScreenEnable {
 
         my $Config = $ConfigObject->Get( $Keys[0] );
         INDEX:
-        for my $Index ( 1 ... $#Keys ) {
+        for my $Index ( 1 .. $#Keys ) {
             last INDEX if !IsHashRefWithData($Config);
             $Config = $Config->{ $Keys[$Index] };
         }
@@ -1203,6 +1232,7 @@ sub _DynamicFieldsScreenEnable {
 
     $SysConfigObject->SettingsSet(
         Settings => \@Settings,
+        Comments => 'DynamicFields screen settings enabled.',
         UserID   => 1,
     );
 
@@ -1285,7 +1315,7 @@ sub _DynamicFieldsScreenDisable {
         # Ticket::Frontend::CustomerTicketZoom###FollowUpDynamicField
         # Ticket::Frontend::AgentTicketSearch###SearchCSVDynamicField
         #
-        # on regular calls $View contains for examlpe "AgentTicketEmail"
+        # on regular calls $View contains for example "AgentTicketEmail"
         #
         # for the three special cases $View contains:
         # AgentTicketSearch###Defaults###DynamicField
@@ -1314,7 +1344,7 @@ sub _DynamicFieldsScreenDisable {
 
         my $Config = $ConfigObject->Get( $Keys[0] );
         INDEX:
-        for my $Index ( 1 ... $#Keys ) {
+        for my $Index ( 1 .. $#Keys ) {
             last INDEX if !IsHashRefWithData($Config);
             $Config = $Config->{ $Keys[$Index] };
         }
@@ -1339,7 +1369,8 @@ sub _DynamicFieldsScreenDisable {
                     EffectiveValue => \%NewDynamicFieldConfig,
                 },
             ],
-            UserID => 1,
+            Comments => 'DynamicFields screen settings disabled.',
+            UserID   => 1,
         );
 
         # reload the ZZZ files
@@ -1533,7 +1564,7 @@ sub _DynamicFieldsCreateIfNotExists {
 
         next DYNAMICFIELD if !IsHashRefWithData($NewDynamicField);
 
-        next DYNAMICFIELD if grep { $NewDynamicField->{Name} eq $_->{Name} } @{$DynamicFieldList};
+        next DYNAMICFIELD if any { $NewDynamicField->{Name} eq $_->{Name} } @{$DynamicFieldList};
 
         push @DynamicFieldExistsNot, $NewDynamicField;
     }
@@ -1590,6 +1621,7 @@ Returns:
 sub _DynamicFieldsCreate {
     my ( $Self, @DynamicFields ) = @_;
 
+    my $LogObject          = $Kernel::OM->Get('Kernel::System::Log');
     my $ValidObject        = $Kernel::OM->Get('Kernel::System::Valid');
     my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
 
@@ -1628,12 +1660,125 @@ sub _DynamicFieldsCreate {
         $DynamicFieldLookup{ $DynamicField->{Name} } = $DynamicField;
     }
 
-    # performance improvement for the FieldOrderAfterField functionality
-    my $FieldOrderAfterFieldActive = grep { $_->{FieldOrderAfterField} || $_->{FieldOrderAfterFieldUpdate} } @DynamicFields;
+    my $Error = 0;
+
+    # check dynamic fields and split dynamic fields in three separate groups
+    my %Namespaces;
+    my @NormalFields;
+    my @LensFields;
+    my @SetFields;
+    for my $DynamicFieldConfig (@DynamicFields) {
+
+        # check for namespaces
+        my $FieldName = $DynamicFieldConfig->{Name};
+        if ( $FieldName !~ m{ \A [a-zA-Z\d\-]+ \z }xms ) {
+            return {
+                Success      => 0,
+                ErrorMessage => "Invalid DynamicField name '$FieldName'.",
+            };
+        }
+        if ( $FieldName =~ /^([^-]+)-/ ) {
+            $Namespaces{$1} = 1;
+        }
+
+        # sort field into fitting array
+        if ( $DynamicFieldConfig->{FieldType} eq 'Lens' ) {
+            push @LensFields, $DynamicFieldConfig;
+        }
+        elsif ( $DynamicFieldConfig->{FieldType} eq 'Set' ) {
+            push @SetFields, $DynamicFieldConfig;
+        }
+        else {
+            push @NormalFields, $DynamicFieldConfig;
+        }
+    }
+
+    # sort lens fields in case a lens has another lens as attribute dynamic field
+    my @LensFieldsSorted = sort {
+        ( $b->{Name} eq $a->{Config}{AttributeDF} ) <=> ( $a->{Name} eq $b->{Config}{AttributeDF} )
+    } @LensFields;
+
+    # namespace handling
+    if (%Namespaces) {
+
+        # check against existing namespaces
+        #   might be the case that a used namespace exists in the global namespaces setting
+        my @ExistingNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+            Scope => 'DynamicField',
+        );
+
+        my @NamespacesToAdd;
+        for my $NewNamespace ( keys %Namespaces ) {
+            if ( none { $NewNamespace eq $_ } @ExistingNamespaces ) {
+                push @NamespacesToAdd, $NewNamespace;
+            }
+        }
+
+        if (@NamespacesToAdd) {
+
+            my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
+
+            # Get current setting value.
+            my %Setting = $SysConfigObject->SettingGet(
+                Name => 'Namespaces###DynamicField',
+            );
+
+            my $ExclusiveLockGUID = $SysConfigObject->SettingLock(
+                UserID    => 1,
+                Force     => 1,
+                DefaultID => $Setting{DefaultID},
+            );
+
+            # Update setting with modified data
+            my %Result = $SysConfigObject->SettingUpdate(
+                Name              => 'Namespaces###DynamicField',
+                IsValid           => 1,
+                EffectiveValue    => [ $Setting{EffectiveValue}->@*, @NamespacesToAdd ],
+                ExclusiveLockGUID => $ExclusiveLockGUID,
+                UserID            => 1,
+            );
+            if ( !$Result{Success} ) {
+                return {
+                    Success      => 0,
+                    ErrorMessage => 'Could not update setting Namespaces###DynamicField.',
+                };
+            }
+
+            my $Success = $SysConfigObject->SettingUnlock(
+                UserID    => 1,
+                DefaultID => $Setting{DefaultID},
+            );
+            if ( !$Success ) {
+                return {
+                    Success      => 0,
+                    ErrorMessage => 'Could not unlock setting Namespaces###DynamicField.',
+                };
+            }
+
+            my %DeploymentResult = $SysConfigObject->ConfigurationDeploy(
+                Comments      => "DynamicFieldImport updating Namespaces###DynamicField",
+                UserID        => 1,
+                Force         => 1,
+                DirtySettings => ['Namespaces###DynamicField'],
+            );
+
+            if ( !$DeploymentResult{Success} ) {
+                return {
+                    Success      => 0,
+                    ErrorMessage => 'Deployment failed!',
+                };
+            }
+        }
+    }
 
     # create or update dynamic fields
     DYNAMICFIELD:
-    for my $NewDynamicField (@DynamicFields) {
+    for my $NewDynamicField ( @NormalFields, @LensFieldsSorted, @SetFields ) {
+
+        # field config transformation
+        $NewDynamicField = $DynamicFieldObject->DynamicFieldConfigName2ID(
+            DynamicFieldConfig => $NewDynamicField,
+        );
 
         my $CreateDynamicField;
 
@@ -1642,7 +1787,7 @@ sub _DynamicFieldsCreate {
             $CreateDynamicField = 1;
         }
 
-        # if the field exists check if the type match with the needed type
+        # if the field exists check if the type matches with the needed type
         elsif (
             $DynamicFieldLookup{ $NewDynamicField->{Name} }->{FieldType}
             ne $NewDynamicField->{FieldType}
@@ -1656,6 +1801,52 @@ sub _DynamicFieldsCreate {
                 Name   => $OldDynamicFieldConfig{Name} . 'Old',
                 UserID => 1,
             );
+
+            if ( !$Success ) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "Error while renaming dynamic field $OldDynamicFieldConfig{Name}!",
+                );
+                $Error = 1;
+            }
+            else {
+
+                my $IsScriptField = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->HasBehavior(
+                    DynamicFieldConfig => \%OldDynamicFieldConfig,
+                    Behavior           => 'IsScriptField',
+                );
+
+                # set events for script fields
+                if ( $IsScriptField && IsArrayRefWithData( $OldDynamicFieldConfig{Config}{UpdateEvents} ) ) {
+                    my $Config = $OldDynamicFieldConfig{FieldType} ? $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Driver')->{ $OldDynamicFieldConfig{FieldType} } : {};
+
+                    # Check module validity
+                    if ( !$Config->{Module} || !$Kernel::OM->Get('Kernel::System::Main')->Require( $Config->{Module} ) ) {
+                        next DYNAMICFIELD;
+                    }
+
+                    my $DriverObject = $Kernel::OM->Get( $Config->{Module} );
+
+                    # validate update events against possible events
+                    my $PossibleConditions = $DriverObject->GetPossibleExecutionConditions(
+                        ObjectType => $OldDynamicFieldConfig{ObjectType},
+                        FieldID    => $OldDynamicFieldConfig{ID},
+                    );
+
+                    my @FilteredUpdateEvents;
+                    if ( IsArrayRefWithData( $PossibleConditions->{PossibleUpdateEvents} ) ) {
+                        my %PossibleUpdateEvents = map { $_ => $_ } $PossibleConditions->{PossibleUpdateEvents}->@*;
+                        @FilteredUpdateEvents = grep { $PossibleUpdateEvents{$_} } $OldDynamicFieldConfig{Config}{UpdateEvents}->@*;
+                    }
+
+                    if (@FilteredUpdateEvents) {
+                        $DriverObject->SetUpdateEvents(
+                            FieldID => $OldDynamicFieldConfig{ID},
+                            Events  => \@FilteredUpdateEvents,
+                        );
+                    }
+                }
+            }
 
             $CreateDynamicField = 1;
         }
@@ -1676,6 +1867,54 @@ sub _DynamicFieldsCreate {
                 Reorder    => 0,
                 UserID     => 1,
             );
+            if ( !$Success ) {
+                $LogObject->Log(
+                    Priority => 'error',
+                    Message  => "Error while updating dynamic field $OldDynamicFieldConfig{Name}!",
+                );
+                $Error = 1;
+            }
+            else {
+
+                my $IsScriptField = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->HasBehavior(
+                    DynamicFieldConfig => {
+                        $NewDynamicField->%*,
+                        ID => $OldDynamicFieldConfig{ID},
+                    },
+                    Behavior => 'IsScriptField',
+                );
+
+                # set events for script fields
+                if ( $IsScriptField && IsArrayRefWithData( $NewDynamicField->{Config}{UpdateEvents} ) ) {
+                    my $Config = $NewDynamicField->{FieldType} ? $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Driver')->{ $NewDynamicField->{FieldType} } : {};
+
+                    # Check module validity
+                    if ( !$Config->{Module} || !$Kernel::OM->Get('Kernel::System::Main')->Require( $Config->{Module} ) ) {
+                        next DYNAMICFIELD;
+                    }
+
+                    my $DriverObject = $Kernel::OM->Get( $Config->{Module} );
+
+                    # validate update events against possible events
+                    my $PossibleConditions = $DriverObject->GetPossibleExecutionConditions(
+                        ObjectType => $NewDynamicField->{ObjectType},
+                        FieldID    => $OldDynamicFieldConfig{ID},
+                    );
+
+                    my @FilteredUpdateEvents;
+                    if ( IsArrayRefWithData( $PossibleConditions->{PossibleUpdateEvents} ) ) {
+                        my %PossibleUpdateEvents = map { $_ => $_ } $PossibleConditions->{PossibleUpdateEvents}->@*;
+                        @FilteredUpdateEvents = grep { $PossibleUpdateEvents{$_} } $NewDynamicField->{Config}{UpdateEvents}->@*;
+                    }
+
+                    if (@FilteredUpdateEvents) {
+                        $DriverObject->SetUpdateEvents(
+                            FieldID => $OldDynamicFieldConfig{ID},
+                            Events  => \@FilteredUpdateEvents,
+                        );
+                    }
+                }
+            }
         }
 
         # check if new field has to be created
@@ -1697,13 +1936,60 @@ sub _DynamicFieldsCreate {
             ValidID       => $NewDynamicField->{ValidID}       || $ValidID,
             UserID        => 1,
         );
+        if ( !$FieldID ) {
+            $LogObject->Log(
+                Priority => 'error',
+                Message  => "Error while creating dynamic field $NewDynamicField->{Name}!",
+            );
+            $Error = 1;
+        }
+
         next DYNAMICFIELD if !$FieldID;
+
+        my $IsScriptField = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->HasBehavior(
+            DynamicFieldConfig => {
+                $NewDynamicField->%*,
+                ID => $FieldID,
+            },
+            Behavior => 'IsScriptField',
+        );
+
+        # set events for script fields
+        if ( $IsScriptField && IsArrayRefWithData( $NewDynamicField->{Config}{UpdateEvents} ) ) {
+            my $Config = $NewDynamicField->{FieldType} ? $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Driver')->{ $NewDynamicField->{FieldType} } : {};
+
+            # Check module validity
+            if ( !$Config->{Module} || !$Kernel::OM->Get('Kernel::System::Main')->Require( $Config->{Module} ) ) {
+                next DYNAMICFIELD;
+            }
+
+            my $DriverObject = $Kernel::OM->Get( $Config->{Module} );
+
+            # validate update events against possible events
+            my $PossibleConditions = $DriverObject->GetPossibleExecutionConditions(
+                ObjectType => $NewDynamicField->{ObjectType},
+                FieldID    => $FieldID,
+            );
+
+            my @FilteredUpdateEvents;
+            if ( IsArrayRefWithData( $PossibleConditions->{PossibleUpdateEvents} ) ) {
+                my %PossibleUpdateEvents = map { $_ => $_ } $PossibleConditions->{PossibleUpdateEvents}->@*;
+                @FilteredUpdateEvents = grep { $PossibleUpdateEvents{$_} } $NewDynamicField->{Config}{UpdateEvents}->@*;
+            }
+
+            if (@FilteredUpdateEvents) {
+                $DriverObject->SetUpdateEvents(
+                    FieldID => $FieldID,
+                    Events  => \@FilteredUpdateEvents,
+                );
+            }
+        }
 
         # increase the order number
         $NextOrderNumber++;
     }
 
-    return 1;
+    return !$Error;
 }
 
 =item DynamicFieldFieldOrderAfterFieldGet()
@@ -1926,6 +2212,17 @@ sub _DynamicFieldsConfigExport {
         }
     }
 
+    # perform transformations if necessary
+    for my $DynamicFieldConfig (@DynamicFieldConfigs) {
+        $DynamicFieldConfig = $DynamicFieldObject->DynamicFieldConfigID2Name(
+            DynamicFieldConfig => $DynamicFieldConfig,
+        );
+
+        # tidy export data
+        delete $DynamicFieldConfig->{Config}{PartOfSet};
+        delete $DynamicFieldConfig->{ID};
+    }
+
     my $Data;
     if ( $ResultType eq 'hash' ) {
         %{$Data} = map { $_->{Name} => $_ } @DynamicFieldConfigs;
@@ -1986,8 +2283,6 @@ sub _DynamicFieldsScreenConfigExport {
     my ( $Self, %Param ) = @_;
 
     my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
-    my $LogObject          = $Kernel::OM->Get('Kernel::System::Log');
-    my $ConfigObject       = $Kernel::OM->Get('Kernel::Config');
 
     my $ValidDynamicFieldScreenList = $Self->_ValidDynamicFieldScreenListGet();
 
@@ -2067,8 +2362,7 @@ Returns:
 sub _DynamicFieldsScreenConfigImport {
     my ( $Self, %Param ) = @_;
 
-    my $LogObject    = $Kernel::OM->Get('Kernel::System::Log');
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
 
     # check needed stuff
     NEEDED:
@@ -2513,12 +2807,12 @@ sub _PriorityCreateIfNotExists {
         return;
     }
 
-    my %PrioritysReversed = $PriorityObject->PriorityList(
+    my %PrioritiesReversed = $PriorityObject->PriorityList(
         Valid => 0,
     );
-    %PrioritysReversed = reverse %PrioritysReversed;
+    %PrioritiesReversed = reverse %PrioritiesReversed;
 
-    my $ItemID = $Self->_ItemReverseListGet( $Param{Name}, %PrioritysReversed );
+    my $ItemID = $Self->_ItemReverseListGet( $Param{Name}, %PrioritiesReversed );
     return $ItemID if $ItemID;
 
     return $PriorityObject->PriorityAdd(
@@ -2674,7 +2968,7 @@ sub _StateTypeCreateIfNotExists {
         Limit => 1,
     );
     my $Exists;
-    while ( my @Row = $DBObject->FetchrowArray() ) {
+    while ( $DBObject->FetchrowArray() ) {
         $Exists = 1;
     }
     return 1 if $Exists;
@@ -3132,7 +3426,6 @@ sub _GeneralCatalogItemCreateIfNotExists {
     my ( $Self, %Param ) = @_;
 
     my $LogObject            = $Kernel::OM->Get('Kernel::System::Log');
-    my $DBObject             = $Kernel::OM->Get('Kernel::System::DB');
     my $GroupObject          = $Kernel::OM->Get('Kernel::System::Group');
     my $MainObject           = $Kernel::OM->Get('Kernel::System::Main');
     my $ValidObject          = $Kernel::OM->Get('Kernel::System::Valid');
@@ -3202,766 +3495,6 @@ sub _GeneralCatalogItemCreateIfNotExists {
     return $ItemID;
 }
 
-=item _ITSMConfigItemDefinitionCreate()
-
-adds or updates a definition for a ConfigItemClass. You need to provide the configuration
-of the CMDB class in the following directory:
-
-/opt/otrs/scripts/cmdb_classes/Private_Endgeraete.config
-
-The required general catalog item will be created automatically.
-
-    my $DefinitionID = $ZnunyHelperObject->_ITSMConfigItemDefinitionCreate(
-        Class           => 'Private Endgeraete',
-        ClassFile       => 'Private_Endgeraete',  # optional
-        PermissionGroup => 'itsm-configitem',     # optional
-    );
-
-Returns:
-
-    my $DefinitionID = 1234;
-
-=cut
-
-sub _ITSMConfigItemDefinitionCreate {
-    my ( $Self, %Param ) = @_;
-
-    my $LogObject        = $Kernel::OM->Get('Kernel::System::Log');
-    my $MainObject       = $Kernel::OM->Get('Kernel::System::Main');
-    my $ConfigObject     = $Kernel::OM->Get('Kernel::Config');
-    my $ConfigItemObject = $Kernel::OM->Get('Kernel::System::ITSMConfigItem');
-    my $YAMLObject       = $Kernel::OM->Get('Kernel::System::YAML');
-
-    # check needed stuff
-    NEEDED:
-    for my $Needed (qw(Class)) {
-
-        next NEEDED if defined $Param{$Needed};
-
-        $LogObject->Log(
-            Priority => 'error',
-            Message  => "Parameter '$Needed' is needed!",
-        );
-        return;
-    }
-
-    my $Home = $ConfigObject->Get('Home');
-
-    # check if ITSMConfigItem module is installed
-    my $ITSMConfigItemLoaded = $MainObject->Require(
-        'Kernel::System::ITSMConfigItem',
-        Silent => 1,
-    );
-    return if !$ITSMConfigItemLoaded;
-
-    # create general catalog item for class
-    my $ClassID = $Self->_GeneralCatalogItemCreateIfNotExists(
-        Name            => $Param{Class},
-        Class           => 'ITSM::ConfigItem::Class',
-        PermissionGroup => $Param{PermissionGroup},
-    );
-    return if !$ClassID;
-
-    # do check create if not exists
-    if ( $Param{CreateIfNotExists} ) {
-        my $DefinitionListRef = $ConfigItemObject->DefinitionList(
-            ClassID => $ClassID,
-        );
-        return $DefinitionListRef->[-1]->{DefinitionID} if IsArrayRefWithData($DefinitionListRef);
-    }
-
-    # check which type of import file is present (Perl structure or YAML).
-    my $BaseClassFilePath = $Home . '/scripts/cmdb_classes/' . ( $Param{ClassFile} || $Param{Class} );
-
-    my $ClassFilePath   = $BaseClassFilePath . '.yml';
-    my $ClassFileIsYAML = 1;
-    if ( !-f $ClassFilePath ) {
-        $ClassFilePath   = $BaseClassFilePath . '.config';
-        $ClassFileIsYAML = 0;
-    }
-    return if !-f $ClassFilePath;
-
-    # get configuration from the file system
-    my $ContentSCALARRef = $MainObject->FileRead(
-        Location => $ClassFilePath,
-        Mode     => 'utf8',
-        Result   => 'SCALAR',
-    );
-    return if !$ContentSCALARRef;
-
-    my $Content = ${$ContentSCALARRef};
-    return if !defined $Content || !length $Content;
-
-    # ITSMConfigurationManagement 6.0.18 switched format of config item definitions from Perl
-    # to YAML. Check which one is needed by checking if the new console command
-    # Kernel::System::Console::Command::Maint::ITSM::Configitem::DefinitionPerl2YAML
-    # exists.
-    my $DefinitionPerl2YAMLFilePath = $Home
-        . '/Kernel/System/Console/Command/Maint/ITSM/Configitem/DefinitionPerl2YAML.pm';
-    my $YAMLConfigItemDefinitionExpected = ( -f $DefinitionPerl2YAMLFilePath ) ? 1 : 0;
-
-    if (
-        !$ClassFileIsYAML
-        && $YAMLConfigItemDefinitionExpected
-        )
-    {
-        # Turn Perl config item file into Perl structure.
-        $Content = eval $Content;    ## no critic qw(BuiltinFunctions::ProhibitStringyEval)
-        return if !defined $Content;
-
-        # Turn Perl structure into YAML.
-        $Content = $YAMLObject->Dump(
-            Data => $Content,
-        );
-    }
-    elsif (
-        $ClassFileIsYAML
-        && !$YAMLConfigItemDefinitionExpected
-        )
-    {
-        # Turn YAML config item file into Perl structure.
-        $Content = $YAMLObject->Load(
-            Data => $Content,
-        );
-        return if !defined $Content;
-
-        # Turn Perl structure into string.
-        $Content = $MainObject->Dump(
-            $Content,
-        );
-
-        # Remove leading '$VAR1 =' from dump.
-        $Content =~ s{\A\$VAR1 = }{};
-    }
-
-    return if !defined $Content || !length $Content;
-
-    # get last definition
-    my $LastDefinition = $ConfigItemObject->DefinitionGet(
-        ClassID => $ClassID,
-    );
-
-    # stop add if definition was not changed
-    return $LastDefinition->{DefinitionID}
-        if IsHashRefWithData($LastDefinition) && $LastDefinition->{Definition} eq $Content;
-
-    my $DefinitionID = $ConfigItemObject->DefinitionAdd(
-        ClassID    => $ClassID,
-        Definition => $Content,
-        UserID     => 1,
-    );
-
-    return $DefinitionID;
-}
-
-=item _ITSMConfigItemDefinitionCreateIfNotExists()
-
-add if not exists a definition for a ConfigItemClass. You need to provide the configuration
-of the CMDB class in the following directory:
-
-/opt/otrs/scripts/cmdb_classes/Private_Endgeraete.config
-
-The required general catalog item will be created automatically.
-
-    my $DefinitionID = $ZnunyHelperObject->_ITSMConfigItemDefinitionCreateIfNotExists(
-        Class           => 'Private Endgeraete',
-        ClassFile       => 'Private_Endgeraete',  # optional
-        PermissionGroup => 'itsm-configitem',     # optional
-    );
-
-Returns:
-
-    my $DefinitionID = 1234;
-
-=cut
-
-sub _ITSMConfigItemDefinitionCreateIfNotExists {
-    my ( $Self, %Param ) = @_;
-
-    return $Self->_ITSMConfigItemDefinitionCreate(
-        %Param,
-        CreateIfNotExists => 1,
-    );
-}
-
-=item _ITSMConfigItemVersionAdd()
-
-adds or updates a ConfigItem version.
-
-    my $VersionID = $ZnunyHelperObject->_ITSMConfigItemVersionAdd(
-        ConfigItemID  => 12345,
-        Name          => 'example name',
-
-        ClassID       => 1234,
-        ClassName     => 'example class',
-        DefinitionID  => 1234,
-
-        DeplStateID   => 1234,
-        DeplStateName => 'Production',
-
-        InciStateID   => 1234,
-        InciStateName => 'Operational',
-
-        XMLData => {
-            'Priority'    => 'high',
-            'Product'     => 'test',
-            'Description' => 'test'
-        },
-    );
-
-    EXAMPLE Create Computer:
-
-    my $ZnunyHelperObject    = $Kernel::OM->Get('Kernel::System::ZnunyHelper');
-    my $ConfigItemObject     = $Kernel::OM->Get('Kernel::System::ITSMConfigItem');
-    my $GeneralCatalogObject = $Kernel::OM->Get('Kernel::System::GeneralCatalog');
-    my $ValidObject          = $Kernel::OM->Get('Kernel::System::Valid');
-
-    # get valid id
-    my $ValidID = $ValidObject->ValidLookup(
-        Valid => 'valid',
-    );
-
-    my $ClassListRef = $GeneralCatalogObject->ItemList(
-        Class => 'ITSM::ConfigItem::Class',
-        Valid => $ValidID,
-    );
-    my %ClassList = reverse %{ $ClassListRef || {} };
-
-    my $YesNoRef = $GeneralCatalogObject->ItemList(
-        Class => 'ITSM::ConfigItem::YesNo',
-        Valid => $ValidID,
-    );
-    my %YesNoList = reverse %{ $YesNoRef || {} };
-
-    my $ConfigItemID = $ConfigItemObject->ConfigItemAdd(
-        ClassID => $ClassList{Computer},
-        UserID  => 1,
-    );
-
-    # create new version of ConfigItem
-    my $VersionID = $ZnunyHelperObject->_ITSMConfigItemVersionAdd(
-        ConfigItemID  => $ConfigItemID,
-        Name          => 'blub',
-        ClassName     => 'Computer',
-        DeplStateName => 'Production',
-        InciStateName => 'Operational',
-        XMLData => {
-            OtherEquipment         => '...',
-            Note                   => '...',
-            WarrantyExpirationDate => '2016-01-01',
-            InstallDate            => '2016-01-01',
-            NIC                    => [
-                {
-                    Content => 'NIC',
-                    IPoverDHCP => [
-                        {
-                            Content => $YesNoList{Yes},
-                        },
-                    ],
-                    IPAddress => [
-                        {
-                            Content => '127.0.0.1'
-                        },
-                    ],
-                },
-            ],
-        },
-    );
-
-Returns:
-
-    my $VersionID = 1234;
-
-=cut
-
-sub _ITSMConfigItemVersionAdd {
-    my ( $Self, %Param ) = @_;
-
-    my $LogObject  = $Kernel::OM->Get('Kernel::System::Log');
-    my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
-
-    # check needed stuff
-    NEEDED:
-    for my $Needed (qw(ConfigItemID Name)) {
-
-        next NEEDED if defined $Param{$Needed};
-
-        $LogObject->Log(
-            Priority => 'error',
-            Message  => "Parameter '$Needed' is needed!",
-        );
-        return;
-    }
-
-    if ( !$Param{DeplStateID} && !$Param{DeplStateName} ) {
-        $LogObject->Log(
-            Priority => 'error',
-            Message  => "Parameter 'DeplStateID' or 'DeplStateName' needed!",
-        );
-        return;
-    }
-    if ( !$Param{InciStateID} && !$Param{InciStateName} ) {
-        $LogObject->Log(
-            Priority => 'error',
-            Message  => "Parameter 'DeplStateID' or 'DeplStateName' needed!",
-        );
-        return;
-    }
-    if ( $Param{XMLData} && ref $Param{XMLData} ne 'HASH' ) {
-        $LogObject->Log(
-            Priority => 'error',
-            Message  => "Parameter 'XMLData' as hash ref needed!",
-        );
-        return;
-    }
-
-    # check if general catalog module is installed
-    my $GeneralCatalogLoaded = $MainObject->Require(
-        'Kernel::System::GeneralCatalog',
-        Silent => 1,
-    );
-
-    return if !$GeneralCatalogLoaded;
-
-    # check if general catalog module is installed
-    my $ITSMConfigItemLoaded = $MainObject->Require(
-        'Kernel::System::ITSMConfigItem',
-        Silent => 1,
-    );
-
-    return if !$ITSMConfigItemLoaded;
-
-    my $ConfigItemObject     = $Kernel::OM->Get('Kernel::System::ITSMConfigItem');
-    my $GeneralCatalogObject = $Kernel::OM->Get('Kernel::System::GeneralCatalog');
-    my $ValidObject          = $Kernel::OM->Get('Kernel::System::Valid');
-
-    my $ConfigItemID = $Param{ConfigItemID};
-    my %ConfigItem   = %{ $Param{XMLData} || {} };
-
-    my %Version = $Self->_ITSMVersionGet(
-        ConfigItemID => $ConfigItemID,
-    );
-
-    # get deployment state list
-    my %DeplStateList = %{
-        $GeneralCatalogObject->ItemList(
-            Class => 'ITSM::ConfigItem::DeploymentState',
-            )
-            || {}
-    };
-    my %DeplStateListReverse = reverse %DeplStateList;
-
-    my %InciStateList = %{
-        $GeneralCatalogObject->ItemList(
-            Class => 'ITSM::Core::IncidentState',
-            )
-            || {}
-    };
-    my %InciStateListReverse = reverse %InciStateList;
-
-    # get definition
-    my $DefinitionID = $Param{DefinitionID};
-    if ( !$DefinitionID ) {
-
-        # get class id or name
-        my $ClassID = $Param{ClassID};
-        if ( $Param{ClassName} ) {
-
-            # get valid id
-            my $ValidID = $ValidObject->ValidLookup(
-                Valid => 'valid',
-            );
-
-            my $ItemListRef = $GeneralCatalogObject->ItemList(
-                Class => 'ITSM::ConfigItem::Class',
-                Valid => $ValidID,
-            );
-
-            my %ItemList = reverse %{ $ItemListRef || {} };
-
-            $ClassID = $ItemList{ $Param{ClassName} };
-        }
-
-        my $XMLDefinition = $ConfigItemObject->DefinitionGet(
-            ClassID => $ClassID,
-        );
-
-        $DefinitionID = $XMLDefinition->{DefinitionID};
-    }
-
-    if ( $Param{Name} ) {
-        $Version{Name} = $Param{Name};
-    }
-    if ( $Param{DefinitionID} || $Param{ClassID} || $Param{ClassName} ) {
-        $Version{DefinitionID} = $DefinitionID;
-    }
-    if ( $Param{DeplStateID} ) {
-        $Version{DeplStateID} = $Param{DeplStateID};
-    }
-    if ( $Param{InciStateID} ) {
-        $Version{InciStateID} = $Param{InciStateID};
-    }
-    if ( $Param{DeplStateName} ) {
-        $Version{DeplStateID} = $DeplStateListReverse{ $Param{DeplStateName} };
-    }
-    if ( $Param{InciStateName} ) {
-        $Version{InciStateID} = $InciStateListReverse{ $Param{InciStateName} };
-    }
-
-    %ConfigItem = ( %{ $Version{XMLData} || {} }, %ConfigItem );
-
-    my $XMLData = [
-        undef,
-        {
-            'Version' => [
-                undef,
-                {},
-            ],
-        },
-    ];
-    $Self->_ParseData2XML(
-        %Param,
-        Result => $XMLData->[1]->{Version}->[-1],
-        Data   => \%ConfigItem,
-    );
-
-    my $VersionID = $ConfigItemObject->VersionAdd(
-        ConfigItemID => $ConfigItemID,
-        Name         => $Version{Name},
-        DefinitionID => $Version{DefinitionID},
-        DeplStateID  => $Version{DeplStateID},
-        InciStateID  => $Version{InciStateID},
-        XMLData      => $XMLData,
-        UserID       => 1,
-    );
-
-    return $VersionID;
-}
-
-=item _ITSMConfigItemVersionExists()
-
-checks if a version already exists without returning a error.
-
-
-    my $Found = $ZnunyHelperObject->_ITSMConfigItemVersionExists(
-        VersionID  => 123,
-    );
-
-    or
-
-    my $Found = $ZnunyHelperObject->_ITSMConfigItemVersionExists(
-        ConfigItemID => 123,
-    );
-
-
-Returns:
-
-    my $Found = 1;
-
-=cut
-
-sub _ITSMConfigItemVersionExists {
-    my ( $Self, %Param ) = @_;
-
-    my $LogObject  = $Kernel::OM->Get('Kernel::System::Log');
-    my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
-    my $DBObject   = $Kernel::OM->Get('Kernel::System::DB');
-
-    # check needed stuff
-    if ( !$Param{VersionID} && !$Param{ConfigItemID} ) {
-        $LogObject->Log(
-            Priority => 'error',
-            Message  => 'Need VersionID or ConfigItemID!',
-        );
-        return;
-    }
-
-    # check if general catalog module is installed
-    my $GeneralCatalogLoaded = $MainObject->Require(
-        'Kernel::System::GeneralCatalog',
-        Silent => 1,
-    );
-
-    return if !$GeneralCatalogLoaded;
-
-    # check if general catalog module is installed
-    my $ITSMConfigItemLoaded = $MainObject->Require(
-        'Kernel::System::ITSMConfigItem',
-        Silent => 1,
-    );
-
-    return if !$ITSMConfigItemLoaded;
-
-    if ( $Param{VersionID} ) {
-
-        # get version
-        $DBObject->Prepare(
-            SQL   => 'SELECT 1 FROM configitem_version WHERE id = ?',
-            Bind  => [ \$Param{VersionID} ],
-            Limit => 1,
-        );
-    }
-    else {
-
-        # get version
-        $DBObject->Prepare(
-            SQL   => 'SELECT 1 FROM configitem_version WHERE configitem_id = ? ORDER BY id DESC',
-            Bind  => [ \$Param{ConfigItemID} ],
-            Limit => 1,
-        );
-    }
-
-    # fetch the result
-    my $Found;
-    while ( my @Row = $DBObject->FetchrowArray() ) {
-        $Found = 1;
-    }
-
-    return $Found;
-}
-
-=item _ITSMConfigItemVersionGet()
-
-get a ConfigItem version.
-
-    my %Version = $ZnunyHelperObject->_ITSMConfigItemVersionGet(
-        ConfigItemID    => 12345,
-        XMLDataMultiple => 1,      # default: 0, This option will return a more complex XMLData structure with multiple element data! Makes sense if you are using CountMin, CountMax etc..
-    );
-
-Returns:
-
-    my %Version = (
-        ConfigItemID  => 12345,
-
-        DefinitionID => 1234,
-        DeplStateID  => 1234,
-        DeplState    => 'Production',
-        InciStateID  => 1234,
-        InciState    => 'Operational',
-        Name         => 'example name',
-        XMLData      => {
-            'Priority'    => 'high',
-            'Product'     => 'test',
-            'Description' => 'test'
-        },
-    );
-
-=cut
-
-sub _ITSMConfigItemVersionGet {
-    my ( $Self, %Param ) = @_;
-
-    my $MainObject           = $Kernel::OM->Get('Kernel::System::Main');
-    my $ConfigItemObject     = $Kernel::OM->Get('Kernel::System::ITSMConfigItem');
-    my $GeneralCatalogObject = $Kernel::OM->Get('Kernel::System::GeneralCatalog');
-
-    # check if general catalog module is installed
-    my $GeneralCatalogLoaded = $MainObject->Require(
-        'Kernel::System::GeneralCatalog',
-        Silent => 1,
-    );
-
-    return if !$GeneralCatalogLoaded;
-
-    # check if general catalog module is installed
-    my $ITSMConfigItemLoaded = $MainObject->Require(
-        'Kernel::System::ITSMConfigItem',
-        Silent => 1,
-    );
-
-    return if !$ITSMConfigItemLoaded;
-    return if !$Self->_ITSMConfigItemVersionExists(%Param);
-
-    my $VersionRef = $ConfigItemObject->VersionGet(
-        %Param,
-        XMLDataGet => 1,
-    );
-
-    return if !IsHashRefWithData($VersionRef);
-
-    my %VersionConfigItem;
-    $VersionConfigItem{XMLData} ||= {};
-    if ( IsHashRefWithData( $VersionRef->{XMLData}->[1]->{Version}->[1] ) ) {
-        $Self->_ParseXML2Data(
-            %Param,
-            Result => $VersionConfigItem{XMLData},
-            Data   => $VersionRef->{XMLData}->[1]->{Version}->[1],
-        );
-    }
-
-    for my $Field (qw(ConfigItemID Name ClassID Class DefinitionID DeplStateID DeplState InciStateID InciState)) {
-        $VersionConfigItem{$Field} = $VersionRef->{$Field};
-    }
-
-    return %VersionConfigItem;
-}
-
-=item _ITSMVersionAdd()
-
-DEPRECATED, use $Self->_ITSMConfigItemVersionAdd instead.
-
-=cut
-
-sub _ITSMVersionAdd {
-    my ( $Self, %Param ) = @_;
-
-    return $Self->_ITSMConfigItemVersionAdd(%Param);
-}
-
-=item _ITSMVersionExists()
-
-DEPRECATED, use $Self->_ITSMConfigItemVersionExists instead.
-
-=cut
-
-sub _ITSMVersionExists {
-    my ( $Self, %Param ) = @_;
-
-    return $Self->_ITSMConfigItemVersionExists(%Param);
-}
-
-=item _ITSMVersionGet()
-
-DEPRECATED, use $Self->_ITSMConfigItemVersionGet instead.
-
-=cut
-
-sub _ITSMVersionGet {
-    my ( $Self, %Param ) = @_;
-
-    return $Self->_ITSMConfigItemVersionGet(%Param);
-}
-
-=item _ParseXML2Data()
-
-this is a internal function for _ITSMVersionGet to parse the additional data
-stored in XMLData.
-
-    my $Success = $ZnunyHelperObject->_ParseXML2Data(
-        Parent          => $Identifier,          # optional: contains the field name of the parent xml
-        Result          => $Result,              # contains the reference to the result hash
-        Data            => $Data{$Field}->[1],   # contains the xml hash we want to parse
-        XMLDataMultiple => 1,                    # default: 0, This option will return a more complex XMLData structure with multiple element data! Makes sense if you are using CountMin, CountMax etc..
-    );
-
-Returns:
-
-    my $Success = 1;
-
-=cut
-
-sub _ParseXML2Data {
-    my ( $Self, %Param ) = @_;
-
-    my $Result          = $Param{Result};
-    my $XMLDataMultiple = $Param{XMLDataMultiple};
-    my $Parent          = $Param{Parent} || '';
-    my %Data            = %{ $Param{Data} || {} };
-
-    FIELD:
-    for my $Field ( sort keys %Data ) {
-        next FIELD if !IsArrayRefWithData( $Data{$Field} );
-
-        if ($XMLDataMultiple) {
-            $Result->{$Field} = [];
-
-            for my $Index ( 1 .. $#{ $Data{$Field} } ) {
-                my $Value = $Data{$Field}->[$Index]->{Content};
-
-                my $CurrentResult = {};
-
-                $Self->_ParseXML2Data(
-                    %Param,
-                    Parent => $Field,
-                    Result => $CurrentResult,
-                    Data   => $Data{$Field}->[$Index],
-                );
-
-                if ( defined $Value ) {
-                    $CurrentResult->{Content} = $Value;
-
-                    if ( keys %{$CurrentResult} ) {
-                        push @{ $Result->{$Field} }, $CurrentResult;
-                    }
-                }
-            }
-        }
-        else {
-            my $Value = $Data{$Field}->[1]->{Content};
-
-            next FIELD if !defined $Value;
-
-            $Result->{$Field} = $Value;
-        }
-    }
-
-    return 1;
-}
-
-=item _ParseData2XML()
-
-this is a internal function for _ITSMVersionAdd to parse the additional data
-for xml storage.
-
-    my $Success = $ZnunyHelperObject->_ParseData2XML(
-        Parent => $Identifier,          # optional: contains the field name of the parent xml
-        Result => $Result,              # contains the reference to the result hash
-        Data   => $Data{$Field}->[1],   # contains the xml hash we want to parse
-    );
-
-Returns:
-
-    my $Success = 1;
-
-=cut
-
-sub _ParseData2XML {
-    my ( $Self, %Param ) = @_;
-
-    my $Result = $Param{Result};
-    my $Parent = $Param{Parent} || '';
-    my %Data   = %{ $Param{Data} || {} };
-
-    ITEM:
-    for my $ItemID ( sort keys %Data ) {
-        next ITEM if $ItemID eq $Parent;
-        next ITEM if $ItemID eq 'Content';
-
-        my $Item = $Data{$ItemID};
-
-        if ( IsArrayRefWithData($Item) ) {
-
-            $Result->{$ItemID} = [undef];
-
-            for my $Index ( 0 .. $#{$Item} ) {
-                my $ItemData = $Item->[$Index];
-
-                push @{ $Result->{$ItemID} }, {
-                    'Content' => $Item->[$Index]->{Content},
-                };
-
-                $Self->_ParseData2XML(
-                    %Param,
-                    Parent => $ItemID,
-                    Result => $Result->{$ItemID}->[-1],
-                    Data   => $Data{$ItemID}->[$Index],
-                );
-            }
-        }
-        else {
-            $Result->{$ItemID} = [
-                undef,
-                {
-                    'Content' => $Item,
-                }
-            ];
-        }
-    }
-
-    return 1;
-}
-
 =item _WebserviceCreateIfNotExists()
 
 creates web services that not exist yet
@@ -4013,7 +3546,7 @@ sub _WebserviceCreateIfNotExists {
     for my $WebserviceName ( sort keys %{$Webservices} ) {
 
         # stop if already added
-        next WEBSERVICE if grep { $WebserviceName eq $_ } sort values %{$WebserviceList};
+        next WEBSERVICE if any { $WebserviceName eq $_ } sort values %{$WebserviceList};
 
         my $WebserviceYAMLPath = $Webservices->{$WebserviceName};
 
@@ -4234,7 +3767,7 @@ sub _WebserviceDelete {
 
 =item _WebservicesGet()
 
-gets a list of .yml files from $OTOBO/scripts/webservices
+gets a list of .yml files from $CareOnCloud ESM/scripts/webservices
 
     my $Result = $ZnunyHelperObject->_WebservicesGet(
         SubDir => 'Znuny4OTRSAssetDesk', # optional
@@ -4513,7 +4046,7 @@ sub _ProcessCreate {
 
 =item _ProcessesGet()
 
-gets a list of .yml files from $OTOBO/scripts/processes
+gets a list of .yml files from $CareOnCloud ESM/scripts/processes
 
     my $Result = $ZnunyHelperObject->_ProcessesGet(
         SubDir => 'Znuny4OTRSAssetDesk', # optional
@@ -4581,7 +4114,6 @@ sub _ProcessWidgetDynamicFieldGroupsGet {
     my ( $Self, %Param ) = @_;
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my $LogObject    = $Kernel::OM->Get('Kernel::System::Log');
 
     my $AgentTicketZoomConfig           = $ConfigObject->Get('Ticket::Frontend::AgentTicketZoom');
     my %ProcessWidgetDynamicFieldGroups = %{ $AgentTicketZoomConfig->{ProcessWidgetDynamicFieldGroups} };
@@ -4623,7 +4155,6 @@ sub _ProcessWidgetDynamicFieldGroupsAdd {
     my ( $Self, %Groups ) = @_;
 
     my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
-    my $LogObject       = $Kernel::OM->Get('Kernel::System::Log');
     my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
 
     my %ProcessWidgetDynamicFieldGroups = $Self->_ProcessWidgetDynamicFieldGroupsGet();
@@ -4675,7 +4206,8 @@ sub _ProcessWidgetDynamicFieldGroupsAdd {
                 EffectiveValue => \%NewDynamicFieldConfig,
             },
         ],
-        UserID => 1,
+        Comments => 'Process widget dynamic field groups settings added.',
+        UserID   => 1,
     );
 
     # reload the ZZZ files
@@ -4708,8 +4240,6 @@ gets ProcessWidgetDynamicFieldGroups
 sub _ProcessWidgetDynamicFieldGroupsRemove {
     my ( $Self, %Groups ) = @_;
 
-    my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
-    my $LogObject       = $Kernel::OM->Get('Kernel::System::Log');
     my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
 
     my %ProcessWidgetDynamicFieldGroups = $Self->_ProcessWidgetDynamicFieldGroupsGet();
@@ -4757,7 +4287,8 @@ sub _ProcessWidgetDynamicFieldGroupsRemove {
                 EffectiveValue => \%NewDynamicFieldConfig,
             },
         ],
-        UserID => 1,
+        Comments => 'Process widget dynamic field groups settings removed.',
+        UserID   => 1,
     );
 
     # reload the ZZZ files
@@ -4876,7 +4407,8 @@ sub _ModuleGroupAdd {
                 EffectiveValue => $ModuleRegistration,
             },
         ],
-        UserID => 1,
+        Comments => 'Module group settings added.',
+        UserID   => 1,
     );
 
     return 1;
@@ -4988,7 +4520,8 @@ sub _ModuleGroupRemove {
                 EffectiveValue => $ModuleRegistration,
             },
         ],
-        UserID => 1,
+        Comments => 'Module group settings removed.',
+        UserID   => 1,
     );
 
     return 1;
@@ -5526,127 +5059,6 @@ sub _GenericAgentCreateIfNotExists {
             %{$NewGenericAgent},
         );
     }
-
-    return 1;
-}
-
-=item _ArticleActionsAdd()
-
-Adds article action menu items.
-
-    my %ArticleActions = (
-        Internal => [ # Channel name (Internal, Phone, Email, Chat or Invalid)
-            {
-                Key      => 'Znuny4OTRSMarkTicketSeenUnseen',
-                Module   => 'Kernel::Output::HTML::ArticleAction::MyMenuItem',
-                Priority => 999,
-            },
-        ],
-    );
-
-    my $Success = $ZnunyHelperObject->_ArticleActionsAdd(%ArticleActionMenuItems);
-
-Returns:
-
-    my $Success = 1;
-
-=cut
-
-sub _ArticleActionsAdd {
-    my ( $Self, %Param ) = @_;
-
-    my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
-    my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
-
-    my $ArticleActionConfig = $ConfigObject->Get('Ticket::Frontend::Article::Actions') // {};
-
-    my @Settings;
-    CHANNELNAME:
-    for my $ChannelName ( sort keys %Param ) {
-
-        next CHANNELNAME if !IsArrayRefWithData( $Param{$ChannelName} );
-
-        for my $ArticleAction ( @{ $Param{$ChannelName} } ) {
-            $ArticleActionConfig->{$ChannelName}->{ $ArticleAction->{Key} } = {
-                Module => $ArticleAction->{Module},
-                Prio   => $ArticleAction->{Priority},
-                Valid  => 1,
-            };
-        }
-
-        push @Settings, {
-            Name           => 'Ticket::Frontend::Article::Actions###' . $ChannelName,
-            EffectiveValue => $ArticleActionConfig->{$ChannelName},
-            IsValid        => 1,
-        };
-
-    }
-
-    my $SettingSet = $SysConfigObject->SettingsSet(
-        UserID   => 1,
-        Comments => 'Article action settings added by package setup of Znuny4OTRS-MarkTicketSeenUnseen.',
-        Settings => \@Settings,
-    );
-
-    return if !$SettingSet;
-
-    return 1;
-}
-
-=item _ArticleActionsRemove()
-
-Removes article action menu items.
-
-    my %ArticleActions = (
-        Internal => [ # Channel name (Internal, Phone, Email, Chat or Invalid)
-            {
-                Module   => 'Kernel::Output::HTML::ArticleAction::MyMenuItem',
-                Priority => 999,
-            },
-        ],
-    );
-
-    my $Success = $ZnunyHelperObject->_ArticleActionsRemove(%ArticleActions);
-
-Returns:
-
-    my $Success = 1;
-
-=cut
-
-sub _ArticleActionsRemove {
-    my ( $Self, %Param ) = @_;
-
-    my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
-    my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
-
-    my $ArticleActionConfig = $ConfigObject->Get('Ticket::Frontend::Article::Actions') // {};
-
-    my @Settings;
-    CHANNELNAME:
-    for my $ChannelName ( sort keys %Param ) {
-
-        next CHANNELNAME if !IsArrayRefWithData( $Param{$ChannelName} );
-
-        for my $ArticleAction ( @{ $Param{$ChannelName} } ) {
-            delete $ArticleActionConfig->{$ChannelName}->{ $ArticleAction->{Key} };
-        }
-
-        push @Settings, {
-            Name           => 'Ticket::Frontend::Article::Actions###' . $ChannelName,
-            EffectiveValue => $ArticleActionConfig->{$ChannelName},
-            IsValid        => 1,
-        };
-
-    }
-
-    my $SettingSet = $SysConfigObject->SettingsSet(
-        UserID   => 1,
-        Comments => 'Article action settings removed by package setup of Znuny4OTRS-MarkTicketSeenUnseen.',
-        Settings => \@Settings,
-    );
-
-    return if !$SettingSet;
 
     return 1;
 }

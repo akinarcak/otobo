@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,7 +30,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Check OTOBO database connectivity.');
+    $Self->Description('Check CareOnCloud ESM database connectivity.');
     $Self->AddOption(
         Name        => 'repair',
         Description => 'Repairs invalid database schema (like deleting invalid default values for datetime fields).',
@@ -94,7 +94,7 @@ sub _CheckMySQLDefaultStorageEngine {
     return 1 if $DBObject->{'DB::Type'} ne 'mysql';
 
     # Check for common MySQL issue where default storage engine is different
-    #   from initial OTOBO table; this can happen when MySQL is upgraded from
+    #   from initial CareOnCloud ESM table; this can happen when MySQL is upgraded from
     #   5.1 > 5.5.
     # Default storage engine variable has changed its name in MySQL 5.5.3, we need to support both of them for now.
     #   <= 5.5.2 storage_engine
@@ -181,7 +181,7 @@ sub _CheckMySQLInvalidDefaultValues {
     }
     else {
         $Error
-            .= "\n\n *** Please correct these problems manually with the following SQL statements or use 'otobo.Console.pl $Self->{Name} --repair'. *** \n\n";
+            .= "\n\n *** Please correct these problems manually with the following SQL statements or use 'careoncloud.Console.pl $Self->{Name} --repair'. *** \n\n";
     }
 
     my @SQLRepairStatements;

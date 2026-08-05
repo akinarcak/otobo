@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -92,14 +92,24 @@ Core.Form.Validate = (function (TargetNS) {
             ErrorType = 'Error';
         }
 
-        // TODO: find a nicer way to ensure focus only happens on submit
+        var CustomerInterface = ( Core.Config.Get('SessionName') === Core.Config.Get('CustomerPanelSessionName') )
+
+        // If the element, which has an validation error, is a richtext element, trigger the focus event
         window.setTimeout(function () {
-            // If the element, which has an validation error, is a richtext element, trigger the focus event
             if (Core.UI.RichTextEditor.IsEnabled($Element)) {
+
                 if ($Element.closest('form').hasClass('oooSubmitted')) {
                     Core.UI.RichTextEditor.Focus($Element);
+                    $('.ck-placeholder').addClass('error');
                     Core.UI.ScrollTo($Element.closest('.RichTextHolder'));
-                    //$Element.focus();
+                } else if ( !CustomerInterface ) {
+                    Core.UI.ScrollTo($Element.closest('.RichTexField'));
+
+                    if ($Element.hasClass(Options.ErrorClass)) {
+                        return false;
+                    }
+
+                    Core.UI.RichTextEditor.Focus($Element);
                 }
             }
 
@@ -145,14 +155,20 @@ Core.Form.Validate = (function (TargetNS) {
 
         if (InputErrorMessageHTML && InputErrorMessageHTML.length) {
             // If error field is a RTE, it is a little bit more difficult.
-            if ($('#cke_' + Core.App.EscapeSelector(Element.id)).length) {
+            if ( $Element.hasClass('RichText') && typeof ClassicEditor != 'undefined') {
                 Core.Form.ErrorTooltips.InitRTETooltip($Element, InputErrorMessageHTML);
             }
             // If server error field is RTE, action must be subscribed and loaded when event is finished because RTE is not loaded yet.
-            else if ($Element.hasClass('RichText') && parseInt(Core.Config.Get('RichTextSet'), 10) === 1)
+            else if ($Element.hasClass('RichText') && parseInt(Core.Config.Get('RichTextSet'), 10) === 1 )
             {
                 Core.App.Subscribe('Event.UI.RichTextEditor.InstanceReady', function () {
                     Core.Form.ErrorTooltips.InitRTETooltip($Element, InputErrorMessageHTML);
+                });
+            }
+            else if ($Element.hasClass('CodeMirrorEditor')) {
+                Core.App.Subscribe('Event.UI.CodeMirrorEditor.InstanceReady', function () {
+                    var Editor = arguments[0];
+                    Core.Form.ErrorTooltips.InitCMETooltip(Editor, InputErrorMessageHTML);
                 });
             }
             else {
@@ -211,10 +227,14 @@ Core.Form.Validate = (function (TargetNS) {
             $Element.attr('aria-invalid', false);
 
             // if error field is a RTE, it is a little bit more difficult
-            if ($('#cke_' + Core.App.EscapeSelector(Element.id)).length) {
+            if ( $Element.hasClass('RichText') ) {
                 Core.Form.ErrorTooltips.RemoveRTETooltip($Element);
-            } else {
-                Core.Form.ErrorTooltips.RemoveTooltip($Element);
+            }
+            else if ( $Element.hasClass('CodeMirrorEditor') ) {
+                Core.Form.ErrorTooltips.RemoveCMETooltip();
+            }
+            else {
+               Core.Form.ErrorTooltips.RemoveTooltip($Element);
             }
         }
     };
@@ -274,7 +294,7 @@ Core.Form.Validate = (function (TargetNS) {
         var Text,
             $Element = $(Element);
 
-        // special treatment of <select> elements in OTOBO
+        // special treatment of <select> elements in CareOnCloud ESM
         if (Element.nodeName.toLowerCase() === 'select') {
             Text = $(Element).find('option:selected').text();
             return (Text.length && Text !== '-');
@@ -284,8 +304,7 @@ Core.Form.Validate = (function (TargetNS) {
         // keep tags if images are embedded because of inline-images
         // keep tags if codemirror plugin is used (for XSLT editor)
         if (Core.UI.RichTextEditor.IsEnabled($Element)) {
-            Value = CKEDITOR.instances[Element.id].getData();
-            if (typeof CKEDITOR.instances[Element.id].config.codemirror === 'undefined' && !Value.match(/<img/)) {
+            if ( !Value.match(/<img/) ) {
                 Value = Value.replace(/\s+|&nbsp;|<\/?\w+[^>]*\/?>/g, '');
             }
         }
@@ -319,13 +338,13 @@ Core.Form.Validate = (function (TargetNS) {
     }
 
     /*
-     * Definitions of all OTOBO specific rules and rule methods
+     * Definitions of all CareOnCloud ESM specific rules and rule methods
      */
     $.validator.addMethod("Validate_Required", ValidatorMethodRequired, "");
     $.validator.addMethod("Validate_Number", $.validator.methods.digits, "");
     $.validator.addMethod("Validate_DnDUpload", ValidatorMethodDnDUpload, "");
 
-    // There is a configuration option in OTOBO that controls if email addresses
+    // There is a configuration option in CareOnCloud ESM that controls if email addresses
     // should be validated or not.
     // If email address should be validated, this function is overwritten in Init method
     $.validator.addMethod("Validate_Email", ValidatorMethodRequired, "");
@@ -395,10 +414,17 @@ Core.Form.Validate = (function (TargetNS) {
         DateMinuteClassPrefix = 'Validate_DateMinute_',
         DateAfterBefore,
         DateCheck,
+        CustomerInterface = Core.Config.Get('SessionName') === Core.Config.Get('CustomerPanelSessionName'),
         $UsedObj;
 
         // Skip validation if field is not used (bug#12210)
-        $UsedObj = $(Element).siblings('input.DynamicFieldText[id*="Used"][type="checkbox"]');
+        if (CustomerInterface) {
+            $UsedObj = $(Element).parent().siblings('input.DynamicFieldText[id*="Used"][type="checkbox"]');
+        }
+        else {
+            $UsedObj = $(Element).siblings('input.DynamicFieldText[id*="Used"][type="checkbox"]');
+        }
+
         if ($UsedObj.length > 0 && $UsedObj.is(':checked') === false) {
             return true;
         }
@@ -823,7 +849,7 @@ Core.Form.Validate = (function (TargetNS) {
             FormSelector = 'form';
         }
 
-        // There is a configuration option in OTOBO that controls if email addresses
+        // There is a configuration option in CareOnCloud ESM that controls if email addresses
         //  should be validated or not.
         if (parseInt(Core.Config.Get('CheckEmailAddresses'), 10)) {
             $.validator.addMethod("Validate_Email", $.validator.methods.email, "");
@@ -968,7 +994,7 @@ Core.Form.Validate = (function (TargetNS) {
      * @memberof Core.Form.Validate
      * @function
      * @param {String} Name - The name of the rule.
-     * @param {Object} MethodHash - This JS object defines, which methods should be included in this rule, e.g. { OTOBO_Validate_Required: true, OTOBO-Validate_MinLength: 2 }.
+     * @param {Object} MethodHash - This JS object defines, which methods should be included in this rule, e.g. { CareOnCloud_Validate_Required: true, CareOnCloud ESM-Validate_MinLength: 2 }.
      * @description
      *      This function is used to add special validation rules. The name is also the class name you can use in the HTML.
      */

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -122,14 +122,14 @@ sub SettingEffectiveValueCheck {
         UserID => $Param{UserID},
     );
 
-    my $OTOBOTimeZone = $Kernel::OM->Get('Kernel::Config')->Get("OTOBOTimeZone");
+    my $CareOnCloudTimeZone = $Kernel::OM->Get('Kernel::Config')->Get("CareOnCloudTimeZone");
     my $DateTimeObject;
 
-    if ( !$Preferences{UserTimeZone} || $Preferences{UserTimeZone} eq $OTOBOTimeZone ) {
+    if ( !$Preferences{UserTimeZone} || $Preferences{UserTimeZone} eq $CareOnCloudTimeZone ) {
         $DateTimeObject = $Kernel::OM->Create(
             'Kernel::System::DateTime',
             ObjectParams => {
-                TimeZone => $OTOBOTimeZone,
+                TimeZone => $CareOnCloudTimeZone,
             },
         );
 
@@ -162,7 +162,7 @@ sub SettingEffectiveValueCheck {
         }
 
         my $Success = $DateTimeObject->ToTimeZone(
-            TimeZone => $OTOBOTimeZone,
+            TimeZone => $CareOnCloudTimeZone,
         );
 
         if ($Success) {
@@ -170,12 +170,12 @@ sub SettingEffectiveValueCheck {
         }
         else {
             $Result{Error} = $Kernel::OM->Get('Kernel::Language')->Translate(
-                "System was not able to calculate user DateTime in OTOBOTimeZone!"
+                "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
             );
 
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "System was not able to calculate user DateTime in OTOBOTimeZone!"
+                Message  => "System was not able to calculate user DateTime in CareOnCloudTimeZone!"
             );
         }
     }
@@ -278,7 +278,7 @@ sub SettingRender {
         );
     }
 
-    my $TimeZone = $Kernel::OM->Get('Kernel::Config')->Get("OTOBOTimeZone");
+    my $TimeZone = $Kernel::OM->Get('Kernel::Config')->Get("CareOnCloudTimeZone");
 
     my $DateTimeObject = $Kernel::OM->Create(
         'Kernel::System::DateTime',
@@ -424,7 +424,7 @@ sub AddItem {
     my $Name = $Param{Name} . $IDSuffix;
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $TimeZone     = $Kernel::OM->Get('Kernel::Config')->Get("OTOBOTimeZone");
+    my $TimeZone     = $Kernel::OM->Get('Kernel::Config')->Get("CareOnCloudTimeZone");
 
     my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
         UserID => $Param{UserID},

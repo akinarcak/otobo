@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,7 +21,7 @@ use warnings;
 
 our $ObjectManagerDisabled = 1;
 
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(IsArrayRefWithData);
 
 sub new {
@@ -41,7 +41,8 @@ sub Run {
     my $ConfigObject    = $Kernel::OM->Get('Kernel::Config');
     my $ParamObject     = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
-    my $ConfigLevel     = $Kernel::OM->Get('Kernel::Config')->Get('ConfigLevel') || 0;
+
+    my $ConfigLevel = $ConfigObject->Get('ConfigLevel') || 0;
 
     if ( $Self->{Subaction} eq 'Lock' ) {
 
@@ -122,7 +123,7 @@ sub Run {
             UserID  => $Self->{UserID},
         );
 
-        # Send only useful setting attributes to reduce ammount of data transfered in the AJAX call.
+        # Send only useful setting attributes to reduce amount of data transferred in the AJAX call.
         for my $Key (qw(IsModified IsDirty IsLocked Error ExclusiveLockGUID IsValid UserModificationActive)) {
             $Result{Data}->{SettingData}->{$Key} = $Setting{$Key};
         }
@@ -177,7 +178,7 @@ sub Run {
             UserID  => $Self->{UserID},
         );
 
-        # Send only useful setting attributes to reduce ammount of data transfered in the AJAX call.
+        # Send only useful setting attributes to reduce amount of data transferred in the AJAX call.
         for my $Key (qw(IsModified IsDirty IsLocked Error ExclusiveLockGUID IsValid UserModificationActive)) {
             $Result{Data}->{SettingData}->{$Key} = $Setting{$Key};
         }
@@ -280,7 +281,7 @@ sub Run {
 
         if (
             ( grep { $_ eq 'reset-locally' } @Options )
-            && $SysConfigObject->can('UserSettingValueDelete')    # OTOBO Community Solution
+            && $SysConfigObject->can('UserSettingValueDelete')    # CareOnCloud ESM Community Solution
             )
         {
 
@@ -306,7 +307,7 @@ sub Run {
             UserID          => $Self->{UserID},
         );
 
-        # Send only useful setting attributes to reduce amount of data transfered in the AJAX call.
+        # Send only useful setting attributes to reduce amount of data transferred in the AJAX call.
         for my $Key (qw(IsModified IsDirty IsLocked ExclusiveLockGUID IsValid UserModificationActive)) {
             $Result{Data}->{SettingData}->{$Key} = $Setting{$Key};
         }
@@ -611,12 +612,17 @@ sub Run {
         pop @SettingStructure;
 
         my %Result;
-        for my $Needed (qw(Name Key)) {
-            if ( !$Needed ) {
-                $Result{Error} = Translatable("Missing setting $Needed.");
-
-                return $LayoutObject->JSONReply( Data => \%Result );
-            }
+        if ( !$SettingName ) {
+            $Result{Error} = $Kernel::OM->Get('Kernel::Language')->Translate(
+                "Missing setting name!",
+            );
+            return $Self->_ReturnJSON( Response => \%Result );
+        }
+        if ( !$Key ) {
+            $Result{Error} = $Kernel::OM->Get('Kernel::Language')->Translate(
+                "Missing setting key!",
+            );
+            return $Self->_ReturnJSON( Response => \%Result );
         }
 
         my %Setting = $SysConfigObject->SettingGet(

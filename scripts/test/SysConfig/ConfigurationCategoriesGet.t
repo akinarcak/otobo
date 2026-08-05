@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -35,11 +35,11 @@ my $HelperObject = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
 
 my $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestPackage1</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
@@ -48,15 +48,15 @@ my $String = '<?xml version="1.0" encoding="utf-8" ?>
   <Filelist>
     <File Location="Kernel/Config/Files/XML/TestPackage1.xml" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $String2 = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestPackage2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
@@ -65,7 +65,7 @@ my $String2 = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="Kernel/Config/Files/XML/TestPackage2-1.xml" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="Kernel/Config/Files/XML/TestPackage2-2.xml" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageObject = $Kernel::OM->Get('Kernel::System::Package');
@@ -93,8 +93,8 @@ my @Tests = (
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            OTOBO => {
-                DisplayName => 'OTOBO',
+            CareOnCloud => {
+                DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',          'CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml',
                     'ProcessManagement.xml', 'Ticket.xml'
@@ -114,8 +114,8 @@ my @Tests = (
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            OTOBO => {
-                DisplayName => 'OTOBO',
+            CareOnCloud => {
+                DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',          'CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml',
                     'ProcessManagement.xml', 'Ticket.xml'
@@ -139,8 +139,8 @@ my @Tests = (
                 DisplayName => 'All Settings',
                 Files       => [],
             },
-            OTOBO => {
-                DisplayName => 'OTOBO',
+            CareOnCloud => {
+                DisplayName => 'CareOnCloud ESM',
                 Files       => [
                     'Calendar.xml',          'CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml',
                     'ProcessManagement.xml', 'Ticket.xml'
@@ -169,7 +169,9 @@ for my $Test (@Tests) {
     );
 
     if ( $Test->{RepositoryAdd} ) {
-        my $RepositoryAdd = $PackageObject->RepositoryAdd( String => $Test->{RepositoryAdd}->{String} );
+        my $RepositoryAdd = $PackageObject->RepositoryAdd(
+            String => $Test->{RepositoryAdd}->{String}
+        );
         $Self->True(
             $RepositoryAdd,
             "RepositoryAdd() $Test->{RepositoryAdd}->{PackageName}",

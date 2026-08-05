@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,14 +21,14 @@ use strict;
 use warnings;
 
 # core modules
-use Getopt::Long();
-use Term::ANSIColor();
+use Getopt::Long    qw();
+use Term::ANSIColor qw(colored);
 
 # CPAN modules
 use IO::Interactive();
 use Encode::Locale();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -60,8 +60,7 @@ override L</Configure()> instead if you need to.
 sub new {
     my ( $Type, %Param ) = @_;
 
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # for usage help
     $Self->{Name} = $Type;
@@ -178,9 +177,13 @@ indicate which arguments it can process.
         Description  => 'name of the file to be loaded',
         Required     => 1,
         ValueRegex   => qr{a-zA-Z0-9]\.txt},
+        Slurpy       => 1,   # optional, 0|1, the default is 0
     );
 
 Please note that required arguments have to be specified before any optional ones.
+
+When C<Slurpy> is passed then this argument will slurp up all remaining values.
+Argument declarations after a C<Slurpy> declaration are silently ignored.
 
 The information about known arguments and options (see below) will be used to generate
 usage help and also to automatically verify the data provided by the user on the command line.
@@ -209,7 +212,8 @@ sub AddArgument {
         die;
     }
 
-    if ( $Self->{_OptionSeen}->{ $Param{Name} } ) {
+    # No need to check for clashes with alternative option names
+    if ( $Self->{_CanonicalOptionNameSeen}->{ $Param{Name} } ) {
         $Self->PrintError("Cannot add argument '$Param{Name}', because it is already registered as an option.");
         die;
     }
@@ -233,6 +237,7 @@ sub GetArgument {
 
     if ( !$Self->{_ArgumentSeen}->{$Argument} ) {
         $Self->PrintError("Argument '$Argument' was not configured and cannot be accessed.");
+
         return;
     }
 
@@ -252,6 +257,17 @@ indicate which arguments it can process.
         HasValue     => 0,
         ValueRegex   => qr{\d+},
         Multiple     => 0,  # optional, allow more than one occurrence (only possible if HasValue is true)
+    );
+
+Alternative names can be declared as well. In this case the I<CanonicalName> has to be specified.
+
+    $Self->AddOption(
+        Name          => 'module-directory|dir',
+        CanonicalName => 'module-directory',
+        Description   => "Specify the directory containing the module sources (otherwise the CareOnCloud ESM home directory will be used).",
+        Required      => 0,
+        HasValue      => 1,
+        ValueRegex    => qr/.*/smx,
     );
 
 B<Option Naming Conventions>
@@ -291,19 +307,38 @@ sub AddOption {
         }
     }
 
+    # check the CanonicalName
+    if ( $Param{Name} =~ m/[|]/ ) {
+        if ( !$Param{CanonicalName} ) {
+            $Self->PrintError("A canonical option name must be declared for the option '$Param{Name}'.");
+            die;
+        }
+
+        my %IsAlternative = map { $_ => 1 } split /[|]/, $Param{Name};
+        if ( !$IsAlternative{ $Param{CanonicalName} } ) {
+            $Self->PrintError("The canonical option name '$Param{CanonicalName}' must be one of the alternative names.");
+            die;
+        }
+    }
+
     if ( $Param{Multiple} && !$Param{HasValue} ) {
         $Self->PrintError("Multiple can only be specified if HasValue is true.");
         die;
     }
 
-    if ( $Self->{_OptionSeen}->{ $Param{Name} }++ ) {
-        $Self->PrintError("Cannot register option '$Param{Name}' twice.");
-        die;
-    }
+    # The Name may include alternative names, e.g. 'module-directory|dir'
+    $Self->{_CanonicalOptionNameSeen}->{ $Param{CanonicalName} // $Param{Name} }++;
+    for my $Name ( split /[|]/, $Param{Name} ) {
 
-    if ( $Self->{_ArgumentSeen}->{ $Param{Name} } ) {
-        $Self->PrintError("Cannot add option '$Param{Name}', because it is already registered as an argument.");
-        die;
+        if ( $Self->{_OptionSeen}->{$Name}++ ) {
+            $Self->PrintError("Cannot register option '$Name' twice.");
+            die;
+        }
+
+        if ( $Self->{_ArgumentSeen}->{$Name} ) {
+            $Self->PrintError("Cannot add option '$Param{Name}', because it is already registered as an argument.");
+            die;
+        }
     }
 
     $Self->{_Options} //= [];
@@ -329,8 +364,9 @@ if the option was specified, and undef otherwise.
 sub GetOption {
     my ( $Self, $Option ) = @_;
 
-    if ( !$Self->{_OptionSeen}->{$Option} ) {
+    if ( !$Self->{_CanonicalOptionNameSeen}->{$Option} ) {
         $Self->PrintError("Option '--$Option' was not configured and cannot be accessed.");
+
         return;
     }
 
@@ -398,7 +434,7 @@ sub Execute {
     #   In future we might need to check if it was created and update it on the fly.
     $Kernel::OM->ObjectParamAdd(
         'Kernel::System::Log' => {
-            LogPrefix => 'OTOBO-otobo.Console.pl-' . $Self->Name(),
+            LogPrefix => 'CareOnCloud ESM-careoncloud.Console.pl-' . $Self->Name(),
         },
     );
 
@@ -407,9 +443,9 @@ sub Execute {
     # Don't allow to run these scripts as root.
     if ( !$ParsedGlobalOptions->{'allow-root'} && $> == 0 ) {    # $EFFECTIVE_USER_ID
         $Self->PrintError(
-            "You cannot run otobo.Console.pl as root. Please run it as the 'otobo' user or with the help of su:"
+            "You cannot run careoncloud.Console.pl as root. Please run it as the 'careoncloud' user or with the help of su:"
         );
-        $Self->Print("  <yellow>su -c \"bin/otobo.Console.pl MyCommand\" -s /bin/bash otobo</yellow>\n");
+        $Self->Print("  <yellow>su -c \"bin/careoncloud.Console.pl MyCommand\" -s /bin/bash careoncloud</yellow>\n");
 
         return $Self->ExitCodeError();
     }
@@ -422,6 +458,7 @@ sub Execute {
     # Only run if the command was setup ok.
     if ( !$Self->{_ConfigureSuccessful} ) {
         $Self->PrintError("Aborting because the command was not successfully configured.");
+
         return $Self->ExitCodeError();
     }
 
@@ -432,6 +469,7 @@ sub Execute {
 
     if ( $ParsedGlobalOptions->{help} ) {
         print "\n" . $Self->GetUsageHelp();
+
         return $Self->ExitCodeOk();
     }
 
@@ -444,6 +482,7 @@ sub Execute {
     $Self->{_ParsedARGV} = $Self->_ParseCommandlineArguments( \@CommandlineArguments );
     if ( !%{ $Self->{_ParsedARGV} // {} } ) {
         print STDERR "\n" . $Self->GetUsageHelp();
+
         return $Self->ExitCodeError();
     }
 
@@ -541,7 +580,7 @@ sub GetUsageHelp {
 
     my $UsageText = "<green>$Self->{Description}</green>\n";
     $UsageText .= "\n<yellow>Usage:</yellow>\n";
-    $UsageText .= " otobo.Console.pl $Self->{Name}";
+    $UsageText .= " careoncloud.Console.pl $Self->{Name}";
 
     my $OptionsText   = "<yellow>Options:</yellow>\n";
     my $ArgumentsText = "<yellow>Arguments:</yellow>\n";
@@ -612,6 +651,7 @@ sub ANSI {
     my ( $Self, $ANSI ) = @_;
 
     $Self->{ANSI} = $ANSI if defined $ANSI;
+
     return $Self->{ANSI};
 }
 
@@ -621,6 +661,8 @@ shorthand method to print an error message to STDERR.
 
 It will be prefixed with 'Error: ' and colored in red,
 if the terminal supports it (see L</ANSI()>).
+No other color markup will be handled.
+A trailing newline will be added.
 
 =cut
 
@@ -629,6 +671,7 @@ sub PrintError {
 
     chomp $Text;
     print STDERR $Self->_Color( 'red', "Error: $Text\n" );
+
     return;
 }
 
@@ -648,6 +691,45 @@ sub Print {
     if ( !$Self->{Quiet} ) {
         print $Self->_ReplaceColorTags($Text);
     }
+
+    return;
+}
+
+=head2 PrintWarning()
+
+this method will print the given text and a newline to STDOUT.
+
+The text will be colored in yellow if the terminal supports it (see L</ANSI()>).
+No other color markup will be handled.
+
+=cut
+
+sub PrintWarning {
+    my ( $Self, $Text ) = @_;
+
+    if ( !$Self->{Quiet} ) {
+        say $Self->_Color( 'yellow', $Text );
+    }
+
+    return;
+}
+
+=head2 PrintOk()
+
+this method will print the given text and a newline to STDOUT.
+
+The text will be colored in green if the terminal supports it (see L</ANSI()>).
+No other color markup will be handled.
+
+=cut
+
+sub PrintOk {
+    my ( $Self, $Text ) = @_;
+
+    if ( !$Self->{Quiet} ) {
+        say $Self->_Color( 'green', $Text );
+    }
+
     return;
 }
 
@@ -956,12 +1038,14 @@ sub _ParseCommandlineArguments {
                 }
 
                 $Self->PrintError("please provide option '--$Option->{Name}'.");
+
                 return;
             }
 
             for my $Value (@Values) {
                 if ( $Option->{HasValue} && $Value !~ $Option->{ValueRegex} ) {
                     $Self->PrintError("please provide a valid value for option '--$Option->{Name}'.");
+
                     return;
                 }
             }
@@ -985,11 +1069,13 @@ sub _ParseCommandlineArguments {
                 }
 
                 $Self->PrintError("please provide option '--$Option->{Name}'.");
+
                 return;
             }
 
             if ( $Option->{HasValue} && $Value !~ $Option->{ValueRegex} ) {
                 $Self->PrintError("please provide a valid value for option '--$Option->{Name}'.");
+
                 return;
             }
 
@@ -999,21 +1085,48 @@ sub _ParseCommandlineArguments {
 
     my %ArgumentValues;
 
+    # handle the arguments that are not named options
     ARGUMENT:
     for my $Argument ( @{ $Self->{_Arguments} // [] } ) {
-        if ( !@{$Arguments} ) {
-            if ( !$Argument->{Required} ) {
-                next ARGUMENT;
-            }
 
+        if ( !@{$Arguments} ) {
+
+            # optional options are skipped when the argument array is exhausted
+            next ARGUMENT unless $Argument->{Required};
+
+            # missing required arguments trigger an error
             $Self->PrintError("please provide a value for argument '$Argument->{Name}'.");
+
             return;
         }
 
-        my $Value = shift @{$Arguments};
+        # slurpy unnamed option take the whole array
+        # any argument declaration after a slurpy argument is ignored
+        if ( $Argument->{Slurpy} ) {
+
+            # do the slurping
+            my $ValueList = $Arguments;
+            $Arguments = [];
+
+            for my $Value ( $ValueList->@* ) {
+                if ( $Value !~ $Argument->{ValueRegex} ) {
+                    $Self->PrintError("please provide a valid value for argument '$Argument->{Name}'.");
+
+                    return;
+                }
+            }
+
+            $ArgumentValues{ $Argument->{Name} } = $ValueList;
+
+            last ARGUMENT;
+        }
+
+        # single value when not slurpy
+        my $Value = shift $Arguments->@*;
 
         if ( $Value !~ $Argument->{ValueRegex} ) {
             $Self->PrintError("please provide a valid value for argument '$Argument->{Name}'.");
+
             return;
         }
 
@@ -1026,6 +1139,7 @@ sub _ParseCommandlineArguments {
         $Error .= join "', '", @{$Arguments};
         $Error .= "').\n";
         $Self->PrintError($Error);
+
         return;
     }
 
@@ -1047,14 +1161,16 @@ ANSI output is available and active, otherwise the text stays unchanged.
 sub _Color {
     my ( $Self, $Color, $Text ) = @_;
 
-    return $Text if !$Self->{ANSI};
+    return $Text unless $Self->{ANSI};
     return $Text if $SuppressANSI;
-    return Term::ANSIColor::color($Color) . $Text . Term::ANSIColor::color('reset');
+    return colored( $Text, $Color );
 }
 
 sub _ReplaceColorTags {
     my ( $Self, $Text ) = @_;
+
     $Text =~ s{<(green|yellow|red)>(.*?)</\1>}{$Self->_Color($1, $2)}gsmxe;
+
     return $Text;
 }
 

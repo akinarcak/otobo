@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -32,7 +32,7 @@ sub Data {
     $Self->{DateFormatShort}     = '';
     $Self->{DateInputFormat}     = '';
     $Self->{DateInputFormatLong} = '';
-    $Self->{Completeness}        = 0.87775487553512;
+    $Self->{Completeness}        = 0.782384901344009;
 
     # csv separator
     $Self->{Separator}         = '';
@@ -43,7 +43,10 @@ sub Data {
 
         # Template: AdminACL
         'ACL Management' => 'ACL 관리',
+        'Filter by valid state' => '',
+        'Include invalid ACLs' => '',
         'Actions' => '행동',
+        'Object Type' => '',
         'Create New ACL' => '새 ACL',
         'Deploy ACLs' => 'ACL 배포',
         'Export ACLs' => 'ACL 내보내기',
@@ -61,6 +64,8 @@ sub Data {
             '새 ACL을 만들려면 다음에서 내 보낸 ACL을 가져올 수 있습니다.다른 시스템을 만들거나 완전한 새 시스템을 만드십시오.',
         'Changes to the ACLs here only affect the behavior of the system, if you deploy the ACL data afterwards. By deploying the ACL data, the newly made changes will be written to the configuration.' =>
             '이후 ACL 데이터를 배포하는 경우 여기에서 ACL을 변경하면 시스템의 동작에만 영향을줍니다. ACL 데이터를 배포하면 새로 변경된 내용이 구성에 기록됩니다.',
+        'To delete an existing ACL you have to set the validity to invalid and save it. Afterwards a new button to delete the ACL will appear.' =>
+            '',
         'ACLs' => 'ACL',
         'Please note: This table represents the execution order of the ACLs. If you need to change the order in which ACLs are executed, please change the names of the affected ACLs.' =>
             '이 테이블은 ACL의 실행 순서를 나타냅니다. ACL이 실행되는 순서를 변경해야하는 경우 영향을받는 ACL의 이름을 변경하십시오',
@@ -82,8 +87,8 @@ sub Data {
         'Set up matching criteria for this ACL. Use \'Properties\' to match the current screen or \'PropertiesDatabase\' to match attributes of the current ticket that are in the database.' =>
             '이 ACL에 대한 일치 기준을 설정하십시오. \'Properties\'를 사용하여 현재 화면을 일치 시키거나 \'PropertiesDatabase\'를 사용하여 데이터베이스에있는 현재 티켓의 속성과 일치시킵니다.',
         'Change settings' => '설정 변경',
-        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is a white list, \'PossibleNot\' a black list.' =>
-            '기준이 일치하면 변경하려는 항목을 설정하십시오. Possible \'은 흰색 목록이고\'PossibleNot \'은 검은 색 목록입니다.',
+        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is an exclusive white list, \'PossibleAdd\' a white list, \'PossibleNot\' a black list. \'Possible\' also hides the empty value, which you could add again with \'[empty]\'.' =>
+            '',
         'Check the official %sdocumentation%s.' => '',
         'Show or hide the content' => '내용 보여주기/가리기',
         'Edit ACL Information' => 'ACL 정보 수정',
@@ -119,12 +124,13 @@ sub Data {
         'Calendar Management' => '캘린더 관리',
         'Add Calendar' => '캘린더 추가',
         'Edit Calendar' => '캘린더 수정',
+        'Include invalid calendars' => '',
         'Calendar Overview' => '캘린더 개요',
         'Add new Calendar' => '새 캘린더 추가',
         'Import Appointments' => '예약 Import',
         'Calendar Import' => '캘린더 Import',
-        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by calendar management module.' =>
-            '여기서 구성 파일을 업로드하여 시스템에 달력을 가져올 수 있습니다. 캘린더 관리 모듈에서 내 보낸 파일은 .yml 형식이어야합니다.',
+        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by the calendar management module.' =>
+            '',
         'Overwrite existing entities' => '덮어쓰시겠습니까?',
         'Upload calendar configuration' => '캘린더 설정 업로드',
         'Import Calendar' => '캘린더 Import',
@@ -152,6 +158,7 @@ sub Data {
         'Calendar with same name already exists.' => '같은 이름의 캘린더가 존재합니다.',
         'Color' => '색깔',
         'Permission group' => '권한 그룹',
+        'Insufficient group permissions.' => '',
         'Ticket Appointments' => '티켓 예약',
         'Rule' => '규칙',
         'Remove this entry' => '이것을 삭제',
@@ -187,6 +194,7 @@ sub Data {
         'Appointment Notification Management' => '약속 알림 관리',
         'Add Notification' => '알림 추가',
         'Edit Notification' => '알림 수정',
+        'Include invalid appointment notifications' => '',
         'Export Notifications' => '알림 Export',
         'Filter for Notifications' => '알림 필터',
         'Filter for notifications' => '알림 필터',
@@ -271,6 +279,7 @@ sub Data {
         'Attachment Management' => '첨부파일 관리',
         'Add Attachment' => '첨부파일 추가',
         'Edit Attachment' => '첨부파일 편집',
+        'Include invalid attachments' => '',
         'Filter for Attachments' => '첨부파일 필터링',
         'Filter for attachments' => '첨부파일 필터링',
         'Filename' => '파일 이름',
@@ -283,6 +292,7 @@ sub Data {
         'Auto Response Management' => '자동 응답 관리',
         'Add Auto Response' => '자동 응답 추가',
         'Edit Auto Response' => '자동 응답 수정',
+        'Include invalid auto responses' => '',
         'Filter for Auto Responses' => '자동 응답 필터링',
         'Filter for auto responses' => '자동 응답 필터링',
         'Response' => '응답',
@@ -308,25 +318,25 @@ sub Data {
         'Support data collector' => '지원 데이터 수집기',
         'Hint' => '힌트',
         'Currently support data is only shown in this system.' => '현재 지원되는 데이터는이 시스템에만 표시됩니다.',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
             '',
         'Configuration' => '구성',
         'Send support data' => '지원 데이터 보내기',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
             '',
         'Update' => '최신 정보',
         'System Registration' => '시스템 등록',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'Register this System' => '이 시스템 등록',
         'System Registration is disabled for your system. Please check your configuration.' =>
             '시스템 등록은 시스템에서 사용할 수 없습니다. 구성을 확인하십시오.',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
             '',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            'OTOBO 클라우드 서비스를 사용하려면 시스템을 등록해야합니다.',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            'CareOnCloud ESM 클라우드 서비스를 사용하려면 시스템을 등록해야합니다.',
         'Register this system' => '이 시스템 등록',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             '%s와 안전하게 통신 할 수있는 클라우드 서비스를 구성 할 수 있습니다.',
@@ -425,12 +435,34 @@ sub Data {
         'Customer Management' => '고객 관리',
         'Add Customer' => '고객 추가',
         'Edit Customer' => '고객 편집',
+        'Include invalid customer companies' => '',
         'List (only %s shown - more available)' => '목록 ( %s 보여짐 - 더있음)',
         'total' => '총',
         'Please enter a search term to look for customers.' => '고객을 찾으려면 검색어를 입력하십시오.',
         'Customer ID' => '고객 ID',
         'Please note' => '주의 사항',
         'This customer backend is read only!' => '이 고객 백엔드는 읽기전용입니다!',
+
+        # Template: AdminCustomerDashboardInfoTile
+        'Customer Info' => '',
+        'Customer Info Management' => '',
+        'Create new info tile entry' => '',
+        'Filter for info tile entries' => '',
+        'Create a new entry to be displayed on the info tile on the customer dashboard.' =>
+            '',
+        'Stop date' => '종료 날짜',
+        'Delete info tile entry' => '',
+
+        # Template: AdminCustomerDashboardInfoTileEdit
+        'Edit customer dashboard info tile entry' => '',
+        'Date invalid!' => '날짜가 잘못 되었습니다!',
+        'Tile content' => '',
+        'Content Body' => '',
+        'Marquee content' => '',
+        'Group Selection' => '',
+
+        # Template: AdminCustomerDashboardInfoTileNew
+        'Create new customer dashboard info tile entry' => '',
 
         # Template: AdminCustomerGroup
         'Manage Customer-Group Relations' => '고객-그룹 관계 관리',
@@ -466,6 +498,7 @@ sub Data {
         'Customer User Management' => '고객 사용자 관리',
         'Add Customer User' => '고객 사용자 추가',
         'Edit Customer User' => '고객 사용자 편집',
+        'Include invalid customer users' => '',
         'Customer user are needed to have a customer history and to login via customer panel.' =>
             '고객 사용자는 고객 기록을 보유하고 고객 패널을 통해 로그인해야 합니다.',
         'List (%s total)' => '목록 (%s 총)',
@@ -530,9 +563,14 @@ sub Data {
 
         # Template: AdminDynamicField
         'Dynamic Fields Management' => '동적 필드 관리',
-        'Add new field for object' => '객체에 대한 새 필드 추가',
+        'Include invalid dynamic fields' => '',
         'Filter for Dynamic Fields' => '동적 필드 필터링',
         'Filter for dynamic fields' => '동적 필드 필터링',
+        'Filter field by object type' => '',
+        'Filter field by namespace' => '',
+        'Add new field for object' => '객체에 대한 새 필드 추가',
+        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
+            '새 필드를 추가하려면 객체 목록 중 하나에서 필드 유형을 선택하십시오. 객체는 필드의 경계를 정의하며 필드 작성 후에는 변경할 수 없습니다.',
         'New Dynamic Fields' => '',
         'Would you like to benefit from additional dynamic field types? You have full access to the following field types:' =>
             '',
@@ -544,18 +582,17 @@ sub Data {
             '외부 웹 서비스는 이 동적 필드의 데이터 소스로 구성될 수 있습니다.',
         'This feature allows to add (multiple) contacts with data to tickets.' =>
             '이 기능을 사용하면 데이터가 있는 연락처를 티켓에 추가 할 수 있습니다.',
-        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
-            '새 필드를 추가하려면 객체 목록 중 하나에서 필드 유형을 선택하십시오. 객체는 필드의 경계를 정의하며 필드 작성 후에는 변경할 수 없습니다.',
         'Dynamic Fields List' => '동적 필드 목록',
         'Dynamic fields per page' => '페이지 당 동적 필드',
         'Label' => '상표',
         'Order' => '주문',
         'Object' => '목적',
+        'Copy this field' => '',
         'Delete this field' => '이 입력란을 삭제하십시오.',
 
         # Template: AdminDynamicFieldAdvanced
         'Import / Export' => '',
-        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by dynamic field management module.' =>
+        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by the dynamic field management module.' =>
             '',
         'DynamicFields Import' => '',
         'DynamicFields Export' => '',
@@ -579,6 +616,9 @@ sub Data {
         'This field is required and must be numeric.' => '이 필드는 필수이며 숫자여야 합니다.',
         'This is the order in which this field will be shown on the screens where is active.' =>
             '이 필드가 활성화 된 화면에 표시되는 순서입니다.',
+        'Namespace' => '네임 스페이스',
+        'This is the namespace in which this field will be used as prefix with the name.' =>
+            '',
         'Tooltip message:' => '',
         'This is the tooltip message shown inside the customer interface.' =>
             '',
@@ -637,6 +677,8 @@ sub Data {
         'Example' => '예',
         'You can reference the field with its own field name. You can also refer to other fields, e.g. with \'DynamicField_OtherFieldName\'.' =>
             '',
+        'If a dynamic field with a namespace is to be referenced, the field name needs to be stored in a variable and called.' =>
+            '',
         'Link for preview' => '미리보기 링크',
         'If filled in, this URL will be used for a preview which is shown when this link is hovered in ticket zoom. Please note that for this to work, the regular URL field above needs to be filled in, too.' =>
             '입력되면이 URL은 미리보기로 사용되며이 링크는 티켓 확대시 표시됩니다. 이 기능을 사용하려면 위의 일반 URL 입력란도 채워야합니다.',
@@ -655,6 +697,9 @@ sub Data {
         'Searchsuffix' => '',
         'Result Limit' => '',
         'Case Sensitive' => '',
+        'Multiple Values' => '',
+        'Activate this option to allow multiple values for this field.' =>
+            '',
 
         # Template: AdminDynamicFieldDateTime
         'Default date difference' => '기본 날짜 차이',
@@ -693,11 +738,28 @@ sub Data {
         'Fields' => '전지',
         'Screens' => '',
 
+        # Template: AdminDynamicFieldReference
+        'Check ReferenceFilter' => '',
+        'Below you can configure filters to restrict the list of referenced objects. The filters compare an attribute of the referenced object either to an attribute of the mask you are currently editing or to a fixed string.' =>
+            '',
+        'Object attribute' => '',
+        'Select an attribute of the referenced object by which the selectable entries will be filtered.' =>
+            '',
+        'Invalid ReferenceFilter_ReferenceObjectAttribute' => '',
+        'matches mask attribute' => '',
+        'Select an attribute of the edit mask to compare the selected attribute of the referenced object against.' =>
+            '',
+        'matches string' => '',
+        'Type a string to compare the selected attribute of the referenced object against.' =>
+            '',
+        'Add Reference Filter' => '',
+
         # Template: AdminDynamicFieldScreen
         'Management of Dynamic Fields <-> Screens' => '',
+        'Filter by object type' => '',
         'Overview' => '개요',
         'Default Columns Screens' => '',
-        'Add DynamicField' => '',
+        'Add Dynamic Field' => '',
         'You can assign elements to this Screen/Field by dragging the elements with the mouse from the left list to the right list.' =>
             '',
         'Ordering the elements within the list is also possible by drag \'n\' drop.' =>
@@ -719,13 +781,18 @@ sub Data {
         'Assigned Required Elements' => '',
         'Reset' => '리셋',
 
-        # Template: AdminDynamicFieldText
-        'Number of rows' => '행 수',
-        'Specify the height (in lines) for this field in the edit mode.' =>
-            '편집 모드에서이 필드의 높이를 (줄 단위로) 지정하십시오.',
-        'Number of cols' => '열 수',
-        'Specify the width (in characters) for this field in the edit mode.' =>
-            '편집 모드에서이 필드의 너비 (문자)를 지정하십시오.',
+        # Template: AdminDynamicFieldScript
+        'Expression' => '',
+        'The function which will be evaluated.' => '',
+        'Requirements' => '',
+        'If set, the function will only be evaluated if all chosen attributes are set.' =>
+            '',
+        'Preview Triggers' => '',
+        'If set, the field will be recalculated upon AJAX updates in edit masks.' =>
+            '',
+        'Storage Triggers (Events)' => '',
+        'If set, the field will be recalculated for the following events.' =>
+            '',
         'Check RegEx' => 'RegEx 확인',
         'Here you can specify a regular expression to check the value. The regex will be executed with the modifiers xms.' =>
             '여기서 정규 표현식을 지정하여 값을 확인할 수 있습니다. 정규 표현식은 xms 수정 자로 실행됩니다.',
@@ -733,6 +800,23 @@ sub Data {
         'Invalid RegEx' => '정규식이 잘못되었습니다.',
         'Error Message' => '에러 메시지',
         'Add RegEx' => '정규 표현식 추가',
+
+        # Template: AdminDynamicFieldSet
+        'Auto Indent Code' => '',
+        'Comment/Uncomment Code' => '',
+        'Search & Replace' => '',
+        'Select All' => '',
+        'Full Screen' => '',
+        'The YAML array of included dynamic fields. Syntax: \'--- [{DF: Name},...]\'' =>
+            '',
+
+        # Template: AdminDynamicFieldText
+        'Number of rows' => '행 수',
+        'Specify the height (in lines) for this field in the edit mode.' =>
+            '편집 모드에서이 필드의 높이를 (줄 단위로) 지정하십시오.',
+        'Number of cols' => '열 수',
+        'Specify the width (in characters) for this field in the edit mode.' =>
+            '편집 모드에서이 필드의 너비 (문자)를 지정하십시오.',
 
         # Template: AdminDynamicFieldTitle
         'Template' => '템플릿',
@@ -778,8 +862,13 @@ sub Data {
         'Edit Job' => '',
         'Add Job' => '',
         'Run Job' => '',
+        'Include invalid jobs' => '',
         'Filter for Jobs' => '',
         'Filter for jobs' => '',
+        'Here you can upload a configuration file to import generic agents to your system. The file needs to be in .yml format as exported by the generic agent management module.' =>
+            '',
+        'Generic Agents Import' => '',
+        'Generic Agents Export' => '',
         'Last run' => '마지막 실행',
         'Run Now!' => '지금 실행!',
         'Delete this task' => '이 작업 삭제',
@@ -904,6 +993,12 @@ sub Data {
         'Affected Tickets' => '영향받은 티켓',
         'Age' => '생성이후',
 
+        # Template: AdminGenericAgentImportExport
+        'Generic Agents' => '',
+        'Here you can export a configuration file of generic agents to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Generic Agents List' => '',
+
         # Template: AdminGenericInterfaceDebugger
         'GenericInterface Web Service Management' => 'GenericInterface 웹 서비스 관리',
         'Web Service Management' => '웹서비스 관리',
@@ -935,8 +1030,8 @@ sub Data {
             '이 이름은 다른 오류 처리 구성을 구분하는데 사용할 수 있습니다.',
         'Please provide a unique name for this web service.' => '이 웹 서비스에 고유한 이름을 입력하십시오.',
         'Error handling module backend' => '오류 처리 모듈 백엔드',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
-            '이 OTOBO 오류 처리 백엔드 모듈은 내부적으로 호출되어 오류 처리 메커니즘을 처리합니다.',
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
+            '이 CareOnCloud ESM 오류 처리 백엔드 모듈은 내부적으로 호출되어 오류 처리 메커니즘을 처리합니다.',
         'Processing options' => '처리 옵션',
         'Configure filters to control error handling module execution.' =>
             '오류 처리 모듈 실행을 제어하는 필터를 구성합니다.',
@@ -1027,15 +1122,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             '이름은 일반적으로 원격 웹 서비스의 작업을 호출하는데 사용됩니다.',
         'Invoker backend' => '호출자 백엔드',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            '이 OTOBO 호출자 백엔드 모듈은 원격 시스템에 전송할 데이터를 준비하고 응답 데이터를 처리하기 위해 호출됩니다.',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            '이 CareOnCloud ESM 호출자 백엔드 모듈은 원격 시스템에 전송할 데이터를 준비하고 응답 데이터를 처리하기 위해 호출됩니다.',
         'Mapping for outgoing request data' => '나가는 요청 데이터 매핑',
         'Configure' => '구성',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            'OTOBO 호출자의 데이터는이 매핑에 의해 처리되어 원격 시스템이 예상하는 종류의 데이터로 변환됩니다.',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            'CareOnCloud ESM 호출자의 데이터는이 매핑에 의해 처리되어 원격 시스템이 예상하는 종류의 데이터로 변환됩니다.',
         'Mapping for incoming response data' => '들어오는 응답 데이터 매핑',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            '응답 데이터는이 매핑에 의해 처리되어 OTOBO의 호출자가 예상하는 종류의 데이터로 변환됩니다.',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            '응답 데이터는이 매핑에 의해 처리되어 CareOnCloud ESM의 호출자가 예상하는 종류의 데이터로 변환됩니다.',
         'Asynchronous' => '비동기식',
         'Condition' => '조건',
         'Edit this event' => '이 일정 수정',
@@ -1043,8 +1138,8 @@ sub Data {
         'Add Event' => '',
         'To add a new event select the event object and event name and click on the "+" button' =>
             '새 이벤트를 추가하려면 이벤트 객체와 이벤트 이름을 선택하고 "+"버튼을 클릭하십시오.',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            '비동기 이벤트 트리거는 백그라운드에서 OTOBO Scheduler Daemon에 의해 처리됩니다 (권장).',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            '비동기 이벤트 트리거는 백그라운드에서 CareOnCloud ESM Scheduler Daemon에 의해 처리됩니다 (권장).',
         'Synchronous event triggers would be processed directly during the web request.' =>
             '동기 이벤트 트리거는 웹 요청 중에 직접 처리됩니다.',
 
@@ -1131,15 +1226,15 @@ sub Data {
         # Template: AdminGenericInterfaceMappingXSLT
         'General Shortcuts' => '일반 단축키',
         'MacOS Shortcuts' => 'MacOS 단축키',
-        'Comment code' => '주석 코드',
-        'Uncomment code' => '코드 주석 처리 해제',
-        'Auto format code' => '자동 형식 코드',
-        'Expand/Collapse code block' => '확장 / 축소 코드 블록',
+        'Comment/Uncomment code' => '',
+        'Auto indent code' => '',
+        'Jump to line' => '',
+        'Autocomplete' => '',
         'Find' => '찾기',
         'Find next' => '다음 찾기',
         'Find previous' => '이전 찾기',
         'Find and replace' => '찾기 및 바꾸기',
-        'Find and replace all' => '모두 찾기 및 바꾸기',
+        'Exit full screen' => '',
         'XSLT Mapping' => 'XSLT 매핑',
         'XSLT stylesheet' => 'XSLT 스타일 시트',
         'The entered data is not a valid XSLT style sheet.' => '입력 한 데이터가 유효한 XSLT 스타일 시트가 아닙니다.',
@@ -1178,6 +1273,11 @@ sub Data {
             '여기에 정의 된 정규 표현식은 XSLT 매핑 전에 적용됩니다.',
         'Regular expressions defined here will be applied after the XSLT mapping.' =>
             '여기에 정의 된 정규 표현식은 XSLT 매핑 후에 적용됩니다.',
+        'Enable Extended XSLT Mapping' => '',
+        'Extended XSLT Mapping' => '',
+        'Enable' => '사용',
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+            '',
 
         # Template: AdminGenericInterfaceOperationDefault
         'Add Operation' => '작업 추가',
@@ -1187,11 +1287,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             '이름은 일반적으로 원격 시스템에서이 웹 서비스 조작을 호출하는 데 사용됩니다.',
         'Operation backend' => '작업 백엔드',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            '이 OTOBO 연산 백엔드 모듈은 내부적으로 호출되어 요청을 처리하고 응답 데이터를 생성합니다.',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            '이 CareOnCloud ESM 연산 백엔드 모듈은 내부적으로 호출되어 요청을 처리하고 응답 데이터를 생성합니다.',
         'Mapping for incoming request data' => '들어오는 요청 데이터 매핑',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            '요청 데이터는이 매핑에 의해 처리되어 OTOBO가 예상하는 종류의 데이터로 변환됩니다.',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            '요청 데이터는이 매핑에 의해 처리되어 CareOnCloud ESM가 예상하는 종류의 데이터로 변환됩니다.',
         'Mapping for outgoing response data' => '발신 응답 데이터 매핑',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             '응답 데이터는이 매핑에 의해 처리되어 원격 시스템이 예상하는 종류의 데이터로 변환합니다.',
@@ -1209,8 +1309,8 @@ sub Data {
             '이 작동을 특정 요청 방법으로 제한하십시오. 메서드를 선택하지 않으면 모든 요청이 수락됩니다.',
         'Maximum message length' => '최대 메시지 길이',
         'This field should be an integer number.' => '이 필드는 정수여야 합니다.',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            '여기서 OTOBO가 처리 할 REST 메시지의 최대 크기 (바이트)를 지정할 수 있습니다.',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            '여기서 CareOnCloud ESM가 처리 할 REST 메시지의 최대 크기 (바이트)를 지정할 수 있습니다.',
         'Send Keep-Alive' => 'Keep-Alive 보내기',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             '이 구성은 들어오는 연결이 닫히거나 살아 있어야 하는지를 정의합니다.',
@@ -1219,7 +1319,7 @@ sub Data {
         'Endpoint' => '종점',
         'URI to indicate specific location for accessing a web service.' =>
             '웹 서비스에 액세스하기위한 특정 위치를 나타내는 URI.',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => '제한시간',
         'Timeout value for requests.' => '요청에 대한 시간 초과값 입니다.',
@@ -1230,6 +1330,13 @@ sub Data {
         'The user name to be used to access the remote system.' => '원격 시스템에 액세스하는 데 사용할 사용자 이름.',
         'BasicAuth Password' => 'BasicAuth 비밀번호',
         'The password for the privileged user.' => '권한있는 사용자의 암호입니다.',
+        'Kerberos User' => '',
+        'Kerberos keytab file' => '',
+        'The Kerberos keytab file for the privileged user.' => '',
+        'OAuth2 Functional Account' => '',
+        'Select the Functional-Account to use for OAuth2 authentication. Functional-Accounts can be configured here:' =>
+            '',
+        'OAuth2 Functional Accounts' => '',
         'Use Proxy Options' => '프록시 옵션 사용',
         'Show or hide Proxy options to connect to the remote system.' => '원격 시스템에 연결하기위한 프록시 옵션 표시 또는 숨기기.',
         'Proxy Server' => '프록시 서버',
@@ -1246,24 +1353,27 @@ sub Data {
         'Client Certificate' => '클라이언트 인증서',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             'SSL 클라이언트 인증서 파일의 전체 경로 및 이름 (PEM, DER 또는 PKCS # 12 형식이어야 함).',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => '예 : /opt/otobo/var/certificates/SOAP/certificate.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => '예 : /opt/careoncloud/var/certificates/SOAP/certificate.pem',
         'Client Certificate Key' => '클라이언트 인증서 키',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             'SSL 클라이언트 인증서 키 파일의 전체 경로 및 이름 (아직 인증서 파일에 포함되어 있지 않은 경우).',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => '예 : /opt/otobo/var/certificates/SOAP/key.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => '예 : /opt/careoncloud/var/certificates/SOAP/key.pem',
         'Client Certificate Key Password' => '클라이언트 인증서 키 암호',
         'The password to open the SSL certificate if the key is encrypted.' =>
             '키가 암호화 된 경우 SSL 인증서를 여는 암호입니다.',
         'Certification Authority (CA) Certificate' => '인증 기관 (CA) 인증서',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             'SSL 인증서의 유효성을 검사하는 인증 기관 인증서 파일의 전체 경로 및 이름입니다.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => '예 : /opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => '예 : /opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => '인증 기관 (CA) 디렉토리',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             'CA 인증서가 파일 시스템에 저장되는 인증 기관 디렉토리의 전체 경로입니다.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => '예 : / opt / otobo / var / certificates / SOAP / CA',
-        'SSL hostname verification.' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => '예 : / opt / careoncloud / var / certificates / SOAP / CA',
+        'SSL hostname verification' => '',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
+            '',
+        'SSL verify mode' => '',
+        'Abort the request if SSL verification fails. Disabling skips SSL verification entirely. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             '',
         'Controller mapping for Invoker' => '호출자에 대한 컨트롤러 매핑',
         'The controller that the invoker should send requests to. Variables marked by a \':\' will get replaced by the data value and passed along with the request. (e.g. /Ticket/:TicketID?UserLogin=:UserLogin&Password=:Password).' =>
@@ -1273,6 +1383,9 @@ sub Data {
             '이 Invoker (선택 사항)로 요청에 사용할 특정 HTTP 명령입니다.',
         'Default command' => '기본 명령',
         'The default HTTP command to use for the requests.' => '요청에 사용할 기본 HTTP 명령입니다.',
+        'Use multipart/form-data:' => '',
+        'Select requesters to send attachments as binary data with content type \'multipart/form-data\' instead of the default Base64 encoded inline JSON.' =>
+            '',
         'Additional request headers (all invokers)' => '',
         'Additional request headers (invoker specific)' => '',
         'Remove all headers for this invoker' => '',
@@ -1305,9 +1418,8 @@ sub Data {
         'Usually .Net web services use "/" as separator.' => '일반적으로 .Net 웹 서비스는 구분 기호로 "/"를 사용합니다.',
         'SOAPAction free text' => 'SOAPAction 자유 텍스트',
         'Text to be used to as SOAPAction.' => 'SOAPAction로서 사용되는 텍스트.',
-        'Namespace' => '네임 스페이스',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI는 SOAP 메소드에 컨텍스트를 제공하여 모호성을 줄입니다.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => '요청 이름 체계',
         'Select how SOAP request function wrapper should be constructed.' =>
@@ -1325,8 +1437,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             'SOAP 응답 함수 랩퍼를 구성하는 방법을 선택하십시오.',
         'Response name free text' => '응답 이름 자유 텍스트',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            '여기서 OTOBO가 처리 할 SOAP 메시지의 최대 크기 (바이트)를 지정할 수 있습니다.',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            '여기서 CareOnCloud ESM가 처리 할 SOAP 메시지의 최대 크기 (바이트)를 지정할 수 있습니다.',
         'Encoding' => '부호화',
         'The character encoding for the SOAP message contents.' => 'SOAP 메시지 내용의 문자 인코딩입니다.',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => '',
@@ -1339,6 +1451,7 @@ sub Data {
         # Template: AdminGenericInterfaceWebservice
         'Add Web Service' => '웹 서비스 추가',
         'Edit Web Service' => '웹 서비스 편집',
+        'Include invalid webservices' => '',
         'Clone Web Service' => '웹 서비스 복제',
         'The name must be unique.' => '이름은 고유해야 합니다.',
         'Clone' => '클론',
@@ -1365,10 +1478,10 @@ sub Data {
         'Provider transport' => '공급자 전송',
         'Requester transport' => '요청자 전송',
         'Debug threshold' => '디버그 임계 값',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            '공급자 모드에서 OTOBO는 원격 시스템에서 사용되는 웹 서비스를 제공합니다.',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            '요청자 모드에서 OTOBO는 원격 시스템의 웹 서비스를 사용합니다.',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            '공급자 모드에서 CareOnCloud ESM는 원격 시스템에서 사용되는 웹 서비스를 제공합니다.',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            '요청자 모드에서 CareOnCloud ESM는 원격 시스템의 웹 서비스를 사용합니다.',
         'Network transport' => '네트워크 전송',
         'Error Handling Modules' => '오류 처리 모듈',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1405,11 +1518,61 @@ sub Data {
         'Group Management' => '그룹 관리',
         'Add Group' => '그룹 추가',
         'Edit Group' => '그룹 편집',
+        'Include invalid groups' => '',
         'The admin group is to get in the admin area and the stats group to get stats area.' =>
             '관리자 그룹은 관리 영역과 통계 그룹을 가져 와서 통계 영역을 얻는 것입니다.',
         'Create new groups to handle access permissions for different groups of agent (e. g. purchasing department, support department, sales department, ...). ' =>
             '서로 다른 에이전트 그룹 (예 : 구매 부서, 지원 부서, 판매 부서 등)에 대한 액세스 권한을 처리 할 새 그룹을 만듭니다.',
         'It\'s useful for ASP solutions. ' => 'ASP 솔루션에 유용합니다.',
+        'Here you can upload a configuration file to import groups to your system. The file needs to be in .yml format as exported by the group management module.' =>
+            '',
+        'Groups Import' => '',
+        'Groups Export' => '',
+
+        # Template: AdminGroupImportExport
+        'Here you can export a configuration file of groups to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Groups List' => '',
+
+        # Template: AdminImportExport
+        'Import/Export Management' => '',
+        'Add template' => '템플릿 추가',
+        'Create a template to import and export object information.' => '',
+        'To use this module, you need to install ITSMConfigurationManagement or any other package that provides back end for objects to be imported and exported.' =>
+            '',
+        'Number' => '번호',
+        'Format' => '체재',
+        'Start Import' => '',
+        'Start Export' => '',
+        'Delete this template' => '',
+        'Step 1 of 5 - Edit common information' => '',
+        'Name is required!' => '',
+        'Object is required!' => '',
+        'Format is required!' => '',
+        'Next' => '다음',
+        'Step 2 of 5 - Edit object information' => '',
+        'Back' => '뒤',
+        'Step 3 of 5 - Edit format information' => '',
+        'is required!' => '',
+        'Step 4 of 5 - Edit mapping information' => '',
+        'No map elements found.' => '',
+        'Up' => '위',
+        'Down' => '하위',
+        'Add Mapping Element' => '',
+        'Step 5 of 5 - Edit search information' => '',
+        'Template Name' => '템플릿 이름',
+        'Restrict export per search' => '',
+        'Finish' => '끝',
+        'Import information' => '',
+        'Source File' => '',
+        'Import summary for %s' => '',
+        'Records' => '',
+        'Success' => '',
+        'Failed' => '실패한',
+        'Duplicate names' => '',
+        'Last processed line number of import file' => '',
+        'Ok' => '',
+        'Do you really want to delete this template item?' => '',
 
         # Template: AdminLog
         'System Log' => '시스템 로그',
@@ -1424,12 +1587,13 @@ sub Data {
         'Add Mail Account' => '메일 계정 추가',
         'Edit Mail Account for host' => '호스트용 메일 계정 편집',
         'and user account' => '및 사용자 계정',
+        'Include invalid Mail Accounts' => '',
         'Filter for Mail Accounts' => '메일 계정 필터링',
         'Filter for mail accounts' => '메일 계정 필터링',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             '하나의 계정을 가진 모든 수신 이메일은 선택된 대기열에 발송됩니다.',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
-            '계정이 신뢰할 수있는 것으로 표시되면 도착 시간 (예 : 우선 순위 등)에 이미 존재하는 X-OTOBO 헤더가 보존되어 사용됩니다 예 : PostMaster 필터',
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+            '계정이 신뢰할 수있는 것으로 표시되면 도착 시간 (예 : 우선 순위 등)에 이미 존재하는 X-CareOnCloud ESM 헤더가 보존되어 사용됩니다 예 : PostMaster 필터',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             '나가는 이메일은 %s의 Sendmail * 설정을 통해 구성 할 수 있습니다.',
         'System Configuration' => '시스템 설정',
@@ -1437,6 +1601,9 @@ sub Data {
         'Delete account' => '계정 삭제',
         'Fetch mail' => '메일 가져오기',
         'Do you really want to delete this mail account?' => '정말로 이 메일 계정을 삭제 하시겠습니까?',
+        'OIDC Account' => '',
+        'Select the' => '',
+        'Account to use for OAuth2 authentication.' => '',
         'Example: mail.example.com' => '예 : mail.example.com',
         'IMAP Folder' => 'IMAP 폴더',
         'Only modify this if you need to fetch mail from a different folder than INBOX.' =>
@@ -1459,6 +1626,7 @@ sub Data {
 
         # Template: AdminNotificationEvent
         'Ticket Notification Management' => '티켓 알림 관리',
+        'Include invalid notifications' => '',
         'Here you can upload a configuration file to import Ticket Notifications to your system. The file needs to be in .yml format as exported by the Ticket Notification module.' =>
             '여기서 구성 파일을 업로드하여 시스템에 티켓 알림을 가져올 수 있습니다. 티켓 알림 모듈에서 내 보낸 파일은 .yml 형식이어야합니다.',
         'Here you can choose which events will trigger this notification. An additional ticket filter can be applied below to only send for ticket with certain criteria.' =>
@@ -1497,15 +1665,125 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => '',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
-            '<OTOBO_TICKET_DynamicField _...>와 같은 OTOBO 태그를 사용하여 현재 티켓의 값을 삽입 할 수 있습니다.',
+        'You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            '<CareOnCloud_TICKET_DynamicField _...>와 같은 CareOnCloud ESM 태그를 사용하여 현재 티켓의 값을 삽입 할 수 있습니다.',
+
+        # Template: AdminOAuthTokenStore
+        'OAuth2 Token Management (OIDC)' => '',
+        'OpenID Connect Functional OAuth2 Account Management' => '',
+        'Add Account' => '',
+        'Edit Account' => '',
+        'About OIDC Functional Accounts' => '',
+        'This page displays an overview of configured functional OAuth accounts and their corresponding token status.' =>
+            '',
+        'You can test your configuration with a click on the \'Renew\' button, which will try to fetch or refresh a new token.' =>
+            '',
+        'OIDC profiles to link your OIDC functional account to can be created here:' =>
+            '',
+        'OAuth2 OIDC profiles' => '',
+        'Delete Account' => '',
+        'OIDC Functional Accounts and their active OAuth2 Tokens' => '',
+        'Since you do not have any OIDC provider profiles configured, you cannot add an OAuth2 functional account. You have to first configure at least one OIDC provider profile here:' =>
+            '',
+        'OIDC profiles' => '',
+        'There are no OAuth2 accounts defined.' => '',
+        'Account Name' => '',
+        'Profile Name' => '',
+        'Flow' => '',
+        'Has Token?' => '',
+        'Refresh Token Expires' => '',
+        'Renew Token(s)' => '',
+        'Renew' => '',
+        'Add Invoker Account' => '',
+        'Edit Invoker Account' => '',
+        'The unique name for this account.' => '',
+        'OIDC Profile' => '',
+        'The OpenID Connect profile to link to this functional account. OIDC profiles can be configured here:' =>
+            '',
+        'Grant Type' => '',
+        'The OAuth2 grant_type to use for acquiring tokens for this account.' =>
+            '',
+        'Selecting \'authorization_code\' will redirect you to your OpenID Connect provider\'s login page to validate your account once you click \'Save\'.' =>
+            '',
+        'The username if grant type is \'password\'.' => '',
+        'The password to use if grant type is \'password\'.' => '',
+        'OAuth2 Scopes' => '',
+        'Space separate list of OAuth2 scopes to use. Usual values include openid, email, profile, and roles.' =>
+            '',
+        'Advanced Invoker Settings' => '',
+        'Resources' => '자원',
+        'Optional (space separated list) for the resource parameter if required. Leave empty unless instructed otherwise.' =>
+            '',
+        'Resource Parameter Name' => '',
+        'Name of the resource parameter to use. Defaults to \'resource\'. Do not change unless instructed.' =>
+            '',
+        'Token Type' => '',
+        'The token type to use for external API calls. Usually \'access_token\'.' =>
+            '',
+
+        # Template: AdminOIDCProfiles
+        'OpenID Connect Profiles' => '',
+        'OpenID Connect Provider Profiles Management' => '',
+        'Add Profile' => '',
+        'Edit Profile' => '',
+        'About OIDC Provider Profiles' => '',
+        'This page displays an overview of configured OIDC provider profiles.' =>
+            '',
+        'You can connect OIDC profiles with a OIDC functional account' =>
+            '',
+        'here' => '',
+        'Delete Profile' => '',
+        'OpenID Connect Provider Profiles for Outgoing Web Service Calls (GenericInterface Invoker)' =>
+            '',
+        'There are no OIDC provider profiles defined.' => '',
+        'Client ID' => '',
+        'Provider' => '',
+        'Add OIDC Provider Profile' => '',
+        'Edit OIDC Provider Profile' => '',
+        'Since you are using OIDC as authentication module, these values have been pre-populated with the OIDC provider configuration used for login.' =>
+            '',
+        'The unique name for this profile.' => '',
+        'Metadata URL.' => '',
+        'The well-known provider metadata URL.' => '',
+        'The client ID of your OAuth2 application.' => '',
+        'Client Secret' => '',
+        'The client secret of your OAuth2 application.' => '',
+        'Time in seconds for caching provider data.' => '',
+        'SSL Options (Optional)' => '',
+        'SSL Certificate' => '',
+        'SSL certificate path.' => '',
+        'SSL Certificate Key' => '',
+        'SSL certificate private key path.' => '',
+        'SSL Password' => '',
+        'The SSL password.' => '',
+        'SSL CA File' => '',
+        'SSL certificate authority file path.' => '',
+        'SSL CA Directory' => '',
+        'SSL certificate authority directory path.' => '',
+        'SSL Verify Hostname' => '',
+        'Enable or disable SSL hostname verification. Only disable for debugging purposes!' =>
+            '',
+        'SSL Verify Mode' => '',
+        'Enable or disable SSL verification. Only disable for debugging purposes!' =>
+            '',
+        'Misc Options (Optional)' => '',
+        'Use Nonce' => '',
+        'Rand Length' => '',
+        'Random string length used for state and nonce parameters. Default is \'22\'.' =>
+            '',
+        'Rand TTL' => '',
+        'Time-to-live for state and nonce in seconds. Default is \'300\' (5 min).' =>
+            '',
+        'Leeway' => '',
+        'Time drift allowance between servers to be allowed. Default \'2\' seconds.' =>
+            '',
 
         # Template: AdminPGP
         'PGP Management' => 'PGP 관리',
         'Add PGP Key' => 'PGP 키 추가',
         'PGP support is disabled' => 'PGP 지원이 비활성화되었습니다.',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            'OTOBO에서 PGP를 사용하려면 먼저 PGP를 활성화해야합니다.',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            'CareOnCloud ESM에서 PGP를 사용하려면 먼저 PGP를 활성화해야합니다.',
         'Enable PGP support' => 'PGP 지원 사용',
         'Faulty PGP configuration' => 'PGP 구성 오류',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1530,22 +1808,22 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             '이 패키지를 정말로 다시 설치 하시겠습니까? 수동으로 변경하면 손실됩니다.',
         'Go to updating instructions' => '',
-        'Go to the OTOBO customer portal' => 'OTOBO 고객 포털로 이동하십시오.',
+        'Go to the CareOnCloud ESM customer portal' => 'CareOnCloud ESM 고객 포털로 이동하십시오.',
         'package information' => '패키지 정보',
-        'Package installation requires a patch level update of OTOBO.' =>
-            '패키지를 설치하려면 OTOBO의 패치 레벨 업데이트가 필요합니다. ',
-        'Package update requires a patch level update of OTOBO.' => '패키지 업데이트에는 OTOBO의 패치 수준 업데이트가 필요합니다. ',
-        'Please note that your installed OTOBO version is %s.' => '설치된 OTOBO 버전은 %s입니다.',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
-            '이 패키지를 설치하려면 OTOBO를 버전 %s 이상으로 업데이트해야합니다.',
-        'This package can only be installed on OTOBO version %s or older.' =>
-            '이 패키지는 OTOBO 버전 %s 또는 그 이상에서만 설치할 수 있습니다.',
-        'This package can only be installed on OTOBO version %s or newer.' =>
-            'This package can only be installed on OTOBO version %s or newer.',
-        'Why should I keep OTOBO up to date?' => '왜 OTOBO를 최신 상태로 유지해야합니까?',
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
+            '패키지를 설치하려면 CareOnCloud ESM의 패치 레벨 업데이트가 필요합니다. ',
+        'Package update requires a patch level update of CareOnCloud ESM.' => '패키지 업데이트에는 CareOnCloud ESM의 패치 수준 업데이트가 필요합니다. ',
+        'Please note that your installed CareOnCloud ESM version is %s.' => '설치된 CareOnCloud ESM 버전은 %s입니다.',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
+            '이 패키지를 설치하려면 CareOnCloud ESM를 버전 %s 이상으로 업데이트해야합니다.',
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
+            '이 패키지는 CareOnCloud ESM 버전 %s 또는 그 이상에서만 설치할 수 있습니다.',
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
+            'This package can only be installed on CareOnCloud ESM version %s or newer.',
+        'Why should I keep CareOnCloud ESM up to date?' => '왜 CareOnCloud ESM를 최신 상태로 유지해야합니까?',
         'You will receive updates about relevant security issues.' => '관련 보안 문제에 대한 업데이트가 제공됩니다.',
-        'You will receive updates for all other relevant OTOBO issues.' =>
-            '다른 모든 관련 OTOBO 문제에 대한 업데이트가 제공됩니다.',
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
+            '다른 모든 관련 CareOnCloud ESM 문제에 대한 업데이트가 제공됩니다.',
         'How can I do a patch level update if I don’t have a contract?' =>
             '계약이 없다면 어떻게 패치 레벨 업데이트를 할 수 있습니까?',
         'Please find all relevant information within the updating instructions at %s.' =>
@@ -1561,7 +1839,7 @@ sub Data {
         'Install' => '설치',
         'Update repository information' => '저장소 정보 업데이트',
         'Cloud services are currently disabled.' => '클라우드 서비스는 현재 사용할 수 없습니다.',
-        'OTOBO Verify can not continue!' => '',
+        'CareOnCloud ESM Verify can not continue!' => '',
         'Enable cloud services' => '클라우드 서비스 사용',
         'Update all installed packages' => '설치된 모든 패키지를 업데이트 하십시오.',
         'Online Repository' => '온라인 저장소',
@@ -1569,7 +1847,7 @@ sub Data {
         'Action' => '동작',
         'Module documentation' => '모듈 문서',
         'Local Repository' => '로컬 저장소',
-        'This package is verified by OTOBOverify (tm)' => '이 패키지는 OTOBOverify (tm)에 의해 검증됩니다.',
+        'This package is verified by CareOnCloud Verify (tm)' => '이 패키지는 CareOnCloud Verify (tm)에 의해 검증됩니다.',
         'Uninstall' => '제거',
         'Package not correctly deployed! Please reinstall the package.' =>
             '패키지가 올바르게 배치되지 않았습니다! 패키지를 다시 설치하십시오.',
@@ -1619,8 +1897,13 @@ sub Data {
         'PostMaster Filter Management' => 'PostMaster 필터 관리',
         'Add PostMaster Filter' => 'PostMaster 필터 추가',
         'Edit PostMaster Filter' => '포스트 마스터 필터 편집',
+        'Include invalid PostMaster Filters' => '',
         'Filter for PostMaster Filters' => '',
         'Filter for PostMaster filters' => '',
+        'Search through PostMaster filters' => '',
+        'Search all filter attributes' => '',
+        'Limit search to selected header fields' => '',
+        'Limit search to selected set fields' => '',
         'To dispatch or filter incoming emails based on email headers. Matching using Regular Expressions is also possible.' =>
             '전자 메일 헤더를 기반으로 수신 전자메일을 발송하거나 필터링합니다. 정규표현식을 사용하여 일치시킬 수도 있습니다.',
         'If you want to match only the email address, use EMAILADDRESS:info@example.com in From, To or Cc.' =>
@@ -1649,6 +1932,7 @@ sub Data {
         'Priority Management' => '우선 순위 관리',
         'Add Priority' => '우선 순위 추가',
         'Edit Priority' => '우선 순위 편집',
+        'Include invalid priorities' => '',
         'Filter for Priorities' => '우선 순위에 대한 필터링',
         'Filter for priorities' => '우선 순위에 대한 필터링',
         'This priority is present in a SysConfig setting, confirmation for updating settings to point to the new priority is needed!' =>
@@ -1657,12 +1941,13 @@ sub Data {
 
         # Template: AdminProcessManagement
         'Process Management' => '공정 관리',
+        'Include inactive processes' => '',
         'Filter for Processes' => '프로세스 필터링',
         'Filter for processes' => '',
         'Create New Process' => '새 프로세스 만들기',
         'Deploy All Processes' => '모든 프로세스 배포',
-        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by process management module.' =>
-            '여기서 구성 파일을 업로드하여 시스템에 프로세스를 가져올 수 있습니다. 파일은 프로세스 관리 모듈에서 내 보낸 .yml 형식이어야합니다.',
+        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by the process management module.' =>
+            '',
         'Upload process configuration' => '업로드 프로세스 구성',
         'Import process configuration' => '프로세스 구성 가져오기',
         'Ready2Adopt Processes' => 'Ready2Adopt 프로세스',
@@ -1686,6 +1971,7 @@ sub Data {
             '이 활동을 변경하면 다음 프로세스에 영향을 미칩니다.',
         'Activity' => '활동',
         'Activity Name' => '활동명',
+        'Global' => '',
         'Activity Dialogs' => '활동 대화상자',
         'You can assign Activity Dialogs to this Activity by dragging the elements with the mouse from the left list to the right list.' =>
             '마우스로 요소를 왼쪽 목록에서 오른쪽 목록으로 드래그하여 활동 대화 상자를 이 활동에 지정할 수 있습니다.',
@@ -1712,6 +1998,10 @@ sub Data {
         'The selected required lock does not exist.' => '선택한 필수 잠금이 없습니다.',
         'Submit Advice Text' => 'Submit Advice Text',
         'Submit Button Text' => '제출 버튼 텍스트',
+        'Input Field Definition' => '',
+        'Direct submit' => '',
+        'This property won\'t take effect because there are fields configured as visible.' =>
+            '',
         'You can assign Fields to this Activity Dialog by dragging the elements with the mouse from the left list to the right list.' =>
             '마우스로 요소를 왼쪽 목록에서 오른쪽 목록으로 끌어서이 활동 대화 상자에 필드를 할당 할 수 있습니다.',
         'Filter available fields' => '사용 가능한 필드 필터링',
@@ -1719,6 +2009,7 @@ sub Data {
         'Assigned Fields' => '할당된 필드',
         'Communication Channel' => '통신 채널',
         'Is visible for customer' => '고객에게 표시됩니다.',
+        'Standard Templates' => '',
         'Display' => '다스플레이',
 
         # Template: AdminProcessManagementPath
@@ -1796,10 +2087,43 @@ sub Data {
         'Transition actions are not being used in this process.' => '전환 작업은 이 프로세스에서 사용되지 않습니다.',
 
         # Template: AdminProcessManagementTransition
-        'Please note that changing this transition will affect the following processes' =>
-            '이 전환을 변경하면 다음 프로세스에 영항을 미칩니다.',
+        'Please note that changing this transition will affect the following processes:' =>
+            '',
         'Transition' => '전환',
         'Transition Name' => '전환 이름',
+        'Transition Reference for "Fields" Settings' => '',
+        'Name of the ticket attribute that should be used for validation. In general, all attributes returned by the TicketGet function can be used.' =>
+            '',
+        'There are several possibilities to validate whether this transition is valid.' =>
+            '',
+        'Exact match' => '정확히 일치',
+        'Value must exactly match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - negated' => '',
+        'Value must not match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the string specified in "Value".' =>
+            '',
+        'Regular Expression' => '',
+        'Value must contain a matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - negated' => '',
+        'Value must contain a non-matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the regular expression specified in "Value".' =>
+            '',
+        'Transition validation module' => '전환 유효성 검사 모듈',
+        '"Name" is currently irrelevant, "Value" must contain the path to the module, usually Kernel::System::Process::Transition::<TA_Name>.' =>
+            '',
+        'Value must always contain a string or a regular expression used for comparison.' =>
+            '',
+        'Examples' => '',
+        'The process ticket should move to the next process step as soon as a status containing "closed" in its name is set. Therefore, configure Name="State", Type="Regular Expression" and Value="closed" (or the long form "^.*closed.*$").' =>
+            '',
+        'If a dynamic field should be used, configure Name="DynamicField_<FieldName>". To access a field inside a dynamic field of type "Set", the following syntax can be used: ' =>
+            '',
 
         # Template: AdminProcessManagementTransitionAction
         'Please note that changing this transition action will affect the following processes' =>
@@ -1815,8 +2139,13 @@ sub Data {
         'Queue Management' => '',
         'Add Queue' => '대기열 추가',
         'Edit Queue' => '대기열 편집',
+        'Include invalid queues' => '',
         'Filter for Queues' => '대기열 필터링',
         'Filter for queues' => '대기열 필터링',
+        'Here you can upload a configuration file to import queues to your system. The file needs to be in .yml format as exported by the queue management module.' =>
+            '',
+        'Queues Import' => '',
+        'Queues Export' => '',
         'A queue with this name already exists!' => '이 이름을 가진 대기열이 이미 있습니다!',
         'This queue is present in a SysConfig setting, confirmation for updating settings to point to the new queue is needed!' =>
             '이 대기열은 SysConfig 설정에 있으며, 새로운 대기열을 가리 키도록 설정을 업데이트해야합니다!',
@@ -1843,6 +2172,7 @@ sub Data {
             '티켓이 닫히고 고객이 후속 조치를 보내면 티켓이 이전 소유자에게 고정됩니다.',
         'System address' => '시스템 주소',
         'Will be the sender address of this queue for email answers.' => '전자 메일 응답을 위한 이 큐의 보낸사람 주소가 됩니다.',
+        'Is defined in Admin > Email Addresses.' => '',
         'Default sign key' => '기본 기호 키',
         'To use a sign key, PGP keys or S/MIME certificates need to be added with identifiers for selected queue system address.' =>
             '',
@@ -1850,6 +2180,10 @@ sub Data {
         'The salutation for email answers.' => '이메일 답변에 대한 인사말.',
         'Signature' => '서명',
         'The signature for email answers.' => '이메일 답변을 위한 서명.',
+        'The business calendar for unlock time and the escalation times. No selection means that the default calendar is used.' =>
+            '',
+        'Is defined in Admin > SystemConfiguration > Core > Time (default calendar) or in calendars 1 through 9.' =>
+            '',
         'This queue is used in the following config settings:' => '이 대기열은 다음 구성 설정에서 사용됩니다.',
 
         # Template: AdminQueueAutoResponse
@@ -1861,38 +2195,52 @@ sub Data {
         'Show All Queues' => '모든 대기열 표시',
         'Auto Responses' => '자동 응답',
 
+        # Template: AdminQueueImportExport
+        'Here you can export a configuration file of queues to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Queues List' => '',
+
         # Template: AdminQueueTemplates
         'Manage Template-Queue Relations' => '템플릿 - 대기열 관계 관리',
         'Filter for Templates' => '템플릿 필터링',
         'Filter for templates' => '',
+        'Here you can upload a configuration file to import queue-template relations to your system. The file needs to be in .yml format as exported by the queue-template management module.' =>
+            '',
+        'Queue-Templates Import' => '',
+        'Queue-Templates Export' => '',
         'Templates' => '템플릿',
+
+        # Template: AdminQueueTemplatesImportExport
+        'Queue-Template Relations' => '',
+        'Here you can export a configuration file of queue-template relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
 
         # Template: AdminRegistration
         'System Registration Management' => '시스템 등록 관리',
         'Edit System Registration' => '시스템 등록 편집',
         'System Registration Overview' => '시스템 등록 개요',
         'Register System' => '시스템 등록',
-        'Validate OTOBO-ID' => 'OTOBO-ID 확인',
+        'Validate CareOnCloud ID' => 'CareOnCloud ID 확인',
         'Deregister System' => 'Deregister System',
         'Edit details' => '세부 정보 수정',
         'Show transmitted data' => '전송된 데이터 표시',
         'Deregister system' => 'Deregister system',
         'Overview of registered systems' => '등록된 시스템 개요',
-        'This system is registered with OTOBO Team.' => '',
+        'This system is registered with CareOnCloud ESM Team.' => '',
         'System type' => '시스템 유형',
         'Unique ID' => '고유 ID',
         'Last communication with registration server' => '등록 서버와의 마지막 통신',
         'System Registration not Possible' => '시스템 등록이 불가능합니다.',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            'OTOBO 데몬이 올바르게 실행되지 않으면 시스템을 등록 할 수 없습니다.',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            'CareOnCloud ESM 데몬이 올바르게 실행되지 않으면 시스템을 등록 할 수 없습니다.',
         'Instructions' => '명령',
         'System Deregistration not Possible' => '시스템 등록 취소가 불가능합니다.',
-        'OTOBO-ID Login' => 'OTOBO-ID 로그인',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
+        'CareOnCloud ID Login' => 'CareOnCloud ID 로그인',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
             '',
         'Read more' => '더 많은 것을 읽으십시오',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            '시스템을 등록하려면 OTOBO-ID로 로그인해야합니다.',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            '시스템을 등록하려면 CareOnCloud ID로 로그인해야합니다.',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'OTOBO-ID는 OTOBO.com 웹 페이지에 가입 할 때 사용한 이메일 주소입니다.',
         'Data Protection' => '데이터 보호',
@@ -1903,45 +2251,44 @@ sub Data {
         'This is only the beginning!' => '이것은 단지 시작일뿐입니다!',
         'We will inform you about our new services and offerings soon.' =>
             '조만간 새로운 서비스와 제품에 대해 알려 드리겠습니다.',
-        'Can I use OTOBO without being registered?' => 'OTOBO를 등록하지 않고도 사용할 수 있습니까?',
+        'Can I use CareOnCloud ESM without being registered?' => 'CareOnCloud ESM를 등록하지 않고도 사용할 수 있습니까?',
         'System registration is optional.' => '시스템 등록은 선택 사항입니다.',
-        'You can download and use OTOBO without being registered.' => '등록없이 OTOBO를 다운로드하여 사용할 수 있습니다.',
+        'You can download and use CareOnCloud ESM without being registered.' => '등록없이 CareOnCloud ESM를 다운로드하여 사용할 수 있습니다.',
         'Is it possible to deregister?' => '등록 취소가 가능합니까?',
         'You can deregister at any time.' => '언제든지 등록 취소 할 수 있습니다.',
         'Which data is transfered when registering?' => '등록할 때 어떤 데이터가 전송됩니까?',
-        'A registered system sends the following data to OTOBO Team:' => '',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            'FQDN (정규화 된 도메인 이름), OTOBO 버전, 데이터베이스, 운영 체제 및 Perl 버전',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => '',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            'FQDN (정규화 된 도메인 이름), CareOnCloud ESM 버전, 데이터베이스, 운영 체제 및 Perl 버전',
         'Why do I have to provide a description for my system?' => '왜 내 시스템에 대한 설명을 제공해야 합니까?',
         'The description of the system is optional.' => '시스템 설명은 선택 사항 입니다.',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             '지정하는 설명 W 시스템 유형은 등록 된 시스템의 세부 사항을 식별하고 관리하는 데 도움을줍니다.',
-        'How often does my OTOBO system send updates?' => 'OTOBO 시스템은 얼마나 자주 업데이트를 보내나요?',
+        'How often does my CareOnCloud ESM system send updates?' => 'CareOnCloud ESM 시스템은 얼마나 자주 업데이트를 보내나요?',
         'Your system will send updates to the registration server at regular intervals.' =>
             '시스템은 일정한 간격으로 등록 서버에 업데이트를 보냅니다.',
         'Typically this would be around once every three days.' => '일반적으로 3일에 1번 정도입니다.',
         'If you deregister your system, you will lose these benefits:' =>
             '시스템 등록을 취소하면 다음과 같은 이점을 잃게 됩니다.',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            '시스템 등록을 취소하려면 OTOBO-ID로 로그인해야합니다.',
-        'OTOBO-ID' => 'OTOBO-ID ',
-        'You don\'t have an OTOBO-ID yet?' => '아직 OTOBO-ID가 없습니까?',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            '시스템 등록을 취소하려면 CareOnCloud ID로 로그인해야합니다.',
+        'CareOnCloud ID' => 'CareOnCloud ID ',
+        'You don\'t have a CareOnCloud ID yet?' => '아직 CareOnCloud ID가 없습니까?',
         'Sign up now' => '지금 등록하세요',
         'Forgot your password?' => '비밀번호를 잊어 버렸습니까?',
         'Retrieve a new one' => '새 항목 가져 오기',
-        'Next' => '다음',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
             '',
         'Attribute' => '속성',
         'FQDN' => 'FQDN',
-        'OTOBO Version' => 'OTOBO 버전',
+        'CareOnCloud ESM Version' => 'CareOnCloud ESM 버전',
         'Operating System' => '운영 체제',
         'Perl Version' => '펄 버전',
         'Optional description of this system.' => '이 시스템에 대한 선택적 설명.',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
             '',
         'Register' => '기록',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
             '',
         'Deregister' => '위임자',
         'You can modify registration settings here.' => '여기에서 등록 설정을 수정할 수 있습니다.',
@@ -1958,32 +2305,59 @@ sub Data {
         'Role Management' => '역할 관리',
         'Add Role' => '역할 추가',
         'Edit Role' => '역할 편집',
+        'Include invalid roles' => '',
         'Filter for Roles' => '역할 필터링',
         'Filter for roles' => '역할 필터링',
         'Create a role and put groups in it. Then add the role to the users.' =>
             '역할을 만들고 그 안에 그룹을 넣으십시오. 그런 다음 사용자에게 역할을 추가 하십시오.',
+        'Here you can upload a configuration file to import roles to your system. The file needs to be in .yml format as exported by the role management module.' =>
+            '',
+        'Roles Import' => '',
+        'Roles Export' => '',
         'There are no roles defined. Please use the \'Add\' button to create a new role.' =>
             '정의 된 역할이 없습니다. \'추가\'버튼을 사용하여 새 역할을 만드십시오.',
 
         # Template: AdminRoleGroup
         'Manage Role-Group Relations' => '역할 그룹 관계 관리',
+        'Here you can upload a configuration file to import role-group relations to your system. The file needs to be in .yml format as exported by the role-group management module.' =>
+            '',
+        'Role-Group Import' => '',
+        'Role-Group Export' => '',
         'Roles' => '역할',
         'Select the role:group permissions.' => '역할 : 그룹 권한을 선택 하십시오.',
         'If nothing is selected, then there are no permissions in this group (tickets will not be available for the role).' =>
             '아무 것도 선택하지 않으면이 그룹에 권한이 없습니다 (티켓을 역할에 사용할 수 없음).',
         'Toggle %s permission for all' => '모든 사용자에게 %s의 권한을 토글합니다.',
+        'Read only access to the ticket in this group/queue. The ticket can be found via a search and its TicketZoom can be accessed. If used for a calendar, users can see and export all appointments in the calendar.' =>
+            '',
         'move_into' => 'move_into',
-        'Permissions to move tickets into this group/queue.' => '이 그룹 / 대기열로 티켓을 이동하는 권한.',
+        'Permissions to move tickets into this group/queue. If used for a calendar, users can modify appointments in the calendar, but without changing the calendar selection.' =>
+            '',
         'create' => '생성',
-        'Permissions to create tickets in this group/queue.' => '이 그룹 / 대기열에서 티켓을 만들 수 있는 권한.',
+        'Permissions to create tickets in this group/queue. If used for a calendar, users can create and delete appointments in the calendar.' =>
+            '',
         'note' => '노트',
-        'Permissions to add notes to tickets in this group/queue.' => '이 그룹 / 대기열의 티켓에 메모를 추가할 권한.',
+        'Permissions to add notes to tickets in this group/queue. It also allows agents to be informed via the \'Inform Agents\' section in the Notes.' =>
+            '',
         'owner' => '소유자',
-        'Permissions to change the owner of tickets in this group/queue.' =>
-            '이 그룹 / 대기열에서 티켓 소유자를 변경할 권한.',
+        'Permissions to be become the owner of tickets in this group/queue. One can be selected as an owner while creating a ticket or changing the owner. Being the owner gives full rw permissions to this ticket.' =>
+            '',
         'priority' => '우선 순위',
-        'Permissions to change the ticket priority in this group/queue.' =>
-            '이 그룹 / 큐에서 티켓 우선 순위를 변경할 권한.',
+        'Permissions to open the priority action in this group/queue.' =>
+            '',
+        'Full read and write access to the tickets in this group/queue. If used for a calendar, users can manage the calendar itself.' =>
+            '',
+
+        # Template: AdminRoleGroupImportExport
+        'Role-Group Relations' => '',
+        'Here you can export a configuration file of role-group relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Role-Group relations List' => '',
+
+        # Template: AdminRoleImportExport
+        'Here you can export a configuration file of roles to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Roles List' => '',
 
         # Template: AdminRoleUser
         'Manage Agent-Role Relations' => '에이전트 역할 관계 관리',
@@ -1997,16 +2371,27 @@ sub Data {
         'SLA Management' => 'SLA 관리',
         'Edit SLA' => 'SLA 편집',
         'Add SLA' => 'SLA 추가',
+        'Include invalid SLAs' => '',
         'Filter for SLAs' => 'SLA 필터링',
+        'Here you can upload a configuration file to import SLAs to your system. The file needs to be in .yml format as exported by the SLA management module.' =>
+            '',
+        'SLAs Import' => '',
+        'SLAs Export' => '',
         'Please write only numbers!' => '숫자만 써주세요!',
+
+        # Template: AdminSLAImportExport
+        'SLAs' => '',
+        'Here you can export a configuration file of SLAs to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'SLAs List' => '',
 
         # Template: AdminSMIME
         'S/MIME Management' => 'S / MIME 관리',
         'Add Certificate' => '인증서 추가',
         'Add Private Key' => '비공개 키 추가',
         'SMIME support is disabled' => 'SMIME 지원이 비활성화되었습니다.',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            'OTOBO에서 SMIME을 사용하려면 먼저 SMIME를 활성화해야합니다.',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            'CareOnCloud ESM에서 SMIME을 사용하려면 먼저 SMIME를 활성화해야합니다.',
         'Enable SMIME support' => 'SMIME 지원 사용',
         'Faulty SMIME configuration' => 'SMIME 구성 오류',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2044,6 +2429,7 @@ sub Data {
         'Salutation Management' => '인사말 관리',
         'Add Salutation' => '인사말 추가',
         'Edit Salutation' => '인사말 편집',
+        'Include invalid salutations' => '',
         'Filter for Salutations' => '인사말 필터링',
         'Filter for salutations' => '인사말 필터링',
         'e. g.' => '예를들면',
@@ -2079,9 +2465,19 @@ sub Data {
         'Service Management' => '서비스 관리',
         'Add Service' => '서비스 추가',
         'Edit Service' => '서비스 편집',
+        'Include invalid services' => '',
+        'Here you can upload a configuration file to import services to your system. The file needs to be in .yml format as exported by the service management module.' =>
+            '',
+        'Services Import' => '',
+        'Services Export' => '',
         'Service name maximum length is 200 characters (with Sub-service).' =>
             '서비스 이름의 최대 길이는 200 자 (서브 서비스 포함)입니다.',
         'Sub-service of' => '의 서브 서비스',
+
+        # Template: AdminServiceImportExport
+        'Here you can export a configuration file of services to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Services List' => '',
 
         # Template: AdminSession
         'Session Management' => '세션 관리',
@@ -2103,6 +2499,7 @@ sub Data {
         'Signature Management' => '시그니처 관리',
         'Add Signature' => '시그니처 추가',
         'Edit Signature' => '시그니처 편집',
+        'Include invalid signatures' => '',
         'Filter for Signatures' => '시그니처 필터링',
         'Filter for signatures' => '시그니처 필터링',
         'Example signature' => '서명의 예',
@@ -2111,6 +2508,7 @@ sub Data {
         'State Management' => '주 관리',
         'Add State' => '주 추가',
         'Edit State' => '주 편집',
+        'Include invalid states' => '',
         'Filter for States' => '주 필터링',
         'Filter for states' => '주 필터링',
         'Attention' => '주의',
@@ -2123,17 +2521,17 @@ sub Data {
         'This state is used in the following config settings:' => '이 상태는 다음 구성 설정에서 사용됩니다.',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => '',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => '',
         'Enable Cloud Services' => '클라우드 서비스 사용',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
             '',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             '이 버튼을 눌러 Support Data를 수동으로 트리거 할 수 있습니다 :',
         'Send Update' => '업데이트 보내기',
         'Currently this data is only shown in this system.' => '현재 이 데이터는 이 시스템에만 표시됩니다.',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
             '',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             '이 단추를 누르면 지원 번들 (시스템 등록 정보, 지원 데이터, 설치된 패키지 목록 및 모든 로컬로 수정 된 소스 코드 파일 포함)을 생성 할 수 있습니다.',
@@ -2146,10 +2544,10 @@ sub Data {
         'The email address for this user is invalid, this option has been disabled.' =>
             '이 사용자의 이메일 주소가 유효하지 않습니다.이 옵션은 사용 중지되었습니다.',
         'Sending' => '보내다',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
             '',
         'Download File' => '다운로드 파일',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
             '',
         'Error: Support data could not be collected (%s).' => '오류 : 지원 데이터를 수집 할 수 없습니다 (%s).',
         'Details' => '세부',
@@ -2158,6 +2556,7 @@ sub Data {
         'System Email Addresses Management' => '시스템 전자 메일 주소 관리',
         'Add System Email Address' => '시스템 전자 메일 주소 추가',
         'Edit System Email Address' => '시스템 전자 메일 주소 편집',
+        'Include invalid system addresses' => '',
         'Add System Address' => '시스템 주소 추가',
         'Filter for System Addresses' => '시스템 주소 필터링',
         'Filter for system addresses' => '시스템 주소 필터링',
@@ -2168,6 +2567,8 @@ sub Data {
         'This email address is already used as system email address.' => '이 전자 메일 주소는 이미 시스템 전자 메일 주소로 사용됩니다.',
         'The display name and email address will be shown on mail you send.' =>
             '표시 이름과 이메일 주소가 보내는 메일에 표시됩니다.',
+        'Only relevant if the postmaster mail account is set to dispatching by To-field.' =>
+            '',
         'This system address cannot be set to invalid.' => '',
         'This system address cannot be set to invalid, because it is used in one or more queue(s) or auto response(s).' =>
             '',
@@ -2182,8 +2583,8 @@ sub Data {
         'Find out how to use the system configuration by reading the %s.' =>
             '%s를 읽음으로써 시스템 구성을 사용하는 방법을 알아보십시오.',
         'Search in all settings...' => '모든 설정에서 검색...',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
-            '현재 사용할 수있는 설정이 없습니다. 소프트웨어를 사용하기 전에 \'otobo.Console.pl Maint :: Config :: Rebuild\'를 실행하십시오. ',
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+            '현재 사용할 수있는 설정이 없습니다. 소프트웨어를 사용하기 전에 \'careoncloud.Console.pl Maint :: Config :: Rebuild\'를 실행하십시오. ',
 
         # Template: AdminSystemConfigurationDeployment
         'Changes Deployment' => '변경 사항 배포',
@@ -2277,6 +2678,7 @@ sub Data {
 
         # Template: AdminSystemMaintenance
         'System Maintenance Management' => '시스템 유지 보수 관리',
+        'Include invalid system maintenances' => '',
         'Schedule New System Maintenance' => '새로운 시스템 유지 보수 일정 계획',
         'Filter for System Maintenances' => '시스템 유지 관리를 위한 필터',
         'Filter for system maintenances' => '시스템 유지 관리를 위한 필터',
@@ -2284,13 +2686,11 @@ sub Data {
             '상담원과 고객을 알리기 휘한 시스템 유지 보수 기간을 예약하면 일정 기간 시스템이 다운됩니다.',
         'Some time before this system maintenance starts the users will receive a notification on each screen announcing about this fact.' =>
             '이 시스템 유지 보수가 시작되기 전에 사용자는 각 화면에서 이 사실을 알리는 알림을 받게 됩니다.',
-        'Stop date' => '종료 날짜',
         'Delete System Maintenance' => '시스템 유지 보수 삭제',
 
         # Template: AdminSystemMaintenanceEdit
         'Edit System Maintenance' => '시스템 유지 보수 편집',
         'Edit System Maintenance Information' => '시스템 유지 보수 정보 편집',
-        'Date invalid!' => '날짜가 잘못 되었습니다!',
         'Login message' => '로그인 메시지',
         'This field must have less then 250 characters.' => '이 입력란은 250자 미만이어야 합니다.',
         'Show login message' => '로그인 메시지 표시',
@@ -2305,9 +2705,15 @@ sub Data {
         'Template Management' => '',
         'Add Template' => '템플릿 추가',
         'Edit Template' => '템플릿 편집',
+        'Include invalid templates' => '',
         'A template is a default text which helps your agents to write faster tickets, answers or forwards.' =>
             '템플릿은 에이전트가 티켓, 응답 또는 전달을 더 빨리 작성할 수 있도록 도와주는 기본 텍스트입니다.',
         'Don\'t forget to add new templates to queues.' => '대기열에 새 템플릿을 추가하는 것을 잊지 마십시오.',
+        'Here you can upload a configuration file to import templates to your system. The file needs to be in .yml format as exported by the template management module.' =>
+            '',
+        'Templates Import' => '',
+        'Templates Export' => '',
+        'Pre-selected ticket state' => '',
         'Attachments' => '첨부파일',
         'Delete this entry' => '이 항목 삭제',
         'Do you really want to delete this template?' => '이 템플릿을 정말로 삭제 하시겠습니까?',
@@ -2330,20 +2736,75 @@ sub Data {
         'Toggle active for all' => '모든 사용자에게 전환 사용',
         'Link %s to selected %s' => '%s를 선택한 %s에 연결',
 
+        # Template: AdminTemplateImportExport
+        'Here you can export a configuration file of templates to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Templates List' => '',
+
+        # Template: AdminTicketMask
+        'Ticket Mask Management' => '',
+        'Edit mask' => '',
+        'Change mask definition' => '',
+        'Ticket Mask' => '',
+        'Change' => '',
+        'Definition' => '',
+
+        # Template: AdminTranslations
+        'Translation Management' => '',
+        'Add Translations' => '',
+        'Edit Translations' => '',
+        'Language' => '언어',
+        'Deploy Translations' => '',
+        'Translation States' => '',
+        'New Translation' => '',
+        'Editing Translation' => '',
+        'Translation Marked for Deletion' => '',
+        'Deployed Translation' => '',
+        'Changes made here only affect the system behavior after your draft translations have been deployed. By deploying them, all changes will be written to the language files.' =>
+            '',
+        'Select an object to start adding translations. Depending on your selection, single or multiple translations can be added.' =>
+            '',
+        'Edit active translations using provided text fields!' => '',
+        'List custom translations for' => '',
+        'Draft Translations' => '',
+        'Filter for Draft Translations' => '',
+        'Active Translations' => '',
+        'Filter for Active Translations' => '',
+        'Content' => '만족',
+        'Translation' => '',
+        'Marked for Deletion' => '',
+        'Edit Translation' => '',
+        'Overwrites CareOnCloud ESM translation' => '',
+        'Undo Delete Translation' => '',
+        'Delete Translation' => '',
+        'Translations' => '',
+
         # Template: AdminType
         'Type Management' => '유형 관리',
         'Add Type' => '유형 추가',
         'Edit Type' => '유형 편집',
+        'Include invalid types' => '',
         'Filter for Types' => '유형 필터',
         'Filter for types' => '유형 필터',
+        'Here you can upload a configuration file to import types to your system. The file needs to be in .yml format as exported by the type management module.' =>
+            '',
+        'Types Import' => '',
+        'Types Export' => '',
         'A type with this name already exists!' => '이 이름을 가진 유형이 이미 존재합니다!',
         'This type is present in a SysConfig setting, confirmation for updating settings to point to the new type is needed!' =>
             '이 유형은 SysConfig 설정에 있으며, 새 유형을 가리 키도록 설정을 업데이트해야합니다!',
         'This type is used in the following config settings:' => '이 유형은 다음 구성 설정에서 사용됩니다.',
 
+        # Template: AdminTypeImportExport
+        'Types' => '유형',
+        'Here you can export a configuration file of types to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Types List' => '',
+
         # Template: AdminUser
         'Agent Management' => '상담원 관리',
         'Edit Agent' => '상담원 수정',
+        'Include invalid users' => '',
         'Edit personal preferences for this agent' => '이 상담원의 개인 설정 수정',
         'Agents will be needed to handle tickets.' => '티켓을 처리하려면 상담원이 필요합니다.',
         'Don\'t forget to add a new agent to groups and/or roles!' => '그룹이나 역할에 새 상담원을 추가하는 것을 잊지마세요.',
@@ -2363,6 +2824,13 @@ sub Data {
 
         # Template: AdminUserGroup
         'Manage Agent-Group Relations' => '상담원-그룹 관계 관리',
+        'Permissions to move tickets into this group/queue.' => '이 그룹 / 대기열로 티켓을 이동하는 권한.',
+        'Permissions to create tickets in this group/queue.' => '이 그룹 / 대기열에서 티켓을 만들 수 있는 권한.',
+        'Permissions to add notes to tickets in this group/queue.' => '이 그룹 / 대기열의 티켓에 메모를 추가할 권한.',
+        'Permissions to change the owner of tickets in this group/queue.' =>
+            '이 그룹 / 대기열에서 티켓 소유자를 변경할 권한.',
+        'Permissions to change the ticket priority in this group/queue.' =>
+            '이 그룹 / 큐에서 티켓 우선 순위를 변경할 권한.',
 
         # Template: AgentAppointmentAgendaOverview
         'Agenda Overview' => 'Agenda 개요',
@@ -2478,17 +2946,22 @@ sub Data {
         'Customer User Information Center' => '고객 사용자 정보 센터',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'OTOBO Daemon은 비동기 작업을 수행하는 데몬 프로세스입니다. 티켓 에스컬레이션 트리거링, 이메일 전송 등',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            '올바른 시스템 작동을 위해서는 실행중인 OTOBO 데몬이 필수입니다.',
-        'Starting the OTOBO Daemon' => 'OTOBO Daemon 시작',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            '.dist (확장자없이) \'%s\'파일이 있는지 확인하십시오. 이 cron 작업은 OTOBO 데몬이 실행중인 경우 5 분마다 점검하고 필요한 경우 시작합니다.',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            '\'%s start\'를 실행하여 \'otobo\'사용자의 cron 작업이 활성 상태인지 확인하십시오.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            '5 분 후, OTOBO 데몬이 시스템에서 실행 중인지 확인하십시오 ( \'bin / otobo.Daemon.pl status\').',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'CareOnCloud ESM Daemon은 비동기 작업을 수행하는 데몬 프로세스입니다. 티켓 에스컬레이션 트리거링, 이메일 전송 등',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            '올바른 시스템 작동을 위해서는 실행중인 CareOnCloud ESM 데몬이 필수입니다.',
+        'Starting the CareOnCloud ESM Daemon' => 'CareOnCloud ESM Daemon 시작',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            '.dist (확장자없이) \'%s\'파일이 있는지 확인하십시오. 이 cron 작업은 CareOnCloud ESM 데몬이 실행중인 경우 5 분마다 점검하고 필요한 경우 시작합니다.',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            '\'%s start\'를 실행하여 \'careoncloud\'사용자의 cron 작업이 활성 상태인지 확인하십시오.',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            '5 분 후, CareOnCloud ESM 데몬이 시스템에서 실행 중인지 확인하십시오 ( \'bin / careoncloud.Daemon.pl status\').',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => '',
+        'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
+            '',
+        'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
+            '',
 
         # Template: AgentDashboard
         'Dashboard' => '현황판',
@@ -2583,16 +3056,19 @@ sub Data {
         'until' => '까지',
 
         # Template: AgentDynamicFieldDBDetailedSearch
-        'Back' => '뒤',
         'Detailed search' => '',
         'Add an additional attribute' => '',
 
         # Template: AgentDynamicFieldDBDetails
         'Details view' => '',
 
+        # Template: AgentElasticsearchCommon
+        'Elasticsearch Results' => '',
+
         # Template: AgentElasticsearchQuickResult
         'Tickets' => '티켓',
         'ConfigItems' => '',
+        'FAQs' => '',
 
         # Template: AgentInfo
         'To accept some news, a license or some changes.' => '일부 뉴스, 라이센스 또는 일부 변경 사항을 수락합니다.',
@@ -2649,7 +3125,7 @@ sub Data {
         'This setting can currently not be saved.' => '이 설정은 현재 저장할 수 없습니다.',
         'This setting can currently not be saved' => '이 설정은 현재 저장할 수 없습니다.',
         'Save this setting' => '이 설정 저장',
-        'Did you know? You can help translating OTOBO at %s.' => '아시나요? OTOBO를 %s에서 번역 할 수 있습니다.',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => '아시나요? CareOnCloud ESM를 %s에서 번역 할 수 있습니다.',
 
         # Template: SettingsList
         'Reset to default' => '기본값으로 재설정',
@@ -2669,7 +3145,7 @@ sub Data {
         # Template: AgentStatisticsAdd
         'Statistics Management' => '',
         'Add Statistics' => '통계 추가',
-        'Read more about statistics in OTOBO' => 'OTOBO의 통계에 대해 자세히 알아보십시오.',
+        'Read more about statistics in CareOnCloud ESM' => 'CareOnCloud ESM의 통계에 대해 자세히 알아보십시오.',
         'Dynamic Matrix' => '가변 매트릭스',
         'Each cell contains a singular data point.' => '각 셀에는 단일 데이터 요소가 포함되어 있습니다.',
         'Dynamic List' => '가변 리스트',
@@ -2708,7 +3184,6 @@ sub Data {
             '',
         'Please note that you can only select charts as statistics output format if you configured one of the renderer binaries on your system.' =>
             '',
-        'Configure PhantomJS' => '',
         'Configure GoogleChrome' => '',
         'General settings' => '',
         'Automatic generation settings' => '',
@@ -2766,12 +3241,14 @@ sub Data {
         'Set Pending Time for %s%s%s' => '%s%s%s의 보류 시간 설정',
         'Change Priority of %s%s%s' => '%s%s%s의 우선 순위 변경',
         'Change Responsible of %s%s%s' => '%s%s%s의 책임 변경',
+        'Edit Article "%s" of %s%s%s' => '',
         'The ticket has been locked' => '티켓이 잠겼습니다.',
         'Undo & close' => '실행 취소 및 닫기',
+        'All fields marked with an asterisk (*) are mandatory.' => '별표 (*)로 표시된 모든 필드는 필수 항목입니다.',
         'Ticket Settings' => '티켓 설정',
-        'Queue invalid.' => '대기열이 잘못 되었습니다.',
         'Service invalid.' => '서비스가 유효하지 않습니다.',
         'SLA invalid.' => 'SLA가 유효하지 않습니다.',
+        'Queue invalid.' => '대기열이 잘못 되었습니다.',
         'New Owner' => '신규 소유자',
         'Please set a new owner!' => '새 주인을 설정하십시오!',
         'Owner invalid.' => '소유자가 유효하지 않습니다.',
@@ -2791,6 +3268,12 @@ sub Data {
         'Text Template' => '텍스트 템플릿',
         'Setting a template will overwrite any text or attachment.' => '템플릿을 설정하면 텍스트나 첨부파일을 덮어씁니다.',
         'Invalid time!' => '시간이 잘못 되었습니다!',
+
+        # Template: AgentTicketArticleEdit
+        'Edit Article' => '',
+
+        # Template: AgentTicketArticleVersionView
+        'Viewing Article Version#%s of current Article: #%s %s' => '',
 
         # Template: AgentTicketBounce
         'Bounce %s%s%s' => '바운스 %s%s%s',
@@ -2841,7 +3324,6 @@ sub Data {
 
         # Template: AgentTicketEmail
         'Create New Email Ticket' => '새 전자 메일 티켓 만들기',
-        'Example Template' => '템플릿 예제',
         'To customer user' => '고객 사용자에게',
         'Please include at least one customer user for the ticket.' => '적어도 한 명의 고객 사용자를 티켓에 포함하십시오.',
         'Select this customer as the main customer.' => '이 고객을 주요 고객으로 선택하십시오.',
@@ -2897,6 +3379,7 @@ sub Data {
         'First Response Time' => '첫 번째 응답 시간',
         'Update Time' => '업데이트 시간',
         'Solution Time' => '솔루션 시간',
+        'Accounted Time' => '',
         'Move ticket to a different queue' => '티켓을 다른 대기열로 이동',
         'Change queue' => '대기열 변경',
 
@@ -2917,8 +3400,6 @@ sub Data {
         'Create New Phone Ticket' => '새로운 폰 티켓 생성',
         'Please include at least one customer for the ticket.' => '최소한 한 명의 고객을 티켓에 포함하십시오.',
         'To queue' => '대기열에 넣기',
-        'Chat protocol' => '채팅 프로토콜',
-        'The chat will be appended as a separate article.' => '채팅은 별도의 기사로 추가됩니다.',
 
         # Template: AgentTicketPhoneCommon
         'Phone Call for %s%s%s' => '%s%s%s 통화 중입니다.',
@@ -2985,12 +3466,15 @@ sub Data {
         'No.' => '아니오.',
         'Unread articles' => '읽지 않은 기사',
         'Via' => '~를 이용해',
+        'Article Edited' => '',
+        'Time Units' => '',
         'Important' => '중대한',
         'Unread Article!' => '읽지 않은 기사!',
         'Incoming message' => '수신 메시지 ',
         'Outgoing message' => '보내는 메시지',
         'Internal message' => '내부 메시지',
         'Sending of this message has failed.' => '이 메시지를 보내지 못했습니다.',
+        'The article was edited' => '',
         'Resize' => '크기 조정',
         'Mark this article as read' => '이 기사를 읽음으로 표시 하십시오.',
         'Show Full Text' => '전체 텍스트 보기',
@@ -3062,10 +3546,11 @@ sub Data {
         'Ticket Search' => '',
         'New Ticket' => '새 티켓',
 
+        # Template: CustomerElasticsearchQuickResult
+        'FAQ#' => '',
+
         # Template: CustomerError
         'An Error Occurred' => '에러 발생됨',
-        'Error Details' => '오류 정보',
-        'Traceback' => '역 추적',
 
         # Template: CustomerFooterJS
         '%s detected possible network issues. You could either try reloading this page manually or wait until your browser has re-established the connection on its own.' =>
@@ -3123,7 +3608,7 @@ sub Data {
         'Click here for an unfiltered list of all your tickets.' => '',
 
         # Template: CustomerTicketMessage
-        'Issue a new Ticket' => '',
+        'Create a new Ticket' => '',
         'Service level agreement' => '서비스 수준 계약',
 
         # Template: CustomerTicketOverview
@@ -3132,11 +3617,11 @@ sub Data {
         'Sort' => '',
 
         # Template: CustomerTicketSearch
+        'Search for a Ticket' => '',
         'Profile' => '프로필',
         'e. g. 10*5155 or 105658*' => '이자형. 지. 10 * 5155 또는 105658 *',
         'CustomerID' => '고객 ID',
         'Fulltext Search in Tickets (e. g. "John*n" or "Will*")' => '티켓에서 전체 텍스트 검색 (예 : "John * n"또는 "Will *")',
-        'Types' => '유형',
         'Time Restrictions' => '시간 제한',
         'No time settings' => '시간 설정 없음',
         'All' => '모든',
@@ -3146,9 +3631,8 @@ sub Data {
         'Only tickets created between' => '사이에 생성된 티켓만',
         'Ticket Archive System' => '티켓 보관 시스템',
         'Save Search as Template?' => '검색을 템플릿으로 저장하시겠습니까?',
-        'Save as Template?' => '템플릿으로 저장?',
         'Save as Template' => '템플릿으로 저장?',
-        'Template Name' => '템플릿 이름',
+        'Save as Template?' => '템플릿으로 저장?',
         'Pick a profile name' => '프로필 이름 선택',
         'Output to' => '출력',
 
@@ -3160,9 +3644,6 @@ sub Data {
         # Template: CustomerTicketZoom
         'Reply' => '댓글',
         'Discard' => '',
-        'Ticket Information' => '티켓 정보',
-        'Categories' => '',
-        'Further actions' => '',
 
         # Template: Chat
         'Expand article' => '기사 펼치기',
@@ -3170,18 +3651,22 @@ sub Data {
         # Template: MIMEBase
         'Article Information' => '',
 
+        # Template: TicketInfo
+        'Ticket Information' => '티켓 정보',
+        'Categories' => '',
+        'Further actions' => '',
+
         # Template: CustomerWarning
         'Warning' => '경고',
 
         # Template: TileNewTicket
-        'Issue%sa ticket' => '',
+        'Create%sa ticket' => '',
 
         # Template: DashboardEventsTicketCalendar
         'Event Information' => '이벤트 정보',
 
         # Template: Error
         'Send a bugreport' => 'bugreport 보내기',
-        'Expand' => '넓히다',
 
         # Template: Footer
         'Powered by %s' => '',
@@ -3212,7 +3697,6 @@ sub Data {
         'License' => '특허',
         'Database Settings' => '데이터베이스 설정',
         'General Specifications and Mail Settings' => '일반 사양 및 메일 설정',
-        'Finish' => '끝',
         'Welcome to %s' => '%s에 오신 것을 환영합니다.',
         'Germany' => '',
         'Phone' => '전화',
@@ -3252,8 +3736,8 @@ sub Data {
 
         # Template: InstallerDBStart
         'Install Type' => '설치 유형',
-        'Create a new database for OTOBO' => 'OTOBO를위한 새로운 데이터베이스 생성',
-        'Use an existing database for OTOBO' => 'OTOBO에 기존 데이터베이스 사용',
+        'Create a new database for CareOnCloud ESM' => 'CareOnCloud ESM를위한 새로운 데이터베이스 생성',
+        'Use an existing database for CareOnCloud ESM' => 'CareOnCloud ESM에 기존 데이터베이스 사용',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3264,15 +3748,18 @@ sub Data {
         'Database check successful.' => '데이터베이스 검사에 성공했습니다.',
         'Database User' => '데이터베이스 사용자',
         'New' => '새로운',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
-            '제한된 권한을 가진 새로운 데이터베이스 사용자가이 OTOBO 시스템에 대해 생성됩니다.',
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
+            '제한된 권한을 가진 새로운 데이터베이스 사용자가이 CareOnCloud ESM 시스템에 대해 생성됩니다.',
         'Generated password' => '생성된 암호',
         'Repeat Password' => '비밀번호 반복',
         'Passwords do not match' => '비밀번호가 일치하지 않습니다.',
 
+        # Template: InstallerDBmysql
+        'Authentication Plugin' => '',
+
         # Template: InstallerFinish
         'Start page' => '시작 페이지',
-        'Your OTOBO Team' => 'OTOBO 팀',
+        'Your CareOnCloud ESM Team' => 'CareOnCloud ESM 팀',
 
         # Template: InstallerLicense
         'Don\'t accept license' => '면허를 받지마라.',
@@ -3302,9 +3789,9 @@ sub Data {
             '수동으로 입력 한 전자 메일 주소는 DNS에있는 MX 레코드와 비교하여 검사됩니다. DNS가 느리거나 공개 주소를 확인하지 못하면이 옵션을 사용하지 마십시오.',
         'Elasticsearch' => '',
         'Initialize Elasticsearch' => '',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
             '',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
             '',
 
         # Template: LinkObject
@@ -3334,15 +3821,15 @@ sub Data {
         'Clean up and finish' => '',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
             '',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
-            'OTOBO를 사용하려면 명령 줄 (터미널 / 쉘)에 다음 행을 루트로 입력해야합니다.',
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+            'CareOnCloud ESM를 사용하려면 명령 줄 (터미널 / 쉘)에 다음 행을 루트로 입력해야합니다.',
         'Restart your webserver' => '웹 서버 다시 시작',
-        'After doing so your OTOBO is up and running.' => '그렇게하면 OTOBO가 실행됩니다.',
+        'After doing so your CareOnCloud ESM is up and running.' => '그렇게하면 CareOnCloud ESM가 실행됩니다.',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
             '',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             '',
@@ -3352,21 +3839,19 @@ sub Data {
             '',
         'All entered passwords are cached until the migration is finished.' =>
             '',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
             '',
-        'If you need support, just ask our experts – either at' => '',
-        'OTOBO forum' => '',
-        'or directly via mail to' => '',
+        'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
+            '',
         'Cached data found' => '',
         'You will continue where you aborted the migration last time. If you do not want this, please discard your previous progress.' =>
             '',
-        'An error occured.' => '',
+        'An error occurred.' => '',
         'Discard previous progress' => '',
         'Insecure HTTP connection' => '',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
             '',
         'Continue anyways :(' => '',
-        ' Continue anyways :(' => '',
 
         # Template: OTRSDBSettings
         'DSN' => '',
@@ -3388,8 +3873,8 @@ sub Data {
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => '사용할 수없는 기능',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            '죄송합니다. 현재 OTOBO의이 기능은 휴대 기기에서 사용할 수 없습니다. 이 기능을 사용하려면 데스크톱 모드로 전환하거나 일반 데스크톱 장치를 사용할 수 있습니다.',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            '죄송합니다. 현재 CareOnCloud ESM의이 기능은 휴대 기기에서 사용할 수 없습니다. 이 기능을 사용하려면 데스크톱 모드로 전환하거나 일반 데스크톱 장치를 사용할 수 있습니다.',
 
         # Template: Motd
         'Message of the Day' => '오늘의 메시지',
@@ -3429,8 +3914,8 @@ sub Data {
 
         # Template: PublicDefault
         'Welcome' => '환영',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            '이것은 OTOBO의 기본 공용 인터페이스입니다! 주어진 행동 매개 변수가 없습니다.',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            '이것은 CareOnCloud ESM의 기본 공용 인터페이스입니다! 주어진 행동 매개 변수가 없습니다.',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             '공용 인터페이스가있는 FAQ 모듈과 같이 (패키지 관리자)를 통해 사용자 정의 공용 모듈을 설치할 수 있습니다.',
 
@@ -3482,7 +3967,6 @@ sub Data {
             '통계가 생성될 때 이 요소에 대한 변경을 허용하지 마십시오.',
 
         # Template: StatsParamsWidget
-        'Format' => '체재',
         'Exchange Axis' => '교환 축',
         'Configurable Params of Static Stat' => '정적 통계의 구성 가능한 매개 변수',
         'No element selected.' => '선택된 요소가 없습니다.',
@@ -3527,7 +4011,6 @@ sub Data {
         'Disable this setting, so it is no longer effective' => '이 설정을 비활성화하면 더이상 효과적이지 않습니다.',
         'Disable' => '사용 안함',
         'Enable this setting, so it becomes effective' => '이 설정을 사용하면 효과적입니다.',
-        'Enable' => '사용',
         'Reset this setting to its default state' => '이 설정을 기본 상태로 재설정하십시오.',
         'Reset setting' => '재설정 설정',
         'Allow users to adapt this setting from within their personal preferences' =>
@@ -3588,10 +4071,15 @@ sub Data {
         'Delete user\'s value.' => '',
 
         # Template: Test
-        'OTOBO Test Page' => 'OTOBO 테스트 페이지',
+        'CareOnCloud ESM Test Page' => 'CareOnCloud ESM 테스트 페이지',
         'Unlock' => '잠금해제',
         'Welcome %s %s' => '환영합니다 %s %s',
         'Counter' => '계수기',
+
+        # Template: TranslationsTable
+        'Filter Content' => '',
+        'Filter for Translations' => '',
+        'No content available to translate.' => '',
 
         # Template: Warning
         'Go back to the previous page' => '이전 페이지로 돌아가기',
@@ -3628,7 +4116,7 @@ sub Data {
 
         # JS Template: PackageResolve
         'Package' => '',
-        'Uninstall from OTOBO' => '',
+        'Uninstall from CareOnCloud ESM' => '',
         'Ignore' => '',
         'Migrate' => '',
 
@@ -3676,16 +4164,24 @@ sub Data {
         'Country' => '국가',
         'Mr.' => 'Mr.',
         'Mrs.' => 'Mrs.',
+        'Manager' => '',
         'Address' => '주소',
         'View system log messages.' => '시스템 로그 메시지를 봅니다.',
         'Edit the system configuration settings.' => '시스템 구성 설정을 편집 하십시오.',
         'Update and extend your system with software packages.' => '소프트웨어 패키지로 시스템을 업데이트하고 확장하십시오.',
 
+        # Perl Module: Kernel/GenericInterface/Transport/HTTP/REST.pm
+        'Error fetching the OAuth2 Token' => '',
+        'Attached OAuth2 Bearer Token' => '',
+
+        # Perl Module: Kernel/Language.pm
+        '(in process)' => '(과정에서)',
+
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             '데이터베이스의 ACL 정보가 시스템 구성과 일치하지 않습니다. 모든 ACL을 배포하십시오.',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            '알 수없는 오류로 인해 ACL을 가져올 수 없습니다. 자세한 내용은 OTOBO 로그를 확인하십시오.',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            '알 수없는 오류로 인해 ACL을 가져올 수 없습니다. 자세한 내용은 CareOnCloud ESM 로그를 확인하십시오.',
         'The following ACLs have been added successfully: %s' => '다음 ACL이 성공적으로 추가되었습니다 : %s',
         'The following ACLs have been updated successfully: %s' => '다음 ACL이 성공적으로 업데이트되었습니다 : %s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
@@ -3701,7 +4197,6 @@ sub Data {
         '%s (copy) %s' => '',
         'Please note that ACL restrictions will be ignored for the Superuser account (UserID 1).' =>
             '수퍼 유저 계정 (UserID 1)에 대한 ACL 제한은 무시됩니다.',
-        'Exact match' => '정확히 일치',
         'Negated exact match' => '부정 일치 검색',
         'Regular expression' => '정규식',
         'Regular expression (ignore case)' => '정규식 (대소 문자 무시)',
@@ -3729,6 +4224,7 @@ sub Data {
         '+15 minutes' => '+15분',
         '+30 minutes' => '+30분',
         '+1 hour' => '+1시간',
+        '+1 day' => '',
 
         # Perl Module: Kernel/Modules/AdminAppointmentImport.pm
         'No permissions' => '권한 없음',
@@ -3743,8 +4239,8 @@ sub Data {
         'Unknown Notification %s!' => '알 수없는 알림 %s!',
         '%s (copy)' => '',
         'There was an error creating the Notification' => '알림을 만드는 중 오류가 발생했습니다.',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            '알 수없는 오류로 인해 알림을 가져올 수 없습니다. 자세한 내용은 OTOBO 로그를 확인하십시오.',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            '알 수없는 오류로 인해 알림을 가져올 수 없습니다. 자세한 내용은 CareOnCloud ESM 로그를 확인하십시오.',
         'The following Notifications have been added successfully: %s' =>
             '다음 알림이 성공적으로 추가되었습니다 : %s',
         'The following Notifications have been updated successfully: %s' =>
@@ -3759,6 +4255,7 @@ sub Data {
             '약속 (캘린더)에 대한 쓰기 권한이있는 모든 상담원',
 
         # Perl Module: Kernel/Modules/AdminAttachment.pm
+        'No permission to edit this attachment.' => '',
         'Attachment added!' => '첨부 파일이 추가되었습니다.',
 
         # Perl Module: Kernel/Modules/AdminAutoResponse.pm
@@ -3777,7 +4274,6 @@ sub Data {
         'Invalid StartTime: %s!' => '잘못된 시작 시간 : %s!',
         'Successful' => '성공한',
         'Processing' => '가공',
-        'Failed' => '실패한',
         'Invalid Filter: %s!' => '잘못된 필터 : %s!',
         'Less than a second' => '1초 미만',
         'sorted descending' => '내림차순 정렬',
@@ -3815,6 +4311,24 @@ sub Data {
         'Customer Company %s already exists!' => '고객 회사 %s가 이미 존재합니다!',
         'Customer company added!' => '고객 회사가 추가되었습니다!',
 
+        # Perl Module: Kernel/Modules/AdminCustomerDashboardInfoTile.pm
+        'Start date shouldn\'t be defined after Stop date!' => '시작일은 종요일 이후에 정의되어서는 안됩니다!',
+        'Name is missing!' => '',
+        'Content is missing!' => '',
+        'ValidID is missing!' => '',
+        'Group is missing!' => '',
+        'There was an error creating the info tile entry' => '',
+        'Need ID!' => '',
+        'This Entry does not exist, or you don\'t have permissions to access it in its current state.' =>
+            '',
+        'Could not get data for ID %s' => '',
+        'Info tile entry was added successfully!' => '',
+        'Info tile entry was updated successfully!' => '',
+        'Session has been killed!' => '세션이 종료되었습니다!',
+        'All sessions have been killed, except for your own.' => '모든 세션이 자신의 것을 제외한 모든 세션에서 종료되었습니다.',
+        'There was an error updating the info tile entry' => '',
+        'It was not possible to delete the info tile entry: %s!' => '',
+
         # Perl Module: Kernel/Modules/AdminCustomerGroup.pm
         'No configuration for \'CustomerGroupPermissionContext\' found!' =>
             '\'CustomerGroupPermissionContext\'에 대한 구성이 없습니다!',
@@ -3849,9 +4363,9 @@ sub Data {
         'Undefined subaction.' => '지정되지 않은 서브액션',
         'Need %s' => '%s 필요',
         'Add %s field' => '%s 필드 추가',
+        'The field must be numeric.' => '이 필드는 숫자여야 합니다.',
         'The field does not contain only ASCII letters and numbers.' => '입력란에는 ASCII 문자와 숫자 만 포함되지 않습니다.',
         'There is another field with the same name.' => '같은 이름의 다른 필드가 있습니다.',
-        'The field must be numeric.' => '이 필드는 숫자여야 합니다.',
         'Need ValidID' => 'ValidID 필요',
         'Could not create the new field' => '새 필드를 만들지 못했습니다.',
         'Need ID' => '신분증이 필요함',
@@ -3879,12 +4393,48 @@ sub Data {
         'An element is used as parent element, but not included itself. Please include it.' =>
             '',
 
+        # Perl Module: Kernel/Modules/AdminDynamicFieldLens.pm
+        'The referenced dynamic field' => '',
+        'Select the dynamic field that references an object' => '',
+        'The attribute of the referenced object' => '',
+        'Select the attribute dynamic field that references an object' =>
+            '',
+        'A field of type %s is currently not usable as lens attribute.' =>
+            '',
+        'Field %s is not a reference field.' => '',
+        'Not a valid dynamic field.' => '',
+
         # Perl Module: Kernel/Modules/AdminDynamicFieldScreen.pm
         'Settings were saved.' => '',
         'System was not able to save the setting!' => '',
         'Setting is locked by another user!' => '다른 사용자가 설정을 잠갔습니다!',
         'System was not able to reset the setting!' => '시스템에서 설정을 재설정 할 수 없었습니다!',
         'Settings were reset.' => '',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldScript.pm
+        'Need valid field driver.' => '',
+        'Erroneous value in RequiredArgs.' => '',
+        'Erroneous value in PreviewTriggers.' => '',
+        'Erroneous value in StorageTriggers.' => '',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldSet.pm
+        'Missing Dynamic Field.' => '',
+        'No valid dynamic field "%s".' => '',
+        'The dynamic field type "%s" of dynamic field "%s" can not be used in sets.' =>
+            '',
+        'The dynamic field "%s" can not be used in sets as it is either a Set field or a Lens field pointing to a Set field.' =>
+            '',
+        'The dynamic field "%s" is already in use in a ticket mask.' => '',
+        'The object type of the dynamic field "%s" does not match the object type of the Set field.' =>
+            '',
+        'Misconfigured Grid - need Rows as Array!' => '',
+        'Misconfigured Grid - need Columns as integer > 0!' => '',
+        'Misconfigured Grid - Rows can\'t be empty!' => '',
+        'Misconfigured Grid - Rows must contain entries with key \'DF\'!' =>
+            '',
+        'Missing Dynamic Field or Grid.' => '',
+        'The field must be a valid YAML containing an array of dynamic fields.' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminEmail.pm
         'Select at least one recipient.' => '받는 사람을 한 명 이상 선택하십시오.',
@@ -4018,6 +4568,8 @@ sub Data {
             '',
         'Outgoing error handler data after error handling (ProviderErrorHandlingOutput)' =>
             '',
+        'Disabled' => '불구가 된',
+        'Enabled' => '사용',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceOperationDefault.pm
         'Could not determine config for operation %s' => '%s Operation에 대한 구성을 결정할 수 없습니다.',
@@ -4027,6 +4579,8 @@ sub Data {
         'Need valid Subaction!' => '유효한 서브 액션이 필요합니다!',
         'This field should be an integer.' => '이 필드는 정수여야 합니다.',
         'File or Directory not found.' => '파일 또는 디렉터리를 찾을 수 없음.',
+        'This key is already used' => '',
+        'This key is not allowed' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
         'There is another web service with the same name.' => '같은 이름의 다른 웹 서비스가 있습니다.',
@@ -4038,12 +4592,12 @@ sub Data {
         'Could not load %s.' => '',
         'Could not read %s!' => '%s를 읽을 수 없습니다!',
         'Need a file to import!' => '가져올 파일이 필요합니다!',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            '가져온 파일에 유효한 YAML 콘텐츠가 없습니다! 자세한 내용은 OTOBO 로그를 확인하십시오.',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            '가져온 파일에 유효한 YAML 콘텐츠가 없습니다! 자세한 내용은 CareOnCloud ESM 로그를 확인하십시오.',
         'Web service "%s" deleted!' => 'Web service "%s"이 삭제되었습니다!',
-        'OTOBO as provider' => '공급자 인 OTOBO',
+        'CareOnCloud ESM as provider' => '공급자 인 CareOnCloud ESM',
         'Operations' => '운영',
-        'OTOBO as requester' => '요청자 인 OTOBO',
+        'CareOnCloud ESM as requester' => '요청자 인 CareOnCloud ESM',
         'Invokers' => '인보커',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4053,6 +4607,23 @@ sub Data {
         # Perl Module: Kernel/Modules/AdminGroup.pm
         'Group updated!' => '그룹이 업데이트 되었습니다!',
 
+        # Perl Module: Kernel/Modules/AdminImportExport.pm
+        'No object backend found!' => '',
+        'No format backend found!' => '',
+        'Template not found!' => '',
+        'Can\'t insert/update template!' => '',
+        'Needed TemplateID!' => '',
+        'Error occurred. Import impossible! See Syslog for details.' => '',
+        'Error occurred. Export impossible! See Syslog for details.' => '',
+        'Template List' => '',
+        'number' => '',
+        'number bigger than zero' => '',
+        'integer' => '',
+        'integer bigger than zero' => '',
+        'Element required, please insert data' => '',
+        'Invalid data, please insert a valid %s' => '',
+        'Format not found!' => '',
+
         # Perl Module: Kernel/Modules/AdminMailAccount.pm
         'Mail account added!' => '메일 계정이 추가되었습니다!',
         'Email account fetch already fetched by another process. Please try again later!' =>
@@ -4061,6 +4632,9 @@ sub Data {
         'Dispatching by selected Queue.' => '선택한 대기열로 발송.',
 
         # Perl Module: Kernel/Modules/AdminNotificationEvent.pm
+        'No permission to edit this ticket notification.' => '',
+        'You need %s permissions!' => '%s의 권한이 필요합니다!',
+        'Agent who created the first article' => '',
         'Agent who created the ticket' => '티켓을 만든 에이전트',
         'Agent who owns the ticket' => '티켓을 소유한 에이전트',
         'Agent who is responsible for the ticket' => '티켓을 책임지는 요원',
@@ -4073,8 +4647,35 @@ sub Data {
         'Customer user of the ticket' => '티켓의 고객 사용자',
         'All recipients of the first article' => '첫 번째 기사의 모든 수신자',
         'All recipients of the last article' => '마지막 기사의 모든 수신자',
+        'Only send within working hours' => '',
+        'Only send outside working hours' => '',
         'Invisible to customer' => '',
         'Visible to customer' => '',
+
+        # Perl Module: Kernel/Modules/AdminOAuthTokenStore.pm
+        'Account Name is missing!' => '',
+        'Username is required!' => '',
+        'Password is required!' => '',
+        'Account Name is taken!' => '',
+        'Error creating/updating %s!' => '',
+        'Unable to generate OIDC provider authentication URL for login. Invalid OIDC configuration!' =>
+            '',
+        'Account %s deleted!' => '',
+        'Token %s updated!' => '',
+        'Invalid OAuth State!' => '',
+        'Invalid Account %s for Token!' => '',
+        'Invalid Issuer %s for Token %s!' => '',
+
+        # Perl Module: Kernel/Modules/AdminOIDCProfiles.pm
+        'Profile Name is missing!' => '',
+        'Provider metadata url is missing!' => '',
+        'Provider client id is missing!' => '',
+        'Provider client secret is missing!' => '',
+        'Profile Name is taken!' => '',
+        'Error creating/updating Profile %s!' => '',
+        'Profile %s deleted!' => '',
+        'Profile %s could not be deleted - do you have any Functional Accounts referencing this Profile?' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminPGP.pm
         'PGP environment is not working. Please check log for more info!' =>
@@ -4090,7 +4691,7 @@ sub Data {
         'Can\'t read %s!' => '%s를 읽을 수 없습니다!',
         'File is OK' => '파일은 정상입니다.',
         'Package has locally modified files.' => '패키지에 로컬로 수정된 파일이 있습니다.',
-        'Package not verified by the OTOBO Team!' => '',
+        'Package not verified by the CareOnCloud ESM Team!' => '',
         'Not Started' => '시작되지 않음',
         'Updated' => '업데이트 됨',
         'Already up-to-date' => '이미 최신',
@@ -4111,9 +4712,9 @@ sub Data {
             '',
         'Package not verified due a communication issue with verification server!' =>
             '확인 서버와의 통신 문제로 인해 패키지가 확인되지 않았습니다!',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => 'OTOBO 기능 추가 기능 목록 서버에 연결할 수 없습니다!',
-        'Can\'t get OTOBO Feature Add-on list from server!' => '서버에서 OTOBO 기능 추가 기능 목록을 가져올 수 없습니다!',
-        'Can\'t get OTOBO Feature Add-on from server!' => '서버에서 OTOBO 기능 추가 기능을 가져올 수 없습니다!',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => 'CareOnCloud ESM 기능 추가 기능 목록 서버에 연결할 수 없습니다!',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => '서버에서 CareOnCloud ESM 기능 추가 기능 목록을 가져올 수 없습니다!',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => '서버에서 CareOnCloud ESM 기능 추가 기능을 가져올 수 없습니다!',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => '해당 필터 없음 : %s',
@@ -4125,6 +4726,8 @@ sub Data {
         'Process Management information from database is not in sync with the system configuration, please synchronize all processes.' =>
             '데이터베이스의 프로세스 관리 정보가 시스템 구성과 동기화되지 않았습니다. 모든 프로세스를 동기화 하십시오.',
         'Need ExampleProcesses!' => 'ExampleProcesses가 필요합니다!',
+        'There was an error setting the entity sync status for Process entity: %s' =>
+            '프로세스 엔티티에 대한 엔티티 동기화 상태를 설정하는 중 오류가 발생했습니다 : %s',
         'Need ProcessID!' => 'ProcessID가 필요합니다!',
         'Yes (mandatory)' => '예 (필수)',
         'Unknown Process %s!' => '알 수없는 프로세스 %s!',
@@ -4132,10 +4735,17 @@ sub Data {
             '이 프로세스에 대한 새 EntityID를 생성하는 중 오류가 발생했습니다.',
         'The StateEntityID for state Inactive does not exists' => '상태 비활성에 대한 StateEntityID가 없습니다.',
         'There was an error creating the Process' => '프로세스를 만드는 중 오류가 발생했습니다.',
-        'There was an error setting the entity sync status for Process entity: %s' =>
-            '프로세스 엔티티에 대한 엔티티 동기화 상태를 설정하는 중 오류가 발생했습니다 : %s',
-        'Could not get data for ProcessID %s' => 'ProcessID %s에 대한 데이터를 가져올 수 없습니다.',
+        'There was an error generating a new EntityID while copying an associated Element' =>
+            '',
+        'There was an error copying an associated Element' => '',
+        'There was an error setting the entity sync status for an associated Element entity: %s' =>
+            '',
         'There was an error updating the Process' => '프로세스를 업데이트 하는 중 오류가 발생했습니다.',
+        'Could not get data for ProcessID %s' => 'ProcessID %s에 대한 데이터를 가져올 수 없습니다.',
+        'Process: %s successfully deleted, but failed to delete an associated Element' =>
+            '',
+        'Process: %s successfully deleted, but there was an error setting the entity sync status for an associated Element entity' =>
+            '',
         'Process: %s could not be deleted' => 'Process : %s을 삭제할 수 없습니다.',
         'There was an error synchronizing the processes.' => '프로세스를 동기화하는 중 오류가 발생했습니다.',
         'The %s:%s is still in use' => '%s : %s는 아직 사용 중입니다.',
@@ -4144,24 +4754,30 @@ sub Data {
         'There was an error setting the entity sync status for %s entity: %s' =>
             '엔티티 동기화 상태 설정 오류 : %s, 엔티티 %s',
         'Could not get %s' => '%s를 얻을 수 없음',
+        'Need ProcessEntityID!' => '',
         'Need %s!' => '%s 필요!',
         'Process: %s is not Inactive' => 'Process : %s이 비활성 상태가 아닙니다.',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementActivity.pm
-        'There was an error generating a new EntityID for this Activity' =>
-            '이 활동에 대한 새 EntityID를 생성하는 중 오류가 발생했습니다.',
-        'There was an error creating the Activity' => '활동을 만드는 중 오류가 발생했습니다.',
-        'There was an error setting the entity sync status for Activity entity: %s' =>
-            'Activity 엔티티에 대한 엔티티 동기화 상태를 설정하는 중 오류가 발생했습니다 : %s',
-        'Need ActivityID!' => 'ActivityID가 필요합니다!',
-        'Could not get data for ActivityID %s' => 'ActivityID %s에 대한 데이터를 가져올 수 없습니다.',
-        'There was an error updating the Activity' => '활동을 업데이트 하는 중 오류가 발생했습니다.',
+        'Non-global activity dialogs may not be assigned to global activities.' =>
+            '',
+        'There was an error generating a new entity ID for this activity.' =>
+            '',
+        'There was an error creating the activity.' => '',
+        'There was an error setting the entity sync status for activity entity: %s' =>
+            '',
+        'Need ActivityID and ProcessEntityID!' => '',
+        'Could not get data for activity ID %s' => '',
+        'This activity is not available to the current process.' => '',
+        'Activities currently shared by other processes may not be set to non-global.' =>
+            '',
+        'There was an error updating the activity.' => '',
         'Missing Parameter: Need Activity and ActivityDialog!' => '누락 된 매개 변수 : 필요한 활동 및 ActivityDialog!',
         'Activity not found!' => '활동을 찾을 수 없습니다!',
         'ActivityDialog not found!' => 'ActivityDialog를 찾을 수 없습니다!',
-        'ActivityDialog already assigned to Activity. You cannot add an ActivityDialog twice!' =>
-            'ActivityDialog가 이미 Activity에 할당되었습니다. ActivityDialog를 두 번 추가 할 수는 없습니다!',
-        'Error while saving the Activity to the database!' => '활동을 데이터베이스에 저장하는 동안 오류가 발생했습니다!',
+        'Activity dialog already assigned to activity. You cannot add an activity dialog twice.' =>
+            '',
+        'Error while saving the activity to the database.' => '',
         'This subaction is not valid' => '이 하위 작업이 유효하지 않습니다.',
         'Edit Activity "%s"' => 'Activity 편집 "%s"',
 
@@ -4171,8 +4787,12 @@ sub Data {
         'There was an error creating the ActivityDialog' => 'ActivityDialog를 만드는 중 오류가 발생했습니다.',
         'There was an error setting the entity sync status for ActivityDialog entity: %s' =>
             'ActivityDialog 엔터티에 대한 엔터티 동기화 상태를 설정하는 중 오류가 발생했습니다 : %s',
-        'Need ActivityDialogID!' => 'ActivityDialogID가 필요합니다!',
+        'Need ActivityDialogID and ProcessEntityID!' => '',
         'Could not get data for ActivityDialogID %s' => 'ActivityDialogID %s에 대한 데이터를 가져올 수 없습니다.',
+        'This Activity Dialog is not available to the current Process!' =>
+            '',
+        'ActivityDialogs currently used in gobal ' => '',
+        'ActivityDialogs currently used in non-gobal Activities ' => '',
         'There was an error updating the ActivityDialog' => 'ActivityDialog를 업데이트하는 중 오류가 발생했습니다.',
         'Edit Activity Dialog "%s"' => 'Activity Dialog 수정 "%s"',
         'Agent Interface' => '에이전트 인터페이스',
@@ -4191,11 +4811,15 @@ sub Data {
         'There was an error creating the Transition' => '전환을 만드는 중에 오류가 발생했습니다.',
         'There was an error setting the entity sync status for Transition entity: %s' =>
             '전환 엔티티에 대한 엔티티 동기화 상태를 설정하는 중에 오류가 발생했습니다 : %s',
-        'Need TransitionID!' => '전환 ID가 필요합니다!',
+        'Need TransitionID and ProcessEntityID!' => '',
         'Could not get data for TransitionID %s' => 'TransitionID %s에 대한 데이터를 가져올 수 없습니다.',
+        'This Transition is not available to the current Process!' => '',
+        'Transitions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the Transition' => '전환을 업데이트 하는 중 오류가 발생했습니다.',
         'Edit Transition "%s"' => '전환 편집 "%s"',
-        'Transition validation module' => '전환 유효성 검사 모듈',
+        'Regular expression - all' => '',
+        'Regular expression - negated' => '',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementTransitionAction.pm
         'At least one valid config parameter is required.' => '하나 이상의 유효한 config 매개 변수가 필요합니다.',
@@ -4204,8 +4828,12 @@ sub Data {
         'There was an error creating the TransitionAction' => 'TransitionAction을 만드는 중 오류가 발생했습니다.',
         'There was an error setting the entity sync status for TransitionAction entity: %s' =>
             'TransitionAction 항목의 항목 동기화 상태를 설정하는 중에 오류가 발생했습니다 : %s',
-        'Need TransitionActionID!' => 'TransitionActionID가 필요합니다!',
+        'Need TransitionActionID and ProcessEntityID!' => '',
         'Could not get data for TransitionActionID %s' => 'TransitionActionID %s에 대한 데이터를 가져올 수 없습니다.',
+        'This Transition Action is not available to the current Process!' =>
+            '',
+        'TransitionActions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the TransitionAction' => 'TransitionAction을 업데이트하는 중 오류가 발생했습니다.',
         'Edit Transition Action "%s"' => '전환 Action 편집 "%s"',
         'Error: Not all keys seem to have values or vice versa.' => '오류 : 모든 키가 값을 가진 것처럼 보이지 않거나 그 반대의 경우도 있습니다.',
@@ -4284,13 +4912,13 @@ sub Data {
         'You currently don\'t have any favourite settings.' => '현재 즐겨찾는 설정이 없습니다.',
         'The following settings could not be found: %s' => '다음 설정을 찾을 수 없습니다 : %s',
         'Import not allowed!' => '가져오기가 허용되지 않습니다!',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
-            '알 수없는 오류로 인해 시스템 구성을 가져올 수 없습니다. 자세한 내용은 OTOBO 로그를 확인하십시오.',
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
+            '알 수없는 오류로 인해 시스템 구성을 가져올 수 없습니다. 자세한 내용은 CareOnCloud ESM 로그를 확인하십시오.',
         'Category Search' => '카테고리 검색',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
-            '일부 가져온 설정은 구성의 현재 상태에 나타나지 않거나 업데이트 할 수 없습니다. 자세한 내용은 OTOBO 로그를 확인하십시오.',
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
+            '일부 가져온 설정은 구성의 현재 상태에 나타나지 않거나 업데이트 할 수 없습니다. 자세한 내용은 CareOnCloud ESM 로그를 확인하십시오.',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
         'This deployment does not contain changes in the setting values!' =>
@@ -4307,6 +4935,7 @@ sub Data {
         'System was not able to lock the setting!' => '시스템이 설정을 잠글 수 없습니다!',
         'Missing setting name.' => '설정 이름이 없습니다.',
         'Setting not found.' => '설정을 찾을 수 없습니다.',
+        'Missing setting key!' => '',
         'Missing Settings!' => '설정이 없습니다!',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationSettingHistory.pm
@@ -4322,24 +4951,38 @@ sub Data {
         'System was not able to delete the user setting values!' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemMaintenance.pm
-        'Start date shouldn\'t be defined after Stop date!' => '시작일은 종요일 이후에 정의되어서는 안됩니다!',
         'There was an error creating the System Maintenance' => '시스템 유지 보수를 작성하는 중 오류가 발생했습니다.',
         'Need SystemMaintenanceID!' => 'SystemMaintenanceID가 필요합니다!',
         'Could not get data for SystemMaintenanceID %s' => 'SystemMaintenanceID %s에 대한 데이터를 가져올 수 없습니다.',
         'System Maintenance was added successfully!' => '시스템 유지 보수가 성공적으로 추가 되었습니다!',
         'System Maintenance was updated successfully!' => '시스템 유지 보수가 성공적으로 업데이트되었습니다!',
-        'Session has been killed!' => '세션이 종료되었습니다!',
-        'All sessions have been killed, except for your own.' => '모든 세션이 자신의 것을 제외한 모든 세션에서 종료되었습니다.',
         'There was an error updating the System Maintenance' => '시스템 유지 보수를 업데이트하는 중 오류가 발생했습니다.',
         'Was not possible to delete the SystemMaintenance entry: %s!' => 'SystemMaintenance 항목을 삭제할 수 없습니다 : %s',
 
         # Perl Module: Kernel/Modules/AdminTemplate.pm
+        'No permission to edit this template.' => '',
         'Template updated!' => '템플릿이 업데이트 되었습니다!',
         'Template added!' => '템플릿이 추가되었습니다!',
 
         # Perl Module: Kernel/Modules/AdminTemplateAttachment.pm
         'Change Attachment Relations for Template' => '템플릿에 대한 첨부 파일 관계 변경',
         'Change Template Relations for Attachment' => '첨부 파일에 대한 템플릿 관계 변경',
+
+        # Perl Module: Kernel/Modules/AdminTranslations.pm
+        'Translation unmarked for deletion!' => '',
+        'Error trying unmark translation for delete!' => '',
+        'Translations changed!' => '',
+        'No translations were changed!' => '',
+        'Errors trying to change translations!' => '',
+        'Translations added!' => '',
+        'No translations were given to add!' => '',
+        'Translation already exists!' => '',
+        'Translations deployed successfully!' => '',
+        'Nothing to do!' => '',
+        'Errors occurred when trying to deploy translation. Please check system logs!' =>
+            '',
+        'All Items' => '',
+        'Deployment Results' => '',
 
         # Perl Module: Kernel/Modules/AdminType.pm
         'Need Type!' => '유형 필요!',
@@ -4459,7 +5102,6 @@ sub Data {
 
         # Perl Module: Kernel/Modules/AgentTicketActionCommon.pm
         'No TicketID is given!' => 'TicketID가 주어지지 않았습니다!',
-        'You need %s permissions!' => '%s의 권한이 필요합니다!',
         'Loading draft failed!' => '초안로드 실패!',
         'Sorry, you need to be the ticket owner to perform this action.' =>
             '죄송합니다. 이 작업을 수행하려면 티켓 소유자여야 합니다.',
@@ -4474,6 +5116,14 @@ sub Data {
         'wrote' => '쓴',
         'Message from' => '님의 메시지',
         'End message' => '메시지 끝내기',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleEdit.pm
+        'No ArticleID is given!' => 'ArticleID가 주어지지 않았습니다!',
+        'This action is not permitted on the article!' => '',
+        'This article is not editable!' => '',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleStatus.pm
+        'Can\'t set this Ticket option, no TicketID is given!' => '',
 
         # Perl Module: Kernel/Modules/AgentTicketBounce.pm
         '%s is needed!' => '%s가 필요합니다!',
@@ -4512,9 +5162,6 @@ sub Data {
         # Perl Module: Kernel/Modules/AgentTicketEmailOutbound.pm
         'Got no TicketID!' => 'TicketID가 없습니다!',
         'System Error!' => '시스템 오류!',
-
-        # Perl Module: Kernel/Modules/AgentTicketEmailResend.pm
-        'No ArticleID is given!' => 'ArticleID가 주어지지 않았습니다!',
 
         # Perl Module: Kernel/Modules/AgentTicketEscalationView.pm
         'Next week' => '다음 주',
@@ -4612,14 +5259,14 @@ sub Data {
         'This step does not belong anymore to the current activity in process for ticket \'%s%s%s\'! Another user changed this ticket in the meantime. Please close this window and reload the ticket.' =>
             '이 단계는 \'%s %s %s\'티켓의 진행중인 현재 활동에 더 이상 속하지 않습니다! 다른 사용자가이 티켓을 변경했습니다. 이 창을 닫고 티켓을 다시로드하십시오.',
         'Missing ProcessEntityID in Ticket %s!' => '티켓 %s에 ProcessEntityID가 누락되었습니다!',
-        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
-            '%s의 DynamicField값 설정할 수 없음 - 티켓 ID "%s" - ActivityDialog "%s"!',
         'Could not set PendingTime for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             'PendingTime 설정할 수 없음 - 티켓 ID "%s" - ActivityDialog "%s"!',
         'Wrong ActivityDialog Field config: %s can\'t be Display => 1 / Show field (Please change its configuration to be Display => 0 / Do not show field or Display => 2 / Show field as mandatory)!' =>
             '잘못된 ActivityDialog 필드 설정 : %s는 표시 => 1 / 표시 필드 일 수 없습니다. (표시 => 0 / 필드 표시 안 함 또는 표시 => 2 / 표시 필드를 필수로 변경하십시오)!',
         'Could not set %s for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             '%s 설정할 수 없음 - 티켓 ID "%s" - ActivityDialog "%s"!',
+        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
+            '%s의 DynamicField값 설정할 수 없음 - 티켓 ID "%s" - ActivityDialog "%s"!',
         'Default Config for Process::Default%s missing!' => 'Process::Default%s 의 기본 구성이 누락되었습니다!',
         'Default Config for Process::Default%s invalid!' => 'Process::Default%s 의 기본 구성이 잘못되었습니다!',
 
@@ -4707,12 +5354,11 @@ sub Data {
         'Notification Was Sent' => '알림을 보냈습니다.',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state.' =>
             '이 티켓이 없거나 현재 상태로 액세스 할 수있는 권한이 없습니다.',
+        'Could not delete form draft.' => '',
         'Missing FormDraftID!' => '누락 된 FormDraftID!',
         'Can\'t get for ArticleID %s!' => 'ArticleID %s를 얻을 수 없습니다!',
         'Article filter settings were saved.' => '기사 필터 설정이 저장되었습니다.',
         'Event type filter settings were saved.' => '이벤트 유형 필터 설정이 저장되었습니다.',
-        'Need ArticleID!' => 'ArticleID가 필요합니다!',
-        'Invalid ArticleID!' => '잘못된 ArticleID!',
         'Forward article via mail' => '우편으로 기사 전달',
         'Forward' => '전달',
         'Fields with no group' => '그룹이 없는 필드',
@@ -4727,10 +5373,13 @@ sub Data {
         'Error: the file could not be deleted properly. Please contact your administrator (missing FileID).' =>
             '오류 : 파일을 제대로 삭제할 수 없습니다. 관리자에게 문의하십시오 (누락 된 FileID).',
 
+        # Perl Module: Kernel/Modules/BasePassword.pm
+        'Can`t remove SessionID.' => 'SessionID를 제거 할 수 없습니다.',
+
         # Perl Module: Kernel/Modules/CustomerDashboardCommon.pm
-        'Registration for tile %s of CustomerDashboard is invalid! Either Module or Template needed.' =>
+        'Registration for tile \'%s\' of CustomerDashboard is invalid! Order needs to be a number and unique.' =>
             '',
-        'Registration for tile %s of CustomerDashboard is invalid! Order needs to be a unique number.' =>
+        'Registration for tile %s of customer dashboard is invalid! Either Module or Template needed.' =>
             '',
 
         # Perl Module: Kernel/Modules/CustomerGenericContent.pm
@@ -4738,6 +5387,9 @@ sub Data {
         'Invalid Key!' => '',
         'Failed to load Content!' => '',
         'Destination unknown.' => '',
+
+        # Perl Module: Kernel/Modules/CustomerPreferences.pm
+        'No valid config for %s' => '',
 
         # Perl Module: Kernel/Modules/CustomerTicketArticleContent.pm
         'ArticleID is needed!' => 'ArticleID이 필요합니다!',
@@ -4758,12 +5410,9 @@ sub Data {
         'Need CustomerID!' => '고객 ID가 필요합니다!',
         'My Tickets' => '내 티켓',
         'Company Tickets' => '회사 티켓',
-        'Untitled!' => '제목없는!',
 
         # Perl Module: Kernel/Modules/CustomerTicketSearch.pm
         'Customer Realname' => '고객 실명',
-        'Created within the last' => '마지막으로 생성된',
-        'Created more than ... ago' => '만든 이상 ...전',
         'Please remove the following words because they cannot be used for the search:' =>
             '다음 단어를 검색에 사용할 수 없으므로 제거하십시오.',
 
@@ -4780,7 +5429,7 @@ sub Data {
         'Configure "Home" in Kernel/Config.pm first!' => '먼저 Kernel / Config.pm에서 "홈"을 구성하십시오!',
         'File "%s/Kernel/Config.pm" not found!' => '"%s/Kernel/Config.pm"파일을 찾을 수 없습니다!',
         'Directory "%s" not found!' => '"%s" 디렉토리를 찾을 수 없습니다!',
-        'Install OTOBO' => 'OTOBO 설치',
+        'Install CareOnCloud ESM' => 'CareOnCloud ESM 설치',
         'Intro' => '소개',
         'Kernel/Config.pm isn\'t writable!' => 'Kernel / Config.pm에 쓸 수 없습니다!',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -4797,7 +5446,7 @@ sub Data {
         'Unknown database type "%s".' => '알 수없는 데이터베이스 유형 "%s".',
         'Please go back.' => '돌아가 주세요.',
         'Create Database' => '데이터베이스 생성',
-        'Install OTOBO - Error' => 'OTOBO 설치 - 오류',
+        'Install CareOnCloud ESM - Error' => 'CareOnCloud ESM 설치 - 오류',
         'File "%s/%s.xml" not found!' => '"%s / %s.xml"파일을 찾을 수 없습니다!',
         'Contact your Admin!' => '관리자에게 문의하십시오!',
         'Execution of SQL statement failed: ' => '',
@@ -4812,6 +5461,8 @@ sub Data {
             '데이터베이스에 연결할 수 없습니다. Perl 모듈 DBD :: %s이 설치되지 않았습니다!',
         'Can\'t connect to database, read comment!' => '데이터베이스에 연결할 수 없으므로 주석을 읽으십시오!',
         'Database already contains data - it should be empty!' => '데이터베이스에 이미 데이터가 있습니다. 비워두워야 합니다.',
+        'Error: database version requirement not satisfied. Have version: %s Want version: %s' =>
+            '',
         'Error: Please make sure your database accepts packages over %s MB in size (it currently only accepts packages up to %s MB). Please adapt the max_allowed_packet setting of your database in order to avoid errors.' =>
             '오류 : 데이터베이스가 크기가 %s를 넘는 패킷을 수락하는지 확인하십시오 (패키지는 현재 최대 %s MB 만 허용). 오류를 피하기 위해 데이터베이스의 max_allowed_packet 설정을 조정하십시오.',
         'Error: Please set the value for innodb_log_file_size on your database to at least %s MB (current: %s MB, recommended: %s MB). For more information, please have a look at %s.' =>
@@ -4820,7 +5471,7 @@ sub Data {
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             '',
-        'OTRS to OTOBO migration' => '',
+        'OTRS to CareOnCloud ESM migration' => '',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => '아니 %s!',
@@ -4835,6 +5486,15 @@ sub Data {
 
         # Perl Module: Kernel/Output/HTML/Article/Chat.pm
         'Chat' => '~에게 말을 걸다',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleDelete.pm
+        'Delete this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleEdit.pm
+        'Edit this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleRestore.pm
+        'Restore this article' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketBounce.pm
         'Bounce Article to a different mail address' => '다른 메일 주소로 기사 반송',
@@ -4865,8 +5525,12 @@ sub Data {
         'Print this article' => '이 기사 인쇄',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/GetHelpLink.pm
-        'Contact us at hello@otobo.de' => '',
+        'Contact us at hello@otobo.io' => '',
         'Get Help' => '도움말 보기',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/MarkArticleSeenUnseen.pm
+        'Mark article as unseen' => '',
+        'Mark as unseen' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/MarkAsImportant.pm
         'Mark' => '마크',
@@ -4944,8 +5608,8 @@ sub Data {
         'Shown Tickets' => '표시된 티켓',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => 'OTOBO 뉴스 서버에 연결할 수 없습니다!',
-        'Can\'t get OTOBO News from server!' => '서버에서 OTOBO 뉴스를 가져올 수 없습니다!',
+        'Can\'t connect to CareOnCloud ESM News server!' => 'CareOnCloud ESM 뉴스 서버에 연결할 수 없습니다!',
+        'Can\'t get CareOnCloud ESM News from server!' => '서버에서 CareOnCloud ESM 뉴스를 가져올 수 없습니다!',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => '제품 뉴스 서버에 연결할 수 없습니다!',
@@ -4967,6 +5631,12 @@ sub Data {
         'User set their status to unavailable.' => '사용자가 상태를 사용할 수 없도록 설정했습니다.',
         'Unavailable' => '불가능',
 
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchGeneric.pm
+        'Shown Elasticsearch Results' => '',
+
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchTicketGeneric.pm
+        'Shown Elsticsearch Results' => '',
+
         # Perl Module: Kernel/Output/HTML/Layout.pm
         'Standard' => '표준',
         'The following tickets are not updated: %s.' => '',
@@ -4975,10 +5645,6 @@ sub Data {
         'd' => '일',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state. You can take one of the following actions:' =>
             '이 티켓이 없거나 현재 상태로 액세스 할 수 있는 권한이 없습니다. 다음 작업 중 하나를 수행할 수 있습니다.',
-        'This is a' => '이것은',
-        'email' => '이메일',
-        'click here' => '여기를 클릭',
-        'to open it in a new window.' => '새 창에서 열려면.',
         'Year' => '년',
         'Hours' => '시간',
         'Minutes' => '분',
@@ -5029,7 +5695,7 @@ sub Data {
             '시스템 유지 보수 기간은 %s에서 시작되며 %s에서 중단 될 것으로 예상됩니다.',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'OTOBO 데몬이 실행되고 있지 않습니다.',
+        'CareOnCloud ESM Daemon is not running.' => 'CareOnCloud ESM 데몬이 실행되고 있지 않습니다.',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5055,9 +5721,6 @@ sub Data {
         'Please make sure you\'ve chosen at least one transport method for mandatory notifications.' =>
             '필수 알림을 위한 전송 방법을 하나 이상 선택했는지 확인하십시오.',
         'Preferences updated successfully!' => '환경 설정이 성공적으로 업데이트 되었습니다!',
-
-        # Perl Module: Kernel/Output/HTML/Preferences/Language.pm
-        '(in process)' => '(과정에서)',
 
         # Perl Module: Kernel/Output/HTML/Preferences/OutOfOffice.pm
         'Please specify an end date that is after the start date.' => '시작일 이후의 종료일을 지정 하십시오.',
@@ -5119,11 +5782,16 @@ sub Data {
         'Cancel editing and unlock this setting' => '이 설정 편집 및 잠금 해제를 취소하십시오.',
         'Reset this setting to its default value.' => '이 설정을 기본값으로 다시 설정하십시오.',
         'Unable to load %s!' => '%s를 로드 할 수 없습니다!',
-        'Content' => '만족',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/Lock.pm
         'Unlock to give it back to the queue' => '잠금 해제하여 다시 대기열로 보냅니다.',
         'Lock it to work on it' => '잠금 기능',
+
+        # Perl Module: Kernel/Output/HTML/TicketMenu/ShowHideDeletedArticles.pm
+        'Hide deleted articles' => '',
+        'Click to hide deleted articles' => '',
+        'Show deleted articles' => '',
+        'Click to show deleted articles' => '',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/TicketWatcher.pm
         'Unwatch' => '언 워치',
@@ -5133,6 +5801,9 @@ sub Data {
 
         # Perl Module: Kernel/Output/HTML/TicketOverviewMenu/Sort.pm
         'Order by' => '주문',
+
+        # Perl Module: Kernel/Output/HTML/TicketZoom/SimilarTickets.pm
+        'Similar Tickets' => '',
 
         # Perl Module: Kernel/Output/HTML/ToolBar/TicketLocked.pm
         'Locked Tickets New' => '잠긴 티켓 신규',
@@ -5207,137 +5878,213 @@ sub Data {
         'This email address is already in use for another customer user.' =>
             '이 이메일 주소는 이미 다른 고객 사용자를 위해 사용 중입니다.',
 
+        # Perl Module: Kernel/System/DynamicField/Driver/Agent.pm
+        'Group of the agents' => '',
+        'Select the group of the agents.' => '',
+        'External source key' => '',
+        'When set via an external source (e.g. web service or import / export), the value will be interpreted as this attribute.' =>
+            '',
+
         # Perl Module: Kernel/System/DynamicField/Driver/BaseDateTime.pm
         'before/after' => '전/후',
         'between' => '사이에',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/BaseText.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseReference.pm
+        'Referenced object type' => '',
+        'Select the type of the referenced object.' => '',
+        'Input mode of edit field' => '',
+        'Select the input mode for the edit field.' => '',
+        'Link type' => '',
+        'Select the link type.' => '',
+        'Forwards: Referencing (Source) -> Referenced (Target)' => '',
+        'Backwards: Referenced (Source) -> Referencing (Target)' => '',
+        'Link Direction' => '',
+        'The referencing object is the one containing this dynamic field, the referenced object is the one selected as value of the dynamic field.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseScript.pm
         'e.g. Text or Te*t' => '예 : 텍스트 또는 문자 *',
 
         # Perl Module: Kernel/System/DynamicField/Driver/Checkbox.pm
         'Ignore this field.' => '이 입력란을 무시하십시오.',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/TextArea.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/CustomerCompany.pm
+        'Attribute which will be searched on autocomplete' => '',
+        'Select the attribute which customer companies will be searched by.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/RichText.pm
         'This field is required or' => '이 필드는 필수이거나',
         'The field content is too long!' => '입력란 내용이 너무 깁니다.',
         'Maximum size is %s characters.' => '최대 크기는%s자입니다.',
+        'Full %s Text' => '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/Ticket.pm
+        'Queue of the ticket' => '',
+        'Select the queue of the ticket.' => '',
+        'Type of the ticket' => '',
+        'Select the type of the ticket.' => '',
+        'Select the attribute which tickets will be searched by.' => '',
+        'Attribute which is displayed for values' => '',
+        'Select the type of display.' => '',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/CSV.pm
+        'Column Separator' => '',
+        'Tabulator (TAB)' => '',
+        'Semicolon (;)' => '',
+        'Colon (:)' => '',
+        'Dot (.)' => '',
+        'Comma (,)' => '',
+        'Charset' => '',
+        'Include Column Headers' => '',
+        'Column' => '',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/JSON.pm
+        'Pretty print the exported concatenated JSON' => '',
+
+        # Perl Module: Kernel/System/ImportExport/ObjectBackend/Ticket.pm
+        'Default Queue' => '',
+        'Default Type' => '',
+        'Default Service' => '',
+        'Default SLA' => '',
+        'Default state' => '',
+        'Default priority' => '',
+        'Default owner' => '',
+        'Default responsible' => '',
+        'Default lock' => '',
+        'Default CustomerID' => '',
+        'Default CustomerUserID' => '',
+        'Default ArchiveFlag' => '',
+        'Default subject' => '',
+        'Default body' => '',
+        'Default sender type' => '',
+        'Default is visible to customer' => '',
+        'Empty fields indicate that the current values are kept' => '',
+        'Do not update existing tickets' => '',
+        'Only update tickets of this user in the target system' => '',
+        'Import/Export articles' => '',
+        'Default Backend' => '',
+        'Store articles on separate lines indicated by a blank first entry' =>
+            '',
+        'Import/Export attachments (as the last entries per line)' => '',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => '',
         'Deployment completed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => '',
         'Migration failed.' => '',
         'Migrate database table auto_response.' => '',
         'Migration completed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
+        'CareOnCloud ESM Cache cleanup.' => '',
         'Completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => '',
-        'Can\'t access OTRS Home: %s!' => '',
+        'Can\'t access OTRS home directory: %s!' => '',
         'All needed files copied and migrated, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => '',
         'Skipped...' => '',
         'System was unable to connect to OTRS database.' => '',
         'System was unable to complete data transfer.' => '',
         'Data transfer completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => '',
-        'Check if OTOBO and OTRS connect is possible.' => '',
-        'Can\'t open RELEASE file from OTRSHome: %s!' => '',
-        'Check if OTOBO and OTRS version is correct.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
+        'Check if CareOnCloud ESM version is correct.' => '',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => '',
+        'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => '',
         '%s does not exist!' => '',
-        'No OTOBO system found!' => '',
+        'No CareOnCloud ESM system found!' => '',
         'You are trying to run this script on the wrong framework version %s!' =>
             '',
-        'OTOBO Version is correct: %s.' => '',
+        'CareOnCloud ESM Version is correct: %s.' => '',
         'Check if OTRS version is correct.' => '',
         'OTRS RELEASE file %s does not exist!' => '',
         'Can\'t read OTRS RELEASE file: %s' => '',
         'No OTRS system found!' => '',
-        'Unknown PRODUCT found in OTRS RELASE file: %s. Expected values are %s.' =>
+        'Unknown PRODUCT found in OTRS RELEASE file: %s. Expected values are %s.' =>
             '',
         'OTRS Version is correct: %s.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => '',
-        'Nothing to do, as the the table \'%s\' does not exist.' => '',
+        'Nothing to do, as the table \'%s\' does not exist.' => '',
         'UPDATE of the table \'%s\' failed.' => '',
         'Migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => '',
-        'An error occured during SysConfig data migration or no configuration exists.' =>
+        'An error occurred during system configuration data migration or no configuration exists.' =>
             '',
-        'An error occured during SysConfig migration when writing XML to DB.' =>
+        'An error occurred during system configuration migration when writing XML to DB.' =>
             '',
         'SysConfig data migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => '',
         'Failed - see the log!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
-        'Can\'t open Kernel/Config.pm file from OTRSHome: %s!' => '',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => '',
-        'Kernel/Config.pm exists in OTOBO home' => '',
-        'Check if we are able to connect to OTRS Home.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
+        'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
+            '',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => '',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => '',
+        'Check if we are able to connect to OTRS home directory.' => '',
         'Can\'t connect to OTRS file directory.' => '',
         'Connect to OTRS file directory is possible.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => '',
         'Could not create database object.' => '',
         'Database connect and sanity checks completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => '',
         'The following packages are only installed in OTRS:' => '',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             '',
         'The same packages are installed on both systems, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => '',
         'Done -' => '',
         'Failed at -' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => '',
         '%s script does not exist.' => '',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             '',
         'All required Perl modules have been installed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => '',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -5346,18 +6093,33 @@ sub Data {
         'Imported notification has body text with more than 4000 characters.' =>
             '가져온 알림에는 4000자 이상의 본문 텍스트가 있습니다.',
 
+        # Perl Module: Kernel/System/OpenIDConnect/OAuth2.pm
+        'Error fetching Token: %s' => '',
+        'Need ClientID and ClientSecret!' => '',
+        'Got no content when requesting Token. Response Code: %s' => '',
+        'Got no JSON object when requesting Token. Response: %s' => '',
+
+        # Perl Module: Kernel/System/OpenIDConnect/TokenProvider.pm
+        'AccountName %s not found!' => '',
+        'No valid refresh_token for Account %s using grant_type \'authorization code\' !' =>
+            '',
+        'Need functional account Invoker settings in System Configuration for %s.' =>
+            '',
+        'Did not receive the desired TokenType \'%s\' in OIDC provider response for Invoker %s!' =>
+            '',
+        'Time left on fresh token is: %s s for Invoker %s!' => '',
+        'Could not get the OAuth2 token_endpoint for Invoker ' => '',
+
         # Perl Module: Kernel/System/Package.pm
         'not installed' => '설치되지 않았다.',
         'installed' => '설치된',
         'Unable to parse repository index document.' => '저장소 색인 문서를 구문 분석 할 수 없습니다.',
-        'No packages for your framework version found in this repository, it only contains packages for other framework versions.' =>
-            '이 저장소에 있는 프레임 워크 버전의 패키지가 없으며 다른 프레임 워크 버전의 패키지만 포함합니다.',
         'File is not installed!' => '파일이 설치되지 않았습니다!',
         'File is different!' => '파일이 다릅니다!',
         'Can\'t read file!' => '파일을 읽을 수 없습니다!',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
             '',
-        'Package not verified by the OTOBO community!' => '',
+        'Package not verified by the CareOnCloud ESM community!' => '',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '',
         'Verification not possible (e.g. no internet connection)!' => '',
@@ -5384,13 +6146,20 @@ sub Data {
         'quarter' => '쿼터',
         'half-year' => '반년',
 
-        # Perl Module: Kernel/System/Stats/Dynamic/Ticket.pm
+        # Perl Module: Kernel/System/Stats/Dynamic/ArticleList.pm
+        'unlimited' => '제한 없는',
+        'Attributes to be printed' => '인쇄할 속성',
+        'Sort sequence' => '정렬 순서',
+        'State Historic' => '주 역사',
         'State Type' => '상태 유형',
+        'State Type Historic' => '국가 유형 역사',
         'Created Priority' => '생성된 우선 순위',
         'Created State' => '생성된 주',
         'Create Time' => '시간 생성',
+        'Article Create Time' => '',
         'Pending until time' => '시간까지 보류 중입니다.',
         'Close Time' => '종료 시간',
+        'Historic Time Range' => '역사적인 시간 범위',
         'Escalation' => '단계적 확대',
         'Escalation - First Response Time' => '에스컬레이션 - 첫 번째 응답 시간',
         'Escalation - Update Time' => '에스컬레이션 - 업데이트 시간',
@@ -5398,6 +6167,7 @@ sub Data {
         'Agent/Owner' => '담당상담원',
         'Created by Agent/Owner' => '담당상담원이 만듬',
         'Assigned to Customer User Login' => '고객 사용자 로그인에 할당 됨',
+        'Last Changed' => '마지막 변경됨',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketAccountedTime.pm
         'Evaluation by' => '에 의한 평가',
@@ -5414,16 +6184,6 @@ sub Data {
         'Article Min Time' => '기사 최소 시간',
         'Article Max Time' => '기사 최대 시간',
         'Number of Articles' => '기사 수',
-
-        # Perl Module: Kernel/System/Stats/Dynamic/TicketList.pm
-        'unlimited' => '제한 없는',
-        'Attributes to be printed' => '인쇄할 속성',
-        'Sort sequence' => '정렬 순서',
-        'State Historic' => '주 역사',
-        'State Type Historic' => '국가 유형 역사',
-        'Historic Time Range' => '역사적인 시간 범위',
-        'Number' => '번호',
-        'Last Changed' => '마지막 변경됨',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketSolutionResponseTime.pm
         'Solution Average' => '술루션 평균',
@@ -5468,6 +6228,11 @@ sub Data {
         'Internal Error: Could not read file.' => '내부 오류 : 파일을 읽을 수 없습니다.',
         'Tables found which are not present in the database.' => '발견된 테이블은 데이터베이스에 없습니다.',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/Type.pm
+        'Database Type' => '',
+        'The type of the database looks strange as it contain no Latin letters.' =>
+            '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mssql/Size.pm
         'Database Size' => '데이터베이스 크기',
         'Could not determine database size.' => '데이터베이스 크기를 결정할 수 없습니다.',
@@ -5486,14 +6251,17 @@ sub Data {
         'There were tables found which do not have \'utf8mb4\' as charset.' =>
             '',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Connection.pm
+        'SSL Version' => '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InnoDBLogFileSize.pm
         'InnoDB Log File Size' => 'InnoDB 로그 파일 사이즈',
         'The setting innodb_log_file_size must be at least 256 MB.' => 'innodb_log_file_size 설정은 256MB 이상이어야합니다.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => '잘못된 기본값',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
-            '잘못된 기본값이있는 테이블을 찾았습니다. 자동으로 수정하려면 다음을 실행하십시오. bin / otobo.Console.pl Maint :: Database :: Check --repair',
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
+            '잘못된 기본값이있는 테이블을 찾았습니다. 자동으로 수정하려면 다음을 실행하십시오. bin / careoncloud.Console.pl Maint :: Database :: Check --repair',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
         'Maximum Query Size' => '최대 쿼리 크기',
@@ -5512,6 +6280,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Version.pm
         'MySQL 5.x or higher is required.' => 'MySQL 5.x 이상이 필요합니다.',
+        'Client Info' => '',
+        'Perl Client Info' => '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/oracle/NLS.pm
         'NLS_LANG Setting' => 'NLS_LANG 설정',
@@ -5546,8 +6316,8 @@ sub Data {
         'Certificate check' => '',
         'Found obsolete cryptographic function.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'OTOBO 디스크 파티션',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
+        'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM 디스크 파티션',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => '디스크 파티션 사용법',
@@ -5571,8 +6341,6 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/PerlModulesAudit.pm
         'Perl Modules Audit' => '',
-        'CPAN::Audit reported that one or more installed Perl modules have known vulnerabilities. Please note that there might be false positives for distributions patching Perl modules without changing their version number.' =>
-            '',
         'CPAN::Audit did not report any known vulnerabilities in the installed Perl modules.' =>
             '',
 
@@ -5583,37 +6351,37 @@ sub Data {
         'There should be more than 60% free swap space.' => '스왑 공간이 60 % 이상 있어야합니다.',
         'There should be no more than 200 MB swap space used.' => '사용 된 스왑 공간은 200MB 이상이어야합니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => '기사 검색 색인 상태',
         'Indexed Articles' => '색인 생성된 기사',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => '커뮤니케이션 채널 당 기사',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => '수신 통신',
         'Outgoing communications' => '나가는 통신',
         'Failed communications' => '실패한 통신',
         'Average processing time of communications (s)' => '통신 평균 처리 시간(s)',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => '통신 로그 계정 상태 (지난 24시간)',
         'No connections found.' => '연결이 없습니다.',
         'ok' => '승인',
         'permanent connection errors' => '영구 연결 오류',
         'intermittent connection errors' => '간헐적인 연결 오류',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => '구성 설정',
         'Could not determine value.' => '가치를 결정할 수 없습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => '데몬',
         'Daemon is running.' => '데몬이 실행 중입니다.',
         'Daemon is not running.' => '데몬이 실행되고 있지 않습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => '데이터베이스 레코드',
         'Ticket History Entries' => '티켓 기록 항목',
         'Articles' => '게시물',
@@ -5628,26 +6396,26 @@ sub Data {
         'Tickets Per Month (avg)' => '월간 티켓 (평균)',
         'Open Tickets' => '진행중 티켓',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => '기본 관리자 비밀번호',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             '보안 위험 : 에이전트 계정 root @ localhost에는 여전히 기본 암호가 있습니다. 계정을 변경하거나 계정을 무효화하십시오.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => '이메일 전송 대기열',
         'Emails queued for sending' => '전송 대기중인 이메일',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => 'FQDN (도메인 이름)',
         'Please configure your FQDN setting.' => 'FQDN 설정을 구성하십시오.',
         'Domain Name' => '도메인 이름',
         'Your FQDN setting is invalid.' => 'FQDN 설정이 잘못되었습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => '파일 시스템 쓰기 가능',
-        'The file system on your OTOBO partition is not writable.' => 'OTOBO 파티션의 파일 시스템에 쓸 수 없습니다.',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'CareOnCloud ESM 파티션의 파일 시스템에 쓸 수 없습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => '레거시 구성 백업',
         'No legacy configuration backup files found.' => '레거시 구성 백업 파일이 없습니다.',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -5655,77 +6423,77 @@ sub Data {
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => '패키지 설치 상태',
         'Some packages have locally modified files.' => '일부 패키지에는 로컬로 수정된 파일이 있습니다.',
         'Some packages are not correctly installed.' => '일부 패키지가 올바르게 설치되지 않았습니다.',
         'Package Verification Status' => '패키지 확인 상태',
-        'Some packages are not verified by the OTOBO Team.' => '',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => '',
         'Package Framework Version Status' => '패키지 프레임 워크 버전 상태',
         'Some packages are not allowed for the current framework version.' =>
             '일부 패키지는 현재 프레임 워크 버전에 허용되지 않습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => '패키지 목록',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => '세션 구성 설정',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => '스풀된 전자 메일',
-        'There are emails in var/spool that OTOBO could not process.' => 'OTOBO가 처리 할 수없는 var / spool에 이메일이 있습니다.',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => 'CareOnCloud ESM가 처리 할 수없는 var / spool에 이메일이 있습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             '시스템 ID 설정이 잘못되었습니다. 숫자 만 포함해야합니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => '기본 티켓 유형',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             '구성된 기본 티켓 유형이 잘못되었거나 누락되었습니다. Ticket :: Type :: Default 설정을 변경하고 유효한 티켓 유형을 선택하십시오.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => '티켓 색인 모듈',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             '60,000 개 이상의 티켓이 있으며 StaticDB 백엔드를 사용해야합니다. 자세한 내용은 관리자 설명서 (성능 튜닝)를 참조하십시오.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => '잠긴 티켓이 있는 사용자가 잘못되었습니다.',
         'There are invalid users with locked tickets.' => '잠긴 티켓이 있는 유효하지 않은 사용자가 있습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             '시스템에 8,000개 이상의 티켓이 없어야합니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => '티켓 검색 Index Module',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             '색인 생성 프로세스는 필터를 실행하거나 정지 단어 목록을 적용하지 않고 기사 검색 색인에 원본 기사 텍스트의 저장을 강제합니다. 이렇게하면 검색 색인의 크기가 커지고 전체 텍스트 검색 속도가 느려질 수 있습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'ticket_lock_index 테이블의 고아 레코드',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            '표 ticket_lock_index에는 분리 된 레코드가 있습니다. bin / otobo.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            '표 ticket_lock_index에는 분리 된 레코드가 있습니다. bin / careoncloud.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
         'Orphaned Records In ticket_index Table' => 'ticket_index 테이블의 고아 레코드',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            '표 ticket_index에는 분리 된 레코드가 있습니다. bin / otobo.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            '표 ticket_index에는 분리 된 레코드가 있습니다. bin / careoncloud.Console.pl "Maint :: Ticket :: QueueIndexCleanup"을 실행하여 StaticDB 색인을 정리하십시오.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => '시간 설정',
         'Server time zone' => '서버 시간대',
-        'OTOBO time zone' => 'OTOBO 시간대',
-        'OTOBO time zone is not set.' => 'OTOBO 시간대가 설정되지 않았습니다.',
+        'CareOnCloud ESM time zone' => 'CareOnCloud ESM 시간대',
+        'CareOnCloud ESM time zone is not set.' => 'CareOnCloud ESM 시간대가 설정되지 않았습니다.',
         'User default time zone' => '사용자 기본 시간대',
         'User default time zone is not set.' => '사용자 기본 시간대가 설정되지 않았습니다.',
         'Calendar time zone is not set.' => '달력 표준 시간대가 설정되지 않았습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => 'UI - 에이전트 스킨 사용',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => 'UI - 에이전트 테마 사용법',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => 'UI - 특수 통계',
         'Agents using custom main menu ordering' => '사용자 정의 주 메뉴 순서를 사용하는 에이전트',
         'Agents using favourites for the admin overview' => '관리자 개요에 즐겨찾기를 사용하는 에이전트',
@@ -5736,8 +6504,8 @@ sub Data {
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'MPM 모델',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'OTOBO는 \'prefork\'MPM 모델로 아파치를 실행해야합니다.',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'CareOnCloud ESM는 \'prefork\'MPM 모델로 아파치를 실행해야합니다.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'CGI 가속기 사용법',
@@ -5767,7 +6535,7 @@ sub Data {
         'Webserver Version' => '웹 서버 버전',
         'Could not determine webserver version.' => '웹 서버 버전을 확인할 수 없습니다.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => '동시 사용자 세부 정보',
         'Concurrent Users' => '동시 사용자',
 
@@ -5793,17 +6561,13 @@ sub Data {
         'Value is not correct! Please, consider updating this field.' => '값이 올바르지 않습니다! 이 필드를 업데이트 하십시오.',
         'Value doesn\'t satisfy regex (%s).' => '값이 정규식 (%s)을 만족하지 않습니다.',
 
-        # Perl Module: Kernel/System/SysConfig/ValueType/Checkbox.pm
-        'Enabled' => '사용',
-        'Disabled' => '불구가 된',
-
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
-            '시스템이 OTOBOTimeZone에서 사용자 날짜를 계산할 수 없습니다!',
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
+            '시스템이 CareOnCloudTimeZone에서 사용자 날짜를 계산할 수 없습니다!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
-            '시스템은 OTOBOTimeZone에서 사용자 DateTime을 계산할 수 없었습니다!',
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
+            '시스템은 CareOnCloudTimeZone에서 사용자 DateTime을 계산할 수 없었습니다!',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
         'Value is not correct! Please, consider updating this module.' =>
@@ -5820,13 +6584,20 @@ sub Data {
         'Chat Participant' => '',
         'Chat Message Text' => '',
 
+        # Perl Module: Kernel/System/Ticket/Mask.pm
+        'Base structure is not valid. Please provide an array with data in YAML format.' =>
+            '',
+        'Error parsing dynamic fields.' => '',
+        'No dynamic field "%s".' => '',
+        'Dynamic field "%s" not valid.' => '',
+        'Dynamic field "%s" already in use in a Set.' => '',
+
         # Perl Module: Kernel/System/Web/InterfaceAgent.pm
         'Too many failed login attempts, please retry in %s s.' => '',
         'Login failed! Your user name or password was entered incorrectly.' =>
             '로그인 실패! 사용자 이름 또는 암호가 잘못 입력되었습니다.',
         'Authentication succeeded, but no user data record is found in the database. Please contact the administrator.' =>
             '인증에 성공했지만 데이터베이스에 사용자 데이터 레코드가 없습니다. 관리자에게 문의하십시오.',
-        'Can`t remove SessionID.' => 'SessionID를 제거 할 수 없습니다.',
         'Logout successful.' => '로그아웃에 성공했습니다.',
         'Feature not active!' => '기능이 활성화되지 않았습니다!',
         'Sent password reset instructions. Please check your email.' => '보낸 암호 재설정 지침. 이메일을 확인하십시오.',
@@ -5862,7 +6633,7 @@ sub Data {
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => '',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => '유효하지 않은 일시적',
         'Group for default access.' => '기본 액세스 그룹.',
         'Group of all administrators.' => '모든 관리자 그룹.',
@@ -5927,8 +6698,8 @@ sub Data {
         'Auto remove will be sent out after a customer removed the request.' =>
             '고객이 요청을 삭제하면 자동 제거가 발송됩니다.',
         'default reply (after new ticket has been created)' => '기본 답장 (새 티켓을 만든 후)',
-        'default reject (after follow-up and rejected of a closed ticket)' =>
-            '가본 거부 (후속 조치 후 닫힌 티켓 거부)',
+        'default reject (after follow-up and rejection of a closed ticket)' =>
+            '',
         'default follow-up (after a ticket follow-up has been added)' => '기본 후속 조치 (티켓 후속 조치가 추가된 후)',
         'default reject/new ticket created (after closed follow-up with new ticket creation)' =>
             '기본 거부 / 새 티켓 생성 (새 티켓 작성으로 마감된 후속 조치)',
@@ -5998,6 +6769,10 @@ sub Data {
         'There was an error deleting the attachment. Please check the logs for more information.' =>
             '첨부 파일을 삭제하는 중 오류가 발생했습니다. 자세한 내용은 로그를 확인하십시오.',
         'Attachment was deleted successfully.' => '첨부 파일을 삭제했습니다.',
+
+        # JS File: Core.Agent.Admin.CustomerDashboardInfoTile
+        'Do you really want to delete this customer dashboard info tile entry?' =>
+            '',
 
         # JS File: Core.Agent.Admin.DynamicField
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!' =>
@@ -6076,8 +6851,8 @@ sub Data {
         'Currently not possible' => '현재 불가능',
         'This is currently disabled because of an ongoing package upgrade.' =>
             '진행중인 패키지 업그레이드로 인해 현재 이 기능을 사용할 수 없습니다.',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
-            'OTOBO 데몬이 실행 중이 아니기 때문에이 옵션은 현재 비활성화되어 있습니다.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
+            'CareOnCloud ESM 데몬이 실행 중이 아니기 때문에이 옵션은 현재 비활성화되어 있습니다.',
         'Are you sure you want to update all installed packages?' => '설치된 패키지를 모두 업데이트 하시겠습니까?',
         'No response from get package upgrade run status.' => '',
 
@@ -6109,6 +6884,8 @@ sub Data {
         'This TransitionAction is already used in this Path. You cannot use it twice!' =>
             '이 전환 액션은 이미 이 경로에서 사용됩니다. 두 번 사용할 수 없습니다!',
         'Hide EntityIDs' => '엔티티 ID 숨기기',
+        'Non-global ActivityDialogs may not be assigned to global Activities!' =>
+            '',
         'Edit Field Details' => '필드 세부 정보 편집',
         'Customer interface does not support articles not visible for customers.' =>
             '고객 인터페이스는 고객이 볼 수없는 기사를 지원하지 않습니다.',
@@ -6170,13 +6947,17 @@ sub Data {
         'Deleting the template and its data. This may take a while...' =>
             '템플릿 및 해당 데이터 삭제. 이 작업은 다소 시간이 걸릴 수 있습니다...',
 
+        # JS File: Core.Agent.Admin.Translations
+        'Missing Translations' => '',
+        'At least one translation must be filled!' => '',
+        'All translations must be filled!' => '',
+
         # JS File: Core.Agent.AppointmentCalendar
         'Jump' => '도약',
         'Timeline Month' => '타임라인 달',
         'Timeline Week' => '타임라인 주',
         'Timeline Day' => '타임라인 일',
         'Previous' => '너무 이른',
-        'Resources' => '자원',
         'Su' => '일요일',
         'Mo' => '월요일',
         'Tu' => '화요일',
@@ -6196,6 +6977,16 @@ sub Data {
         'Are you sure you want to delete this appointment? This operation cannot be undone.' =>
             '이 약속을 삭제 하시겠습니까? 이 작업은 실행 취소할 수 없습니다.',
 
+        # JS File: Core.Agent.ArticleFeatures
+        'Article Delete' => '',
+        'Are you sure you want to delete this article?' => '',
+        'Article deleted successfully!' => '',
+        'Article already marked as deleted.' => '',
+        'Article Restore' => '',
+        'Are you sure you want to restore this article?' => '',
+        'Article restored successfully!' => '',
+        'Article not available for restoring.' => '',
+
         # JS File: Core.Agent.CustomerSearch
         'First select a customer user, then select a customer ID to assign to this ticket.' =>
             '먼저 고객 사용자를 선택한 다음이 티켓에 지정할 고객 ID를 선택하십시오.',
@@ -6207,7 +6998,7 @@ sub Data {
             '검색 값을 하나 이상 입력하거나 *를 입력하십시오.',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => 'OTOBO 데몬에 대한 정보',
+        'Information about the CareOnCloud ESM Daemon' => 'CareOnCloud ESM 데몬에 대한 정보',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => '유효한 입력을 위해 빨간색으로 표시된 필드를 확인하십시오.',
@@ -6313,6 +7104,10 @@ sub Data {
         'Do you really want to revert this setting to its historical value?' =>
             '이 설정을 이전 값으로 되돌리시겠습니까?',
 
+        # JS File: Core.UI.CodeMirrorEditor
+        'Error trying to create CodeMirror instance, please check configuration!' =>
+            '',
+
         # JS File: Core.UI.Datepicker
         'Open date selection' => '영업일 선택',
         'Invalid date (need a future date)!' => '날짜가 잘못 되었습니다 (미래 날짜 필요)!',
@@ -6355,6 +7150,7 @@ sub Data {
         'Sorry, you can only upload one file here.' => '죄송합니다. 여기에 하나의 파일만 업로드 할 수 있습니다.',
         'Sorry, you can only upload %s files.' => '죄송합니다. %s 파일 만 업로드 할 수 있습니다.',
         'Please only select at most %s files for upload.' => '업로드하려면 최대 %s 파일 만 선택하십시오.',
+        'Upload information' => '정보 업로드',
         'The following files are not allowed to be uploaded: %s' => '다음 파일은 업로드 할 수 없습니다 : %s',
         'The following files exceed the maximum allowed size per file of %s and were not uploaded: %s' =>
             '다음 파일은 파일 당 최대 허용 크기인 %s를 초과하여 업로드되지 않았습니다 : %s',
@@ -6362,9 +7158,14 @@ sub Data {
             '다음 파일은 이미 업로드되었으며 다시 업로드되지 않았습니다 : %s',
         'No space left for the following files: %s' => '다음 파일에 공간이 없습니다 : %s',
         'Available space %s of %s.' => '사용 가능한 공간 %s / %s',
-        'Upload information' => '정보 업로드',
         'An unknown error occurred when deleting the attachment. Please try again. If the error persists, please contact your system administrator.' =>
             '첨부파일을 삭제할 때 알 수없는 오류가 발생했습니다. 다시 시도하십시오. 오류가 계속되면 시스템 관리자에게 문의하십시오.',
+
+        # JS File: ITSM.Admin.ImportExport
+        'Deleting template...' => '',
+        'There was an error deleting the template. Please check the logs for more information.' =>
+            '',
+        'Template was deleted successfully.' => '',
 
         # JS File: Core.Language.UnitTest
         'yes' => '예',
@@ -6372,22 +7173,18 @@ sub Data {
         'This is %s' => '이것은 %s입니다.',
         'Complex %s with %s arguments' => '%s 인수가있는 복합 %s',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '자료 없음.',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => '그룹화 된',
         'Stacked' => '누적된',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => '흐름',
         'Expanded' => '퍼지는',
 
         # SysConfig
-        '
-            Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown
-            in an extra table
-        ' => '',
         '
 Dear Customer,
 
@@ -6415,8 +7212,6 @@ Thanks for your help!
         ' 2 minutes' => '2분',
         ' 5 minutes' => '5분',
         ' 7 minutes' => '7분',
-        '"Slim" skin which tries to save screen space for power users.' =>
-            '고급 사용자를 위해 화면 공간을 절약하려고하는 "슬림"스킨.',
         '%s' => '%s',
         '(UserLogin) Firstname Lastname' => '(사용자 로그인) 이름 성',
         '(UserLogin) Lastname Firstname' => '(사용자 로그인) 성 이름',
@@ -6436,10 +7231,13 @@ Thanks for your help!
         '30 Minutes' => '30분',
         '300 (Beginner)' => '300(초급)',
         '5 Minutes' => '5분',
+        '7 days' => '',
         'A TicketWatcher Module.' => 'TicketWatcher 모듈.',
         'A Website' => '웹 사이트',
         'A list of dynamic fields that are merged into the main ticket during a merge operation. Only dynamic fields that are empty in the main ticket will be set.' =>
             '병합 작업 중에 주 티켓에 병합되는 동적 필드 목록입니다. 기본 티켓에서 비어있는 동적 필드만 설정됩니다.',
+        'A list of parameters which can be updated via the UpdateAJAX.' =>
+            '',
         'A picture' => '사진',
         'ACL module that allows closing parent tickets only if all its children are already closed ("State" shows which states are not available for the parent ticket until all child tickets are closed).' =>
             '모든 자식 티켓이 이미 닫힌 경우에만 부모 티켓을 닫을 수있는 ACL 모듈 ( "상태"는 모든 자식 티켓이 닫힐 때까지 부모 티켓에 사용할 수없는 상태를 보여줍니다).',
@@ -6448,13 +7246,13 @@ Thanks for your help!
         'Activate Elasticsearch.' => '',
         'Activate the customer frontend.' => '',
         'Activate the public frontend.' => '',
-        'Activates Rendering of DynamicFields outside of the DynamicField block.' =>
-            '',
         'Activates a blinking mechanism of the queue that contains the oldest ticket.' =>
             '가장 오래된 티켓을 포함하는 큐의 깜박이는 메커니즘을 활성화합니다.',
         'Activates lost password feature for agents, in the agent interface.' =>
             '에이전트 인터페이스에서 에이전트에 대해 손실된 암호 기능을 활성화합니다.',
         'Activates lost password feature for customers.' => '고객을 위해 손실된 암호 기능을 활성화합니다.',
+        'Activates rendering of dynamic fields outside of the dynamic field block.' =>
+            '',
         'Activates support for customer and customer user groups.' => '고객 및 고객 사용자 그룹에 대한 지원을 활성화합니다.',
         'Activates the article filter in the zoom view to specify which articles should be shown.' =>
             '확대 / 축소 보기에서 기사 필터를 활성화하여 표시할 기사를 지정합니다.',
@@ -6479,8 +7277,10 @@ Thanks for your help!
         'Added subscription for user "%s".' => 'Added subscription for user "%s".',
         'Added system request (%s).' => '시스템 요구 사항을 추가했습니다 (%s).',
         'Added web request from customer.' => '고객의 웹 요청을 추가했습니다.',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
-            'OTOBO 로그 파일에 실제 연도와 월이있는 접미어를 추가합니다. 매월 로그 파일이 생성됩니다.',
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
+            'CareOnCloud ESM 로그 파일에 실제 연도와 월이있는 접미어를 추가합니다. 매월 로그 파일이 생성됩니다.',
+        'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
+            '',
         'Adds customers email addresses to recipients in the ticket compose screen of the agent interface. The customers email address won\'t be added if the article type is email-internal.' =>
             '상담원 인터페이스의 티켓 작성 화면에서 고객 전자 메일 주소를 받는 사람에게 추가합니다. 기사 유형이 이메일 내부인 경우 고객 이메일 주소는 추가되지 않습니다.',
         'Adds the one time vacation days for the indicated calendar.' => '표시된 달력에 대해 휴가일을 한 번 추가합니다.',
@@ -6506,6 +7306,7 @@ Thanks for your help!
         'Agent Name' => '에이전트 이름',
         'Agent Name + FromSeparator + System Address Display Name' => '에이전트 이름 + 발신자 + 시스템 주소 표시 이름',
         'Agent Preferences.' => '에이전트 환경 설정.',
+        'Agent Reference Dynamic Field With Data Search' => '',
         'Agent Statistics.' => '에이전트 통계.',
         'Agent User Search' => '에이전트 사용자 검색',
         'Agent User Search.' => '에이전트 사용자 검색.',
@@ -6534,12 +7335,15 @@ Thanks for your help!
             '내 서비스에서 티켓 수를 확인할 수있는 에이전트 인터페이스 알림 모듈 이 링크를 표시하거나 표시하지 않으려는 추가 액세스 제어는 키 "그룹"과 "rw : group1; move_into : group2"와 같은 내용을 사용하여 수행 할 수 있습니다.',
         'Agent interface notification module to see the number of watched tickets. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '감시 된 티켓 수를보기위한 에이전트 인터페이스 알림 모듈. 이 링크를 표시하거나 표시하지 않으려는 추가 액세스 제어는 키 "그룹"과 "rw : group1; move_into : group2"와 같은 내용을 사용하여 수행 할 수 있습니다.',
+        'Agent reference dynamic field with data search.' => '',
         'AgentTicketZoom widget that displays Contact with data dynamic field in the side bar.' =>
             '',
         'AgentTicketZoom widget that displays a table of objects linked to the ticket.' =>
             '티켓에 연결된 객체 테이블을 표시하는 AgentTicketZoom 위젯입니다.',
         'AgentTicketZoom widget that displays customer information for the ticket in the side bar.' =>
             '사이드 바에 티켓에 대한 고객 정보를 표시하는 AgentTicketZoom 위젯.',
+        'AgentTicketZoom widget that displays similar ticket data in the side bar. Elasticsearch needs to be enabled beofre you can enable this widget.' =>
+            '',
         'AgentTicketZoom widget that displays ticket data in the side bar.' =>
             '사이드 바에 티켓 데이터를 표시하는 AgentTicketZoom 위젯.',
         'Agents ↔ Groups' => '에이전트 ↔ 그룹',
@@ -6648,11 +7452,16 @@ Thanks for your help!
         'Appointment notifications' => '약속 알림',
         'Appointments' => '약속',
         'Arabic (Saudi Arabia)' => '아랍어 (사우디 아라비아)',
+        'Article ID: %s was deleted by "%s" (%s)' => '',
+        'Article ID: %s was edited by "%s" (%s)' => '',
+        'Article ID: %s was restored by "%s" (%s)' => '',
+        'Article Version View' => '',
         'Article attributes that should be available in ticket invoker configuration frontend (0 = visible/selectable, 1 = default/preselected).' =>
             '',
         'ArticleTree' => 'ArticleTree',
+        'As soon as the move queue option dropdown is enabled for example in the AgentTicketZoom dialogue, it is possible to move tickets locked to other agents to another queue by activating this option.' =>
+            '',
         'Attachment Name' => '첨부명',
-        'Autoloading of Znuny4OTOBOPasswordPolicy extensions.' => '',
         'Automated line break in text messages after x number of chars.' =>
             'X 문자 수 후에 문자 메시지의 자동 줄바꿈',
         'Automatically change the state of a ticket with an invalid owner once it is unlocked. Maps from a state type to a new ticket state.' =>
@@ -6668,13 +7477,13 @@ Thanks for your help!
         'Automatically sets the responsible of a ticket (if it is not set yet) after the first owner update.' =>
             '첫 번째 소유자가 업데이트된 후 티켓의 책임을 자동으로 설정합니다 (티켓이 아직 설정되지 않은 경우).',
         'Avatar' => '화신',
-        'Balanced white skin by Felix Niklas (slim version).' => 'Felix Niklas (슬림 버전)의 균형 잡힌 하얀 피부.',
-        'Balanced white skin by Felix Niklas.' => 'Felix Niklas의 균형 잡힌 하얀 피부.',
         'Based on global RichText setting' => '전역 서식있는 텍스트 설정에 기반',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+        'Basic Auth' => '',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
             '',
-        'Blocks all the incoming emails that do not have a valid ticket number in subject with From: @example.com address.' =>
-            '보낸 사람 : @ example.com 주소로 유효한 티켓 번호가없는 수신 전자 메일을 모두 차단합니다.',
+        'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
+            '',
+        'Both' => '',
         'Bounced to "%s".' => 'Bounced to "%s".',
         'Bulgarian' => '불가리아 사람',
         'Bulk Action' => '일괄 작업',
@@ -6731,7 +7540,7 @@ Thanks for your help!
         'Checks for queued outgoing emails to be sent.' => '보낸 대기중인 보내는 전자 메일을 확인합니다.',
         'Checks if an E-Mail is a followup to an existing ticket by searching the subject for a valid ticket number.' =>
             '유효한 티켓 번호를 검색하여 전자 메일이 기존 티켓의 후속 조치인지 확인합니다.',
-        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module.' =>
+        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew. Please define a rule set in the settings "000-ExternalTicketNumberRecognition1" through "000-ExternalTicketNumberRecognition4".' =>
             '',
         'Checks the SystemID in ticket number detection for follow-ups. If not enabled, SystemID will be changed after using the system.' =>
             '후속 조치를 위해 티켓 번호 검색에서 SystemID를 확인합니다. 활성화되지 않은 경우 시스템을 사용한 후 SystemID가 변경됩니다.',
@@ -6753,6 +7562,11 @@ Thanks for your help!
         'Cloud service admin module registration for the transport layer.' =>
             '전송 계층에 대한 클라우드 서비스 관리 모듈 등록',
         'Collect support data for asynchronous plug-in modules.' => '비동기 플러그인 모듈에 대한 지원 데이터를 수집하십시오.',
+        'Color definitions for agent interface high contrast skin.' => '',
+        'Color definitions for customer interface high contrast skin.' =>
+            '',
+        'Color definitions for the agent interface (default skin). MainDark, -Light and Hover are the navigation background, buttons and some other main elements. Highlight are e.g. icons and selected elements in the navbar. BG- and Text colors are various background, and text colors. Hover colors are used in selections and tables. Notify colors are the background of notifications.' =>
+            '',
         'Color definitions for the customer interface.' => '',
         'Column ticket filters for Ticket Overviews type "Small".' => '티켓 개요에 대한 열 티켓 필터는 "Small"입니다.',
         'Columns that can be filtered in the escalation view of the agent interface. Note: Only Ticket attributes, Dynamic Fields (DynamicField_NameX) and Customer attributes (e.g. CustomerUserPhone, CustomerCompanyName, ...) are allowed.' =>
@@ -6783,19 +7597,22 @@ Thanks for your help!
         'Company Tickets.' => '회사 티켓.',
         'Company name which will be included in outgoing emails as an X-Header.' =>
             '발신 이메일에 X-Header로 포함될 회사 이름.',
-        'Compat module for AgentZoom to AgentTicketZoom.' => 'AgentZoom과 AgentTicketZoom의 호환성 모듈.',
         'Complex' => '복잡한',
         'Compose' => '조립하다',
         'Configure Processes.' => '프로세스 구성.',
         'Configure and manage ACLs.' => 'ACL 구성 및 관리',
         'Configure any additional readonly mirror databases that you want to use.' =>
             '사용할 추가 읽기 전용 미러 데이터베이스를 구성하십시오.',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
             '',
         'Configure the About information.' => '',
         'Configure the privacy policy.' => '',
         'Configure which screen should be shown after a new ticket has been created.' =>
             '새 티켓이 작성된 후 표시할 화면을 구성하십시오.',
+        'Configure which screen should be shown after a ticket has been marked as seen.' =>
+            '',
+        'Configure which screen should be shown after a ticket has been marked as unseen.' =>
+            '',
         'Configure your own log text for PGP.' => 'PGP에 대한 자체 로그 텍스트를 구성하십시오.',
         'Configures a default TicketDynamicField setting. "Name" defines the dynamic field which should be used, "Value" is the data that will be set, and "Event" defines the trigger event. Please check the developer manual (https://doc.otobo.org/), chapter "Ticket Event Module".' =>
             '',
@@ -6816,16 +7633,22 @@ Thanks for your help!
             '자동 완성 필드가 AdminCustomerUser 인터페이스의 고객 ID 선택에 사용되는지 여부를 제어합니다.',
         'Controls if the ticket and article seen flags are removed when a ticket is archived.' =>
             '티켓을 보관할 때 티켓 및 집필 플래그가 제거되는지 여부를 제어합니다.',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'Converts HTML mails into text messages.' => 'HTML 메일을 텍스트 메시지로 변환합니다.',
         'Create New process ticket.' => '새 프로세스 티켓을 만듭니다.',
         'Create Templates for AdminDynamicFieldTitle.' => '',
         'Create Ticket' => '티켓 만들기',
         'Create a new calendar appointment linked to this ticket' => '이 티켓에 연결된 새 일정 약속을 만듭니다.',
         'Create and manage Service Level Agreements (SLAs).' => 'SLA (Service Level Agreements) 작성 및 관리',
+        'Create and manage advanced definitions for ticket masks.' => '',
         'Create and manage agents.' => '에이전트 생성 및 관리.',
         'Create and manage appointment notifications.' => '약속 알림을 작성하고 관리하십시오.',
         'Create and manage attachments.' => '첨부파일을 만들고 관리합니다.',
         'Create and manage calendars.' => '캘린더를 만들고 관리합니다.',
+        'Create and manage custom translations.' => '',
         'Create and manage customer users.' => '고객 사용자를 생성하고 관라하십시오.',
         'Create and manage customers.' => '고객 생성 및 관리.',
         'Create and manage dynamic fields.' => '동적 필드를 만들고 관리합니다.',
@@ -6854,12 +7677,15 @@ Thanks for your help!
         'Created ticket [%s] in "%s" with priority "%s" and state "%s".' =>
             '티켓 [%s] 생성 : "%s", 우선 순위 -"%s" , 상태 -"%s"',
         'Croatian' => '크로아티아 사람',
+        'Custom CSS styles for RichText articles.' => '',
         'Custom RSS Feed' => '사용자 정의 RSS 피드',
         'Custom text for the page shown to customers that have no tickets yet (if you need those text translated add them to a custom translation module).' =>
             '티켓이 없는 고객에게 표시되는 페이지의 사용자 정의 텍스트(번역된 텍스트가 필요한 경우 사용자 정의 번역 모듈에 추가).',
         'Customer Administration' => '고객 관리',
         'Customer Companies' => '고객사',
+        'Customer Company' => '',
         'Customer Dashboard' => '',
+        'Customer Dashboard Info Tile' => '',
         'Customer Dynamic Field Database Detailed Search' => '',
         'Customer Dynamic Field Database Details' => '',
         'Customer Dynamic Field Database Search' => '',
@@ -6868,6 +7694,7 @@ Thanks for your help!
         'Customer Information Center search.' => '고객 정보 센터 검색',
         'Customer Information Center.' => '고객 정보 센터',
         'Customer Password.' => '',
+        'Customer Reference Dynamic Field With Data Search' => '',
         'Customer Ticket Print Module.' => '고객 티켓 인쇄 모듈',
         'Customer User Administration' => '고객 사용자 관리',
         'Customer User Information' => '고객 사용자 정보',
@@ -6885,6 +7712,7 @@ Thanks for your help!
         'Customer item (icon) which shows the open tickets of this customer as info block. Setting CustomerUserLogin to 1 searches for tickets based on login name rather than CustomerID.' =>
             '고객의 오픈 티켓을 정보 블록으로 보여주는 고객 아이템 (아이콘). CustomerUserLogin을 1로 설정하면 CustomerID가 아닌 로그인 이름을 기반으로하는 티켓이 검색됩니다.',
         'Customer preferences.' => '고객 환경설정',
+        'Customer reference dynamic field with data search.' => '',
         'Customer ticket overview' => '고객 티켓 개요',
         'Customer ticket search.' => '고객 티켓 검색',
         'Customer ticket zoom' => '고객 티켓 줌',
@@ -6900,7 +7728,6 @@ Thanks for your help!
         'Dashboard overview.' => '현황판 개요',
         'Data used to export the search result in CSV format.' => '검색 결과를 CSV 형식으로 내보내는데 사용되는 데이터입니다.',
         'Date / Time' => '날짜 / 시간',
-        'Default (Slim)' => '기본값 (슬림)',
         'Default ACL values for ticket actions.' => '티켓 조치에 대한 기본 ACL 값.',
         'Default ProcessManagement entity prefixes for entity IDs that are automatically generated.' =>
             '자동으로 생성되는 엔티티 ID에 대한 기본 ProcessManagement 엔티티 접두사입니다.',
@@ -6915,7 +7742,6 @@ Thanks for your help!
             'AgentTicketZoom 및 CustomerTicketZoom의 보낸 사람 (보낸 사람) 이름의 기본 표시 유형입니다.',
         'Default loop protection module.' => '기본 루프 보호 모듈.',
         'Default queue ID used by the system in the agent interface.' => '에이전트 인터페이스에서 시스템이 사용하는 기본 대기열 ID입니다.',
-        'Default skin for the agent interface (slim version).' => '에이전트 인터페이스 (슬림버전)의 기본 스킨입니다.',
         'Default skin for the agent interface.' => '에이전트 인터페이스의 기본 스킨입니다.',
         'Default skin for the customer interface.' => '고객 인터페이스의 기본 스킨입니다.',
         'Default ticket ID used by the system in the agent interface.' =>
@@ -6925,8 +7751,8 @@ Thanks for your help!
         'Default value for NameX' => 'NameX의 기본값',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             '링크 객체 위젯에서 설정 버튼을 사용할 수있는 액션 정의 (LinkObject :: ViewMode = "complex"). 이러한 작업은 다음 JS 및 CSS 파일을 등록해야합니다. Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '정의 된 문자열 뒤에 링크를 추가하기 위해 html 출력을위한 필터를 정의하십시오. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 OTOBO 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '정의 된 문자열 뒤에 링크를 추가하기 위해 html 출력을위한 필터를 정의하십시오. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 CareOnCloud ESM 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             '고객 사용자 데이터 (키)의 변수와 티켓의 동적 필드 (값) 간의 매핑을 정의하십시오. 그 목적은 티켓 동적 필드에 고객 사용자 데이터를 저장하는 것입니다. 동적 필드는 시스템에 있어야하며 에이전트에서 수동으로 설정하거나 업데이트 할 수 있도록 AgentTicketFreeText에 대해 활성화해야합니다. AgentTicketPhone, AgentTicketEmail 및 AgentTicketCustomer에는 사용할 수 없습니다. 그럴 경우 자동으로 설정된 값보다 우선합니다. 이 매핑을 사용하려면 Ticket :: EventModulePost ### 4100-DynamicFieldFromCustomerUser 설정을 활성화해야합니다.',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -6935,6 +7761,12 @@ Thanks for your help!
             '종료 시간의 동적 필드 이름을 정의하십시오. 이 필드는 티켓 : "날짜 / 시간"으로 시스템에 수동으로 추가되어야하며 티켓 생성 화면 및 / 또는 기타 티켓 동작 화면에서 활성화해야합니다.',
         'Define dynamic field name for start time. This field has to be manually added to the system as Ticket: "Date / Time" and must be activated in ticket creation screens and/or in any other ticket action screens.' =>
             '시작 시간의 동적 필드 이름을 정의하십시오. 이 필드는 티켓 : "날짜 / 시간"으로 시스템에 수동으로 추가되어야하며 티켓 생성 화면 및 / 또는 기타 티켓 동작 화면에서 활성화해야합니다.',
+        'Define possible namespaces for dynamic fields. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces for global usage (currently dynamic fields and process elements). Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces specifically for process elements. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters.' =>
+            '',
         'Define the max depth of queues.' => '대기열의 최대 깊이를 정의하십시오.',
         'Define the queue comment 2.' => '큐 설명 정의 2.',
         'Define the service comment 2.' => '서비스 주석 정의2.',
@@ -6960,14 +7792,14 @@ Thanks for your help!
             '고객 정보 블록의 끝에 Google 아이콘을 생성하는 고객 항목을 정의합니다.',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             '고객 정보 블록의 끝에 Google지도 아이콘을 생성하는 고객 항목을 정의합니다.',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'CVE 번호 뒤에 링크를 추가하는 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 OTOBO 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'MSBulletin 번호 뒤에 링크를 추가하기 위해 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 OTOBO 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            '정의 된 문자열 뒤에 링크를 추가하는 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 OTOBO 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'bugtraq 번호 뒤에 링크를 추가하기위한 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 OTOBO 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'CVE 번호 뒤에 링크를 추가하는 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 CareOnCloud ESM 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'MSBulletin 번호 뒤에 링크를 추가하기 위해 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 CareOnCloud ESM 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            '정의 된 문자열 뒤에 링크를 추가하는 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 CareOnCloud ESM 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'bugtraq 번호 뒤에 링크를 추가하기위한 html 출력을위한 필터를 정의합니다. Image 요소는 두 가지 입력 종류를 허용합니다. 한 번에 이미지의 이름 (예 : faq.png). 이 경우 CareOnCloud ESM 이미지 경로가 사용됩니다. 두 번째 가능성은 링크를 이미지에 삽입하는 것입니다.',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             'AgentTicketZoom의 기사 텍스트에서 CVE 번호를 수집하는 필터를 정의합니다. 결과는 기사 옆의 메타 상자에 표시됩니다. 링크 요소 위로 마우스 커서를 이동할 때 미리보기를 보려면 URLPreview를 채 웁니다. URL과 동일한 URL 일 수도 있지만 대체 URL 일 수도 있습니다. 일부 웹 사이트는 iframe (예 : Google)에 표시되지 않으므로 미리보기 모드에서는 작동하지 않습니다.',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -6999,7 +7831,7 @@ Thanks for your help!
         'Defines all the possible stats output formats.' => '가능한 모든 통계 출력형식을 정의합니다.',
         'Defines an alternate URL, where the login link refers to.' => '로그인 링크가 참조하는 대체 URL을 정의합니다.',
         'Defines an alternate URL, where the logout link refers to.' => '로그 아웃 링크가 참조하는 대체 URL을 정의합니다.',
-        'Defines an alternate login URL for the customer panel..' => '고객 패널에 대한 대체 로그인 URL을 정의합니다.',
+        'Defines an alternate login URL for the customer panel.' => '',
         'Defines an alternate logout URL for the customer panel.' => '고객 패널에 대한 대체 로그 아웃 URL을 정의합니다.',
         'Defines an external link to the database of the customer (e.g. \'http://yourhost/customer.php?CID=[% Data.CustomerID %]\' or \'\').' =>
             '고객의 데이터베이스에 대한 외부 링크를 정의합니다 (예 : \'http://yourhost/customer.php?CID=[% Data.CustomerID %]\' or \'\').',
@@ -7007,15 +7839,16 @@ Thanks for your help!
             '약속 편집 화면에서 현재 위치의 Google지도 페이지로 연결되는 아이콘을 정의합니다.',
         'Defines an overview module to show the address book view of a customer user list.' =>
             'Customer User List의 주소록보기를 보여주는 개요 모듈을 정의합니다.',
-        'Defines available article actions for Chat articles.' => '채팅 기사에 대해 사용 가능한 기사 작업을 정의합니다.',
-        'Defines available article actions for Email articles.' => '전자 메일 아티클에 대해 사용 가능한 아티클 동작을 정의합니다.',
         'Defines available article actions for Internal articles.' => '내부 기사에 대해 사용가능한 기사 조치를 정의합니다.',
         'Defines available article actions for Phone articles.' => '전화 기사에 대해 사용가능한 기사 조치를 정의합니다.',
+        'Defines available article actions for e-mail articles.' => '',
         'Defines available article actions for invalid articles.' => '유효하지 않은 기사에 대해 사용 가능한 기사 조치를 정의합니다.',
         'Defines available groups for the admin overview screen.' => '관리자 개요 화면에 사용할 수 있는 그룹을 정의합니다.',
         'Defines chat communication channel.' => '채팅 통신 채널을 정의합니다.',
         'Defines default headers for outgoing emails.' => '보내는 전자 메일의 기본 헤더를 정의합니다.',
         'Defines email communication channel.' => '전자 메일 통신 채널을 정의합니다.',
+        'Defines for which article types the editing of subject, body and attachment is enabled. "Both" includes "Phone" and "Internal".' =>
+            '',
         'Defines from which ticket attributes the agent can select the result order.' =>
             '에이전트가 결과 순서를 선택할 수 있는 티켓 속성을 정의합니다.',
         'Defines groups for preferences items.' => '기본 설정 항목에 대한 그룹을 정의합니다.',
@@ -7061,14 +7894,17 @@ Thanks for your help!
             '에이전트 인터페이스의 티켓 고객을 변경하기 위해 티켓 잠금이 필요한지 여부를 정의합니다 (티켓이 아직 잠겨 있지 않은 경우 티켓이 잠기고 현재 에이전트가 자동으로 소유자로 설정 됨).',
         'Defines if agents should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             '상담원이 기본 설정에 공유 암호가 저장되어 있지 않아 이중 인증을 사용하지 않는 경우 로그인을 허용해야하는지 여부를 정의합니다.',
+        'Defines if articles written by the customer are editable.' => '',
         'Defines if customers should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             '공유 설정이 환경 설정에 저장되어 있지 않아 이중 인증을 사용하지 않는 경우 고객이 로그인 할 수 있도록 허용해야하는지 정의합니다.',
+        'Defines if parent-child translations for queues and services should be generated automatically.' =>
+            '',
         'Defines if the communication between this system and the servers that provide cloud services is possible. If set to \'Disable cloud services\', some functionality will be lost such as support data sending, Package Verify™ and product News dashboard widgets, among others.' =>
+            '',
+        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in agent interface.' =>
             '',
         'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in customer interface.' =>
             '고객 인터페이스에서 확장 모드를 사용해야하는지 (테이블, 바꾸기, 아래첨자, 위 첨자, 단어에서 붙여넣기 등 사용가능) 정의합니다.',
-        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.).' =>
-            '확장 모드를 사용해야하는지 정의합니다 (테이블, 바꾸기, 아래 첨자, 위 첨자, 단어 붙여 넣기 등 사용 가능).',
         'Defines if the first article should be displayed as expanded, that is visible for the related customer. If nothing defined, latest article will be expanded.' =>
             '첫 번째 기사를 확장된 것으로 표시할지, 관련 고객에게 표시할지 여부를 정의합니다. 아무것도 정의하지 않으면 최신 기사가 확장됩니다.',
         'Defines if the message in the email outbound screen of the agent interface is visible for the customer by default.' =>
@@ -7097,20 +7933,24 @@ Thanks for your help!
             '에이전트 인터페이스의 티켓 담당 화면에 있는 노트가 기본적으로 고객에게 표시되는지 여부를 정의합니다.',
         'Defines if the previously valid token should be accepted for authentication. This is slightly less secure but gives users 30 seconds more time to enter their one-time password.' =>
             '이전에 유효한 토큰이 인증을 위해 수락되어야 하는지 여부를 정의합니다. 이는 보안이 다소 떨어지지만 사용자가 일회용 암호를 입력하는데 30초 이상 더 많은 시간을 줍니다.',
+        'Defines if the ticket info widget is displayed permanently on the left below the article list or is available via click on the \'Information\' button.' =>
+            '',
         'Defines if the values for filters should be retrieved from all available tickets. If enabled, only values which are actually used in any ticket will be available for filtering. Please note: The list of customers will always be retrieved like this.' =>
             '사용 가능한 모든 티켓에서 필터 값을 검색해야하는지 여부를 정의합니다. 활성화 된 경우 실제로 티켓에서 사용되는 값만 필터링에 사용할 수 있습니다. 참고 : 고객 목록은 항상 이와 같이 검색됩니다.',
-        'Defines if time accounting is mandatory in the agent interface. If enabled, a note must be entered for all ticket actions (no matter if the note itself is configured as active or is originally mandatory for the individual ticket action screen).' =>
-            '상담원 인터페이스에서 시간 계산이 필수인지 정의합니다. 활성화 된 경우 모든 티켓 동작에 대해 노트를 입력해야 합니다 (노트 자체가 활성으로 구성되어 있거나 원래 개별 티켓 동작 화면에 필수적이든간에).',
+        'Defines if time accounting is mandatory in the agent interface, if a note is entered.' =>
+            '',
         'Defines if time accounting must be set to all tickets in bulk action.' =>
             '일괄 처리로 시간 계산을 모든 티켓으로 설정해야하는지 여부를 정의합니다.',
+        'Defines if user can modify all possible values/labels of dynamic fields in one data table.' =>
+            '',
         'Defines internal communication channel.' => '내부 통신 채널을 정의합니다.',
         'Defines out of office message template. Two string parameters (%s) available: end date and number of days left.' =>
             '부재 중 메시지 템플릿을 정의합니다. 사용 가능한 두 개의 문자열 매개 변수 (%s) : 종료 날짜 및 남은 일 수.',
         'Defines phone communication channel.' => '전화 통신 채널을 정의합니다.',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             '달력 이벤트로 표시하기 위해 티켓을 사용하는 대기열을 정의합니다.',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            '\'PublicSupportDataCollector\'공용 모듈 (예 : OTOBO 데몬에서 사용)을 사용하여 지원 데이터 수집을위한 HTTP 호스트 이름을 정의합니다.',
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            '\'PublicSupportDataCollector\'공용 모듈 (예 : CareOnCloud ESM 데몬에서 사용)을 사용하여 지원 데이터 수집을위한 HTTP 호스트 이름을 정의합니다.',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             '로컬 저장소에 액세스하기위한 IP 정규식을 정의합니다. 이것을 사용하여 로컬 저장소에 액세스 할 수 있어야하며 패키지 :: RepositoryList가 원격 호스트에 필요합니다.',
         'Defines the PostMaster header to be used on the filter for keeping the current state of the ticket.' =>
@@ -7143,9 +7983,13 @@ Thanks for your help!
         'Defines the close state for quick close.' => '',
         'Defines the column to store the keys for the preferences table.' =>
             '환경 설정 테이블의 키를 저장할 열을 정의합니다.',
-        'Defines the communication chanel for the quick close article action.' =>
+        'Defines the communication channel for the quick close article action.' =>
             '',
         'Defines the config options for the autocompletion feature.' => '자동 완성 기능의 구성 옵션을 정의합니다.',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketSeenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketUnseenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
         'Defines the config parameters of this item, to be shown in the preferences view.' =>
             '환경 설정 보기에 표시할 이 항목의 구성 매개 변수를 정의합니다.',
         'Defines the config parameters of this item, to be shown in the preferences view. \'PasswordRegExp\' allows to match passwords against a regular expression. Define the minimum number of characters using \'PasswordMinSize\'. Define if at least 2 lowercase and 2 uppercase letter characters are needed by setting the appropriate option to \'1\'. \'PasswordMin2Characters\' defines if the password needs to contain at least 2 letter characters (set to 0 or 1). \'PasswordNeedDigit\' controls the need of at least 1 digit (set to 0 or 1 to control). \'PasswordMaxLoginFailed\' allows to set an agent to invalid-temporarily if max failed logins reached. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -7155,9 +7999,9 @@ Thanks for your help!
         'Defines the connections for http/ftp, via a proxy.' => '프록시를 통해 http / ftp에 대한 연결을 정의합니다.',
         'Defines the customer preferences key where the shared secret key is stored.' =>
             '공유 비밀 키가 저장되는 고객 기본 설정 키를 정의합니다.',
+        'Defines the data objects available to be translated.' => '',
         'Defines the date input format used in forms (option or input fields).' =>
             '양식 (옵션 또는 입력 필드)에 사용되는 날짜 입력 형식을 정의합니다.',
-        'Defines the default CSS used in rich text editors.' => '서식있는 텍스트 편집기에 사용되는 기본 CSS를 정의합니다.',
         'Defines the default agent name in the ticket zoom view of the customer interface.' =>
             '',
         'Defines the default auto response type of the article for this operation.' =>
@@ -7166,12 +8010,12 @@ Thanks for your help!
             '에이전트 인터페이스의 티켓 비어있는 텍스트 화면에서 노트의 기본 본문을 정의합니다.',
         'Defines the default filter fields in the customer user address book search (CustomerUser or CustomerCompany). For the CustomerCompany fields a prefix \'CustomerCompany_\' must be added.' =>
             '고객 사용자 주소록 검색 (CustomerUser 또는 CustomerCompany)의 기본 필터 필드를 정의합니다. CustomerCompany 필드의 경우 접두사 \'CustomerCompany_\'를 추가해야합니다.',
-        'Defines the default front-end (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
+        'Defines the default frontend (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
             '',
-        'Defines the default front-end language. All the possible values are determined by the available language files on the system (see the next setting).' =>
-            '기본 프런트 엔드 언어를 정의합니다. 가능한 모든 값은 시스템에서 사용 가능한 언어 파일에 의해 결정됩니다 (다음 설정 참조).',
+        'Defines the default frontend language. All the possible values are determined by the available language files on the system. These values are listed as the keys in the setting \'DefaultUsedLanguages\'.' =>
+            '',
         'Defines the default history type in the customer interface.' => '고객 인터페이스에서 기본 기록 유형을 정의합니다.',
-        'Defines the default interface. Unknown pathes below the script alias are redirected to the selected interface.' =>
+        'Defines the default interface. Unknown paths below the script alias are redirected to the selected interface.' =>
             '',
         'Defines the default maximum number of X-axis attributes for the time scale.' =>
             '시간 스케일에 대한 X 축 속성의 기본 최대 수를 정의합니다.',
@@ -7322,6 +8166,8 @@ Thanks for your help!
             '이 작업을 위해 고객에게 기사의 기본 가시성을 정의합니다.',
         'Defines the displayed style of the From field in notes that are visible for customers. A default agent name can be defined in Ticket::Frontend::CustomerTicketZoom###DefaultAgentName setting.' =>
             '',
+        'Defines the dynamic field to identify tickets by for this operation. Please put in the field name only without the \'DynamicField_\' prefix.' =>
+            '',
         'Defines the dynamic fields that are used for displaying on calendar events.' =>
             '달력 이벤트에 표시하는데 사용되는 동적 필드를 정의합니다.',
         'Defines the event object types that will be handled via AdminAppointmentNotificationEvent.' =>
@@ -7333,18 +8179,14 @@ Thanks for your help!
             'URL을 강조 표시하기 위해 기사의 텍스트를 처리하는 필터를 정의합니다.',
         'Defines the format of responses in the ticket compose screen of the agent interface ([% Data.OrigFrom | html %] is From 1:1, [% Data.OrigFromName | html %] is only realname of From).' =>
             '에이전트 인터페이스 ([% Data.OrigFrom | html %]는 From 1 : 1, [% Data.OrigFromName | html %]는 From의 실제 이름 임)의 티켓 작성 화면에서 응답 형식을 정의합니다.',
-        'Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
-            '시스템의 정규화 된 도메인 이름을 정의합니다. 이 설정은 응용 프로그램에서 사용하는 모든 형식의 메시징에있는 변수 인 OTOBO_CONFIG_FQDN으로 사용되어 시스템 내의 티켓에 대한 링크를 만듭니다.',
+        'Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
+            '시스템의 정규화 된 도메인 이름을 정의합니다. 이 설정은 응용 프로그램에서 사용하는 모든 형식의 메시징에있는 변수 인 CareOnCloud_CONFIG_FQDN으로 사용되어 시스템 내의 티켓에 대한 링크를 만듭니다.',
         'Defines the groups every customer user will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer user for these groups).' =>
             '모든 고객 사용자가있을 그룹을 정의합니다 (CustomerGroupSupport가 사용 가능하고이 그룹에 대한 모든 고객 사용자를 관리하지 않으려는 경우).',
         'Defines the groups every customer will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer for these groups).' =>
             '모든 고객이 속할 그룹을 정의합니다 (CustomerGroupSupport가 사용 가능하고이 그룹의 모든 고객을 관리하지 않으려는 경우).',
         'Defines the headers which will be shown to generic content for the requested key.' =>
             '',
-        'Defines the height for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
-            '이 화면의 서식있는 텍스트 편집기 구성 요소의 높이를 정의합니다. 숫자 (픽셀) 또는 퍼센트 값 (상대)을 입력하십시오.',
-        'Defines the height for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            '서식있는 텍스트 편집기 구성 요소의 높이를 정의합니다. 숫자 (픽셀) 또는 퍼센트 값 (상대)을 입력하십시오.',
         'Defines the history comment for the close ticket screen action, which gets used for ticket history in the agent interface.' =>
             '에이전트 인터페이스의 티켓 기록에 사용되는 닫기 티켓 화면 작업에 대한 기록 주석을 정의합니다.',
         'Defines the history comment for the email ticket screen action, which gets used for ticket history in the agent interface.' =>
@@ -7400,6 +8242,10 @@ Thanks for your help!
         'Defines the hours and week days of the indicated calendar, to count the working time.' =>
             '작업 시간을 계산하기 위해 표시된 달력의 시간과 요일을 정의합니다.',
         'Defines the hours and week days to count the working time.' => '근무 시간을 계산할 시간과 요일을 정의합니다.',
+        'Defines the initial height for the rich text editor component. Enter number (pixels).' =>
+            '',
+        'Defines the initial height in pixels for the rich text editor component for this screen.' =>
+            '',
         'Defines the key to be checked with Kernel::Modules::AgentInfo module. If this user preferences key is true, the message is accepted by the system.' =>
             'Kernel :: Modules :: AgentInfo 모듈로 확인할 키를 정의합니다. 이 사용자 기본 설정 키가 true이면 시스템에서 메시지를 수락합니다.',
         'Defines the key to check with CustomerAccept. If this user preferences key is true, then the message is accepted by the system.' =>
@@ -7410,8 +8256,8 @@ Thanks for your help!
             '링크 유형 \'ParentChild\'를 정의합니다. 소스 이름과 대상 이름이 동일한 값을 포함하면 결과 링크는 비 방향성 링크입니다. 그렇지 않은 경우 결과는 방향 링크입니다.',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             '링크 유형 그룹을 정의합니다. 같은 그룹의 링크 유형은 서로 취소합니다. 예 : 항공권 A가 티켓 B와 \'일반\'링크별로 링크 된 경우이 티켓을 \'ParentChild\'관계의 링크와 추가로 연결할 수 없습니다.',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            '온라인 리포지토리의 목록을 정의합니다. 다른 설치를 저장소로 사용할 수 있습니다 예 : Key= "http://example.com/otobo/public.pl?Action=PublicRepository;File= "and Content="Some Name".',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            '온라인 리포지토리의 목록을 정의합니다. 다른 설치를 저장소로 사용할 수 있습니다 예 : Key= "http://example.com/careoncloud/public.pl?Action=PublicRepository;File= "and Content="Some Name".',
         'Defines the list of params that can be passed to ticket search function.' =>
             '티켓 검색 기능에 전달할 수있는 매개변수의 목록을 정의합니다.',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -7421,8 +8267,8 @@ Thanks for your help!
             '추가 패키지 온라인 저장소 목록을 가져올 위치를 정의합니다. 첫 번째 가능한 결과가 사용됩니다.',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             '시스템의 로그 모듈을 정의합니다. "파일"은 주어진 로그 파일에 모든 메시지를 쓰고 "syslog"는 시스템의 syslog 데몬을 사용합니다. syslogd.',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            '브라우저를 통한 파일 업로드의 최대 크기 (바이트)를 정의합니다. 경고 :이 옵션을 너무 낮은 값으로 설정하면 OTOBO 인스턴스의 많은 마스크가 작동을 멈출 수 있습니다 (사용자가 입력 한 마스크 일 가능성이 있음).',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            '브라우저를 통한 파일 업로드의 최대 크기 (바이트)를 정의합니다. 경고 :이 옵션을 너무 낮은 값으로 설정하면 CareOnCloud ESM 인스턴스의 많은 마스크가 작동을 멈출 수 있습니다 (사용자가 입력 한 마스크 일 가능성이 있음).',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             '세션 ID의 최대 유효 시간 (초)을 정의합니다.',
         'Defines the maximum number of affected tickets per job.' => '작업 당 영향을 받는 티켓의 최대 수를 정의합니다.',
@@ -7443,8 +8289,8 @@ Thanks for your help!
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             '현재 로그인 한 고객을 고객 인터페이스에 표시하는 모듈을 정의합니다.',
         'Defines the module to authenticate customers.' => '고객을 인증할 모듈을 정의합니다.',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            'OTOBO 데몬이 실행되고 있지 않은 경우 에이전트 인터페이스에 알림을 표시 할 모듈을 정의합니다.',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            'CareOnCloud ESM 데몬이 실행되고 있지 않은 경우 에이전트 인터페이스에 알림을 표시 할 모듈을 정의합니다.',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             '시스템 구성이 동기화되지 않은 경우 에이전트 인터페이스에 알림을 표시 할 모듈을 정의합니다.',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -7465,9 +8311,11 @@ Thanks for your help!
             '시스템 유지 보수가 활성화 된 상태에서 고객이 로그인 한 경우 고객 인터페이스에 알림을 표시 할 모듈을 정의합니다.',
         'Defines the module to display a notification in the customer interface, if the customer user has not yet selected a time zone.' =>
             '고객 사용자가 아직 시간대를 선택하지 않은 경우 고객 인터페이스에 알림을 표시할 모듈을 정의합니다.',
+        'Defines the module to display a notification in the customer interface. UseMarquee options: 1/0. NotifyPriority options: Notice/Error/Success/Info.' =>
+            '',
         'Defines the module to generate code for periodic page reloads.' =>
             '정기적 페이지 제로드를 위한 코드를 생성하는 모듈을 정의합니다.',
-        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
+        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
             '',
         'Defines the module used to store the session data. With "DB" the frontend server can be splitted from the db server. "FS" is faster.' =>
             '세션 데이터를 저장하는 데 사용되는 모듈을 정의합니다. "DB"를 사용하면 프론트 엔드 서버를 db 서버에서 분리 할 수 ​​있습니다. "FS"가 빠릅니다.',
@@ -7481,8 +8329,8 @@ Thanks for your help!
             '환경 설정 테이블에 사용자 식별자를 저장할 열의 이름을 정의합니다.',
         'Defines the name of the indicated calendar.' => '표시된 달력의 이름을 정의합니다.',
         'Defines the name of the key for customer sessions.' => '고객 세션의 키 이름을 정의합니다.',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            '세션 키의 이름을 정의합니다. 예 : 세션, 세션 ID 또는 OTOBO.',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            '세션 키의 이름을 정의합니다. 예 : 세션, 세션 ID 또는 CareOnCloud ESM.',
         'Defines the name of the table where the user preferences are stored.' =>
             '사용자 기본 설정이 저장된 테이블의 이름을 정의합니다.',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -7532,6 +8380,8 @@ Thanks for your help!
             '대시 보드 백엔드의 매개 변수를 정의합니다. "제한"은 기본적으로 표시되는 항목 수를 정의합니다. "그룹"은 플러그인 (예 : 그룹 : 관리자, 그룹 1, 그룹 2)에 대한 액세스를 제한하는 데 사용됩니다. "기본값"은 플러그인이 기본적으로 활성화되어 있는지 또는 사용자가 수동으로 활성화해야하는지 여부를 나타냅니다. "CacheTTL"은 플러그인의 캐시 만기 기간을 나타냅니다. "필수"는 플러그인이 항상 표시되는지 여부를 결정하며 에이전트가 플러그인을 제거 할 수 없습니다.',
         'Defines the parameters for the dashboard backend. "Limit" defines the number of entries displayed by default. "Group" is used to restrict access to the plugin (e. g. Group: admin;group1;group2;). "Default" indicates if the plugin is enabled by default or if the user needs to enable it manually. "CacheTTLLocal" defines the cache expiration period in minutes for the plugin. "Mandatory" determines if the plugin is always shown and can not be removed by agents.' =>
             '대시 보드 백엔드의 매개 변수를 정의합니다. "제한"은 기본적으로 표시되는 항목 수를 정의합니다. "그룹"은 플러그인 (예 : 그룹 : 관리자, 그룹 1, 그룹 2)에 대한 액세스를 제한하는 데 사용됩니다. "기본값"은 플러그인이 기본적으로 활성화되어 있는지 또는 사용자가 수동으로 활성화해야하는지 여부를 나타냅니다. "CacheTTLLocal"은 플러그인의 캐시 만기 기간을 분 단위로 정의합니다. "필수"는 플러그인이 항상 표시되는지 여부를 결정하며 에이전트가 플러그인을 제거 할 수 없습니다.',
+        'Defines the parameters for the elasticsearch widget backend.' =>
+            '',
         'Defines the path and TTF-File to handle bold italic monospaced font in PDF documents.' =>
             'PDF 문서에서 굵은 기울임 꼴 고정 폭 글꼴을 처리 할 경로와 TTF-File을 정의합니다.',
         'Defines the path and TTF-File to handle bold italic proportional font in PDF documents.' =>
@@ -7553,10 +8403,7 @@ Thanks for your help!
         'Defines the path to PGP binary.' => 'PGP 바이너리 경로를 정의합니다.',
         'Defines the path to open ssl binary. It may need a HOME env ($ENV{HOME} = \'/var/lib/wwwrun\';).' =>
             'ssl 바이너리를 여는 경로를 정의합니다. HOME 환경 변수 ($ ENV {HOME} = \'/ var / lib / wwwrun\';)가 필요합니다.',
-        'Defines the path to the Google Chrome or Chromium binary. If set, this binary will be used instead of PhantomJS::Bin.' =>
-            '',
-        'Defines the path to the PhantomJS binary. You can use a static build from http://phantomjs.org/download.html for an easy installation process.' =>
-            '',
+        'Defines the path to the Google Chrome or Chromium binary.' => '',
         'Defines the period of time (in minutes) before agent is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
             '비활성 상태 (예 : \'로그인 사용자\'위젯 또는 채팅)로 인해 상담원이 \'자리 비움\'으로 표시되기까지의 시간 (분)을 정의합니다.',
         'Defines the period of time (in minutes) before customer is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
@@ -7568,6 +8415,10 @@ Thanks for your help!
             '에이전트 티켓에서 전화 티켓의받는 사람 대상과 전자 메일 티켓의 보낸 사람을 정의합니다 ( "대기열"은 모든 대기열을 나타내며 "시스템 주소"는 모든 시스템 주소를 표시합니다).',
         'Defines the recipient target of the tickets ("Queue" shows all queues, "SystemAddress" shows only the queues which are assigned to system addresses) in the customer interface.' =>
             '티켓의 수신자 대상을 정의합니다 ( "대기열"은 모든 대기열을 나타내며 "시스템 주소"는 시스템 주소에 할당 된 대기열 만 표시 함).',
+        'Defines the redirect URL for setting a ticket article to \'seen\'.' =>
+            '',
+        'Defines the redirect URL for setting a ticket article to \'unseen\'.' =>
+            '',
         'Defines the required permission to show a ticket in the escalation view of the agent interface.' =>
             '에이전트 인터페이스의 에스컬레이션 보기에 티켓을 표시하는데 필요한 권한을 정의합니다.',
         'Defines the search limit for the stats.' => '통계에 대한 검색 제한을 정의합니다.',
@@ -7578,7 +8429,7 @@ Thanks for your help!
             '에이전트 실명과 주어진 대기열 전자메일 주소 사이의 구분 기호를 정의합니다.',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             'AgentCustomerUserAddressBook 결과 화면에 표시된 열과 위치를 정의합니다.',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> and <CareOnCloud_CONFIG_ScriptAlias> will be substituted.' =>
             '',
         'Defines the source dynamic field for storing historical data.' =>
             '',
@@ -7604,8 +8455,8 @@ Thanks for your help!
             '',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             '시스템 관리자의 전자 메일 주소를 정의합니다. 응용 프로그램의 오류 화면에 표시됩니다.',
-        'Defines the system identifier. Every ticket number and http session string contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO).' =>
-            '시스템 식별자를 정의합니다. 모든 티켓 번호와 http 세션 문자열에는이 ID가 들어 있습니다. 이렇게하면 시스템에 속한 티켓 만 후속 조치로 처리됩니다 (OTOBO의 두 인스턴스간에 통신 할 때 유용함).',
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
+            '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             '외부 고객 데이터베이스 링크의 대상 속성을 정의합니다. 예 : \'AsPopup PopupType_TicketAction\'.',
         'Defines the target attribute in the link to external customer database. E.g. \'target="cdb"\'.' =>
@@ -7623,11 +8474,11 @@ Thanks for your help!
         'Defines the ticket plugin for calendar appointments.' => '일정 약속을 위한 티켓 플러그인을 정의합니다.',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             '지정된 일정에 나중에 할당할 수 있는 지정된 달력의 표준 시간대를 정의합니다.',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
-            '공개 모듈 \'PublicSupportDataCollector\'(예 : OTOBO 데몬에서 사용)를 사용하여 지원 데이터 수집에 대한 시간 초과 (최소, 20 초)를 정의합니다.',
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
+            '공개 모듈 \'PublicSupportDataCollector\'(예 : CareOnCloud ESM 데몬에서 사용)를 사용하여 지원 데이터 수집에 대한 시간 초과 (최소, 20 초)를 정의합니다.',
         'Defines the two-factor module to authenticate agents.' => '에이전트를 인증할 2요소 모듈을 정의합니다.',
         'Defines the two-factor module to authenticate customers.' => '고객을 인증할 2요소 모듈을 정의합니다.',
-        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
+        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
             '',
         'Defines the used character for plaintext email quotes in the ticket compose screen of the agent interface. If this is empty or inactive, original emails will not be quoted but appended to the response.' =>
             '에이전트 인터페이스의 티켓 작성 화면에서 일반 텍스트 전자 메일 따옴표에 사용되는 문자를 정의합니다. 비어 있거나 비활성 인 경우 원래 이메일은 인용되지 않고 응답에 추가됩니다.',
@@ -7636,14 +8487,16 @@ Thanks for your help!
             '사용자 아바타를 정의합니다. 참고 : \'활성\'을 0으로 설정하면 상담원이이 그룹의 개인 환경 설정에서 설정을 편집하지 못하게되지만 관리자가 다른 사용자를 대신하여 설정을 편집 할 수 있습니다. \'PreferenceGroup\'을 사용하여 이러한 설정을 사용자 인터페이스에 표시 할 영역을 제어하십시오.',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            '잠금 해제 된 티켓의 유효한 상태를 정의합니다. 티켓의 잠금을 해제하려면 "bin / otobo.Console.pl Maint :: Ticket :: UnlockTimeout"스크립트를 사용할 수 있습니다.',
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+            '',
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            '잠금 해제 된 티켓의 유효한 상태를 정의합니다. 티켓의 잠금을 해제하려면 "bin / careoncloud.Console.pl Maint :: Ticket :: UnlockTimeout"스크립트를 사용할 수 있습니다.',
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
+            '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             '티켓의 표시 가능 잠금을 정의합니다. 참고 :이 설정을 변경할 때 새 값을 사용하려면 캐시를 삭제해야합니다. 기본값 : 잠금 해제, tmp_lock.',
         'Defines the width for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
             '이 화면의 서식있는 텍스트 편집기 구성 요소의 너비를 정의합니다. 숫자 (픽셀) 또는 퍼센트 값 (상대)을 입력하십시오.',
-        'Defines the width for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            '서식있는 텍스트 편집기 구성 요소의 너비를 정의합니다. 숫자 (픽셀) 또는 퍼센트 값 (상대)을 입력하십시오.',
         'Defines time in minutes since last modification for drafts of specified type before they are considered expired.' =>
             '만료된 것으로 간주되기 전에 지정된 유형의 초안에 대한 최종 수정 이후의 시간을 분으로 정의합니다.',
         'Defines whether to index archived tickets for fulltext searches.' =>
@@ -7661,6 +8514,7 @@ Thanks for your help!
         'Defines, which tickets of which ticket state types should not be listed in linked ticket lists.' =>
             '티켓 상태 유형이 링크된 티켓 목록에 나열되어서는 안되는 티켓을 정의합니다.',
         'Delete expired cache from core modules.' => '만료된 캐시를 코어 모듈에서 삭제하십시오.',
+        'Delete expired form cache hourly.' => '',
         'Delete expired loader cache weekly (Sunday mornings).' => '매주 만료된 로더 캐시를 삭제하십시오 (일요일 오전).',
         'Delete expired sessions.' => '만료된 세션을 삭제하십시오.',
         'Delete expired ticket draft entries.' => '만료된 티켓 초안 항목을 삭제하십시오.',
@@ -7678,6 +8532,8 @@ Thanks for your help!
             '링크를 삭제할 버튼이 각 줌 마스크의 각 링크 옆에 표시되어야 하는지 여부를 결정합니다.',
         'Determines if the list of possible queues to move to ticket into should be displayed in a dropdown list or in a new window in the agent interface. If "New Window" is set you can add a move note to the ticket.' =>
             '티켓으로 이동할 수있는 대기열 목록을 드롭 다운 목록이나 에이전트 인터페이스의 새 창에 표시할지 결정합니다. "새 창"이 설정되면 티켓에 이동 노트를 추가 할 수 있습니다.',
+        'Determines if the statistics module may generate article lists.' =>
+            '',
         'Determines if the statistics module may generate ticket lists.' =>
             '통계 모듈이 티켓 목록을 생성할 수 있는지 여부를 결정합니다.',
         'Determines the next possible ticket states, after the creation of a new email ticket in the agent interface.' =>
@@ -7708,41 +8564,65 @@ Thanks for your help!
             '상담원 인터페이스에서 수신자 (전화 티켓) 및 발신자 (전자 메일 티켓)에 대해 유효한 옵션을 결정합니다.',
         'Determines which queues will be valid for ticket\'s recepients in the customer interface.' =>
             '고객 인터페이스에서 티켓의 수신인에 대해 유효한 대기열을 결정합니다.',
+        'Dialog to show after marking a ticket as seen' => '',
+        'Dialog to show after marking a ticket as unseen' => '',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             '외부 스크립트 내용로드를 허용하려면 HTTP 헤더 "Content-Security-Policy"를 비활성화하십시오. 이 HTTP 헤더를 비활성화하면 보안 문제가 발생할 수 있습니다! 자신이하는 일을 아는 경우에만 사용을 중지하십시오!',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
-            'HTTP 헤더 "X-Frame-Options : SAMEORIGIN"을 사용하지 않도록 설정하여 OTOBO를 다른 웹 사이트의 IFrame으로 포함 할 수 있습니다. 이 HTTP 헤더를 비활성화하면 보안 문제가 발생할 수 있습니다! 자신이하는 일을 아는 경우에만 사용을 중지하십시오!',
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+            'HTTP 헤더 "X-Frame-Options : SAMEORIGIN"을 사용하지 않도록 설정하여 CareOnCloud ESM를 다른 웹 사이트의 IFrame으로 포함 할 수 있습니다. 이 HTTP 헤더를 비활성화하면 보안 문제가 발생할 수 있습니다! 자신이하는 일을 아는 경우에만 사용을 중지하십시오!',
         'Disable autocomplete in the login screen.' => '',
         'Disable cloud services' => '클라우드 서비스 사용 중지',
         'Disables sending reminder notifications to the responsible agent of a ticket (Ticket::Responsible needs to be enabled).' =>
             '책임있는 에이전트에게 티켓 알림을 보내는 것을 비활성화합니다 (Ticket :: Responsible을 활성화해야합니다).',
         'Disables the redirection to the last screen overview / dashboard after a ticket is closed.' =>
             '',
+        'Display a message explaining that the asterisk indicates mandatory fields.' =>
+            '',
         'Display a warning and prevent search when using stop words within fulltext search.' =>
             '전체 텍스트 검색 내에서 중지 단어를 사용할 때 경고를 표시하고 검색을 차단합니다.',
         'Display communication log entries.' => '통신 로그 항목을 표시하십시오.',
         'Display settings to override defaults for Process Tickets.' => '프로세스 티켓의 기본값을 대체하는 설정 표시.',
+        'Display settings to override defaults for dynamic field widget for Tickets.' =>
+            '',
+        'Displayable via click' => '',
         'Displays the accounted time for an article in the ticket zoom view.' =>
             '티켓 확대보기에서 기사의 계정 시간을 표시합니다.',
         'Displays the number of all tickets with the same CustomerID as current ticket in the ticket zoom view.' =>
             '티켓 확대보기에서 현재 티켓과 동일한 CustomerID를 가진 모든 티켓 수를 표시합니다.',
-        'Down' => '하위',
         'Dropdown' => '쓰러지다',
         'Dutch' => '네덜란드 사람',
         'Dutch stop words for fulltext index. These words will be removed from the search index.' =>
             '전체 텍스트 색인에 대한 네덜란드어 중지 단어. 이 단어는 검색 색인에서 제거됩니다.',
+        'Dynamic Field Contents' => '',
+        'Dynamic Field Information' => '',
+        'Dynamic Field Labels' => '',
+        'Dynamic Field Screen' => '',
+        'Dynamic Field Set' => '',
+        'Dynamic Field Set Backend GUI' => '',
         'Dynamic Fields Checkbox Backend GUI' => '동적 필드 확인란 백엔드 GUI',
         'Dynamic Fields Contact Data Backend GUI' => '',
         'Dynamic Fields Database Backend GUI' => '',
         'Dynamic Fields Date Time Backend GUI' => '동적 필드 날짜 시간 백엔드 GUI',
         'Dynamic Fields Drop-down Backend GUI' => '동적 필드 드롭 다운 백엔드 GUI',
         'Dynamic Fields GUI' => '동적 필드 GUI',
+        'Dynamic Fields Lens Backend GUI' => '',
         'Dynamic Fields Multiselect Backend GUI' => '동적 필드 다중 선택 백엔드 GUI',
         'Dynamic Fields Overview Limit' => '동적 필드 개요 제한',
+        'Dynamic Fields Reference Backend GUI' => '',
         'Dynamic Fields Text Backend GUI' => '동적 필드 텍스트 백엔드 GUI',
         'Dynamic Fields Web Service Backend GUI' => '',
         'Dynamic Fields used to export the search result in CSV format.' =>
             '검색 결과를 CSV 형식으로 내보내는 데 사용되는 동적 필드입니다.',
+        'Dynamic field event module that deletes script field events if a dynamic field of type script gets deleted.' =>
+            '',
+        'Dynamic field event module that updates PartOfSet attributes of fields which are included in a set.' =>
+            '',
+        'Dynamic field event module that updates the MultiValue attribute of the Lens field configuration to match the MultiValue attribute of the attribute field.' =>
+            '',
+        'Dynamic fields available as attributes for the settings \'Ticket::Frontend::CustomerTicketCategories###DynamicField\', which are shown in the ticket overview screen of the customer interface.' =>
+            '',
+        'Dynamic fields groups for dynamic field widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
+            '',
         'Dynamic fields groups for process widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
             '프로세스 위젯의 동적 필드 그룹. 키는 그룹의 이름이고, 값은 표시 할 필드를 포함합니다. 예 : \'Key => My Group\', \'Content : Name_X, NameY\'.',
         'Dynamic fields limit per page for Dynamic Fields Overview.' => '동적 필드 개요에 대한 페이지 당 동적 필드 제한',
@@ -7750,6 +8630,8 @@ Thanks for your help!
             '동적 필드 옵션은 고객 인터페이스의 티켓 메시지 화면에 표시됩니다. 노트. 이러한 필드를 고객 인터페이스의 티켓 확대에도 표시하려면 CustomerTicketZoom ### DynamicField에서 활성화해야합니다.',
         'Dynamic fields options shown in the ticket reply section in the ticket zoom screen of the customer interface.' =>
             '동적 필드 옵션은 고객 인터페이스의 티켓 확대 / 축소 화면에서 티켓 응답 섹션에 표시됩니다.',
+        'Dynamic fields shown in the dynamic field widget in ticket zoom screen of the agent interface.' =>
+            '',
         'Dynamic fields shown in the email outbound screen of the agent interface.' =>
             '에이전트 인터페이스의 전자 메일 아웃바운드 화면에 표시되는 동적 필드입니다.',
         'Dynamic fields shown in the process widget in ticket zoom screen of the agent interface.' =>
@@ -7772,8 +8654,6 @@ Thanks for your help!
             '에이전트 인터페이스의 티켓 이동 화면에 표시된 동적 필드',
         'Dynamic fields shown in the ticket note screen of the agent interface.' =>
             '에이전트 인터페이스의 티켓 메모 화면에 표시된 동적 필드입니다.',
-        'Dynamic fields shown in the ticket overview screen of the customer interface.' =>
-            '동적 인터페이스는 고객 인터페이스의 티켓 개요 화면에 표시됩니다.',
         'Dynamic fields shown in the ticket owner screen of the agent interface.' =>
             '에이전트 인터페이스의 티켓 소유자 화면에 표시된 동적 필드입니다.',
         'Dynamic fields shown in the ticket pending screen of the agent interface.' =>
@@ -7807,7 +8687,6 @@ Thanks for your help!
         'DynamicField' => 'DynamicField',
         'DynamicField backend registration.' => 'DynamicField 백엔드 등록.',
         'DynamicField object registration.' => 'DynamicField 개체 등록.',
-        'DynamicFieldScreen' => '',
         'DynamicField_%s' => 'DynamicField_%s',
         'E-Mail Outbound' => '전자 메일 아웃 바운드',
         'Edit Customer Companies.' => '고객 회사 편집.',
@@ -7816,6 +8695,7 @@ Thanks for your help!
         'Edit contacts with data' => '',
         'Edit contacts with data.' => '',
         'Edit customer company' => '고객 회사 편집',
+        'Elasticsearch (u)' => '',
         'Elasticsearch quick result module.' => '',
         'Email Addresses' => '이메일 주소',
         'Email Outbound' => '이메일 발신',
@@ -7826,15 +8706,18 @@ Thanks for your help!
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             '신뢰할 수있는 서명으로 인증되지 않았더라도 모든 공용 및 개인용 PGP 키를 신뢰하는 경우이 옵션을 활성화하십시오.',
         'Enabled filters.' => '필터를 사용합니다.',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            'PGP 지원을 사용합니다. 메일 서명 및 암호화에 대해 PGP 지원을 사용하는 경우 웹 서버를 OTOBO 사용자로 실행하는 것이 좋습니다. 그렇지 않으면 .gnupg 폴더에 액세스 할 때 권한에 문제가 있습니다.',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            'PGP 지원을 사용합니다. 메일 서명 및 암호화에 대해 PGP 지원을 사용하는 경우 웹 서버를 CareOnCloud ESM 사용자로 실행하는 것이 좋습니다. 그렇지 않으면 .gnupg 폴더에 액세스 할 때 권한에 문제가 있습니다.',
         'Enables S/MIME support.' => 'S / MIME 지원을 사용합니다.',
         'Enables customers to create their own accounts.' => '고객이 자신의 계정을 만들 수 있습니다.',
         'Enables fetch S/MIME from CustomerUser backend support.' => '고객사용자 백 엔드 지원에서 S / MIME을 가져올 수 있습니다.',
         'Enables file upload in the package manager frontend.' => '패키지 관리자 프론트 엔드에서 파일 업로드를 사용 가능하게 합니다.',
         'Enables or disables the caching for templates. WARNING: Do NOT disable template caching for production environments for it will cause a massive performance drop! This setting should only be disabled for debugging reasons!' =>
             '템플릿에 대한 캐싱을 사용하거나 사용하지 않도록 설정합니다. 경고 : 프로덕션 환경에서 템플릿 캐싱을 사용하지 않도록 설정하면 성능이 크게 떨어질 수 있습니다. 이 설정은 디버깅을 이유로 사용하지 않아야 합니다!',
+        'Enables or disables the debug mode for translations module.' => '',
         'Enables or disables the debug mode over frontend interface.' => '프론트 엔드 인터페이스에서 디버그 모드를 활성화 또는 비활성화합니다. ',
+        'Enables or disables the editing of articles which are visible for the customer in general.' =>
+            '',
         'Enables or disables the ticket watcher feature, to keep track of tickets without being the owner nor the responsible.' =>
             '티켓 워처 기능을 사용 또는 사용 중지하여 소유자 또는 책임자가 아닌 티켓을 추적합니다.',
         'Enables performance log (to log the page response time). It will affect the system performance. Frontend::Module###AdminPerformanceLog must be enabled.' =>
@@ -7849,7 +8732,7 @@ Thanks for your help!
             '티켓 관련 기능을 사용하여 특정 티켓을 추적합니다.',
         'Enables ticket type feature.' => '티켓 유형 기능을 사용합니다.',
         'Enables ticket watcher feature only for the listed groups.' => '나열된 그룹에 대해서만 티켓 감시자 기능을 사용합니다.',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
             '',
         'English (Canada)' => '영어 (캐나다)',
         'English (United Kingdom)' => '영어 (영국)',
@@ -7863,6 +8746,7 @@ Thanks for your help!
         'Escalation view' => 'Escalation 뷰',
         'EscalationTime' => '에스컬레이션 시간',
         'Estonian' => '에스토니아 사람',
+        'Evaluate all script fields.' => '',
         'Event module registration (store historical data in dynamic fields).' =>
             '',
         'Event module registration. For more performance you can define a trigger event (e. g. Event => TicketCreate).' =>
@@ -7892,8 +8776,8 @@ Thanks for your help!
             '사용자 지정 명령 또는 모듈을 실행합니다. 참고 : 모듈을 사용하는 경우 기능이 필요합니다.',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             '제목에 티켓 번호가없는 메일에 대한 In-Reply-To 또는 References 헤더의 후속 검사를 실행합니다.',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
-            'OTOBO Header \'X-OTOBO-Bounce\'에 대한 후속 검사를 실행합니다.',
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'.' =>
+            'CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'에 대한 후속 검사를 실행합니다.',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             '제목에 티켓 번호가 없는 메일의 첨부파일 내용에 대한 후속 검사를 실행합니다.',
         'Executes follow-up checks on email body for mails that don\'t have a ticket number in the subject.' =>
@@ -7911,21 +8795,21 @@ Thanks for your help!
             '프록시를 통해 패키지를 가져옵니다. "WebUserAgent :: Proxy"를 덮어 씁니다.',
         'Fields of the customer company index, used for the company fulltext search. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '',
-        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
+        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
             '',
         'Fields stored in the customer company index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '',
         'Fields stored in the customer user index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '',
-        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
+        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
             '',
         'Fields to be searched in ticket index. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '',
         'File that is displayed in the Kernel::Modules::AgentInfo module, if located under Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.' =>
             'Kernel :: Outputs / HTML / Templates / Standard / AgentInfo.tt 아래에있는 경우 Kernel :: Modules :: AgentInfo 모듈에 표시되는 파일.',
-        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
+        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
             'ACL 디버깅 용 필터. 참고 : 더 많은 티켓 속성을 1과 같은 형식으로 추가 할 수 있습니다. 2.',
-        'Filter for debugging Transitions. Note: More filters can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
+        'Filter for debugging Transitions. Note: More filters can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
             '전환 디버깅을위한 필터. 참고 : 더 많은 필터를 1과 같은 형식으로 추가 할 수 있습니다. 2.',
         'Filter incoming emails.' => '수신 이메일 필터링.',
         'Finnish' => '핀란드어',
@@ -7957,6 +8841,8 @@ Thanks for your help!
         'French stop words for fulltext index. These words will be removed from the search index.' =>
             '전체 텍스트 인덱스에 대한 프랑스어 중지 단어. 이 단어는 검색 색인에서 제거됩니다.',
         'Frontend' => '프론트 엔드',
+        'Frontend module for dashboard info tile in customer interface.' =>
+            '',
         'Frontend module registration (disable AgentTicketService link if Ticket Service feature is not used).' =>
             '프론트 엔드 모듈 등록 (티켓 서비스 기능을 사용하지 않는 경우 AgentTicketService 링크를 비활성화).',
         'Frontend module registration (disable company link if no company feature is used).' =>
@@ -7970,11 +8856,13 @@ Thanks for your help!
         'Frontend module registration for the customer interface.' => '고객 인터페이스에 대한 프론트 엔드 모듈 등록.',
         'Frontend module registration for the public interface.' => '',
         'Full value' => '최대 가치',
+        'Fulltext Elasticsearch' => '',
         'Fulltext index regex filters to remove parts of the text.' => '전체 텍스트 색인 정규식 필터는 텍스트의 일부를 제거합니다.',
         'Fulltext search' => '전체 텍스트 검색',
         'Fulltext search using Elasticsearch.' => '',
-        'FulltextES' => '',
+        'Functional Account and Token Management.' => '',
         'Galician' => '갈리시아 사람',
+        'General Label' => '',
         'General ticket data shown in the ticket overviews (fall-back). Note that TicketNumber can not be disabled, because it is necessary.' =>
             '티켓 개요에 표시된 일반 티켓 데이터 (폴백). TicketNumber는 필요하므로 비활성화 할 수 없습니다.',
         'Generate HTML comment hooks for the specified blocks so that filters can use them.' =>
@@ -8022,11 +8910,12 @@ Thanks for your help!
         'Graph: Stacked Area Chart' => '그래프 : 누적 영역 차트',
         'Greek' => '그리스 사람',
         'Hebrew' => '헤브라이 사람',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
             '',
         'High Contrast' => '고 대비',
         'High contrast skin for visually impaired users.' => '시각 장애가 있는 사용자를 위한 고 대비 피부.',
         'Hindi' => '힌디 어',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => '',
         'Hungarian' => '헝가리 인',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             'Customer :: AuthModule에 대해 "DB"가 선택되면 데이터베이스 드라이버 (일반적으로 자동 감지가 사용됨)를 지정할 수 있습니다.',
@@ -8038,8 +8927,8 @@ Thanks for your help!
             'Customer :: AuthModule에 대해 "DB"를 선택한 경우 고객 테이블에 대한 연결에 대한 DSN을 지정해야합니다.',
         'If "DB" was selected for Customer::AuthModule, the column name for the CustomerPassword in the customer table must be specified.' =>
             'Customer :: AuthModule에 대해 "DB"가 선택되면 customer 테이블의 CustomerPassword에 대한 열 이름을 지정해야합니다.',
-        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified.' =>
-            'Customer :: AuthModule에 대해 "DB"가 선택되면 암호의 암호화 유형을 지정해야합니다.',
+        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified. It is discouraged to configure the not really secure algorithms like \'md5\', \'apr1\', \'crypt\', and \'plain\'.' =>
+            '',
         'If "DB" was selected for Customer::AuthModule, the name of the column for the CustomerKey in the customer table must be specified.' =>
             'Customer :: AuthModule에 대해 "DB"가 선택되면 customer 테이블의 CustomerKey에 대한 열의 이름을 지정해야합니다.',
         'If "DB" was selected for Customer::AuthModule, the name of the table where your customer data should be stored must be specified.' =>
@@ -8074,8 +8963,8 @@ Thanks for your help!
             'Customer :: AuthModule에 대해 "LDAP"를 선택한 경우 여기에서 액세스 속성을 지정할 수 있습니다.',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             'Customer :: AuthModule에 대해 "LDAP"가 선택된 경우, e. 지. 네트워크 문제로 인해 서버에 연결할 수 없습니다.',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            'Customer :: Authmodule에 대해 "LDAP"가 선택된 경우 사용자가 posixGroup에 있기 때문에 인증 할 수 있는지 확인할 수 있습니다. 사용자는 OTOBO를 사용하려면 그룹 xyz에 있어야합니다. 시스템에 액세스 할 수있는 그룹을 지정하십시오.',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            'Customer :: Authmodule에 대해 "LDAP"가 선택된 경우 사용자가 posixGroup에 있기 때문에 인증 할 수 있는지 확인할 수 있습니다. 사용자는 CareOnCloud ESM를 사용하려면 그룹 xyz에 있어야합니다. 시스템에 액세스 할 수있는 그룹을 지정하십시오.',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             '"LDAP"를 선택한 경우 각 LDAP 쿼리에 필터를 추가 할 수 있습니다. (메일 = *), (objectclass = 사용자) 또는 (! objectclass = 컴퓨터).',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -8094,6 +8983,12 @@ Thanks for your help!
             'CryptType에 대해 "bcrypt"를 선택한 경우 bcrypt 해싱에 여기에 지정된 비용을 사용하십시오. 현재 최대 지원 비용 값은 31입니다.',
         'If "file" was selected for LogModule, a logfile must be specified. If the file doesn\'t exist, it will be created by the system.' =>
             'LogModule에 대해 "file"을 선택하면 로그 파일을 지정해야합니다. 파일이 없으면 시스템에 의해 작성됩니다.',
+        'If \'XOAUTH2\' or \'OAUTHBEARER\' is selected in the \'SendmailModule::OAuth2Method\' setting, then this setting needs to be enabled and set to a valid OIDC Functional Account. OIDC Accounts can be configured in the Admin UI \'OAuth Functional Accounts\' Module.' =>
+            '',
+        'If activated additional data such as the history and links will be read from a foreign DB containing the exported tickets and added to the imported tickets on this system. This is only available for created, not for updated tickets.' =>
+            '',
+        'If activated, a clicked activity button will be hidden in the customer ticket zoom frontend.' =>
+            '',
         'If active, none of the regular expressions may match the user\'s email address to allow registration.' =>
             '활성화되어 있는 경우 등록을 허용하는 정규 표현식이 사용자의 전자 메일 주소와 일치하지 않을 수 있습니다.',
         'If active, one of the regular expressions has to match the user\'s email address to allow registration.' =>
@@ -8106,6 +9001,8 @@ Thanks for your help!
             '"SMTP"메커니즘 중 하나가 SendmailModule로 선택된 경우 메일을 보내는 메일 호스트를 지정해야합니다.',
         'If any of the "SMTP" mechanisms was selected as SendmailModule, the port where your mailserver is listening for incoming connections must be specified.' =>
             '"SMTP"메커니즘 중 하나가 SendmailModule로 선택된 경우 메일 서버가 들어오는 연결을 수신하는 포트를 지정해야합니다.',
+        'If any of the "SSL" mechanisms was selected as SendmailModule than declare whether the mail server should be verified.' =>
+            '',
         'If enabled debugging information for ACLs is logged.' => '활성화 된 경우 ACL에 대한 디버깅 정보가 기록됩니다.',
         'If enabled debugging information for transitions is logged.' => '활성화 된 경우 전환에 대한 디버깅 정보가 기록됩니다.',
         'If enabled defines the preselected state for customer follow-up in the customer interface.' =>
@@ -8114,16 +9011,16 @@ Thanks for your help!
             '사용 가능하면 데몬은 표준 오류 스트림을 로그 파일로 재지정합니다.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             '사용 가능하면 데몬은 표준 출력 스트림을 로그 파일로 재지정합니다.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
-            '이 설정을 사용하면 데몬은이 디렉토리를 사용하여 PID 파일을 만듭니다. 참고 : 변경하기 전에 데몬을 중지하고 <$ OTOBOHome> / var / run /을 사용할 수없는 경우에만이 설정을 사용하십시오.',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
-            '사용하도록 설정하면 OTOBO는 모든 CSS 파일을 축소 된 형식으로 제공합니다.',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
-            '사용하도록 설정하면 OTOBO는 모든 JavaScript 파일을 축소 된 형식으로 제공합니다.',
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
+            '이 설정을 사용하면 데몬은이 디렉토리를 사용하여 PID 파일을 만듭니다. 참고 : 변경하기 전에 데몬을 중지하고 <$ CareOnCloudHome> / var / run /을 사용할 수없는 경우에만이 설정을 사용하십시오.',
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
+            '사용하도록 설정하면 CareOnCloud ESM는 모든 CSS 파일을 축소 된 형식으로 제공합니다.',
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
+            '사용하도록 설정하면 CareOnCloud ESM는 모든 JavaScript 파일을 축소 된 형식으로 제공합니다.',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             '사용하도록 설정하면 TicketPhone 및 TicketEmail이 새 창에서 열립니다.',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
-            '사용 설정하면 OTOBO 버전 태그가 웹 인터페이스, 나가는 메일의 HTTP 헤더 및 X 헤더에서 삭제됩니다. 참고 :이 옵션을 변경하면 캐시를 삭제하십시오.',
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+            '사용 설정하면 CareOnCloud ESM 버전 태그가 웹 인터페이스, 나가는 메일의 HTTP 헤더 및 X 헤더에서 삭제됩니다. 참고 :이 옵션을 변경하면 캐시를 삭제하십시오.',
         'If enabled, the cache data be held in memory.' => '활성화된 경우 캐시 데이터가 메모리에 보관됩니다.',
         'If enabled, the cache data will be stored in cache backend.' => '활성화된 경우 캐시 데이터가 캐시 백엔드에 저장됩니다.',
         'If enabled, the customer can search for tickets in all services (regardless what services are assigned to the customer).' =>
@@ -8133,19 +9030,21 @@ Thanks for your help!
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             '이 옵션을 사용하면 메인 메뉴의 첫 번째 레벨이 마우스를 올리면 열리게 됩니다 (클릭만 하는 대신).',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
-            '사용하도록 설정하면 아직 시간대를 선택하지 않은 사용자에게 알림이 전송됩니다. 참고 : (1) 사용자가 아직 시간대를 선택하지 않았으며 (2) OTOBOTimeZone과 UserDefaultTimeZone이 일치하고 (3) UTC로 설정되지 않은 경우 알림이 표시되지 않습니다.',
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+            '사용하도록 설정하면 아직 시간대를 선택하지 않은 사용자에게 알림이 전송됩니다. 참고 : (1) 사용자가 아직 시간대를 선택하지 않았으며 (2) CareOnCloudTimeZone과 UserDefaultTimeZone이 일치하고 (3) UTC로 설정되지 않은 경우 알림이 표시되지 않습니다.',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             'SendmailNotificationEnvelopeFrom이 지정되지 않은 경우이 설정을 사용하면 빈 봉투 발신자 대신 (특정 전자 메일 서버 구성에서 필요) 전자 메일의 보낸 사람 주소를 사용할 수 있습니다.',
         'If set, this address is used as envelope sender header in outgoing notifications. If no address is specified, the envelope sender header is empty (unless SendmailNotificationEnvelopeFrom::FallbackToEmailFrom is set).' =>
             '설정된 경우이 주소는 보내는 알림의 봉투 보낸 사람 헤더로 사용됩니다. 주소를 지정하지 않으면 봉투 송신자 헤더가 비어 있습니다 (SendmailNotificationEnvelopeFrom :: FallbackToEmailFrom이 설정되지 않은 경우).',
         'If set, this address is used as envelope sender in outgoing messages (not notifications - see below). If no address is specified, the envelope sender is equal to queue e-mail address.' =>
             '설정된 경우 이 주소는 발신 메일에서 봉투 발신자로 사용됩니다 ( 알림이 아님 - 아래 참조). 주소를 지정하지 않으면 봉투 송신자는 대기열 전자 우편 주소와 같습니다.',
+        'If the accounted time units for articles are shown in the article list. Only showing if at least one article has any accounted time.' =>
+            '',
         'If this option is enabled, tickets created via the web interface, via Customers or Agents, will receive an autoresponse if configured. If this option is not enabled, no autoresponses will be sent.' =>
             '이 옵션을 사용하면 Customers 나 Agents를 통해 웹 인터페이스를 통해 생성 된 티켓은 자동 응답을받습니다. 이 옵션을 사용하지 않으면 자동 응답이 전송되지 않습니다.',
         'If this regex matches, no message will be send by the autoresponder.' =>
             '이 정규식이 일치하면 자동 응답으로 보낼 메시지가 없습니다.',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
             '',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             '이 설정을 사용하면 로컬 수정 내용이 패키지 관리자 및 지원 데이터 수집기에서 오류로 강조 표시되지 않습니다.',
@@ -8154,21 +9053,28 @@ Thanks for your help!
         'Ignore system sender article types (e. g. auto responses or email notifications) to be flagged as \'Unread Article\' in AgentTicketZoom or expanded automatically in Large view screens.' =>
             'AgentTicketZoom에서 시스템 발신자 기사 유형 (예 : 자동 응답 또는 이메일 알림)을 \'읽지 않은 기사\'로 표시하거나 큰보기 화면에서 자동으로 확장하도록 무시합니다.',
         'Ignores not ticket related attributes.' => '',
+        'Import and export object information.' => '',
         'Import appointments screen.' => '약속 가져오기 화면.',
+        'Import/Export' => '',
+        'In case only one value in a dropdown is left, (0) you do nothing with the field and show it, (1) that single value is selected automatically but the field is still shown or (2) that single value is selected automatically and the field is hidden (but still has the value). Possible dropdown fields could be e.g. Dest (destination queue), ServiceID, SLAID, TypeID, DynamicFields (list your DF names without "DynamicField_" as a prefix) and more.' =>
+            '',
         'Include tickets of subqueues per default when selecting a queue.' =>
             '큐를 선택할 때 기본값 당 서브 큐 티켓을 포함하십시오.',
         'Include unknown customers in ticket filter.' => '티켓 필터에 알 수없는 고객을 포함시킵니다.',
         'Includes article create times in the ticket search of the agent interface.' =>
             '에이전트 인터페이스의 티켓 검색에서 기사 작성 시간을 포함합니다.',
         'Incoming Phone Call.' => '수신 전화.',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            'IndexAccelerator : 백엔드 TicketViewAccelerator 모듈을 선택합니다. "RuntimeDB"는 티켓 테이블에서 각 큐 뷰를 생성합니다 (성능상의 문제없이 최대 약 60,000 개의 티켓과 시스템의 6.000 개 티켓). "StaticDB"는보기와 같이 작동하는 별도의 티켓 색인 표를 사용하는 가장 강력한 모듈입니다 (80.000 개 이상의 티켓이 시스템에 저장되어있는 경우 권장). 초기 색인 작성은 "bin / otobo.Console.pl Maint :: Ticket :: QueueIndexRebuild"명령을 사용하십시오.',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            'IndexAccelerator : 백엔드 TicketViewAccelerator 모듈을 선택합니다. "RuntimeDB"는 티켓 테이블에서 각 큐 뷰를 생성합니다 (성능상의 문제없이 최대 약 60,000 개의 티켓과 시스템의 6.000 개 티켓). "StaticDB"는보기와 같이 작동하는 별도의 티켓 색인 표를 사용하는 가장 강력한 모듈입니다 (80.000 개 이상의 티켓이 시스템에 저장되어있는 경우 권장). 초기 색인 작성은 "bin / careoncloud.Console.pl Maint :: Ticket :: QueueIndexRebuild"명령을 사용하십시오.',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             '반송 전자 메일을 항상 정상적인 후속조치로 처리해야하는지 나타냅니다.',
         'Indonesian' => '인도네시아인',
         'Inline' => '인라인',
         'Input' => '입력',
         'Interface language' => '인터페이스 언어',
+        'Interfaces for which the restoring of pending information is activated.' =>
+            '',
+        'Internal' => '',
         'Internal communication channel.' => '내부 통신 채널.',
         'International Workers\' Day' => '국제 노동의 날',
         'It is possible to configure different skins, for example to distinguish between diferent agents, to be used on a per-domain basis within the application. Using a regular expression (regex), you can configure a Key/Content pair to match a domain. The value in "Key" should match the domain, and the value in "Content" should be a valid skin on your system. Please see the example entries for the proper form of the regex.' =>
@@ -8182,13 +9088,11 @@ Thanks for your help!
         'Italian' => '이탈리아 사람',
         'Italian stop words for fulltext index. These words will be removed from the search index.' =>
             '전체 텍스트 색인에 대한 이탈리아어 중지 단어. 이 단어는 검색 색인에서 제거됩니다.',
-        'Ivory' => '아이보리',
-        'Ivory (Slim)' => '아이보리(슬림)',
         'Japanese' => '일본어',
         'JavaScript function for the search frontend.' => '검색 프론트 엔드 용 JavaScript 함수.',
-        'Jump to OTOBO!' => '',
+        'Jump to CareOnCloud ESM!' => '',
         'Korean' => '',
-        'Language' => '언어',
+        'Languages' => '',
         'Large' => '큰',
         'Last Screen Overview' => '마지막 화면 개요',
         'Last customer subject' => '마지막 고객 주제',
@@ -8198,7 +9102,9 @@ Thanks for your help!
         'Lastname, Firstname (UserLogin)' => '성, 이름 (UserLogin)',
         'LastnameFirstname' => '성 이름',
         'Latvian' => '라트비아 사람',
+        'Lax' => '',
         'Left' => '왼쪽',
+        'Lens' => '',
         'Link Object' => '링크 개체',
         'Link Object.' => '링크 개체.',
         'Link agents to groups.' => '에이전트를 그룹에 연결하십시오.',
@@ -8215,6 +9121,10 @@ Thanks for your help!
         'Links 2 tickets with a "Normal" type link.' => '2 개의 티켓을 "일반"유형 링크로 연결합니다.',
         'Links 2 tickets with a "ParentChild" type link.' => '2 개의 티켓을 "ParentChild"유형 링크로 연결합니다.',
         'Links appointments and tickets with a "Normal" type link.' => '약속과 티켓을 "일반"유형 링크로 연결합니다.',
+        'List of Active CKEditor Plugins. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'List of Active CKEditor Plugins. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'List of CSS files to always be loaded for the agent interface.' =>
             '에이전트 인터페이스 용으로 항상로드 될 CSS 파일 목록입니다.',
         'List of CSS files to always be loaded for the customer interface.' =>
@@ -8243,8 +9153,12 @@ Thanks for your help!
         'List of responsive CSS files to always be loaded for the customer interface.' =>
             '응답 성 CSS 파일 목록은 고객 인터페이스 용으로 항상로드됩니다.',
         'List of states for which escalations should be suspended.' => '',
+        'List of ticket masks which can be altered using AdminTicketMask.' =>
+            '',
         'List view' => '목록보기',
         'Lithuanian' => '리투아니아 사람',
+        'Loader module for dashboard info tile in customer interface.' =>
+            '',
         'Loader module registration for the agent interface.' => '에이전트 인터페이스에 대한 로더 모듈 등록.',
         'Loader module registration for the customer interface.' => '',
         'Lock / unlock this ticket' => '이 티켓 잠금 / 잠금 해제',
@@ -8266,10 +9180,10 @@ Thanks for your help!
         'Makes the application check the MX record of email addresses before sending an email or submitting a telephone or email ticket.' =>
             '전자 메일을 보내거나 전화 또는 전자 메일 티켓을 제출하기 전에 응용 프로그램에서 전자 메일 주소의 MX 레코드를 확인하게합니다.',
         'Makes the application check the syntax of email addresses.' => '응용 프로그램이 전자 메일 주소의 구문을 검사하도록 합니다.',
-        'Makes the session management use html cookies. If html cookies are disabled or if the client browser disabled html cookies, then the system will work as usual and append the session id to the links.' =>
-            '세션 관리가 html 쿠키를 사용하게합니다. html 쿠키가 비활성화되거나 클라이언트 브라우저가 html 쿠키를 비활성화 한 경우 시스템은 평소와 같이 작동하고 링크에 세션 ID를 추가합니다.',
         'Malay' => '말레이 사람',
-        'Manage OTOBO Team cloud services.' => '',
+        'Manage Customer Dashboard Info Tile Entries' => '',
+        'Manage CareOnCloud ESM Team cloud services.' => '',
+        'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => '전자 메일 암호화를위한 PGP 키 관리.',
         'Manage POP3 or IMAP accounts to fetch email from.' => 'POP3 또는 IMAP 계정을 관리하여 전자 메일을 가져옵니다.',
         'Manage S/MIME certificates for email encryption.' => '전자 메일 암호화를위한 S / MIME 인증서를 관리합니다.',
@@ -8277,11 +9191,17 @@ Thanks for your help!
         'Manage different calendars.' => '다른 캘린더를 관리하십시오.',
         'Manage dynamic field in screens.' => '',
         'Manage existing sessions.' => '기존 세션을 관리합니다.',
+        'Manage import and export of objects.' => '',
         'Manage support data.' => '지원 데이터를 관리합니다.',
         'Manage system registration.' => '시스템 등록을 관리합니다.',
         'Manage tasks triggered by event or time based execution.' => '이벤트 또는 시간 기반 실행에 의해 트리거된 작업을 관리합니다.',
+        'Mark as (un)seen' => '',
         'Mark as Spam!' => '스팸으로 표시하십시오!',
+        'Mark as seen' => '',
         'Mark this ticket as junk!' => '이 티켓을 정크로 표시하십시오!',
+        'Mark ticket as seen' => '',
+        'Mark ticket as unseen' => '',
+        'Mark tickets as seen or unseen via bulk action' => '',
         'Max size (in characters) of the customer information table (phone and email) in the compose screen.' =>
             '작성 화면의 고객 정보 테이블 (전화 및 이메일)의 최대 크기 (문자 수).',
         'Max size (in rows) of the informed agents box in the agent interface.' =>
@@ -8290,6 +9210,8 @@ Thanks for your help!
             '에이전트 인터페이스의 관련 상담원 상자의 최대 크기 (행).',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             '전자 메일 회신 및 일부 개요 화면에서 주체의 최대 크기입니다.',
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+            '',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             '하루 동안 자신의 이메일 주소에 대한 최대 자동 이메일 응답(반복 방지).',
         'Maximal auto email responses to own email-address a day, configurable by email address (Loop-Protection).' =>
@@ -8316,7 +9238,8 @@ Thanks for your help!
         'Medium' => '중간의',
         'Merge this ticket and all articles into another ticket' => '이 티켓과 모든 기사를 다른 티켓으로 병합하십시오.',
         'Merged Ticket (%s/%s) to (%s/%s).' => '합쳐진 티켓 (%s/ %s) ~ (%s/ 1 % s).',
-        'Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>.' => 'Merged Ticket 1 to 2.',
+        'Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>.' => 'Merged Ticket 1 to 2.',
+        'Message of the day' => '',
         'Minute' => '분',
         'Miscellaneous' => '기타',
         'Module for To-selection in new ticket screen in the customer interface.' =>
@@ -8378,7 +9301,7 @@ Thanks for your help!
         'New Year\'s Day' => '새해첫날',
         'New Year\'s Eve' => '새해 전날',
         'New process ticket' => '새 프로세스 티켓',
-        'News about OTOBO.' => 'OTOBO에 관한 뉴스.',
+        'News about CareOnCloud ESM.' => 'CareOnCloud ESM에 관한 뉴스.',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             '다음 가능한 티켓 상태는 에이전트 인터페이스의 티켓 인바운드 인바운드 화면에 전화 메모를 추가한 후의 상태입니다.',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -8396,26 +9319,35 @@ Thanks for your help!
             '에이전트 인터페이스에서 검색 유틸리티가 표시하는 행당 (티켓 당) 수.',
         'Number of shards (NS), replicas (NR) and fields limit for the index \'ticket\'.' =>
             '',
+        'Number of shards (NS), replicas (NR) and fields limit for the index \'tmpattachments\'.' =>
+            '',
         'Number of shards (NS), replicas (NR) and fields limit for the index. Note: \'Elasticsearch::ArticleIndexCreationSettings\' is deprecated. For upwards compatibility use \'Elasticsearch::IndexSettings###Default\' instead.' =>
             '',
-        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices.\'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
+        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices. \'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
             '',
         'Number of tickets to be displayed in each page of a search result in the agent interface.' =>
             '에이전트 인터페이스에서 검색 결과의 각 페이지에 표시할 티넷 수입니다.',
         'Number of tickets to be displayed in each page of a search result in the customer interface.' =>
             '고객 인터페이스에서 검색 결과의 각 페이지에 표시할 티켓 수입니다.',
-        'OTOBO News' => 'OTOBO 뉴스',
-        'OTOBO Team Services' => '',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
-            'OTOBO는 전체 텍스트 검색이나 통계 생성과 같은 값 비싼 작업에 대해 하나 이상의 읽기 전용 미러 데이터베이스를 사용할 수 있습니다. 여기서 첫 번째 미러 데이터베이스에 대해 DSN을 지정할 수 있습니다.',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
-            'OTOBO는 끝 날짜 또는 반복 횟수가없는 되풀이 약속을 지원하지 않습니다. 가져 오기 프로세스 중에 ICS 파일에 이러한 약속이 포함될 수 있습니다. 대신, 시스템은 과거의 모든 약속과 다음 N 개월 (기본적으로 120 개월 / 10 년)의 약속을 작성합니다.',
-        'Objects to search for, how many entries and which attributs to show.' =>
+        'OAUTHBEARER' => '',
+        'OAuth Functional Accounts' => '',
+        'OAuth Tokens' => '',
+        'OIDC Profile Management' => '',
+        'OIDC Profiles' => '',
+        'CareOnCloud ESM News' => 'CareOnCloud ESM 뉴스',
+        'CareOnCloud ESM Team Services' => '',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+            'CareOnCloud ESM는 전체 텍스트 검색이나 통계 생성과 같은 값 비싼 작업에 대해 하나 이상의 읽기 전용 미러 데이터베이스를 사용할 수 있습니다. 여기서 첫 번째 미러 데이터베이스에 대해 DSN을 지정할 수 있습니다.',
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+            'CareOnCloud ESM는 끝 날짜 또는 반복 횟수가없는 되풀이 약속을 지원하지 않습니다. 가져 오기 프로세스 중에 ICS 파일에 이러한 약속이 포함될 수 있습니다. 대신, 시스템은 과거의 모든 약속과 다음 N 개월 (기본적으로 120 개월 / 10 년)의 약속을 작성합니다.',
+        'Object backend module registration for the import/export module.' =>
             '',
-        'Objects to search for, how many entries and which attributs to show. Ticket attributes, except queue, have to explicitely be stored via Elasticsearch.' =>
+        'Objects to search for, how many entries and which attributes to show.' =>
+            '',
+        'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
             '',
         'Open an external link!' => '외부 링크 열기',
-        'Open the OTOBO home page in a new window' => '',
+        'Open the CareOnCloud ESM home page in a new window' => '',
         'Open tickets (customer user)' => '진행중 티켓 (고객 사용자)',
         'Open tickets (customer)' => '진행중 티켓 (고객)',
         'Option' => '옵션',
@@ -8523,10 +9455,15 @@ Thanks for your help!
         'ParentChild' => '부모 자녀',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             '로그 파일 경로 (LoopProtectionModule에 대해 "FS"가 선택되고 필수 항목 인 경우에만 적용됩니다).',
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
         'Pending time' => '보류 시간',
         'People' => '사람들',
         'Performs the configured action for each event (as an Invoker) for each configured web service.' =>
             '구성된 각 웹 서비스의 각 이벤트 (Invoker)에 대해 구성된 작업을 수행합니다.',
+        'Permanent' => '',
         'Permitted width for compose email windows.' => '전자 메일 작성용으로 허용된 너비.',
         'Permitted width for compose note windows.' => '노트 작성 윈도우의 너비 허용.',
         'Persian' => '페르시아인',
@@ -8554,6 +9491,7 @@ Thanks for your help!
         'Process Management Path GUI' => '프로세스 관리 경로 GUI',
         'Process Management Transition Action GUI' => '프로세스 관리 전환 액션 GUI',
         'Process Management Transition GUI' => '프로세스 관리 전환 GUI',
+        'Process dialog' => '',
         'Process pending tickets.' => '대기중인 티켓 처리.',
         'ProcessID' => 'ProcessID',
         'Processes & Automation' => '프로세스 및 자동화',
@@ -8576,12 +9514,24 @@ Thanks for your help!
             '',
         'Rebuilds the ACL preselection cache.' => '',
         'Rebuilds the escalation index.' => '',
-        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value.' =>
+        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew.' =>
             '',
         'Redis server address. Example: 127.0.0.1:6379.' => '',
         'Refresh interval' => '리프레쉬 간격',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as unseen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as unseen.' =>
+            '',
         'Registers a log module, that can be used to log communication related information.' =>
             '통신 관련 정보를 기록하는데 사용할 수있는 로그 모듈을 등록합니다.',
+        'Registration of the CSV format backend module for the ImportExport feature.' =>
+            '',
+        'Registration of the JSON format backend module for the ImportExport feature.' =>
+            '',
         'Reminder Tickets' => '잊지 말아야 할 티켓',
         'Removed subscription for user "%s".' => '"%s" 사용자에 대한 가입이 삭제되었습니다.',
         'Removes old generic interface debug log entries created before the specified amount of days.' =>
@@ -8642,6 +9592,7 @@ Thanks for your help!
             '아카이브에서 티켓을 복원합니다(이벤트가 사용 가능한 열린 상태로 상태가 변경된 경우에만).',
         'Retains all services in listings even if they are children of invalid elements.' =>
             '서비스가 잘못된 요소의 하위 항목인 경우에도 목록의 모든 서비스를 유지합니다.',
+        'Richtext' => '',
         'Right' => '권리',
         'Roles ↔ Groups' => '역할 ↔ 그룹',
         'Romanian' => '',
@@ -8658,19 +9609,21 @@ Thanks for your help!
             '시스템을 "데모"모드로 실행합니다. 이 옵션을 사용하면 상담원 웹 인터페이스를 통해 언어 및 테마 선택과 같은 기본 설정을 변경할 수 있습니다. 이러한 변경은 현재 세션에서만 유효합니다. 에이전트가 암호를 변경할 수는 없습니다.',
         'Russian' => '러시아인',
         'S/MIME Certificates' => 'S / MIME 인증서',
+        'SSL_VERIFY_NONE - no verification of mail server host' => '',
+        'SSL_VERIFY_PEER - verify the mail server host' => '',
         'Salutations' => '인사말',
         'Sample command output' => '샘플 명령 출력',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
             '',
         'Schedule a maintenance period.' => '유지 보수 기간을 예약하십시오.',
         'Screen after new ticket' => '새로운 티켓 후에 화면',
+        'Script (Template Toolkit)' => '',
         'Search Customer' => '고객 검색',
         'Search Ticket.' => '티켓 검색.',
         'Search Tickets.' => '티켓 검색.',
         'Search User' => '사용자 검색',
         'Search backend default router.' => '백엔드 기본 라우터를 검색합니다.',
         'Search backend router.' => '검색 백엔드 라우터.',
-        'Search.' => '검색.',
         'Second Christmas Day' => '두 번째 크리스마스',
         'Second Queue' => '두 번째 대기열',
         'Select after which period ticket overviews should refresh automatically.' =>
@@ -8685,7 +9638,7 @@ Thanks for your help!
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             '개인 시간대를 선택하십시오. 모든 시간은이 시간대를 기준으로 표시됩니다.',
         'Select your preferred layout for the software.' => '소프트웨어의 기본 레이아웃을 선택하십시오.',
-        'Select your preferred theme for OTOBO.' => 'OTOBO에 대한 선호 테마를 선택하십시오.',
+        'Select your preferred theme for CareOnCloud ESM.' => 'CareOnCloud ESM에 대한 선호 테마를 선택하십시오.',
         'Selects the cache backend to use.' => '사용할 캐시 백엔드를 선택합니다.',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             '웹 인터페이스를 통해 업로드를 처리 할 모듈을 선택합니다. "DB"는 모든 업로드를 데이터베이스에 저장하고 "FS"는 파일 시스템을 사용합니다.',
@@ -8699,7 +9652,7 @@ Thanks for your help!
         'Sends all outgoing email via bcc to the specified address. Please use this only for backup reasons.' =>
             '모든 발신 이메일을 bcc를 통해 지정된 주소로 보냅니다. 백업 목적으로 만 사용하십시오.',
         'Sends customer notifications just to the mapped customer.' => '매핑된 고객에게 고객 알림만 보냅니다.',
-        'Sends registration information to OTOBO group.' => 'OTOBO 그룹에 등록 정보를 보냅니다.',
+        'Sends registration information to Rother OSS.' => '',
         'Sends reminder notifications of unlocked ticket after reaching the reminder date (only sent to ticket owner).' =>
             '미리 알림 날짜에 도달 한 후 잠금 해제 된 티켓에 대한 미리 알림을 전송합니다 (티켓 소유자에게만 전송 됨).',
         'Sends the notifications which are configured in the admin interface under "Ticket Notifications".' =>
@@ -8837,8 +9790,8 @@ Thanks for your help!
         'Sets the prefered time units (e.g. work units, hours, minutes).' =>
             '선호 시간 단위 (예 : 작업 단위, 시간, 분)를 설정합니다.',
         'Sets the preferred digest to be used for PGP binary.' => 'PGP 바이너리에 사용할 선호 다이제스트를 설정합니다.',
-        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
-            '접두어를 웹 서버에 구성된대로 서버의 scripts 폴더에 설정합니다. 이 설정은 응용 프로그램에서 사용하는 모든 형식의 메시징에서 발견되는 변수 인 OTOBO_CONFIG_ScriptAlias로 사용되어 시스템 내의 티켓에 대한 링크를 작성합니다.',
+        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
+            '접두어를 웹 서버에 구성된대로 서버의 scripts 폴더에 설정합니다. 이 설정은 응용 프로그램에서 사용하는 모든 형식의 메시징에서 발견되는 변수 인 CareOnCloud_CONFIG_ScriptAlias로 사용되어 시스템 내의 티켓에 대한 링크를 작성합니다.',
         'Sets the queue in the ticket close screen of a zoomed ticket in the agent interface.' =>
             '에이전트 인터페이스에서 확대 / 축소된 티켓의 티켓 닫기 화면에서 대기열을 설정합니다.',
         'Sets the queue in the ticket free text screen of a zoomed ticket in the agent interface.' =>
@@ -8932,13 +9885,16 @@ Thanks for your help!
             '에이전트 인터페이스에서 확대 / 축소 된 티켓의 티켓 우선 순위 화면에 티켓 유형을 설정합니다 (Ticket :: Type을 활성화해야합니다).',
         'Sets the ticket type in the ticket responsible screen of the agent interface (Ticket::Type needs to be enabled).' =>
             '에이전트 인터페이스의 티켓 책임 화면에 티켓 유형을 설정합니다 (Ticket :: Type을 활성화해야합니다).',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
-            'OTOBO에 의해 내부적으로 사용되는 시간대를 e로 설정합니다. 지. 날짜와 시간을 데이터베이스에 저장하십시오. 경고 :이 설정은 일단 설정하고 티켓 또는 날짜 / 시간이 포함 된 다른 데이터를 작성한 후에 변경하면 안됩니다.',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
-            '새로 생성 된 사용자에게 할당되고 아직 시간대를 설정하지 않은 사용자에게 사용될 시간대를 설정합니다. 이 시간대는 OTOBO 시간대와 사용자 시간대 사이의 날짜와 시간을 변환하기 위해 기본값으로 사용됩니다.',
+        'Sets the time units in the ticket note screen of the agent interface.' =>
+            '',
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+            'CareOnCloud ESM에 의해 내부적으로 사용되는 시간대를 e로 설정합니다. 지. 날짜와 시간을 데이터베이스에 저장하십시오. 경고 :이 설정은 일단 설정하고 티켓 또는 날짜 / 시간이 포함 된 다른 데이터를 작성한 후에 변경하면 안됩니다.',
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
+            '새로 생성 된 사용자에게 할당되고 아직 시간대를 설정하지 않은 사용자에게 사용될 시간대를 설정합니다. 이 시간대는 CareOnCloud ESM 시간대와 사용자 시간대 사이의 날짜와 시간을 변환하기 위해 기본값으로 사용됩니다.',
         'Sets the timeout (in seconds) for http/ftp downloads.' => 'http / ftp 다운로드에 대한 시간 초과 (초)를 설정합니다.',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
             '패키지 다운로드의 시간 초과 (초)를 설정합니다. "WebUserAgent :: Timeout"을 덮어 씁니다.',
+        'Settings for Similar Ticket Search in ES.' => '',
         'Settings for the customer login screen.' => '',
         'Shared Secret' => '공유된 비밀',
         'Show a responsible selection in phone and email tickets in the agent interface.' =>
@@ -8946,9 +9902,11 @@ Thanks for your help!
         'Show article as rich text even if rich text writing is disabled.' =>
             '리치 텍스트 쓰기가 비활성화된 경우에도 기사를 리치 텍스트로 표시하십시오.',
         'Show command line output.' => '명령 행 출력보기.',
+        'Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown in an extra table.' =>
+            '',
+        'Show or Hide Deleted Articles' => '',
+        'Show or Hide deleted articles.' => '',
         'Show queues even when only locked tickets are in.' => '잠긴 티켓만 있는 경우에도 대기열을 표시하십시오.',
-        'Show the current owner in the customer interface.' => '고객 인터페이스에 현재 소유자를 표시하십시오.',
-        'Show the current queue in the customer interface.' => '고객 인터페이스에 현재 대기열을 표시하십시오.',
         'Show the history for this ticket' => '이 티켓의 기록 표시',
         'Show the ticket history' => '티켓 기록보기',
         'Show various content.' => '',
@@ -9016,6 +9974,8 @@ Thanks for your help!
             '메뉴에 링크를 표시하여 에이전트 인터페이스의 티켓 확대보기에서 보류중인 티켓을 설정합니다. 이 링크를 표시하거나 표시하지 않으려는 추가 액세스 제어는 키 "그룹"과 "rw : group1; move_into : group2"와 같은 내용을 사용하여 수행 할 수 있습니다. 클러스터 항목 메뉴를 사용하려면 Key "ClusterName"에 사용하고 Content 이름에는 UI에 표시합니다. "ClusterPriority"를 사용하여 툴바에서 특정 클러스터의 순서를 구성하십시오.',
         'Shows a link in the menu to set the priority of a ticket in every ticket overview of the agent interface.' =>
             '메뉴에 링크를 표시하여 에이전트 인터페이스의 모든 티켓 개요에 있는 티켓의 우선 순위를 설정합니다.',
+        'Shows a link in the menu to show/hide deleted articles in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2". To cluster menu items use for Key "ClusterName" and for the Content any name you want to see in the UI. Use "ClusterPriority" to configure the order of a certain cluster within the toolbar.' =>
+            '',
         'Shows a link in the menu to zoom a ticket in the ticket overviews of the agent interface.' =>
             '메뉴에 링크를 표시하여 에이전트 인터페이스의 티켓 개요에서 티켓을 확대 / 축소합니다.',
         'Shows a link to access article attachments via a html online viewer in the zoom view of the article in the agent interface.' =>
@@ -9067,13 +10027,15 @@ Thanks for your help!
             '다중 선택 필드에 모든 고객 사용자 식별자를 표시합니다 (많은 고객 사용자 식별자가 있는 경우 유용하지 않음).',
         'Shows an owner selection in phone and email tickets in the agent interface.' =>
             '상담원 인터페이스의 전화 및 전자 메일 티켓에서 소유자 선택을 표시합니다.',
+        'Shows creation date instead of age in the customer interface if ticket is older than configured value (days).' =>
+            '',
         'Shows customer history tickets in AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer.' =>
             'AgentTicketPhone, AgentTicketEmail 및 AgentTicketCustomer에 고객 기록 티켓을 표시합니다.',
         'Shows either the last customer article\'s subject or the ticket title in the small format overview.' =>
             '마지막 고객 기사의 제목이나 작은 제목 개요의 티켓 제목을 표시합니다.',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             '시스템의 기존 상위/하위 대기열 목록을 트리 또는 목록 형태로 표시합니다.',
-        'Shows information on how to start OTOBO Daemon' => 'OTOBO 데몬을 시작하는 방법에 대한 정보를 보여줍니다.',
+        'Shows information on how to start CareOnCloud ESM Daemon' => 'CareOnCloud ESM 데몬을 시작하는 방법에 대한 정보를 보여줍니다.',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '에이전트 인터페이스의 티켓 확대보기에서 외부 페이지에 대한 링크를 표시합니다. 이 링크를 표시하거나 표시하지 않으려는 추가 액세스 제어는 키 "그룹"과 "rw : group1; move_into : group2"와 같은 내용을 사용하여 수행 할 수 있습니다.',
         'Shows the article head information in the agent zoom view.' => '',
@@ -9125,6 +10087,8 @@ Thanks for your help!
             '사용 가능한 경우 긴 형식 (일, 시간, 분)으로 시간을 표시합니다. 또는 짧은 형식 (일, 시간)으로 설정할 수 있습니다.',
         'Shows time use complete description (days, hours, minutes), if enabled; or just first letter (d, h, m), if not enabled.' =>
             '사용 가능한 경우 시간 사용 완료 설명 (일, 시간, 분)을 표시합니다. 또는 활성화되지 않은 경우 첫 번째 문자 (d, h, m).',
+        'Shows time with localization indicator (01.01.1970 00:01 (Europe/Berlin)), if enabled; or without (01.01.1970 00:01), if not enabled.' =>
+            '',
         'Signature data.' => '',
         'Signatures' => '서명',
         'Simple' => '단순한',
@@ -9159,16 +10123,16 @@ Thanks for your help!
         'Specifies the directory where SSL certificates are stored.' => 'SSL 인증서가 저장되는 디렉토리를 지정합니다.',
         'Specifies the directory where private SSL certificates are stored.' =>
             '개인 SSL 인증서가 저장되는 디렉토리를 지정합니다.',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            '알림을 보낼 때 응용 프로그램에서 사용해야하는 전자 메일 주소를 지정합니다. 이메일 주소는 알림 마스터의 전체 표시 이름 (예 : "OTOBO Notifications"otobo@your.example.com)을 작성하는 데 사용됩니다. OTOBO_CONFIG_FQDN 변수를 설정에 사용하거나 다른 이메일 주소를 선택할 수 있습니다.',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            '알림을 보낼 때 응용 프로그램에서 사용해야하는 전자 메일 주소를 지정합니다. 이메일 주소는 알림 마스터의 전체 표시 이름 (예 : "CareOnCloud ESM Notifications"careoncloud@your.example.com)을 작성하는 데 사용됩니다. CareOnCloud_CONFIG_FQDN 변수를 설정에 사용하거나 다른 이메일 주소를 선택할 수 있습니다.',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             '스케줄러 테스크에서 알림 메시지를 가져올 이메일 주소를 지정합니다.',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
             '"SwitchToCustomer"기능에 액세스 할 수 있도록 사용자에게 rw 권한이 필요한 그룹을 지정합니다.',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             '다른 사용자 기본 설정을 편집 할 수 있도록 사용자에게 rw 권한이 필요한 그룹을 지정합니다.',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
-            '알림을 보낼 때 응용 프로그램에서 사용해야하는 이름을 지정합니다. 발신자 이름은 알림 마스터의 전체 표시 이름 (예 : "OTOBO Notifications"otobo@your.example.com)을 작성하는 데 사용됩니다.',
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
+            '알림을 보낼 때 응용 프로그램에서 사용해야하는 이름을 지정합니다. 발신자 이름은 알림 마스터의 전체 표시 이름 (예 : "CareOnCloud ESM Notifications"careoncloud@your.example.com)을 작성하는 데 사용됩니다.',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             '에이전트의 성 및 성을 표시하는 순서를 지정합니다.',
         'Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).' =>
@@ -9213,6 +10177,7 @@ Thanks for your help!
         'Stopped solution time escalation.' => '중지된 솔루션 시간 에스컬레이션.',
         'Stopped update time escalation.' => '업데이트 시간 에스컬레이션이 중지되었습니다.',
         'Stores cookies after the browser has been closed.' => '브라우저가 닫힌 후에 쿠키를 저장합니다.',
+        'Strict' => '',
         'Strips empty lines on the ticket preview in the queue view.' => '대기열 보기의 티켓 미리보기에서 빈 줄을 제거합니다.',
         'Strips empty lines on the ticket preview in the service view.' =>
             '서비스보기의 티켓 미리보기에서 빈 줄을 제거합니다.',
@@ -9220,6 +10185,8 @@ Thanks for your help!
         'Suspend already escalated tickets.' => '',
         'Swahili' => '스와힐리어',
         'Swedish' => '스웨덴어',
+        'Switch deleted article status view' => '',
+        'Switch deleted article status view.' => '',
         'System Address Display Name' => '시스템 주소 표시 이름',
         'System Configuration Deployment' => '시스템 구성 배치',
         'System Configuration Group' => '시스템 구성 그룹',
@@ -9238,6 +10205,8 @@ Thanks for your help!
         'The PGP signature with the keyid is good.' => '',
         'The agent skin\'s InternalName which should be used in the agent interface. Please check the available skins in Frontend::Agent::Skins.' =>
             '에이전트 인터페이스에서 사용해야하는 에이전트 스킨의 InternalName입니다. Frontend :: Agent :: Skins에서 사용 가능한 스킨을 확인하십시오.',
+        'The authentication method to use for SMTP Authentication, defaults to \'Basic Auth\'. If \'XOAUTH2\' or \'OAUTHBEARER\' is selected, then the \'"SendmailModule \'"SendmailModule::OAuth2FunctionalAccount\' setting needs to be enabled and set to a valid OIDC Functional Account.  OIDC Accounts can be configured in the Admin UI  \'OAuth Functional Accounts\' Module.' =>
+            '',
         'The customer skin\'s InternalName which should be used in the customer interface. Please check the available skins in Frontend::Customer::Skins.' =>
             '고객 인터페이스에서 사용해야하는 고객 스킨의 InternalName입니다. Frontend :: Customer :: Skins에서 사용 가능한 스킨을 확인하십시오.',
         'The daemon registration for sync with S3.' => '',
@@ -9281,6 +10250,8 @@ Thanks for your help!
             '이메일이 전달 될 때 제목의 시작 부분에있는 텍스트입니다 예 : FW, FWD 또는 WG.',
         'The value of the From field' => '',
         'Theme' => '테마',
+        'These attributes are passed when connecting to the database. A common use case is a connection which is secured by TLS.' =>
+            '',
         'This configuration defines all possible screens to enable or disable default columns.' =>
             '',
         'This configuration defines all possible screens to enable or disable dynamic fields.' =>
@@ -9288,6 +10259,8 @@ Thanks for your help!
         'This configuration defines if only valids or all (invalids) dynamic fields should be shown.' =>
             '',
         'This configuration defines the number of iterations that should be performed at max for calculating the WorkingTime for a Ticket. Attention: Setting this configuration to high can lead to performance issues.' =>
+            '',
+        'This configuration registers a bulk module to mark tickets as seen or unseen via bulk action.' =>
             '',
         'This configuration registers an OutputFilter module that injects the javascript functionality to remove PendingTime.' =>
             '',
@@ -9302,7 +10275,7 @@ Thanks for your help!
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             '이 모듈과 PreRun () 함수는 모든 요청에 ​​대해 정의 된 경우 실행됩니다. 이 모듈은 일부 사용자 옵션을 확인하거나 새 응용 프로그램에 대한 뉴스를 표시하는 데 유용합니다.',
         'This module is being used to extend the password policy.' => '',
-        'This module is part of the admin area of OTOBO.' => '이 모듈은 OTOBO의 관리 영역의 일부입니다.',
+        'This module is part of the admin area of CareOnCloud ESM.' => '이 모듈은 CareOnCloud ESM의 관리 영역의 일부입니다.',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             '이 옵션은 프로세스 관리 활동 엔티티ID가 저장되는 동적 필드를 정의합니다.',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -9311,11 +10284,13 @@ Thanks for your help!
         'This option defines the process tickets default priority.' => '이 옵션은 프로세스 티켓의 기본 우선 순위를 정의합니다.',
         'This option defines the process tickets default queue.' => '이 옵션은 프로세스 티켓 기본 큐를 정의합니다.',
         'This option defines the process tickets default state.' => '이 옵션은 프로세스 티켓 기본 상태를 정의합니다.',
-        'This option will deny the access to customer company tickets, which are not created by the customer user.' =>
-            '이 옵션은 고객 사용자가 생성하지 않은 고객 회사 티켓에 대한 액세스를 거부합니다.',
+        'This option sets additional quick date buttons to pending dates. For ordering purposes one hash entry per array segment has to be set. The key is the button name, value is the value, where a single number n sets the date to n days from now, +n adds n days to the currently set date, and -n subtracts them.' =>
+            '',
+        'This option will deny the access to customer company tickets, which are not created by the customer user. Please also deactivate "CustomerFrontend::Navigation###CustomerTicketOverview###002-Ticket" so that the button is no longer visible.' =>
+            '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             '이 설정을 사용하면 기본 제공 국가 목록을 자신의 국가 목록으로 대체할 수 있습니다. 소규모 그룹을 선택하고 싶을 때 특히 편리합니다.',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => '이 설정은 사용되지 않습니다. 대신 OTOBOTimeZone을 설정하십시오.',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '이 설정은 사용되지 않습니다. 대신 CareOnCloudTimeZone을 설정하십시오.',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '이 설정은 대기열보기 뿐만 아니라 모든 개요 화면에서 정렬 속성을 표시합니다.',
         'Ticket Close' => '',
@@ -9327,6 +10302,7 @@ Thanks for your help!
         'Ticket FreeText.' => 'Ticket FreeText.',
         'Ticket History.' => '티켓 기록.',
         'Ticket Lock.' => '티켓 잠금.',
+        'Ticket Masks' => '',
         'Ticket Merge.' => '표 병합.',
         'Ticket Move.' => '티켓 이동.',
         'Ticket Note.' => '티켓 메모.',
@@ -9341,6 +10317,10 @@ Thanks for your help!
         'Ticket Priority.' => '티켓 심각도',
         'Ticket Queue Overview' => '티켓 대기열 개요',
         'Ticket Responsible.' => '책임 티켓.',
+        'Ticket Search.' => '',
+        'Ticket States' => '',
+        'Ticket Title' => '',
+        'Ticket Types' => '',
         'Ticket Watcher' => '티켓 워처',
         'Ticket Zoom' => '티켓 확대/축소',
         'Ticket Zoom.' => '티켓 확대/축소.',
@@ -9362,17 +10342,23 @@ Thanks for your help!
         'Tickets in the following queues will not be stored on the Elasticsearch server. To apply this to existing tickets, the ticket migration has to be run via console, after changing this option.' =>
             '',
         'Tickets.' => '티켓',
-        'Tile registration for the CustomerDashboard. Module is required.' =>
+        'Tile registration for the customer dashboard. Module is required.' =>
             '',
-        'Time in seconds that gets added to the actual time if setting a pending-state (default: 86400 = 1 day).' =>
-            '보류 중 상태 (기본값 : 86400 = 1 일)를 설정하면 실제 시간에 추가되는 시간 초입니다.',
+        'Tile registration for the customer dashboard. Module is required. Optionally, an order for items can be set. The order must have the name of the item as key and the desired position as integer value.' =>
+            '',
+        'Time in seconds that gets added to the actual time if setting a pending-state. Examples: 86400 = 1 day or 604800 = 1 week.' =>
+            '',
         'To accept login information, such as an EULA or license.' => 'EULA 또는 라이센스와 같은 로그인 정보를 수락합니다.',
         'To download attachments.' => '첨부 파일을 다운로드 하려면.',
         'To view HTML attachments.' => 'HTML 첨부 파일을 봅니다.',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
-            'PackageManager의 OTOBO FeatureAddons 목록 표시를 토글합니다.',
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
+            'PackageManager의 CareOnCloud ESM FeatureAddons 목록 표시를 토글합니다.',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '도구 모음 단축키 항목입니다. 이 링크를 표시하거나 표시하지 않으려는 추가 액세스 제어는 키 "그룹"과 "rw : group1; move_into : group2"와 같은 내용을 사용하여 수행 할 수 있습니다.',
+        'Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
+        'Translate the language names in the language selection. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
         'Transport selection for appointment notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
             '약속 알림을위한 전송 선택. 참고 : \'활성\'을 0으로 설정하면 상담원이이 그룹의 개인 환경 설정에서 설정을 편집하지 못하게되지만 관리자가 다른 사용자를 대신하여 설정을 편집 할 수 있습니다. \'PreferenceGroup\'을 사용하여 이러한 설정을 사용자 인터페이스에 표시 할 영역을 제어하십시오.',
         'Transport selection for ticket notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -9389,14 +10375,13 @@ Thanks for your help!
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             '원격 IP 주소 확인을 켭니다. 예를 들어 프록시 팜이나 전화 접속 연결을 통해 응용 프로그램을 사용하는 경우에는 원격 IP 주소가 대부분 요청마다 다릅니다.',
         'Tweak the system as you wish.' => '원하는대로 시스템을 조정하십시오.',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
-            '사용할 데몬 로그 회전 유형 : OTOBO 시스템이 파일 순환을 처리하도록하려면 \'OTOBO\'를 선택하고 제3자 회전 메커니즘 (즉, logrotate)을 사용하려면 \'외부\'를 선택하십시오. 참고 : 외부 회전 메커니즘은 자체적으로 독립적인 구성이 필요합니다.',
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+            '사용할 데몬 로그 회전 유형 : CareOnCloud ESM 시스템이 파일 순환을 처리하도록하려면 \'CareOnCloud ESM\'를 선택하고 제3자 회전 메커니즘 (즉, logrotate)을 사용하려면 \'외부\'를 선택하십시오. 참고 : 외부 회전 메커니즘은 자체적으로 독립적인 구성이 필요합니다.',
         'Ukrainian' => '우크라이나 말',
         'Unlock tickets that are past their unlock timeout.' => '잠금 해제 시간 초과가 된 티켓의 잠금을 해제하십시오.',
         'Unlock tickets whenever a note is added and the owner is out of office.' =>
             '메모가 추가되고 소유자가 부재할 때마다 티켓을 잠금 해제하십시오.',
         'Unlocked ticket.' => '잠금해제된 티켓',
-        'Up' => '위',
         'Upcoming Events' => '다가오는 이벤트',
         'Update Ticket "Seen" flag if every article got seen or a new Article got created.' =>
             '모든 기사가 보거나 새로운 기사가 생성되면 티켓을 읽습니다.',
@@ -9417,8 +10402,13 @@ Thanks for your help!
         'Uses richtext for viewing and editing ticket notification.' => '티켓 통지를보고 편집하기 위해 richtext를 사용합니다.',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             '기사, 인사말, 서명, 표준 템플릿, 자동 응답 및 알림과 같은보기 및 편집을 위해 richtext를 사용합니다.',
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
+            '',
+        'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
+            '',
         'Vietnam' => '베트남',
         'View performance benchmark results.' => '실적 벤치 마크 결과를 봅니다.',
+        'View stored article version.' => '',
         'Watch this ticket' => '티켓보기',
         'Watched Tickets' => '이미본티켓',
         'Watched Tickets.' => '이미본티켓',
@@ -9427,14 +10417,17 @@ Thanks for your help!
             '우리는 예정된 유지 보수를 수행하고 있습니다. 일시적으로 로그인 할 수 없습니다.',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             '우리는 예정된 유지보수를 수행하고 있습니다. 우리는 곧 온라인으로 돌아와야 합니다.',
-        'We have changed the default ticket unlock behaviour in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behaviour is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behaviour of OTRS version 2-6 and OTOBO 10..' =>
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
             '',
         'Web Service' => '',
         'Web Services' => '웹서비스',
+        'Welcome %s, to your CareOnCloud ESM.' => '',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             '',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
             '에이전트가 티켓을 만들 때 티켓이 에이전트에 자동으로 잠겨있는지 여부.',
+        'When support data is collected via SupportDataCollector, certain SysConfig values marked with ValueType="Password" are automatically masked. This prevents passwords from appearing in plain text in the support data. This setting defines the settings that contain complex configuration hashes that should not be masked when generating the support data.' =>
+            '',
         'When tickets are merged, a note will be added automatically to the ticket which is no longer active. Here you can define the body of this note (this text cannot be changed by the agent).' =>
             '티켓이 병합되면 더이상 활성화되지 않은 티켓에 자동으로 노트가 추가됩니다. 여기에서 이 메모의 본문을 정의할 수 있습니다. (이 텍스트는 상담원이 변경할 수 없습니다)',
         'When tickets are merged, a note will be added automatically to the ticket which is no longer active. Here you can define the subject of this note (this subject cannot be changed by the agent).' =>
@@ -9443,24 +10436,29 @@ Thanks for your help!
             '티켓이 병합되면 고객에게 "보낸 사람에게 알림"확인란을 설정하여 전자 메일별로 알릴 수 있습니다. 이 텍스트 영역에서는 나중에 에이전트로 수정할 수있는 미리 형식이 지정된 텍스트를 정의 할 수 있습니다.',
         'Whether extended customer information is shown in the ticket print screen of the customer interface.' =>
             '',
-        'Whether fields should be automatically filled (1), and in that case also be hidden from ticket formulars (2).' =>
-            '',
         'Whether or not to collect meta information from articles using filters configured in Ticket::Frontend::ZoomCollectMetaFilters.' =>
             'Ticket :: Frontend :: ZoomCollectMetaFilters에서 구성된 필터를 사용하여 아티클에서 메타 정보를 수집할지 여부.',
         'Whether the execution of TicketACL can be avoided by checking cached field dependencies. This can improve loading times of ticket formulars, but has to be disabled, if ACLModules are to be used for Ticket- and Form-ReturnTypes.' =>
             '',
         'Whether to force redirect all requests from http to https protocol. Please check that your web server is configured correctly for https protocol before enable this option.' =>
             'http에서 https 프로토콜로 모든 요청을 강제로 리디렉션할지 여부입니다. 이 옵션을 활성화하기 전에 웹 서버가 https 프로토콜에 맞게 올바르게 구성되어 있는지 확인하십시오.',
+        'Which units are used and shown in the overview for timeunits?' =>
+            '',
+        'XOAUTH2' => '',
         'Yes, but hide archived tickets' => '예, 보관된 티켓은 숨깁니다.',
-        'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
+        'Your Tickets. Your CareOnCloud ESM.' => '',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is bounced to "<CareOnCloud_BOUNCE_TO>". Contact this address for further information.' =>
             '티켓 번호가 "1"인 이메일은 "2"로 반송됩니다. 자세한 내용은이 주소로 문의하십시오.',
-        'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
+        'Your email with ticket number "<CareOnCloud_TICKET>" is merged to "<CareOnCloud_MERGE_TO_TICKET>".' =>
             '티켓 번호가 "1"인 이메일은 "2"로 병합됩니다.',
+        'Your external tools' => '',
+        'Your last tickets' => '',
         'Your queue selection of your preferred queues. You also get notified about those queues via email if enabled.' =>
             '선호하는 대기열에 대한 대기열 선택. 또한 활성화된 경우 이메일을 통해 대기열에 대한 알림을 받습니다.',
         'Your service selection of your preferred services. You also get notified about those services via email if enabled.' =>
             '원하는 서비스에 대한 귀하의 서비스 선택. 또한 활성화된 경우 이메일을 통해 해당 서비스에 대한 알림을 받습니다.',
         'Zoom' => '줌',
+        'always' => '',
         'attachment' => '첨부',
         'bounce' => '바운스',
         'compose' => '짓다',
@@ -9502,6 +10500,7 @@ Thanks for your help!
         'Add to favourites',
         'Agent',
         'All occurrences',
+        'All translations must be filled!',
         'All-day',
         'An error occurred during communication.',
         'An error occurred! Please check the browser error log for more details!',
@@ -9514,13 +10513,22 @@ Thanks for your help!
         'Apr',
         'April',
         'Are you sure you want to delete this appointment? This operation cannot be undone.',
+        'Are you sure you want to delete this article?',
         'Are you sure you want to remove all user values?',
+        'Are you sure you want to restore this article?',
         'Are you sure you want to update all installed packages?',
         'Are you using a browser plugin like AdBlock or AdBlockPlus? This can cause several issues and we highly recommend you to add an exception for this domain.',
+        'Article Delete',
+        'Article Restore',
+        'Article already marked as deleted.',
+        'Article deleted successfully!',
         'Article display',
         'Article filter',
+        'Article not available for restoring.',
+        'Article restored successfully!',
         'As soon as you use this button or link, you will leave this screen and its current state will be saved automatically. Do you want to continue?',
         'Ascending sort applied, ',
+        'At least one translation must be filled!',
         'Attachment was deleted successfully.',
         'Attachments',
         'Aug',
@@ -9570,8 +10578,10 @@ Thanks for your help!
         'Delete this Operation',
         'Delete this PostMasterFilter',
         'Delete this Template',
+        'Delete this template',
         'Delete web service',
         'Deleting attachment...',
+        'Deleting template...',
         'Deleting the field and its data. This may take a while...',
         'Deleting the mail account and its data. This may take a while...',
         'Deleting the postmaster filter and its data. This may take a while...',
@@ -9588,6 +10598,7 @@ Thanks for your help!
         'Do you really want to continue?',
         'Do you really want to delete "%s"?',
         'Do you really want to delete this certificate?',
+        'Do you really want to delete this customer dashboard info tile entry?',
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!',
         'Do you really want to delete this generic agent job?',
         'Do you really want to delete this key?',
@@ -9612,6 +10623,7 @@ Thanks for your help!
         'Error during AJAX communication',
         'Error during AJAX communication. Status: %s, Error: %s',
         'Error in the mail settings. Please correct and try again.',
+        'Error trying to create CodeMirror instance, please check configuration!',
         'Error: Browser Check failed!',
         'Event Type Filter',
         'Expanded',
@@ -9632,7 +10644,8 @@ Thanks for your help!
         'If you now leave this page, all open popup windows will be closed, too!',
         'Ignore',
         'Import web service',
-        'Information about the OTOBO Daemon',
+        'Information',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -9663,6 +10676,7 @@ Thanks for your help!
         'May',
         'May_long',
         'Migrate',
+        'Missing Translations',
         'Mo',
         'Mon',
         'Monday',
@@ -9682,6 +10696,7 @@ Thanks for your help!
         'No response from package upgrade all.',
         'No sort applied, ',
         'No space left for the following files: %s',
+        'Non-global ActivityDialogs may not be assigned to global Activities!',
         'Not available',
         'Notice',
         'Notification',
@@ -9787,6 +10802,7 @@ Thanks for your help!
         'Switch to mobile mode',
         'System Registration',
         'Team',
+        'Template was deleted successfully.',
         'Th',
         'The browser you are using is too old.',
         'The deployment is already running.',
@@ -9800,6 +10816,7 @@ Thanks for your help!
         'There are no more drafts available.',
         'There is a package upgrade process running, click here to see status information about the upgrade progress.',
         'There was an error deleting the attachment. Please check the logs for more information.',
+        'There was an error deleting the template. Please check the logs for more information.',
         'There was an error. Please save all settings you are editing and check the logs for more information.',
         'This Activity cannot be deleted because it is the Start Activity.',
         'This Activity is already used in the Process. You cannot add it twice!',
@@ -9815,7 +10832,7 @@ Thanks for your help!
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -9832,7 +10849,7 @@ Thanks for your help!
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,7 +28,7 @@ use parent qw(Kernel::System::Console::BaseCommand);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -41,7 +41,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Upgrade all OTOBO packages to the latest versions from the on-line repositories.');
+    $Self->Description('Upgrade all CareOnCloud ESM packages to the latest versions from the on-line repositories.');
     $Self->AddOption(
         Name        => 'force',
         Description => 'Force package upgrade/installation even if validation fails.',
@@ -81,52 +81,6 @@ sub Run {
         $Self->Print("\n<green>Done.</green>\n");
 
         return $Self->ExitCodeOk();
-    }
-
-    my %RepositoryList = $PackageObject->_ConfiguredRepositoryDefinitionGet();
-
-    # Show cloud repositories if system is registered.
-    my $RepositoryCloudList;
-    my $RegistrationState = $Kernel::OM->Get('Kernel::System::SystemData')->SystemDataGet(
-        Key => 'Registration::State',
-    ) || '';
-
-    if (
-        $RegistrationState eq 'registered'
-        && !$Kernel::OM->Get('Kernel::Config')->Get('CloudServices::Disabled')
-        )
-    {
-
-        $Self->Print("<yellow>Getting cloud repositories information...</yellow>\n");
-
-        $RepositoryCloudList = $PackageObject->RepositoryCloudList( NoCache => 1 );
-
-        $Self->Print("  Cloud repositories... <green>Done</green>\n\n");
-    }
-
-    my %RepositoryListAll = ( %RepositoryList, %{ $RepositoryCloudList || {} } );
-
-    $Self->Print("<yellow>Fetching on-line repositories...</yellow>\n");
-
-    URL:
-    for my $URL ( sort keys %RepositoryListAll ) {
-
-        $Self->Print("  $RepositoryListAll{$URL}... ");
-
-        my $FromCloud = 0;
-        if ( $RepositoryCloudList->{$URL} ) {
-            $FromCloud = 1;
-
-        }
-
-        my @OnlineList = $PackageObject->PackageOnlineList(
-            URL       => $URL,
-            Lang      => 'en',
-            Cache     => 1,
-            FromCloud => $FromCloud,
-        );
-
-        $Self->Print("<green>Done</green>\n");
     }
 
     # Check again after repository refresh
@@ -204,7 +158,6 @@ sub Run {
         NotFound       => 'could not be found in the on-line repositories...',
         WrongVersion   => 'require a version higher than the one found in the on-line repositories...',
         DependencyFail => 'fail to upgrade/install their package dependencies...'
-
     );
 
     if ( IsHashRefWithData( $Result{Failed} ) ) {
@@ -219,9 +172,7 @@ sub Run {
     }
 
     if ( !$Result{Success} ) {
-        $Self->Print("\n<red>Fail.</red>\n");
-
-        return $Self->ExitCodeError();
+        $Self->Print("\n<red>Not (all) packages could be upgraded automatically, see above.</red>\n");
     }
 
     if ( IsHashRefWithData( $Result{Undeployed} ) ) {
@@ -235,6 +186,10 @@ sub Run {
     $CacheObject->Configure(
         CacheInMemory => 0,
     );
+
+    if ( !$Result{Success} ) {
+        return $Self->ExitCodeError();
+    }
 
     $Self->Print("\n<green>Done.</green>\n");
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 use parent 'Kernel::System::Ticket::Article::Backend::Base';
 
@@ -161,7 +161,7 @@ sub ArticleCreate {
 
         my $Success = $DBObject->Do(
             SQL => '
-                INSERT INTO article_data_otobo_chat
+                INSERT INTO article_data_careoncloud_chat
                     (article_id, chat_participant_id, chat_participant_name, chat_participant_type,
                         message_text, system_generated, create_time)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -175,7 +175,7 @@ sub ArticleCreate {
         if ( !$Success ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "System was unable to store data in article_data_otobo_chat table (ArticleID = $ArticleID)!",
+                Message  => "System was unable to store data in article_data_careoncloud_chat table (ArticleID = $ArticleID)!",
             );
             return;
         }
@@ -355,7 +355,7 @@ sub ArticleGet {
     my $SQL = '
         SELECT id, chat_participant_id, chat_participant_name, chat_participant_type, message_text, system_generated,
             create_time
-        FROM article_data_otobo_chat
+        FROM article_data_careoncloud_chat
         WHERE article_id = ?
         ORDER BY id ASC
     ';
@@ -478,7 +478,7 @@ sub ArticleUpdate {
         # First, remove existing messages from storage.
         my $Success = $DBObject->Do(
             SQL => '
-                DELETE FROM article_data_otobo_chat
+                DELETE FROM article_data_careoncloud_chat
                 WHERE article_id = ?
             ',
             Bind => [ \$Param{ArticleID} ],
@@ -487,7 +487,7 @@ sub ArticleUpdate {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  =>
-                    "System was unable to remove data from article_data_otobo_chat table (ArticleID = $Param{ArticleID})!",
+                    "System was unable to remove data from article_data_careoncloud_chat table (ArticleID = $Param{ArticleID})!",
             );
             return;
         }
@@ -501,7 +501,7 @@ sub ArticleUpdate {
 
             my $Success = $DBObject->Do(
                 SQL => '
-                    INSERT INTO article_data_otobo_chat
+                    INSERT INTO article_data_careoncloud_chat
                         (article_id, chat_participant_id, chat_participant_name, chat_participant_type,
                             message_text, system_generated, create_time)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -517,7 +517,7 @@ sub ArticleUpdate {
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
                     Priority => 'error',
                     Message  =>
-                        "System was unable to store data in article_data_otobo_chat table (ArticleID = $Param{ArticleID})!",
+                        "System was unable to store data in article_data_careoncloud_chat table (ArticleID = $Param{ArticleID})!",
                 );
                 return;
             }
@@ -578,7 +578,7 @@ sub ArticleDelete {
     # Delete all records related to the article.
     return if !$Kernel::OM->Get('Kernel::System::DB')->Do(
         SQL => '
-            DELETE FROM article_data_otobo_chat
+            DELETE FROM article_data_careoncloud_chat
             WHERE article_id = ?
         ',
         Bind => [ \$Param{ArticleID} ],

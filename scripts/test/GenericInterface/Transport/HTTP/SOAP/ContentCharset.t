@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,12 +23,12 @@ use utf8;
 
 # CPAN modules
 use Test2::V0;
-use HTTP::Request;
+use HTTP::Request ();
 
-# OTOBO modules
-use Kernel::System::ObjectManager;
-use Kernel::GenericInterface::Debugger;
-use Kernel::GenericInterface::Transport::HTTP::SOAP;
+# CareOnCloud ESM modules
+use Kernel::System::ObjectManager                   ();
+use Kernel::GenericInterface::Debugger              ();
+use Kernel::GenericInterface::Transport::HTTP::SOAP ();
 
 $Kernel::OM = Kernel::System::ObjectManager->new();
 
@@ -110,7 +110,11 @@ plan( scalar @Tests );
 
 for my $Test (@Tests) {
 
-    my $Request = << "END_XML";
+    # This test request XML has a trailing newline. There have been problems with that
+    # when XML::Parser >= 1.48 is used.
+    # Therefore Kernel::GenericInterface::Transport::HTTP::SOAP::ProviderProcessRequest()
+    # has been tweaked to trim trailing white space.
+    my $Request = <<"END_XML";
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tic="http://www.otobo.org/TicketConnector/">
    <soapenv:Header/>
    <soapenv:Body>

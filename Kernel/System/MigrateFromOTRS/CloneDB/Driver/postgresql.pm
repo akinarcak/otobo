@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,8 +27,8 @@ use parent qw(Kernel::System::MigrateFromOTRS::CloneDB::Driver::Base);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::DB;
+# CareOnCloud ESM modules
+use Kernel::System::DB ();
 
 our @ObjectDependencies = (
     'Kernel::System::Log',
@@ -55,7 +55,7 @@ Please look there for a detailed reference of the functions.
 sub CreateOTRSDBConnection {
     my ( $Self, %Param ) = @_;
 
-    # check OTRSDBSettings
+    # check OTRSDBSettings, Attribute is optional
     for my $Needed (
         qw(DBHost DBName DBUser DBPassword DBType)
         )
@@ -76,10 +76,12 @@ sub CreateOTRSDBConnection {
 
     # create target DB object
     my $OTRSDBObject = Kernel::System::DB->new(
-        DatabaseDSN  => $Param{OTRSDatabaseDSN},
-        DatabaseUser => $Param{DBUser},
-        DatabasePw   => $Param{DBPassword},
-        Type         => $Param{DBType},
+        DatabaseDSN             => $Param{OTRSDatabaseDSN},
+        DatabaseUser            => $Param{DBUser},
+        DatabasePw              => $Param{DBPassword},
+        Type                    => $Param{DBType},
+        Attribute               => $Param{Attribute},
+        DisconnectOnDestruction => 1,
     );
 
     if ( !$OTRSDBObject ) {
@@ -147,7 +149,7 @@ sub ResetAutoIncrementField {
         }
     }
 
-    # The OTOBO naming convention uses 'id' for the primary keys.
+    # The CareOnCloud ESM naming convention uses 'id' for the primary keys.
     # Special handling for a table with no 'id' column but with a 'object_id' column.
     my $TableName       = $Param{Table};
     my $SerialAttribute = $TableName eq 'dynamic_field_obj_id_name' ? 'object_id' : 'id';

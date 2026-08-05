@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,13 +22,13 @@ use warnings;
 use utf8;
 
 # core modules
-use Data::Dumper;    ## no critic qw(Modules::ProhibitEvilModules)
+use Data::Dumper qw(Dumper);    ## no critic qw(Modules::ProhibitEvilModules)
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -38,6 +38,15 @@ sub new {
     # allocate new hash for object
     my $Self = {%Param};
     bless( $Self, $Type );
+
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
 
     return $Self;
 }
@@ -72,6 +81,19 @@ sub Run {
             },
         ];
     }
+
+    $Param{IncludeInvalid} = $ParamObject->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $Param{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $Param{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $Param{IncludeInvalid};
+    }
+    $Param{IncludeInvalidChecked} = $Self->{IncludeInvalid} ? 'checked' : '';
 
     # get needed objects
     my $LayoutObject  = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
@@ -150,7 +172,6 @@ sub Run {
             $Content = ${ $Content || \'' };
         }
         else {
-            my $FormID      = $ParamObject->GetParam( Param => 'FormID' ) || '';
             my %UploadStuff = $ParamObject->GetUploadAll(
                 Param => 'FileUpload',
             );
@@ -204,6 +225,26 @@ sub Run {
                 }
             }
 
+            for my $ProcessEntityID ( $ProcessImport{ProcessEntityIDs}->@* ) {
+
+                # set entity sync state
+                my $Success = $EntityObject->EntitySyncStateSet(
+                    EntityType => 'Process',
+                    EntityID   => $ProcessEntityID,
+                    SyncState  => 'not_sync',
+                    UserID     => $Self->{UserID},
+                );
+
+                # show error if can't set
+                if ( !$Success ) {
+                    return $LayoutObject->ErrorScreen(
+                        Message => $LayoutObject->{LanguageObject}->Translate(
+                            'There was an error setting the entity sync status for Process entity: %s', $EntityID
+                        ),
+                    );
+                }
+            }
+
             # show the overview with success informations
             $Param{NotifyData} = [
                 {
@@ -237,7 +278,7 @@ sub Run {
             ID => $ProcessID
         );
 
-        # convert the processdata hash to string
+        # convert the process data hash to string
         my $ProcessDataYAML = $Kernel::OM->Get('Kernel::System::YAML')->Dump( Data => $ProcessData );
 
         # send the result to the browser
@@ -297,7 +338,7 @@ sub Run {
                     },
                 );
 
-                # list all assigned dialogs
+                # list all assigned dialogues
                 my $AssignedDialogs = $ProcessData->{Activities}->{$ActivityEntityID}->{Config}->{ActivityDialog};
                 if ( $AssignedDialogs && %{$AssignedDialogs} ) {
 
@@ -313,9 +354,10 @@ sub Run {
                         $LayoutObject->Block(
                             Name => 'AssignedDialogsRow',
                             Data => {
-                                Name => $ProcessData->{ActivityDialogs}->{$AssignedDialogEntityID}
-                                    ->{Name},
-                                EntityID => $AssignedDialogEntityID,
+                                Name            => $ProcessData->{ActivityDialogs}{$AssignedDialogEntityID}{Name},
+                                Namespace       => $ProcessData->{ActivityDialogs}{$AssignedDialogEntityID}{Namespace},
+                                ProcessEntityID => $ProcessData->{ActivityDialogs}{$AssignedDialogEntityID}{ProcessEntityID},
+                                EntityID        => $AssignedDialogEntityID,
                             },
                         );
                     }
@@ -328,7 +370,7 @@ sub Run {
             );
         }
 
-        # print all activity dialogs
+        # print all activity dialogues
         if ( $ProcessData->{ActivityDialogs} && %{ $ProcessData->{ActivityDialogs} } ) {
 
             for my $ActivityDialogEntityID ( sort keys %{ $ProcessData->{ActivityDialogs} } ) {
@@ -600,7 +642,7 @@ sub Run {
             }
         }
 
-        my $SkinSelected = $Self->{'UserSkin'};
+        my $SkinSelected = $Self->{Session}{UserSkin};
 
         # check if the skin is valid
         my $SkinValid = 0;
@@ -743,37 +785,37 @@ sub Run {
         my $ProcessName = $LayoutObject->{LanguageObject}->Translate( '%s (copy)', $ProcessData->{Name} );
 
         # generate entity ID
-        my $EntityID = $EntityObject->EntityIDGenerate(
+        my $ProcessEntityID = $EntityObject->EntityIDGenerate(
             EntityType => 'Process',
             UserID     => $Self->{UserID},
         );
 
         # show error if can't generate a new EntityID
-        if ( !$EntityID ) {
+        if ( !$ProcessEntityID ) {
             return $LayoutObject->ErrorScreen(
                 Message => Translatable('There was an error generating a new EntityID for this Process'),
             );
         }
 
-        # check if Inactive state estity exists
+        # check if inactive state entity exists
         my $StateList   = $StateObject->StateList( UserID => $Self->{UserID} );
         my %StateLookup = reverse %{$StateList};
 
         my $StateEntityID = $StateLookup{'Inactive'};
 
         # show error if  StateEntityID for Inactive does not exist
-        if ( !$EntityID ) {
+        if ( !$StateEntityID ) {
             return $LayoutObject->ErrorScreen(
                 Message => Translatable('The StateEntityID for state Inactive does not exists'),
             );
         }
 
-        # otherwise save configuration and return to overview screen
+        # otherwise create a new process without layout and old config
         my $ProcessID = $ProcessObject->ProcessAdd(
             Name          => $ProcessName,
-            EntityID      => $EntityID,
+            EntityID      => $ProcessEntityID,
             StateEntityID => $StateEntityID,
-            Layout        => $ProcessData->{Layout},
+            Layout        => {},
             Config        => $ProcessData->{Config},
             UserID        => $Self->{UserID},
         );
@@ -785,10 +827,10 @@ sub Run {
             );
         }
 
-        # set entitty sync state
+        # set entity sync state
         my $Success = $EntityObject->EntitySyncStateSet(
             EntityType => 'Process',
-            EntityID   => $EntityID,
+            EntityID   => $ProcessEntityID,
             SyncState  => 'not_sync',
             UserID     => $Self->{UserID},
         );
@@ -797,7 +839,174 @@ sub Run {
         if ( !$Success ) {
             return $LayoutObject->ErrorScreen(
                 Message => $LayoutObject->{LanguageObject}->Translate(
-                    'There was an error setting the entity sync status for Process entity: %s', $EntityID
+                    'There was an error setting the entity sync status for Process entity: %s', $ProcessEntityID
+                ),
+            );
+        }
+
+        # maps for process-specific element EntityIDs, original->copy
+        my $ElementMap = {
+            ActivityDialog   => {},
+            Activity         => {},
+            Transition       => {},
+            TransitionAction => {},
+        };
+
+        # copy elements (ActiviyDialog before Activity, since the former is stored internally in the latter)
+        for my $Element (qw(ActivityDialog Activity Transition TransitionAction)) {
+
+            my $ElementObject = $Kernel::OM->Get( 'Kernel::System::ProcessManagement::DB::' . $Element );
+            my $ElementList   = $Element . 'List';
+            my $ElementGet    = $Element . 'Get';
+            my $ElementAdd    = $Element . 'Add';
+
+            ELEMENT:
+            for my $ElementID ( sort keys %{ $ElementObject->$ElementList( UserID => $Self->{UserID} ) } ) {
+                my $ElementData = $ElementObject->$ElementGet(
+                    ID     => $ElementID,
+                    UserID => $Self->{UserID},
+                );
+
+                # check if element is local to this process
+                next ELEMENT unless $ElementData && $ElementData->{ProcessEntityID} && $ElementData->{ProcessEntityID} eq $ProcessData->{EntityID};
+
+                # reassign ActivityDialogs of process-specific Activities
+                if ( $Element eq 'Activity' ) {
+
+                    if ( !$ElementData->{Config}->{ActivityDialogs} ) {
+                        my %ConfigActivityDialog;
+
+                        while ( my ( $Counter, $ActivityDialogEntityID ) = each %{ $ElementData->{Config}->{ActivityDialog} } ) {
+
+                            $ConfigActivityDialog{$Counter} = $ElementMap->{ActivityDialog}->{$ActivityDialogEntityID} || $ActivityDialogEntityID;
+                        }
+
+                        # set final config ActivityDialog value
+                        $ElementData->{Config}->{ActivityDialog} = \%ConfigActivityDialog;
+                    }
+                }
+
+                # generate entity ID
+                my $EntityID = $EntityObject->EntityIDGenerate(
+                    EntityType => $Element,
+                    UserID     => $Self->{UserID},
+                );
+
+                # show error if can't generate a new EntityID
+                if ( !$EntityID ) {
+                    return $LayoutObject->ErrorScreen(
+                        Message => Translatable('There was an error generating a new EntityID while copying an associated Element'),
+                    );
+                }
+
+                # copy Element using new ProcessEntityID
+                my $ElementID = $ElementObject->$ElementAdd(
+                    Name            => $LayoutObject->{LanguageObject}->Translate( '%s (copy)', $ElementData->{Name} ),
+                    Namespace       => $ElementData->{Namespace},
+                    EntityID        => $EntityID,
+                    Config          => $ElementData->{Config},
+                    UserID          => $Self->{UserID},
+                    ProcessEntityID => $ProcessEntityID,
+                );
+
+                # show error if can't create
+                if ( !$ElementID ) {
+                    return $LayoutObject->ErrorScreen(
+                        Message => Translatable('There was an error copying an associated Element'),
+                    );
+                }
+
+                # set entity sync state
+                my $Success = $EntityObject->EntitySyncStateSet(
+                    EntityType => $Element,
+                    EntityID   => $EntityID,
+                    SyncState  => 'not_sync',
+                    UserID     => $Self->{UserID},
+                );
+
+                # show error if can't set
+                if ( !$Success ) {
+                    return $LayoutObject->ErrorScreen(
+                        Message => $LayoutObject->{LanguageObject}->Translate(
+                            'There was an error setting the entity sync status for an associated Element entity: %s',
+                            $EntityID
+                        ),
+                    );
+                }
+
+                # store mapping
+                $ElementMap->{$Element}->{ $ElementData->{EntityID} } = $EntityID;
+            }
+        }
+
+        # now rebuild process layout, substituting process-specific elements
+        my %Layout;
+
+        while ( my ( $ActivityEntityID, $Position ) = each %{ $ProcessData->{Layout} } ) {
+
+            $Layout{ $ElementMap->{Activity}->{$ActivityEntityID} || $ActivityEntityID } = $Position;
+        }
+
+        # now rebuild process path config, substituting process-specific elements
+        my %ConfigPath;
+
+        while ( my ( $ActivityEntityID, $PathList ) = each %{ $ProcessData->{Config}->{Path} } ) {
+
+            my %PathList;
+
+            while ( my ( $TransitionEntityID, $PathData ) = each %{$PathList} ) {
+
+                my %Path;
+                my @TransitionAction;
+
+                for my $TransitionActionEntityID ( @{ $PathData->{TransitionAction} } ) {
+
+                    push @TransitionAction, $ElementMap->{TransitionAction}->{TransitionActionEntityID} || $TransitionActionEntityID;
+                }
+
+                $Path{ActivityEntityID} = $ElementMap->{Activity}->{ $PathData->{ActivityEntityID} } || $PathData->{ActivityEntityID};
+                $Path{TransitionAction} = \@TransitionAction;
+                $PathList{ $ElementMap->{Transition}->{$TransitionEntityID} || $TransitionEntityID } = \%Path;
+            }
+
+            $ConfigPath{ $ElementMap->{Activity}->{$ActivityEntityID} || $ActivityEntityID } = \%PathList;
+        }
+
+        # set final config path value
+        $ProcessData->{Config}->{Path} = \%ConfigPath;
+
+        # save new layout and config and return to overview screen
+        $Success = $ProcessObject->ProcessUpdate(
+            ID            => $ProcessID,
+            Name          => $ProcessName,
+            EntityID      => $ProcessEntityID,
+            StateEntityID => $StateEntityID,
+            Layout        => \%Layout,
+            Config        => $ProcessData->{Config},
+            UserID        => $Self->{UserID},
+        );
+
+        # show error if can't update
+        if ( !$Success ) {
+            return $LayoutObject->ErrorScreen(
+                Message => Translatable('There was an error updating the Process'),
+            );
+        }
+
+        # set entity sync state
+        $Success = $EntityObject->EntitySyncStateSet(
+            EntityType => 'Process',
+            EntityID   => $ProcessData->{EntityID},
+            SyncState  => 'not_sync',
+            UserID     => $Self->{UserID},
+        );
+
+        # show error if can't set
+        if ( !$Success ) {
+            return $LayoutObject->ErrorScreen(
+                Message => $LayoutObject->{LanguageObject}->Translate(
+                    'There was an error setting the entity sync status for Process entity: %s',
+                    $ProcessData->{EntityID}
                 ),
             );
         }
@@ -831,7 +1040,7 @@ sub Run {
         # get parameter from web browser
         my $GetParam = $Self->_GetParams();
 
-        # set new confguration
+        # set new configuration
         $ProcessData->{Name}                  = $GetParam->{Name};
         $ProcessData->{Config}->{Description} = $GetParam->{Description};
         $ProcessData->{StateEntityID}         = $GetParam->{StateEntityID};
@@ -902,7 +1111,7 @@ sub Run {
             );
         }
 
-        # set entitty sync state
+        # set entity sync state
         my $Success = $EntityObject->EntitySyncStateSet(
             EntityType => 'Process',
             EntityID   => $EntityID,
@@ -989,13 +1198,13 @@ sub Run {
         # challenge token check for write action
         $LayoutObject->ChallengeTokenCheck();
 
-        # get webserice configuration
+        # get webservice configuration
         my $ProcessData;
 
         # get parameter from web browser
         my $GetParam = $Self->_GetParams();
 
-        # set new confguration
+        # set new configuration
         $ProcessData->{Name}                          = $GetParam->{Name};
         $ProcessData->{EntityID}                      = $GetParam->{EntityID};
         $ProcessData->{ProcessLayout}                 = $GetParam->{ProcessLayout};
@@ -1059,7 +1268,7 @@ sub Run {
             );
         }
 
-        # set entitty sync state
+        # set entity sync state
         $Success = $EntityObject->EntitySyncStateSet(
             EntityType => 'Process',
             EntityID   => $ProcessData->{EntityID},
@@ -1138,6 +1347,68 @@ sub Run {
         my $JSON;
         if ( $CheckResult->{Success} ) {
 
+            # get ProcessEntityID
+            my $ProcessData = $ProcessObject->ProcessGet(
+                ID     => $ProcessID,
+                UserID => $Self->{UserID},
+            );
+            my $ProcessEntityID = $ProcessData->{EntityID};
+
+            # delete non-global elements of the process
+            for my $Element (qw(Activity ActivityDialog Transition TransitionAction)) {
+
+                my $ElementObject = $Kernel::OM->Get( 'Kernel::System::ProcessManagement::DB::' . $Element );
+                my $ElementList   = $Element . 'List';
+                my $ElementGet    = $Element . 'Get';
+                my $ElementDelete = $Element . 'Delete';
+
+                ELEMENT:
+                for my $ElementID ( sort keys %{ $ElementObject->$ElementList( UserID => $Self->{UserID} ) } ) {
+                    my $ElementData = $ElementObject->$ElementGet(
+                        ID     => $ElementID,
+                        UserID => $Self->{UserID},
+                    );
+
+                    # check if element is specific to this process
+                    next ELEMENT unless $ElementData && $ElementData->{ProcessEntityID} && $ElementData->{ProcessEntityID} eq $ProcessEntityID;
+
+                    my $Success = $ElementObject->$ElementDelete(
+                        ID     => $ElementID,
+                        UserID => $Self->{UserID},
+                    );
+
+                    my %DeleteResult = (
+                        Success => $Success,
+                    );
+
+                    if ( !$Success ) {
+                        $DeleteResult{Message} = $LayoutObject->{LanguageObject}->Translate(
+                            'Process: %s successfully deleted, but failed to delete an associated Element',
+                            $ProcessID
+                        );
+                    }
+                    else {
+
+                        # set entity sync state
+                        my $Success = $EntityObject->EntitySyncStateSet(
+                            EntityType => $Element,
+                            EntityID   => $ElementData->{EntityID},
+                            SyncState  => 'deleted',
+                            UserID     => $Self->{UserID},
+                        );
+
+                        # show error if can't set
+                        if ( !$Success ) {
+                            $DeleteResult{Success} = $Success;
+                            $DeleteResult{Message} = $LayoutObject->{LanguageObject}->Translate(
+                                'Process: %s successfully deleted, but there was an error setting the entity sync status for an associated Element entity',
+                                $ProcessID
+                            );
+                        }
+                    }
+                }
+            }
+
             my $Success = $ProcessObject->ProcessDelete(
                 ID     => $ProcessID,
                 UserID => $Self->{UserID},
@@ -1152,7 +1423,7 @@ sub Run {
             }
             else {
 
-                # set entitty sync state
+                # set entity sync state
                 my $Success = $EntityObject->EntitySyncStateSet(
                     EntityType => 'Process',
                     EntityID   => $CheckResult->{ProcessData}->{EntityID},
@@ -1160,7 +1431,7 @@ sub Run {
                     UserID     => $Self->{UserID},
                 );
 
-                # show error if cant set
+                # show error if can't set
                 if ( !$Success ) {
                     $DeleteResult{Success} = $Success;
                     $DeleteResult{Message} = $LayoutObject->{LanguageObject}->Translate(
@@ -1228,7 +1499,7 @@ sub Run {
         }
         else {
 
-            # show error if can't synch
+            # show error if can't sync
             return $LayoutObject->ErrorScreen(
                 Message => Translatable('There was an error synchronizing the processes.'),
             );
@@ -1337,7 +1608,7 @@ sub Run {
                 }
                 else {
 
-                    # set entitty sync state
+                    # set entity sync state
                     my $Success = $EntityObject->EntitySyncStateSet(
                         EntityType => $GetParam{EntityType},
                         EntityID   => $Entity->{EntityID},
@@ -1472,7 +1743,15 @@ sub Run {
     # ------------------------------------------------------------ #
     elsif ( $Self->{Subaction} eq 'UpdateAccordion' ) {
 
-        # ouput available process elements in the accordion
+        # check for ProcessEntityID
+        my $ProcessEntityID = $ParamObject->GetParam( Param => 'EntityID' ) || '';
+        if ( !$ProcessEntityID ) {
+            return $LayoutObject->ErrorScreen(
+                Message => Translatable('Need ProcessEntityID!'),
+            );
+        }
+
+        # output available process elements in the accordion
         for my $Element (qw(Activity ActivityDialog Transition TransitionAction)) {
 
             my $ElementMethod = $Element . 'ListGet';
@@ -1483,11 +1762,14 @@ sub Run {
 
             # check there are elements to display
             if ( IsArrayRefWithData($ElementList) ) {
+                ELEMENT:
                 for my $ElementData (
                     sort { lc( $a->{Name} ) cmp lc( $b->{Name} ) }
                     @{$ElementList}
                     )
                 {
+                    next ELEMENT unless !$ElementData->{ProcessEntityID} ||
+                        $ElementData->{ProcessEntityID} eq $ProcessEntityID;
 
                     my $AvailableIn = '';
                     if ( $Element eq "ActivityDialog" ) {
@@ -1515,7 +1797,8 @@ sub Run {
                         Name => $Element . 'Row',
                         Data => {
                             %{$ElementData},
-                            AvailableIn => $AvailableIn,    #only used for ActivityDialogs
+                            ProcessEntityID => $EntityID,
+                            AvailableIn     => $AvailableIn,    #only used for ActivityDialogs
                         },
                     );
                 }
@@ -1532,7 +1815,9 @@ sub Run {
 
         my $Output = $LayoutObject->Output(
             TemplateFile => 'AdminProcessManagementProcessAccordion',
-            Data         => {},
+            Data         => {
+                ProcessEntityID => $EntityID,
+            },
         );
 
         # send HTML response
@@ -1644,8 +1929,21 @@ sub _ShowOverview {
 
     my $ProcessObject = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Process');
 
+    # fetch state list to filter processes by states
+    my $StateList   = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Process::State')->StateList( UserID => $Self->{UserID} );
+    my %StateLookup = reverse %{$StateList};
+
+    # apply restrictions from checkbox
+    my @ProcessStates = ( $StateLookup{'Active'}, $StateLookup{'FadeAway'} );
+    if ( $Self->{IncludeInvalid} ) {
+        push @ProcessStates, $StateLookup{'Inactive'};
+    }
+
     # get a process list
-    my $ProcessList = $ProcessObject->ProcessList( UserID => $Self->{UserID} );
+    my $ProcessList = $ProcessObject->ProcessList(
+        UserID         => $Self->{UserID},
+        StateEntityIDs => \@ProcessStates,
+    );
 
     if ( IsHashRefWithData($ProcessList) ) {
 
@@ -1701,6 +1999,13 @@ sub _ShowEdit {
 
     if ( defined $Param{Action} && $Param{Action} eq 'Edit' ) {
 
+        # check for ProcessEntityID
+        if ( !$ProcessData->{EntityID} ) {
+            return $LayoutObject->ErrorScreen(
+                Message => Translatable('Need ProcessEntityID!'),
+            );
+        }
+
         # check if process is inactive and show delete action
         my $State = $StateObject->StateLookup(
             EntityID => $ProcessData->{StateEntityID},
@@ -1715,7 +2020,7 @@ sub _ShowEdit {
             );
         }
 
-        # ouput available process elements in the accordion
+        # output available process elements in the accordion
         for my $Element (qw(Activity ActivityDialog Transition TransitionAction)) {
 
             my $ElementMethod = $Element . 'ListGet';
@@ -1726,11 +2031,14 @@ sub _ShowEdit {
 
             # check there are elements to display
             if ( IsArrayRefWithData($ElementList) ) {
+                ELEMENT:
                 for my $ElementData (
                     sort { lc( $a->{Name} ) cmp lc( $b->{Name} ) }
                     @{$ElementList}
                     )
                 {
+                    next ELEMENT unless !$ElementData->{ProcessEntityID} ||
+                        $ElementData->{ProcessEntityID} eq $ProcessData->{EntityID};
 
                     my $AvailableIn = '';
                     if ( $Element eq "ActivityDialog" ) {
@@ -1758,7 +2066,8 @@ sub _ShowEdit {
                         Name => $Element . 'Row',
                         Data => {
                             %{$ElementData},
-                            AvailableIn => $AvailableIn,    #only used for ActivityDialogs
+                            ProcessEntityID => $ProcessData->{EntityID},
+                            AvailableIn     => $AvailableIn,               #only used for ActivityDialogs
                         },
                     );
                 }
@@ -1830,7 +2139,8 @@ sub _ShowEdit {
             Transition        => $ProcessDump->{Transition},
             TransitionAction  => $ProcessDump->{TransitionAction},
             PopupPathActivity => $LayoutObject->{Baselink}
-                . 'Action=AdminProcessManagementActivity;Subaction=ActivityEdit;',
+                . 'Action=AdminProcessManagementActivity;Subaction=ActivityEdit;ProcessEntityID='
+                . ( $ProcessData->{EntityID} || '' ) . ';',
             PopupPathPath => $LayoutObject->{Baselink} . 'Action=AdminProcessManagementPath;Subaction=PathEdit;',
         }
     );
@@ -1840,7 +2150,8 @@ sub _ShowEdit {
         Data         => {
             %Param,
             %{$ProcessData},
-            Description => $ProcessData->{Config}->{Description} || '',
+            ProcessEntityID => $ProcessData->{EntityID},
+            Description     => $ProcessData->{Config}->{Description} || '',
         },
     );
 
@@ -2089,7 +2400,7 @@ sub _GetProcessData {
         );
         $ProcessData{Activities}->{$ActivityEntityID} = $Activity;
 
-        # get all used activity dialogs
+        # get all used activity dialogues
         for my $ActivityDialogEntityID ( @{ $Activity->{ActivityDialogs} } ) {
 
             my $ActivityDialog = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::ActivityDialog')->ActivityDialogGet(

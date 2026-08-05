@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,18 +16,26 @@
 
 package Kernel::System::ProcessManagement::TransitionAction::DynamicFieldSet;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
 use utf8;
 
-use Kernel::System::VariableCheck qw(:all);
-
 use parent qw(Kernel::System::ProcessManagement::TransitionAction::Base);
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
     'Kernel::System::DynamicField',
     'Kernel::System::DynamicField::Backend',
     'Kernel::System::Log',
+    'Kernel::System::Ticket',
 );
 
 =head1 NAME
@@ -80,6 +88,16 @@ sub Params {
         {
             Key      => 'UserID',
             Value    => '1 (can overwrite the logged in user)',
+            Optional => 1,
+        },
+        {
+            Key      => 'TicketID',
+            Value    => '12345 (set dynamic field value of other than the process ticket itself)',
+            Optional => 1,
+        },
+        {
+            Key      => 'ExternalSource',
+            Value    => '1 (treat value as external source for reference fields)',
             Optional => 1,
         },
     );
@@ -136,12 +154,6 @@ sub Run {
     # override UserID if specified as a parameter in the TA config
     $Param{UserID} = $Self->_OverrideUserID(%Param);
 
-    # special case for DyanmicField UserID, convert form DynamicField_UserID to UserID
-    if ( defined $Param{Config}->{DynamicField_UserID} ) {
-        $Param{Config}->{UserID} = $Param{Config}->{DynamicField_UserID};
-        delete $Param{Config}->{DynamicField_UserID};
-    }
-
     # use ticket attributes if needed
     $Self->_ReplaceTicketAttributes(%Param);
     $Self->_ReplaceAdditionalAttributes(%Param);
@@ -149,6 +161,35 @@ sub Run {
     # get dynamic field objects
     my $DynamicFieldObject        = $Kernel::OM->Get('Kernel::System::DynamicField');
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
+
+    my $TicketID;
+    if ( exists $Param{Config}->{TicketID} ) {
+
+        $TicketID = delete $Param{Config}->{TicketID};
+
+        # for the processes mostly the ConfigItems will come from reference fields
+        if ( ref $TicketID eq 'ARRAY' ) {
+            $TicketID = $TicketID->[0];
+        }
+
+        if ( !$Kernel::OM->Get('Kernel::System::Ticket')->TicketGet( TicketID => $TicketID ) ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => $CommonMessage
+                    . "'$TicketID' is not a valid TicketID.",
+            );
+
+            return;
+        }
+    }
+    else {
+        $TicketID = $Param{Ticket}->{TicketID};
+    }
+
+    my %ExternalSource;
+    if ( delete $Param{Config}{ExternalSource} ) {
+        $ExternalSource{ExternalSource} = 1;
+    }
 
     for my $CurrentDynamicField ( sort keys %{ $Param{Config} } ) {
 
@@ -181,9 +222,11 @@ sub Run {
         # try to set the configured value
         my $Success = $DynamicFieldBackendObject->ValueSet(
             DynamicFieldConfig => $DynamicFieldConfig,
-            ObjectID           => $Param{Ticket}->{TicketID},
+            ObjectID           => $TicketID,
             Value              => $Param{Config}->{$CurrentDynamicField},
             UserID             => $Param{UserID},
+            EditFieldValue     => 0,
+            %ExternalSource,
         );
 
         # check if everything went right
@@ -194,7 +237,7 @@ sub Run {
                     . "Can't set value '"
                     . $Param{Config}->{$CurrentDynamicField}
                     . "' for DynamicField '$CurrentDynamicField',"
-                    . "TicketID '" . $Param{Ticket}->{TicketID} . "'!",
+                    . "TicketID '" . $TicketID . "'!",
             );
             return;
         }

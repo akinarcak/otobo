@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # get helper object
 $Kernel::OM->ObjectParamAdd(
@@ -33,7 +35,7 @@ $Kernel::OM->ObjectParamAdd(
 );
 my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
-# This test checks if OTOBO correctly detects that an email must not be auto-responded to.
+# This test checks if CareOnCloud ESM correctly detects that an email must not be auto-responded to.
 my @Tests = (
     {
         Name  => 'Regular mail',
@@ -46,7 +48,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => '',
+            'X-CareOnCloud-Loop' => '',
         },
     },
     {
@@ -61,7 +63,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -76,7 +78,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -91,22 +93,22 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
-        Name  => 'X-OTOBO-Loop',
+        Name  => 'X-CareOnCloud-Loop',
         Email =>
             'From: test@home.com
 To: test@home.com
-X-OTOBO-Loop: yes
+X-CareOnCloud-Loop: yes
 Subject: Testmail
 
 Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -121,7 +123,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -136,7 +138,7 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => 'yes',
+            'X-CareOnCloud-Loop' => 'yes',
         },
     },
     {
@@ -151,14 +153,14 @@ Body
 ',
         EmailParams => {
             From           => 'test@home.com',
-            'X-OTOBO-Loop' => '',
+            'X-CareOnCloud-Loop' => '',
         },
     },
 );
 
 for my $Test (@Tests) {
 
-    my @Email = split( /\n/, $Test->{Email} );
+    my @Email = map { $_ . "\n" } split /\n/, $Test->{Email};
 
     my $CommunicationLogObject = $Kernel::OM->Create(
         'Kernel::System::CommunicationLog',
@@ -177,7 +179,7 @@ for my $Test (@Tests) {
     my $EmailParams = $PostMasterObject->GetEmailParams();
 
     for my $EmailParam ( sort keys %{ $Test->{EmailParams} } ) {
-        $Self->Is(
+        is(
             $EmailParams->{$EmailParam},
             $Test->{EmailParams}->{$EmailParam},
             "$Test->{Name} - $EmailParam",
@@ -193,6 +195,4 @@ for my $Test (@Tests) {
     );
 }
 
-# cleanup cache is done by RestoreDatabase
-
-$Self->DoneTesting();
+done_testing;

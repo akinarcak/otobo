@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,29 +16,49 @@
 
 package Kernel::System::DynamicField;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+use utf8;
 
 use parent qw(Kernel::System::EventHandler);
 
+# core modules
+use List::Util qw(any);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
+# Inform the object manager about the hard dependencies.
+# This module must be discarded when one of the hard dependencies has been discarded.
 our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::Cache',
     'Kernel::System::DB',
     'Kernel::System::Log',
+    'Kernel::System::Queue',
+    'Kernel::System::Type',
     'Kernel::System::Valid',
     'Kernel::System::YAML',
 );
 
+# Inform the CodePolicy about the soft dependencies that are intentionally not in @ObjectDependencies.
+# Soft dependencies are modules that used by this object, but who don't affect the state of this object.
+# There is no need to discard this module when one of the soft dependencies is discarded.
+our @SoftObjectDependencies = (
+    'Kernel::System::GeneralCatalog',
+);
+
 =head1 NAME
 
-Kernel::System::DynamicField
+Kernel::System::DynamicField - general methods for dynamic fields
 
 =head1 DESCRIPTION
 
-DynamicFields backend
+DynamicFields backend.
 
 =head1 PUBLIC INTERFACE
 
@@ -115,7 +135,7 @@ sub DynamicFieldAdd {
     }
 
     # check needed structure for some fields
-    if ( $Param{Name} !~ m{ \A [a-zA-Z\d\-]+ \z }xms ) {
+    if ( $Param{Name} !~ m{ \A [a-zA-Z\d-]+ \z }axms ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Not valid letters on Name:$Param{Name}!"
@@ -134,7 +154,7 @@ sub DynamicFieldAdd {
     );
 
     my $NameExists;
-    while ( my @Data = $DBObject->FetchrowArray() ) {
+    while ( $DBObject->FetchrowArray() ) {
         $NameExists = 1;
     }
 
@@ -381,6 +401,18 @@ sub DynamicFieldUpdate {
 
     my $YAMLObject = $Kernel::OM->Get('Kernel::System::YAML');
 
+    # get the old dynamic field data
+    my $OldDynamicField = $Self->DynamicFieldGet(
+        ID => $Param{ID},
+    );
+
+    # keep PartOfSet if present, or delete it if explicitly deactivated
+    if ( $OldDynamicField->{Config}{PartOfSet} ) {
+        $Param{Config}{PartOfSet} //= $OldDynamicField->{Config}{PartOfSet};
+
+        delete $Param{Config}{PartOfSet} if !$Param{Config}{PartOfSet};
+    }
+
     # dump config as string
     my $Config = $YAMLObject->Dump( Data => $Param{Config} );
 
@@ -408,7 +440,7 @@ sub DynamicFieldUpdate {
     );
 
     my $NameExists;
-    while ( my @Data = $DBObject->FetchrowArray() ) {
+    while ( $DBObject->FetchrowArray() ) {
         $NameExists = 1;
     }
 
@@ -427,11 +459,6 @@ sub DynamicFieldUpdate {
         );
         return;
     }
-
-    # get the old dynamic field data
-    my $OldDynamicField = $Self->DynamicFieldGet(
-        ID => $Param{ID},
-    );
 
     # check if FieldOrder is changed
     my $ChangedOrder;
@@ -570,7 +597,7 @@ sub DynamicFieldDelete {
 
 =head2 DynamicFieldList()
 
-get DynamicField list ordered by the the "Field Order" field in the DB
+get the DynamicField list ordered by the "Field Order" field in the DB
 
     my $List = $DynamicFieldObject->DynamicFieldList();
 
@@ -580,8 +607,16 @@ or
         Valid => 0,             # optional, defaults to 1
 
         # object  type (optional) as STRING or as ARRAYREF
+        # The special object type 'All' places no restriction on the object type when
+        # it is passed as a single string.
         ObjectType => 'Ticket',
         ObjectType => ['Ticket', 'Article'],
+
+        # field  type (optional) as STRING or as ARRAYREF
+        # The special field type 'All' places no restriction on the field type when
+        # it is passed as a single string.
+        FieldType => 'Dropdown',
+        FieldType => ['Dropdown', 'Text'],
 
         ResultType => 'HASH',   # optional, 'ARRAY' or 'HASH', defaults to 'ARRAY'
 
@@ -652,6 +687,15 @@ sub DynamicFieldList {
         $ObjectType = $Param{ObjectType};
     }
 
+    # set cache key object type component depending on the FieldType parameter
+    my $FieldType = 'All';
+    if ( IsArrayRefWithData( $Param{FieldType} ) ) {
+        $FieldType = join '_', sort @{ $Param{FieldType} };
+    }
+    elsif ( IsStringWithData( $Param{FieldType} ) ) {
+        $FieldType = $Param{FieldType};
+    }
+
     # set cache key namespace component depending on the Namespace parameter
     my $Namespace = 'All';
     if ( IsStringWithData( $Param{Namespace} ) ) {
@@ -668,6 +712,8 @@ sub DynamicFieldList {
         . $Valid
         . '::ObjectType::'
         . $ObjectType
+        . '::FieldType::'
+        . $FieldType
         . '::Namespace::'
         . $Namespace
         . '::ResultType::'
@@ -762,6 +808,20 @@ sub DynamicFieldList {
             elsif ( IsArrayRefWithData( $Param{ObjectType} ) ) {
                 push @WhereClauses, 'object_type IN (' . join( ', ', map {'?'} $Param{ObjectType}->@* ) . ')';
                 push @Bind,         map { \$_ } $Param{ObjectType}->@*;
+            }
+
+        }
+
+        if ( $Param{FieldType} ) {
+
+            # differentiate whether we have an field type string or array
+            if ( IsStringWithData( $Param{FieldType} ) && $Param{FieldType} ne 'All' ) {
+                push @WhereClauses, 'field_type = ?';
+                push @Bind,         \$Param{FieldType};
+            }
+            elsif ( IsArrayRefWithData( $Param{FieldType} ) ) {
+                push @WhereClauses, 'field_type IN (' . join( ', ', map {'?'} $Param{FieldType}->@* ) . ')';
+                push @Bind,         map { \$_ } $Param{FieldType}->@*;
             }
 
         }
@@ -878,6 +938,107 @@ sub DynamicFieldList {
     return;
 }
 
+=head2 DynamicFieldListMask()
+
+retrieve DynamicField list from given mask definition
+
+    my $List = $DynamicFieldObject->DynamicFieldListMask();
+
+or
+
+    my $List = $DynamicFieldObject->DynamicFieldListMask(
+        Content    => [
+            { DF => 'FieldName1' },
+            {
+                Grid => {
+                    Columns => 2,
+                    Rows    => [
+                        [
+                            { DF => 'FieldName2' },
+                        ],
+                    ],
+                }
+            }
+        ],
+    );
+
+Returns:
+
+    $List = [
+        'ItemOne',
+        'ItemTwo',
+        'ItemThree',
+        'ItemFour',
+    ];
+
+=cut
+
+sub DynamicFieldListMask {
+    my ( $Self, %Param ) = @_;
+
+    if ( !IsArrayRefWithData( $Param{Content} ) ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error',
+            Message  => 'Need Content!',
+        );
+        return;
+    }
+
+    my $ResultType = $Param{ResultType} || 'ARRAY';
+    $ResultType = $ResultType eq 'HASH' ? 'HASH' : 'ARRAY';
+
+    # track fields in hash to avoid returning duplicates
+    my %DFSeen;
+    my @DFList;
+
+    # cycle through content rows
+    CONTENTELEMENT:
+    for my $Element ( $Param{Content}->@* ) {
+        if ( !IsHashRefWithData($Element) ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Misconfigured Definition!",
+            );
+
+            next CONTENTELEMENT;
+        }
+
+        if ( $Element->{DF} ) {
+            next CONTENTELEMENT if $DFSeen{ $Element->{DF} }++;
+            push @DFList, $Element->{DF};
+        }
+        elsif ( $Element->{Grid} ) {
+            if ( !IsArrayRefWithData( $Element->{Grid}{Rows} ) ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => "Misconfigured Grid - need Rows as Array!",
+                );
+
+                next ELEMENT;
+            }
+            if ( $Element->{Grid}{Columns} !~ /^0*[1-9]\d*$/ ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => "Misconfigured Grid - need Columns as integer > 0!",
+                );
+
+                next ELEMENT;
+            }
+
+            for my $Row ( $Element->{Grid}{Rows}->@* ) {
+                for my $RowElement ( $Row->@* ) {
+                    if ( $RowElement->{DF} ) {
+                        next CONTENTELEMENT if $DFSeen{ $RowElement->{DF} }++;
+                        push @DFList, $RowElement->{DF};
+                    }
+                }
+            }
+        }
+    }
+
+    return \@DFList;
+}
+
 =head2 DynamicFieldListGet()
 
 get list of valid dynamic fields with complete data ordered by the "Field Order" field in the DB
@@ -889,12 +1050,21 @@ Additional restrictions can be applied:
     my $List = $DynamicFieldObject->DynamicFieldListGet(
         Valid        => 0,            # optional, defaults to 1
 
-        # object  type (optional) as STRING or as ARRAYREF
-        # The special object type 'All' places no restriction on the object type.
+        # object type (optional) as STRING or as ARRAYREF
+        # The special object type 'All' places no restriction on the object type when
+        # it is passed as a single string.
         ObjectType => 'Ticket',
         ObjectType => ['Ticket', 'Article'],
 
-        FieldFilter => {        # optional, filter by name of the dynamic field
+        # field type (optional) as STRING or as ARRAYREF
+        # The special field type 'All' places no restriction on the field type when
+        # it is passed as a single string.
+        FieldType => 'Dropdown',
+        FieldType => ['Dropdown', 'Text'],
+
+        # optional, filter by name of the dynamic field
+        # only the fields where there the field name has a true value are returned
+        FieldFilter => {
             nameforfield => 1,
             fieldname    => 2,
             other        => 0,
@@ -944,19 +1114,37 @@ sub DynamicFieldListGet {
     }
 
     # set cache key object type component depending on the ObjectType parameter
-    my $ObjectType = 'All';
+    my @ObjectTypes;
+    my $ObjectTypeCacheKey = 'All';
     if ( IsArrayRefWithData( $Param{ObjectType} ) ) {
-        $ObjectType = join '_', sort @{ $Param{ObjectType} };
+        @ObjectTypes        = sort $Param{ObjectType}->@*;
+        $ObjectTypeCacheKey = join '_', @ObjectTypes;
     }
     elsif ( IsStringWithData( $Param{ObjectType} ) ) {
-        $ObjectType = $Param{ObjectType};
+        @ObjectTypes        = $Param{ObjectType} eq 'All' ? () : ( $Param{ObjectType} );
+        $ObjectTypeCacheKey = $Param{ObjectType};
+    }
+
+    # set cache key field type component depending on the FieldType parameter
+    my @FieldTypes;
+    my $FieldTypeCacheKey = 'All';
+    if ( IsArrayRefWithData( $Param{FieldType} ) ) {
+        @FieldTypes        = sort $Param{FieldType}->@*;
+        $FieldTypeCacheKey = join '_', @FieldTypes;
+    }
+    elsif ( IsStringWithData( $Param{FieldType} ) ) {
+        @FieldTypes        = $Param{FieldType} eq 'All' ? () : ( $Param{FieldType} );
+        $FieldTypeCacheKey = $Param{FieldType};
     }
 
     # get cache object
     my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
 
-    my $CacheKey = 'DynamicFieldListGet::Valid::' . $Valid . '::ObjectType::' . $ObjectType;
-    my $Cache    = $CacheObject->Get(
+    my $CacheKey = join '::', 'DynamicFieldListGet',
+        Valid      => $Valid,
+        ObjectType => $ObjectTypeCacheKey,
+        FieldType  => $FieldTypeCacheKey;
+    my $Cache = $CacheObject->Get(
         Type => 'DynamicField',
         Key  => $CacheKey,
     );
@@ -978,65 +1166,70 @@ sub DynamicFieldListGet {
             return;
         }
 
-        my $FilteredData;
+        my @FilteredData;
 
         DYNAMICFIELD:
-        for my $DynamicFieldConfig ( @{$Cache} ) {
-            next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
-            next DYNAMICFIELD if !$DynamicFieldConfig->{Name};
-            next DYNAMICFIELD if !$Param{FieldFilter}->{ $DynamicFieldConfig->{Name} };
+        for my $DynamicFieldConfig ( $Cache->@* ) {
+            next DYNAMICFIELD unless IsHashRefWithData($DynamicFieldConfig);
+            next DYNAMICFIELD unless $DynamicFieldConfig->{Name};
+            next DYNAMICFIELD unless $Param{FieldFilter}->{ $DynamicFieldConfig->{Name} };
 
-            push @{$FilteredData}, $DynamicFieldConfig;
+            push @FilteredData, $DynamicFieldConfig;
         }
 
         # return filtered data from cache
-        return $FilteredData;
+        return \@FilteredData;
     }
 
     # get database object
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
-    my $SQL = 'SELECT id, name, field_order FROM dynamic_field';
-
+    # assemble SQL
+    my ( @WhereClauses, @Binds );
     if ($Valid) {
-
-        # get valid object
         my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
 
-        $SQL .= ' WHERE valid_id IN (' . join ', ', $ValidObject->ValidIDsGet() . ')';
-
-        if ( $Param{ObjectType} ) {
-            if ( IsStringWithData( $Param{ObjectType} ) && $Param{ObjectType} ne 'All' ) {
-                $SQL .=
-                    " AND object_type = '" . $DBObject->Quote( $Param{ObjectType} ) . "'";
-            }
-            elsif ( IsArrayRefWithData( $Param{ObjectType} ) ) {
-                my $ObjectTypeString =
-                    join ',',
-                    map { "'" . $DBObject->Quote($_) . "'" } @{ $Param{ObjectType} };
-                $SQL .= " AND object_type IN ($ObjectTypeString)";
-
-            }
-        }
-    }
-    else {
-        if ( $Param{ObjectType} ) {
-            if ( IsStringWithData( $Param{ObjectType} ) && $Param{ObjectType} ne 'All' ) {
-                $SQL .=
-                    " WHERE object_type = '" . $DBObject->Quote( $Param{ObjectType} ) . "'";
-            }
-            elsif ( IsArrayRefWithData( $Param{ObjectType} ) ) {
-                my $ObjectTypeString =
-                    join ',',
-                    map { "'" . $DBObject->Quote($_) . "'" } @{ $Param{ObjectType} };
-                $SQL .= " WHERE object_type IN ($ObjectTypeString)";
-            }
-        }
+        push @WhereClauses, sprintf 'valid_id IN (%s)', join ', ', $ValidObject->ValidIDsGet;
     }
 
-    $SQL .= " ORDER BY field_order, id";
+    if (@ObjectTypes) {
+        my %QueryCondition = $DBObject->QueryInCondition(
+            Key      => 'object_type',
+            Values   => \@ObjectTypes,
+            BindMode => 1,
+        );
 
-    return if !$DBObject->Prepare( SQL => $SQL );
+        push @WhereClauses, $QueryCondition{SQL};
+        push @Binds,        $QueryCondition{Values}->@*;
+    }
+
+    if (@FieldTypes) {
+        my %QueryCondition = $DBObject->QueryInCondition(
+            Key      => 'field_type',
+            Values   => \@FieldTypes,
+            BindMode => 1,
+        );
+
+        push @WhereClauses, $QueryCondition{SQL};
+        push @Binds,        $QueryCondition{Values}->@*;
+    }
+
+    my $WhereSQL = '';
+    if (@WhereClauses) {
+        $WhereSQL = 'WHERE ' . join ' AND ', @WhereClauses;
+    }
+
+    my $SQL = <<"END_SQL";
+SELECT id, name, field_order
+  FROM dynamic_field
+  $WhereSQL
+  ORDER BY field_order, id
+END_SQL
+
+    return unless $DBObject->Prepare(
+        SQL  => $SQL,
+        Bind => \@Binds,
+    );
 
     # Fetch first the list of IDs,
     # as DynamicFieldGet() might use Kernell::System::DB as well
@@ -1065,6 +1258,7 @@ sub DynamicFieldListGet {
             Priority => 'error',
             Message  => 'FieldFilter must be a HASH reference!',
         );
+
         return;
     }
 
@@ -1072,9 +1266,9 @@ sub DynamicFieldListGet {
     my $FilteredData;
     DYNAMICFIELD:
     for my $DynamicFieldConfig (@Data) {
-        next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
-        next DYNAMICFIELD if !$DynamicFieldConfig->{Name};
-        next DYNAMICFIELD if !$Param{FieldFilter}->{ $DynamicFieldConfig->{Name} };
+        next DYNAMICFIELD unless IsHashRefWithData($DynamicFieldConfig);
+        next DYNAMICFIELD unless $DynamicFieldConfig->{Name};
+        next DYNAMICFIELD unless $Param{FieldFilter}->{ $DynamicFieldConfig->{Name} };
 
         push @{$FilteredData}, $DynamicFieldConfig;
     }
@@ -1264,10 +1458,10 @@ sub ObjectMappingGet {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # Get configuration for this object type
-    my $Config           = $ConfigObject->Get("DynamicFields::ObjectType") || {};
-    my $ObjecTypesConfig = $Config->{ $Param{ObjectType} };
+    my $Config            = $ConfigObject->Get("DynamicFields::ObjectType") || {};
+    my $ObjectTypesConfig = $Config->{ $Param{ObjectType} };
 
-    if ( !IsHashRefWithData($ObjecTypesConfig) ) {
+    if ( !IsHashRefWithData($ObjectTypesConfig) ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Configuration for dynamic field object type $Param{ObjectType} is invalid!",
@@ -1276,7 +1470,7 @@ sub ObjectMappingGet {
         return;
     }
 
-    if ( !$ObjecTypesConfig->{UseObjectName} ) {
+    if ( !$ObjectTypesConfig->{UseObjectName} ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Dynamic field object type $Param{ObjectType} does not support this function",
@@ -1380,10 +1574,10 @@ sub ObjectMappingCreate {
     }
 
     # Get configuration for this object type
-    my $Config           = $Kernel::OM->Get('Kernel::Config')->Get("DynamicFields::ObjectType") || {};
-    my $ObjecTypesConfig = $Config->{ $Param{ObjectType} };
+    my $Config            = $Kernel::OM->Get('Kernel::Config')->Get("DynamicFields::ObjectType") || {};
+    my $ObjectTypesConfig = $Config->{ $Param{ObjectType} };
 
-    if ( !IsHashRefWithData($ObjecTypesConfig) ) {
+    if ( !IsHashRefWithData($ObjectTypesConfig) ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Configuration for dynamic field object type $Param{ObjectType} is invalid!",
@@ -1391,7 +1585,7 @@ sub ObjectMappingCreate {
         return;
     }
 
-    if ( !$ObjecTypesConfig->{UseObjectName} ) {
+    if ( !$ObjectTypesConfig->{UseObjectName} ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Dynamic field object type $Param{ObjectType} does not support this function",
@@ -1466,10 +1660,10 @@ sub ObjectMappingNameChange {
     }
 
     # Get configuration for this object type
-    my $Config           = $Kernel::OM->Get('Kernel::Config')->Get("DynamicFields::ObjectType") || {};
-    my $ObjecTypesConfig = $Config->{ $Param{ObjectType} };
+    my $Config            = $Kernel::OM->Get('Kernel::Config')->Get("DynamicFields::ObjectType") || {};
+    my $ObjectTypesConfig = $Config->{ $Param{ObjectType} };
 
-    if ( !IsHashRefWithData($ObjecTypesConfig) ) {
+    if ( !IsHashRefWithData($ObjectTypesConfig) ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Configuration for dynamic field object type $Param{ObjectType} is invalid!",
@@ -1477,7 +1671,7 @@ sub ObjectMappingNameChange {
         return;
     }
 
-    if ( !$ObjecTypesConfig->{UseObjectName} ) {
+    if ( !$ObjectTypesConfig->{UseObjectName} ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => "Dynamic field object type $Param{ObjectType} does not support this function",
@@ -1525,7 +1719,23 @@ sub DESTROY {
 
 Returns a list of valid dynamic fields.
 
-    my $DynamicFields = $DynamicFieldObject->GetValidDynamicFields();
+    my $DynamicFields = $DynamicFieldObject->GetValidDynamicFields(
+
+        # object  type (optional) as STRING or as ARRAYREF
+        # The special object type 'All' places no restriction on the object type when
+        # it is passed as a single string.
+        ObjectType => 'Ticket',
+        ObjectType => ['Ticket', 'Article'],
+
+        # optional, filter by name of the dynamic field
+        # only the fields where there the field name has a true value are returned
+        FieldFilter => {
+            nameforfield => 1,
+            fieldname    => 2,
+            other        => 0,
+            otherfield   => 0,
+        },
+    );
 
 Returns:
 
@@ -1541,9 +1751,10 @@ sub GetValidDynamicFields {
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $DynamicFieldValid = $ConfigObject->Get('Znuny4OTOBOAdvancedDynamicFields::DynamicFieldValid');
+    my $DynamicFieldValid = $ConfigObject->Get('Znuny4CareOnCloudAdvancedDynamicFields::DynamicFieldValid');
 
     my $DynamicFieldList = $Self->DynamicFieldListGet(
+        %Param,
         ResultType => 'HASH',
         Valid      => $DynamicFieldValid,
     );
@@ -1559,6 +1770,144 @@ sub GetValidDynamicFields {
     }
 
     return $DynamicFields;
+}
+
+=head2 DynamicFieldConfigName2ID()
+
+Transformations of the dynamic field config needed for Import, which includes transitioning names in field configs into IDs.
+Note that the passed in dynamic field config is modified in place.
+
+    $FieldConfig = $DynamicFieldObject->DynamicFieldConfigName2ID(
+        DynamicFieldConfig => $FieldConfig,
+    );
+
+=cut
+
+sub DynamicFieldConfigName2ID {
+    my ( $Self, %Param ) = @_;
+
+    if ( !IsHashRefWithData( $Param{DynamicFieldConfig} ) ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error',
+            Message  => "Need DynamicFieldConfig!",
+        );
+        return;
+    }
+
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+
+    if ( any { $DynamicFieldConfig->{FieldType} eq $_ } qw(Agent ConfigItem ConfigItemVersion CustomerCompany CustomerUser FAQ Ticket) ) {
+
+        # needed transformation: Name -> ID
+        if ( $DynamicFieldConfig->{Config}{Queue} ) {
+            my @QueueIDs;
+            for my $QueueName ( $DynamicFieldConfig->{Config}{Queue}->@* ) {
+                push @QueueIDs, $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup( Queue => $QueueName );
+            }
+            $DynamicFieldConfig->{Config}{Queue} = \@QueueIDs;
+        }
+        if ( $DynamicFieldConfig->{Config}{TicketType} ) {
+            my @TypeIDs;
+            for my $TypeName ( $DynamicFieldConfig->{Config}{TicketType}->@* ) {
+                push @TypeIDs, $Kernel::OM->Get('Kernel::System::Type')->TypeLookup( TypeID => $TypeName );
+            }
+            $DynamicFieldConfig->{Config}{TicketType} = \@TypeIDs;
+        }
+        if ( $DynamicFieldConfig->{Config}{ClassIDs} ) {
+            my %ClassName2ID = reverse %{
+                $Kernel::OM->Get('Kernel::System::GeneralCatalog')->ItemList(
+                    Class => 'ITSM::ConfigItem::Class',
+                )
+            };
+            my @ClassIDs = map
+                { $ClassName2ID{$_} }
+                $DynamicFieldConfig->{Config}->{ClassIDs}->@*;
+            $DynamicFieldConfig->{Config}{ClassIDs} = \@ClassIDs;
+        }
+    }
+    elsif ( $Param{DynamicFieldConfig}{FieldType} eq 'Lens' ) {
+
+        # needed transformation: Name -> ID
+        my $AttributeDF = $Self->DynamicFieldGet(
+            Name => $Param{DynamicFieldConfig}{Config}{AttributeDF},
+        );
+        $Param{DynamicFieldConfig}{Config}{AttributeDF} = $AttributeDF->{ID};
+        my $ReferenceDF = $Self->DynamicFieldGet(
+            Name => $Param{DynamicFieldConfig}{Config}{ReferenceDF},
+        );
+        $Param{DynamicFieldConfig}{Config}{ReferenceDF} = $ReferenceDF->{ID};
+    }
+
+    return $Param{DynamicFieldConfig};
+}
+
+=head2 DynamicFieldConfigID2Name()
+
+Transformations of the dynamic field config needed for Import/Export, which includes transitioning IDs in field configs into names.
+Note that the passed in dynamic field config is modified in place.
+
+    $FieldConfig = $DynamicFieldObject->DynamicFieldConfigID2Name(
+        DynamicFieldConfig => $FieldConfig,
+    );
+
+=cut
+
+sub DynamicFieldConfigID2Name {
+    my ( $Self, %Param ) = @_;
+
+    if ( !IsHashRefWithData( $Param{DynamicFieldConfig} ) ) {
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'error',
+            Message  => "Need DynamicFieldConfig!",
+        );
+        return;
+    }
+
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+
+    if ( any { $DynamicFieldConfig->{FieldType} eq $_ } qw(Agent ConfigItem ConfigItemVersion CustomerCompany CustomerUser FAQ Ticket) ) {
+
+        # needed transformation: ID -> Name
+        if ( $DynamicFieldConfig->{Config}{Queue} ) {
+            my @QueueNames;
+            for my $QueueID ( $DynamicFieldConfig->{Config}{Queue}->@* ) {
+                push @QueueNames, $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup( QueueID => $QueueID );
+            }
+            $DynamicFieldConfig->{Config}{Queue} = \@QueueNames;
+        }
+        if ( $DynamicFieldConfig->{Config}{TicketType} ) {
+            my @TypeNames;
+            for my $TypeID ( $DynamicFieldConfig->{Config}{TicketType}->@* ) {
+                push @TypeNames, $Kernel::OM->Get('Kernel::System::Type')->TypeLookup( TypeID => $TypeID );
+            }
+            $DynamicFieldConfig->{Config}{TicketType} = \@TypeNames;
+        }
+        if ( $DynamicFieldConfig->{Config}{ClassIDs} ) {
+            my %ClassID2Name = %{
+                $Kernel::OM->Get('Kernel::System::GeneralCatalog')->ItemList(
+                    Class => 'ITSM::ConfigItem::Class',
+                )
+            };
+            my @ClassNames = map
+                { $ClassID2Name{$_} }
+                $DynamicFieldConfig->{Config}->{ClassIDs}->@*;
+            $DynamicFieldConfig->{Config}{ClassIDs} = \@ClassNames;
+        }
+    }
+    elsif ( $Param{DynamicFieldConfig}{FieldType} eq 'Lens' ) {
+
+        # needed transformation: ID -> Name
+        my $AttributeDF = $Self->DynamicFieldGet(
+            ID => $Param{DynamicFieldConfig}{Config}{AttributeDF},
+        );
+        $Param{DynamicFieldConfig}{Config}{AttributeDF} = $AttributeDF->{Name};
+        my $ReferenceDF = $Self->DynamicFieldGet(
+            ID => $Param{DynamicFieldConfig}{Config}{ReferenceDF},
+        );
+        $Param{DynamicFieldConfig}{Config}{ReferenceDF} = $ReferenceDF->{Name};
+    }
+
+    return $Param{DynamicFieldConfig};
 }
 
 =begin Internal:
@@ -1610,11 +1959,6 @@ sub _DynamicFieldReorder {
             return;
         }
     }
-
-    # get the Dynamic Field trigger
-    my $DynamicFieldTrigger = $Self->DynamicFieldGet(
-        ID => $Param{ID},
-    );
 
     # extract the field order from the params
     my $TriggerFieldOrder = $Param{FieldOrder};
@@ -1748,7 +2092,7 @@ sub _DynamicFieldReorder {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  => 'An error was detected while re ordering the field list on field '
-                    . "DynamicField->{Name}!",
+                    . "$DynamicField->{Name}!",
             );
             return;
         }

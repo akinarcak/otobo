@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-# Stop the OTOBO specific container for Selenium testing.
+# Stop the CareOnCloud ESM specific container for Selenium testing.
 # Usually the container will be autmatically removed after it had been stopped.
 # The image will linger.
 docker stop otobo_selenium-chrome

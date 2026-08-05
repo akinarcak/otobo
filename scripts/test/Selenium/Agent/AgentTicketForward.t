@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 
 our $Self;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -221,30 +221,30 @@ $Selenium->RunTest(
 
         # Wait until CKEditor content is updated.
         $Selenium->WaitFor(
-            JavaScript => "return CKEDITOR.instances.RichText.getData().indexOf('$ImgSource') > -1;",
+            JavaScript => qq{ return CKEditorInstances['RichText'].getData().indexOf('$ImgSource') > -1; },
         );
 
         # Verify external content is loaded due to disabled BlockLoadingRemoteContent.
         $Self->True(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('$ImgSource') > -1;"),
+            $Selenium->execute_script(qq{ return CKEditorInstances['RichText'].getData().indexOf('$ImgSource') > -1; }),
             "BlockLoadingRemoteContent is disabled - external content is loaded"
         );
 
         # Verify potentially unsafe tags are not present.
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<applet') > -1;"),
+            $Selenium->execute_script(qq{return CKEditorInstances['RichText'].getData().indexOf('<applet') > -1;}),
             'APPLET tag is stripped from the quoted content'
         );
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<embed') > -1;"),
+            $Selenium->execute_script(qq{ return CKEditorInstances['RichText'].getData().indexOf('<embed') > -1; }),
             'EMBED tag is stripped from the quoted content'
         );
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<svg') > -1;"),
+            $Selenium->execute_script(qq{ return CKEditorInstances['RichText'].getData().indexOf('<svg') > -1;}),
             'SVG tag is stripped from the quoted content'
         );
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<script') > -1;"),
+            $Selenium->execute_script("return CKEditorInstances['RichText'].getData().indexOf('<script') > -1;"),
             'SCRIPT tag is stripped from the quoted content'
         );
 
@@ -259,30 +259,30 @@ $Selenium->RunTest(
 
         # Wait until CKEditor content is updated.
         $Selenium->WaitFor(
-            JavaScript => "return CKEDITOR.instances.RichText.getData().indexOf('$RandomID') > -1;",
+            JavaScript => qq{ return CKEditorInstances['RichText'].getData().indexOf('$RandomID') > -1; },
         );
 
         # Verify external content is not loaded due to enabled BlockLoadingRemoteContent.
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('$ImgSource') > -1;"),
+            $Selenium->execute_script(qq{ return CKEditorInstances['RichText'].getData().indexOf('$ImgSource') > -1; }),
             "BlockLoadingRemoteContent is enabled - external content is not loaded"
         );
 
         # Verify potentially unsafe tags are not present.
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<applet') > -1;"),
+            $Selenium->execute_script(q{ return CKEditorInstances['RichText'].getData().indexOf('<applet') > -1; }),
             'APPLET tag is stripped from the quoted content'
         );
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<embed') > -1;"),
+            $Selenium->execute_script(q{ return CKEditorInstances['RichText'].getData().indexOf('<embed') > -1; }),
             'EMBED tag is stripped from the quoted content'
         );
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<svg') > -1;"),
+            $Selenium->execute_script(q{ return CKEditorInstances['RichText'].getData().indexOf('<svg') > -1; }),
             'SVG tag is stripped from the quoted content'
         );
         $Self->False(
-            $Selenium->execute_script("return CKEDITOR.instances.RichText.getData().indexOf('<script') > -1;"),
+            $Selenium->execute_script(q{ return CKEditorInstances['RichText'].getData().indexOf('<script') > -1; }),
             'SCRIPT tag is stripped from the quoted content'
         );
 

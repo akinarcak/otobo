@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,7 +30,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Reinstall all OTOBO packages that are not correctly deployed.');
+    $Self->Description('Reinstall all CareOnCloud ESM packages that are not correctly deployed.');
     $Self->AddOption(
         Name        => 'force',
         Description => 'Force package reinstallation even if validation fails.',
@@ -53,7 +53,7 @@ sub Run {
 
     my $HideDeploymentInfoOption = $Self->GetOption('hide-deployment-info') || 0;
 
-    $Self->Print("<yellow>Reinstalling all OTOBO packages that are not correctly deployed...</yellow>\n");
+    $Self->Print("<yellow>Reinstalling all CareOnCloud ESM packages that are not correctly deployed...</yellow>\n");
 
     my $CacheObject = $Kernel::OM->Get('Kernel::System::Cache');
 

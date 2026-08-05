@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -34,6 +34,7 @@
 #       FieldName="MyName"
 #       MaxFiles="2"
 #       Mandatory="true"
+#       ACLHidden="true"
 #       FileTypes="pdf,jpg,jpeg"
 #       FormID="3849738474.3343434"
 #   %]
@@ -45,8 +46,8 @@
 
 <div class="oooDnD">
     <input
-        class="AjaxDnDUpload [% IF Mandatory %]Validate_DnDUpload[% END %]"
-        [% IF !Single %] multiple="multiple"[% END %]
+        class="AjaxDnDUpload [% IF ACLHidden && Mandatory %]Validate_DnDUpload_IfVisible[% ELSIF Mandatory %]Validate_DnDUpload[% END %]"
+        [% IF !Single %] multiple[% END %]
         id="[% IF FieldID %][% FieldID | html %][% ELSE %]FileUpload[% END %][% IF Data.IDSuffix %]_[% Data.IDSuffix | html %][% END %]"
         name="[% IF FieldName %][% FieldName | html %][% ELSE %]FileUpload[% END %]"
         data-max-files="[% MaxFiles | html %]"

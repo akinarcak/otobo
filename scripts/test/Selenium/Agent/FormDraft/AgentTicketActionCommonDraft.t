@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,17 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+use Test2::V0;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $main::Self
 
 our $Self;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -235,12 +240,6 @@ $Selenium->RunTest(
             {
                 Module => 'Responsible',
                 Fields => {
-                    Title => {
-                        ID     => 'Title',
-                        Type   => 'Input',
-                        Value  => 'Selenium Responsible Title',
-                        Update => 'Selenium Responsible Title - Update'
-                    },
                     Subject => {
                         ID     => 'Subject',
                         Type   => 'Input',
@@ -337,18 +336,20 @@ $Selenium->RunTest(
                 }
                 elsif ( $Test->{Fields}->{$Field}->{Type} eq 'RichText' ) {
 
-                    # wait for the CKE to load
+                    # Wait for the CKEditor to load.
+                    my $RichTextElement = $Selenium->find_element( '#RichText', 'css' );
                     $Selenium->WaitFor(
-                        JavaScript =>
-                            "return \$('body.cke_editable', \$('.cke_wysiwyg_frame').contents()).length == 1;"
+                        JavaScript => [
+                            q{ return arguments[0].classList.contains('HasCKEInstance') },
+                            $RichTextElement,
+                        ],
                     );
 
                     $Selenium->execute_script(
-                        "return CKEDITOR.instances.RichText.setData('$Test->{Fields}->{$Field}->{Value}');"
+                        qq{ return CKEditorInstances['RichText'].setData('$Test->{Fields}->{$Field}->{Value}'); }
                     );
-
                     $Selenium->execute_script(
-                        "return CKEDITOR.instances.RichText.updateElement();"
+                        q{ return CKEditorInstances['RichText'].updateSourceElement(); }
                     );
                 }
                 else {
@@ -442,11 +443,10 @@ $Selenium->RunTest(
                     my $Value = $Test->{Fields}->{$FieldValue}->{Value};
 
                     $Selenium->WaitFor(
-                        JavaScript =>
-                            "return typeof(\$) === 'function' && \$('#$ID').length && \$('#$ID').val() == '$Value';"
+                        JavaScript => "return typeof(\$) === 'function' && \$('#$ID').length && \$('#$ID').val() == '$Value';"
                     );
 
-                    $Self->Is(
+                    is(
                         $Selenium->execute_script("return \$('#$ID').val();"),
                         $Value,
                         "Initial Draft value for $Test->{Module} field $FieldValue is correct - $Value"
@@ -511,24 +511,25 @@ $Selenium->RunTest(
                 }
                 elsif ( $Test->{Fields}->{$FieldValue}->{Type} eq 'RichText' ) {
 
-                    # wait for the CKE to load
+                    # Wait for the CKEditor to load.
+                    my $RichTextElement = $Selenium->find_element( '#RichText', 'css' );
                     $Selenium->WaitFor(
-                        JavaScript =>
-                            "return \$('body.cke_editable', \$('.cke_wysiwyg_frame').contents()).length == 1;"
+                        JavaScript => [
+                            q{ return arguments[0].classList.contains('HasCKEInstance') },
+                            $RichTextElement,
+                        ],
                     );
 
-                    $Self->Is(
-                        $Selenium->execute_script('return CKEDITOR.instances.RichText.getData();'),
-                        $Test->{Fields}->{$FieldValue}->{Value},
+                    is(
+                        $Selenium->execute_script(q{ return CKEditorInstances['RichText'].getData();}),
+                        "<p>$Test->{Fields}->{$FieldValue}->{Value}</p>",
                         "Initial Draft value for $Test->{Module} field $FieldValue is correct"
                     );
-
                     $Selenium->execute_script(
-                        "return CKEDITOR.instances.RichText.setData('$Test->{Fields}->{$FieldValue}->{Update}');"
+                        qq{ return CKEditorInstances['RichText'].setData('$Test->{Fields}->{$FieldValue}->{Update}'); }
                     );
-
                     $Selenium->execute_script(
-                        "return CKEDITOR.instances.RichText.updateElement();"
+                        q{ return CKEditorInstances['RichText'].updateSourceElement(); }
                     );
                 }
                 else {
@@ -641,14 +642,8 @@ $Selenium->RunTest(
         # Submit empty form to check validation.
         $Selenium->find_element( "#submitRichText", 'css' )->click();
 
-        # Wait error Dialog to be visible.
-        $Selenium->WaitFor( JavaScript => 'return typeof($) === "function" && $(".Dialog:visible").length === 1;' );
-
-        # Close error Dialog.
-        $Selenium->find_element( "#DialogButton1", 'css' )->click();
-        $Selenium->WaitFor( JavaScript => 'return typeof($) === "function" && $(".Dialog:visible").length === 0;' );
-
         # Check validation.
+        $Selenium->WaitFor( JavaScript => "return \$('#Subject').hasClass('Error');" );
         $Self->Is(
             $Selenium->execute_script(
                 "return \$('#Subject').hasClass('Error');"
@@ -685,4 +680,4 @@ $Selenium->RunTest(
 
 );
 
-$Self->DoneTesting();
+done_testing;

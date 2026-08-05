@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,12 +23,12 @@ use warnings;
 # core modules
 
 # CPAN modules
-use Mail::Address;
-use MIME::Entity;
-use MIME::Parser;
-use MIME::Words;
+use Mail::Internet ();
+use MIME::Entity   ();
+use MIME::Parser   ();
+use MIME::Words    qw(encode_mimewords);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -40,6 +40,7 @@ our @ObjectDependencies = (
     'Kernel::System::Log',
     'Kernel::System::MailQueue',
     'Kernel::System::CommunicationLog',
+    'Kernel::System::EmailAddress',
 );
 
 =head1 NAME
@@ -97,7 +98,7 @@ To send an email without already created header:
         References    => '<somemessageid-1@example.com> <somemessageid-2@example.com>',
         Loop          => 1, # not required, removes smtp from
         CustomHeaders => {
-            X-OTOBO-MyHeader => 'Some Value',
+            X-CareOnCloud-MyHeader => 'Some Value',
         },
         Attachment => [
             {
@@ -300,9 +301,7 @@ sub Send {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # Check from
-    if ( !$Param{From} ) {
-        $Param{From} = $ConfigObject->Get('AdminEmail') || 'otobo@localhost';
-    }
+    $Param{From} ||= $ConfigObject->Get('AdminEmail') || 'careoncloud@localhost';
 
     # Map ReplyTo into Reply-To if present.
     if ( $Param{ReplyTo} ) {
@@ -564,6 +563,7 @@ sub Send {
             );
 
             my $Parser = MIME::Parser->new();
+            $Parser->output_to_core('ALL');
 
             $Parser->output_dir( $ConfigObject->Get('TempDir') );
             $Entity = $Parser->parse_data( $Header . $EncryptedMessage );
@@ -596,17 +596,13 @@ sub Send {
 
     # get recipients
     my @ToArray;
-    my $To = '';
-
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
     RECIPIENT:
     for my $Recipient (qw(To Cc Bcc)) {
-        next RECIPIENT if !$Param{$Recipient};
-        for my $Email ( Mail::Address->parse( $Param{$Recipient} ) ) {
-            push( @ToArray, $Email->address() );
-            if ($To) {
-                $To .= ', ';
-            }
-            $To .= $Email->address();
+        next RECIPIENT unless $Param{$Recipient};
+
+        for my $Email ( $EmailAddressObject->ParseAddressLine( Line => $Param{$Recipient} ) ) {
+            push @ToArray, $EmailAddressObject->GetAddress( AddressObject => $Email );
         }
     }
 
@@ -614,14 +610,16 @@ sub Send {
     my $SendmailBcc = $ConfigObject->Get('SendmailBcc');
     if ($SendmailBcc) {
         push @ToArray, $SendmailBcc;
-        $To .= ', ' . $SendmailBcc;
     }
+
+    # comma separated list used for logging and error messages
+    my $To = join ', ', @ToArray;
 
     # set envelope sender for replies
     my $RealFrom = $ConfigObject->Get('SendmailEnvelopeFrom') || '';
     if ( !$RealFrom ) {
-        my @Sender = Mail::Address->parse( $Param{From} );
-        $RealFrom = $Sender[0]->address();
+        my ($Sender) = $EmailAddressObject->ParseAddressLine( Line => $Param{From} );
+        $RealFrom = $EmailAddressObject->GetAddress( AddressObject => $Sender );
     }
 
     # set envelope sender for auto-responses and notifications
@@ -701,7 +699,7 @@ Really send the mail
 
     my $Result = $SendObject->SendExecute(
         From                   => $RealFrom,
-        ToArray                => \@ToArray,
+        To                     => \@ToArray,
         Header                 => \$Param{Header},
         Body                   => \$Param{Body},
         CommunicationLogObject => $CommunicationLogObject,
@@ -898,8 +896,9 @@ sub Bounce {
     my $EmailObject = Mail::Internet->new( \@EmailPlain );
 
     # get sender
-    my @Sender   = Mail::Address->parse( $Param{From} );
-    my $RealFrom = $Sender[0]->address();
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    my ($Sender)           = $EmailAddressObject->ParseAddressLine( Line => $Param{From} );
+    my $RealFrom           = $EmailAddressObject->GetAddress( AddressObject => $Sender );
 
     # add ReSent header (see https://www.ietf.org/rfc/rfc2822.txt A.3. Resent messages)
     my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
@@ -990,7 +989,7 @@ sub _EncodeMIMEWords {
     # return if no content is given
     return '' if !defined $Param{Line};
 
-    return MIME::Words::encode_mimewords(
+    return encode_mimewords(
         Encode::encode(
             $Param{Charset},
             $Param{Line},

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -59,7 +59,7 @@ sub Run {
         }
     }
 
-    # The dynamic fields of a CustomerUser are linked via the the field UserLogin. But UserLogin
+    # The dynamic fields of a CustomerUser are linked via the field UserLogin. But UserLogin
     # is not necessarily the unique id for the customer user. This means that UserLogin may
     # change. If the user login has been changed, update dynamic field object name for given name and type.
     if ( lc $Param{Data}->{OldData}->{UserLogin} ne lc $Param{Data}->{NewData}->{UserLogin} ) {

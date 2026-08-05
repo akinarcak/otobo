@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,15 @@ package Kernel::Modules::AdminProcessManagementPath;
 
 use strict;
 use warnings;
+use utf8;
 
-use List::Util qw(first);
+# core modules
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -76,7 +80,7 @@ sub Run {
         # get parameter from web browser
         my $GetParam = $Self->_GetParams();
 
-        $PathData->{ProcessEntityID}    = $GetParam->{ProcessEntityID}    || $GetParam->{ID};
+        $PathData->{ProcessEntityID}    = $GetParam->{ProcessEntityID};
         $PathData->{TransitionEntityID} = $GetParam->{TransitionEntityID} || $GetParam->{EntityID};
         $PathData->{StartActivityID}    = $GetParam->{StartActivityID};
 
@@ -151,35 +155,17 @@ sub Run {
         # check if needed to open another window or if popup should go back
         if ( $Redirect && $Redirect eq '1' ) {
 
-            my $RedirectAction    = $ParamObject->GetParam( Param => 'PopupRedirectAction' )    || '';
-            my $RedirectSubaction = $ParamObject->GetParam( Param => 'PopupRedirectSubaction' ) || '';
-            my $RedirectID        = $ParamObject->GetParam( Param => 'PopupRedirectID' )        || '';
-            my $RedirectEntityID  = $ParamObject->GetParam( Param => 'PopupRedirectEntityID' )  || '';
-
-            # when redirecting to the transition dialog, we need the new TransitionID
-            # because the ID was possibly changed in this dialog
-            # the value is stored in data-entity
-            # when redirecting to the transition action dialog, data-entity contains
-            # the transition action ID, but still we need the transition ID for going back
-
-            my $EntityID;
-
-            if (
-                $RedirectSubaction eq 'TransitionActionEdit'
-                || $RedirectSubaction eq 'TransitionActionNew'
-                )
-            {
-                $EntityID = $TransferData->{TransitionEntityID};
-            }
-            elsif ( $RedirectSubaction eq 'TransitionEdit' ) {
-                $EntityID = $RedirectEntityID;
-            }
+            my $RedirectAction          = $ParamObject->GetParam( Param => 'PopupRedirectAction' )          || '';
+            my $RedirectSubaction       = $ParamObject->GetParam( Param => 'PopupRedirectSubaction' )       || '';
+            my $RedirectID              = $ParamObject->GetParam( Param => 'PopupRedirectID' )              || '';
+            my $RedirectEntityID        = $ParamObject->GetParam( Param => 'PopupRedirectEntityID' )        || '';
+            my $RedirectProcessEntityID = $ParamObject->GetParam( Param => 'PopupRedirectProcessEntityID' ) || '';
 
             $Self->_PushSessionScreen(
-                ID              => $TransferData->{ProcessEntityID},    # abuse!
-                EntityID        => $EntityID,
+                ProcessEntityID => $TransferData->{ProcessEntityID},
+                EntityID        => $DataToMerge->{NewTransitionEntityID},
                 StartActivityID => $GetParam->{StartActivityID},
-                Subaction       => 'PathEdit'                           # always use edit screen
+                Subaction       => 'PathEdit'                               # always use edit screen
             );
 
             # get transition id
@@ -195,10 +181,11 @@ sub Run {
             return $Self->_PopupResponse(
                 Redirect => 1,
                 Screen   => {
-                    Action    => $RedirectAction,
-                    Subaction => $RedirectSubaction,
-                    ID        => $RedirectID,
-                    EntityID  => $RedirectEntityID,
+                    Action          => $RedirectAction,
+                    Subaction       => $RedirectSubaction,
+                    ID              => $RedirectID,
+                    EntityID        => $RedirectEntityID,
+                    ProcessEntityID => $RedirectProcessEntityID,
                 },
                 ConfigJSON => $ReturnConfig,
             );
@@ -271,10 +258,11 @@ sub _ShowEdit {
         $LayoutObject->Block(
             Name => 'GoBack',
             Data => {
-                Action    => $Self->{ScreensPath}->[-1]->{Action}    || '',
-                Subaction => $Self->{ScreensPath}->[-1]->{Subaction} || '',
-                ID        => $Self->{ScreensPath}->[-1]->{ID}        || '',
-                EntityID  => $Self->{ScreensPath}->[-1]->{EntityID}  || '',
+                Action          => $Self->{ScreensPath}->[-1]->{Action}          || '',
+                Subaction       => $Self->{ScreensPath}->[-1]->{Subaction}       || '',
+                ID              => $Self->{ScreensPath}->[-1]->{ID}              || '',
+                EntityID        => $Self->{ScreensPath}->[-1]->{EntityID}        || '',
+                ProcessEntityID => $Self->{ScreensPath}->[-1]->{ProcessEntityID} || '',
             },
         );
     }
@@ -295,15 +283,27 @@ sub _ShowEdit {
 
     # collect possible transitions and build selection
     my %TransitionList;
+    TRANSITION:
     for my $Transition ( @{ $Self->{TransitionList} } ) {
-        $TransitionList{ $Transition->{EntityID} } = $Transition->{Name};
+        next TRANSITION unless !$Transition->{ProcessEntityID} ||
+            $Transition->{ProcessEntityID} eq $Param{ProcessEntityID};
+
+        my $Name = $Transition->{Name};
+
+        # add namespace if needed
+        if ( $Transition->{Namespace} ) {
+
+            # NOTE dash is em dash on purpose for namespace separation
+            $Name = $Transition->{Namespace} . ' — ' . $Name;
+        }
+
+        $TransitionList{ $Transition->{EntityID} } = $Name;
     }
 
     # fix sorting by names
     my @TransitionList;
     for my $TransitionID (
-        sort { lc $TransitionList{$a} cmp lc $TransitionList{$b} }
-        keys %TransitionList
+        sort { lc $TransitionList{$a} cmp lc $TransitionList{$b} } keys %TransitionList
         )
     {
         push @TransitionList, {
@@ -322,16 +322,22 @@ sub _ShowEdit {
     );
 
     # display available transition actions
+    TRANSITIONACTION:
     for my $EntityID ( sort keys %AvailableTransitionActionsLookup ) {
 
         my $TransitionActionData = $AvailableTransitionActionsLookup{$EntityID};
 
+        next TRANSITIONACTION unless !$TransitionActionData->{ProcessEntityID} ||
+            $TransitionActionData->{ProcessEntityID} eq $Param{ProcessEntityID};
+
         $LayoutObject->Block(
             Name => 'AvailableTransitionActionRow',
             Data => {
-                ID       => $TransitionActionData->{ID},
-                EntityID => $TransitionActionData->{EntityID},
-                Name     => $TransitionActionData->{Name},
+                ID              => $TransitionActionData->{ID},
+                EntityID        => $TransitionActionData->{EntityID},
+                Name            => $TransitionActionData->{Name},
+                Namespace       => $TransitionActionData->{Namespace} || '',
+                ProcessEntityID => $Param{ProcessEntityID},
             },
         );
     }
@@ -368,7 +374,7 @@ sub _GetParams {
 
     # get parameters from web browser
     for my $ParamName (
-        qw( ID EntityID ProcessData TransitionInfo ProcessEntityID StartActivityID TransitionEntityID )
+        qw( EntityID ProcessData TransitionInfo ProcessEntityID StartActivityID TransitionEntityID )
         )
     {
         $GetParam->{$ParamName} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => $ParamName )
@@ -420,7 +426,7 @@ sub _PushSessionScreen {
     push @{ $Self->{ScreensPath} }, {
         Action          => $Self->{Action} || '',
         Subaction       => $Param{Subaction},
-        ID              => $Param{ID},
+        ProcessEntityID => $Param{ProcessEntityID},
         EntityID        => $Param{EntityID},
         StartActivityID => $Param{StartActivityID},
     };

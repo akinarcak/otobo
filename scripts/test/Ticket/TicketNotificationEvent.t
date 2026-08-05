@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -143,7 +143,7 @@ my $NotificationID = $NotificationEventObject->NotificationAdd(
             Subject => 'Test external note',
 
             # include non-breaking space (bug#10970)
-            Body => 'Ticket:&nbsp;<OTOBO_TICKET_TicketID>&nbsp;<OTOBO_OWNER_UserFirstname>',
+            Body => 'Ticket:&nbsp;<CareOnCloud_TICKET_TicketID>&nbsp;<CareOnCloud_OWNER_UserFirstname>',
 
             ContentType => 'text/html',
         },

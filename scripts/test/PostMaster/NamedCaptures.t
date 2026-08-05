@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
@@ -70,7 +72,7 @@ for my $FieldName ( sort keys %NeededDynamicfields ) {
         );
 
         # verify dynamic field creation
-        $Self->True(
+        ok(
             $FieldID,
             "DynamicFieldAdd() successful for Field $FieldName",
         );
@@ -91,7 +93,7 @@ for my $FieldName ( sort keys %NeededDynamicfields ) {
             );
 
             # verify dynamic field creation
-            $Self->True(
+            ok(
                 $SuccessUpdate,
                 "DynamicFieldUpdate() successful update for Field $DynamicField->{Name}",
             );
@@ -100,8 +102,8 @@ for my $FieldName ( sort keys %NeededDynamicfields ) {
 }
 
 my %NeededXHeaders = (
-    'X-OTOBO-DynamicField-TicketFreeText1' => 1,
-    'X-OTOBO-DynamicField-TicketFreeText2' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeText1' => 1,
+    'X-CareOnCloud-DynamicField-TicketFreeText2' => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -124,8 +126,9 @@ $ConfigObject->Set(
 # filter test
 my @Tests = (
     {
-        Name  => '#1 - Body Test',
-        Match => [
+        Name    => '#1 - Body Test',
+        ValidID => 1,
+        Match   => [
             {
                 Key   => 'Body',
                 Value => '(?s:server:\s+(?<server>[a-z.]+).*?IP\s+address:\s+(?<ip>\d+\.\d+\.\d+\.\d+))',
@@ -133,11 +136,11 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => '[**\server**]',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => '[**\ip**]',
             },
         ],
@@ -147,8 +150,9 @@ my @Tests = (
         },
     },
     {
-        Name  => '#2 - Body+Subject Test',
-        Match => [
+        Name    => '#2 - Body+Subject Test',
+        ValidID => 1,
+        Match   => [
             {
                 Key   => 'Subject',
                 Value => 'Server:\s+(?<server>[a-z.]+)',
@@ -160,11 +164,11 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText1',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText1',
                 Value => '[**\server**]',
             },
             {
-                Key   => 'X-OTOBO-DynamicField-TicketFreeText2',
+                Key   => 'X-CareOnCloud-DynamicField-TicketFreeText2',
                 Value => '[**\ip**]',
             },
         ],
@@ -181,6 +185,7 @@ my $PostMasterFilter = $Kernel::OM->Get('Kernel::System::PostMaster::Filter');
 for my $Test (@Tests) {
     $PostMasterFilter->FilterAdd(
         Name           => $Test->{Name},
+        ValidID        => $Test->{ValidID},
         StopAfterMatch => 0,
         %{$Test},
     );
@@ -221,12 +226,12 @@ The IP address: 192.168.0.1
             Status => 'Successful',
         );
     }
-    $Self->Is(
+    is(
         $Return[0] || 0,
         1,
         "#Filter Run() - NewTicket",
     );
-    $Self->True(
+    ok(
         $Return[1] || 0,
         "#Filter Run() - NewTicket/TicketID",
     );
@@ -241,7 +246,7 @@ The IP address: 192.168.0.1
     );
 
     for my $Key ( sort keys %{ $Test->{Check} } ) {
-        $Self->Is(
+        is(
             $Ticket{$Key},
             $Test->{Check}->{$Key},
             "#Filter Run('$Test->{Name}') - $Key",
@@ -253,7 +258,7 @@ The IP address: 192.168.0.1
         TicketID => $Return[1],
         UserID   => 1,
     );
-    $Self->True(
+    ok(
         $Delete || 0,
         "#Filter TicketDelete()",
     );
@@ -262,6 +267,4 @@ The IP address: 192.168.0.1
     $PostMasterFilter->FilterDelete( Name => $Test->{Name} );
 }
 
-# cleanup is done by RestoreDatabase
-
-$Self->DoneTesting();
+done_testing;

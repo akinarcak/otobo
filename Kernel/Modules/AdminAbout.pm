@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,16 +22,13 @@ use warnings;
 our $ObjectManagerDisabled = 1;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Type;
 }
 
 sub Run {
@@ -50,8 +47,9 @@ sub Run {
     my $LayoutObject      = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     my $DataStorageObject = $Kernel::OM->Get('Kernel::System::DataStorage');
 
-    my $Output = $LayoutObject->Header();
-    $Output .= $LayoutObject->NavigationBar();
+    my $Output = join '',
+        $LayoutObject->Header,
+        $LayoutObject->NavigationBar;
 
     my %GetParam;
     my %Data = $DataStorageObject->Get(
@@ -94,10 +92,7 @@ sub Run {
                     UserID => $Self->{UserID},
                 );
 
-                if ($Success) {
-                    $Data{$LanguageID} = $GetParam{Message}->{$LanguageID};
-                }
-                else {
+                if ( !$Success ) {
                     $Error = 1;
                 }
             }
@@ -148,35 +143,8 @@ sub Run {
         push @LanguageIDs, ( sort keys %DefaultUsedLanguages )[0];
     }
 
-    # get native names of languages
-    my %DefaultUsedLanguagesNative = %{ $ConfigObject->Get('DefaultUsedLanguagesNative') || {} };
-
-    my %Languages;
-    LANGUAGEID:
-    for my $LanguageID ( sort keys %DefaultUsedLanguages ) {
-
-        # next language if there is not set any name for current language
-        if ( !$DefaultUsedLanguages{$LanguageID} && !$DefaultUsedLanguagesNative{$LanguageID} ) {
-            next LANGUAGEID;
-        }
-
-        # get texts in native and default language
-        my $Text        = $DefaultUsedLanguagesNative{$LanguageID} || '';
-        my $TextEnglish = $DefaultUsedLanguages{$LanguageID}       || '';
-
-        # translate to current user's language
-        my $TextTranslated =
-            $Kernel::OM->Get('Kernel::Output::HTML::Layout')->{LanguageObject}->Translate($TextEnglish);
-
-        if ( $TextTranslated && $TextTranslated ne $Text ) {
-            $Text .= ' - ' . $TextTranslated;
-        }
-
-        # next language if there is not set English nor native name of language.
-        next LANGUAGEID if !$Text;
-
-        $Languages{$LanguageID} = $Text;
-    }
+    # for the language selection
+    my %Languages = $LayoutObject->{LanguageObject}->LanguageList;
 
     # copy original list of languages which will be used for rebuilding language selection
     my %OriginalDefaultUsedLanguages = %Languages;

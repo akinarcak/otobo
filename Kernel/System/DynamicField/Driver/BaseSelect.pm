@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,8 +30,8 @@ use parent qw(Kernel::System::DynamicField::Driver::Base);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -100,7 +100,6 @@ sub ValueSet {
     );
 }
 
-# TODO: probably adjust Base.pm to check for arrays
 sub ValueIsDifferent {
     my ( $Self, %Param ) = @_;
 
@@ -227,7 +226,6 @@ sub EditFieldRender {
     # take config from field config
     my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
     my $FieldName   = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
 
     my $Value;
 
@@ -275,9 +273,17 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
+    }
+
+    # set ajaxupdate class
+    if ( $Param{AJAXUpdate} ) {
+        $FieldClass .= ' FormUpdate';
     }
 
     # set error css class
@@ -297,7 +303,7 @@ sub EditFieldRender {
 
     # TODO change ConfirmationNeeded parameter name to something more generic
 
-    # when ConfimationNeeded parameter is present (AdminGenericAgent) the filed should be displayed
+    # when ConfirmationNeeded parameter is present (AdminGenericAgent) the filed should be displayed
     # as an open list, because you might not want to change the value, otherwise a value will be
     # selected
     if ( $Param{ConfirmationNeeded} ) {
@@ -398,23 +404,8 @@ sub EditFieldRender {
 
     if ( $Param{AJAXUpdate} ) {
 
-        my $FieldSelector = '#' . $FieldName;
-
-        my $FieldsToUpdate = '';
-        if ( IsArrayRefWithData( $Param{UpdatableFields} ) ) {
-
-            # Remove current field from updatable fields list
-            my @FieldsToUpdate = grep { $_ ne $FieldName } @{ $Param{UpdatableFields} };
-
-            # quote all fields, put commas in between them
-            $FieldsToUpdate = join( ', ', map {"'$_'"} @FieldsToUpdate );
-        }
-
-        # add js to call FormUpdate()
-        $Param{LayoutObject}->AddJSOnDocumentComplete( Code => <<"EOF");
-\$('$FieldSelector').bind('change', function (Event) {
-    Core.AJAX.FormUpdate(\$(this).parents('form'), 'AJAXUpdate', '$FieldName', [ $FieldsToUpdate ]);
-});
+        # add js to bind TreeSelection event
+        $Param{LayoutObject}->AddJSOnDocumentComplete( Code => <<"EOF" );
 Core.App.Subscribe('Event.AJAX.FormUpdate.Callback', function(Data) {
     var FieldName = '$FieldName';
     if (Data[FieldName] && \$('#' + FieldName).hasClass('DynamicFieldWithTreeView')) {
@@ -466,15 +457,11 @@ sub EditFieldValueGet {
         )
     {
         if ( $Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
-            my @DataAll = $Param{ParamObject}->GetArray( Param => $FieldName );
-            my @Data;
+            my @Data = $Param{ParamObject}->GetArray( Param => $FieldName );
 
             # delete the template value
-            pop @DataAll;
+            pop @Data;
 
-            for my $Item (@DataAll) {
-                push @Data, $Item // '';
-            }
             $Value = \@Data;
         }
         else {
@@ -511,26 +498,30 @@ sub EditFieldValueValidate {
         $Value = [$Value];
     }
 
-    # TODO: check whether EditFieldValueGet returns ('first','second','','','fifth','') in case of added but unfilled multivalue fields
-
     # get possible values list
     my $PossibleValues = $Param{PossibleValuesFilter} // $Param{DynamicFieldConfig}->{Config}->{PossibleValues};
 
+    my $ValueItemsPresent = 0;
     for my $ValueItem ( @{$Value} ) {
 
+        $ValueItem //= '';
+
         # perform necessary validations
-        if ( $Param{Mandatory} && !$ValueItem ) {
-            return {
-                ServerError => 1,
-            };
-        }
-        else {
+        if ( $ValueItem ne '' ) {
+            $ValueItemsPresent++;
+
             # validate if value is in possible values list (but let pass empty values)
             if ( $ValueItem && !$PossibleValues->{$ValueItem} ) {
                 $ServerError  = 1;
                 $ErrorMessage = 'The field content is invalid';
             }
         }
+    }
+
+    if ( $Param{Mandatory} && $ValueItemsPresent == 0 ) {
+
+        $ServerError  = 1;
+        $ErrorMessage = 'The field content is invalid';
     }
 
     # return resulting structure
@@ -629,7 +620,6 @@ sub SearchFieldRender {
     # take config from field config
     my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
     my $FieldName   = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
 
     my $Value;
 
@@ -1018,10 +1008,10 @@ sub ValueLookup {
     if ($Value) {
 
         # check if there is a real value for this key (otherwise keep the key)
-        if ( $Param{DynamicFieldConfig}->{Config}->{PossibleValues}->{$Value} ) {
+        if ( $PossibleValues->{$Value} ) {
 
             # get readable value
-            $Value = $Param{DynamicFieldConfig}->{Config}->{PossibleValues}->{$Value};
+            $Value = $PossibleValues->{$Value};
 
             # check if translation is possible
             if (
@@ -1045,13 +1035,13 @@ sub BuildSelectionDataGet {
     my $FieldConfig            = $Param{DynamicFieldConfig}->{Config};
     my $FilteredPossibleValues = $Param{PossibleValues};
 
-    # get the possible values again as it might or might not contain the possible none and it could
-    # also be overwritten
-    my $ConfigPossibleValues = $Self->PossibleValuesGet(%Param);
-
     # check if $PossibleValues differs from configured PossibleValues
     # and show values which are not contained as disabled if TreeView => 1
     if ( $FieldConfig->{TreeView} ) {
+
+        # get the possible values again as it might or might not contain the possible none and it could
+        # also be overwritten
+        my $ConfigPossibleValues = $Self->PossibleValuesGet(%Param);
 
         if ( keys %{$ConfigPossibleValues} != keys %{$FilteredPossibleValues} ) {
 
@@ -1060,13 +1050,13 @@ sub BuildSelectionDataGet {
             my $Parents;
             my %DisabledElements;
             my %ProcessedElements;
-            my $PosibleNoneSet;
+            my $PossibleNoneSet;
 
             # loop on all filtered possible values
             for my $Key ( sort keys %{$FilteredPossibleValues} ) {
 
                 # special case for possible none
-                if ( !$Key && !$PosibleNoneSet && $FieldConfig->{PossibleNone} ) {
+                if ( !$Key && !$PossibleNoneSet && $FieldConfig->{PossibleNone} ) {
 
                     # add possible none
                     push @Values, {
@@ -1157,6 +1147,9 @@ sub PossibleValuesGet {
     }
 
     # set none value if defined on field config
+    #   NOTE  this is done here instead of passing it to $LayoutObject->BuildSelection() in $Self->EditFieldRender() on purpose.
+    #         The reason is that some ACL mechanisms only work when the empty value is present in the PossibleValues data,
+    #         e.g. removing it via ACL.
     if ($FieldPossibleNone) {
         %PossibleValues = ( '' => '-' );
     }

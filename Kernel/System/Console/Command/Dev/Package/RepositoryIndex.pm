@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -29,10 +29,10 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Generate an index file (otobo.xml) for an OTOBO package repository.');
+    $Self->Description('Generate an index file (careoncloud.xml) for a CareOnCloud ESM package repository.');
     $Self->AddArgument(
         Name        => 'source-directory',
-        Description => "Specify the directory containing the OTOBO packages.",
+        Description => "Specify the directory containing the CareOnCloud ESM packages.",
         Required    => 1,
         ValueRegex  => qr/.*/smx,
     );
@@ -55,7 +55,7 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     my $Result = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
-    $Result .= "<otobo_package_list version=\"1.0\">\n";
+    $Result .= "<careoncloud_package_list version=\"1.0\">\n";
     my $SourceDirectory = $Self->GetArgument('source-directory');
     my @List            = $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
         Directory => $SourceDirectory,
@@ -87,7 +87,7 @@ sub Run {
         $Result .= "  <File>$RelativeFile</File>\n";
         $Result .= "</Package>\n";
     }
-    $Result .= "</otobo_package_list>\n";
+    $Result .= "</careoncloud_package_list>\n";
     $Self->Print($Result);
 
     return $Self->ExitCodeOk();

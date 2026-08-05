@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -46,7 +46,7 @@ Core.Init = (function (TargetNS) {
      * @param {Object} NewNamespace - The new namespace to register
      * @param {String} InitializationBlock - The name of the initialization block in which the namespace should be registered
      * @description
-     *      Register a new JavaScript namespace for the OTOBO app.
+     *      Register a new JavaScript namespace for the CareOnCloud ESM app.
      *      Parameters define, when the init function of the registered namespace
      *      should be executed.
      */
@@ -71,7 +71,7 @@ Core.Init = (function (TargetNS) {
      * @function
      * @param {String} InitializationBlock - The block of registered namespaces that should be initialized
      * @description
-     *      Initialize the OTOBO app. Call all init function of all
+     *      Initialize the CareOnCloud ESM app. Call all init function of all
      *      previously registered JS namespaces.
      *      Parameter defines, which initialization block should be executed.
      */

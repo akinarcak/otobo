@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,10 +19,12 @@ package Kernel::GenericInterface::Invoker::Test::Test;
 use strict;
 use warnings;
 
-use Kernel::System::VariableCheck qw(IsString IsStringWithData);
+# core modules
 
-# prevent 'Used once' warning for Kernel::OM
-use Kernel::System::ObjectManager;
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsString IsStringWithData);
 
 our $ObjectManagerDisabled = 1;
 
@@ -97,6 +99,7 @@ sub PrepareRequest {
     }
 
     # check request for system time
+    $Kernel::OM = $Kernel::OM;    # avoid 'once' warning
     if ( IsStringWithData( $Param{Data}->{GetSystemTime} ) && $Param{Data}->{GetSystemTime} ) {
         $ReturnData{SystemTime} = $Kernel::OM->Create('Kernel::System::DateTime')->ToEpoch();
     }
@@ -150,32 +153,38 @@ sub HandleResponse {
         };
     }
 
-    # we need a TicketNumber
-    if ( !IsStringWithData( $Param{Data}->{TicketNumber} ) ) {
+    my $ReturnData;
+    if ( ref $Param{Data} eq 'HASH' ) {
 
-        return $Self->{DebuggerObject}->Error( Summary => 'Got no TicketNumber!' );
-    }
+        # we need a TicketNumber
+        if ( !IsStringWithData( $Param{Data}->{TicketNumber} ) ) {
 
-    # prepare TicketNumber
-    my %ReturnData = (
-        TicketNumber => $Param{Data}->{TicketNumber},
-    );
-
-    # check Action
-    if ( IsStringWithData( $Param{Data}->{Action} ) ) {
-        if ( $Param{Data}->{Action} =~ m{ \A ( .*? ) Test \z }xms ) {
-            $ReturnData{Action} = $1;
+            return $Self->{DebuggerObject}->Error( Summary => 'Got no TicketNumber!' );
         }
-        else {
-            return $Self->{DebuggerObject}->Error(
-                Summary => 'Got Action but it is not in required format!',
-            );
+
+        # prepare TicketNumber
+        $ReturnData = {
+            TicketNumber => $Param{Data}->{TicketNumber},
+        };
+
+        # check Action
+        if ( IsStringWithData( $Param{Data}->{Action} ) ) {
+            if ( $Param{Data}->{Action} =~ m{ \A ( .*? ) Test \z }xms ) {
+                $ReturnData->{Action} = $1;
+            }
+            else {
+                return $Self->{DebuggerObject}->Error(
+                    Summary => 'Got Action but it is not in required format!',
+                );
+            }
         }
     }
-
+    else {
+        $ReturnData = $Param{Data};
+    }
     return {
         Success => 1,
-        Data    => \%ReturnData,
+        Data    => $ReturnData,
     };
 }
 

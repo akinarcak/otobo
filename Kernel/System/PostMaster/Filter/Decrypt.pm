@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,14 +19,19 @@ package Kernel::System::PostMaster::Filter::Decrypt;
 use strict;
 use warnings;
 
-use Kernel::System::EmailParser;
-use Kernel::Language qw(Translatable);
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::EmailParser ();
+use Kernel::Language            qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
-    'Kernel::System::Log',
     'Kernel::System::Crypt::PGP',
     'Kernel::System::Crypt::SMIME',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
@@ -96,29 +101,31 @@ sub Run {
     if ( $EncryptionMethod eq 'PGP' ) {
 
         # Try to decrypt body with PGP.
-        $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} = $Self->_DecryptPGP(
+        $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} = $Self->_DecryptPGP(
             Body        => $Message,
             ContentType => $ContentType,
             %Param
         ) || '';
 
         # Return PGP decrypted content if encryption is PGP.
-        return $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} if $Param{GetParam}->{'X-OTOBO-BodyDecrypted'};
+        return $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} if $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'};
     }
     elsif ( $EncryptionMethod eq 'SMIME' ) {
 
         # Try to decrypt body with SMIME.
-        $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} = $Self->_DecryptSMIME(
-            Body        => $Self->{ParserObject}->{Email}->as_string(),
+        # Actually pass the complete mail as a string as
+        # the crypted body will be detected in _DecryptSMIME().
+        $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} = $Self->_DecryptSMIME(
+            Body        => $Self->{ParserObject}->GetPlainEmail,
             ContentType => $ContentType,
             %Param
         ) || '';
 
         # Return SMIME decrypted content if encryption is SMIME
-        return $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} if $Param{GetParam}->{'X-OTOBO-BodyDecrypted'};
+        return $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} if $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'};
     }
     else {
-        $Param{GetParam}->{'X-OTOBO-BodyDecrypted'} = '';
+        $Param{GetParam}->{'X-CareOnCloud-BodyDecrypted'} = '';
     }
 
     return 1;
@@ -235,15 +242,14 @@ sub _DecryptSMIME {
         my %EmailsToSearch;
         for my $Email (qw(Resent-To Envelope-To To Cc Delivered-To X-Original-To)) {
 
-            my @EmailAddressOnField = $Self->{ParserObject}->SplitAddressLine(
+            my $EmailAddressObject  = $Kernel::OM->Get('Kernel::System::EmailAddress');
+            my @EmailAddressOnField = $EmailAddressObject->ParseAddressLine(
                 Line => $Self->{ParserObject}->GetParam( WHAT => $Email ),
             );
 
             # filter email addresses avoiding repeated and save on hash to search
             for my $EmailAddress (@EmailAddressOnField) {
-                my $CleanEmailAddress = $Self->{ParserObject}->GetEmailAddress(
-                    Email => $EmailAddress,
-                );
+                my $CleanEmailAddress = $EmailAddressObject->GetAddress( AddressObject => $EmailAddress );
                 $EmailsToSearch{$CleanEmailAddress} = '1';
             }
         }
@@ -414,8 +420,9 @@ sub _DecryptSMIME {
             # made if sender and signer addresses does not match
 
             # get original sender from email
-            my $OrigFrom   = $Self->{ParserObject}->GetParam( WHAT => 'From' );
-            my $OrigSender = $Self->{ParserObject}->GetEmailAddress( Email => $OrigFrom );
+            my $OrigFrom           = $Self->{ParserObject}->GetParam( WHAT => 'From' );
+            my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+            my $OrigSender         = $EmailAddressObject->GetAddress( Email => $OrigFrom );
 
             # compare sender email to signer email
             my $SignerSenderMatch = 0;
@@ -453,7 +460,7 @@ sub _DecryptSMIME {
             }
         }
 
-        # some errors occured
+        # some errors occurred
         else {
             $Param{GetParam}{Signed} = 'Signed message, but unable to verify!';
             return;

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -40,8 +40,7 @@ Core.Customer.Search = (function (TargetNS) {
             $('#oooSearch').addClass('oooFull');
             $('#oooSearch').focus();
 
-            // TODO: include FAQ to ES
-            if (Core.Config.Get('ESActive') == 1 && Core.Config.Get('Action') !== 'CustomerFAQExplorer' && Core.Config.Get('Action') !== 'CustomerFAQZoom'){
+            if (Core.Config.Get('ESActive') == 1){
                 Core.UI.Elasticsearch.InitSearchField($('#oooSearch'), "CustomerElasticsearchQuickResult");
             }
 
@@ -57,6 +56,27 @@ Core.Customer.Search = (function (TargetNS) {
             $('#oooSearch').blur();
         });*/
 
+        var  $DateTimeDynamicFieldCheckboxes = $('.oooTicketSearchForm .Row_DynamicField .TimeRestrictionField input[type=checkbox]');
+
+        // add missing checkbox icons to time point fields
+        $DateTimeDynamicFieldCheckboxes.filter('input[name$=TimePoint]').each( function() {
+            var $Checkbox = $(this);
+            var $Field = $($Checkbox.closest('.Field'));
+            $Field.addClass('oooCheckboxContainer');
+            var $Icon = $("<i class='oooAltCheck ooofo'></i>").on('click', function() {
+                $Checkbox.click();
+            });
+            $Checkbox.after( $Icon );
+        });
+
+        // remove unchecked date time dynamic field values from form submission
+        $('.oooTicketSearchForm form').on('submit', function () {
+            $DateTimeDynamicFieldCheckboxes.each( function() {
+                if (!this.checked) {
+                    $(this).parent().find('*').prop('disabled', true);
+                }
+            });
+        });
     };
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');

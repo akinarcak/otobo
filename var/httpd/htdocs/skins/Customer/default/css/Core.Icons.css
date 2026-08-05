@@ -1,7 +1,7 @@
-/* OTOBO is a web-based ticketing system for service organisations.
+/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2026 Rother OSS GmbH, https://careoncloud.io/
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -14,12 +14,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 @font-face {
-  font-family: 'otobo';
-  src:  url('/otobo-web/common/fonts/otobo.eot?8f3wlj');
-  src:  url('/otobo-web/common/fonts/otobo.eot?8f3wlj#iefix') format('embedded-opentype'),
-    url('/otobo-web/common/fonts/otobo.ttf?8f3wlj') format('truetype'),
-    url('/otobo-web/common/fonts/otobo.woff?8f3wlj') format('woff'),
-    url('/otobo-web/common/fonts/otobo.svg?8f3wlj#otobo') format('svg');
+  font-family: 'careoncloud';
+  src:  url('../../../../common/fonts/careoncloud.eot?8f3wlj');
+  src:  url('../../../../common/fonts/careoncloud.eot?8f3wlj#iefix') format('embedded-opentype'),
+    url('../../../../common/fonts/careoncloud.ttf?8f3wlj') format('truetype'),
+    url('../../../../common/fonts/careoncloud.woff?8f3wlj') format('woff'),
+    url('../../../../common/fonts/careoncloud.svg?8f3wlj#careoncloud') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -27,7 +27,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 .ooofo {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'otobo' !important;
+  font-family: 'careoncloud' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;

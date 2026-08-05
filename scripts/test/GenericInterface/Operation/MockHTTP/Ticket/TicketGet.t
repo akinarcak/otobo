@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-use v5.024;
+use v5.24;
 use strict;
 use warnings;
 use utf8;
@@ -23,11 +23,11 @@ use utf8;
 
 # CPAN modules
 use Test2::V0;
-use Plack::Util;
-use Plack::Test;
-use HTTP::Request::Common;
+use Plack::Util           ();
+use Plack::Test           ();
+use HTTP::Request::Common qw(GET POST);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # RestoreDatabase => 1 can't be used here as Plack::Test seems to spawn a new process,
@@ -161,14 +161,14 @@ my $WebserviceID = $WebserviceObject->WebserviceAdd(
 );
 ok( $WebserviceID, "Added Web Service" );
 
-# load the PSGI app 'otobo.psgi' and intialize
+# load the PSGI app 'careoncloud.psgi' and intialize
 my $PlackTest;
 {
     my $Home = $ConfigObject->Get('Home');
-    ok( -d $Home, 'OTOBO home dir found' );
+    ok( -d $Home, 'CareOnCloud ESM home dir found' );
 
-    my $PSGIFile = "$Home/bin/psgi-bin/otobo.psgi";
-    ok( -f $PSGIFile, 'otobo.psgi found' );
+    my $PSGIFile = "$Home/bin/psgi-bin/careoncloud.psgi";
+    ok( -f $PSGIFile, 'careoncloud.psgi found' );
     my $App = Plack::Util::load_psgi($PSGIFile);
     ref_ok( $App, 'CODE', 'PSGI app was loaded' );
 

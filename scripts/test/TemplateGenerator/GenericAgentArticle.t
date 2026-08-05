@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,6 @@ use Kernel::System::UnitTest::RegisterDriver;
 our $Self;
 
 # get needed objects
-my $ConfigObject         = $Kernel::OM->Get('Kernel::Config');
 my $TicketObject         = $Kernel::OM->Get('Kernel::System::Ticket');
 my $GenericAgentObject   = $Kernel::OM->Get('Kernel::System::GenericAgent');
 my $CustomerUserObject   = $Kernel::OM->Get('Kernel::System::CustomerUser');
@@ -90,7 +89,7 @@ my %CustomerUserData = $Kernel::OM->Get('Kernel::System::CustomerUser')->Custome
 
 my %Notification = (
     Subject     => '',
-    Body        => '<OTOBO_TICKET_TicketNumber>',
+    Body        => '<CareOnCloud_TICKET_TicketNumber>',
     ContentType => 'text/plain',
 );
 
@@ -104,7 +103,7 @@ my %GenericAgentArticle = $Kernel::OM->Get('Kernel::System::TemplateGenerator')-
 $Self->Is(
     $GenericAgentArticle{Body},
     $Ticket{TicketNumber},
-    "TicketNumber found. OTOBO Tag used.",
+    "TicketNumber found. CareOnCloud ESM Tag used.",
 );
 
 $Self->DoneTesting();

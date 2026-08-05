@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,8 +24,8 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::RegisterDriver;    # Set up $Self (unused) and $Kernel::OM
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
@@ -261,7 +261,7 @@ $Selenium->RunTest(
             IsVisibleForCustomer => 0,
             SenderType           => 'customer',
             From                 => $UserFormString,
-            To                   => 'Some Agent <otobo@example.com>',
+            To                   => 'Some Agent <careoncloud@example.com>',
             Subject              => 'some short description',
             Body                 => 'the message text',
             Charset              => 'utf8',
@@ -330,7 +330,7 @@ $Selenium->RunTest(
         );
 
         $Selenium->WaitFor(
-            ElementExists => "//input[contains(\@name,'CustomerUserID')]"
+            ElementExists => "//input[contains(\@name,'CustomerAutoComplete')]"
         );
 
         # Verify form is loaded.

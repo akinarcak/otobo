@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package Kernel::System::SysConfig::BaseValueType;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
 
 use strict;
@@ -46,6 +47,7 @@ Check if provided EffectiveValue matches structure defined in XMLContentParsed.
                     'Item' => [
                         {
                             'Content' => "Scalar value",
+                            'ValueRegex' => '\.(?i:jpeg|jpg)$',
                         },
                     ],
                 },
@@ -316,7 +318,7 @@ sub SettingRender {
     }
 
     if ( !$Param{RW} ) {
-        $HTML .= "disabled='disabled' ";
+        $HTML .= "disabled ";
     }
 
     $HTML .= " />\n";
@@ -422,8 +424,6 @@ sub AddItem {
     elsif ( $Param{DefaultItem} ) {
         $DefaultValue = $Param{DefaultItem} && $Param{DefaultItem}->{Content} || '';
     }
-
-    my $RemoveThisEntry = $Kernel::OM->Get('Kernel::Language')->Translate("Remove this entry");
 
     my $Result = "<input type='text' id='$Name'
         value='$DefaultValue' name='$Param{Name}' class='$Class Entry'/>";

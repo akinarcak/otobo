@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,12 +16,18 @@
 
 package Kernel::Modules::AdminCustomerUser;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
 
-use Kernel::System::CheckItem;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -31,6 +37,15 @@ sub new {
     # allocate new hash for object
     my $Self = {%Param};
     bless( $Self, $Type );
+
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
 
     my $DynamicFieldConfigs = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldListGet(
         ObjectType => 'CustomerUser',
@@ -47,9 +62,20 @@ sub Run {
     my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $Nav    = $ParamObject->GetParam( Param => 'Nav' )    || '';
-    my $Source = $ParamObject->GetParam( Param => 'Source' ) || 'CustomerUser';
-    my $Search = $ParamObject->GetParam( Param => 'Search' );
+    my $Nav            = $ParamObject->GetParam( Param => 'Nav' )    || '';
+    my $Source         = $ParamObject->GetParam( Param => 'Source' ) || 'CustomerUser';
+    my $Search         = $ParamObject->GetParam( Param => 'Search' );
+    my $IncludeInvalid = $ParamObject->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $IncludeInvalid ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $IncludeInvalid,
+        );
+
+        $Self->{IncludeInvalid} = $IncludeInvalid;
+    }
     $Search
         ||= $ConfigObject->Get('AdminCustomerUser::RunInitialWildcardSearch') ? '*' : '';
 
@@ -127,29 +153,24 @@ sub Run {
         # get customer interface session name
         my $SessionName = $ConfigObject->Get('CustomerPanelSessionName') || 'CSID';
 
-        # create a new LayoutObject with SessionIDCookie
-        my $Expires = '+' . $ConfigObject->Get('SessionMaxTime') . 's';
-        if ( !$ConfigObject->Get('SessionUseCookieAfterBrowserClose') ) {
-            $Expires = '';
-        }
-
-        # Restrict Cookie to HTTPS if it is used.
-        my $CookieSecureAttribute = $ConfigObject->Get('HttpType') eq 'https' ? 1 : undef;
-
+        # create a new LayoutObject
         my $LayoutObject = Kernel::Output::HTML::Layout->new(
             %{$Self},
-            SetCookies => {
-                SessionIDCookie => $ParamObject->SetCookie(
-                    Key      => $SessionName,
-                    Value    => $NewSessionID,
-                    Expires  => $Expires,
-                    Path     => $ConfigObject->Get('ScriptAlias'),
-                    Secure   => $CookieSecureAttribute,
-                    HTTPOnly => 1,
-                ),
-            },
             SessionID   => $NewSessionID,
             SessionName => $ConfigObject->Get('SessionName'),
+        );
+
+        # set the session cookie
+        my $Expires = $ConfigObject->Get('SessionUseCookieAfterBrowserClose')
+            ?
+            '+' . $ConfigObject->Get('SessionMaxTime') . 's'
+            :
+            '';
+        $LayoutObject->SetCookie(
+            Key     => 'SessionIDCookie',
+            Name    => $SessionName,
+            Value   => $NewSessionID,
+            Expires => $Expires,
         );
 
         # log event
@@ -159,21 +180,16 @@ sub Run {
                 "Switched from Agent to Customer ($Self->{UserLogin} -=> $UserData{UserLogin})",
         );
 
-        # build URL to customer interface
-        my $URL = $ConfigObject->Get('HttpType')
-            . '://'
-            . $ConfigObject->Get('FQDN')
-            . '/'
-            . $ConfigObject->Get('ScriptAlias')
-            . 'customer.pl';
+        # redirect to customer interface
+        my $ExtURL = join '',
+            $ConfigObject->Get('HttpType'),
+            '://',
+            $ConfigObject->Get('FQDN'),
+            '/',
+            $ConfigObject->Get('ScriptAlias'),
+            'customer.pl';
 
-        # if no sessions are used we attach the session as URL parameter
-        if ( !$ConfigObject->Get('SessionUseCookie') ) {
-            $URL .= "?$SessionName=$NewSessionID";
-        }
-
-        # redirect to customer interface with new session id
-        return $LayoutObject->Redirect( ExtURL => $URL );
+        return $LayoutObject->Redirect( ExtURL => $ExtURL );
     }
 
     # search user list
@@ -204,7 +220,6 @@ sub Run {
     elsif ( $Self->{Subaction} eq 'Download' ) {
         my $Group = $ParamObject->GetParam( Param => 'Group' ) || '';
         my $User  = $ParamObject->GetParam( Param => 'ID' )    || '';
-        my $File  = $ParamObject->GetParam( Param => 'File' )  || '';
 
         # get user data
         my %UserData    = $CustomerUserObject->CustomerUserDataGet( User => $User );
@@ -383,8 +398,6 @@ sub Run {
             if ( $UpdateSuccess || $UpdateOnlyPreferences ) {
 
                 # set dynamic field values
-                my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
-
                 ENTRY:
                 for my $Entry ( @{ $ConfigObject->Get($Source)->{Map} } ) {
                     next ENTRY if $Entry->[5] ne 'dynamic_field';
@@ -439,7 +452,10 @@ sub Run {
                         UserObject => $CustomerUserObject,
                         Debug      => $Self->{Debug},
                     );
-                    my @Params = $Object->Param( UserData => \%UserData );
+                    my @Params = $Object->Param(
+                        UserData => \%UserData,
+                        Customer => 1,
+                    );
                     if (@Params) {
                         my %GetParam;
                         for my $ParamItem (@Params) {
@@ -636,12 +652,9 @@ sub Run {
             );
             if ($User) {
 
-                # set dynamic field values
-                my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
-
                 ENTRY:
                 for my $Entry ( @{ $ConfigObject->Get($Source)->{Map} } ) {
-                    next ENTRY if $Entry->[5] ne 'dynamic_field';
+                    next ENTRY unless $Entry->[5] eq 'dynamic_field';
 
                     my $DynamicFieldConfig = $Self->{DynamicFieldLookup}->{ $Entry->[2] };
 
@@ -652,6 +665,7 @@ sub Run {
                                 $Entry->[2],
                             ),
                         );
+
                         next ENTRY;
                     }
 
@@ -669,6 +683,7 @@ sub Run {
                                 $Entry->[2],
                             ),
                         );
+
                         next ENTRY;
                     }
                 }
@@ -693,7 +708,11 @@ sub Run {
                         UserObject => $CustomerUserObject,
                         Debug      => $Self->{Debug},
                     );
-                    my @Params = $Object->Param( %{ $Preferences{$Group} }, UserData => \%UserData );
+                    my @Params = $Object->Param(
+                        %{ $Preferences{$Group} },
+                        UserData => \%UserData,
+                        Customer => 1,
+                    );
                     if (@Params) {
                         my %GetParam;
                         for my $ParamItem (@Params) {
@@ -863,6 +882,13 @@ sub _Overview {
         Data => \%Param,
     );
 
+    $LayoutObject->Block(
+        Name => 'IncludeInvalid',
+        Data => {
+            IncludeInvalid        => $Self->{IncludeInvalid},
+            IncludeInvalidChecked => $Self->{IncludeInvalid} ? 'checked' : '',
+        },
+    );
     $LayoutObject->Block( Name => 'ActionList' );
     $LayoutObject->Block(
         Name => 'ActionSearch',
@@ -934,7 +960,7 @@ sub _Overview {
 
         my %List = $CustomerUserObject->CustomerSearch(
             Search => $Param{Search},
-            Valid  => 0,
+            Valid  => $Self->{IncludeInvalid} ? 0 : 1,
         );
 
         if ( keys %ListAllItems > $Limit ) {
@@ -1058,8 +1084,6 @@ sub _Edit {
     # Get layout object.
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
-    my $Output = '';
-
     $LayoutObject->Block(
         Name => 'Overview',
         Data => \%Param,
@@ -1096,7 +1120,11 @@ sub _Edit {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # update user
-    if ( $ConfigObject->Get( $Param{Source} )->{ReadOnly} || $ConfigObject->Get( $Param{Source} )->{Module} =~ /LDAP/i )
+    if (
+        $ConfigObject->Get( $Param{Source} )->{ReadOnly}
+        ||
+        $ConfigObject->Get( $Param{Source} )->{Module} =~ /LDAP/i
+        )
     {
         $UpdateOnlyPreferences = 1;
     }
@@ -1187,7 +1215,8 @@ sub _Edit {
             $Param{RequiredClass} .= ' Validate_Email';
         }
 
-        # build selections or input fields
+        # Build selections or input fields.
+        # An explicit selection has the highest priority.
         if ( $ConfigObject->Get( $Param{Source} )->{Selections}->{ $Entry->[0] } ) {
             $Block = 'Option';
 
@@ -1214,7 +1243,34 @@ sub _Edit {
                 Disabled    => $UpdateOnlyPreferences ? 1 : 0,
             );
         }
-        elsif ( $Entry->[0] =~ /^ValidID/i ) {
+        elsif (
+            $Entry->[0] =~ m/^UserCountry/i
+            &&
+            $ConfigObject->Get('ReferenceData::TranslatedCountryNames')
+            )
+        {
+            $Block = 'Option';
+
+            my $CountryList = $Kernel::OM->Get('Kernel::System::ReferenceData')->CLDRCountryList(
+                Language => $LayoutObject->{UserLanguage},
+            );
+
+            # Make sure that the previous value exists in the selection list even if isn't a country code.
+            my $PreviousCountry = $Param{ $Entry->[0] };
+            if ($PreviousCountry) {
+                $CountryList->{$PreviousCountry} //= $PreviousCountry;
+            }
+
+            $Param{Option} = $LayoutObject->BuildSelection(
+                Data         => $CountryList,
+                PossibleNone => 1,
+                Sort         => 'AlphanumericValue',
+                Name         => $Entry->[0],
+                Class        => "$Param{RequiredClass} Modernize " . $Param{Errors}->{ $Entry->[0] . 'Invalid' },
+                SelectedID   => ( $Param{ $Entry->[0] } // 1 ),
+            );
+        }
+        elsif ( $Entry->[0] =~ m/^ValidID/i ) {
 
             # Change the validation class
             if ( $Param{RequiredClass} ) {
@@ -1232,7 +1288,7 @@ sub _Edit {
             );
         }
         elsif (
-            $Entry->[0] =~ /^UserCustomerID$/i
+            $Entry->[0] =~ m/^UserCustomerID$/i
             && $ConfigObject->Get( $Param{Source} )->{CustomerCompanySupport}
             )
         {
@@ -1401,8 +1457,7 @@ sub _Edit {
                 next PRIO;
             }
 
-            my $Module = $Preference{Module}
-                || 'Kernel::Output::HTML::CustomerPreferencesGeneric';
+            my $Module = $Preference{Module} || 'Kernel::Output::HTML::CustomerPreferencesGeneric';
 
             # load module
             if ( $Kernel::OM->Get('Kernel::System::Main')->Require($Module) ) {
@@ -1412,7 +1467,10 @@ sub _Edit {
                     UserObject => $Kernel::OM->Get('Kernel::System::CustomerUser'),
                     Debug      => $Self->{Debug},
                 );
-                my @Params = $Object->Param( UserData => \%Param );
+                my @Params = $Object->Param(
+                    UserData => \%Param,
+                    Customer => 1,
+                );
                 if (@Params) {
                     for my $ParamItem (@Params) {
                         $LayoutObject->Block(

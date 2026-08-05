@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,8 +16,15 @@
 
 package Kernel::System::PostMaster::Reject;
 
+use v5.24;
 use strict;
 use warnings;
+
+# core modules
+
+# CPAN modules
+
+# OTOB modules
 
 our @ObjectDependencies = (
     'Kernel::System::DynamicField',
@@ -31,8 +38,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # get parser object
     $Self->{ParserObject} = $Param{ParserObject} || die "Got no ParserObject!";
@@ -55,6 +61,7 @@ sub Run {
                 Key           => 'Kernel::System::PostMaster::Reject',
                 Value         => "Need $_!",
             );
+
             return;
         }
     }
@@ -78,15 +85,15 @@ sub Run {
         ChannelName => 'Email',
     );
 
-    # Check if X-OTOBO-SenderType exists, if not set default 'customer'.
-    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-OTOBO-SenderType'} ) ) {
+    # Check if X-CareOnCloud-SenderType exists, if not set default 'customer'.
+    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-CareOnCloud-SenderType'} ) ) {
         $Self->{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
             Priority      => 'Error',
             Key           => 'Kernel::System::PostMaster::Reject',
-            Value         => "Can't find valid SenderType '$GetParam{'X-OTOBO-SenderType'}' in DB, take 'customer'",
+            Value         => "Can't find valid SenderType '$GetParam{'X-CareOnCloud-SenderType'}' in DB, take 'customer'",
         );
-        $GetParam{'X-OTOBO-SenderType'} = 'customer';
+        $GetParam{'X-CareOnCloud-SenderType'} = 'customer';
     }
 
     $Self->{CommunicationLogObject}->ObjectLog(
@@ -99,8 +106,8 @@ sub Run {
     # do db insert
     my $ArticleID = $ArticleBackendObject->ArticleCreate(
         TicketID             => $Param{TicketID},
-        IsVisibleForCustomer => $GetParam{'X-OTOBO-IsVisibleForCustomer'} // 1,
-        SenderType           => $GetParam{'X-OTOBO-SenderType'},
+        IsVisibleForCustomer => $GetParam{'X-CareOnCloud-IsVisibleForCustomer'} // 1,
+        SenderType           => $GetParam{'X-CareOnCloud-SenderType'},
         From                 => $GetParam{From},
         ReplyTo              => $GetParam{ReplyTo},
         To                   => $GetParam{To},
@@ -125,6 +132,7 @@ sub Run {
             Key           => 'Kernel::System::PostMaster::Reject',
             Value         => "Article could not be created!",
         );
+
         return;
     }
 
@@ -163,6 +171,7 @@ sub Run {
         next ATTRIBUTE if $CommunicationLogSkipAttributes{$Attribute};
 
         my $Value = $GetParam{$Attribute};
+
         next ATTRIBUTE if !( defined $Value ) || !( length $Value );
 
         $Self->{CommunicationLogObject}->ObjectLog(
@@ -199,19 +208,19 @@ sub Run {
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
     # dynamic fields
-    my $DynamicFieldList =
-        $DynamicFieldObject->DynamicFieldList(
-            Valid      => 0,
-            ResultType => 'HASH',
-            ObjectType => 'Article',
-        );
+    my $DynamicFieldList = $DynamicFieldObject->DynamicFieldList(
+        Valid      => 0,
+        ResultType => 'HASH',
+        ObjectType => 'Article',
+    );
 
     # set dynamic fields for Article object type
     DYNAMICFIELDID:
     for my $DynamicFieldID ( sort keys %{$DynamicFieldList} ) {
         next DYNAMICFIELDID if !$DynamicFieldID;
         next DYNAMICFIELDID if !$DynamicFieldList->{$DynamicFieldID};
-        my $Key = 'X-OTOBO-FollowUp-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
+
+        my $Key = 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
         if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
 
             # get dynamic field config
@@ -232,48 +241,6 @@ sub Run {
                 Key           => 'Kernel::System::PostMaster::Reject',
                 Value         => "Article DynamicField update via '$Key'! Value: $GetParam{$Key}.",
             );
-        }
-    }
-
-    # reverse dynamic field list
-    my %DynamicFieldListReversed = reverse %{$DynamicFieldList};
-
-    # set free article text
-    my %Values =
-        (
-            'X-OTOBO-FollowUp-ArticleKey'   => 'ArticleFreeKey',
-            'X-OTOBO-FollowUp-ArticleValue' => 'ArticleFreeText',
-        );
-    for my $Item ( sort keys %Values ) {
-        for my $Count ( 1 .. 16 ) {
-            my $Key = $Item . $Count;
-            if (
-                defined $GetParam{$Key}
-                && length $GetParam{$Key}
-                && $DynamicFieldListReversed{ $Values{$Item} . $Count }
-                )
-            {
-                # get dynamic field config
-                my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
-                    ID => $DynamicFieldListReversed{ $Values{$Item} . $Count },
-                );
-                if ($DynamicFieldGet) {
-                    my $Success = $DynamicFieldBackendObject->ValueSet(
-                        DynamicFieldConfig => $DynamicFieldGet,
-                        ObjectID           => $ArticleID,
-                        Value              => $GetParam{$Key},
-                        UserID             => $Param{InmailUserID},
-                    );
-                }
-
-                $Self->{CommunicationLogObject}->ObjectLog(
-                    ObjectLogType => 'Message',
-                    Priority      => 'Debug',
-                    Key           => 'Kernel::System::PostMaster::Reject',
-                    Value         =>
-                        "TicketKey$Count: Article DynamicField (ArticleKey) update via '$Key'! Value: $GetParam{$Key}.",
-                );
-            }
         }
     }
 

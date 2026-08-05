@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -37,8 +37,6 @@ sub new {
 
 sub Run {
     my ( $Self, %Param ) = @_;
-
-    my $Output;
 
     # get layout object
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
@@ -90,7 +88,7 @@ sub Run {
     my %AclAction = $TicketObject->TicketAclActionData();
 
     # check if ACL restrictions exist
-    if ( $ACL || IsHashRefWithData( \%AclAction ) ) {
+    if ($ACL) {
 
         my %AclActionLookup = reverse %AclAction;
 
@@ -224,13 +222,11 @@ sub Run {
 sub Form {
     my ( $Self, %Param ) = @_;
 
-    my $Output;
-
     # get layout object
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
     # print header
-    $Output .= $LayoutObject->Header(
+    my $Output = $LayoutObject->Header(
         Type => 'Small',
     );
     my $TicketCustomerID = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'CustomerID' ) || '';
@@ -281,11 +277,18 @@ sub Form {
         );
     }
 
-    $Output
-        .= $LayoutObject->Output(
-            TemplateFile => 'AgentTicketCustomer',
-            Data         => \%Param
+    # explanatory message about asterisk
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    if ( $ConfigObject->Get('Ticket::Frontend::AsteriskExplanation') ) {
+        $LayoutObject->Block(
+            Name => 'AsteriskExplanation',
         );
+    }
+
+    $Output .= $LayoutObject->Output(
+        TemplateFile => 'AgentTicketCustomer',
+        Data         => \%Param
+    );
     $Output .= $LayoutObject->Footer(
         Type => 'Small',
     );

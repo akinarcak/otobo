@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -45,12 +45,12 @@ Core.Debug = (function (TargetNS) {
      *      Container variable for the generic DebugLog object.
      */
         DebugLog;
-    /*eslint-disable no-console */
+
     if (typeof console === 'object' && typeof console.log === 'function') {
         DebugConsole = console;
         DebugLog = console.log;
     }
-    /*eslint-enable no-console */
+
     /* global opera:false */
     else if (typeof opera === 'object' && typeof opera.PostError === 'function') {
         DebugConsole = opera;
@@ -106,9 +106,9 @@ Core.Debug = (function (TargetNS) {
         var RequiredEval, ErrorMessage;
 
         try {
-            /*eslint-disable no-eval */
+
             RequiredEval = eval('try{ typeof ' + Required + '} catch (E) {}');
-            /*eslint-enable no-eval */
+
         }
         catch (Event) {
             // no code here
@@ -194,7 +194,7 @@ Core.Debug = (function (TargetNS) {
                             InputType === 'text') {
                             InputValue = CurrentNode.getAttribute('value');
                             if (InputValue && InputValue.length) {
-                                ReplacementValue = Replacement.substr(0, InputValue.length);
+                                ReplacementValue = Replacement.substring(0, InputValue.length);
                                 CurrentNode.setAttribute('value', ReplacementValue);
                             }
                         }
@@ -216,7 +216,7 @@ Core.Debug = (function (TargetNS) {
                     continue;
                 }
 
-                CurrentNode.nodeValue = Replacement.substr(0, CurrentText.length);
+                CurrentNode.nodeValue = Replacement.substring(0, CurrentText.length);
             }
         }
 

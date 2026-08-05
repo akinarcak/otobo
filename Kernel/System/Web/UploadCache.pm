@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,6 +21,7 @@ use warnings;
 
 our @ObjectDependencies = (
     'Kernel::Config',
+    'Kernel::System::Web::FormCache',
 );
 
 =head1 NAME
@@ -60,7 +61,7 @@ sub new {
 
 =head2 FormIDCreate()
 
-create a new Form ID
+create a new Form ID - this method was moved to Web::FormCache
 
     my $FormID = $UploadCacheObject->FormIDCreate();
 
@@ -69,7 +70,7 @@ create a new Form ID
 sub FormIDCreate {
     my ( $Self, %Param ) = @_;
 
-    return $Self->{Backend}->FormIDCreate(%Param);
+    return $Kernel::OM->Get('Kernel::System::Web::FormCache')->FormIDCreate(%Param);
 }
 
 =head2 FormIDRemove()
@@ -142,7 +143,7 @@ returns an array with a hash ref of all files for a Form ID
         FormID => 12345,
     );
 
-    Return data of on hash is Content, ContentType, ContentID, Filename, Filesize, FileID;
+Return data of on hash is Content, ContentType, ContentID, Filename, Filesize, FileID;
 
 =cut
 
@@ -162,7 +163,7 @@ Note: returns no content, only meta data.
         FormID => 12345,
     );
 
-    Return data of hash is ContentType, ContentID, Filename, Filesize, FileID;
+Return data of hash is ContentType, ContentID, Filename, Filesize, FileID;
 
 =cut
 

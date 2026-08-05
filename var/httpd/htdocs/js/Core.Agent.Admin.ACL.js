@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -57,6 +57,16 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
         if (Core.Config.Get('Subaction') === 'ACLEdit') {
             TargetNS.InitACLEdit();
         }
+
+        // init checkbox to include invalid elements
+        $('input#IncludeInvalid').off('change').on('change', function () {
+            var URL = Core.Config.Get("Baselink") + 'Action=' + Core.Config.Get("Action") + ';IncludeInvalid=' + ( $(this).is(':checked') ? 1 : 0 );
+            window.location.href = URL;
+        });
+
+        $('#ObjectType').on('change', function() {
+            window.location.href = Core.Config.Get('Baselink') + 'Action=AdminACL;ObjectType=' + $(this).val();
+        });
     };
 
     /**
@@ -91,9 +101,10 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
                    Label: Core.Language.Translate('Delete'),
                    Function: function () {
                        var Data = {
-                               Action: 'AdminACL',
-                               Subaction: 'ACLDelete',
-                               ID: ACLID
+                                Action: 'AdminACL',
+                                Subaction: 'ACLDelete',
+                                ID: ACLID,
+                                ObjectType: $('[name=ObjectType]').val(),
                            };
 
                        // Change the dialog to an ajax loader
@@ -110,7 +121,8 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
                            }
 
                            Core.App.InternalRedirect({
-                               Action: Data.Action
+                               Action: Data.Action,
+                               ObjectType: Data.ObjectType
                            });
                        }, 'json');
                    }
@@ -150,7 +162,7 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
 
         for (Level1Key in Data) {
 
-            if (Data.hasOwnProperty(Level1Key)) {
+            if (Object.prototype.hasOwnProperty.call(Data, Level1Key)) {
 
                 $ItemObjLevel1 = $('#TemplateLevel1 > li').clone();
                 $ItemObjLevel1
@@ -167,7 +179,7 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
 
                     for (Level2Key in Data[Level1Key]) {
 
-                        if (Data[Level1Key].hasOwnProperty(Level2Key)) {
+                        if (Object.prototype.hasOwnProperty.call(Data[Level1Key], Level2Key)) {
 
                             if ($.inArray(Level2Key, KeysWithoutSubkeys) !== -1 && !IsMatchItem) {
                                 $ItemObjLevel2 = $('#TemplateLevel2Last > li').clone();
@@ -209,7 +221,7 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
 
                                 for (Level3Key in Data[Level1Key][Level2Key]) {
 
-                                    if (Data[Level1Key][Level2Key].hasOwnProperty(Level3Key)) {
+                                    if (Object.prototype.hasOwnProperty.call(Data[Level1Key][Level2Key], Level3Key)) {
 
                                         Value = Data[Level1Key][Level2Key][Level3Key];
 
@@ -236,7 +248,7 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
 
                                     for (Level3Key in Data[Level1Key][Level2Key]) {
 
-                                        if (Data[Level1Key][Level2Key].hasOwnProperty(Level3Key)) {
+                                        if (Object.prototype.hasOwnProperty.call(Data[Level1Key][Level2Key], Level3Key)) {
 
                                             $ItemObjLevel3 = $('#TemplateLevel3 > li').clone();
                                             $ItemObjLevel3
@@ -269,7 +281,7 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
 
                                                 for (Level4Key in Data[Level1Key][Level2Key][Level3Key]) {
 
-                                                    if (Data[Level1Key][Level2Key][Level3Key].hasOwnProperty(Level4Key)) {
+                                                    if (Object.prototype.hasOwnProperty.call(Data[Level1Key][Level2Key][Level3Key], Level4Key)) {
 
                                                         Value = Data[Level1Key][Level2Key][Level3Key][Level4Key];
 
@@ -885,7 +897,7 @@ Core.Agent.Admin.ACL = (function (TargetNS) {
                                 Data = PossibleActionsList;
                             }
                             else {
-                                $.each(PossibleActionsList, function(Index, Item) {
+                                $.each(PossibleActionsList, function(_Index, Item) {
                                     ItemLC = Item.value.toLowerCase();
                                     if (ItemLC.indexOf(Request.term.toLowerCase()) !== -1) {
                                         Data.push(Item);

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,8 +16,16 @@
 
 package Kernel::Modules::PictureUpload;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our $ObjectManagerDisabled = 1;
 
@@ -25,10 +33,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Type;
 }
 
 sub Run {
@@ -51,6 +56,7 @@ sub Run {
                 CKEditorFuncNum => $CKEditorFuncNum,
             },
         );
+
         return $LayoutObject->Attachment(
             ContentType => 'text/html; charset=' . $Charset,
             Content     => $LayoutObject->Output( TemplateFile => 'PictureUpload' ),
@@ -85,6 +91,7 @@ sub Run {
                         CKEditorFuncNum => $CKEditorFuncNum,
                     },
                 );
+
                 return $LayoutObject->Attachment(
                     ContentType => 'text/html; charset=' . $Charset,
                     Content     => $LayoutObject->Output( TemplateFile => 'PictureUpload' ),
@@ -131,6 +138,7 @@ sub Run {
                 CKEditorFuncNum => $CKEditorFuncNum,
             },
         );
+
         return $LayoutObject->Attachment(
             ContentType => 'text/html; charset=' . $Charset,
             Content     => $LayoutObject->Output( TemplateFile => 'PictureUpload' ),
@@ -147,6 +155,7 @@ sub Run {
                 CKEditorFuncNum => $CKEditorFuncNum,
             },
         );
+
         return $LayoutObject->Attachment(
             ContentType => 'text/html; charset=' . $Charset,
             Content     => $LayoutObject->Output( TemplateFile => 'PictureUpload' ),
@@ -221,12 +230,8 @@ sub Run {
     }
 
     # serve new content id and url to rte
-    my $Session = '';
-    if ( $Self->{SessionID} && !$Self->{SessionIDCookie} ) {
-        $Session = ';' . $Self->{SessionName} . '=' . $Self->{SessionID};
-    }
     my $URL = $LayoutObject->{Baselink}
-        . "Action=PictureUpload;FormID=$FormID;ContentID=$ContentIDNew$Session";
+        . "Action=PictureUpload;FormID=$FormID;ContentID=$ContentIDNew";
 
     # if ResponseType is JSON, do not return template content but a JSON structure
     if ( $ResponseType eq 'json' ) {
@@ -251,6 +256,7 @@ sub Run {
             URL             => $URL,
         },
     );
+
     return $LayoutObject->Attachment(
         ContentType => 'text/html; charset=' . $Charset,
         Content     => $LayoutObject->Output( TemplateFile => 'PictureUpload' ),

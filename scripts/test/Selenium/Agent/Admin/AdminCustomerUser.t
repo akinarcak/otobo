@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 
 our $Self;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -93,7 +93,7 @@ $Selenium->RunTest(
         my $ScriptAlias  = $ConfigObject->Get('ScriptAlias');
 
         # Navigate to AdminCustomerUser screen.
-        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminCustomerUser");
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminCustomerUser;IncludeInvalid=1");
 
         # Check overview AdminCustomerCompany.
         $Selenium->find_element( "table",             'css' );
@@ -308,6 +308,8 @@ $Selenium->RunTest(
             $Selenium->execute_script("return \$('.MessageBox.Notice p:contains($Notification)').length"),
             "$Notification - notification is found."
         );
+
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminCustomerUser");
 
         # Test search filter.
         $Selenium->find_element( "#Search",           'css' )->clear();

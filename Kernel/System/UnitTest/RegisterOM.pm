@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -33,6 +33,11 @@ Load this module in test scripts when the test driver C<$main::Self> is not need
 When you need C<$main::Self> too, then you only need to load C<Kernel::System::UnitTest::RegisterDriver>
 which loads this module implicitly.
 
+Running a script, which loads this module, never emits the warning
+"Name "Kernel::OM" used only once: possible typo". Even if the script has C<$Kernel::OM> only once.
+This is because C<$Kernel::OM> is mentioned in this module. Also,  modules loaded by
+C<Kernel::System::ObjectManager> mention C<$Kernel::OM>.
+
 =cut
 
 use v5.24;
@@ -44,8 +49,8 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::ObjectManager;
+# CareOnCloud ESM modules
+use Kernel::System::ObjectManager ();
 
 our $ObjectManagerDisabled = 1;
 
@@ -58,11 +63,21 @@ sub import {    ## no critic qw(OTOBO::RequireCamelCase)
 
         # Log to an identifiable logfile.
         'Kernel::System::Log' => {
-            LogPrefix => 'OTOBO-otobo.UnitTest',
+            LogPrefix => 'CareOnCloud ESM-careoncloud.UnitTest',
         },
     );
 
     return;
+}
+
+END {
+
+    # Clean up the global objects before global destruction sets in.
+    # This makes the test scripts behave more like careoncloud.psgi
+    # or careoncloud.Console.pl .
+    if ($Kernel::OM) {
+        $Kernel::OM->ObjectsDiscard;
+    }
 }
 
 1;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -55,7 +55,7 @@
             <div class="Content">
                 <p>
                     [% Translate("Currently support data is only shown in this system.") | html %]
-                    [% Translate("It is sometimes recommended to send this data to the OTOBO team in order to get better support.") | html %]
+                    [% Translate("It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.") | html %]
                 </p>
             </div>
             <div class="Clear"></div>
@@ -80,7 +80,7 @@
                         <div class="Field">
                             <input type="checkbox" name="SupportDataSending" id="SupportDataSending" value="Yes" [% Data.SupportDataSendingChecked %] />
                             <p class="FieldExplanation">
-                                [% Translate("This will allow the system to send additional support data information to the OTOBO team.") | html %]
+                                [% Translate("This will allow the system to send additional support data information to the CareOnCloud ESM team.") | html %]
                             </p>
                         </div>
                         <div class="Clear"></div>
@@ -106,9 +106,9 @@
             <div class="Content">
                 <p class="Center">
                     [% Translate("Currently support data is only shown in this system.") | html %]
-                    [% Translate("It is sometimes recommended to send this data to the OTOBO team in order to get better support.") | html %]
+                    [% Translate("It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.") | html %]
                     <br/>
-                    [% Translate("To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the 'send support data' option.)") | html %]
+                    [% Translate("To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the 'send support data' option.)") | html %]
                 </p>
 
                 [%  IF Config("Frontend::Module").AdminRegistration %]

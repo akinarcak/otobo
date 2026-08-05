@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,7 +15,6 @@
 # --
 
 package Kernel::Modules::MigrateFromOTRS;
-## nofilter(TidyAll::Plugin::OTOBO::Perl::DBObject)
 
 use strict;
 use warnings;
@@ -27,8 +26,8 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our $ObjectManagerDisabled = 1;
@@ -142,7 +141,7 @@ sub Run {
                 TTL   => $CacheTTL,
             );
             $Return = $MigrateFromOTRSObject->Run(
-                Task     => 'OTOBOOTRSConnectionCheck',
+                Task     => 'CareOnCloudOTRSConnectionCheck',
                 UserID   => 1,
                 OTRSData => \%GetParam,
             );
@@ -156,7 +155,8 @@ sub Run {
                 $GetParam{$Key} =~ s/\s+$//;
             }
             $GetParam{DBDSN} =
-                $GetParam{DBType} eq 'mysql'      ? "DBI:mysql:database=;host=$GetParam{DBHost};" :
+                $GetParam{DBType} eq 'mariadb'    ? "DBI:MariaDB:database=;host=$GetParam{DBHost};" :
+                $GetParam{DBType} eq 'mysql'      ? "DBI:MariaDB:database=;host=$GetParam{DBHost};" :
                 $GetParam{DBType} eq 'postgresql' ? "DBI:Pg:host=$GetParam{DBHost};" :
                 $GetParam{DBType} eq 'oracle'     ? $GetParam{DBDSN} :
                 '';
@@ -176,7 +176,7 @@ sub Run {
             # "normal" migration
             else {
                 $Return = $MigrateFromOTRSObject->Run(
-                    Task   => 'OTOBOOTRSDBCheck',
+                    Task   => 'CareOnCloudOTRSDBCheck',
                     UserID => 1,
                     DBData => \%GetParam,
                 );
@@ -187,30 +187,30 @@ sub Run {
             my @Taskorder;
             if ( $Self->{Subaction} eq 'PreChecks' ) {
                 @Taskorder = qw(
-                    OTOBOFrameworkVersionCheck
-                    OTOBOPerlModulesCheck
+                    CareOnCloudFrameworkVersionCheck
+                    CareOnCloudPerlModulesCheck
                 );
 
-                #                    OTOBOOTRSPackageCheck
+                #                    CareOnCloudOTRSPackageCheck
             }
             elsif ( $Self->{Subaction} eq 'Copy' ) {
                 @Taskorder = qw(
-                    OTOBODatabaseMigrate
-                    OTOBOCopyFilesFromOTRS
-                    OTOBOMigrateConfigFromOTRS
-                    OTOBONotificationMigrate
-                    OTOBOStatsMigrate
-                    OTOBOItsmTablesMigrate
-                    OTOBOAutoResponseTemplatesMigrate
-                    OTOBOResponseTemplatesMigrate
-                    OTOBOSalutationsMigrate
-                    OTOBOSignaturesMigrate
-                    OTOBOPostmasterFilterMigrate
-                    OTOBOACLDeploy
-                    OTOBOMigrateWebServiceConfiguration
-                    OTOBOProcessDeploy
-                    OTOBOCacheCleanup
-                    OTOBOPackageSpecifics
+                    CareOnCloudDatabaseMigrate
+                    CareOnCloudCopyFilesFromOTRS
+                    CareOnCloudMigrateConfigFromOTRS
+                    CareOnCloudNotificationMigrate
+                    CareOnCloudStatsMigrate
+                    CareOnCloudItsmTablesMigrate
+                    CareOnCloudAutoResponseTemplatesMigrate
+                    CareOnCloudResponseTemplatesMigrate
+                    CareOnCloudSalutationsMigrate
+                    CareOnCloudSignaturesMigrate
+                    CareOnCloudPostmasterFilterMigrate
+                    CareOnCloudACLDeploy
+                    CareOnCloudMigrateWebServiceConfiguration
+                    CareOnCloudProcessDeploy
+                    CareOnCloudCacheCleanup
+                    CareOnCloudPackageSpecifics
                 );
             }
 
@@ -251,7 +251,7 @@ sub Run {
                 if ( !$Result || !defined $Result->{Successful} ) {
                     $Result->{Successful} = 0;
                     $Result->{Message}    = $AJAXTask;
-                    $Result->{Comment}    = 'A fatal error occured.';
+                    $Result->{Comment}    = 'A fatal error occurred.';
 
                     $Kernel::OM->Get('Kernel::System::Log')->Log(
                         Priority => 'error',
@@ -299,7 +299,7 @@ sub Run {
 
         # Return AJAX response content as as Perl string.
         # The output should not be encoded because the content
-        # will be encoded in otobo.psgi. Double encoding is bad.
+        # will be encoded in careoncloud.psgi. Double encoding is bad.
         my $OutputJSON = $LayoutObject->JSONEncode( Data => $Return );
 
         return $LayoutObject->Attachment(
@@ -313,7 +313,7 @@ sub Run {
     # if this is not an AJAX request, then build the HTML for the current subaction
 
     # generate current title
-    my $Title     = $LayoutObject->{LanguageObject}->Translate('OTRS to OTOBO migration');
+    my $Title     = $LayoutObject->{LanguageObject}->Translate('OTRS to CareOnCloud ESM migration');
     my %Subtitles = (
         Intro            => 'Intro',
         OTRSFileSettings => 'OTRS server and path',
@@ -390,8 +390,8 @@ sub Run {
         # Use defaults for various settings, unless we have cached data
         if ( !IsHashRefWithData($CachedData) ) {
 
-            # Under Docker we assume that /opt/otrs has been copied into the otobo_opt_otobo volume.
-            my $DefaultOTRSHome = $ENV{OTOBO_RUNS_UNDER_DOCKER} ? '/opt/otobo/var/tmp/copied_otrs' : '/opt/otrs';
+            # Under Docker we assume that /opt/otrs has been copied into the otobo_opt_careoncloud volume.
+            my $DefaultOTRSHome = $ENV{CareOnCloud_RUNS_UNDER_DOCKER} ? '/opt/careoncloud/var/tmp/copied_otrs' : '/opt/otrs';
             my %Defaults        = (
                 Intro => {
                     Subaction => 'OTRSFileSettings',
@@ -405,10 +405,10 @@ sub Run {
                     DBUser => 'otrs',
                 },
                 PreChecks => {
-                    NextTask => 'OTOBOFrameworkVersionCheck',
+                    NextTask => 'CareOnCloudFrameworkVersionCheck',
                 },
                 Copy => {
-                    NextTask => 'OTOBODatabaseMigrate',
+                    NextTask => 'CareOnCloudDatabaseMigrate',
                 },
             );
 
@@ -428,6 +428,7 @@ sub Run {
         },
         OTRSDBSettings => {
             DBType => {
+                mariadb    => 'MariaDB',
                 mysql      => 'MySQL',
                 postgresql => 'PostgreSQL',
                 oracle     => 'Oracle',
@@ -572,7 +573,7 @@ sub _Finish {
         UserID      => 1,
     );
 
-    # A restart should never be needed as otobo.psgi checks for changed modules.
+    # A restart should never be needed as careoncloud.psgi checks for changed modules.
     # But keep the old code for future reference.
     my $Webserver;
     if (0) {
@@ -590,8 +591,8 @@ sub _Finish {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # index.pl is appended in the template
-    my $OTOBOHandle = $ParamObject->ScriptName();
-    $OTOBOHandle =~ s/\/(.*)\/migration\.pl/$1/;
+    my $CareOnCloudHandle = $ParamObject->ScriptName();
+    $CareOnCloudHandle =~ s/\/(.*)\/migration\.pl/$1/;
 
     # Under Docker the scheme is correctly recognised as there are only two relevant cases:
     #   a) HTTP should actually be used
@@ -611,7 +612,7 @@ sub _Finish {
     return {
         Webserver   => $Webserver,
         Scheme      => $Scheme,
-        OTOBOHandle => $OTOBOHandle,
+        CareOnCloudHandle => $CareOnCloudHandle,
         Host        => $Host,
     };
 }
@@ -629,7 +630,7 @@ sub _CheckConfig {
 
     my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-    # TODO: is this still needed? ConfigurationXML2DB is already called on OTOBOMigrateConfigFromOTRS
+    # TODO: is this still needed? ConfigurationXML2DB is already called on CareOnCloudMigrateConfigFromOTRS
     return $SysConfigObject->ConfigurationXML2DB(
         UserID    => 1,
         Directory => "$Home/Kernel/Config/Files/XML",
@@ -647,7 +648,7 @@ sub _TaskError {
     );
 
     return {
-        Message => "An error occured.",
+        Message => "An error occurred.",
         Comment => "Task '$Task' not defined for $Self->{Subaction}!",
         Success => 0,
     };

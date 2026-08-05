@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,12 +20,12 @@ use warnings;
 use utf8;
 
 # core modules
+use Archive::Tar ();
 
 # CPAN modules
 use Test2::V0;
-use Archive::Tar;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 use Kernel::System::VariableCheck qw(:all);
 
@@ -55,7 +55,7 @@ $Helper->ConfigSettingChange(
     Valid => 1,
     Key   => 'SupportDataCollector::DisablePlugins',
     Value => [
-        'Kernel::System::SupportDataCollector::Plugin::OTOBO::PackageDeployment',
+        'Kernel::System::SupportDataCollector::Plugin::CareOnCloud::PackageDeployment',
     ],
 );
 
@@ -79,7 +79,7 @@ else {
 }
 
 # create an ARCHIVE file on developer systems to continue working
-my $ArchiveGeneratorTool = $Home . '/bin/otobo.CheckSum.pl';
+my $ArchiveGeneratorTool = $Home . '/bin/careoncloud.CheckSum.pl';
 
 # if tool is not present we can't continue
 if ( !-e $ArchiveGeneratorTool ) {
@@ -95,10 +95,7 @@ my $Result = `$ArchiveGeneratorTool -a create`;
 if ( !-e $Home . '/ARCHIVE' || -z $Home . '/ARCHIVE' ) {
 
     # if ARCHIVE file is not present we can't continue
-    $Self->True(
-        0,
-        "ARCHIVE file is not generated, we can't continue",
-    );
+    fail("ARCHIVE file is not generated, we can't continue");
 
     done_testing();
 
@@ -128,32 +125,32 @@ else {
     );
 }
 
-# get OTOBO Version
-my $OTOBOVersion = $ConfigObject->Get('Version');
+# get CareOnCloud ESM Version
+my $CareOnCloudVersion = $ConfigObject->Get('Version');
 
 # leave only mayor and minor level versions
-$OTOBOVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
+$CareOnCloudVersion =~ s{ (\d+ \. \d+) .+ }{$1}msx;
 
 # add x as patch level version
-$OTOBOVersion .= '.x';
+$CareOnCloudVersion .= '.x';
 
 my $TestPackage = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test - ' . $RandomNumber . '</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
-  <Framework>' . $OTOBOVersion . '</Framework>
+  <Framework>' . $CareOnCloudVersion . '</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="TestSBG" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/TestSBG" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # tests for GenerateCustom Files Archive
@@ -432,7 +429,7 @@ my $PerlStructureScalar = $JSONObject->Decode(
 if (%RegistrationInfo) {
     for my $Attribute (
         qw(
-            FQDN OTOBOVersion OSType OSVersion DatabaseVersion PerlVersion
+            FQDN CareOnCloudVersion OSType OSVersion DatabaseVersion PerlVersion
             Description SupportDataSending RegistrationKey APIKey State Type
         )
         )
@@ -540,35 +537,35 @@ $Self->IsDeeply(
 # Generate ZZZZUnitTestMaskPasswords.pm to check later for mask passwords.
 my $MaskPasswordIdentifier = $Helper->GetRandomNumber() . 'MaskPasswords';
 my $MaskPasswordFile       = 'ZZZZUnitTest' . $MaskPasswordIdentifier . '.pm';
-my $MaskPasswordContent    = <<"END_CUSTOM_CODE";
-# OTOBO config file (automatically generated)
+my $MaskPasswordContent    = sprintf <<'END_CUSTOM_CODE', $MaskPasswordIdentifier;
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:1.1
-package Kernel::Config::Files::ZZZZUnitTest$MaskPasswordIdentifier;
+package Kernel::Config::Files::ZZZZUnitTest%s;
 use strict;
 use warnings;
-no warnings \'redefine\';
+no warnings 'redefine';
 use utf8;
 sub Load {
-    my (\$File, \$Self) = \@_;
+    my ($File, $Self) = @_;
 
     # Simple tests.
-    \$Self->{DatabasePw} = 'some-pass';
-    \$Self->{'DatabasePw'} = 'some-pass2';
-    \$Self->{'Customer::AuthModule::DB::CustomerPassword'} = 'password123';
-    \$Self->{'Customer::AuthModule::DB::Password'} = 'password456';
+    $Self->{DatabasePw} = 'some-pass';
+    $Self->{'DatabasePw'} = 'some-pass2';
+    $Self->{'Customer::AuthModule::DB::CustomerPassword'} = 'password123';
+    $Self->{'Customer::AuthModule::DB::Password'} = 'password456';
 
     # Complex tests.
-    \$Self->{CustomerUser} = {
+    $Self->{CustomerUser} = {
         Name   => 'Database Backend',
         Module => 'Kernel::System::CustomerUser::DB',
         Params => {
-           User => 'OTOBO',
+           User => 'CareOnCloud ESM',
            Password => 'secure-password',
            Table => 'customer_user',
         },
     };
 
-    \$Self->{CustomerUser} = {
+    $Self->{CustomerUser} = {
         Name => 'LDAP Backend',
         Module => 'Kernel::System::CustomerUser::LDAP',
         Params => {
@@ -589,32 +586,33 @@ sub Load {
     };
 
     # HTTP credentials test.
-    \$Self->{'DocumentSearch::Nodes'} = [
+    $Self->{'DocumentSearch::Nodes'} = [
         {
-            DNS  => 'https://elastic:search\@localhost:9200',
+            DNS  => 'https://elastic:search@localhost:9200',
             Name => 'test',
         },
     ];
 }
+
 1;
 END_CUSTOM_CODE
 
 my @ExpectedResults = (
     {
         Name   => 'DatabasePw (normal)',
-        Result => "\$Self->{DatabasePw} = 'xxx';",
+        Result => q{$Self->{DatabasePw} = 'xxx';},
     },
     {
         Name   => 'DatabasePw (with single quotes)',
-        Result => "\$Self->{'DatabasePw'} = 'xxx';",
+        Result => q{$Self->{'DatabasePw'} = 'xxx';},
     },
     {
         Name   => 'CustomerPassword (Customer::AuthModule::DB::CustomerPassword)',
-        Result => "\$Self->{'Customer::AuthModule::DB::CustomerPassword'} = 'xxx';",
+        Result => q{$Self->{'Customer::AuthModule::DB::CustomerPassword'} = 'xxx';},
     },
     {
         Name   => 'Password (Customer::AuthModule::DB::Password)',
-        Result => "\$Self->{'Customer::AuthModule::DB::Password'} = 'xxx';",
+        Result => q{$Self->{'Customer::AuthModule::DB::Password'} = 'xxx';},
     },
     {
         Name   => 'Password (CustomerUser DB backend)',
@@ -626,7 +624,7 @@ my @ExpectedResults = (
     },
     {
         Name   => 'DNS (Document search nodes)',
-        Result => "DNS  => 'https://[user]:[password]\@localhost:9200'"
+        Result => q{DNS  => 'https://[user]:[password]@localhost:9200'},
     }
 );
 

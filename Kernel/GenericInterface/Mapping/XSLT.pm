@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,8 +19,13 @@ package Kernel::GenericInterface::Mapping::XSLT;
 use strict;
 use warnings;
 
+# core modules
+use Storable qw(dclone);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Storable;
 
 our $ObjectManagerDisabled = 1;
 
@@ -118,7 +123,8 @@ sub Map {
     # Check data - only accept undef or hash ref or array ref.
     if ( defined $Param{Data} && ref $Param{Data} ne 'HASH' && ref $Param{Data} ne 'ARRAY' ) {
         return $Self->{DebuggerObject}->Error(
-            Summary => 'Got Data but it is not a hash or array ref in Mapping XSLT backend!'
+            Summary => 'Got Data but it is not a hash or array ref in Mapping XSLT backend!',
+            Data    => $Param{Data},
         );
     }
 
@@ -130,7 +136,21 @@ sub Map {
     }
 
     # Return if data is empty.
-    if ( !defined $Param{Data} || !%{ $Param{Data} } ) {
+    if ( !defined $Param{Data} ) {
+        return {
+            Success => 1,
+            Data    => {},
+        };
+    }
+
+    if ( ref $Param{Data} eq 'HASH' && !%{ $Param{Data} } ) {
+        return {
+            Success => 1,
+            Data    => {},
+        };
+    }
+
+    if ( ref $Param{Data} eq 'ARRAY' && !scalar @{ $Param{Data} } ) {
         return {
             Success => 1,
             Data    => {},
@@ -198,29 +218,52 @@ sub Map {
         && IsArrayRefWithData( $Config->{DataInclude} )
         )
     {
-        my $MergedData = Storable::dclone( $Param{Data} );
-        DATAINCLUDEMODULE:
-        for my $DataIncludeModule ( @{ $Config->{DataInclude} } ) {
-            next DATAINCLUDEMODULE if !$Param{DataInclude}->{$DataIncludeModule};
+        if ( ref $Param{Data} eq 'ARRAY' ) {
 
-            # Clone the data include hash to prevent circular data structure references
-            $MergedData->{DataInclude}->{$DataIncludeModule} = Storable::dclone( $Param{DataInclude}->{$DataIncludeModule} );
+            my @Collector;
+            for my $Data ( $Param{Data}->@* ) {
+
+                push @Collector, $Self->_MergeData(
+                    Data        => $Data,
+                    Config      => $Config,
+                    DataInclude => $Param{DataInclude},
+                );
+            }
+            $Param{Data} = \@Collector;
+        }
+        else {
+
+            $Param{Data} = $Self->_MergeData(
+                Data        => $Param{Data},
+                Config      => $Config,
+                DataInclude => $Param{DataInclude},
+            );
         }
 
         $Self->{DebuggerObject}->Debug(
             Summary => 'Data merged with DataInclude before mapping',
-            Data    => $MergedData,
+            Data    => $Param{Data},
         );
-
-        $Param{Data} = $MergedData;
     }
 
     # XSTL regex recursion.
     if ( IsArrayRefWithData( $Config->{PreRegExFilter} ) ) {
-        $Self->_RegExRecursion(
-            Data   => $Param{Data},
-            Config => $Config->{PreRegExFilter},
-        );
+
+        if ( ref $Param{Data} eq 'ARRAY' ) {
+
+            for my $Data ( $Param{Data}->@* ) {
+                $Self->_RegExRecursion(
+                    Data   => $Data,
+                    Config => $Config->{PreRegExFilter},
+                );
+            }
+        }
+        else {
+            $Self->_RegExRecursion(
+                Data   => $Param{Data},
+                Config => $Config->{PreRegExFilter},
+            );
+        }
         $Self->{DebuggerObject}->Debug(
             Summary => 'Data before mapping after Pre RegExFilter',
             Data    => $Param{Data},
@@ -247,6 +290,9 @@ sub Map {
 
     my $XMLSimple = XML::Simple->new;
     my $XMLPre    = eval {
+
+        # Note that the default behavior for SuppressEmpty applies.
+        # This means that attributes with undefined values will be added as empty elements.
         $XMLSimple->XMLout(
             $Param{Data},
             AttrIndent => 1,
@@ -262,6 +308,14 @@ sub Map {
             Data    => $@,
         );
     }
+
+    $Self->{DebuggerObject}->Debug(
+        Summary => 'XML pre mapping',
+        Data    => {
+            Message => $@,
+            XMLIn   => $XMLPre,
+        },
+    );
 
     # Transform xml data.
     my $XMLSource = eval {
@@ -292,14 +346,19 @@ sub Map {
         );
     }
 
+    my $EnableExtendedXSLTMappingAttributes = $Config->{EnableExtendedXSLTMapping} // 0;
+
     # Convert data back to Perl structure.
     my $ReturnData = eval {
         $XMLSimple->XMLin(
             $XMLPost,
             ForceArray => 0,
             ContentKey => '-content',
-            NoAttr     => 1,
+            NoAttr     => $EnableExtendedXSLTMappingAttributes ? 0 : 1,
             KeyAttr    => [],
+
+            # from XML to JSON map empty and undef values to '' instead of {}
+            SuppressEmpty => '',
         );
     };
     if ( !$ReturnData ) {
@@ -312,22 +371,180 @@ sub Map {
         );
     }
 
+    # typify tree structure if 'careoncloudType' attrs have been used in XSLT
+    if ( $EnableExtendedXSLTMappingAttributes && $XMLPost =~ /careoncloudXslType=/ ) {
+
+        $Self->{DebuggerObject}->Debug(
+            Summary => 'XML after mapping',
+            Data    => $XMLPost,
+        );
+
+        $ReturnData = $Self->_ReduceTypedTreeData(
+            Data => $ReturnData
+        );
+
+        $Self->{DebuggerObject}->Debug(
+            Summary => 'Returned data structure with type reduction applied',
+            Data    => $ReturnData,
+        );
+    }
+
     # XST regex recursion.
     if ( IsArrayRefWithData( $Config->{PostRegExFilter} ) ) {
+
         $Self->{DebuggerObject}->Debug(
             Summary => 'Data after mapping before Post RegExFilter',
             Data    => $ReturnData,
         );
-        $Self->_RegExRecursion(
-            Data   => $ReturnData,
-            Config => $Config->{PostRegExFilter},
-        );
+
+        # keep the code orthogonal with pre regex subst above,
+        # even when currently the ReturnData converted from
+        # xml most likely will have a RootElement anyway.
+        if ( ref $ReturnData eq 'ARRAY' ) {
+
+            for my $Data ( $ReturnData->@* ) {
+
+                $Self->_RegExRecursion(
+                    Data   => $Data,
+                    Config => $Config->{PostRegExFilter},
+                );
+            }
+        }
+        else {
+            $Self->_RegExRecursion(
+                Data   => $ReturnData,
+                Config => $Config->{PostRegExFilter},
+            );
+        }
     }
 
     return {
         Success => 1,
         Data    => $ReturnData,
     };
+}
+
+sub _ReduceTypedTreeData {
+    my ( $Self, %Param ) = @_;
+
+    my $Data     = $Param{Data};
+    my $TypeHint = $Param{TypeHint};
+
+    my $JSONObject = $Kernel::OM->Get('Kernel::System::JSON');
+
+    my $Result;
+
+    # hashes could contain a type discriminator ('careoncloudXslType')
+    if ( ref $Data eq 'HASH' ) {
+
+        # if hash contains a type discriminator ('careoncloudXslType')
+        if ( exists $Data->{careoncloudXslType} ) {
+
+            my $CareOnCloudType = $Data->{careoncloudXslType};
+            my $Content   = $Data->{content};
+
+            if ( $CareOnCloudType =~ 'array' && ref $Content ne 'ARRAY' ) {
+
+                # wrap content in an array as requested
+                $Result = [
+                    $Self->_ReduceTypedTreeData(
+                        Data     => $Content,
+                        TypeHint => $CareOnCloudType
+                    )
+                ];
+            }
+            else {
+
+                # either single element, or already is an Array
+                # so just reduce
+                $Result = $Self->_ReduceTypedTreeData(
+                    Data     => $Content,
+                    TypeHint => $CareOnCloudType
+                );
+            }
+        }
+        else {
+
+            # this is a plain hash. walk the items and reduce it further
+            $Result = {};
+            for my $Key ( keys $Data->%* ) {
+                $Result->{$Key} = $Self->_ReduceTypedTreeData(
+                    Data     => $Data->{$Key},
+                    TypeHint => $TypeHint
+                );
+            }
+        }
+    }
+
+    # arrays won't contain a type discrimator, but their items could
+    elsif ( ref $Data eq 'ARRAY' ) {
+
+        my @Array;
+        for my $Item ( $Data->@* ) {
+
+            # if array item is a hash with careoncloudType discriminator
+            if ( ref $Item eq 'HASH' && exists $Item->{careoncloudXslType} ) {
+
+                push @Array, $Self->_ReduceTypedTreeData(
+                    Data     => $Item->{content},
+                    TypeHint => $Item->{careoncloudXslType}
+                );
+            }
+
+            # plain array item otherwise, just reduce it
+            else {
+
+                push @Array, $Self->_ReduceTypedTreeData(
+                    Data     => $Item,
+                    TypeHint => $TypeHint
+                );
+            }
+        }
+        $Result = \@Array;
+    }
+
+    # not an array or hash, but a typehint exist from parent element
+    elsif ($TypeHint) {
+
+        if ( $TypeHint =~ 'bool' ) {
+
+            # captures undef, 0, '0', and the string 'false' (case-insensitive)
+            if ( !$Data || ( lc($Data) eq 'false' ) ) {
+
+                $Result = $JSONObject->False;
+            }
+
+            # otherwise assume value of true
+            else {
+
+                $Result = $JSONObject->True;
+            }
+        }
+        elsif ( $TypeHint =~ 'int' ) {
+
+            # force integer representation
+            $Result = int($Data);
+        }
+        elsif ( $TypeHint =~ 'float' ) {
+
+            # force floating point represnation
+            $Result = $Data ? 0.0 + $Data : 0.0;
+        }
+        else {
+
+            # copy value as is
+            $Result = $Data;
+        }
+    }
+
+    # not an array or hash, and no typehint avail
+    else {
+
+        # copy value as is
+        $Result = $Data;
+    }
+
+    return $Result;
 }
 
 sub _RegExRecursion {
@@ -379,6 +596,23 @@ sub _RegExRecursion {
     }
 
     return 1;
+}
+
+sub _MergeData {
+    my ( $Self, %Param ) = @_;
+
+    my $Config = $Param{Config};
+
+    my $MergedData = dclone( $Param{Data} );
+    DATAINCLUDEMODULE:
+    for my $DataIncludeModule ( @{ $Config->{DataInclude} } ) {
+        next DATAINCLUDEMODULE if !$Param{DataInclude}->{$DataIncludeModule};
+
+        # Clone the data include hash to prevent circular data structure references
+        $MergedData->{DataInclude}->{$DataIncludeModule} = dclone( $Param{DataInclude}->{$DataIncludeModule} );
+    }
+
+    return $MergedData;
 }
 
 1;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -96,9 +96,9 @@ my @Tests = (
     },
     {
         Input =>
-            'Some text with a complicated url http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631',
+            'Some text with a complicated url http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631',
         Result =>
-            'Some text with a complicated url <a href="http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631" title="http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631">http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631</a>',
+            'Some text with a complicated url <a href="http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631" title="http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631">http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631</a>',
         Name   => 'LinkQuote - complicated',
         Target => '',
     },
@@ -160,9 +160,9 @@ my @Tests = (
     },
     {
         Input =>
-            'Some text with a full url http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631',
+            'Some text with a full url http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631',
         Result =>
-            'Some text with a full url <a href="http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631" title="http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631">http://example.com/otobo/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631</a>',
+            'Some text with a full url <a href="http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631" title="http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631">http://example.com/careoncloud/index.pl?Action=AgentTicketZoom&TicketID=256868&ArticleID=696631&ZoomExpand=0#696631</a>',
         Name   => 'LinkQuote – full url',
         Target => '',
     },
@@ -319,9 +319,9 @@ my @Tests = (
     },
     {
         Input =>
-            '<br />http://cuba/otobo/index.pl?Action=AgentTicketZoom&amp;TicketID=4348<br /><br />Your OTOBO Notification Master',
+            '<br />http://cuba/careoncloud/index.pl?Action=AgentTicketZoom&amp;TicketID=4348<br /><br />Your CareOnCloud ESM Notification Master',
         Result =>
-            '<br /><a href="http://cuba/otobo/index.pl?Action=AgentTicketZoom&amp;TicketID=4348" title="http://cuba/otobo/index.pl?Action=AgentTicketZoom&amp;TicketID=4348">http://cuba/otobo/index.pl?Action=AgentTicketZoom&amp;TicketID=4348</a><br /><br />Your OTOBO Notification Master',
+            '<br /><a href="http://cuba/careoncloud/index.pl?Action=AgentTicketZoom&amp;TicketID=4348" title="http://cuba/careoncloud/index.pl?Action=AgentTicketZoom&amp;TicketID=4348">http://cuba/careoncloud/index.pl?Action=AgentTicketZoom&amp;TicketID=4348</a><br /><br />Your CareOnCloud ESM Notification Master',
         Name   => 'LinkQuote - just TLD given;',
         Target => '',
     },

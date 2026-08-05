@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,11 +16,17 @@
 
 package Kernel::Modules::AgentTicketPrint;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+use utf8;
 
-use Kernel::System::DateTime;
-use Kernel::System::VariableCheck qw(IsHashRefWithData);
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
@@ -28,11 +34,7 @@ our $ObjectManagerDisabled = 1;
 sub new {
     my ( $Type, %Param ) = @_;
 
-    # Allocate new hash for object.
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Type;
 }
 
 sub Run {
@@ -57,7 +59,7 @@ sub Run {
     );
 
     # No permission, do not show ticket.
-    return $LayoutObject->NoPermission( WithHeader => 'yes' ) if !$Access;
+    return $LayoutObject->NoPermission( WithHeader => 'yes' ) unless $Access;
 
     # Get ACL restrictions.
     my %PossibleActions = (
@@ -75,7 +77,7 @@ sub Run {
     my %AclAction = $TicketObject->TicketAclActionData();
 
     # Check if ACL restrictions exist.
-    if ( $ACL || IsHashRefWithData( \%AclAction ) ) {
+    if ($ACL) {
 
         my %AclActionLookup = reverse %AclAction;
 
@@ -101,6 +103,11 @@ sub Run {
     $Filename .= $DateTimeObject->Format( Format => '%Y-%m-%d_%H:%M' );
     $Filename .= '.pdf';
 
+    my $CleanedFilename = $Kernel::OM->Get('Kernel::System::Main')->FilenameCleanUp(
+        Filename => $Filename,
+        Type     => 'Attachment',
+    );
+
     # Return the PDF document.
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $PDFString   = $Kernel::OM->Get('Kernel::Output::PDF::Ticket')->GeneratePDF(
@@ -112,7 +119,7 @@ sub Run {
     );
 
     return $LayoutObject->Attachment(
-        Filename    => $Filename,
+        Filename    => $CleanedFilename,
         ContentType => "application/pdf",
         Content     => $PDFString,
         Type        => 'inline',

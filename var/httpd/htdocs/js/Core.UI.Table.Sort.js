@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -89,17 +89,18 @@ Core.UI.Table.Sort = (function (TargetNS) {
                 $Table.tablesorter({
                     headers: Headers,
                     sortList: InitialSort,
-                    textExtraction: CustomTextExtractor,
-                    language: {
-                      sortAsc      : Core.Language.Translate('Ascending sort applied, '),
-                      sortDesc     : Core.Language.Translate('Descending sort applied, '),
-                      sortNone     : Core.Language.Translate('No sort applied, '),
-                      sortDisabled : Core.Language.Translate('sorting is disabled'),
-                      nextAsc      : Core.Language.Translate('activate to apply an ascending sort'),
-                      nextDesc     : Core.Language.Translate('activate to apply a descending sort'),
-                      nextNone     : Core.Language.Translate('activate to remove the sort')
-                    }
+                    textExtraction: CustomTextExtractor
                 });
+
+                $Table.tablesorter.language = {
+                    sortAsc      : Core.Language.Translate('Ascending sort applied, '),
+                    sortDesc     : Core.Language.Translate('Descending sort applied, '),
+                    sortNone     : Core.Language.Translate('No sort applied, '),
+                    sortDisabled : Core.Language.Translate('sorting is disabled'),
+                    nextAsc      : Core.Language.Translate('activate to apply an ascending sort'),
+                    nextDesc     : Core.Language.Translate('activate to apply a descending sort'),
+                    nextNone     : Core.Language.Translate('activate to remove the sort')
+                };
 
                 if ($.isFunction(Finished)) {
                     $Table.on('sortEnd', Finished);

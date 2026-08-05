@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -39,7 +39,7 @@ sub Configure {
     my ( $Self, %Param ) = @_;
 
     $Self->Description(
-        'Generate (and send, optional) statistics which have been configured previously in the OTOBO statistics module.'
+        'Generate (and send, optional) statistics which have been configured previously in the CareOnCloud ESM statistics module.'
     );
     $Self->AddOption(
         Name        => 'number',
@@ -104,7 +104,7 @@ sub Configure {
     $Self->AddOption(
         Name        => 'language',
         Description =>
-            "Target language (e.g. de) for which the file should be generated (will be OTOBO default language or english as fallback if left empty).",
+            "Target language (e.g. de) for which the file should be generated (will be CareOnCloud ESM default language or english as fallback if left empty).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,

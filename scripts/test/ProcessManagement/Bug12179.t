@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -102,18 +102,18 @@ my %Process = (
                 ContentType          => 'text/plain; charset=UTF8',
                 CustomerID           => '',
                 CustomerUser         => '',
-                $DynamicFieldName    => "<OTOBO_TICKET_$DynamicFieldName>",
+                $DynamicFieldName    => "<CareOnCloud_TICKET_$DynamicFieldName>",
                 HistoryComment       => 'Created new ticket copy',
                 HistoryType          => 'AddNote',
                 LinkAs               => 'Child',
                 Lock                 => 'unlock',
                 OwnerID              => 1,
                 Priority             => '3 normal',
-                Queue                => '<OTOBO_TICKET_Queue>',
+                Queue                => '<CareOnCloud_TICKET_Queue>',
                 State                => 'closed successful',
-                Subject              => '<OTOBO_TICKET_Title>',
-                Title                => '<OTOBO_TICKET_Title>',
-                Type                 => '<OTOBO_TICKET_Type>',
+                Subject              => '<CareOnCloud_TICKET_Title>',
+                Title                => '<CareOnCloud_TICKET_Title>',
+                Type                 => '<CareOnCloud_TICKET_Type>',
             },
             ChangeTime => '2016-07-05 16:00:22',
             CreateTime => '2016-07-05 15:18:21',

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,12 +22,12 @@ use warnings;
 use parent qw(Kernel::System::EventHandler);
 
 # core modules
-use Digest::MD5;
-use MIME::Base64 ();
+use Digest::MD5  ();
+use MIME::Base64 qw(decode_base64 encode_base64);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -98,6 +98,7 @@ creates a new calendar for given user.
                 StartDate => 'FirstResponse',
                 EndDate   => 'Plus_5',
                 QueueID   => [ 2 ],
+                RuleID    => "363665b0ad6b1a7d14a9a30354e80c60",
                 SearchParams => {
                     Title => 'This is a title',
                     Types => 'This is a type',
@@ -177,7 +178,7 @@ sub CalendarCreate {
             Data => $Param{TicketAppointments},
         );
         $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput($TicketAppointments);
-        $TicketAppointments = MIME::Base64::encode_base64($TicketAppointments);
+        $TicketAppointments = encode_base64($TicketAppointments);
     }
 
     my $SQL = '
@@ -198,7 +199,6 @@ sub CalendarCreate {
 
     %Calendar = $Self->CalendarGet(
         CalendarName => $Param{CalendarName},
-        UserID       => $Param{UserID},
     );
     return if !%Calendar;
 
@@ -253,6 +253,7 @@ Returns Calendar data:
                 StartDate => 'FirstResponse',
                 EndDate   => 'Plus_5',
                 QueueID   => [ 2 ],
+                RuleID    => "363665b0ad6b1a7d14a9a30354e80c60",
                 SearchParams => {
                     Title => 'This is a title',
                     Types => 'This is a type',
@@ -268,7 +269,7 @@ Returns Calendar data:
 
 Returns an empty list when no calendar is found.
 
-Returns an empty list the the parameter C<UserID> was passed and the passed user has no permission to access the calendar.
+Returns an empty list if the parameter C<UserID> was passed and the passed user has no permission to access the calendar.
 
 =cut
 
@@ -337,7 +338,7 @@ sub CalendarGet {
             # decode and deserialize ticket appointment data
             my $TicketAppointments;
             if ( $Row[4] ) {
-                my $DecodedData = MIME::Base64::decode_base64( $Row[4] );
+                my $DecodedData = decode_base64( $Row[4] );
                 $TicketAppointments = $Kernel::OM->Get('Kernel::System::Storable')->Deserialize(
                     Data => $DecodedData,
                 );
@@ -534,6 +535,7 @@ updates an existing calendar.
                 StartDate => 'FirstResponse',
                 EndDate   => 'Plus_5',
                 QueueID   => [ 2 ],
+                RuleID    => "363665b0ad6b1a7d14a9a30354e80c60",
                 SearchParams => {
                     Title => 'This is a title',
                     Types => 'This is a type',
@@ -587,7 +589,7 @@ sub CalendarUpdate {
             Data => $Param{TicketAppointments},
         );
         $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput($TicketAppointments);
-        $TicketAppointments = MIME::Base64::encode_base64($TicketAppointments);
+        $TicketAppointments = encode_base64($TicketAppointments);
     }
 
     my $SQL = '

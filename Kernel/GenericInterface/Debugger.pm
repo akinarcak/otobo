@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,12 @@ package Kernel::GenericInterface::Debugger;
 use strict;
 use warnings;
 
-use Kernel::System::VariableCheck qw(IsString IsStringWithData IsHashRefWithData);
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsString IsStringWithData IsHashRefWithData IsArrayRefWithData);
 
 our $ObjectManagerDisabled = 1;
 
@@ -63,8 +68,7 @@ create an object.
 sub new {
     my ( $Type, %Param ) = @_;
 
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # check DebuggerConfig - we need a hash ref with at least one entry
     if ( !IsHashRefWithData( $Param{DebuggerConfig} ) ) {
@@ -197,7 +201,7 @@ sub DebugLog {
 
     # create log message
     my $DataString = '';
-    if ( IsHashRefWithData( $Param{Data} ) ) {
+    if ( IsHashRefWithData( $Param{Data} ) || IsArrayRefWithData( $Param{Data} ) ) {
         $DataString = $Kernel::OM->Get('Kernel::System::Main')->Dump( $Param{Data} );
     }
     elsif ( IsStringWithData( $Param{Data} ) ) {

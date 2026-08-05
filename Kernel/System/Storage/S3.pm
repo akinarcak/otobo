@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,18 +23,18 @@ use utf8;
 
 # core modules
 use File::Basename qw(basename dirname);
-use File::Path qw(make_path);
-use Cwd qw(realpath);
+use File::Path     qw(make_path);
+use Cwd            qw(realpath);
 
 # CPAN modules
 use Mojo::UserAgent;
 use Mojo::Date;
-use Mojo::DOM;
+use Mojo::DOM ();
 use Mojo::URL;
 use Mojo::AWS::S3;
-use Plack::Util;
+use Plack::Util ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -54,8 +54,8 @@ Create bucket on Docker host with:
 
     docker_admin> export AWS_ACCESS_KEY_ID=test
     docker_admin> export AWS_SECRET_ACCESS_KEY=test
-    docker_admin> aws --endpoint-url=http://localhost:4566 s3 mb s3://otobo-bucket-20211128a
-    make_bucket: otobo-bucket-20211128a
+    docker_admin> aws --endpoint-url=http://localhost:4566 s3 mb s3://careoncloud-bucket-20211128a
+    make_bucket: careoncloud-bucket-20211128a
 
 =head1 PUBLIC INTERFACE
 
@@ -125,7 +125,7 @@ Returns:
         'ZZZAAuto.pm' => {
             Size  => 324238,
             Mtime => 1635496219,
-            Key   => 'OTOBO/Kernel/Config/Files/ZZZAAuto,pm',
+            Key   => 'CareOnCloud ESM/Kernel/Config/Files/ZZZAAuto,pm',
         },
         ...
     );
@@ -411,7 +411,7 @@ sub RetrieveObject {
         # Then proceed like in ArticleStorageFS.
         my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
         my $Home         = $ConfigObject->Get('Home');
-        my $Location     = $Param{Key} =~ s!^OTOBO/!$Home/!r;    # same location as in ArticleStorageFS
+        my $Location     = $Param{Key} =~ s!^CareOnCloud ESM/!$Home/!r;    # same location as in ArticleStorageFS
                                                                  # inject PID to avoid interaction between different processes
         $Location = join '/', dirname($Location), "pid-$$", basename($Location);
         unlink $Location;                                        # for now we don't want any caching,
@@ -628,7 +628,7 @@ sub DiscardObjects {
     # See https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjects.html
     my $DOM = Mojo::DOM->new->xml(1);
     {
-        # start with the the toplevel Delete tag
+        # start with the toplevel Delete tag
         $DOM->content( $DOM->new_tag( 'Delete', xmlns => 'http://s3.amazonaws.com/doc/2006-03-01/' ) );
 
         FILENAME:

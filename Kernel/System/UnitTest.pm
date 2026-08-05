@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,13 +24,13 @@ use utf8;
 
 # core modules
 use Term::ANSIColor ();
-use TAP::Harness;
-use List::Util qw(any uniq shuffle);
-use Sys::Hostname qw(hostname);
+use TAP::Harness    ();
+use List::Util      qw(any shuffle uniq);
+use Sys::Hostname   qw(hostname);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsHashRefWithData IsArrayRefWithData);
 
 our @ObjectDependencies = (
@@ -41,7 +41,7 @@ our @ObjectDependencies = (
 
 =head1 NAME
 
-Kernel::System::UnitTest - functions to run all or some OTOBO unit test scripts
+Kernel::System::UnitTest - functions to run all or some CareOnCloud ESM unit test scripts
 
 =head1 DESCRIPTION
 
@@ -88,15 +88,27 @@ sub new {
 run all or some tests located in C<scripts/test/**/*.t> and print the result.
 
     $UnitTestObject->Run(
-        Tests           => ['JSON', 'User'],              # optional, execute certain test files only
-        TestScriptPath  => 'scripts/test/DB',             # optional, execute a single specific test script or scripts in dir
-        Directory       => 'Selenium',                    # optional, execute only the tests in a subdirectory relative to scripts/test
-        SOPMFiles       => ['FAQ.sopm', 'Fred.sopm' ],    # optional, execute only the tests in the Filelist of the .sopm files
-        Packages        => ['Survey', 'TimeAccounting' ], # optional, execute only the tests in the Filelist of the installed package
-        Verbose         => 1,                             # optional (default 0), only show result details for all tests, not just failing
-        Merge           => 1,                             # optional (default 0), merge STDERR and STDOUT of test scripts
-        PostTestScripts => ['...'],                       # Script(s) to execute after a test has been run.
-                                                          #   You can specify %File%, %TestOk% and %TestNotOk% as dynamic arguments.
+        Tests           => [                    # optional, execute certain test files only
+            'JSON',
+            'User'
+        ],
+        TestScriptPaths => [                    # optional, execute specific test scripts or scripts in directory
+            'scripts/test/DB',
+            'scripts/test/NutsAndBolts.t'
+        ],
+        Directory       => 'Selenium',          # optional, execute only the tests in a subdirectory relative to scripts/test
+        SOPMFiles       => [                    # optional, execute only the tests in the Filelist of the .sopm files
+            'FAQ.sopm',
+            'Fred.sopm'
+        ],
+        Packages        => [                    # optional, execute only the tests in the Filelist of the installed package
+            'Survey',                           #   'core' indicates the core files listed in ARCHIVE
+            'TimeAccounting'
+        ],
+        Verbose         => 1,                   # optional (default 0), only show result details for all tests, not just failing
+        Merge           => 1,                   # optional (default 0), merge STDERR and STDOUT of test scripts
+        PostTestScripts => ['...'],             # Script(s) to execute after a test has been run.
+                                                #   You can specify %File%, %TestOk% and %TestNotOk% as dynamic arguments.
     );
 
 You can also specify multiple directories:
@@ -126,13 +138,13 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     # handle parameters
-    my $Verbosity      = $Param{Verbose} // 0;    # print test results when set to 1
-    my $Merge          = $Param{Merge}   // 0;
-    my $DoShuffle      = $Param{Shuffle} // 0;
-    my $DirectoryParam = $Param{Directory};       # either a scalar or an array ref
-    my @SOPMFiles      = ( $Param{SOPMFiles} // [] )->@*;
-    my @Packages       = ( $Param{Packages}  // [] )->@*;
-    my $TestScriptPath = $Param{TestScriptPath};
+    my $Verbosity       = $Param{Verbose} // 0;    # print test results when set to 1
+    my $Merge           = $Param{Merge}   // 0;
+    my $DoShuffle       = $Param{Shuffle} // 0;
+    my $DirectoryParam  = $Param{Directory};       # either a scalar or an array ref
+    my @SOPMFiles       = ( $Param{SOPMFiles}       // [] )->@*;
+    my @Packages        = ( $Param{Packages}        // [] )->@*;
+    my @TestScriptPaths = ( $Param{TestScriptPaths} // [] )->@*;
 
     # The tests specified with the option --test indicate the file name
     # or optionally one or more parent directories.
@@ -149,27 +161,30 @@ sub Run {
     my $Host         = hostname();
 
     my @ActualTestScripts;
-    if ( defined $TestScriptPath ) {
+    if (@TestScriptPaths) {
 
-        # every other option is ignored
-        if ( -f $TestScriptPath ) {
-            push @ActualTestScripts, $TestScriptPath;
-        }
-        elsif ( -d $TestScriptPath ) {
+        # only the explicit list counts, all other options are ignored
+        for my $TestScriptPath (@TestScriptPaths) {
+            if ( -f $TestScriptPath ) {
+                push @ActualTestScripts, $TestScriptPath;
+            }
+            elsif ( -d $TestScriptPath ) {
 
-            # no special handling of 'Custom' dir
-            push @ActualTestScripts,
-                $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
-                    Directory => $TestScriptPath,
-                    Filter    => '*.t',
-                    Recursive => 1,
-                );
-        }
-        else {
-            # do nothing
+                # no special handling of 'Custom' dir
+                push @ActualTestScripts,
+                    $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
+                        Directory => $TestScriptPath,
+                        Filter    => '*.t',
+                        Recursive => 1,
+                    );
+            }
+            else {
+                # do nothing
+            }
         }
     }
     else {
+
         # run tests in a subdir when requested
         my $TestDirectory = "$Home/scripts/test";
         my @Directories;
@@ -235,6 +250,32 @@ sub Run {
 
             PACKAGE:
             for my $Package (@Packages) {
+
+                # Special package name. Get test scripts in CareOnCloud ESM core.
+                if ( $Package eq 'core' ) {
+                    my $ChecksumFile = "$Home/ARCHIVE";
+                    my $ChecksumFileArrayRef;
+                    if ( -e $ChecksumFile ) {
+                        $ChecksumFileArrayRef = $Kernel::OM->Get('Kernel::System::Main')->FileRead(
+                            Location        => $ChecksumFile,
+                            Mode            => 'utf8',
+                            Type            => 'Local',
+                            Result          => 'ARRAY',
+                            DisableWarnings => 1,
+                        );
+                    }
+
+                    if ( $ChecksumFileArrayRef && @{$ChecksumFileArrayRef} ) {
+
+                        # for some reason the trailing .t is checked seperately
+                        push @ExecuteTestPatterns,
+                            map  {qr!/\Q$_\E$!smx}
+                            grep {m!^scripts/test/!}
+                            map  {s/\s+$//r}
+                            map  {s/.*:://r}           # remove the leading MD5sum
+                            $ChecksumFileArrayRef->@*;
+                    }
+                }
 
                 # Silently ignore not installed packages
                 next PACKAGE unless $PackageListLookup{$Package};
@@ -308,7 +349,7 @@ sub Run {
 
     # Register a callback that triggered after a test script has run.
     # E.g.:
-    #   bin/otobo.Console.pl Dev::UnitTest::Run  --verbose --directory ACL \
+    #   bin/careoncloud.Console.pl Dev::UnitTest::Run  --verbose --directory ACL \
     #     --post-test-script 'echo file: %File%' \
     #     --post-test-script 'echo ok: %TestOk%' \
     #     --post-test-script 'echo nok: %TestNotOk%' > prove_acl.out 2>&1
@@ -335,9 +376,6 @@ sub Run {
                     $Cmd =~ s{%TestOk%}{$TestOk}iesmxg;
                     my $TestNotOk = $Parser->actual_failed();
                     $Cmd =~ s{%TestNotOk%}{$TestNotOk}iesmxg;
-
-                    #use Data::Dumper;
-                    #warn Dumper( [ 'LLL', $Cmd, $TestScript, $TestInfo, $Parser ] );
 
                     # finally do the work
                     system $Cmd;

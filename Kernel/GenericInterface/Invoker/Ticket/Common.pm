@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,12 +16,17 @@
 
 package Kernel::GenericInterface::Invoker::Ticket::Common;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 
-use MIME::Base64;
-use Storable;
+# core modules
+use MIME::Base64 qw(encode_base64);
+use Storable     qw(dclone);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our $ObjectManagerDisabled = 1;
@@ -52,8 +57,7 @@ create an object
 sub new {
     my ( $Type, %Param ) = @_;
 
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # check needed objects
     for my $Needed (qw( DebuggerObject Invoker WebserviceID )) {
@@ -391,6 +395,12 @@ sub PrepareRequest {
 
             $ArticleRaw{CommunicationChannel} = $ArticleBackendObject->ChannelNameGet();
             push @ArticleBoxRaw, \%ArticleRaw;
+
+            if ( $CountLastArticle == 1 ) {
+
+                # only consider the latest article
+                last ARTICLE;
+            }
         }
     }
 
@@ -446,7 +456,7 @@ sub PrepareRequest {
                 delete $Attachment{$Attribute};
             }
 
-            push @Attachments,    Storable::dclone( \%Attachment );
+            push @Attachments,    dclone( \%Attachment );
             push @AttachmentData, \%Attachment;
         }
 
@@ -635,16 +645,16 @@ sub PrepareRequest {
 
     # add dynamic fields with old and new structure
     if ( IsArrayRefWithData( \@DynamicFieldTicketData ) ) {
-        $ReturnData{Ticket}->{DynamicField} = Storable::dclone( \@DynamicFieldTicketData );
+        $ReturnData{Ticket}->{DynamicField} = dclone( \@DynamicFieldTicketData );
         if ( $CountLastArticle > 1 ) {
-            $ReturnData{DynamicField} = Storable::dclone( \@DynamicFieldTicketData );
+            $ReturnData{DynamicField} = dclone( \@DynamicFieldTicketData );
         }
     }
     if ( $CountLastArticle == 1 ) {
         my @DynamicFieldDataCombined = ( @DynamicFieldTicketData, @ArticleDynamicFieldsOneArticle );
 
         if ( IsArrayRefWithData( \@DynamicFieldDataCombined ) ) {
-            $ReturnData{DynamicField} = Storable::dclone( \@DynamicFieldDataCombined );
+            $ReturnData{DynamicField} = dclone( \@DynamicFieldDataCombined );
         }
     }
 
@@ -654,13 +664,8 @@ sub PrepareRequest {
 
         ARTICLE:
         for my $Article (@ArticleBox) {
-            my $ClonedArticle = Storable::dclone($Article);
+            my $ClonedArticle = dclone($Article);
             delete $ClonedArticle->{Attachment};
-
-            if ( $CountLastArticle == 1 ) {
-                $ReturnData{Article} = $ClonedArticle;
-                last ARTICLE;
-            }
 
             push @{ $ReturnData{Article} }, $ClonedArticle;
         }
@@ -752,6 +757,7 @@ sub HandleResponse {
                     DynamicFieldConfig => $DynamicFieldConfig,
                     ObjectID           => $Self->{RequestData}->{Data}->{TicketID},
                     Value              => $DynamicFieldData{$DynamicFieldName},
+                    ExternalSource     => 1,
                     UserID             => 1,
                 );
 
@@ -805,6 +811,7 @@ sub HandleResponse {
                 DynamicFieldConfig => $DynamicFieldConfig,
                 ObjectID           => $Self->{RequestData}->{Data}->{TicketID},
                 Value              => $Param{Data}->{TicketID},
+                ExternalSource     => 1,
                 UserID             => 1,
             );
 
@@ -880,10 +887,10 @@ sub _GenerateDynamicFieldData {
         )
     {
         if ( IsHashRefWithData($Structure) ) {
-            push @StructureArray, Storable::dclone($Structure);
+            push @StructureArray, dclone($Structure);
         }
         elsif ( IsArrayRefWithData($Structure) ) {
-            push @StructureArray, @{ Storable::dclone($Structure) };
+            push @StructureArray, @{ dclone($Structure) };
         }
     }
 

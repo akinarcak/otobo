@@ -163,7 +163,7 @@ TransitionActions:
     ChangeTime: 2018-11-20 15:17:06
     Config:
       Config:
-        Body: <div style="font-family:arial;"> <OTOBO_TICKET_DynamicField_TestTextArea>
+        Body: <div style="font-family:arial;"> <CareOnCloud_TICKET_DynamicField_TestTextArea>
           <br></div>
         CommunicationChannel: Email
         ContentType: text/html; charset=UTF-8

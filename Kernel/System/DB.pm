@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,10 +28,11 @@ use utf8;
 use List::Util qw(shuffle);
 
 # CPAN modules
-use DBI;
-use DBIx::Connector;
+use DBI               ();
+use DBIx::Connector   ();
+use Types::Serialiser ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -60,8 +61,8 @@ All database functions to connect/insert/update/delete/... to a database.
 
 =head2 new()
 
-create a database object, with database connect..
-Usually you do not use it directly, instead use:
+creates an object the allows to connect to a database.
+Usually you do not use the constructor directly, instead use:
 
     use Kernel::System::ObjectManager;
 
@@ -82,6 +83,25 @@ Usually you do not use it directly, instead use:
     );
 
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
+
+There are cases when a second connection to a database is needed. In these cases
+the constructor can also be called directly. In most of these cases it makes
+sense to pass the argument C<DisconnectOnDestruction> too. In other cases
+C<Finish()> can be called in order to clean up lingering database connections.
+
+    {
+        my $CustomerDBObject = Kernel::System::DB->new(
+            DatabaseDSN             => $Self->{CustomerCompanyMap}->{Params}->{DSN},
+            DatabaseUser            => $Self->{CustomerCompanyMap}->{Params}->{User},
+            DatabasePw              => $Self->{CustomerCompanyMap}->{Params}->{Password},
+            Type                    => $Self->{CustomerCompanyMap}->{Params}->{Type} || '',
+            DisconnectOnDestruction => 1,
+        ) || die('Can\'t connect to customer database!');
+
+        # do something with the customer database
+
+        # database is disconnected on destruction because DisconnectOnDestruction is set
+    }
 
 =cut
 
@@ -114,12 +134,20 @@ sub new {
     # SlowLog can be activated globally
     $Self->{SlowLog} = $Param{'Database::SlowLog'} || $ConfigObject->Get('Database::SlowLog');
 
+    # turn off persistent database connection, per default database connection is persistent
+    $Self->{DisconnectOnDestruction} = $Param{DisconnectOnDestruction};
+
     # decrypt pw (if needed)
     if ( $Self->{PW} =~ /^\{(.*)\}$/ ) {
         $Self->{PW} = $Self->_Decrypt($1);
     }
 
-    # get database type
+    # Connections to MariaDB and MySQL should both use the driver module DBD::MariaDB. Therefore
+    # it is recommended to use a DSN starting with 'DBI:MariaDB:'. But updated system might still
+    # have a DSN that starts with 'DBI:mysql'. Switch the driver by fiddling with DSN.
+    $Self->{DSN} =~ s/DBI:mysql:/DBI:MariaDB:/;
+
+    # determine which Kernel/System/DB/*.pm database driver module should be used
     $Self->{'DB::Type'} = eval {
 
         # overwrite with an explicit param has highest priority
@@ -129,7 +157,7 @@ sub new {
         return $ConfigObject->Get('Database::Type') if $ConfigObject->Get('Database::Type');
 
         # otherwise auto detection from the DSN
-        return 'mysql'      if $Self->{DSN} =~ m/:mysql/i;
+        return 'mysql'      if $Self->{DSN} =~ m/:mariadb/i;
         return 'postgresql' if $Self->{DSN} =~ m/:pg/i;
         return 'oracle'     if $Self->{DSN} =~ m/:oracle/i;
         return 'db2'        if $Self->{DSN} =~ m/:db2/i;
@@ -146,10 +174,10 @@ sub new {
         return;
     }
 
-    # normalize
+    # normalize the database driver module
     $Self->{'DB::Type'} = lc $Self->{'DB::Type'};
 
-    # load backend module
+    # load the database driver module
     {
         my $GenericModule = 'Kernel::System::DB::' . $Self->{'DB::Type'};
 
@@ -161,11 +189,15 @@ sub new {
     # set database functions
     $Self->{Backend}->LoadPreferences();
 
-    # check/get extra database configuration options
-    # (overwrite auto-detection with config options)
+    # Check or get extra database configuration options, that is overwrite auto-detection with config options.
+    # These presets are typically specified in the file Kernel/Config.pm.
+    #
+    # Note that these configuration options from the SysConfig
+    # applies to all database connections. This is mostly fine
+    # as these settings are most often set in a local scope for testing.
     for my $Setting (
         qw(
-            Type Limit DirectBlob Attribute QuoteSingle QuoteBack
+            Type Limit DirectBlob QuoteSingle QuoteBack
             Connect Encode CaseSensitive LcaseLikeInLargeText
         )
         )
@@ -175,6 +207,33 @@ sub new {
         }
         elsif ( defined $ConfigObject->Get("Database::$Setting") ) {
             $Self->{Backend}->{"DB::$Setting"} = $ConfigObject->Get("Database::$Setting");
+        }
+    }
+
+    # The options DB::Attribute is a special case. As with the other options,
+    # the value passed in the method call has precedence and default settings can
+    # be declared in the SysConfig. But for DB::Attribute there is a default
+    # for the main 'careoncloud' database connection as well as a default
+    # for all database connections. It is best practice to declare the defaults
+    # for the 'careoncloud' connection only, as the declaration for all connections
+    # may have unwanted effects.
+    for my $Setting (qw(Attribute)) {
+        if ( defined $Param{$Setting} ) {
+            $Self->{Backend}->{"DB::$Setting"} = $Param{$Setting};
+        }
+        elsif ( !$Param{DatabaseDSN} && defined $ConfigObject->Get("Database$Setting") ) {
+
+            # default for the main DB connection, note the missing '::'
+            $Self->{Backend}->{"DB::$Setting"} = $ConfigObject->Get("Database$Setting");
+        }
+        elsif ( defined $ConfigObject->Get("Database::$Setting") ) {
+
+            # default for the main DB connection when Database$Setting does not exist
+            # also default for the other DB connections like the customer database of database dynamic fields
+            $Self->{Backend}->{"DB::$Setting"} = $ConfigObject->Get("Database::$Setting");
+        }
+        else {
+            # the value given in the driver module prevails
         }
     }
 
@@ -243,7 +302,7 @@ sub Connect {
                 };
             }
 
-            # In OTOBO 10.0.x running with PostgreSQL the flag pg_enable_utf8 was set to 1.
+            # In CareOnCloud ESM 10.0.x running with PostgreSQL the flag pg_enable_utf8 was set to 1.
             # According to https://metacpan.org/pod/DBD::Pg#pg_enable_utf8-(integer)
             # this is no longer necessary.
             #if ( $Self->{Backend}->{'DB::Type'} eq 'postgresql' ) {
@@ -251,19 +310,23 @@ sub Connect {
             #}
         }
 
-        # The defaults for the attributes RaiseError and AutoInactiveDestroy differ
-        # between DBI and DBIx::Connector.
-        # For DBI they are off per default, but for DBIx::Connector they are on per default.
-        # RaiseError: explicitly turn it off as this was the previous setup in OTOBO.
-        #             This is OK as the the methods run(), txn(), and svp() are not used in OTOBO.
+        # Note that the default values for the attributes RaiseError and AutoInactiveDestroy differ
+        # between DBI and DBIx::Connector. For DBI they are off per default, but for DBIx::Connector
+        # they are on per default.
+        # RaiseError: explicitly turn it off as this was the previous setup in CareOnCloud ESM.
+        #             This is OK as the methods run(), txn(), and svp() are not used in CareOnCloud ESM.
         # AutoInactiveDestroy: Concerns only behavior on forks and such.
         #                      Keep it activated as it is important for DBIx::Connector.
         #
-        # Kernel::System::DB::mysql also sets mysql_auto_reconnect = 0.
-        # This is fine, as this is the same setting as enforced by DBIx::Connector::Driver::mysql
+        # Driver specific attributes may be set by the driver modules. As of January 2026
+        # only Kernel::System::DB::mssql and Kernel::System::DB::oracle use this opportunity.
+        #
+        # Additional attributes my be set via the SysConfig. This settings override the previous settings.
+        # One use case is the support for encrypted connections where keys and certificates
+        # have to be passed.
         my %ConnectAttributes = (
             RaiseError => 0,
-            $Self->{Backend}->{'DB::Attribute'}->%*,
+            ( $Self->{Backend}->{'DB::Attribute'} // {} )->%*,
         );
 
         # Generation of the cache key is copied from DBI::connect_cached().
@@ -292,15 +355,55 @@ sub Connect {
 
         # Use the cached connector when available. Otherwise create a new connector.
         state %Cache;
-        $Cache{$CacheKey} //= DBIx::Connector->new(
-            $Self->{DSN},
-            $Self->{USER},
-            $Self->{PW},
+        if ( !defined $Cache{$CacheKey} ) {
+
+            # Attribute for callbacks. See https://metacpan.org/pod/DBI#Callbacks
+            my %Callbacks;
             {
-                Callbacks => \%Callbacks,
-                %ConnectAttributes,
+                if ( $Self->{Backend}->{'DB::Connect'} ) {
+
+                    # run a command for initializing a session
+                    my $DBConnectSQL = $Self->{Backend}->{'DB::Connect'};
+
+                    # maybe deactivate foreign key checks
+                    my $DeactivateSQL;
+                    if ( $Self->{DeactivateForeignKeyChecks} ) {
+                        $DeactivateSQL = $Self->GetDatabaseFunction('DeactivateForeignKeyChecks');
+                    }
+
+                    $Callbacks{connected} = sub {
+                        my $DatabaseHandle = shift;
+
+                        if ($DBConnectSQL) {
+                            $DatabaseHandle->do($DBConnectSQL);
+                        }
+
+                        if ($DeactivateSQL) {
+                            $DatabaseHandle->do($DeactivateSQL);
+                        }
+
+                        return;
+                    };
+                }
+
+                # In CareOnCloud ESM 10.0.x running with PostgreSQL the flag pg_enable_utf8 was set to 1.
+                # According to https://metacpan.org/pod/DBD::Pg#pg_enable_utf8-(integer)
+                # this is no longer necessary.
+                #if ( $Self->{Backend}->{'DB::Type'} eq 'postgresql' ) {
+                #    $ConnectAttributes{pg_enable_utf8} = 1;
+                #}
             }
-        );
+
+            $Cache{$CacheKey} = DBIx::Connector->new(
+                $Self->{DSN},
+                $Self->{USER},
+                $Self->{PW},
+                {
+                    Callbacks => \%Callbacks,
+                    %ConnectAttributes,
+                }
+            );
+        }
 
         # this method reuses an existing connection when it is still pinging
         $Self->{dbh} = $Cache{$CacheKey}->dbh;
@@ -406,7 +509,7 @@ sub Quote {
     my ( $Self, $Text, $Type ) = @_;
 
     # return undef if undef
-    return if !defined $Text;
+    return unless defined $Text;
 
     # quote strings
     if ( !defined $Type ) {
@@ -475,21 +578,49 @@ sub Error {
 
 to insert, update or delete values
 
-    my $InsertSuccess = $DBObject->Do( SQL => "INSERT INTO table (name) VALUES ('dog')" );
+    my $InsertSuccess = $DBObject->Do( SQL => "INSERT INTO list_of_mammals (name) VALUES ('dog')" );
 
-    my $DeleteSuccess = $DBObject->Do( SQL => "DELETE FROM table" );
+    my $DeleteSuccess = $DBObject->Do( SQL => "DELETE FROM list_of_mammals" );
 
-you also can use DBI bind values (used for large strings):
+you also can use DBI bind values. The usage of bind values is recommended for avoiding SQL injections
+and for passing long strings. Bind variables are passed as reference to plain scalars.
 
-    my $Var1 = 'dog1';
-    my $Var2 = 'dog2';
+Boolean values that are supported by C<Types::Serialiser> can be passed as well. Just like
+simple scalars, these must be passed by reference.
+
+    my $Var1 = 'Balto'; # serum run to Nome in 1925
+    my $Var2 = 'Togo';  # also serum run to Nome in 1925
 
     my $InsertSuccess = $DBObject->Do(
-        SQL  => "INSERT INTO table (name1, name2) VALUES (?, ?)",
-        Bind => [ \$Var1, \$Var2 ],
+        SQL  => "INSERT INTO pack_of_hounds (name1, name2, howl_loudly, are_vegan ) VALUES (?, ?, ?, ?)",
+        Bind => [
+            \$Var1,
+            \$Var2,
+            \$Types::Serialiser::true,
+            \Types::Serialiser::as_bool('')
+        ],
     );
 
 The special value B<current_timestamp> is replaced by the current date and time.
+
+Text fields usually are based on Unicode. This is the default that is also assumed by DBI database drivers.
+They take care of proper UTF-8 encoding when sending Perl strings to the database. However there is
+the special case of BLOB, binary large objects, fields. In that case the exact byte array must be sent to the database.
+Database drivers have no good way of recognizing these cases. They must be explicitly told that a bind variable
+must be transferred as binary. This can be achieved by passing an array reference C<BindAsBinary>. This array
+declares whether a bind variable must be declared as binary.
+
+    my $InsertSuccess = $DBObject->Do(
+        SQL  => "INSERT INTO pack_of_hounds (name1, picture ) VALUES (?, ?)",
+        Bind => [
+            \$DogName,
+            \$DogPicture,
+        ],
+        BindAsBinary => [
+            0,
+            1,
+        ]
+    );
 
 Returns 1 in the case of success, an empty list in the case of failure.
 
@@ -513,13 +644,16 @@ sub Do {
     if ( $Param{Bind} ) {
         for my $Data ( $Param{Bind}->@* ) {
             if ( ref $Data eq 'SCALAR' ) {
-                push @Array, $$Data;
+                push @Array, $Data->$*;
+            }
+            elsif ( ref $Data eq 'REF' && Types::Serialiser::is_bool( $Data->$* ) ) {
+                push @Array, $Data->$*;
             }
             else {
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
                     Caller   => 1,
                     Priority => 'Error',
-                    Message  => 'No SCALAR param in Bind!',
+                    Message  => qq{Invalid reference type in Bind!},
                 );
 
                 return;
@@ -560,8 +694,34 @@ sub Do {
 
     return unless $Self->Connect;
 
-    # send sql to database
-    if ( !$Self->{dbh}->do( $Param{SQL}, undef, @Array ) ) {
+    # Run an SQL statement on the database with consideration of bind variables
+    # that should be bound as binary. This implementation is inspired by the implemetation of DBI::do().
+    # In case of an error an information message is logged and an empty list is returned.
+    my $ExecuteSuccess;
+
+    my $StatementHandle = $Self->{dbh}->prepare( $Param{SQL} );
+
+    if ($StatementHandle) {
+
+        # BindAsBinary is optional
+        if ( ref $Param{BindAsBinary} eq 'ARRAY' ) {
+            my $Index = 1;
+            FLAG:
+            for my $Flag ( $Param{BindAsBinary}->@* ) {
+                next FLAG unless $Flag;
+
+                $StatementHandle->bind_param( $Index, '', DBI::SQL_BINARY );
+            }
+            continue {
+                $Index++;    # bind index are based on 1
+            }
+        }
+
+        $ExecuteSuccess = $StatementHandle->execute(@Array);
+    }
+
+    # zero affected rows are fine
+    if ( !$ExecuteSuccess ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Caller   => 1,
             Priority => 'error',
@@ -734,7 +894,7 @@ Using bind variables is recommended:
     );
 
 These are the regular use cases where C<1> is returned in the case of success. C<undef> is returned
-when there was an error. The result of the SELECT can be retrieved with C<FetchRowArray()>.
+when there was an error. The result of the SELECT can be retrieved with C<FetchrowArray()>.
 
 This method is also used internally for methods that want to execute the prepared statement by themselves.
 This case is triggered by passing the parameter C<Execute> with the value C<0>. The returned value
@@ -746,8 +906,9 @@ Internally, the attribute C<Cursor> will be set to the prepared statement handle
     my $Var2 = 'dog2';
 
     my $BindVariables = $DBObject->Prepare(
-        SQL    => 'SELECT id, name, content FROM table WHERE name_a = ? AND name_b = ?',
-        Bind   => [ \($Var1, $Var2) ],
+        SQL     => 'SELECT id, name, content FROM table WHERE name_a = ? AND name_b = ?',
+        Bind    => [ \($Var1, $Var2) ],
+        Execute => 0,
     );
 
 will return
@@ -852,6 +1013,9 @@ sub Prepare {
             my $RefType = ref $Data;
             if ( $RefIsValid{$RefType} ) {
                 push @BindVariables, $DoArray ? $Data : $Data->$*;
+            }
+            elsif ( !$DoArray && $RefType eq 'REF' && Types::Serialiser::is_bool( $Data->$* ) ) {
+                push @BindVariables, $Data->$*;
             }
             else {
                 $Kernel::OM->Get('Kernel::System::Log')->Log(
@@ -967,13 +1131,13 @@ sub FetchrowArray {
 
 =head2 ListTables()
 
-list all tables in the OTOBO database.
+list all tables in the CareOnCloud ESM database.
 
     my @Tables = $DBObject->ListTables();
 
 On databases like Oracle it could happen that too many tables are listed (all belonging
 to the current user), if the user also has permissions for other databases. So this list
-should only be used for verification of the presence of expected OTOBO tables.
+should only be used for verification of the presence of expected CareOnCloud ESM tables.
 
 The table names are lower cased.
 
@@ -1994,10 +2158,7 @@ sub QueryInCondition {
     $Param{BindMode} //= 0;
 
     # Set the flag for string because of the other handling in the sql statement with strings.
-    my $IsString;
-    if ( !$Param{QuoteType} ) {
-        $IsString = 1;
-    }
+    my $IsString = $Param{QuoteType} ? 0 : 1;
 
     my @Values = @{ $Param{Values} };
 
@@ -2228,16 +2389,14 @@ sub _Encrypt {
 sub _TypeCheck {
     my ( $Self, $Tag ) = @_;
 
-    if (
-        $Tag->{Type}
-        && $Tag->{Type} !~ /^(DATE|SMALLINT|BIGINT|INTEGER|DECIMAL|VARCHAR|LONGBLOB)$/i
-        )
-    {
-        $Kernel::OM->Get('Kernel::System::Log')->Log(
-            Priority => 'Error',
-            Message  => "Unknown data type '$Tag->{Type}'!",
-        );
-    }
+    return 1 unless $Tag->{Type};
+    return 1 if $Tag->{Type} =~ m/^(?:DATE|SMALLINT|BIGINT|INTEGER|DECIMAL|VARCHAR|LONGBLOB)$/i;
+
+    # warn about unknown data type but still report success
+    $Kernel::OM->Get('Kernel::System::Log')->Log(
+        Priority => 'Error',
+        Message  => "Unknown data type '$Tag->{Type}'!",
+    );
 
     return 1;
 }
@@ -2245,12 +2404,14 @@ sub _TypeCheck {
 sub _NameCheck {
     my ( $Self, $Tag ) = @_;
 
-    if ( $Tag->{Name} && length $Tag->{Name} > 30 ) {
-        $Kernel::OM->Get('Kernel::System::Log')->Log(
-            Priority => 'Error',
-            Message  => "Table names should not have more the 30 chars ($Tag->{Name})!",
-        );
-    }
+    return 1 unless $Tag->{Name};
+    return 1 if length $Tag->{Name} <= 30;
+
+    # warn about long names but still report success
+    $Kernel::OM->Get('Kernel::System::Log')->Log(
+        Priority => 'Error',
+        Message  => "Table names should not have more the 30 chars ($Tag->{Name})!",
+    );
 
     return 1;
 }
@@ -2258,14 +2419,14 @@ sub _NameCheck {
 sub _SpecialCharactersGet {
     my ( $Self, %Param ) = @_;
 
-    my %SpecialCharacter = (
+    my %CharacterIsSpecial = (
         '(' => 1,
         ')' => 1,
         '&' => 1,
         '|' => 1,
     );
 
-    return \%SpecialCharacter;
+    return \%CharacterIsSpecial;
 }
 
 sub _EncodeInputList {
@@ -2299,12 +2460,15 @@ sub _EncodeInputList {
 sub DESTROY {
     my $Self = shift;
 
-    # cleanup open statement handle if there is any and then disconnect from DB
+    # cleanup open statement handle if there is one
     if ( $Self->{Cursor} ) {
         $Self->{Cursor}->finish;
     }
 
-    $Self->Disconnect();
+    # persistent connection per default
+    if ( $Self->{DisconnectOnDestruction} ) {
+        $Self->Disconnect;
+    }
 
     return 1;
 }

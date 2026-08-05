@@ -1,7 +1,7 @@
-/* OTOBO is a web-based ticketing system for service organisations.
+/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -51,16 +51,23 @@ div.InputField_InputContainer {
 }
 
 .InputField_Search[readonly]:focus {
-    border-color: #C0C0C0;
+    border-color: var(--colBGDark);
 }
 
 .InputField_Search[readonly].Error:focus {
-    border-color: #ff505e;
+    border-color: var(--colTextErr);
 }
 
 .SidebarColumn .WidgetSimple .InputField_Search,
 .SidebarColumn .WidgetSimple .InputField_Autocomplete {
     min-width: 80px;
+    box-sizing: border-box;
+}
+
+.SidebarColumn .WidgetSimple .InputField_Container,
+.SidebarColumn .WidgetSimple .InputField_Container .InputField_InputContainer,
+.SidebarColumn .WidgetSimple select.Modernize {
+    width: 100%;
 }
 
 .WidgetSettingsForm .InputField_Search,
@@ -76,7 +83,7 @@ div.InputField_InputContainer {
     display: none !important;
 }
 
-.Row_DynamicField {
+.TableLike .Row_DynamicField {
     display: grid;
 }
 
@@ -100,29 +107,34 @@ div.InputField_InputContainer {
 
     fieldset.TableLike > .Field > input.W50pc,
     fieldset.TableLike > .Row > .Field > input.W50pc {
-        max-width: 300px;
+        max-width: 310px;
+        box-sizing: border-box;
     }
 
     fieldset.TableLike .Row > .FieldCell > .Field > select.Modernize,
     fieldset.TableLike .Row > .FieldCell > .Field > input.W75pc,
     fieldset.TableLike .Row > .FieldCell > .Field > input.W50pc,
+    fieldset.TableLike .Row > .FieldCell > .Field > input[type="text"],
     fieldset.TableLike .FieldCell > .Field > div.InputField_Container > div.InputField_InputContainer > .InputField_Search,
     fieldset.TableLike .FieldCell > .Field > div.InputField_Container > div.InputField_InputContainer > .InputField_Autocomplete {
         min-width: 300px;
     }
 
     fieldset.TableLike > .Row:not(.MultiColumn) > .FieldCell > .Field > input.W50pc {
-        max-width: 300px;
+        max-width: 50%;
+        box-sizing: border-box;
     }
 
     fieldset.TableLike > .Field > input.W75pc,
     fieldset.TableLike > .Row > .Field > input.W75pc {
-        max-width: 614px;
+        max-width: 620px;
+        box-sizing: border-box;
     }
 
     fieldset.TableLike > .Field > input#Subject {
-        width: calc( 75% - 4px );
-        max-width: 610px;
+        width: 75%;
+        max-width: 620px;
+        box-sizing: border-box;
     }
 
     fieldset.TableLike > .Field > div.CustomerContainer,
@@ -131,10 +143,11 @@ div.InputField_InputContainer {
         width: calc( 75% - 7px );
         max-width: 607px;
     }
+
 }
 
 #Header div.InputField_Container {
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 #ToolBar li.Extended form div.InputField_Container * {
@@ -159,7 +172,7 @@ div.InputField_InputContainer {
     min-width: 65px;
 }
 
-.InputField_Search[disabled="disabled"] {
+.InputField_Search[disabled] {
     color: #aaa;
 }
 
@@ -175,10 +188,14 @@ div.InputField_InputContainer .InputField_Search {
 fieldset.TableLike > .Row.MultiColumn > .FieldCell > .Field > select.Modernize,
 fieldset.TableLike > .Row.MultiColumn > .FieldCell > .Field > input.W75pc,
 fieldset.TableLike > .Row.MultiColumn > .FieldCell > .Field > input.W50pc,
-fieldset.TableLike > .Row.MultiColumn > .FieldCell > .Field > input,
 fieldset.TableLike > .Row.MultiColumn > .FieldCell .InputField_InputContainer > input {
     min-width: 0 !important;
-    width: calc( 100% - 7px ) !important;
+    width: calc( 100% - 7px );
+}
+
+.DynamicFieldDB {
+    width: calc(100% - 12px);
+    box-sizing: border-box;
 }
 
 fieldset.TableLike > .Row.MultiColumn > .FieldCell .InputField_Container,
@@ -202,6 +219,10 @@ fieldset.TableLike > .Row.MultiColumn > .FieldCell .InputField_InputContainer {
     white-space: nowrap;
 }
 
+.FieldCell div.oooTitle {
+    white-space: normal;
+}
+
 /*div.Row.Row_DynamicField div.SingleColumn > label,
 div.Row.Row_DynamicField div.SingleColumn > div.MultiValueItem > label,
 div.Row.Row_DynamicField div.MultiColumn > label,
@@ -220,7 +241,7 @@ div.Row.Row_DynamicField div.MultiColumn > div.MultiValueItem > label {
     text-shadow: 0 1px 0 #FAFAFA;
 }*/
 
-.AddRemoveValueRow {
+fieldset.TableLike .AddRemoveValueRow {
     display: inline-block;
     padding-left: 8px;
 }
@@ -230,28 +251,30 @@ div.Row.Row_DynamicField div.MultiColumn > div.MultiValueItem > label {
     cursor: pointer;
 }
 
-fieldset.DynamicFieldSet {
+fieldset.TableLike fieldset.DynamicFieldSet {
     box-sizing: border-box;
-    /*margin-top: 28px; /* 1 line in normal view */
-    /*margin-bottom: 8px; /* just to visually mark the end of the set */
-    width: calc(100% - 36px); /* leave 36px room for multivalue buttons */
+    width: 100%
 }
 
 /* needed for multivalue sets due to current difference in outer structure compared to single value sets */
-.MultiValue > .FieldCell > .Field > .DynamicFieldSet {
-    max-width: calc(622px - 36px);
-    width: calc((100vw - 306px) * 0.7 - 57px);
+fieldset.TableLike .MultiValue > .FieldCell > .Field > .DynamicFieldSet {
+    width: 100%;
+}
+
+fieldset.TableLike .MultiValue .DFSetOuterField ~ .AddRemoveValueRow {
+    vertical-align: top;
+    padding-top: 16px;
 }
 
 a.InputField_Action {
     position: absolute;
     display: block;
-    color: #00023c;
+    color: var(--colTextDark);
     top: 5px;
 }
 
 a.InputField_Action:hover {
-    color: #fef235;
+    color: var(--colHighlight);
 }
 
 div.InputField_Selection {
@@ -269,18 +292,18 @@ div.InputField_Selection div {
 }
 
 div.InputField_Selection div.Text {
-    background: #ddd;
+    background: var(--colBGMedium);
     padding: 2px 4px;
 }
 
 div.InputField_Selection div.Remove {
-    background: #bbb;
+    background: var(--colBGDark);
     color: #fff;
     cursor: pointer;
 }
 
 .AlreadyDisabled div.InputField_Selection div.Text {
-    background: #f5f5f5;
+    background: var(--colBGLight);
     cursor: default;
 }
 
@@ -311,7 +334,7 @@ div.InputField_ListContainer {
 
 div.InputField_TreeContainer {
     background-color: #fff;
-    border: 1px solid #ccc;
+    border: 1px solid var(--colBGDark);
     border-top: none;
     overflow-y: auto;
     box-sizing: content-box;
@@ -324,8 +347,8 @@ div.InputField_TreeContainer {
 }
 
 div.InputField_ToolbarContainer {
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
+    background-color: var(--colBGLight);
+    border: 1px solid var(--colBGMedium);
     border-top: none;
     line-height: 21px;
     box-sizing: content-box;
@@ -345,8 +368,7 @@ div.InputField_ToolbarContainer ul li {
 div.InputField_ToolbarContainer ul li:after {
     color: #bbb;
     content: "|";
-    display: inline-block;
-    float: right;
+    float: right; 
     cursor: default;
 }
 
@@ -363,7 +385,7 @@ div.InputField_ToolbarContainer ul li:last-child:after {
 }
 
 div.InputField_ToolbarContainer ul li a {
-    color: #00023c;
+    color: var(--colTextDark);
     display: inline-block;
     margin: 2px 5px;
     font-size: 11px;
@@ -371,11 +393,11 @@ div.InputField_ToolbarContainer ul li a {
 }
 
 div.InputField_ToolbarContainer i {
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 div.InputField_ToolbarContainer ul li a:hover {
-    border-bottom: 2px solid #fef235;
+    border-bottom: 2px solid var(--colHighlight);
     margin-bottom: 0;
 }
 
@@ -387,7 +409,7 @@ div.InputField_ToolbarContainer ul li a:hover {
 .InputField_FiltersList {
     background: #fff;
     white-space: nowrap;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--colBGDark);
     z-index: 1500;
     line-height: 1.5em;
     width: 100%;
@@ -399,9 +421,9 @@ div.InputField_ToolbarContainer ul li a:hover {
     cursor: default;
 }
 
-.InputField_FiltersList input[disabled="disabled"] + span {
+.InputField_FiltersList input[disabled] + span {
     font-style: italic;
-    color: #aaa;
+    color: var(--colTextLight);
 }
 
 /**
@@ -443,7 +465,7 @@ div.InputField_ToolbarContainer ul li a:hover {
 
 .jstree-InputField .jstree-anchor {
     display: inline-block;
-    color: #00023c;
+    color: var(--colTextDark);
     white-space: nowrap;
     padding: 0 4px 0 1px;
     margin: 0;
@@ -530,7 +552,7 @@ div.InputField_ToolbarContainer ul li a:hover {
 }
 
 .jstree-InputField .Disabled > .jstree-anchor {
-    color: #aaa !important;
+    color: var(--colTextLight) !important;
     font-style: italic;
     cursor: default;
 }
@@ -567,24 +589,24 @@ div.InputField_ToolbarContainer ul li a:hover {
 }
 
 .jstree-InputField .jstree-wholerow-ul .jstree-wholerow-clicked {
-    background-color: #ddd;
+    background-color: var(--colBGMedium);
 }
 
 .jstree-InputField .jstree-wholerow-ul .jstree-wholerow:hover,
 .jstree-InputField .jstree-wholerow-ul .jstree-wholerow-hovered,
 .jstree-InputField .jstree-focused > .jstree-wholerow {
-    background-color: #fffccc;
+    background-color: var(--colHoverLight);
 }
 
 .jstree-InputField .jstree-wholerow-ul .jstree-wholerow-clicked:hover,
 .jstree-InputField .jstree-wholerow-ul .jstree-wholerow-clicked.jstree-wholerow-hovered,
 .jstree-InputField .jstree-focused > .jstree-wholerow-clicked {
-    background-color: #fef235;
+    background-color: var(--colHoverDark);
 }
 
 .jstree-InputField .Disabled > .jstree-wholerow:hover,
 .jstree-InputField .Disabled > .jstree-wholerow-hovered {
-    background-color: #eee;
+    background-color: var(--colBGDark);
     cursor: default;
 }
 

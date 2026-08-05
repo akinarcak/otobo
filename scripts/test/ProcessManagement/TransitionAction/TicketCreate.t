@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,16 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+use Storable qw(dclone);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::System::VariableCheck qw(:all);
 
 our $Self;
-
-use Kernel::System::VariableCheck qw(:all);
 
 my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
 my $TicketObject       = $Kernel::OM->Get('Kernel::System::Ticket');
@@ -653,7 +657,7 @@ my @Tests = (
                 Title         => 'ProcessManagement::TransitionAction::TicketCreate::5::' . $RandomID,
                 CustomerID    => '123465',
                 CustomerUser  => 'customer@example.com',
-                OwnerID       => '<OTOBO_TICKET_OwnerID>',
+                OwnerID       => '<CareOnCloud_TICKET_OwnerID>',
                 TypeID        => 1,
                 ResponsibleID => 1,
                 PendingTime   => '2014-12-23 23:05:00',
@@ -695,7 +699,7 @@ my @Tests = (
                 Title         => 'ProcessManagement::TransitionAction::TicketCreate::5::' . $RandomID,
                 CustomerID    => '123465',
                 CustomerUser  => 'customer@example.com',
-                Owner         => '<OTOBO_TICKET_Owner>',
+                Owner         => '<CareOnCloud_TICKET_Owner>',
                 TypeID        => 1,
                 ResponsibleID => 1,
                 PendingTime   => '2014-12-23 23:05:00',
@@ -737,7 +741,7 @@ my @Tests = (
                 Title         => 'ProcessManagement::TransitionAction::TicketCreate::5::' . $RandomID,
                 CustomerID    => '123465',
                 CustomerUser  => 'customer@example.com',
-                OwnerID       => '<OTOBO_TICKET_OwnerID>',
+                OwnerID       => '<CareOnCloud_TICKET_OwnerID>',
                 TypeID        => 1,
                 ResponsibleID => 1,
                 PendingTime   => '2014-12-23 23:05:00',
@@ -759,7 +763,7 @@ my @Tests = (
                 Title         => 'ProcessManagement::TransitionAction::TicketCreate::5::' . $RandomID,
                 CustomerID    => '123465',
                 CustomerUser  => 'customer@example.com',
-                Owner         => '<OTOBO_TICKET_Owner>',
+                Owner         => '<CareOnCloud_TICKET_Owner>',
                 TypeID        => 1,
                 ResponsibleID => 1,
                 PendingTime   => '2014-12-23 23:05:00',
@@ -789,7 +793,7 @@ my @Tests = (
 
                 "DynamicField_Field1$RandomID" => 'Ticket',
                 "DynamicField_Field2$RandomID" => 'Article',
-                "DynamicField_Field3$RandomID" => "<OTOBO_TICKET_DynamicField_Field3$RandomID>",
+                "DynamicField_Field3$RandomID" => "<CareOnCloud_TICKET_DynamicField_Field3$RandomID>",
             },
         },
         Success => 1,
@@ -809,7 +813,7 @@ my @Tests = (
                 ResponsibleID => 1,
                 PendingTime   => '2014-12-23 23:05:00',
 
-                "DynamicField_Field1$RandomID" => "<OTOBO_TICKET_DynamicField_Field3$RandomID" . '_Value>',
+                "DynamicField_Field1$RandomID" => "<CareOnCloud_TICKET_DynamicField_Field3$RandomID" . '_Value>',
             },
         },
         Success => 1,
@@ -829,7 +833,7 @@ my @Tests = (
                 ResponsibleID => 1,
                 PendingTime   => '2014-12-23 23:05:00',
 
-                "DynamicField_Field4$RandomID" => "<OTOBO_TICKET_DynamicField_Field3$RandomID" . '_Data>',
+                "DynamicField_Field4$RandomID" => "<CareOnCloud_TICKET_DynamicField_Field3$RandomID" . '_Data>',
             },
         },
         Success => 1,
@@ -854,7 +858,7 @@ my @Tests = (
                 IsVisibleForCustomer => 0,
                 ContentType          => 'text/plain; charset=ISO-8859-15',
                 Subject              => 'some short description',
-                Body                 => '<OTOBO_Tiket_NotExisting>',
+                Body                 => '<CareOnCloud_Tiket_NotExisting>',
                 HistoryType          => 'OwnerUpdate',
                 HistoryComment       => 'Some free text!',
                 From                 => 'Some Agent <email@example.com>',
@@ -920,7 +924,7 @@ my @Tests = (
         Success => 1,
     },
     {
-        Name   => 'Correct Ticket->OTOBO smart tags',
+        Name   => 'Correct Ticket->CareOnCloud ESM smart tags',
         Config => {
             UserID => $UserID,
             Ticket => \%Ticket,
@@ -936,8 +940,8 @@ my @Tests = (
                 SenderType           => 'agent',
                 IsVisibleForCustomer => 0,
                 ContentType          => 'text/plain; charset=ISO-8859-15',
-                Subject              => '<OTOBO_AGENT_SUBJECT>',
-                Body                 => '<OTOBO_CUSTOMER_BODY>',
+                Subject              => '<CareOnCloud_AGENT_SUBJECT>',
+                Body                 => '<CareOnCloud_CUSTOMER_BODY>',
                 HistoryType          => 'OwnerUpdate',
                 HistoryComment       => 'Some free text!',
 
@@ -1083,7 +1087,7 @@ my $CommunicationChannelObject = $Kernel::OM->Get('Kernel::System::Communication
 for my $Test (@Tests) {
 
     # make a deep copy to avoid changing the definition
-    my $OrigTest = Storable::dclone($Test);
+    my $OrigTest = dclone($Test);
 
     my $Success = $Kernel::OM->Get('Kernel::System::ProcessManagement::TransitionAction::TicketCreate')->Run(
         %{ $Test->{Config} },
@@ -1182,7 +1186,7 @@ for my $Test (@Tests) {
             if (
                 $OrigTest->{Config}->{Config}->{$Attribute}
                 && $OrigTest->{Config}->{Config}->{$Attribute}
-                =~ m{\A<OTOBO_TICKET_([A-Za-z0-9_]+)>\z}msx
+                =~ m{\A<CareOnCloud_TICKET_([A-Za-z0-9_]+)>\z}msx
                 )
             {
                 $ExpectedValue = $Ticket{$1} // '';
@@ -1199,7 +1203,7 @@ for my $Test (@Tests) {
                     );
 
                 }
-                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{OTOBO_TICKET_DynamicField_(\S+?)_Value} ) {
+                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{CareOnCloud_TICKET_DynamicField_(\S+?)_Value} ) {
                     $Self->IsNot(
                         $Test->{Config}->{Config}->{$Attribute},
                         $OrigTest->{Config}->{Config}->{$Attribute},
@@ -1227,7 +1231,7 @@ for my $Test (@Tests) {
                         "$ModuleName - Test:'$Test->{Name}' | Attribute: $Attribute value:"
                     );
                 }
-                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{OTOBO_TICKET_DynamicField_(\S+?)_Data} ) {
+                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{CareOnCloud_TICKET_DynamicField_(\S+?)_Data} ) {
                     $Self->IsNot(
                         $Test->{Config}->{Config}->{$Attribute},
                         $OrigTest->{Config}->{Config}->{$Attribute},
@@ -1250,7 +1254,7 @@ for my $Test (@Tests) {
                         "$ModuleName - Test:'$Test->{Name}' | Attribute: $Attribute value:"
                     );
                 }
-                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{<OTOBO_TICKET_DynamicField_(\S+)>} ) {
+                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{<CareOnCloud_TICKET_DynamicField_(\S+)>} ) {
                     $Self->IsNot(
                         $Test->{Config}->{Config}->{$Attribute},
                         $OrigTest->{Config}->{Config}->{$Attribute},
@@ -1301,7 +1305,7 @@ for my $Test (@Tests) {
             # TODO: currently disabled, re-enable it when AgentNotification is fully switch to NotificationEvent
             # # if article is created by another user it is automatically sent also to Owner
             # if ( $OrigTest->{Config}->{Config}->{UserID} && $Attribute eq 'To' ) {
-            #     $ExpectedValue .= ', Admin OTOBO <root@localhost>'
+            #     $ExpectedValue .= ', Admin CareOnCloud ESM <root@localhost>'
             # }
 
             if ( $Test->{Article} ) {
@@ -1313,7 +1317,7 @@ for my $Test (@Tests) {
                             . " $Article{ArticleID} match expected value"
                     );
                 }
-                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{OTOBO_TICKET_DynamicField_(\S+?)_Value} ) {
+                elsif ( $OrigTest->{Config}->{Config}->{$Attribute} =~ m{CareOnCloud_TICKET_DynamicField_(\S+?)_Value} ) {
 
                     my $DynamicFieldName = $1;
 

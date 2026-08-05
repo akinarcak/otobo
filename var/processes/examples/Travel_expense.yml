@@ -301,7 +301,7 @@ TransitionActions:
     ChangeTime: 2016-08-22 20:29:04
     Config:
       Config:
-        PreProcTravelExpensesInformationComplete: otobo5s-No
+        PreProcTravelExpensesInformationComplete: careoncloud5s-No
       Module: Kernel::System::ProcessManagement::TransitionAction::DynamicFieldSet
     CreateTime: 2016-08-22 20:18:55
     EntityID: TransitionAction-74eea7774d10d2979eca215864afd5fb
@@ -342,7 +342,7 @@ TransitionActions:
     ChangeTime: 2016-08-22 20:29:26
     Config:
       Config:
-        PreProcTravelExpensesProcessState: otobo5s-BackToSpecifiedRecording
+        PreProcTravelExpensesProcessState: careoncloud5s-BackToSpecifiedRecording
       Module: Kernel::System::ProcessManagement::TransitionAction::DynamicFieldSet
     CreateTime: 2016-08-22 20:14:00
     EntityID: TransitionAction-ffdf440fac8fca4ea42c2ee5a07634c9
@@ -356,7 +356,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcTravelExpensesInformationComplete:
-              Match: otobo5s-Yes
+              Match: careoncloud5s-Yes
               Type: String
           Type: and
       ConditionLinking: and
@@ -371,7 +371,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcTravelApprovalYesNo:
-              Match: otobo5s-Yes
+              Match: careoncloud5s-Yes
               Type: String
           Type: and
       ConditionLinking: and
@@ -386,7 +386,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcTravelApprovalYesNo:
-              Match: otobo5s-No
+              Match: careoncloud5s-No
               Type: String
           Type: and
       ConditionLinking: and
@@ -416,7 +416,7 @@ Transitions:
         '1':
           Fields:
             DynamicField_PreProcTravelApprovalYesNo:
-              Match: otobo5s-Back
+              Match: careoncloud5s-Back
               Type: String
           Type: and
       ConditionLinking: and

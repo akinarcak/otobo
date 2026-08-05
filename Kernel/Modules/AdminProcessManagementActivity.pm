@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,7 +22,7 @@ use warnings;
 use List::Util qw(first);
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -43,12 +43,27 @@ sub Run {
 
     $Self->{Subaction} = $ParamObject->GetParam( Param => 'Subaction' ) || '';
 
-    my $ActivityID = $ParamObject->GetParam( Param => 'ID' )       || '';
-    my $EntityID   = $ParamObject->GetParam( Param => 'EntityID' ) || '';
+    my $ActivityID      = $ParamObject->GetParam( Param => 'ID' )              || '';
+    my $EntityID        = $ParamObject->GetParam( Param => 'EntityID' )        || '';
+    my $ProcessEntityID = $ParamObject->GetParam( Param => 'ProcessEntityID' ) || '';
 
     my %SessionData = $Kernel::OM->Get('Kernel::System::AuthSession')->GetSessionIDData(
         SessionID => $Self->{SessionID},
     );
+
+    if ( !exists $SessionData{ProcessManagementScreensPath} ) {
+
+        # get latest config data to send it back to main window
+        my $ActivityConfig = $Self->_GetActivityConfig(
+            EntityID => $EntityID,
+        );
+
+        # we lost session in between, close the popup and reload
+        return $Self->_PopupResponse(
+            ClosePopup => 1,
+            ConfigJSON => $ActivityConfig,
+        );
+    }
 
     # convert JSON string to array
     $Self->{ScreensPath} = $Kernel::OM->Get('Kernel::System::JSON')->Decode(
@@ -66,9 +81,17 @@ sub Run {
     # ------------------------------------------------------------ #
     if ( $Self->{Subaction} eq 'ActivityNew' ) {
 
+        # check for ProcessEntityID
+        if ( !$ProcessEntityID ) {
+            return $LayoutObject->ErrorScreen(
+                Message => Translatable('Need ProcessEntityID!'),
+            );
+        }
+
         return $Self->_ShowEdit(
             %Param,
-            Action => 'New',
+            ProcessEntityID => $ProcessEntityID,
+            Action          => 'New',
         );
     }
 
@@ -87,8 +110,10 @@ sub Run {
         my $GetParam = $Self->_GetParams();
 
         # set new configuration
-        $ActivityData->{Name}   = $GetParam->{Name};
-        $ActivityData->{Config} = {};
+        $ActivityData->{Name}      = $GetParam->{Name};
+        $ActivityData->{Namespace} = $GetParam->{Namespace};
+        $ActivityData->{Global}    = $GetParam->{Global};
+        $ActivityData->{Config}    = {};
 
         # set the rest of the config
         if ( IsArrayRefWithData( $GetParam->{ActivityDialogs} ) ) {
@@ -116,6 +141,17 @@ sub Run {
                     && $ActivityDialogsLookup{$ActivityDialogID}->{EntityID}
                     )
                 {
+                    # Check if ActivityDialog is non-global
+                    if ( $ActivityDialogsLookup{$ActivityDialogID}->{ProcessEntityID} ) {
+
+                        # Activity must then also be non-global
+                        if ( $ActivityData->{Global} || $ActivityDialogsLookup{$ActivityDialogID}->{ProcessEntityID} ne $ProcessEntityID ) {
+                            return $LayoutObject->ErrorScreen(
+                                Message => Translatable('Non-global activity dialogs may not be assigned to global activities.'),
+                            );
+                        }
+                    }
+
                     my $EntityID = $ActivityDialogsLookup{$ActivityDialogID}->{EntityID};
 
                     $ConfigActivityDialog{$Counter} = $EntityID;
@@ -133,7 +169,7 @@ sub Run {
 
             # add server error error class
             $Error{NameServerError}        = 'ServerError';
-            $Error{NameServerErrorMessage} = Translatable('This field is required');
+            $Error{NameServerErrorMessage} = Translatable('This field is required.');
         }
 
         # if there is an error return to edit screen
@@ -141,8 +177,9 @@ sub Run {
             return $Self->_ShowEdit(
                 %Error,
                 %Param,
-                ActivityData => $ActivityData,
-                Action       => 'New',
+                ProcessEntityID => $ProcessEntityID,
+                ActivityData    => $ActivityData,
+                Action          => 'New',
             );
         }
 
@@ -155,22 +192,24 @@ sub Run {
         # show error if can't generate a new EntityID
         if ( !$EntityID ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('There was an error generating a new EntityID for this Activity'),
+                Message => Translatable('There was an error generating a new entity ID for this activity.'),
             );
         }
 
         # otherwise save configuration and return process screen
         my $ActivityID = $ActivityObject->ActivityAdd(
-            Name     => $ActivityData->{Name},
-            EntityID => $EntityID,
-            Config   => $ActivityData->{Config},
-            UserID   => $Self->{UserID},
+            Name            => $ActivityData->{Name},
+            Namespace       => $ActivityData->{Namespace},
+            EntityID        => $EntityID,
+            Config          => $ActivityData->{Config},
+            UserID          => $Self->{UserID},
+            ProcessEntityID => $ActivityData->{Global} ? undef : $ProcessEntityID,
         );
 
         # show error if can't create
         if ( !$ActivityID ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('There was an error creating the Activity'),
+                Message => Translatable('There was an error creating the activity.'),
             );
         }
 
@@ -186,7 +225,7 @@ sub Run {
         if ( !$Success ) {
             return $LayoutObject->ErrorScreen(
                 Message => $LayoutObject->{LanguageObject}->Translate(
-                    'There was an error setting the entity sync status for Activity entity: %s',
+                    'There was an error setting the entity sync status for activity entity: %s',
                     $EntityID
                 ),
             );
@@ -206,24 +245,27 @@ sub Run {
         if ( $Redirect && $Redirect eq '1' ) {
 
             $Self->_PushSessionScreen(
-                ID        => $ActivityID,
-                EntityID  => $ActivityData->{EntityID},
-                Subaction => 'ActivityEdit'               # always use edit screen
+                ID              => $ActivityID,
+                EntityID        => $ActivityData->{EntityID},
+                ProcessEntityID => $ProcessEntityID,
+                Subaction       => 'ActivityEdit'               # always use edit screen
             );
 
-            my $RedirectAction    = $ParamObject->GetParam( Param => 'PopupRedirectAction' )    || '';
-            my $RedirectSubaction = $ParamObject->GetParam( Param => 'PopupRedirectSubaction' ) || '';
-            my $RedirectID        = $ParamObject->GetParam( Param => 'PopupRedirectID' )        || '';
-            my $RedirectEntityID  = $ParamObject->GetParam( Param => 'PopupRedirectEntityID' )  || '';
+            my $RedirectAction          = $ParamObject->GetParam( Param => 'PopupRedirectAction' )          || '';
+            my $RedirectSubaction       = $ParamObject->GetParam( Param => 'PopupRedirectSubaction' )       || '';
+            my $RedirectID              = $ParamObject->GetParam( Param => 'PopupRedirectID' )              || '';
+            my $RedirectEntityID        = $ParamObject->GetParam( Param => 'PopupRedirectEntityID' )        || '';
+            my $RedirectProcessEntityID = $ParamObject->GetParam( Param => 'PopupRedirectProcessEntityID' ) || '';
 
             # redirect to another popup window
             return $Self->_PopupResponse(
                 Redirect => 1,
                 Screen   => {
-                    Action    => $RedirectAction,
-                    Subaction => $RedirectSubaction,
-                    ID        => $RedirectID,
-                    EntityID  => $RedirectID,
+                    Action          => $RedirectAction,
+                    Subaction       => $RedirectSubaction,
+                    ID              => $RedirectID,
+                    EntityID        => $RedirectEntityID,
+                    ProcessEntityID => $RedirectProcessEntityID,
                 },
                 ConfigJSON => $ActivityConfig,
             );
@@ -259,10 +301,10 @@ sub Run {
     # ------------------------------------------------------------ #
     elsif ( $Self->{Subaction} eq 'ActivityEdit' ) {
 
-        # check for ActivityID
-        if ( !$ActivityID ) {
+        # check for ActivityID and ProcessEntityID
+        if ( !$ActivityID || !$ProcessEntityID ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('Need ActivityID!'),
+                Message => Translatable('Need ActivityID and ProcessEntityID!'),
             );
         }
 
@@ -279,15 +321,28 @@ sub Run {
         if ( !IsHashRefWithData($ActivityData) ) {
             return $LayoutObject->ErrorScreen(
                 Message =>
-                    $LayoutObject->{LanguageObject}->Translate( 'Could not get data for ActivityID %s', $ActivityID ),
+                    $LayoutObject->{LanguageObject}->Translate( 'Could not get data for activity ID %s', $ActivityID ),
             );
+        }
+
+        # check if Activity is part of the current Process
+        if ( $ActivityData->{ProcessEntityID} && $ActivityData->{ProcessEntityID} ne $ProcessEntityID ) {
+            return $LayoutObject->ErrorScreen(
+                Message => Translatable('This activity is not available to the current process.'),
+            );
+        }
+
+        # preserve Global if ProcessEntityID already exists in db
+        if ( !$ActivityData->{ProcessEntityID} ) {
+            $ActivityData->{Global} = 'checked';
         }
 
         return $Self->_ShowEdit(
             %Param,
-            ActivityID   => $ActivityID,
-            ActivityData => $ActivityData,
-            Action       => 'Edit',
+            ActivityID      => $ActivityID,
+            ActivityData    => $ActivityData,
+            ProcessEntityID => $ProcessEntityID,
+            Action          => 'Edit',
         );
     }
 
@@ -306,9 +361,11 @@ sub Run {
         my $GetParam = $Self->_GetParams();
 
         # set new configuration
-        $ActivityData->{Name}     = $GetParam->{Name};
-        $ActivityData->{EntityID} = $GetParam->{EntityID};
-        $ActivityData->{Config}   = {};
+        $ActivityData->{Name}      = $GetParam->{Name};
+        $ActivityData->{Namespace} = $GetParam->{Namespace};
+        $ActivityData->{EntityID}  = $GetParam->{EntityID};
+        $ActivityData->{Global}    = $GetParam->{Global};
+        $ActivityData->{Config}    = {};
 
         # set the rest of the config
         if ( IsArrayRefWithData( $GetParam->{ActivityDialogs} ) ) {
@@ -336,6 +393,17 @@ sub Run {
                     && $ActivityDialogsLookup{$ActivityDialogID}->{EntityID}
                     )
                 {
+                    # Check if ActivityDialog is non-global
+                    if ( $ActivityDialogsLookup{$ActivityDialogID}->{ProcessEntityID} ) {
+
+                        # Activity must then also be non-global
+                        if ( $ActivityData->{Global} || $ActivityDialogsLookup{$ActivityDialogID}->{ProcessEntityID} ne $ProcessEntityID ) {
+                            return $LayoutObject->ErrorScreen(
+                                Message => Translatable('Non-global activity dialogs may not be assigned to global activities.'),
+                            );
+                        }
+                    }
+
                     my $EntityID = $ActivityDialogsLookup{$ActivityDialogID}->{EntityID};
 
                     $ConfigActivityDialog{$Counter} = $EntityID;
@@ -354,7 +422,24 @@ sub Run {
 
             # add server error error class
             $Error{NameServerError}        = 'ServerError';
-            $Error{NameServerErrorMessage} = Translatable('This field is required');
+            $Error{NameServerErrorMessage} = Translatable('This field is required.');
+        }
+
+        # prevent updating to non-global if necessary
+        if ( !$ActivityData->{Global} ) {
+
+            my $AffectedProcesses = $ActivityObject->ActivityUsage(
+                EntityID => $ActivityData->{EntityID},
+            );
+
+            for my $AffectedProcessEntityID ( sort keys %{$AffectedProcesses} ) {
+
+                if ( $AffectedProcessEntityID ne $ProcessEntityID ) {
+
+                    $Error{GlobalServerError}        = 'ServerError';
+                    $Error{GlobalServerErrorMessage} = Translatable('Activities currently shared by other processes may not be set to non-global.');
+                }
+            }
         }
 
         # if there is an error return to edit screen
@@ -362,24 +447,27 @@ sub Run {
             return $Self->_ShowEdit(
                 %Error,
                 %Param,
-                ActivityData => $ActivityData,
-                Action       => 'Edit',
+                ProcessEntityID => $ProcessEntityID,
+                ActivityData    => $ActivityData,
+                Action          => 'Edit',
             );
         }
 
         # otherwise save configuration and return to overview screen
         my $Success = $ActivityObject->ActivityUpdate(
-            ID       => $ActivityID,
-            Name     => $ActivityData->{Name},
-            EntityID => $ActivityData->{EntityID},
-            Config   => $ActivityData->{Config},
-            UserID   => $Self->{UserID},
+            ID              => $ActivityID,
+            Name            => $ActivityData->{Name},
+            Namespace       => $ActivityData->{Namespace},
+            EntityID        => $ActivityData->{EntityID},
+            Config          => $ActivityData->{Config},
+            UserID          => $Self->{UserID},
+            ProcessEntityID => $ActivityData->{Global} ? undef : $ProcessEntityID,
         );
 
         # show error if can't update
         if ( !$Success ) {
             return $LayoutObject->ErrorScreen(
-                Message => Translatable('There was an error updating the Activity'),
+                Message => Translatable('There was an error updating the activity.'),
             );
         }
 
@@ -395,7 +483,7 @@ sub Run {
         if ( !$Success ) {
             return $LayoutObject->ErrorScreen(
                 Message => $LayoutObject->{LanguageObject}->Translate(
-                    'There was an error setting the entity sync status for Activity entity: %s',
+                    'There was an error setting the entity sync status for activity entity: %s',
                     $ActivityData->{EntityID}
                 ),
             );
@@ -415,24 +503,27 @@ sub Run {
         if ( $Redirect && $Redirect eq '1' ) {
 
             $Self->_PushSessionScreen(
-                ID        => $ActivityID,
-                EntityID  => $ActivityData->{EntityID},
-                Subaction => 'ActivityEdit'               # always use edit screen
+                ID              => $ActivityID,
+                EntityID        => $ActivityData->{EntityID},
+                ProcessEntityID => $ProcessEntityID,
+                Subaction       => 'ActivityEdit'               # always use edit screen
             );
 
-            my $RedirectAction    = $ParamObject->GetParam( Param => 'PopupRedirectAction' )    || '';
-            my $RedirectSubaction = $ParamObject->GetParam( Param => 'PopupRedirectSubaction' ) || '';
-            my $RedirectID        = $ParamObject->GetParam( Param => 'PopupRedirectID' )        || '';
-            my $RedirectEntityID  = $ParamObject->GetParam( Param => 'PopupRedirectEntityID' )  || '';
+            my $RedirectAction          = $ParamObject->GetParam( Param => 'PopupRedirectAction' )          || '';
+            my $RedirectSubaction       = $ParamObject->GetParam( Param => 'PopupRedirectSubaction' )       || '';
+            my $RedirectID              = $ParamObject->GetParam( Param => 'PopupRedirectID' )              || '';
+            my $RedirectEntityID        = $ParamObject->GetParam( Param => 'PopupRedirectEntityID' )        || '';
+            my $RedirectProcessEntityID = $ParamObject->GetParam( Param => 'PopupRedirectProcessEntityID' ) || '';
 
             # redirect to another popup window
             return $Self->_PopupResponse(
                 Redirect => 1,
                 Screen   => {
-                    Action    => $RedirectAction,
-                    Subaction => $RedirectSubaction,
-                    ID        => $RedirectID,
-                    EntityID  => $RedirectID,
+                    Action          => $RedirectAction,
+                    Subaction       => $RedirectSubaction,
+                    ID              => $RedirectID,
+                    EntityID        => $RedirectEntityID,
+                    ProcessEntityID => $RedirectProcessEntityID,
                 },
                 ConfigJSON => $ActivityConfig,
             );
@@ -541,17 +632,43 @@ sub Run {
             );
         }
 
+        # Check if ActivityDialog is local
+        if ( $ActivityDialogsLookup{ $Param{ActivityDialog} }->{ProcessEntityID} ) {
+
+            # Activity must then also be local
+            if (
+                !$ActivityData->{ProcessEntityID}
+                || $ActivityDialogsLookup{ $Param{ActivityDialog} }->{ProcessEntityID} ne
+                $ActivityData->{ProcessEntityID}
+                )
+            {
+                %Result = (
+                    Success => 0,
+                    Message => Translatable('Non-global activity dialogs may not be assigned to global activities.'),
+                );
+
+                $JSON = $LayoutObject->JSONEncode( Data => \%Result );
+
+                return $LayoutObject->Attachment(
+                    ContentType => 'application/json',
+                    Content     => $JSON,
+                    Type        => 'inline',
+                    NoCache     => 1,
+                );
+            }
+        }
+
         # Check if ActivityDialog is already assigned to Activity
         if ( ref $ActivityData->{Config}->{ActivityDialog} eq 'HASH' ) {
 
             my $CheckActivityDialog = first { $_ eq $Param{ActivityDialog} }
-            values %{ $ActivityData->{Config}->{ActivityDialog} };
+                values %{ $ActivityData->{Config}->{ActivityDialog} };
 
             if ($CheckActivityDialog) {
                 %Result = (
                     Success => 0,
                     Message => $LayoutObject->{LanguageObject}->Translate(
-                        'ActivityDialog already assigned to Activity. You cannot add an ActivityDialog twice!'
+                        'Activity dialog already assigned to activity. You cannot add an activity dialog twice.'
                     ),
                 );
 
@@ -579,17 +696,19 @@ sub Run {
 
         # Save Activity to DB
         my $Success = $ActivityObject->ActivityUpdate(
-            ID       => $ActivityData->{ID},
-            Name     => $ActivityData->{Name},
-            EntityID => $ActivityData->{EntityID},
-            Config   => $ActivityData->{Config},
-            UserID   => $Self->{UserID},
+            ID              => $ActivityData->{ID},
+            Name            => $ActivityData->{Name},
+            Namespace       => $ActivityData->{Namespace},
+            EntityID        => $ActivityData->{EntityID},
+            Config          => $ActivityData->{Config},
+            UserID          => $Self->{UserID},
+            ProcessEntityID => $ActivityData->{ProcessEntityID},
         );
 
         if ( !$Success ) {
             %Result = (
                 Success => 0,
-                Message => Translatable('Error while saving the Activity to the database!'),
+                Message => Translatable('Error while saving the activity to the database.'),
             );
 
             $JSON = $LayoutObject->JSONEncode( Data => \%Result );
@@ -666,7 +785,8 @@ sub _ShowEdit {
     # get Activity information
     my $ActivityData = $Param{ActivityData} || {};
 
-    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $LayoutObject   = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $ActivityObject = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Activity');
 
     # check if last screen action is main screen
     if ( $Self->{ScreensPath}->[-1]->{Action} eq 'AdminProcessManagement' ) {
@@ -683,10 +803,11 @@ sub _ShowEdit {
         $LayoutObject->Block(
             Name => 'GoBack',
             Data => {
-                Action    => $Self->{ScreensPath}->[-1]->{Action}    || '',
-                Subaction => $Self->{ScreensPath}->[-1]->{Subaction} || '',
-                ID        => $Self->{ScreensPath}->[-1]->{ID}        || '',
-                EntityID  => $Self->{ScreensPath}->[-1]->{EntityID}  || '',
+                Action          => $Self->{ScreensPath}->[-1]->{Action}          || '',
+                Subaction       => $Self->{ScreensPath}->[-1]->{Subaction}       || '',
+                ID              => $Self->{ScreensPath}->[-1]->{ID}              || '',
+                EntityID        => $Self->{ScreensPath}->[-1]->{EntityID}        || '',
+                ProcessEntityID => $Self->{ScreensPath}->[-1]->{ProcessEntityID} || '',
             },
         );
     }
@@ -728,9 +849,13 @@ sub _ShowEdit {
         }
 
         # display available activity dialogs
+        ACTIVITYDIALOG:
         for my $EntityID ( sort keys %AvailableActivityDialogsLookup ) {
 
             my $ActivityDialogData = $AvailableActivityDialogsLookup{$EntityID};
+
+            next ACTIVITYDIALOG unless !$ActivityDialogData->{ProcessEntityID} ||
+                $ActivityDialogData->{ProcessEntityID} eq $Param{ProcessEntityID};
 
             my $AvailableIn       = '';
             my $ConfigAvailableIn = $ActivityDialogData->{Config}->{Interface};
@@ -754,10 +879,13 @@ sub _ShowEdit {
             $LayoutObject->Block(
                 Name => 'AvailableActivityDialogRow',
                 Data => {
-                    ID          => $ActivityDialogData->{ID},
-                    EntityID    => $ActivityDialogData->{EntityID},
-                    Name        => $ActivityDialogData->{Name},
-                    AvailableIn => $AvailableIn,
+                    ID                    => $ActivityDialogData->{ID},
+                    EntityID              => $ActivityDialogData->{EntityID},
+                    DialogProcessEntityID => $ActivityDialogData->{ProcessEntityID},
+                    Name                  => $ActivityDialogData->{Name},
+                    Namespace             => $ActivityDialogData->{Namespace},
+                    ProcessEntityID       => $Param{ProcessEntityID},
+                    AvailableIn           => $AvailableIn,
                 },
             );
         }
@@ -789,25 +917,28 @@ sub _ShowEdit {
             $LayoutObject->Block(
                 Name => 'AssignedActivityDialogRow',
                 Data => {
-                    ID          => $ActivityDialogData->{ID},
-                    EntityID    => $ActivityDialogData->{EntityID},
-                    Name        => $ActivityDialogData->{Name},
-                    AvailableIn => $AvailableIn,
+                    ID                    => $ActivityDialogData->{ID},
+                    EntityID              => $ActivityDialogData->{EntityID},
+                    DialogProcessEntityID => $ActivityDialogData->{ProcessEntityID},
+                    Name                  => $ActivityDialogData->{Name},
+                    Namespace             => $ActivityDialogData->{Namespace},
+                    ProcessEntityID       => $Param{ProcessEntityID},
+                    AvailableIn           => $AvailableIn,
                 },
             );
         }
 
         # display other affected processes by editing this activity (if applicable)
-        my $AffectedProcesses = $Self->_CheckActivityUsage(
+        my $AffectedProcesses = $ActivityObject->ActivityUsage(
             EntityID => $ActivityData->{EntityID},
         );
 
-        if ( @{$AffectedProcesses} ) {
+        if ( values %{$AffectedProcesses} ) {
 
             $LayoutObject->Block(
                 Name => 'EditWarning',
                 Data => {
-                    ProcessList => join( ', ', @{$AffectedProcesses} ),
+                    ProcessList => join( ', ', values %{$AffectedProcesses} ),
                 }
             );
         }
@@ -820,9 +951,13 @@ sub _ShowEdit {
     else {
 
         # display available activity dialogs
+        ACTIVITYDIALOG:
         for my $EntityID ( sort keys %AvailableActivityDialogsLookup ) {
 
             my $ActivityDialogData = $AvailableActivityDialogsLookup{$EntityID};
+
+            next ACTIVITYDIALOG unless !$ActivityDialogData->{ProcessEntityID} ||
+                $ActivityDialogData->{ProcessEntityID} eq $Param{ProcessEntityID};
 
             my $AvailableIn       = '';
             my $ConfigAvailableIn = $ActivityDialogData->{Config}->{Interface};
@@ -846,15 +981,45 @@ sub _ShowEdit {
             $LayoutObject->Block(
                 Name => 'AvailableActivityDialogRow',
                 Data => {
-                    ID          => $ActivityDialogData->{ID},
-                    EntityID    => $ActivityDialogData->{EntityID},
-                    Name        => $ActivityDialogData->{Name},
-                    AvailableIn => $AvailableIn,
+                    ID                    => $ActivityDialogData->{ID},
+                    EntityID              => $ActivityDialogData->{EntityID},
+                    DialogProcessEntityID => $ActivityDialogData->{ProcessEntityID},
+                    Name                  => $ActivityDialogData->{Name},
+                    Namespace             => $ActivityDialogData->{Namespace},
+                    ProcessEntityID       => $Param{ProcessEntityID},
+                    AvailableIn           => $AvailableIn,
                 },
             );
         }
 
         $Param{Title} = Translatable('Create New Activity');
+        $ActivityData->{Global} = 0;
+    }
+
+    # get available namespaces
+    my @ProcessNamespaces = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'ProcessManagement',
+    );
+
+    # create namespace selection
+    if (@ProcessNamespaces) {
+        my $NamespaceSelectionHTML = $LayoutObject->BuildSelection(
+            Data         => \@ProcessNamespaces,
+            Name         => 'Namespace',
+            ID           => 'Namespace',
+            SelectedID   => $ActivityData->{Namespace} || '',
+            Sort         => 'AlphanumericKey',
+            Translation  => 0,
+            PossibleNone => 1,
+            Class        => 'Modernize',
+        );
+
+        $LayoutObject->Block(
+            Name => 'NamespaceSelection',
+            Data => {
+                NamespaceSelectionHTML => $NamespaceSelectionHTML,
+            },
+        );
     }
 
     my $Output = $LayoutObject->Header(
@@ -866,6 +1031,7 @@ sub _ShowEdit {
         Data         => {
             %Param,
             %{$ActivityData},
+            ProcessEntityID => $Param{ProcessEntityID},
         },
     );
 
@@ -882,7 +1048,7 @@ sub _GetParams {
 
     # get parameters from web browser
     for my $ParamName (
-        qw( Name EntityID )
+        qw( Name Namespace EntityID Global )
         )
     {
         $GetParam->{$ParamName} = $ParamObject->GetParam( Param => $ParamName ) || '';
@@ -942,10 +1108,11 @@ sub _PushSessionScreen {
 
     # add screen to the screen path
     push @{ $Self->{ScreensPath} }, {
-        Action    => $Self->{Action} || '',
-        Subaction => $Param{Subaction},
-        ID        => $Param{ID},
-        EntityID  => $Param{EntityID},
+        Action          => $Self->{Action} || '',
+        Subaction       => $Param{Subaction},
+        ID              => $Param{ID},
+        EntityID        => $Param{EntityID},
+        ProcessEntityID => $Param{ProcessEntityID},
     };
 
     # convert screens path to string (JSON)
@@ -998,34 +1165,6 @@ sub _PopupResponse {
     $Output .= $LayoutObject->Footer( Type => 'Small' );
 
     return $Output;
-}
-
-sub _CheckActivityUsage {
-    my ( $Self, %Param ) = @_;
-
-    # get a list of parents with all the details
-    my $List = $Kernel::OM->Get('Kernel::System::ProcessManagement::DB::Process')->ProcessListGet(
-        UserID => 1,
-    );
-
-    my @Usage;
-
-    # search entity id in all parents
-    PARENT:
-    for my $ParentData ( @{$List} ) {
-        next PARENT if !$ParentData;
-        next PARENT if !$ParentData->{Activities};
-
-        ENTITY:
-        for my $EntityID ( @{ $ParentData->{Activities} } ) {
-            if ( $EntityID eq $Param{EntityID} ) {
-                push @Usage, $ParentData->{Name};
-                last ENTITY;
-            }
-        }
-    }
-
-    return \@Usage;
 }
 
 1;

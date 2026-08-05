@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ use utf8;
 use Test2::V0;
 use Selenium::Waiter qw(wait_until);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::System::VariableCheck qw(IsHashRefWithData);
 use Kernel::System::UnitTest::Selenium;
@@ -72,14 +72,14 @@ $Selenium->RunTest(
                     CaseSensitive  => undef,
                     SearchSuffix   => '',
                     CacheTTL       => '0',
-                    DBName         => 'otobo',
+                    DBName         => 'careoncloud',
                     SID            => '',
                     Multiselect    => 'checked',
-                    Password       => 'otobo-docker-databasepw',
+                    Password       => 'careoncloud-docker-databasepw',
                     Link           => '',
                     Identifier     => '1',
                     DBTable        => 'queue',
-                    User           => 'otobo',
+                    User           => 'careoncloud',
                     ResultLimit    => '',
                     PossibleValues => {
                         FieldDatatype_1 => 'INTEGER',
@@ -151,10 +151,11 @@ $Selenium->RunTest(
 
         for my $Item ( sort keys %{$ACLList} ) {
 
+            my $ACL = $ACLObject->ACLGet(
+                ID => $Item,
+            );
             $ACLObject->ACLUpdate(
-                ID   => $Item,
-                Name => $ACLList->{$Item},
-                ,
+                $ACL->%*,
                 ValidID => 2,
                 UserID  => 1,
             );
@@ -295,15 +296,43 @@ $Selenium->RunTest(
         $Selenium->WaitFor(
             ElementExists => [ "#CustomerAutoComplete", 'css' ]
         );
+
         $Selenium->execute_script(
             "\$('#CustomerAutoComplete').autocomplete('search', '$TestCustomerUserLogin');"
         );
         $Selenium->WaitFor(
             JavaScript => "return \$.active == 0"
         );
-        $Selenium->find_element( "#ui-id-1 > li > a",     'css' )->click();
-        $Selenium->find_element( "#QueueID_Search",       'css' )->send_keys('raw');
-        $Selenium->find_element( "#QueueID_Select",       'css' )->click();
+
+        $Selenium->find_element( "#ui-id-1 > li > a", 'css' )->click();
+
+        $Selenium->WaitFor(
+            JavaScript => "return \$('#QueueID_Search').length;"
+        );
+
+        my $Element = $Selenium->find_element( "#QueueID_Search", 'css' );
+
+        COUNT:
+        for my $Counter ( 1 .. 10 ) {
+            sleep 1;
+            my $IsDisplayed = $Element->is_displayed();
+            if ($IsDisplayed) {
+                last COUNT;
+            }
+        }
+
+        $Element->click();
+        $Element->send_keys('raw');
+
+        # to prevent timing problem, we wait until raw is the only visible option in Autocomplete
+        $Selenium->WaitFor(
+            JavaScript => 'return $("#QueueID_Select > ul").children(":visible").length == 1'
+        );
+
+        # two clicks are needed here: one to mark the option, the second for selecting it
+        $Selenium->find_element( "#QueueID_Select", 'css' )->click();
+        $Selenium->find_element( "#QueueID_Select", 'css' )->click();
+
         $Selenium->find_element( "button[type='submit']", 'css' )->click();
 
         $Selenium->WaitFor(
@@ -312,6 +341,7 @@ $Selenium->RunTest(
 
         ( undef, my $ProcessTicketID ) = split /TicketID=/, $Selenium->get_current_url();
         push @DeleteTicketIDs, $ProcessTicketID;
+
         my $ProcessTicketNumber = $TicketObject->TicketNumberLookup(
             TicketID => $ProcessTicketID,
         );
@@ -331,7 +361,12 @@ $Selenium->RunTest(
             $Selenium->find_element( "#DynamicField_TestDatabase", 'css' )->is_hidden();
 
             # ACL testing: setting queue to 2 should display the field
-            $Selenium->find_element( "#Dest_Search",         'css' )->send_keys('Raw');
+            $Selenium->find_element( "#Dest_Search", 'css' )->send_keys('Raw');
+
+            $Selenium->WaitFor(
+                JavaScript => "return \$('li[data-id=\"2||Raw\"]').length",
+            );
+
             $Selenium->find_element( "li[data-id='2||Raw']", 'css' )->click();
             $Selenium->WaitFor(
                 JavaScript => "return \$.active == 0",
@@ -363,7 +398,11 @@ $Selenium->RunTest(
             # Wait for AJAX Call
             $Selenium->WaitFor( JavaScript => "return \$.active == 0" );
 
-            $Selenium->find_element( ".ui-menu-item", 'css' )->click();
+            $Selenium->execute_script('$(".ui-menu-item").trigger("click");');
+
+            $Selenium->WaitFor(
+                JavaScript => 'return typeof(Core) == "object" && typeof(Core.App) == "object" && Core.App.PageLoadComplete'
+            );
 
             # Open Detailed Search Dialog
             $Selenium->find_element(
@@ -410,7 +449,11 @@ $Selenium->RunTest(
             $Selenium->switch_to_frame($DetailsIframe);
 
             # Check Elements
-            $Selenium->find_element( "fieldset[field='DynamicField_TestDatabase']", 'css' );
+            is(
+                $Selenium->execute_script('return $("div.Header > h2:contains(\'TestDatabase\')").length;'),
+                1,
+                "Detail View found"
+            );
 
             $Selenium->switch_to_parent_frame();
             $Selenium->find_element( ".Close", 'css' )->click();
@@ -459,9 +502,17 @@ $Selenium->RunTest(
             "${ScriptAlias}customer.pl?Action=CustomerTicketZoom;TicketNumber=$TicketNumber"
         );
         $Selenium->find_element( "#ReplyButton", 'css' )->click();
-        my $Element = $Selenium->find_element( "#DynamicField_TestDatabase", 'css' );
-        $Element->is_enabled();
-        $Element->is_displayed();
+        my $Element2 = $Selenium->find_element( "#DynamicField_TestDatabase", 'css' );
+
+        COUNT2:
+        for my $Count ( 1 .. 10 ) {
+
+            sleep 1;
+            my $IsDisplayed = $Element2->is_displayed();
+            if ($IsDisplayed) {
+                last COUNT2;
+            }
+        }
 
         # Testing invalid search term first
         # Working with autocomplete here for triggering the AJAX request
@@ -581,6 +632,9 @@ $Selenium->RunTest(
         );
         $Selenium->find_element( "tr[class='MasterAction'] > td", 'css' )->click();
 
+        $Selenium->WaitFor(
+            JavaScript => "return \$('#ResultElementText_1').length;",
+        );
         $Selenium->find_element( "#ResultElementText_1", 'css' );
         wait_until {
             $Selenium->find_element( "#ResultElementText_2", 'css' );
@@ -600,7 +654,11 @@ $Selenium->RunTest(
         $Selenium->switch_to_frame($DetailsIframe);
 
         # Check Elements
-        $Selenium->find_element( "fieldset[field='DynamicField_TestDatabase']", 'css' );
+        is(
+            $Selenium->execute_script('return $("div.Header > h2:contains(\'TestDatabase\')").length;'),
+            1,
+            "Detail View found"
+        );
 
         $Selenium->switch_to_parent_frame();
         $Selenium->find_element( ".Close", 'css' )->click();
@@ -705,6 +763,10 @@ $Selenium->RunTest(
 
         # Navigate to AdminProcessManagement screen.
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminProcessManagement");
+
+        $Selenium->WaitFor(
+            JavaScript => 'return typeof(Core) == "object" && typeof(Core.App) == "object" && Core.App.PageLoadComplete'
+        );
 
         # Synchronize Process after deleting test Process.
         $Selenium->find_element("//a[contains(\@href, \'Subaction=ProcessSync' )]")->VerifiedClick();

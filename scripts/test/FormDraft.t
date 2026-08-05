@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,10 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use List::AllUtils qw(pairs);
+use Test2::V0;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 
 # Get FormDraft object.
 my $FormDraftObject = $Kernel::OM->Get('Kernel::System::FormDraft');
@@ -32,7 +36,6 @@ $Kernel::OM->ObjectParamAdd(
         RestoreDatabase => 1,
     },
 );
-my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
 # Create test Ticket.
 my $TicketID = $Kernel::OM->Get('Kernel::System::Ticket')->TicketCreate(
@@ -46,12 +49,12 @@ my $TicketID = $Kernel::OM->Get('Kernel::System::Ticket')->TicketCreate(
     OwnerID      => 1,
     UserID       => 1,
 );
-$Self->True(
+ok(
     $TicketID,
     "TicketCreate() $TicketID",
 );
 
-# Create test scenarions for FormDraftAdd().
+# Create test scenarios for FormDraftAdd().
 my @Tests = (
     {
         Name       => 'No FormData - Add Fail',
@@ -142,6 +145,7 @@ my @Tests = (
 );
 
 # Test FormDraftAdd and FormDraftListGet functions.
+my %FormDraftIDToObjectID;
 my $FormDraftID;
 for my $Test (@Tests) {
 
@@ -157,13 +161,14 @@ for my $Test (@Tests) {
     );
 
     if ( !$Test->{Success} ) {
-        $Self->False(
+        is(
             $FormDraftAdd,
+            undef,
             "FormDraftAdd() $Test->{Name}",
         );
     }
     else {
-        $Self->True(
+        ok(
             $FormDraftAdd,
             "FormDraftAdd() $Test->{Name}",
         );
@@ -173,9 +178,8 @@ for my $Test (@Tests) {
             ObjectType => 'Ticket',
             ObjectID   => $Test->{ObjectID},
             Action     => 'AgentTicketNote',
-            UserID     => $Test->{UserID},
         );
-        $Self->Is(
+        is(
             scalar @{$FormDraftList},
             1,
             "FormDraftListGet() success"
@@ -183,17 +187,18 @@ for my $Test (@Tests) {
 
         # Get created FormDraft ID.
         $FormDraftID = $FormDraftList->[0]->{FormDraftID};
+        $FormDraftIDToObjectID{ $FormDraftList->[0]{FormDraftID} } = $Test->{ObjectID};
 
         # Test FormDraftGet() data with content.
         my $FormDraft = $FormDraftObject->FormDraftGet(
             FormDraftID => $FormDraftID,
+            ObjectID    => $Test->{ObjectID},
             GetContent  => 1,
-            UserID      => $Test->{UserID},
         );
 
         # Verify value from FormDraftGet().
         for my $FormDraftGetParam (qw(FormData FileData ObjectID ObjectType Title Action)) {
-            $Self->IsDeeply(
+            is(
                 $FormDraft->{$FormDraftGetParam},
                 $Test->{$FormDraftGetParam},
                 "FormDraftGet() param $FormDraftGetParam"
@@ -203,13 +208,13 @@ for my $Test (@Tests) {
         # Test FormDraftGet() without content.
         $FormDraft = $FormDraftObject->FormDraftGet(
             FormDraftID => $FormDraftID,
+            ObjectID    => $Test->{ObjectID},
             GetContent  => 0,
-            UserID      => $Test->{UserID},
         );
-        $Self->Is(
+        is(
             $FormDraft->{FileData},
             undef,
-            'FormDraftGet() wthout content FileData'
+            'FormDraftGet() without content FileData'
         );
     }
 }
@@ -384,34 +389,35 @@ for my $Test (@Tests) {
     );
 
     if ( !$Test->{Success} ) {
-        $Self->False(
+        is(
             $FormDraftUpdate,
+            undef,
             "FormDraftUpdate() $Test->{Name}",
         );
     }
     else {
-        $Self->True(
+        ok(
             $FormDraftUpdate,
             "FormDraftUpdate() $Test->{Name}",
         );
 
         # Get updated FormDraft data and check values.
         my $UpdatedFormDraft = $FormDraftObject->FormDraftGet(
-            FormDraftID => $FormDraftID,
+            FormDraftID => $Test->{FormDraftID},
+            ObjectID    => $Test->{ObjectID},
             GetContent  => 1,
-            UserID      => $Test->{UserID},
         );
-        $Self->Is(
+        is(
             $UpdatedFormDraft->{FormData}->{Subject},
             $Test->{FormData}->{Subject},
             "FormDraftUpdate() updated param FormData - Subject"
         );
-        $Self->Is(
+        is(
             $UpdatedFormDraft->{FormData}->{Body},
             $Test->{FormData}->{Body},
             "FormDraftUpdate() updated param FormData - Body"
         );
-        $Self->Is(
+        is(
             $UpdatedFormDraft->{Title},
             $Test->{Title},
             "FormDraftUpdate() updated param Title"
@@ -420,27 +426,30 @@ for my $Test (@Tests) {
 }
 
 # Test FormDraftDelete().
-my $FormDraftDelete = $FormDraftObject->FormDraftDelete(
-    FormDraftID => $FormDraftID,
-    UserID      => 1,
-);
-$Self->True(
-    $FormDraftDelete,
-    'FormDraftDelete() success'
-);
+for my $FormDraftData ( pairs %FormDraftIDToObjectID ) {
+    my ( $FormDraftID, $ObjectID ) = $FormDraftData->@*;
+    my $FormDraftDelete = $FormDraftObject->FormDraftDelete(
+        FormDraftID => $FormDraftID,
+        ObjectID    => $ObjectID,
+    );
+    ok(
+        $FormDraftDelete,
+        'FormDraftDelete() success'
+    );
 
-# Sanity check.
-my $FormDraft = $FormDraftObject->FormDraftGet(
-    FormDraftID => $FormDraftID,
-    GetContent  => 1,
-    UserID      => 1,
-);
-$Self->Is(
-    $FormDraft->{Title},
-    undef,
-    'FormDraftDelete() check Title'
-);
+    # Sanity check.
+    my $FormDraft = $FormDraftObject->FormDraftGet(
+        FormDraftID => $FormDraftID,
+        ObjectID    => $ObjectID,
+        GetContent  => 1,
+    );
+    is(
+        $FormDraft->{Title},
+        undef,
+        'FormDraftDelete() check Title'
+    );
+}
 
 # Cleanup is done by RestoreDatabase.
 
-$Self->DoneTesting();
+done_testing;

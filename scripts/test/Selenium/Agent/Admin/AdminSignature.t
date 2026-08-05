@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ our $Self;
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 my $DBObject     = $Kernel::OM->Get('Kernel::System::DB');
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -53,7 +53,7 @@ $Selenium->RunTest(
         );
 
         my $ScriptAlias = $ConfigObject->Get('ScriptAlias');
-        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminSignature");
+        $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AdminSignature;IncludeInvalid=1");
 
         # Check overview screen.
         $Selenium->find_element( "table",             'css' );
@@ -110,7 +110,7 @@ $Selenium->RunTest(
         my $SignatureRandomID = "Signature" . $Helper->GetRandomID();
 
         # Also check leading and trailing white space.
-        my $SignatureRichText = "\n\nYour Ticket-Team \n\n<OTOBO_Owner_UserFirstname> <OTOBO_Owner_UserLastname>\n";
+        my $SignatureRichText = "\n\nYour Ticket-Team \n\n<CareOnCloud_Owner_UserFirstname> <CareOnCloud_Owner_UserLastname>\n";
         my $SignatureComment  = "Selenium Signature test";
 
         $Selenium->find_element( "#Name",     'css' )->send_keys($SignatureRandomID);
@@ -168,7 +168,7 @@ $Selenium->RunTest(
         }
 
         # Edit test Signature, clear comment and set it to invalid.
-        my $EditSignatureRichText = "Your Ticket-Team \n\n<OTOBO_Responsible_UserFirstname> <OTOBO_Responsible_UserLastname>";
+        my $EditSignatureRichText = "Your Ticket-Team \n\n<CareOnCloud_Responsible_UserFirstname> <CareOnCloud_Responsible_UserLastname>";
 
         $Selenium->find_element( "#RichText", 'css' )->clear();
         $Selenium->find_element( "#RichText", 'css' )->send_keys($EditSignatureRichText);

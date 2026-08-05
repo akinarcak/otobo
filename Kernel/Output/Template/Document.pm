@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -42,7 +42,7 @@ and processing.
 sub process {
     my ( $Self, $Context ) = @_;
 
-    $Self->_InstallOTOBOExtensions($Context);
+    $Self->_InstallCareOnCloudExtensions($Context);
     $Self->_PrecalculateBlockStructure($Context);
     $Self->_PrecalculateBlockHookSubscriptions($Context);
 
@@ -51,26 +51,29 @@ sub process {
 
 =begin Internal:
 
-=head2 _InstallOTOBOExtensions()
+=head2 _InstallCareOnCloudExtensions()
 
-adds some OTOBO specific extensions to Template::Toolkit.
+adds some CareOnCloud ESM specific extensions to Template::Toolkit.
 
 =cut
 
-sub _InstallOTOBOExtensions {
+sub _InstallCareOnCloudExtensions {
     my ( $Self, $Context ) = @_;
 
     # Already installed, nothing to do.
-    return if $Context->stash()->get('OTOBO');
+    # Note that this name is the Template::Toolkit plugin name, resolved against
+    # PLUGIN_BASE as Kernel::Output::Template::Plugin::CareOnCloud. It is an
+    # identifier, not display text, so it carries no product suffix.
+    return if $Context->stash()->get('CareOnCloud');
 
     #
-    # Load the OTOBO plugin. This will register some filters and functions.
+    # Load the CareOnCloud plugin. This will register some filters and functions.
     #
-    $Context->stash()->set( 'OTOBO', $Context->plugin('OTOBO') );
+    $Context->stash()->set( 'CareOnCloud', $Context->plugin('CareOnCloud') );
 
     #
     # The RenderBlock macro makes it possible to use the old dtl:block-Style block calls
-    #   that are still used by OTOBO with Template::Toolkit.
+    #   that are still used by CareOnCloud ESM with Template::Toolkit.
     #
     # The block data is passed to the template, and this macro processes it and calls the relevant
     #   blocks.
@@ -227,6 +230,47 @@ sub _InstallOTOBOExtensions {
     };
 
     #
+    # This block is used to cut out JavaScript data that needs to be inserted to Core.Config
+    #   from the templates and insert it in the footer of the page, all in one place.
+    #   Contrary to the block JSData the value is inserted as a boolean.
+    #
+    # Usage:
+    #     [% Process JSBoolean
+    #         Key   = 'Test.Key'
+    #         Value = 'this is true'
+    #     %]
+    #
+    #
+
+    $Self->{_DEFBLOCKS}->{JSBoolean} //= sub {
+        my $context = shift || die "template sub called without context\n";
+        my $stash   = $context->stash();
+        my $output  = '';
+
+        my $_tt_error;
+
+        eval {
+
+            my $Key   = $stash->get('Key');
+            my $Value = $stash->get('Value');
+
+            return $output if !$Key;
+
+            $context->{LayoutObject}->{_JSData} //= {};
+
+            my $JSONObject = $Kernel::OM->Get('Kernel::System::JSON');
+            $context->{LayoutObject}->{_JSData}->{$Key} = $Value ? $JSONObject->True : $JSONObject->False;
+
+        };
+        if ($@) {
+            $_tt_error = $context->catch( $@, \$output );
+            die $_tt_error if $_tt_error->type() ne 'return';
+        }
+
+        return $output;
+    };
+
+    #
     # This block is used to insert the collected JavaScript data in the page footer.
     #
 
@@ -240,14 +284,14 @@ sub _InstallOTOBOExtensions {
             my %Data = %{ $context->{LayoutObject}->{_JSData} // {} };
             if (%Data) {
                 my $JSONString = $Kernel::OM->Get('Kernel::System::JSON')->Encode(
-                    Data          => \%Data,
-                    SortKeys      => 1,
-                    TypeAllString => 1,
+                    Data             => \%Data,
+                    SortKeys         => 1,
+                    StringifyScalars => 1,
                 );
 
                 # Escape closing script tags in the JSON content as they will confuse the
                 #   browser's parser.
-                $JSONString =~ s{ </(?<ScriptTag>script)}{<\\/$+{ScriptTag}}ismxg;
+                $JSONString =~ s/</\\u003C/gsmi;
 
                 $output .= "Core.Config.AddConfig($JSONString);\n";
             }

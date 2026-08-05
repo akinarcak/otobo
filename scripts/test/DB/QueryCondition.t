@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -1108,8 +1108,8 @@ for my $Query (@Queries) {
 
 # extended test
 %Fill = (
-    Some0 => '0 otobo',
-    Some1 => '1 otobo',
+    Some0 => '0 careoncloud',
+    Some1 => '1 careoncloud',
 );
 for my $Key ( sort keys %Fill ) {
     my $SQL = "INSERT INTO test_condition (name_a, name_b) VALUES ('$Key', '$Fill{$Key}')";
@@ -1123,14 +1123,14 @@ for my $Key ( sort keys %Fill ) {
 }
 @Queries = (
     {
-        Query  => '0 otobo',
+        Query  => '0 careoncloud',
         Result => {
             Some0 => 1,
             Some1 => 0,
         },
     },
     {
-        Query  => '1 otobo',
+        Query  => '1 careoncloud',
         Result => {
             Some0 => 0,
             Some1 => 1,

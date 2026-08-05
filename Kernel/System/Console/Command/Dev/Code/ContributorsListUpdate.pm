@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,9 +19,14 @@ package Kernel::System::Console::Command::Dev::Code::ContributorsListUpdate;
 use strict;
 use warnings;
 
-use IO::File;
-
 use parent qw(Kernel::System::Console::BaseCommand);
+
+# core modules
+use IO::File ();
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -45,7 +50,7 @@ sub Run {
     map { $Seen{$_}++ } @Lines;
 
     my $FileHandle = IO::File->new( 'AUTHORS.md', 'w' );
-    $FileHandle->print("The following persons contributed to OTOBO:\n\n");
+    $FileHandle->print("The following persons contributed to CareOnCloud ESM:\n\n");
 
     AUTHOR:
     for my $Author ( sort keys %Seen ) {

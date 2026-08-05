@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<careoncloud_config version="2.0" init="Application">
+    <Setting Name="CareOnCloud::Reporting::Enabled" Required="1" Valid="1">
+        <Description Translatable="1">Enables tenant-safe operational reporting and export.</Description>
+        <Navigation>Core::CareOnCloud::Reporting</Navigation><Value><Item ValueType="Checkbox">1</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Reporting::MaximumRangeDays" Required="1" Valid="1">
+        <Description Translatable="1">Maximum inclusive date range accepted by an operational report.</Description>
+        <Navigation>Core::CareOnCloud::Reporting</Navigation><Value><Item ValueType="String" ValueRegex="^[1-9][0-9]{0,3}$">366</Item></Value>
+    </Setting>
+    <Setting Name="CareOnCloud::Reporting::CacheTTLSeconds" Required="1" Valid="1">
+        <Description Translatable="1">TTL of a tenant-scoped operational summary.</Description>
+        <Navigation>Core::CareOnCloud::Reporting</Navigation><Value><Item ValueType="String" ValueRegex="^[1-9][0-9]{0,4}$">60</Item></Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AgentCareOnCloudOperations" Required="0" Valid="1"><Description Translatable="1">Tenant-authorized CareOnCloud operations dashboard.</Description><Navigation>Frontend::Agent::ModuleRegistration</Navigation><Value><Item ValueType="FrontendRegistration"><Hash><Item Key="Group"><Array></Array></Item><Item Key="GroupRo"><Array></Array></Item><Item Key="Description" Translatable="1">Management summary for requests, demand and SLA health.</Item><Item Key="NavBarName">CareOnCloudOperations</Item><Item Key="Title" Translatable="1">Operations Center</Item></Hash></Item></Value></Setting>
+    <Setting Name="Frontend::Navigation###AgentCareOnCloudOperations###001-CareOnCloud" Required="0" Valid="1"><Description Translatable="1">CareOnCloud operations center main menu.</Description><Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation><Value><Array><DefaultItem ValueType="FrontendNavigation"><Hash></Hash></DefaultItem><Item><Hash><Item Key="Group"><Array></Array></Item><Item Key="GroupRo"><Array></Array></Item><Item Key="Description" Translatable="1">View tenant-scoped operational KPIs.</Item><Item Key="Name" Translatable="1">Operations Center</Item><Item Key="Link">Action=AgentCareOnCloudOperations</Item><Item Key="LinkOption"></Item><Item Key="NavBar">CareOnCloudOperations</Item><Item Key="Type">Menu</Item><Item Key="Block"></Item><Item Key="AccessKey">o</Item><Item Key="Prio">80</Item></Hash></Item></Array></Value></Setting>
+</careoncloud_config>

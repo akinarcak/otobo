@@ -2,7 +2,7 @@
 <!--
     * This file is for testing development purpose only!
 -->
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="TestString" Required="0" Valid="1">
         <Description Translatable="1">String item.</Description>
         <Navigation>Test</Navigation>
@@ -297,8 +297,8 @@
         <Value>
             <Array>
                 <DefaultItem ValueType="Password">Secret</DefaultItem>
-                <Item>Secret1</Item>
-                <Item>Secret2</Item>
+                <Item ValueType="Password">Secret1</Item>
+                <Item ValueType="Password">Secret2</Item>
             </Array>
         </Value>
     </Setting>
@@ -643,4 +643,4 @@
             </Hash>
         </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

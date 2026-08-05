@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ our $Self;
 use Kernel::System::VariableCheck (qw(IsHashRefWithData));
 
 # get selenium object
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -43,7 +43,7 @@ $Selenium->RunTest(
         $Helper->ConfigSettingChange(
             Valid => 0,
             Key   => 'DashboardBackend',
-            Value => \%$Config,
+            Value => $Config,
         );
 
         my %EventsTicketCalendarSysConfig = $Kernel::OM->Get('Kernel::System::SysConfig')->SettingGet(
@@ -59,6 +59,15 @@ $Selenium->RunTest(
                 %{ $EventsTicketCalendarSysConfig{EffectiveValue} },
                 Default => 1,
             }
+        );
+
+        # add relevant queue to system configuration setting
+        $Helper->ConfigSettingChange(
+            Valid => 1,
+            Key   => 'DashboardEventsTicketCalendar###Queues',
+            Value => [
+                'Raw',
+            ],
         );
 
         # create test user and login

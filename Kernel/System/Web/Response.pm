@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,23 +15,22 @@
 
 package Kernel::System::Web::Response;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
-use namespace::clean;
+use namespace::autoclean;
 use utf8;
 
 # core modules
-use Encode qw();
+use Encode ();
 
 # CPAN modules
-use Plack::Response;
+use Plack::Response ();
 
 # OTOCO modules
 use Kernel::System::VariableCheck qw(:all);
 
-our @ObjectDependencies = (
-);
+our @ObjectDependencies = ();
 
 =head1 NAME
 
@@ -41,7 +40,7 @@ Kernel::System::Web::Response - a wrapper around Plack::Response
 
 A wrapper around L<Plack::Response>.
 Used for collecting the HTTP headers that should be emitted.
-Also, the status code set in this object overrides in F<otobo.psgi> the default status code 200..
+Also, the status code set in this object overrides in F<careoncloud.psgi> the default status code 200..
 
 =head1 PUBLIC INTERFACE
 
@@ -99,9 +98,9 @@ a wrapper around Plack::Response::cookies().
 =cut
 
 sub Cookies {
-    my ( $Self, @Args ) = @_;
+    my ($Self) = @_;
 
-    return $Self->{Response}->cookies(@Args);
+    return $Self->{Response}->cookies;
 }
 
 =head2 Code()

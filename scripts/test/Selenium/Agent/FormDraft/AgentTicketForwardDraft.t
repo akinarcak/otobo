@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,7 @@ use Kernel::System::UnitTest::RegisterDriver;
 
 our $Self;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -389,7 +389,7 @@ $Selenium->RunTest(
         # Verify current test user name as From.
         $Self->True(
             $Selenium->execute_script(
-                "return \$('.TableLike .Field:contains(\"$TestUserLogin\")').length === 1;"
+                "return \$('.Field:contains(\"$TestUserLogin\")').length === 1;"
             ),
             "From correct is '$TestUserLogin'."
         );
@@ -420,7 +420,7 @@ $Selenium->RunTest(
         # Verify current second test user name as From.
         $Self->True(
             $Selenium->execute_script(
-                "return \$('.TableLike .Field:contains(\"$TestUserLogin2\")').length === 1;"
+                "return \$('.Field:contains(\"$TestUserLogin2\")').length === 1;"
             ),
             "From correct is '$TestUserLogin2'."
         );
@@ -440,10 +440,8 @@ $Selenium->RunTest(
         );
         $Selenium->find_element( "#DeleteConfirm", 'css' )->click();
 
-        $Selenium->WaitFor(
-            JavaScript =>
-                'return typeof($) === "function" && $(".FormDraftDelete").length == 0;'
-        ) || die 'FormDraft was not deleted!';
+        $Selenium->WaitFor( AlertPresent => 1 );
+        $Selenium->accept_alert();
 
         # Delete created test ticket.
         my $Success = $TicketObject->TicketDelete(

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 // --
 
-/*eslint-disable no-window*/
+/*eslint-disable careoncloud/no-window*/
 
 "use strict";
 
@@ -49,6 +49,12 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
 
         // Initialize table filter
         Core.UI.Table.InitTableFilter($('#Filter'), $('#Processes'), 0);
+
+        // init checkbox to include invalid elements
+        $('input#IncludeInvalid').off('change').on('change', function () {
+            var URL = Core.Config.Get("Baselink") + 'Action=' + Core.Config.Get("Action") + ';IncludeInvalid=' + ( $(this).is(':checked') ? 1 : 0 );
+            window.location.href = URL;
+        });
 
         // Depending on Subaction initialize specific functions
         if (Subaction === 'ActivityNew' ||
@@ -126,6 +132,7 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
             $('#PopupRedirectSubaction').val($(this).data('subaction'));
             $('#PopupRedirectID').val($(this).data('id'));
             $('#PopupRedirectEntityID').val($(this).data('entity'));
+            $('#PopupRedirectProcessEntityID').val($(this).data('process'));
             // Only used for path popup
             $('#PopupRedirectStartActivityID').val($(this).data('startactivityid'));
 
@@ -174,6 +181,7 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
                 Subaction: Redirect.Subaction,
                 ID: Redirect.ID,
                 EntityID: Redirect.EntityID,
+                ProcessEntityID: Redirect.ProcessEntityID,
                 Field: Redirect.Field,
                 StartActivityID: Redirect.StartActivityID
             };
@@ -487,12 +495,19 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
                         left: Position.left,
                         top: Position.top
                     };
+
+                    // add namespace to entity
+                    let EntityName = Entity.Name;
+                    if ( Entity.Namespace ) {
+                        EntityName = Entity.Namespace + ' – ' + EntityName;
+                    }
+
                     // Draw Entity
-                    TargetNS.Canvas.CreateActivity(EntityID, Entity.Name, ActivityID, Position.left, Position.top);
+                    TargetNS.Canvas.CreateActivity(EntityID, EntityName, ActivityID, Position.left, Position.top);
 
                     // get Path length
                     for (PathKey in Path) {
-                        if (Path.hasOwnProperty(PathKey)) {
+                        if (Object.prototype.hasOwnProperty.call(Path, PathKey)) {
                             PathLength++;
                         }
                     }
@@ -617,8 +632,8 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
        */
         function DummyActivityConnected(ProcessEntityID) {
             var DummyFound = false;
-            $.each(TargetNS.ProcessData.Process[ProcessEntityID].Path, function (Activity, ActivityData) {
-                $.each(ActivityData, function (Transition, TransitionData) {
+            $.each(TargetNS.ProcessData.Process[ProcessEntityID].Path, function (_Activity, ActivityData) {
+                $.each(ActivityData, function (_Transition, TransitionData) {
                     if (typeof TransitionData.ActivityEntityID === 'undefined') {
                         DummyFound = true;
                     }
@@ -698,7 +713,7 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
        * @description
        *      Adds transition action to the canvas after drop event.
        */
-        function AddTransitionActionToCanvas(Event, UI) {
+        function AddTransitionActionToCanvas(_Event, UI) {
             var EntityID = $(UI.draggable).data('entity'),
                 Entity = TargetNS.ProcessData.TransitionAction[EntityID],
                 Transition,
@@ -746,7 +761,7 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
                 $Clone.addClass('EntityDrag').find('span').remove();
                 return $Clone[0];
             },
-            start: function (Event, UI) {
+            start: function (_Event, UI) {
                 var $Source = $(this),
                     SourceID = $Source.closest('ul').attr('id');
 
@@ -826,7 +841,8 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
         // re-initialize accordion functions (accordion, filters, DnD)
         var Data = {
                 Action: 'AdminProcessManagement',
-                Subaction: 'UpdateAccordion'
+                Subaction: 'UpdateAccordion',
+                EntityID: $('input[name=EntityID]').val(),
             },
             ActiveElementIndex = parseInt($('ul#ProcessElements > li.Active').index(), 10),
             ActiveElementValue = $('ul#ProcessElements > li:eq(' + ActiveElementIndex + ') .ProcessElementFilter').val();
@@ -996,9 +1012,9 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
             // get process layout and store it into a hidden field as JSON string
             $('input[name=ProcessLayout]').val(Core.JSON.Stringify(TargetNS.ProcessLayout));
 
-            // check if there are "open" transitions, e.g. transitions that have only a startpoint but no defined endpoint
+            // check if there are "open" transitions, e.g. transitions that have only a start point but no defined endpoint
             // these open transitions must be deleted before saving
-            $.each(TargetNS.ProcessData.Process[ProcessEntityID].Path, function (Activity, ActivityData) {
+            $.each(TargetNS.ProcessData.Process[ProcessEntityID].Path, function (_Activity, ActivityData) {
                 $.each(ActivityData, function (Transition, TransitionData) {
                     if (typeof TransitionData.ActivityEntityID === 'undefined') {
                         delete ActivityData[Transition];
@@ -1060,18 +1076,70 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
      *      Initialize activity edit screen.
      */
     TargetNS.InitActivityEdit = function () {
-        function InitListFilter(Event, UI) {
-         // only do something, if the element was removed from the right list
+        function SortAvailableActivityDialogs() {
+            var $list = $('#AvailableActivityDialogs');
+
+            $list.children('li').sort(
+                    (a, b) => a.title.localeCompare(b.title)
+            ).appendTo($list);
+        }
+
+        function StopEvent(Event) {
+
+            // rerun sort if element was dragged within left list
+            if ($(Event.target).attr('id') === 'AvailableActivityDialogs') {
+                SortAvailableActivityDialogs();
+            }
+        }
+
+        function TransferEvent(_Event, UI) {
+
+            // only rerun filter and sort if the element was removed from the right list
             if (UI.sender.attr('id') === 'AssignedActivityDialogs') {
                 Core.UI.Table.InitTableFilter($('#FilterAvailableActivityDialogs'), $('#AvailableActivityDialogs'));
+                SortAvailableActivityDialogs();
             }
         }
 
         // Initialize Allocation List
-        Core.UI.AllocationList.Init("#AvailableActivityDialogs, #AssignedActivityDialogs", ".AllocationList", InitListFilter);
+        Core.UI.AllocationList.Init(
+            "#AvailableActivityDialogs, #AssignedActivityDialogs",
+            ".AllocationList",
+            TransferEvent,
+            null,
+            StopEvent
+        );
 
         // Initialize list filter
         Core.UI.Table.InitTableFilter($('#FilterAvailableActivityDialogs'), $('#AvailableActivityDialogs'));
+
+        // Initial sort of left list
+        SortAvailableActivityDialogs();
+
+        // Hide non-global ActivityDialogs if Global selection is checked
+        if ($('input#Global').is(":checked")) {
+            $('.NonGlobalDialog').each( function () {
+                $(this).hide();
+            });
+        }
+
+        // Init event handler if Global selection is changed during edit
+        $('input#Global').off('click').on('click', function () {
+            if ($(this).is(':checked')) {
+                if (Core.UI.AllocationList.GetResult('#AssignedActivityDialogs', 'dialogprocess').filter(item => item !== '').length) {
+                    alert(Core.Language.Translate("Non-global ActivityDialogs may not be assigned to global Activities!"));
+                    return false;
+                }
+                $('.NonGlobalDialog').each( function () {
+                    $(this).hide();
+                });
+            }
+            else {
+                $('.NonGlobalDialog').each( function () {
+                    $(this).show();
+                });
+            }
+        });
 
         $('#Submit').on('click', function() {
             $('#ActivityForm').submit();
@@ -1109,7 +1177,7 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
         var MandatoryFields = ['Queue', 'State', 'Lock', 'Priority', 'Type', 'CustomerID'],
             FieldsWithoutDefaultValue = ['CustomerID', 'Article'];
 
-        function UpdateFields(Event, UI) {
+        function UpdateFields(_Event, UI) {
             var Fieldname,
                 DefaultFieldConfig = {};
 
@@ -1136,6 +1204,24 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
                     .data('config', Core.JSON.Stringify(DefaultFieldConfig))
                     .find('.FieldDetailsOverlay').trigger('click');
             }
+            DirectSubmitCheck();
+        }
+
+        function DirectSubmitCheck() {
+            var ShownFields = [];
+            $('#AssignedFields').children('li').each(function () {
+                var Config = Core.JSON.Parse($(this).data('config'));
+                if (Config.Display != 0) {
+                    ShownFields.push($(this));
+                }
+            });
+
+            if ( $('#DirectSubmit').is(':checked') && ShownFields.length ) {
+                $('#DirectSubmit ~ p.Warning').show();
+            }
+            else {
+                $('#DirectSubmit ~ p.Warning').hide();
+            }
         }
 
         // Initialize Allocation List
@@ -1143,6 +1229,14 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
 
         // Initialize list filter
         Core.UI.Table.InitTableFilter($('#FilterAvailableFields'), $('#AvailableFields'));
+
+        // Initialize direct submit tooltip
+        $('#DirectSubmit').off('change').on('change', function() {
+            DirectSubmitCheck();
+        });
+
+        // Execute check to get correct starting value
+        DirectSubmitCheck();
 
         $('#Submit').on('click', function() {
             $('#ActivityDialogForm').submit();
@@ -1226,11 +1320,19 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
                                      return false;
                                  }
 
-                                 // add the time units value to the fieldconfig
+                                 // add the time units value to the field config
                                  FieldConfigElement.Config.TimeUnits = $('#TimeUnits').val();
+
+                                 // add the standard template value to the field config
+                                 FieldConfigElement.Config.StandardTemplates = '0';
+                                 if ($('#StandardTemplates').prop('checked')) {
+                                    FieldConfigElement.Config.StandardTemplates = '1';
+                                 }
                              }
 
                              $Element.closest('li').data('config', Core.JSON.Stringify(FieldConfigElement));
+
+                             DirectSubmitCheck();
 
                              Core.UI.Dialog.CloseDialog($('.Dialog'));
                          }
@@ -1286,6 +1388,9 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
                     if (FieldConfig.Config.TimeUnits) {
                         $('#TimeUnits').val(FieldConfig.Config.TimeUnits);
                     }
+                    if ((typeof FieldConfig.Config.StandardTemplates === 'undefined') || FieldConfig.Config.StandardTemplates === '1') {
+                        $('#StandardTemplates').prop("checked", true);
+                    }
                 }
             }
 
@@ -1311,6 +1416,9 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
                 $('#TimeUnitsContainer').removeClass('Hidden');
                 $('#TimeUnitsContainer').prev('label').css('display', 'block');
                 $('#TimeUnitsContainer .Modernize').trigger('redraw.InputField');
+
+                $('#StandardTemplatesContainer').removeClass('Hidden');
+                $('#StandardTemplatesContainer').prev('label').css('display', 'block');
             }
             else {
 
@@ -1322,6 +1430,9 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
 
                 $('#TimeUnitsContainer').addClass('Hidden');
                 $('#TimeUnitsContainer').prev('label').css('display', 'none');
+
+                $('#StandardTemplatesContainer').addClass('Hidden');
+                $('#StandardTemplatesContainer').prev('label').css('display', 'none');
             }
 
             return false;
@@ -1350,7 +1461,7 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
         $('#ConditionAdd').on('click', function() {
             // get current parent index
             var CurrentParentIndex = parseInt($(this).prev('.WidgetSimple').first().attr('id').replace(/Condition\[/g, '').replace(/\]/g, ''), 10),
-                // in case we add a whole new condition, the fieldindex must be 1
+                // in case we add a whole new condition, the field index must be 1
                 LastKnownFieldIndex = 1,
                 // get current index
                 ConditionHTML = $('#ConditionContainer').html().replace(/_INDEX_/g, CurrentParentIndex + 1).replace(/_FIELDINDEX_/g, LastKnownFieldIndex);
@@ -1521,8 +1632,20 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
         // set current start and end activity (just for information purposes, not changeable)
         $.each(PathInfo, function(Activity, Transition) {
             if (Activity === StartActivityID && typeof Transition[CurrentTransitionEntityID] !== 'undefined') {
-                $('#StartActivity').attr('title', ActivityInfo[Activity].Name).text(ActivityInfo[Activity].Name);
-                $('#EndActivity').attr('title', ActivityInfo[Transition[CurrentTransitionEntityID].ActivityEntityID].Name).text(ActivityInfo[Transition[CurrentTransitionEntityID].ActivityEntityID].Name);
+
+                // build start activity and end activity names with namespaces
+                let StartActivityName = ActivityInfo[Activity].Name,
+                    EndActivityName = ActivityInfo[Transition[CurrentTransitionEntityID].ActivityEntityID].Name;
+
+                if ( ActivityInfo[Activity].Namespace ) {
+                    StartActivityName = ActivityInfo[Activity].Namespace + ' – ' + StartActivityName;
+                }
+                if ( ActivityInfo[Transition[CurrentTransitionEntityID].ActivityEntityID].Namespace ) {
+                    EndActivityName = ActivityInfo[Transition[CurrentTransitionEntityID].ActivityEntityID].Namespace + ' – ' + EndActivityName;
+                }
+
+                $('#StartActivity').attr('title', StartActivityName).text(StartActivityName);
+                $('#EndActivity').attr('title', EndActivityName).text(EndActivityName);
 
                 StartActivityEntityID = Activity;
                 EndActivityEntityID = Transition[CurrentTransitionEntityID].ActivityEntityID;
@@ -1532,13 +1655,13 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
             }
         });
 
-        // Set chosen Startactivity, Endactivity and Transition
+        // Set chosen start activity, end activity and Transition
         $('#Transition').val(CurrentTransitionEntityID);
         $('#EditPath a').data('entity', CurrentTransitionEntityID);
 
         if (AssignedTransitionActions && AssignedTransitionActions.length) {
             // Display assigned Transition Actions
-            $.each(AssignedTransitionActions, function(Index, TransitionActionEntityID) {
+            $.each(AssignedTransitionActions, function(_Index, TransitionActionEntityID) {
                 $('#AvailableTransitionActions').find('#' + TransitionActionEntityID).remove().appendTo($('#AssignedTransitionActions'));
             });
         }
@@ -1674,7 +1797,7 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
      * @returns {Boolean} Returns false, if Config is not defined.
      * @param {Object} Config
      * @description
-     *      Update gloabl process config object after config change e.g. in popup windows.
+     *      Update global process config object after config change e.g. in popup windows.
      */
     TargetNS.UpdateConfig = function (Config) {
         if (typeof Config === 'undefined') {
@@ -1728,4 +1851,4 @@ Core.Agent.Admin.ProcessManagement = (function (TargetNS) {
     return TargetNS;
 }(Core.Agent.Admin.ProcessManagement || {}));
 
-/*eslint-enable no-window*/
+/*eslint-enable careoncloud/no-window*/

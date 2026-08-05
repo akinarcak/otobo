@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,6 +18,13 @@ package Kernel::System::Group;
 
 use strict;
 use warnings;
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(IsArrayRefWithData IsHashRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -58,7 +65,7 @@ sub new {
 
 =head2 GroupLookup()
 
-get id or name for group
+gets either the ID or the name for a group.
 
     my $Group = $GroupObject->GroupLookup(
         GroupID => $GroupID,
@@ -79,6 +86,7 @@ sub GroupLookup {
             Priority => 'error',
             Message  => 'Need Group or GroupID!',
         );
+
         return;
     }
 
@@ -1468,7 +1476,7 @@ add new permissions or update existing one to the given group of a given role
             ro        => 1,
             move_into => 1,
             create    => 1,
-            note      =  1,
+            note      => 1,
             owner     => 1,
             priority  => 0,
             rw        => 0,
@@ -2393,6 +2401,456 @@ sub GroupUserRoleMemberAdd {
     my ( $Self, %Param ) = @_;
 
     return $Self->PermissionRoleUserAdd(%Param);
+}
+
+=head2 ExportGroups()
+
+Returns data structures ready for export for each group. Optionally filterable by giving a list of desired groups.
+
+    my $ExportData = $GroupObject->ExportGroups(
+        Groups => [         # (optional) restrict groups to given ones
+            'Group01',
+            'Group02',
+        ]
+    );
+
+=cut
+
+sub ExportGroups {
+    my ( $Self, %Param ) = @_;
+
+    my %GroupFilter;
+    if ( IsArrayRefWithData( $Param{Groups} ) ) {
+        %GroupFilter = map { $_ => 1 } $Param{Groups}->@*;
+    }
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %GroupList = $Self->GroupList(
+        Valid => 0,
+    );
+
+    my %ExportData;
+    GROUPID:
+    for my $GroupID ( sort keys %GroupList ) {
+
+        my %GroupData = $Self->GroupGet(
+            ID => $GroupID,
+        );
+
+        if (%GroupFilter) {
+            next GROUPID unless $GroupFilter{ $GroupData{Name} };
+        }
+
+        # translate IDs into names or name-like identifiers
+        ATTRIBUTE:
+        for my $Attribute ( keys %GroupData ) {
+
+            next ATTRIBUTE unless $Attribute =~ /ID/;
+
+            # single-value attributes
+            if ( $Attribute eq 'ValidID' ) {
+                my $Valid = $ValidObject->ValidLookup(
+                    ValidID => $GroupData{ValidID},
+                );
+                $GroupData{Valid} = $Valid;
+                delete $GroupData{ValidID};
+            }
+        }
+
+        # delete unneeded attributes to avoid bloating the export
+        delete $GroupData{ChangeBy};
+        delete $GroupData{ChangeTime};
+        delete $GroupData{CreateBy};
+        delete $GroupData{CreateTime};
+        delete $GroupData{ID};
+
+        $ExportData{ $GroupData{Name} } = \%GroupData;
+    }
+
+    return \%ExportData;
+}
+
+=head2 ImportGroups()
+
+Imports new groups and optionally updates existing ones.
+
+    my $Success = $GroupObject->ImportGroups(
+        Groups                    => {
+            'GroupName01' => {
+                # Group data
+            },
+            'GroupName02' => {
+                # Group data
+            },
+        },
+        OverwriteExistingEntities => (0|1),
+        UserID                    => 1,
+    );
+
+=cut
+
+sub ImportGroups {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %GroupList = $Self->GroupList(
+        Valid => 0,
+    );
+    my %GroupLookup = reverse %GroupList;
+
+    GROUPNAME:
+    for my $GroupName ( keys $Param{Groups}->%* ) {
+        my $GroupData = $Param{Groups}{$GroupName};
+
+        my $GroupID = $GroupLookup{ $GroupData->{Name} };
+
+        # skip if group with same name exists and overwrite is not set
+        next GROUPNAME if ( !$Param{OverwriteExistingEntities} && $GroupID );
+
+        # translate named data back to IDs
+        # single-value attributes
+        $GroupData->{ValidID} = $ValidObject->ValidLookup(
+            Valid => $GroupData->{Valid},
+        );
+
+        # update
+        if ($GroupID) {
+            my $Success = $Self->GroupUpdate(
+                $GroupData->%*,
+                ID     => $GroupID,
+                UserID => $UserID,
+            );
+            return unless $Success;
+        }
+
+        # create
+        else {
+            my $GroupID = $Self->GroupAdd(
+                $GroupData->%*,
+                UserID => $UserID,
+            );
+            return unless $GroupID;
+        }
+    }
+
+    return 1;
+}
+
+=head2 ExportRoles()
+
+Returns data structures ready for export for each role. Optionally filterable by giving a list of desired roles.
+
+    my $ExportData = $GroupObject->ExportRoles(
+        Roles => [         # (optional) restrict roles to given ones
+            'Role01',
+            'Role02',
+        ]
+    );
+
+=cut
+
+sub ExportRoles {
+    my ( $Self, %Param ) = @_;
+
+    my %RoleFilter;
+    if ( IsArrayRefWithData( $Param{Roles} ) ) {
+        %RoleFilter = map { $_ => 1 } $Param{Roles}->@*;
+    }
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %RoleList = $Self->RoleList(
+        Valid => 0,
+    );
+
+    my %ExportData;
+    ROLEID:
+    for my $RoleID ( sort keys %RoleList ) {
+
+        my %RoleData = $Self->RoleGet(
+            ID => $RoleID,
+        );
+
+        if (%RoleFilter) {
+            next ROLEID unless $RoleFilter{ $RoleData{Name} };
+        }
+
+        # translate IDs into names or name-like identifiers
+        ATTRIBUTE:
+        for my $Attribute ( keys %RoleData ) {
+
+            next ATTRIBUTE unless $Attribute =~ /ID/;
+
+            # single-value attributes
+            if ( $Attribute eq 'ValidID' ) {
+                my $Valid = $ValidObject->ValidLookup(
+                    ValidID => $RoleData{ValidID},
+                );
+                $RoleData{Valid} = $Valid;
+                delete $RoleData{ValidID};
+            }
+        }
+
+        # delete unneeded attributes to avoid bloating the export
+        delete $RoleData{ChangeBy};
+        delete $RoleData{ChangeTime};
+        delete $RoleData{CreateBy};
+        delete $RoleData{CreateTime};
+        delete $RoleData{ID};
+
+        $ExportData{ $RoleData{Name} } = \%RoleData;
+    }
+
+    return \%ExportData;
+}
+
+=head2 ImportRoles()
+
+Imports new roles and optionally updates existing ones.
+
+    my $Success = $GroupObject->ImportRoles(
+        Roles                     => {
+            'RoleName01' => {
+                # Role data
+            },
+            'RoleName02' => {
+                # Role data
+            },
+        },
+        OverwriteExistingEntities => (0|1),
+        UserID                    => 1,
+    );
+
+=cut
+
+sub ImportRoles {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    # get necessary objects
+    my $ValidObject = $Kernel::OM->Get('Kernel::System::Valid');
+
+    # fetch lookup lists
+    my %RoleList = $Self->RoleList(
+        Valid => 0,
+    );
+    my %RoleLookup = reverse %RoleList;
+
+    ROLENAME:
+    for my $RoleName ( keys $Param{Roles}->%* ) {
+        my $RoleData = $Param{Roles}{$RoleName};
+
+        my $RoleID = $RoleLookup{ $RoleData->{Name} };
+
+        # skip if role with same name exists and overwrite is not set
+        next ROLENAME if ( !$Param{OverwriteExistingEntities} && $RoleID );
+
+        # translate named data back to IDs
+        # single-value attributes
+        $RoleData->{ValidID} = $ValidObject->ValidLookup(
+            Valid => $RoleData->{Valid},
+        );
+
+        # update
+        if ($RoleID) {
+            my $Success = $Self->RoleUpdate(
+                $RoleData->%*,
+                ID     => $RoleID,
+                UserID => $UserID,
+            );
+            return unless $Success;
+        }
+
+        # create
+        else {
+            my $RoleID = $Self->RoleAdd(
+                $RoleData->%*,
+                UserID => $UserID,
+            );
+            return unless $RoleID;
+        }
+    }
+
+    return 1;
+}
+
+=head2 ExportRoleGroups()
+
+Returns data structures ready for export for each role-group relation. Optionally filterable by giving a list of desired roles. The return data is based on permissions.
+
+    my $ExportData = $GroupObject->ExportRoleGroups(
+        Roles => [         # (optional) restrict roles to given ones
+            'Role01',
+            'Role02',
+        ]
+    );
+
+Returns:
+
+    %ExportData = {
+        "Role01" => {
+            create => ["admin", "users", "stats"],
+            move_into => ["stats", "users", "admin"],
+            note => ["stats", "users", "admin"],
+            owner => ["users", "stats", "admin"],
+            priority => ["admin", "users", "stats"],
+            ro => ["users", "stats", "admin"],
+            rw => ["stats", "users", "admin"],
+        },
+    }
+
+=cut
+
+sub ExportRoleGroups {
+    my ( $Self, %Param ) = @_;
+
+    my %RoleFilter;
+    if ( IsArrayRefWithData( $Param{Roles} ) ) {
+        %RoleFilter = map { $_ => 1 } $Param{Roles}->@*;
+    }
+
+    # get necessary objects
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    # fetch lookup lists
+    my $PermissionTypes = $ConfigObject->Get('System::Permission');
+    my %RoleList        = $Self->RoleList(
+        Valid => 0,
+    );
+
+    my %ExportData;
+    ROLEID:
+    for my $RoleID ( sort keys %RoleList ) {
+
+        my %RoleData = $Self->RoleGet(
+            ID => $RoleID,
+        );
+
+        if (%RoleFilter) {
+            next ROLEID unless $RoleFilter{ $RoleData{Name} };
+        }
+
+        my %Types;
+        for my $Type ( $PermissionTypes->@* ) {
+            my %Data = $Self->PermissionRoleGroupGet(
+                RoleID => $RoleID,
+                Type   => $Type,
+            );
+
+            # use values as array to prevent exporting group ids
+            my @GroupNames = values %Data;
+            $Types{$Type} = \@GroupNames;
+        }
+
+        $ExportData{ $RoleData{Name} } = \%Types;
+    }
+
+    return \%ExportData;
+}
+
+=head2 ImportRoleGroups()
+
+Imports new role-group relations and optionally updates existing ones.
+
+    my $Success = $GroupObject->ImportRoleGroups(
+        RoleGroups => {
+            "Role01" => {
+                create => ["admin", "users", "stats"],
+                move_into => ["stats", "users", "admin"],
+                note => ["stats", "users", "admin"],
+                owner => ["users", "stats", "admin"],
+                priority => ["admin", "users", "stats"],
+                ro => ["users", "stats", "admin"],
+                rw => ["stats", "users", "admin"],
+            },
+        }
+        OverwriteExistingEntities => (0|1),
+        UserID                    => 1,
+    );
+
+=cut
+
+sub ImportRoleGroups {
+    my ( $Self, %Param ) = @_;
+
+    my $UserID = $Self->{UserID} || $Param{UserID};
+
+    # get necessary objects
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    # fetch lookup lists
+    my $PermissionTypes = $ConfigObject->Get('System::Permission');
+    my %GroupList       = $Self->GroupList(
+        Valid => 0,
+    );
+    my %GroupLookup = reverse %GroupList;
+    my %RoleList    = $Self->RoleList(
+        Valid => 0,
+    );
+    my %RoleLookup = reverse %RoleList;
+
+    ROLENAME:
+    for my $RoleName ( keys $Param{RoleGroups}->%* ) {
+
+        my $RoleData = $Param{RoleGroups}{$RoleName};
+
+        next ROLENAME unless IsHashRefWithData($RoleData);
+
+        my $RoleID = $RoleLookup{$RoleName};
+
+        # skip roles which do not exist on the system
+        next ROLENAME unless $RoleID;
+
+        # traverse permission-group structure to be able to set new values
+        my %PermissionsForGroup;
+        PERMISSIONTYPE:
+        for my $PermissionType ( $PermissionTypes->@* ) {
+
+            next PERMISSIONTYPE unless IsArrayRefWithData( $RoleData->{$PermissionType} );
+
+            GROUPNAME:
+            for my $GroupName ( $RoleData->{$PermissionType}->@* ) {
+
+                my $GroupID = $GroupLookup{$GroupName};
+
+                next GROUPNAME unless $GroupID;
+
+                $PermissionsForGroup{$GroupName} //= {};
+                $PermissionsForGroup{$GroupName}{$PermissionType} = 1;
+            }
+        }
+
+        for my $CurrentGroup ( keys %PermissionsForGroup ) {
+
+            my $GroupID     = $GroupLookup{$CurrentGroup};
+            my $Permissions = $PermissionsForGroup{$CurrentGroup};
+
+            my $Success = $Self->PermissionGroupRoleAdd(
+                GID        => $GroupID,
+                RID        => $RoleID,
+                Permission => $Permissions,
+                UserID     => $UserID,
+            );
+
+            next ROLENAME unless $Success;
+        }
+
+        # skip if role with same name exists and overwrite is not set
+        next ROLENAME if ( !$Param{OverwriteExistingEntities} && $RoleID );
+    }
+
+    return 1;
 }
 
 =begin Internal:

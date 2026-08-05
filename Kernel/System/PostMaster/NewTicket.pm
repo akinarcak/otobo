@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,8 +16,15 @@
 
 package Kernel::System::PostMaster::NewTicket;
 
+use v5.24;
 use strict;
 use warnings;
+
+# core modules
+
+# CPAN modules
+
+# OTOB modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -35,14 +42,14 @@ our @ObjectDependencies = (
     'Kernel::System::Type',
     'Kernel::System::User',
     'Kernel::System::Service',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # get parser object
     $Self->{ParserObject} = $Param{ParserObject} || die "Got no ParserObject!";
@@ -65,6 +72,7 @@ sub Run {
                 Key           => 'Kernel::System::PostMaster::NewTicket',
                 Value         => "Need $Needed!",
             );
+
             return;
         }
     }
@@ -83,21 +91,21 @@ sub Run {
 
     # get state
     my $State = $ConfigObject->Get('PostmasterDefaultState') || 'new';
-    if ( $GetParam{'X-OTOBO-State'} ) {
+    if ( $GetParam{'X-CareOnCloud-State'} ) {
 
         my $StateID = $Kernel::OM->Get('Kernel::System::State')->StateLookup(
-            State => $GetParam{'X-OTOBO-State'},
+            State => $GetParam{'X-CareOnCloud-State'},
         );
 
         if ($StateID) {
-            $State = $GetParam{'X-OTOBO-State'};
+            $State = $GetParam{'X-CareOnCloud-State'};
         }
         else {
             $Self->{CommunicationLogObject}->ObjectLog(
                 ObjectLogType => 'Message',
                 Priority      => 'Error',
                 Key           => 'Kernel::System::PostMaster::NewTicket',
-                Value         => "State $GetParam{'X-OTOBO-State'} does not exist, falling back to $State!",
+                Value         => "State $GetParam{'X-CareOnCloud-State'} does not exist, falling back to $State!",
             );
         }
     }
@@ -105,84 +113,83 @@ sub Run {
     # get priority
     my $Priority = $ConfigObject->Get('PostmasterDefaultPriority') || '3 normal';
 
-    if ( $GetParam{'X-OTOBO-Priority'} ) {
+    if ( $GetParam{'X-CareOnCloud-Priority'} ) {
 
         my $PriorityID = $Kernel::OM->Get('Kernel::System::Priority')->PriorityLookup(
-            Priority => $GetParam{'X-OTOBO-Priority'},
+            Priority => $GetParam{'X-CareOnCloud-Priority'},
         );
 
         if ($PriorityID) {
-            $Priority = $GetParam{'X-OTOBO-Priority'};
+            $Priority = $GetParam{'X-CareOnCloud-Priority'};
         }
         else {
             $Self->{CommunicationLogObject}->ObjectLog(
                 ObjectLogType => 'Message',
                 Priority      => 'Error',
                 Key           => 'Kernel::System::PostMaster::NewTicket',
-                Value         => "Priority $GetParam{'X-OTOBO-Priority'} does not exist, falling back to $Priority!",
+                Value         => "Priority $GetParam{'X-CareOnCloud-Priority'} does not exist, falling back to $Priority!",
             );
         }
     }
 
     my $TypeID;
 
-    if ( $GetParam{'X-OTOBO-Type'} ) {
+    if ( $GetParam{'X-CareOnCloud-Type'} ) {
 
         # Check if type exists
-        $TypeID = $Kernel::OM->Get('Kernel::System::Type')->TypeLookup( Type => $GetParam{'X-OTOBO-Type'} );
+        $TypeID = $Kernel::OM->Get('Kernel::System::Type')->TypeLookup( Type => $GetParam{'X-CareOnCloud-Type'} );
 
         if ( !$TypeID ) {
             $Self->{CommunicationLogObject}->ObjectLog(
                 ObjectLogType => 'Message',
                 Priority      => 'Error',
                 Key           => 'Kernel::System::PostMaster::NewTicket',
-                Value         => "Type $GetParam{'X-OTOBO-Type'} does not exist, falling back to default type.",
+                Value         => "Type $GetParam{'X-CareOnCloud-Type'} does not exist, falling back to default type.",
             );
         }
     }
 
+    # check X-CareOnCloud-From header
+    my $From = $GetParam{'X-CareOnCloud-From'} ? $GetParam{'X-CareOnCloud-From'} : $GetParam{From};
+
     # get sender email
-    my @EmailAddresses = $Self->{ParserObject}->SplitAddressLine(
-        Line => $GetParam{From},
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    my @EmailAddresses     = $EmailAddressObject->ParseAddressLine(
+        Line => $From,
     );
     for my $Address (@EmailAddresses) {
-        $GetParam{SenderEmailAddress} = $Self->{ParserObject}->GetEmailAddress(
-            Email => $Address,
-        );
+        $GetParam{SenderEmailAddress} = $EmailAddressObject->GetAddress( AddressObject => $Address );
     }
 
     $GetParam{SenderEmailAddress} //= '';
 
     # get customer id (sender email) if there is no customer id given
-    if ( !$GetParam{'X-OTOBO-CustomerNo'} && $GetParam{'X-OTOBO-CustomerUser'} ) {
+    if ( !$GetParam{'X-CareOnCloud-CustomerNo'} && $GetParam{'X-CareOnCloud-CustomerUser'} ) {
 
         # get customer user object
         my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
 
-        # get customer user data form X-OTOBO-CustomerUser
+        # get customer user data form X-CareOnCloud-CustomerUser
         my %CustomerData = $CustomerUserObject->CustomerUserDataGet(
-            User => $GetParam{'X-OTOBO-CustomerUser'},
+            User => $GetParam{'X-CareOnCloud-CustomerUser'},
         );
 
         if (%CustomerData) {
-            $GetParam{'X-OTOBO-CustomerNo'} = $CustomerData{UserCustomerID};
+            $GetParam{'X-CareOnCloud-CustomerNo'} = $CustomerData{UserCustomerID};
         }
     }
 
     # get customer user data form From: (sender address)
-    if ( !$GetParam{'X-OTOBO-CustomerUser'} ) {
+    if ( !$GetParam{'X-CareOnCloud-CustomerUser'} ) {
 
         my %CustomerData;
-        if ( $GetParam{From} ) {
+        if ($From) {
 
-            my @EmailAddresses = $Self->{ParserObject}->SplitAddressLine(
-                Line => $GetParam{From},
+            my @EmailAddresses = $EmailAddressObject->ParseAddressLine(
+                Line => $From,
             );
-
             for my $Address (@EmailAddresses) {
-                $GetParam{EmailFrom} = $Self->{ParserObject}->GetEmailAddress(
-                    Email => $Address,
-                );
+                $GetParam{EmailFrom} = $EmailAddressObject->GetAddress( AddressObject => $Address );
             }
 
             if ( $GetParam{EmailFrom} ) {
@@ -203,8 +210,8 @@ sub Run {
         }
 
         # take CustomerID from customer backend lookup or from from field
-        if ( $CustomerData{UserLogin} && !$GetParam{'X-OTOBO-CustomerUser'} ) {
-            $GetParam{'X-OTOBO-CustomerUser'} = $CustomerData{UserLogin};
+        if ( $CustomerData{UserLogin} && !$GetParam{'X-CareOnCloud-CustomerUser'} ) {
+            $GetParam{'X-CareOnCloud-CustomerUser'} = $CustomerData{UserLogin};
 
             # notice that UserLogin is from customer source backend
             $Self->{CommunicationLogObject}->ObjectLog(
@@ -215,8 +222,8 @@ sub Run {
                     . "customer source backend based on ($GetParam{'EmailFrom'}).",
             );
         }
-        if ( $CustomerData{UserCustomerID} && !$GetParam{'X-OTOBO-CustomerNo'} ) {
-            $GetParam{'X-OTOBO-CustomerNo'} = $CustomerData{UserCustomerID};
+        if ( $CustomerData{UserCustomerID} && !$GetParam{'X-CareOnCloud-CustomerNo'} ) {
+            $GetParam{'X-CareOnCloud-CustomerNo'} = $CustomerData{UserCustomerID};
 
             # notice that UserCustomerID is from customer source backend
             $Self->{CommunicationLogObject}->ObjectLog(
@@ -231,38 +238,38 @@ sub Run {
 
     # if there is no customer id found!
     if (
-        !$GetParam{'X-OTOBO-CustomerNo'}
+        !$GetParam{'X-CareOnCloud-CustomerNo'}
         && $ConfigObject->Get('PostMaster::NewTicket::AutoAssignCustomerIDForUnknownCustomers')
         )
     {
-        $GetParam{'X-OTOBO-CustomerNo'} = $GetParam{SenderEmailAddress};
+        $GetParam{'X-CareOnCloud-CustomerNo'} = $GetParam{SenderEmailAddress};
     }
 
     # if there is no customer user found!
-    if ( !$GetParam{'X-OTOBO-CustomerUser'} ) {
-        $GetParam{'X-OTOBO-CustomerUser'} = $GetParam{SenderEmailAddress};
+    if ( !$GetParam{'X-CareOnCloud-CustomerUser'} ) {
+        $GetParam{'X-CareOnCloud-CustomerUser'} = $GetParam{SenderEmailAddress};
     }
 
     # get ticket owner
-    my $OwnerID = $GetParam{'X-OTOBO-OwnerID'} || $Param{InmailUserID};
-    if ( $GetParam{'X-OTOBO-Owner'} ) {
+    my $OwnerID = $GetParam{'X-CareOnCloud-OwnerID'} || $Param{InmailUserID};
+    if ( $GetParam{'X-CareOnCloud-Owner'} ) {
 
         my $TmpOwnerID = $Kernel::OM->Get('Kernel::System::User')->UserLookup(
-            UserLogin => $GetParam{'X-OTOBO-Owner'},
+            UserLogin => $GetParam{'X-CareOnCloud-Owner'},
         );
 
         $OwnerID = $TmpOwnerID || $OwnerID;
     }
 
     my %Opts;
-    if ( $GetParam{'X-OTOBO-ResponsibleID'} ) {
-        $Opts{ResponsibleID} = $GetParam{'X-OTOBO-ResponsibleID'};
+    if ( $GetParam{'X-CareOnCloud-ResponsibleID'} ) {
+        $Opts{ResponsibleID} = $GetParam{'X-CareOnCloud-ResponsibleID'};
     }
 
-    if ( $GetParam{'X-OTOBO-Responsible'} ) {
+    if ( $GetParam{'X-CareOnCloud-Responsible'} ) {
 
         my $TmpResponsibleID = $Kernel::OM->Get('Kernel::System::User')->UserLookup(
-            UserLogin => $GetParam{'X-OTOBO-Responsible'},
+            UserLogin => $GetParam{'X-CareOnCloud-Responsible'},
         );
 
         $Opts{ResponsibleID} = $TmpResponsibleID || $Opts{ResponsibleID};
@@ -278,12 +285,12 @@ sub Run {
         Value         => "Going to create new ticket.",
     );
 
-    if ( $GetParam{'X-OTOBO-Service'} ) {
+    if ( $GetParam{'X-CareOnCloud-Service'} ) {
         my $ServiceObject = $Kernel::OM->Get('Kernel::System::Service');
 
         # Check if service exists.
         my %ServiceData = $ServiceObject->ServiceGet(
-            Name   => $GetParam{'X-OTOBO-Service'},
+            Name   => $GetParam{'X-CareOnCloud-Service'},
             UserID => $Param{InmailUserID},
         );
 
@@ -300,9 +307,9 @@ sub Run {
                 Priority      => 'Debug',
                 Key           => 'Kernel::System::PostMaster::NewTicket',
                 Value         =>
-                    "Service $GetParam{'X-OTOBO-Service'} does not exists or is invalid or is a child of invalid service.",
+                    "Service $GetParam{'X-CareOnCloud-Service'} does not exists or is invalid or is a child of invalid service.",
             );
-            $GetParam{'X-OTOBO-Service'} = '';
+            $GetParam{'X-CareOnCloud-Service'} = '';
         }
     }
 
@@ -310,16 +317,16 @@ sub Run {
     my $NewTn    = $TicketObject->TicketCreateNumber();
     my $TicketID = $TicketObject->TicketCreate(
         TN           => $NewTn,
-        Title        => $GetParam{'X-OTOBO-Title'} || $GetParam{Subject},
+        Title        => $GetParam{'X-CareOnCloud-Title'} || $GetParam{Subject},
         QueueID      => $QueueID,
-        Lock         => $GetParam{'X-OTOBO-Lock'} || 'unlock',
+        Lock         => $GetParam{'X-CareOnCloud-Lock'} || 'unlock',
         Priority     => $Priority,
         State        => $State,
         TypeID       => $TypeID,
-        Service      => $GetParam{'X-OTOBO-Service'} || '',
-        SLA          => $GetParam{'X-OTOBO-SLA'}     || '',
-        CustomerID   => $GetParam{'X-OTOBO-CustomerNo'},
-        CustomerUser => $GetParam{'X-OTOBO-CustomerUser'},
+        Service      => $GetParam{'X-CareOnCloud-Service'} || '',
+        SLA          => $GetParam{'X-CareOnCloud-SLA'}     || '',
+        CustomerID   => $GetParam{'X-CareOnCloud-CustomerNo'},
+        CustomerUser => $GetParam{'X-CareOnCloud-CustomerUser'},
         OwnerID      => $OwnerID,
         UserID       => $Param{InmailUserID},
         %Opts,
@@ -332,6 +339,7 @@ sub Run {
             Key           => 'Kernel::System::PostMaster::NewTicket',
             Value         => "Ticket could not be created!",
         );
+
         return;
     }
 
@@ -342,15 +350,15 @@ TicketNumber: $NewTn
 TicketID: $TicketID
 Priority: $Priority
 State: $State
-CustomerID: $GetParam{'X-OTOBO-CustomerNo'}
-CustomerUser: $GetParam{'X-OTOBO-CustomerUser'}
+CustomerID: $GetParam{'X-CareOnCloud-CustomerNo'}
+CustomerUser: $GetParam{'X-CareOnCloud-CustomerUser'}
 
 END_MESSAGE
 
     for my $Value (qw(Type Service SLA Lock)) {
 
-        if ( $GetParam{ 'X-OTOBO-' . $Value } ) {
-            $TicketCreateMessage .= "$Value: " . $GetParam{ 'X-OTOBO-' . $Value } . "\n";
+        if ( $GetParam{ 'X-CareOnCloud-' . $Value } ) {
+            $TicketCreateMessage .= "$Value: " . $GetParam{ 'X-CareOnCloud-' . $Value } . "\n";
         }
     }
 
@@ -362,14 +370,14 @@ END_MESSAGE
     );
 
     # set pending time
-    if ( $GetParam{'X-OTOBO-State-PendingTime'} ) {
+    if ( $GetParam{'X-CareOnCloud-State-PendingTime'} ) {
 
         # You can specify absolute dates like "2010-11-20 00:00:00" or relative dates, based on the arrival time of the email.
         # Use the form "+ $Number $Unit", where $Unit can be 's' (seconds), 'm' (minutes), 'h' (hours) or 'd' (days).
         # Only one unit can be specified. Examples of valid settings: "+50s" (pending in 50 seconds), "+30m" (30 minutes),
         # "+12d" (12 days). Note that settings like "+1d 12h" are not possible. You can specify "+36h" instead.
 
-        my $TargetTimeStamp = $GetParam{'X-OTOBO-State-PendingTime'};
+        my $TargetTimeStamp = $GetParam{'X-CareOnCloud-State-PendingTime'};
 
         my ( $Sign, $Number, $Unit ) = $TargetTimeStamp =~ m{^\s*([+-]?)\s*(\d+)\s*([smhd]?)\s*$}smx;
 
@@ -405,7 +413,7 @@ END_MESSAGE
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::NewTicket',
             Value         =>
-                "Pending time update via 'X-OTOBO-State-PendingTime'! State-PendingTime: $GetParam{'X-OTOBO-State-PendingTime'}.",
+                "Pending time update via 'X-CareOnCloud-State-PendingTime'! State-PendingTime: $GetParam{'X-CareOnCloud-State-PendingTime'}.",
         );
     }
 
@@ -414,21 +422,27 @@ END_MESSAGE
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
     # dynamic fields
-    my $DynamicFieldList =
-        $DynamicFieldObject->DynamicFieldList(
-            Valid      => 1,
-            ResultType => 'HASH',
-            ObjectType => 'Ticket',
-        );
+    my $DynamicFieldID2Name = $DynamicFieldObject->DynamicFieldList(
+        Valid      => 1,
+        ResultType => 'HASH',
+        ObjectType => 'Ticket',
+    );
 
     # set dynamic fields for Ticket object type
-    DYNAMICFIELDID:
-    for my $DynamicFieldID ( sort keys %{$DynamicFieldList} ) {
-        next DYNAMICFIELDID if !$DynamicFieldID;
-        next DYNAMICFIELDID if !$DynamicFieldList->{$DynamicFieldID};
-        my $Key = 'X-OTOBO-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
+    DYNAMIC_FIELD_ID:
+    for my $DynamicFieldID ( sort keys %{$DynamicFieldID2Name} ) {
+        next DYNAMIC_FIELD_ID unless $DynamicFieldID;
 
-        if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
+        my $DynamicFieldName = $DynamicFieldID2Name->{$DynamicFieldID};
+
+        next DYNAMIC_FIELD_ID unless $DynamicFieldName;
+
+        my $Key = 'X-CareOnCloud-DynamicField-' . $DynamicFieldName;
+
+        next DYNAMIC_FIELD_ID unless defined $GetParam{$Key};
+        next DYNAMIC_FIELD_ID unless length $GetParam{$Key};
+
+        {
 
             # get dynamic field config
             my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
@@ -440,6 +454,7 @@ END_MESSAGE
                 ObjectID           => $TicketID,
                 Value              => $GetParam{$Key},
                 UserID             => $Param{InmailUserID},
+                ExternalSource     => 1,
             );
 
             $Self->{CommunicationLogObject}->ObjectLog(
@@ -451,98 +466,14 @@ END_MESSAGE
         }
     }
 
-    # reverse dynamic field list
-    my %DynamicFieldListReversed = reverse %{$DynamicFieldList};
-
-    # set ticket free text
-    # for backward compatibility (should be removed in a future version)
-    my %Values =
-        (
-            'X-OTOBO-TicketKey'   => 'TicketFreeKey',
-            'X-OTOBO-TicketValue' => 'TicketFreeText',
-        );
-    for my $Item ( sort keys %Values ) {
-        for my $Count ( 1 .. 16 ) {
-            my $Key = $Item . $Count;
-            if (
-                defined $GetParam{$Key}
-                && length $GetParam{$Key}
-                && $DynamicFieldListReversed{ $Values{$Item} . $Count }
-                )
-            {
-                # get dynamic field config
-                my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
-                    ID => $DynamicFieldListReversed{ $Values{$Item} . $Count },
-                );
-                if ($DynamicFieldGet) {
-                    my $Success = $DynamicFieldBackendObject->ValueSet(
-                        DynamicFieldConfig => $DynamicFieldGet,
-                        ObjectID           => $TicketID,
-                        Value              => $GetParam{$Key},
-                        UserID             => $Param{InmailUserID},
-                    );
-                }
-
-                $Self->{CommunicationLogObject}->ObjectLog(
-                    ObjectLogType => 'Message',
-                    Priority      => 'Debug',
-                    Key           => 'Kernel::System::PostMaster::NewTicket',
-                    Value         => "DynamicField (TicketKey$Count) update via '$Key'! Value: $GetParam{$Key}.",
-                );
-            }
-        }
-    }
-
-    # set ticket free time
-    # for backward compatibility (should be removed in a future version)
-    for my $Count ( 1 .. 6 ) {
-
-        my $Key = 'X-OTOBO-TicketTime' . $Count;
-
-        if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
-
-            # get datetime object
-            my $DateTimeObject = $Kernel::OM->Create(
-                'Kernel::System::DateTime',
-                ObjectParams => {
-                    String => $GetParam{$Key}
-                }
-            );
-
-            if ( $DateTimeObject && $DynamicFieldListReversed{ 'TicketFreeTime' . $Count } ) {
-
-                # get dynamic field config
-                my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
-                    ID => $DynamicFieldListReversed{ 'TicketFreeTime' . $Count },
-                );
-
-                if ($DynamicFieldGet) {
-                    my $Success = $DynamicFieldBackendObject->ValueSet(
-                        DynamicFieldConfig => $DynamicFieldGet,
-                        ObjectID           => $TicketID,
-                        Value              => $GetParam{$Key},
-                        UserID             => $Param{InmailUserID},
-                    );
-                }
-
-                $Self->{CommunicationLogObject}->ObjectLog(
-                    ObjectLogType => 'Message',
-                    Priority      => 'Debug',
-                    Key           => 'Kernel::System::PostMaster::NewTicket',
-                    Value         => "DynamicField (TicketTime$Count) update via '$Key'! Value: $GetParam{$Key}.",
-                );
-            }
-        }
-    }
-
     my $ArticleObject        = $Kernel::OM->Get('Kernel::System::Ticket::Article');
     my $ArticleBackendObject = $ArticleObject->BackendForChannel(
         ChannelName => 'Email',
     );
 
     my $IsVisibleForCustomer = 1;
-    if ( length $GetParam{'X-OTOBO-IsVisibleForCustomer'} ) {
-        $IsVisibleForCustomer = $GetParam{'X-OTOBO-IsVisibleForCustomer'};
+    if ( length $GetParam{'X-CareOnCloud-IsVisibleForCustomer'} ) {
+        $IsVisibleForCustomer = $GetParam{'X-CareOnCloud-IsVisibleForCustomer'};
     }
 
     $Self->{CommunicationLogObject}->ObjectLog(
@@ -552,24 +483,24 @@ END_MESSAGE
         Value         => "Going to create new article for TicketID '$TicketID'.",
     );
 
-    # Check if X-OTOBO-SenderType exists, if not set default 'customer'.
-    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-OTOBO-SenderType'} ) )
+    # Check if X-CareOnCloud-SenderType exists, if not set default 'customer'.
+    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-CareOnCloud-SenderType'} ) )
     {
         $Self->{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
             Priority      => 'Error',
             Key           => 'Kernel::System::PostMaster::NewTicket',
-            Value         => "Can't find valid SenderType '$GetParam{'X-OTOBO-SenderType'}' in DB, take 'customer'",
+            Value         => "Can't find valid SenderType '$GetParam{'X-CareOnCloud-SenderType'}' in DB, take 'customer'",
         );
-        $GetParam{'X-OTOBO-SenderType'} = 'customer';
+        $GetParam{'X-CareOnCloud-SenderType'} = 'customer';
     }
 
     # Create email article.
     my $ArticleID = $ArticleBackendObject->ArticleCreate(
         TicketID             => $TicketID,
-        SenderType           => $GetParam{'X-OTOBO-SenderType'},
+        SenderType           => $GetParam{'X-CareOnCloud-SenderType'},
         IsVisibleForCustomer => $IsVisibleForCustomer,
-        From                 => $GetParam{From},
+        From                 => $From,
         ReplyTo              => $GetParam{ReplyTo},
         To                   => $GetParam{To},
         Cc                   => $GetParam{Cc},
@@ -659,6 +590,7 @@ END_MESSAGE
         next ATTRIBUTE if $CommunicationLogSkipAttributes{$Attribute};
 
         my $Value = $GetParam{$Attribute};
+
         next ATTRIBUTE if !( defined $Value ) || !( length $Value );
 
         $Self->{CommunicationLogObject}->ObjectLog(
@@ -670,20 +602,27 @@ END_MESSAGE
     }
 
     # dynamic fields
-    $DynamicFieldList =
-        $DynamicFieldObject->DynamicFieldList(
-            Valid      => 1,
-            ResultType => 'HASH',
-            ObjectType => 'Article',
-        );
+    $DynamicFieldID2Name = $DynamicFieldObject->DynamicFieldList(
+        Valid      => 1,
+        ResultType => 'HASH',
+        ObjectType => 'Article',
+    );
 
     # set dynamic fields for Article object type
-    DYNAMICFIELDID:
-    for my $DynamicFieldID ( sort keys %{$DynamicFieldList} ) {
-        next DYNAMICFIELDID if !$DynamicFieldID;
-        next DYNAMICFIELDID if !$DynamicFieldList->{$DynamicFieldID};
-        my $Key = 'X-OTOBO-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
-        if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
+    DYNAMIC_FIELD_ID:
+    for my $DynamicFieldID ( sort keys %{$DynamicFieldID2Name} ) {
+        next DYNAMIC_FIELD_ID unless $DynamicFieldID;
+
+        my $DynamicFieldName = $DynamicFieldID2Name->{$DynamicFieldID};
+
+        next DYNAMIC_FIELD_ID unless $DynamicFieldName;
+
+        my $Key = 'X-CareOnCloud-DynamicField-' . $DynamicFieldName;
+
+        next DYNAMIC_FIELD_ID unless defined $GetParam{$Key};
+        next DYNAMIC_FIELD_ID unless length $GetParam{$Key};
+
+        {
 
             # get dynamic field config
             my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
@@ -695,6 +634,7 @@ END_MESSAGE
                 ObjectID           => $ArticleID,
                 Value              => $GetParam{$Key},
                 UserID             => $Param{InmailUserID},
+                ExternalSource     => 1,
             );
 
             $Self->{CommunicationLogObject}->ObjectLog(
@@ -703,48 +643,6 @@ END_MESSAGE
                 Key           => 'Kernel::System::PostMaster::NewTicket',
                 Value         => "Article DynamicField update via '$Key'! Value: $GetParam{$Key}.",
             );
-        }
-    }
-
-    # reverse dynamic field list
-    %DynamicFieldListReversed = reverse %{$DynamicFieldList};
-
-    # set free article text
-    # for backward compatibility (should be removed in a future version)
-    %Values =
-        (
-            'X-OTOBO-ArticleKey'   => 'ArticleFreeKey',
-            'X-OTOBO-ArticleValue' => 'ArticleFreeText',
-        );
-    for my $Item ( sort keys %Values ) {
-        for my $Count ( 1 .. 16 ) {
-            my $Key = $Item . $Count;
-            if (
-                defined $GetParam{$Key}
-                && length $GetParam{$Key}
-                && $DynamicFieldListReversed{ $Values{$Item} . $Count }
-                )
-            {
-                # get dynamic field config
-                my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
-                    ID => $DynamicFieldListReversed{ $Values{$Item} . $Count },
-                );
-                if ($DynamicFieldGet) {
-                    my $Success = $DynamicFieldBackendObject->ValueSet(
-                        DynamicFieldConfig => $DynamicFieldGet,
-                        ObjectID           => $ArticleID,
-                        Value              => $GetParam{$Key},
-                        UserID             => $Param{InmailUserID},
-                    );
-                }
-
-                $Self->{CommunicationLogObject}->ObjectLog(
-                    ObjectLogType => 'Message',
-                    Priority      => 'Debug',
-                    Key           => 'Kernel::System::PostMaster::NewTicket',
-                    Value         => "Article DynamicField (ArticleKey) update via '$Key'! Value: $GetParam{$Key}.",
-                );
-            }
         }
     }
 

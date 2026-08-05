@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,8 +28,8 @@ use utf8;
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::ObjectManager;
+# CareOnCloud ESM modules
+use Kernel::System::ObjectManager ();
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -167,7 +167,7 @@ sub CreateOTRSDBConnection {
 
 =head2 DataTransfer()
 
-transfers information from a OTRS DB to the OTOBO DB.
+transfers information from a OTRS DB to the CareOnCloud ESM DB.
 
     my $Success = $BackendObject->DataTransfer(
         OTRSDBObject   => $OTRSDBObject,   # mandatory, instance of Kernel::System::DB
@@ -204,7 +204,7 @@ sub DataTransfer {
         return;
     }
 
-    # get OTOBO db object
+    # get CareOnCloud ESM db object
     # We need to disable FOREIGN_KEY_CHECKS, because we truncate tables and copy rows.
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         'Kernel::System::DB' => {
@@ -212,15 +212,15 @@ sub DataTransfer {
         },
     );
 
-    my $OTOBODBObject = $Kernel::OM->Get('Kernel::System::DB');
+    my $CareOnCloudDBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     # set the target db specific backend
-    my $OTOBODBBackend = 'CloneDB' . $OTOBODBObject->{'DB::Type'} . 'Object';
+    my $CareOnCloudDBBackend = 'CloneDB' . $CareOnCloudDBObject->{'DB::Type'} . 'Object';
 
-    if ( !$Self->{$OTOBODBBackend} ) {
+    if ( !$Self->{$CareOnCloudDBBackend} ) {
         $LogObject->Log(
             Priority => 'error',
-            Message  => "Backend $OTOBODBObject->{'DB::Type'} is invalid!",
+            Message  => "Backend $CareOnCloudDBObject->{'DB::Type'} is invalid!",
         );
 
         return;
@@ -229,8 +229,8 @@ sub DataTransfer {
     # call DataTransfer on the specific backend
     return $SourceDBBackend->DataTransfer(
         OTRSDBObject   => $Param{OTRSDBObject},
-        OTOBODBObject  => $OTOBODBObject,
-        OTOBODBBackend => $Self->{$OTOBODBBackend},
+        CareOnCloudDBObject  => $CareOnCloudDBObject,
+        CareOnCloudDBBackend => $Self->{$CareOnCloudDBBackend},
         DBInfo         => $Param{OTRSDBSettings},
         Force          => $Param{Force},
     );

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,17 +22,19 @@ use warnings;
 use namespace::autoclean;
 
 # core modules
-use MIME::Base64;
+use MIME::Base64 qw(encode_base64 decode_base64);
 
 # CPAN modules
-use HTTP::Status;
-use REST::Client;
-use URI::Escape;
-use Plack::Response;
+use URI::Escape     qw(uri_escape_utf8 uri_unescape);
+use HTTP::Status    qw(status_message);
+use HTTP::Message   ();
+use REST::Client    ();
+use Plack::Response ();
 
-# OTOBO modules
-use Kernel::System::VariableCheck qw(:all);
-use Kernel::System::Web::Exception;
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck  qw(:all);
+use Kernel::System::Web::Exception ();
+use Kernel::Language               qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -134,6 +136,7 @@ sub ProviderProcessRequest {
     }
 
     my %QueryParams;
+
     if ($QueryParamsStr) {
 
         # Remove question mark '?' in the beginning.
@@ -152,8 +155,8 @@ sub ProviderProcessRequest {
             $Value =~ s{\+}{%20}g;
 
             # Unescape URI strings in query parameters.
-            $Key   = URI::Escape::uri_unescape($Key);
-            $Value = URI::Escape::uri_unescape($Value);
+            $Key   = uri_unescape($Key);
+            $Value = uri_unescape($Value);
 
             # Encode variables.
             $EncodeObject->EncodeInput( \$Key );
@@ -210,7 +213,7 @@ sub ProviderProcessRequest {
             my $URIValue = $+{$URIKey};
 
             # Unescape value
-            $URIValue = URI::Escape::uri_unescape($URIValue);
+            $URIValue = uri_unescape($URIValue);
 
             # Encode value.
             $EncodeObject->EncodeInput( \$URIValue );
@@ -260,8 +263,8 @@ sub ProviderProcessRequest {
     # Request bigger than allowed.
     if ( IsInteger( $Config->{MaxLength} ) && $Length > $Config->{MaxLength} ) {
         return $Self->_Error(
-            Summary   => HTTP::Status::status_message(413),
-            HTTPError => 413,                                 # HTTP_PAYLOAD_TOO_LARGE
+            Summary   => status_message(413),
+            HTTPError => 413,                   # HTTP_PAYLOAD_TOO_LARGE
         );
     }
 
@@ -381,7 +384,7 @@ sub ProviderGenerateResponse {
     }
 
     # Check data param.
-    if ( defined $Param{Data} && ref $Param{Data} ne 'HASH' ) {
+    if ( defined $Param{Data} && ref $Param{Data} ne 'HASH' && ref $Param{Data} ne 'ARRAY' ) {
         $Self->_ThrowWebException(
             HTTPCode => 500,
             Content  => 'Invalid data',
@@ -403,7 +406,7 @@ sub ProviderGenerateResponse {
         $HTTPCode = 500;
     }
 
-    # Orepare data.
+    # Prepare data.
     my $JSONString = $Kernel::OM->Get('Kernel::System::JSON')->Encode(
         Data => $Param{Data},
     );
@@ -415,7 +418,7 @@ sub ProviderGenerateResponse {
         );
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloudTicketInvoker
     # Gather additional headers.
     my %ResponseHeaders = $Self->_HeadersGet(
         Type      => 'Operation',
@@ -425,7 +428,7 @@ sub ProviderGenerateResponse {
     # Mirror some HTTP headers when the request comes from a test script
     # that has temporarily set GenericInterface::Transport::UnitTestHeaders.
     # This feature allows to check outgoing HTTP headers of the generic interface.
-    # It was introduced by OTOBOTicketInvoker.
+    # It was introduced by CareOnCloudTicketInvoker.
     if ( $Kernel::OM->Get('Kernel::Config')->Get('GenericInterface::Transport::MirrorUnitTestHTTPHeaders') ) {
 
         # The HTTP::REST support works with a request object.
@@ -473,7 +476,7 @@ sub ProviderGenerateResponse {
     $Self->_ThrowWebException(
         HTTPCode => $HTTPCode,
         Content  => $JSONString,
-        Headers  => \%ResponseHeaders,    # added by OTOBOTicketInvoker
+        Headers  => \%ResponseHeaders,    # added by CareOnCloudTicketInvoker
     );
 
     return;                               # actually not reached
@@ -543,7 +546,7 @@ sub RequesterPerformRequest {
     }
 
     # Check data param.
-    if ( defined $Param{Data} && ref $Param{Data} ne 'HASH' ) {
+    if ( defined $Param{Data} && ref $Param{Data} ne 'HASH' && ref $Param{Data} ne 'ARRAY' ) {
         return {
             Success      => 0,
             ErrorMessage => 'REST Transport: Invalid Data',
@@ -628,11 +631,20 @@ sub RequesterPerformRequest {
 
         # skip hostname verification
         if (
-            IsStringWithData( $Config->{SSL}->{SSLVerifyHostname} )
-            && $Config->{SSL}->{SSLVerifyHostname} eq 'No'
+            IsStringWithData( $Config->{SSL}{SSLVerifyHostname} )
+            && $Config->{SSL}{SSLVerifyHostname} eq 'No'
             )
         {
             $RestClient->getUseragent()->ssl_opts( verify_hostname => 0 );
+        }
+
+        # skip certificate verification
+        if (
+            IsStringWithData( $Config->{SSL}{SSLVerifyMode} )
+            && $Config->{SSL}{SSLVerifyMode} eq 'No'
+            )
+        {
+            $RestClient->getUseragent()->ssl_opts( SSL_verify_mode => 0 );
         }
     }
 
@@ -690,6 +702,42 @@ sub RequesterPerformRequest {
             );
         }
 
+        # oauth
+        elsif (
+            $Config->{Authentication}->{AuthType} eq 'OAuth'
+            && IsStringWithData( $Config->{Authentication}->{OAuthAccountName} )
+            )
+        {
+
+            my $AccountName = $Config->{Authentication}->{OAuthAccountName};
+
+            my $TokenResult = $Kernel::OM->Get('Kernel::System::OpenIDConnect::TokenProvider')->Fetch(
+                AccountName => $AccountName,
+            );
+
+            if ( !$TokenResult->{Success} ) {
+
+                $Self->{DebuggerObject}->Debug(
+                    Summary => Translatable("Error fetching the OAuth2 Token"),
+                    Data    => $TokenResult->{Error},
+                );
+
+                return {
+                    Success      => 0,
+                    ErrorMessage => $TokenResult->{Error},
+                };
+            }
+
+            my $Token = $TokenResult->{Token};
+
+            $Self->{DebuggerObject}->Debug(
+                Summary => Translatable("Attached OAuth2 Bearer Token"),
+                Data    => $Token,
+            );
+
+            $Headers{Authorization} = "Bearer $Token";
+        }
+
         # kerberos
         elsif (
             $Config->{Authentication}->{AuthType} eq 'Kerberos'
@@ -707,7 +755,7 @@ sub RequesterPerformRequest {
                     ErrorMessage => "'$Config->{Authentication}->{KerberosKeytab}' does not exist.",
                 };
             }
-            if ( $Config->{Authentication}->{KerberosUser} =~ /[^\w\d\-\._@]/ ) {
+            if ( $Config->{Authentication}->{KerberosUser} =~ /[^\w0-9\-\._@]/ ) {
                 $Self->{DebuggerObject}->Error(
                     Summary => "Invalid user format '$Config->{Authentication}->{KerberosUser}'.",
                 );
@@ -792,6 +840,9 @@ sub RequesterPerformRequest {
 
     my $Controller = $Config->{InvokerControllerMapping}->{ $Param{Operation} }->{Controller};
 
+    # special case for MultiPart, do this check before $Controller is modified
+    my $IsMultiPartAttachmentUpload = $Config->{InvokerControllerMapping}->{ $Param{Operation} }->{MultipartAttachment} // 0;
+
     # Remove any query parameters that might be in the config,
     #   For example, from the controller: /Ticket/:TicketID/?:UserLogin&:Password
     #   controller must remain  /Ticket/:TicketID/
@@ -807,12 +858,27 @@ sub RequesterPerformRequest {
     #    for example: from /Ticket/:TicketID/:Other
     #    to /Ticket/1/2 (considering that $Param{Data} contains TicketID = 1 and Other = 2).
     my @ParamsToDelete;
-    for my $ParamName ( sort keys %{ $Param{Data} } ) {
-        if ( $Controller =~ m{:$ParamName(?=/|\?|$)}msx ) {
-            my $ParamValue = $Param{Data}->{$ParamName};
-            $ParamValue = URI::Escape::uri_escape_utf8($ParamValue);
-            $Controller =~ s{:$ParamName(?=/|\?|$)}{$ParamValue}msxg;
-            push @ParamsToDelete, $ParamName;
+    if ( ref $Param{Data} eq 'HASH' ) {
+        for my $ParamName ( sort keys %{ $Param{Data} } ) {
+            if ( $Controller =~ m{:$ParamName(?=/|\?|$)}msx ) {
+                my $ParamValue = $Param{Data}->{$ParamName};
+                $ParamValue = uri_escape_utf8($ParamValue);
+                $Controller =~ s{:$ParamName(?=/|\?|$)}{$ParamValue}msxg;
+                push @ParamsToDelete, $ParamName;
+            }
+        }
+    }
+    elsif ( ref $Param{Data} eq 'ARRAY' ) {
+        for my $Data ( $Param{Data}->@* ) {
+
+            for my $ParamName ( sort keys %{$Data} ) {
+                if ( $Controller =~ m{:$ParamName(?=/|\?|$)}msx ) {
+                    my $ParamValue = $Data->{$ParamName};
+                    $ParamValue = uri_escape_utf8($ParamValue);
+                    $Controller =~ s{:$ParamName(?=/|\?|$)}{$ParamValue}msxg;
+                    push @ParamsToDelete, $ParamName;
+                }
+            }
         }
     }
 
@@ -831,7 +897,7 @@ sub RequesterPerformRequest {
         for my $ParamName ( sort keys %{ $Param{Data} } ) {
             if ( $QueryParamsStr =~ m{:$ParamName(?=&|$)}msx ) {
                 my $ParamValue = $Param{Data}->{$ParamName};
-                $ParamValue = URI::Escape::uri_escape_utf8($ParamValue);
+                $ParamValue = uri_escape_utf8($ParamValue);
                 $QueryParamsStr =~ s{:$ParamName(?=&|$)}{$ParamValue}msxg;
                 push @ParamsToDelete, $ParamName;
                 $ReplaceFlag = 1;
@@ -858,10 +924,48 @@ sub RequesterPerformRequest {
     my $JSONObject   = $Kernel::OM->Get('Kernel::System::JSON');
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
-    if ( IsHashRefWithData( $Param{Data} ) ) {
+    my ( @BodyArr, @HeadersArr, @RequestParam );
+
+    if ( IsHashRefWithData( $Param{Data} ) || IsArrayRefWithData( $Param{Data} ) ) {
+
+        # a special case with multipart messages
+        # see http://www.openproject.org/docs/api/endpoints/attachments/
+        if ($IsMultiPartAttachmentUpload) {
+
+            # create Boundary
+            my $Boundary = 'CareOnCloudBoundary' . int( rand(1000000) );
+            $Headers{'Content-Type'} = "multipart/form-data; boundary=$Boundary";
+            push @HeadersArr, \%Headers;
+
+            my @AttachmentArray;
+
+            # loop over attachments
+            ATTACHMENT:
+            for my $Attachment ( $Param{Data}->{Attachment}->@* ) {
+                next ATTACHMENT if $Attachment->{Filename} =~ /^file-\d*/;
+
+                # the first part sets up the filename
+                my $Filename = $Attachment->{Filename};
+
+                # create Multipart content
+                my $Content = "--$Boundary\r\n";
+                $Content .= "Content-Disposition: form-data; name=\"file\"; filename=\"$Filename\"\r\n";
+                $Content .= "Content-Type: $Attachment->{ContentType}\r\n\r\n";
+                $Content .= decode_base64( $Attachment->{Content} ) . "\r\n\r\n";
+
+                push( @AttachmentArray, $Content );
+            }
+
+            my $Content = join( "", @AttachmentArray );
+
+            $Content .= "\r\n--$Boundary--\r\n";
+
+            # The content is the two concatenated parts
+            push @BodyArr, $Content;
+        }
 
         # POST, PUT and PATCH can have Data in the Body.
-        if (
+        elsif (
             $RestCommand eq 'POST'
             || $RestCommand eq 'PUT'
             || $RestCommand eq 'PATCH'
@@ -882,7 +986,11 @@ sub RequesterPerformRequest {
 
         # Whereas GET and the others just have a the data added to the Query URI.
         else {
-            my $QueryParams = $RestClient->buildQuery( $Param{Data}->%* );
+
+            my $QueryParams = $Self->_BuildQueryParams(
+                Data       => $Param{Data},
+                RestClient => $RestClient,
+            );
 
             # Check if controller already have a  question mark '?'.
             if ( $Controller =~ m{\?}msx ) {
@@ -906,8 +1014,6 @@ sub RequesterPerformRequest {
         }
     }
 
-    my @RequestParam = ($Controller);
-
     # Only POST, PUT or PATCH have a body. If it is empty
     # (i. e. $Param{Data} = {}), undef is passed to REST::Client.
     if (
@@ -916,15 +1022,26 @@ sub RequesterPerformRequest {
         || $RestCommand eq 'PATCH'
         )
     {
-        my $Body;
-        if ( IsStringWithData( $Param{Data} ) ) {
-            $Body = $Param{Data};
+        # the regular case
+        if ( !$IsMultiPartAttachmentUpload ) {
+            push @BodyArr,    $Param{Data};
+            push @HeadersArr, %Headers;
         }
+        for my $Body (@BodyArr) {
+            my $Headers = shift @HeadersArr;
 
-        push @RequestParam, $Body;
+            push @RequestParam, $Controller;
+
+            if ( IsStringWithData($Body) ) {
+                push @RequestParam, $Body;
+            }
+        }
+    }
+    else {
+        push @RequestParam, $Controller;
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloudTicketInvoker
 
     # Gather additional headers.
     %Headers = (
@@ -959,8 +1076,6 @@ sub RequesterPerformRequest {
     else {
         $ResponseError = _AssessResponse(
             RestClient   => $RestClient,
-            RestCommand  => $RestCommand,
-            Controller   => $Controller,
             ErrorMessage => $ErrorMessage,
         );
     }
@@ -1035,7 +1150,7 @@ sub RequesterPerformRequest {
         }
     }
 
-    # introduced for OTOBOTicketInvoker
+    # introduced for CareOnCloudTicketInvoker
 
     # Report mirrored headers, only used for UnitTests
     my %UnitTestHeaders;
@@ -1054,7 +1169,7 @@ sub RequesterPerformRequest {
         Success         => 1,
         Data            => $Result || undef,
         SizeExceeded    => $SizeExceeded,
-        UnitTestHeaders => \%UnitTestHeaders,    # added by OTOBOTicketInvoker
+        UnitTestHeaders => \%UnitTestHeaders,    # added by CareOnCloudTicketInvoker
     };
 }
 
@@ -1069,17 +1184,18 @@ Inspect the response immediately after the request.
 sub _AssessResponse {
     my %Param = @_;
 
-    my ( $RestClient, $RestCommand, $Controller, $ErrorMessage ) = @Param{qw(RestClient RestCommand Controller ErrorMessage)};
+    my ( $RestClient, $ErrorMessage ) = @Param{qw(RestClient ErrorMessage)};
 
     my $ResponseCode    = $RestClient->responseCode;
     my $ResponseContent = $RestClient->responseContent;
 
-    my $ResponseError;
+    my $ResponseError;    # will be returned
+
     if ( !IsStringWithData($ResponseCode) ) {
         $ResponseError = $ErrorMessage;
     }
 
-    if ( $ResponseCode !~ m{ \A 20 \d \z }xms ) {
+    if ( $ResponseCode !~ m{ \A 20 [0-9] \z }xms ) {
         $ResponseError = $ErrorMessage . " Response code '$ResponseCode'.";
     }
 
@@ -1153,7 +1269,7 @@ sub _ThrowWebException {
         }
     }
 
-    # introduced by OTOBOTicketInvoker
+    # introduced by CareOnCloudTicketInvoker
     # Set additional headers.
     if ( $Param{Headers} ) {
         for my $Header ( sort keys $Param{Headers}->%* ) {
@@ -1221,7 +1337,7 @@ sub _Error {
     };
 }
 
-# introduced for OTOBOTicketInvoker
+# introduced for CareOnCloudTicketInvoker
 sub _HeadersGet {
     my ( $Self, %Param ) = @_;
 
@@ -1266,6 +1382,23 @@ sub _HeadersGet {
     }
 
     return %Headers;
+}
+
+sub _BuildQueryParams {
+
+    my ( $Self, %Param ) = @_;
+
+    if ( ref $Param{Data} eq 'HASH' ) {
+        return $Param{RestClient}->buildQuery( $Param{Data}->%* );
+    }
+
+    my @QueryParams;
+
+    for my $Data ( $Param{Data}->@* ) {
+        push @QueryParams, $Param{RestClient}->buildQuery( $Data->%* );
+    }
+
+    return join( '&', @QueryParams );
 }
 
 =end Internal:

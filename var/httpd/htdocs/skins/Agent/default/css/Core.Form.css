@@ -1,7 +1,7 @@
-/* OTOBO is a web-based ticketing system for service organisations.
+/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -29,32 +29,31 @@ input[type=text],
 input[type=password],
 input[type=email],
 textarea,
-select[multiple=multiple] {
-    border: 1px solid #C9C9C9;
-    border-top-color: #C0C0C0;
+select[multiple] {
+    border: 1px solid var(--colBGDark);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     /* Opera 10.5 has per default a grey background */
     background-color: #FFF;
-    -webkit-box-shadow: inset 1px 1px 3px #eee, inset -1px -1px 3px #eee;
-    box-shadow: inset 1px 1px 3px #eee, inset -1px -1px 3px #eee;
+    -webkit-box-shadow: inset 1px 1px 3px var(--colBGLight), inset -1px -1px 3px var(--colBGLight);
+    box-shadow: inset 1px 1px 3px var(--colBGLight), inset -1px -1px 3px var(--colBGLight);
 }
 
-select[multiple=multiple] {
+select[multiple] {
     min-width: 300px;
     padding: 3px;
     box-shadow: inset 1px 1px 3px #eee, inset -1px -1px 3px #eee;
 }
 
-.DataTable select[multiple=multiple] {
+.DataTable select[multiple] {
     min-width: 0px;
 }
 
-select[multiple=multiple] option {
+select[multiple] option {
     padding: 2px;
 }
 
-select[multiple=multiple] option:nth-child(odd) {
-    background-color: #f9f9f9;
+select[multiple] option:nth-child(odd) {
+    background-color: var(--colBGLight);
 }
 
 input#Subject {
@@ -69,66 +68,66 @@ input[type=email],
 textarea {
     padding: 3px;
     font-size: 12px;
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 input[type=text]:focus,
 input[type=password]:focus,
 input[type=email]:focus,
 textarea:focus {
-    border-color: #777;
+    border-color: var(--colTextLight);
     outline: 0;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    color: #555;
+    color: var(--colTextMedium);
     transition: color ease 0.3s;
 }
 
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color: #555;
+   color: var(--colTextMedium);
    transition: color ease 0.3s;
    opacity: 1;
 }
 
 ::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color: #555;
+   color: var(--colTextMedium);
    transition: color ease 0.3s;
    opacity: 1;
 }
 
 :-ms-input-placeholder { /* Internet Explorer 10-11 */
-   color: #555;
+   color: var(--colTextMedium);
    transition: color ease 0.3s;
 }
 
 ::-ms-input-placeholder { /* Microsoft Edge */
-   color: #555;
+   color: var(--colTextMedium);
    transition: color ease 0.3s;
 }
 
 :focus::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    color: #ccc;
+    color: var(--colBGDark);
 }
 
 :focus:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color: #ccc;
+   color: var(--colBGDark);
    opacity: 1;
 }
 
 :focus::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color: #ccc;
+   color: var(--colBGDark);
    opacity: 1;
 }
 
 :focus:-ms-input-placeholder { /* Internet Explorer 10-11 */
-   color: #ccc;
+   color: var(--colBGDark);
 }
 
 :focus::-ms-input-placeholder { /* Microsoft Edge */
-   color: #ccc;
+   color: var(--colBGDark);
 }
 
 /**
@@ -139,6 +138,15 @@ textarea {
     font-family: monospace,fixed;
 }
 
+.DynamicFieldSet textarea,
+.Row.MultiColumn textarea {
+    resize: vertical;
+    width: 100%;
+}
+
+.Row_DynamicField textarea {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
 /**
  * @subsection  Input Readonly
@@ -147,7 +155,7 @@ input[type=text][readonly],
 input[type=password][readonly],
 input[type=email][readonly],
 textarea[readonly] {
-    background-color: #DDD;
+    background-color: var(--colBGMedium);
 }
 
 /**
@@ -234,7 +242,7 @@ a.Reset{
 
 .AddButton,
 .RemoveButton {
-    color: #00023c;
+    color: var(--colTextDark);
     font-size: 14px;
     vertical-align: middle;
 }
@@ -259,7 +267,7 @@ button.Reset:active {
     height: 16px;
     margin-left: 3px;
     display: inline-block;
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 .GetAllAJAX span {
@@ -277,7 +285,7 @@ button.Reset:active {
     height: 16px;
     margin-left: 3px;
     display: inline-block;
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 .AdditionlFieldIcon span {
@@ -298,7 +306,7 @@ button.Reset:active {
     width: 16px;
     height: 16px;
     margin-left: 3px;
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 .GenericAgentClearSelect span {
@@ -316,7 +324,7 @@ button.Reset:active {
     height: 16px;
     margin-left: 3px;
     display: none;
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 .ShowTreeSelection span {
@@ -326,7 +334,7 @@ button.Reset:active {
 }
 
 .ShowTreeSelection:focus {
-    color: #fef235;
+    color: var(--colHighlight);
 }
 
 .Field .ShowTreeSelection, .WidgetSettingsForm .ShowTreeSelection {
@@ -343,7 +351,7 @@ button.Reset:active {
 }
 
 #TreeContainer #TreeSearch span {
-    color: #AAAAAA;
+    color: var(--colTextLight);
     cursor: pointer;
     font-size: 12px;
     font-weight: bold;
@@ -355,7 +363,7 @@ button.Reset:active {
 }
 
 .DialogTreeSearch span {
-    color: #AAAAAA;
+    color: var(--colTextLight);
     cursor: pointer;
     font-weight: bold;
     position: relative;
@@ -370,12 +378,12 @@ button.Reset:active {
 
 .JSTreeField {
     background-color: #FFFFFF;
-    border: 1px solid #ccc;
+    border: 1px solid var(--colBGDark);
     height: 72%;
     margin: 10px 12px;
-    -moz-box-shadow: inset 0px 0px 6px #ccc;
-    -webkit-box-shadow: inset 0px 0px 6px #ccc;
-    box-shadow: inset 0px 0px 6px #ccc;
+    -moz-box-shadow: inset 0px 0px 6px var(--colBGDark);
+    -webkit-box-shadow: inset 0px 0px 6px var(--colBGDark);
+    box-shadow: inset 0px 0px 6px var(--colBGDark);
     overflow: auto;
     padding: 0px 10px 10px 10px;
 }
@@ -387,7 +395,7 @@ button.Reset:active {
 }
 
 .JSTreeField .Disabled > a {
-    color: #aaa;
+    color: var(--colTextLight);
     font-style: italic;
 }
 
@@ -396,7 +404,7 @@ button.Reset:active {
 }
 
 .JSTreeField .jstree-search.jstree-clicked {
-    color: #00023c;
+    color: var(--colTextDark);
 }
 
 .JSTreeField .jstree-clicked {
@@ -412,13 +420,13 @@ button.Reset:active {
 }
 
 .JSTreeField .jstree-hovered {
-    background-color: #eee;
-    border-color: #ddd;
+    background-color: var(--colBGLightMedium);
+    border-color: var(--colBGMediumDark);
 }
 
 .JSTreeField a:focus {
-    background-color: #eee;
-    border-color: #ddd;
+    background-color: var(--colBGLightMedium);
+    border-color: var(--colBGMediumDark);
 }
 
 #SubmitTree {
@@ -460,7 +468,7 @@ fieldset > legend {
 }
 
 fieldset > legend > span {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--colBGMediumDark);
     display: block;
     font-weight: bold;
     padding: 5px 0px 5px 30%;
@@ -474,20 +482,21 @@ form fieldset > p.NoValue {
 }
 
 .FieldExplanation {
-    color: #888;
+    width: 100%;
+    color: var(--colTextLight);
     margin: 5px 0;
 }
 
 .SidebarColumn .FieldExplanation.Error {
-    border: 1px solid #F03432;
-    color: #F03432;
+    border: 1px solid var(--colTextErr);
+    color: var(--colTextErr);
     line-height: 150%;
     margin: 7px 0px;
     padding: 7px 10px;
 }
 
 form label.Mandatory {
-    color: #00023c !important;
+    color: var(--colTextDark) !important;
 }
 
 form label.Mandatory span.Marker {
@@ -512,11 +521,11 @@ form label.LabelError {
 .CustomerContainer,
 .CcCustomerContainer,
 .BccCustomerContainer {
-    background-color: #F2F2F2;
-    border: 1px solid #CCCCCC;
-    -moz-box-shadow: inset 1px 1px 5px #ccc;
-    -webkit-box-shadow: inset 1px 1px 5px #ccc;
-    box-shadow: inset 1px 1px 5px #ccc;
+    background-color: var(--colBGLight);
+    border: 1px solid var(--colBGDark);
+    -moz-box-shadow: inset 1px 1px 5px var(--colBGDark);
+    -webkit-box-shadow: inset 1px 1px 5px var(--colBGDark);
+    box-shadow: inset 1px 1px 5px var(--colBGDark);
     padding: 5px 7px 10px 6px;
     width: 74%;
     position: relative;
@@ -543,8 +552,8 @@ form label.LabelError {
 }
 
 .CustomerContainer .CustomerTicketText.MainCustomer {
-    background-color: #fffccc;
-    border: 1px solid #e5e5eb;
+    background-color: var(--colHoverLight);
+    border: 1px solid var(--colBGMedium);
 }
 
 .CustomerContainer .CustomerTicketText.Radio {
@@ -555,7 +564,7 @@ form label.LabelError {
 .CustomerContainer .BoxLabel,
 .CcCustomerContainer .BoxLabel,
 .BccCustomerContainer .BoxLabel {
-    background-color: #CCCCCC;
+    background-color: var(--colBGDark);
     font-size: 11px;
     right: 100%;
     top: 10px;
@@ -564,7 +573,7 @@ form label.LabelError {
     text-align: center;
     text-shadow: 1px 1px 1px #FFFFFF;
     min-width: 20px;
-    color: #555;
+    color: var(--colTextMedium);
 }
 
 #EmailRecipientsList span,
@@ -582,7 +591,7 @@ form label.LabelError {
     font-size: 7px;
     padding: 0.4px 0.8px;
     border-radius: 3px;
-    color: #00023c;
+    color: var(--colTextDark);
     display: inline-block;
     vertical-align: middle;
     line-height: 8.5px;
@@ -606,7 +615,7 @@ form input.Error,
 form textarea.Error,
 form input.Error:focus,
 form textarea.Error:focus {
-    border-color: #ea2400;
+    border-color: var(--colTextErr);
 }
 
 /*
@@ -621,22 +630,25 @@ div.TooltipErrorMessage {
  * @description Provides a table-like, aligned label-value structure
  */
 
-fieldset.TableLike > label,
-fieldset.TableLike > .Row > label,
-fieldset.TableLike > .Row > .FieldCell label {
+fieldset.TableLike > label:not(.ck-label),
+fieldset.TableLike > .Row > label:not(.ck-label),
+fieldset.TableLike .Row > .FieldCell label:not(.ck-label) {
     display: block;
     float: left;
     line-height: 1.9em;
     width: 30%;
     text-align: right;
-    color: #929292;
+    color: var(--colTextLight);
     min-height: 17px;
     padding-top: 0.3em;
     padding-bottom: 1px;
-    text-shadow: 0 1px 0 #FAFAFA;
+    text-shadow: 0 1px 0 var(--colBGLightMedium);
+    text-wrap: wrap;
+    overflow-wrap: break-word;
 }
 
-fieldset.TableLike > .Row.MultiColumn > .FieldCell label {
+fieldset.TableLike .Row.MultiColumn > .FieldCell label,
+fieldset.TableLike .DFSetOuterField .DynamicFieldSet .Row.MultiColumn > .FieldCell label {
     float: none;
     line-height: 1.9em;
     width: auto;
@@ -658,11 +670,12 @@ fieldset.TableLike > .Row.MultiColumn > .FieldCell label {
     padding-top: 3px;
     padding-bottom: 3px;
     min-height: 20px;
-    text-shadow: 0 1px 0 #FAFAFA;
+    text-shadow: 0 1px 0 var(--colBGLightMedium);
 }
 
 fieldset.TableLike > .Field,
-fieldset.TableLike > .Row > .FieldCell > .Field {
+fieldset.TableLike > .Row > .Field,
+fieldset.TableLike .Row > .FieldCell > .Field {
     line-height: 1.9em;
     margin-left: 30%;
     margin-right: 0;
@@ -673,7 +686,12 @@ fieldset.TableLike > .Row > .FieldCell > .Field {
     min-height: 20px;
 }
 
-fieldset.TableLike > .Row.MultiValue {
+fieldset.TableLike .Row > .FieldCell > .Field.RichTextField {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+fieldset.TableLike .Row.MultiValue {
     grid-row-gap: 2px;
 }
 
@@ -683,68 +701,78 @@ fieldset.TableLike > .Row.MultiColumn {
     grid-column-gap: 16px;
 }
 
-/*.Row.MultiColumn .AddRemoveValueRow {
-    position: absolute;
-    left: calc( 100% - 352px );
-    margin-top: 8px;
-}*/
+fieldset.TableLike .Row.MultiColumn .FieldCell {
+    white-space: normal;
+}
 
-fieldset.TableLike > .Row.MultiValue > .FieldCell > .Field {
+fieldset.TableLike .Row.MultiValue > .FieldCell > .Field {
     display: inline-block;
 }
 
-fieldset.TableLike > .Row.MultiValue > .FieldCell.MultiValue_0 > .Field {
+fieldset.TableLike .Row.MultiValue > .FieldCell.MultiValue_0 > .Field {
     margin-left: 0;
 }
 
-fieldset.TableLike > .Row.MultiColumn > .FieldCell > .Field {
+fieldset.TableLike .Row.MultiColumn > .FieldCell > .Field {
     display: inline-block;
     margin-left: 0;
     padding-left: 0;
-    width: 100%;
+    width: calc(100% - 40px);
+}
+
+fieldset.TableLike .Row.MultiColumn > .FieldCell > .RichTextField,
+fieldset.TableLike .DynamicFieldSet > .Row.MultiColumn > .FieldCell > .RichTextField { /* has to override normal sets */
+    width: calc(100% - 40px) !important;
+    max-width: calc(100% - 40px);
 }
 
 /* Dynamic Field Set */
 
 fieldset.TableLike .DFSetOuterField {
-    max-width: 622px; 
+    max-width: 630px; /*width 620px + left margin*/
+    width: calc( 70% - 46px );  /* width of AddRemoveValueRow + left margin*/
+    box-sizing: border-box;
 }
 
 fieldset.TableLike .DynamicFieldSet {
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--colBGDark);
     border-radius: 4px;
 }
 
-fieldset.TableLike .DynamicFieldSet .Row > .FieldCell {
-    display: grid;
-    columns: 3;
-    grid-template-columns: 1fr 2fr 32px;
+fieldset.TableLike .DynamicFieldSet > .Row > .FieldCell label:not(.ck-label) {
+    width: 24%;
 }
 
-fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet label {
-    padding-top: 0px;
-    padding-right: 10px;
-    width: 100%;
-    box-sizing: border-box;
+fieldset.TableLike .DynamicFieldSet > .Row > .FieldCell > .Field {
+    margin-left: 24%;
+    width: calc( 76% - 48px );
 }
 
-fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Field {
-    box-sizing: border-box;
-    grid-column: 2;
+fieldset.TableLike .DynamicFieldSet > .Row > .FieldCell > .RichTextField {
+    width: calc( 76% - 38px ) !important;
+    max-width: calc( 76% - 38px );
 }
 
-fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Row.MultiValue .Field {
-    grid-column-end: span 1;
+fieldset.TableLike .DynamicFieldSet > .Row.MultiValue > .FieldCell.MultiValue_0 > .Field {
+    margin-left: 0;
 }
 
-fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Field > * {
-    width: 100%;
-    box-sizing: border-box;
+fieldset.TableLike .DynamicFieldSet > .Row.MultiColumn {
+    grid-column-gap: 8px;
+    padding-left: 8px;
+}
+
+fieldset.TableLike .DynamicFieldSet > .Row.MultiColumn > .FieldCell > .Field {
+    display: inline-block;
+    margin-left: 0;
+    padding-left: 0;
+    width: calc(100% - 40px);
 }
 
 /* multivalue sets. necessary because of competing CSS specificities*/
-fieldset.TableLike > .Row.MultiValue > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Field > * {
+fieldset.TableLike > .Row.MultiValue > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Field > :not(.AJAXLoader, [type="checkbox"], .ui-resizable-s),
+fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Field > :not(.AJAXLoader, .ck-editor, [type="checkbox"], .ui-resizable-s) {
     width: 100%;
     box-sizing: border-box;
 }
@@ -755,14 +783,30 @@ fieldset.TableLike .DynamicFieldSet .InputField_InputContainer {
     box-sizing: inherit;
 }
 
-fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Row_DynamicField input {
+/* TODO check if it makes sense to do this only if input is direct child */
+fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Row_DynamicField input:not([type="checkbox"]) {
     min-width: 150px; /*kind of random, not ideal*/
     box-sizing: border-box;
-    width: 100%;
+    width: 100% !important;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Row_DynamicField  input.DynamicFieldText {
+    padding-left: 3px;
+}
+
+fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Row_DynamicField .DynamicFieldDate > input {
+    width: unset;
 }
 
 fieldset.TableLike .DynamicFieldSet .AddRemoveValueRow {
     grid-column: 3;
+    box-sizing: border-box;
+}
+
+fieldset.TableLike .DynamicFieldSet .Row.MultiColumn .AddRemoveValueRow {
+    grid-column: 2;
 }
 
 /* EO TODO */
@@ -777,6 +821,7 @@ fieldset.TableLike .DynamicFieldSet .AddRemoveValueRow {
 }
 
 .RTL fieldset.TableLike > .Field,
+.RTL fieldset.TableLike > .Row > .Field,
 .RTL fieldset.TableLike > .Row > .FieldCell > .Field {
     margin-left: 0;
     margin-right: 30%;
@@ -793,8 +838,9 @@ fieldset.TableLike select {
  *          for example for complex input elements.
  */
 fieldset.TableLike > .Field label,
+fieldset.TableLike > .Row > .Field label,
 fieldset.TableLike > .Row > .FieldCell label {
-    color: #929292;
+    color: var(--colTextLight);
 }
 
 fieldset.TableLike .Row > .FieldCell > .Field > select,
@@ -834,12 +880,18 @@ fieldset.TableLike > .Row > .FloatingField {
     float: left;
 }
 
-fieldset.TableLike > .RichTextField {
-    padding-bottom: 10px;
+fieldset.TableLike .RichTextField {
+    z-index: 10;
+    position: relative;
+    min-height: 150px !important;
+    max-width: 632px;
+    padding-bottom: 2px;
+    margin-bottom: 6px;
     padding-left: 10px;
-    padding-right: 10px;
     margin-left: 30%;
     margin-right: 0;
+    box-sizing: border-box;
+    height: min-content;    /* overwritten by Core.UI.RichTextEditor.js! */
 }
 
 body.Popup fieldset.TableLike > .Row > .RichTextField,
@@ -925,6 +977,17 @@ fieldset.TableLike.FixedLabel > .Row > .Value {
     padding-right: 0;
 }
 
+fieldset.TableLike.FixedLabel .Row.MultiColumn {
+    margin-left: 100px;
+}
+
+fieldset.TableLike.FixedLabel .Row.MultiColumn > .Field,
+fieldset.TableLike.FixedLabel .Row.MultiColumn > .FieldCell > .Field,
+fieldset.TableLike.FixedLabel .Row.MultiColumn > .Value {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
 .RTL fieldset.TableLike.FixedLabel > .Field,
 .RTL fieldset.TableLike.FixedLabel > .Row > .Field,
 .RTL fieldset.TableLike.FixedLabel > .Row > .FieldCell > .Field,
@@ -934,6 +997,17 @@ fieldset.TableLike.FixedLabel > .Row > .Value {
     margin-right: 170px;
     padding-left: 0;
     padding-right: 17px;
+}
+
+.RTL fieldset.TableLike.FixedLabel .Row.MultiColumn {
+    margin-right: 100px;
+}
+
+.RTL fieldset.TableLike.FixedLabel > .Row.MultiColumn > .Field,
+.RTL fieldset.TableLike.FixedLabel > .Row.MultiColumn > .FieldCell > .Field,
+.RTL fieldset.TableLike.FixedLabel > .Row.MultiColumn > .Value {
+    margin-right: 0px;
+    padding-right: 0px;
 }
 
 /**
@@ -962,10 +1036,6 @@ fieldset.TableLike.FixedLabelSmall > .Row > .Value {
     margin-right: 100px;
 }
 
-fieldset.TableLike.FixedLabelSmall > .FixedValueSmall,
-fieldset.TableLike.FixedLabelSmall > .Row > .FixedValueSmall {
-    width: 143px;
-}
 fieldset.TableLike.FixedLabelSmall > p.FixedValueSmall > em.Error {
     display: block;
     font-size: 11px;
@@ -996,11 +1066,11 @@ fieldset.TableLike .SetDisplayValue > label {
   line-height: 1.3em;
   width: 126px;
   text-align: right;
-  color: #929292;
+  color: var(--colTextLight);
   min-height: 17px;
   padding-top: 0.3em;
   padding-bottom: 1px;
-  text-shadow: 0 1px 0 #FAFAFA;
+  text-shadow: 0 1px 0 var(--colBGLight);
   overflow-wrap: break-word;
 }
 fieldset.TableLike .SetDisplayValue > .Value {
@@ -1010,13 +1080,10 @@ fieldset.TableLike .SetDisplayValue > .Value {
   padding: 0.3em 0 3px 8px;
   line-height: 1.3em;
 }
-fieldset.TableLike .SetDisplayValue {
-  margin-top: 24px;
-}
 /* EO Temporary */
 
 iframe.Signature {
-    border: 1px solid #888;
+    border: 1px solid var(--colTextLight);
 }
 
 /**
@@ -1032,5 +1099,459 @@ input[type=text].TicketFreeKey,
 input[type=text].ArticleFreeKey {
     width: 50%;
 }
+
+/**
+ * @subsection  New Form Styling (ModularForm)
+ */
+
+fieldset.ModularForm {
+    --max-field-width: 620px;
+    --grid-column-gap: 16px;
+    --text-input-padding: 3px;
+    --field-padding-vertical: 3px;
+    --field-padding-horizontal: 0px;
+    --set-padding: 8px;
+    --line-height: 1em;
+    --row-gap: 0px;
+    --checkbox-size: 1em;
+    --checkbox-margin: calc( (var(--min-field-height) - var(--field-padding-vertical)*2 - var(--checkbox-size)) / 2 );
+    --customer-id-selection-button-width: 110px; /* set in style tag */
+    --address-book-button-width: 16px; /* width set for .AdditionlFieldIcon */
+    --address-book-button-margin: 3px; /* margin set for .AdditionlFieldIcon */
+    
+    --search-icon-width: var(--multivalue-icon-width);
+    --label-padding-vertical: calc( var(--field-padding-vertical) + var(--text-input-padding) + 1px );
+    --label-padding:    var(--label-padding-vertical) 
+                        0px 
+                        var(--label-padding-vertical) 
+                        var(--field-padding-horizontal);
+    --min-field-height: calc( var(--label-padding-vertical)*2 + var(--line-height) );
+
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: var(--line-height);
+    row-gap: var(--row-gap);
+}
+
+    fieldset.ModularForm * {
+        box-sizing: border-box;
+    }
+
+    fieldset.ModularForm .fa {
+        color: var(--colTextDark);
+    }
+
+    fieldset.ModularForm .AJAXLoader {
+        margin: var(--AJAX-loader-margin);
+        position: absolute;
+        right: 0;
+    }
+
+    fieldset.ModularForm div.Field {
+        position: relative;
+        grid-area: field;
+        width: 100%;
+        height: min-content;
+        min-height: var(--min-field-height);
+        padding: var(--field-padding-vertical) var(--field-padding-horizontal);
+    }
+
+    fieldset.ModularForm .Field:not(.Hidden) {
+        display: flex;
+        flex-flow: row wrap;
+    }
+
+    fieldset.ModularForm div.DnDUpload {
+        width: 100%;
+    }
+
+    fieldset.ModularForm label {
+        grid-column: label;
+        text-align: right;
+        vertical-align: middle;
+        padding: var(--label-padding);
+        color: var(--colTextLight);
+        text-shadow: 0 1px 0 var(--colBGLightMedium);
+        text-wrap: wrap;
+        overflow-wrap: break-word;
+    }
+
+    fieldset.ModularForm label[for="Subject"] {
+        padding: var(--label-padding);
+        align-self: center;
+    }
+
+    /* special case for AgentTicketMerge */
+    fieldset.ModularForm .Field > label {
+        --height: max( calc( var(--checkbox-margin) * 2 + var(--checkbox-size) ), var(--line-height) );
+        --padding-vertical: calc(0.5 * (var(--height) - var(--line-height)) );
+        margin: 0 0 0 8px;
+        padding: var(--padding-vertical) 0;
+    }
+
+    fieldset.ModularForm input[type=text],
+    fieldset.ModularForm input[type=email] {
+        border-radius: 4px;
+        width: 100%;
+        line-height: inherit;
+    }
+
+    fieldset.ModularForm .Field > input[type=text] {
+        flex: 1 1 auto;
+    }
+
+    fieldset.ModularForm .PendingDateField {
+        justify-content: start;
+        row-gap: 4px;
+        column-gap: 1px;
+        align-items: center;
+    }
+
+    fieldset.ModularForm .PendingDateField .oooQuickDate {
+        margin: 0;
+        margin-left: 4px;
+        width: min-content;
+        flex: none;
+    }
+
+    fieldset.ModularForm .PendingDateField .FieldExplanation {
+        width: 100%;
+    }
+
+    fieldset.ModularForm #CustomerID {
+        --margin-to-button: 3px;
+        margin-right: var(--margin-to-button);
+        width: calc( 100% - ( var(--customer-id-selection-button-width) + var(--margin-to-button) ) );
+    }
+
+    fieldset.ModularForm #ToCustomer,
+    fieldset.ModularForm #CcCustomer,
+    fieldset.ModularForm #BccCustomer {
+        width: calc( 100% - ( var(--address-book-button-width) + var(--address-book-button-margin) ) );
+    }
+
+    fieldset.ModularForm .OptionCustomerUserAddressBook {
+        align-self: center;
+    }
+
+    fieldset.ModularForm .CustomerContainer, 
+    fieldset.ModularForm .CcCustomerContainer, 
+    fieldset.ModularForm .BccCustomerContainer {
+        --ContainerPadding: 8px;
+        padding: calc( var(--ContainerPadding) / 2) var(--ContainerPadding);
+    }
+
+    fieldset.ModularForm .CustomerContainer .BoxLabel, 
+    fieldset.ModularForm .CcCustomerContainer .BoxLabel, 
+    fieldset.ModularForm .BccCustomerContainer .BoxLabel {
+        display: flex;
+        top: var(--ContainerPadding);
+        bottom: var(--ContainerPadding);
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    fieldset.ModularForm .CustomerContainer > div, 
+    fieldset.ModularForm .CcCustomerContainer > div, 
+    fieldset.ModularForm .BccCustomerContainer > div {
+        margin: calc( var(--ContainerPadding) / 2) 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: calc( var(--ContainerPadding) / 2);
+    }
+
+    fieldset.ModularForm .CustomerContainer input[type="radio"], 
+    fieldset.ModularForm .CcCustomerContainer input[type="radio"], 
+    fieldset.ModularForm .BccCustomerContainer input[type="radio"] {
+        margin: 0;
+    }
+
+    fieldset.ModularForm .CcCustomerContainer .ToMove,
+    fieldset.ModularForm .BccCustomerContainer .ToMove,
+    fieldset.ModularForm .CustomerContainer .CcMove,
+    fieldset.ModularForm .BccCustomerContainer .CcMove,
+    fieldset.ModularForm .CustomerContainer .BccMove,
+    fieldset.ModularForm .CcCustomerContainer .BccMove {
+        height: 14px;
+        padding-bottom: 3px;
+    }
+
+    fieldset.ModularForm .CcCustomerContainer .ToMove > span,
+    fieldset.ModularForm .BccCustomerContainer .ToMove > span,
+    fieldset.ModularForm .CustomerContainer .CcMove > span,
+    fieldset.ModularForm .BccCustomerContainer .CcMove > span,
+    fieldset.ModularForm .CustomerContainer .BccMove > span,
+    fieldset.ModularForm .CcCustomerContainer .BccMove > span {
+        height: 11px;
+        font-size: 10px;
+        font-weight: 600;
+        border: 1.5px solid;
+    }
+
+    fieldset.ModularForm .CustomerContainer .CustomerTicketText, 
+    fieldset.ModularForm .CcCustomerContainer .CustomerTicketText, 
+    fieldset.ModularForm .BccCustomerContainer .CustomerTicketText {
+        width: calc(100% - 70px);
+    }
+
+    fieldset.ModularForm input[type=checkbox] {
+        height: var(--checkbox-size);
+        width: var(--checkbox-size);
+        margin: calc( (var(--min-field-height) - var(--field-padding-vertical)*2 - var(--checkbox-size)) / 2 ) 0;
+    }
+
+    fieldset.ModularForm .DynamicFieldDate {
+        display: flex;
+        flex-direction: row;
+        align-self: center;
+        align-items: center;
+        column-gap: 1px;
+    }
+
+    fieldset.ModularForm .DynamicFieldDate input[type="checkbox"] {
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: 2px;
+    }
+
+    fieldset.ModularForm textarea {
+        resize: vertical;
+        width: 100%;
+        border-radius: 4px;
+    }
+
+    fieldset.ModularForm .oooTitle {
+        max-width: 100%;
+        overflow-wrap: break-word;
+    }
+    
+    fieldset.ModularForm .FieldCell .RichTextField {
+        --InitialHeight: 320px;
+        --PreferredWidth: 620px;
+        flex-direction: column;
+        z-index: 10;
+        position: relative;
+        overflow: hidden;
+        height: var(--InitialHeight);
+        width: min( 100%, var(--PreferredWidth) );
+        max-width: 100%
+    }
+
+    fieldset.ModularForm .RichTextField > .RichTextField_resizeHandle {
+        --handle-width: 30px;
+        position: absolute;
+        bottom: calc( var(--field-padding-vertical) - 0.5px );
+        width: var( --handle-width );
+        box-sizing: border-box;
+        height: 4px;
+        left: calc( 50% - var( --handle-width ) / 2 );
+        border-radius: 5px;
+        background-color: var(--colBGDark);
+        cursor: s-resize;
+        overflow: hidden;
+    }
+
+    fieldset.ModularForm .RichTextField > .RichTextField_resizeHandle i {
+        display: block;
+        margin: auto;
+        margin-top: -2px;
+        color: var(--colTextLight);
+        text-align: center;
+        font-size: 9px;
+    }
+
+    fieldset.ModularForm .RichTextField .ck-editor {
+        width: 100%;
+    }
+
+    fieldset.ModularForm .RichTextField input[type="checkbox"] {
+        height: unset;
+        width: unset;
+        margin: unset;
+    }
+
+    fieldset.ModularForm .InputField_Container {
+        width: 100%
+    }
+
+    fieldset.ModularForm .InputField_InputContainer {
+        width: 100%;
+        line-height: inherit;
+    }
+
+    fieldset.ModularForm .Field > select.Modernize {
+        width: 100%;
+    }
+
+    fieldset.ModularForm .Field #OptionCustomer {
+        align-self: center;
+    }
+
+    /* Override old styles for Subject field */
+    fieldset.ModularForm input#Subject {
+        font-size: inherit;
+        padding: 3px; 
+    }
+
+    fieldset.ModularForm .Field .ReadyForUpload {
+        white-space: wrap;
+    }
+
+    fieldset.ModularForm .Field .AttachmentListContainer {
+        max-width: unset;
+        width: 100%;
+    }
+
+    fieldset.ModularForm .Field table.AttachmentList {
+        max-width: unset;
+    }
+
+    fieldset.ModularForm .Field table.AttachmentList * {
+        box-sizing: content-box;
+    }
+
+    fieldset.ModularForm div.Row {
+        width: 100%;
+    }
+
+    /* surrounding div of dynamic fields */
+    fieldset.ModularForm div.Row > div.FieldCell {
+        display: grid;
+        position: relative;
+        grid-template-areas:   "label                                       field                                                                               multivaluebuttons";
+        grid-template-columns:  calc( 30% - var(--field-column-gap)*2 )     min( calc( 70% - var( --multivalue-buttons-width ) ), var( --max-field-width ) )    var( --multivalue-buttons-width );
+        grid-column-gap: var(--field-column-gap);
+        overflow: hidden;
+    }
+
+    /* +- button div for multivalue rows */
+    fieldset.ModularForm div.AddRemoveValueRow {
+        grid-area: multivaluebuttons;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        column-gap: 3px;
+        padding: var(--label-padding);
+    }
+    
+    fieldset.ModularForm .DatepickerIcon {
+        margin: 0;
+        width: auto;
+        height: auto;
+    }
+
+    fieldset.ModularForm div.Row .DFSetOuterField {
+        padding: 8px;
+        margin: var(--field-padding-vertical) 0;
+        border: 1px solid var(--colBGDark);
+        border-radius: 4px;
+    }
+
+    fieldset.ModularForm div.Row fieldset.DynamicFieldSet {
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--row-gap);
+        width: 100%;
+    }
+
+    fieldset.ModularForm div.Row.MultiColumn {
+        display: grid;
+        column-gap: var(--grid-column-gap);
+    }
+
+    fieldset.ModularForm > div.Row.MultiColumn {
+        --left-margin: 10%;
+        margin: 8px 0 8px var( --left-margin);
+        width: calc( 100% - var( --left-margin ) );
+        column-gap: var(--grid-column-gap);
+    }
+
+    fieldset.ModularForm div.Row.MultiColumn div.FieldCell {
+        --field-column-gap: 5px;
+        grid-template-areas:    "label ."
+                                "field multivaluebuttons";
+        grid-template-rows: min-content 1fr;
+        grid-template-columns: min(calc( 100% - ( var(--multivalue-buttons-width) + var(--field-column-gap) )), var(--max-field-width))  var( --multivalue-buttons-width );
+        grid-column-gap: var(--field-column-gap);
+        overflow: hidden;
+        vertical-align: top;
+    }
+    
+    fieldset.ModularForm div.Row.MultiColumn div[class*=MultiValue_] {
+        grid-template-areas:    "field multivaluebuttons";
+    }
+
+    fieldset.ModularForm div.Row.MultiColumn div.MultiValue_0 {
+        grid-template-areas:    "label ."
+                                "field multivaluebuttons" !important;
+    }
+
+    fieldset.ModularForm div.Row.MultiColumn div.FieldCell label {
+        text-align: left;
+    }
+
+    fieldset.ModularForm .InputField_Container ~ a.GetAllAJAX {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    fieldset.ModularForm .Field .DynamicFieldDB {
+        width: calc ( 100% - var(--search-icon-width));
+    }
+
+    fieldset.ModularForm .DynamicFieldDB ~ a {
+        display: unset;
+        position: static;
+        padding: calc( var(--text-input-padding) + 1px );
+    }
+
+    fieldset.ModularForm .DynamicFieldDBContainer {
+        width: 100%;
+    }
+
+    fieldset.ModularForm .CustomerContainer, 
+    fieldset.ModularForm .CcCustomerContainer, 
+    fieldset.ModularForm .BccCustomerContainer {
+        width: 100%;
+    }
+
+    fieldset.ModularForm div.Field.InfoTextField {
+        padding: var(--label-padding);
+    }
+
+    fieldset.ModularForm .FieldExplanation {
+        text-wrap: wrap;
+    }
+
+    fieldset.ModularForm .DynamicFieldDB ~ a {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    }
+
+    fieldset.ModularForm .Row .Field.ChoiceInput {
+        flex-direction: column;
+    }
+
+    fieldset.ModularForm .ChoiceInput > div {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+    }
+
+    fieldset.ModularForm .ChoiceInput input[type="text"] {
+        width: unset;
+        flex-basis: 1;
+    }
+
+/**
+ * end @subsection New Form CSS
+ */
 
 } /* end @media */

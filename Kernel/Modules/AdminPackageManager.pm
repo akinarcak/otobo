@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,15 +15,23 @@
 # --
 
 package Kernel::Modules::AdminPackageManager;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::DBObject)
 
+use v5.24;
 use strict;
 use warnings;
 
-use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use parent qw(Kernel::System::AsynchronousExecutor);
 
-use parent('Kernel::System::AsynchronousExecutor');
+# core modules
+
+# CPAN modules
+use Text::Diff qw(diff);
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(:all);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -31,8 +39,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
+    my $Self = bless {%Param}, $Type;
 
     # check if cloud services are disabled
     $Self->{CloudServicesDisabled} = $Kernel::OM->Get('Kernel::Config')->Get('CloudServices::Disabled') || 0;
@@ -55,7 +62,7 @@ sub Run {
     my $ParamObject   = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $MainObject    = $Kernel::OM->Get('Kernel::System::Main');
 
-    my $Source = $Self->{UserRepository} || '';
+    my $Source = $Self->{Session}{UserRepository} || '';
     my %Errors;
 
     # ------------------------------------------------------------ #
@@ -118,10 +125,9 @@ sub Run {
                 Mode     => 'binmode',
             );
             if ($Content) {
-                $MainObject->Require('Text::Diff');
-                my $Diff = Text::Diff::diff( \$File, $Content, { STYLE => 'OldStyle' } );
+                my $Diff = diff( \$File, $Content, { STYLE => 'OldStyle' } );
                 $LayoutObject->Block(
-                    Name => "FileDiff",
+                    Name => 'FileDiff',
                     Data => {
                         Location => $Location,
                         Name     => $Name,
@@ -142,12 +148,14 @@ sub Run {
                 );
             }
         }
+
         my $Output = $LayoutObject->Header();
         $Output .= $LayoutObject->NavigationBar();
         $Output .= $LayoutObject->Output(
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
     }
 
@@ -204,10 +212,6 @@ sub Run {
                 Name    => $Name,
                 Version => $Version,
             },
-        );
-
-        my @RepositoryList = $PackageObject->RepositoryList(
-            Result => 'short',
         );
 
         # if visible property is not enable, return error screen
@@ -504,7 +508,7 @@ sub Run {
                 Priority => 'Error',
                 Data     => "$Name $Version - "
                     . $LayoutObject->{LanguageObject}->Translate(
-                        "Package not verified by the OTOBO Team!"
+                        "Package not verified by the CareOnCloud ESM Team!"
                     ),
             );
         }
@@ -513,6 +517,7 @@ sub Run {
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
     }
 
@@ -748,6 +753,7 @@ sub Run {
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
     }
 
@@ -768,6 +774,7 @@ sub Run {
                 Message => Translatable('No such package!'),
             );
         }
+
         return $LayoutObject->Attachment(
             Content     => $Package,
             ContentType => 'application/octet-stream',
@@ -794,6 +801,7 @@ sub Run {
                 Message => Translatable('No such package!'),
             );
         }
+
         return $LayoutObject->Attachment(
             Content     => $Package,
             ContentType => 'application/octet-stream',
@@ -816,6 +824,7 @@ sub Run {
             Key       => 'UserRepository',
             Value     => $Source,
         );
+
         return $LayoutObject->Redirect( OP => "Action=$Self->{Action}" );
     }
 
@@ -959,6 +968,7 @@ sub Run {
                 Data         => \%Param,
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
 
@@ -978,6 +988,7 @@ sub Run {
                 TemplateFile => 'AdminPackageManager',
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
     }
@@ -1053,6 +1064,7 @@ sub Run {
                 TemplateFile => 'AdminPackageManager',
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
 
@@ -1132,6 +1144,7 @@ sub Run {
                 TemplateFile => 'AdminPackageManager',
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
 
@@ -1151,6 +1164,7 @@ sub Run {
                 TemplateFile => 'AdminPackageManager',
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
     }
@@ -1229,6 +1243,7 @@ sub Run {
                 TemplateFile => 'AdminPackageManager',
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
 
@@ -1286,6 +1301,7 @@ sub Run {
                     FormID  => $FormID,
                 );
             }
+
             return $Self->_InstallHandling(
                 Package => $UploadStuff{Content},
                 FormID  => $FormID,
@@ -1319,6 +1335,7 @@ sub Run {
             String => $Package,
         );
         my $File = $PackageObject->PackageBuild(%Structure);
+
         return $LayoutObject->Attachment(
             Content     => $File,
             ContentType => 'application/octet-stream',
@@ -1514,19 +1531,20 @@ sub Run {
 
     # show cloud repo if system is registered
     my $RepositoryCloudList;
-    my $RegistrationState = $Kernel::OM->Get('Kernel::System::SystemData')->SystemDataGet(
-        Key => 'Registration::State',
-    ) || '';
-    if ( $RegistrationState eq 'registered' && !$Self->{CloudServicesDisabled} ) {
-
-        $RepositoryCloudList =
-            $PackageObject->RepositoryCloudList( NoCache => 1 );
+    if ( !$Self->{CloudServicesDisabled} ) {
+        my $RegistrationState = $Kernel::OM->Get('Kernel::System::SystemData')->SystemDataGet(
+            Key => 'Registration::State',
+        ) || '';
+        if ( $RegistrationState eq 'registered' ) {
+            $RepositoryCloudList = $PackageObject->RepositoryCloudList( NoCache => 1 );
+        }
     }
+    $RepositoryCloudList //= {};
 
     # In case Source is present on repository cloud list
     #   the call for retrieving data about it, should be performed
     #   using the CloudService backend.
-    my $FromCloud = ( $RepositoryCloudList->{$Source} ? 1 : 0 );
+    my $FromCloud = $RepositoryCloudList->{$Source} ? 1 : 0;
 
     # Get the list of the installed packages early to be able to show or not the Upgrade All button
     #   in the layout block.
@@ -1542,8 +1560,8 @@ sub Run {
         $Source = %RepositoryRoot
             ?
 
-            # default repo is OTOBO Addons
-            { reverse %RepositoryRoot }->{'OTOBO Addons'} ? { reverse %RepositoryRoot }->{'OTOBO Addons'} :
+            # default repo is CareOnCloud ESM Addons
+            { reverse %RepositoryRoot }->{'CareOnCloud ESM Addons'} ? { reverse %RepositoryRoot }->{'CareOnCloud ESM Addons'} :
 
                 # alternatively take the first repo in %RepositoryRoot
                 ( sort { $a cmp $b } keys %RepositoryRoot )[0]
@@ -1853,7 +1871,7 @@ sub Run {
         );
     }
 
-    # Check if OTOBO Daemon is running in the background.
+    # Check if CareOnCloud ESM Daemon is running in the background.
     #   Get daemon state from the cache.
     my $DaemonRunning = $Kernel::OM->Get('Kernel::System::Cache')->Get(
         Type => 'DaemonRunning',
@@ -1917,7 +1935,7 @@ sub Run {
                 Priority => 'Error',
                 Data     => "$Package $NotVerifiedPackages{$Package} - "
                     . $LayoutObject->{LanguageObject}->Translate(
-                        "Package not verified by the OTOBO Team!"
+                        "Package not verified by the CareOnCloud ESM Team!"
                     ),
             );
         }
@@ -1945,6 +1963,7 @@ sub Run {
         TemplateFile => 'AdminPackageManager',
     );
     $Output .= $LayoutObject->Footer();
+
     return $Output;
 }
 
@@ -1987,6 +2006,7 @@ sub _MessageGet {
             }
         }
     }
+
     return if !$Description && !$Title;
 
     $Description = $Self->_GetSafeString( String => $Description );
@@ -2064,6 +2084,7 @@ sub _DocumentationGet {
     elsif ($DocumentationFileFallback) {
         $Doc{Location} = $DocumentationFileFallback;
     }
+
     return %Doc;
 }
 
@@ -2149,6 +2170,7 @@ sub _InstallHandling {
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
     }
 
@@ -2166,13 +2188,7 @@ sub _InstallHandling {
     if ( !$Self->{CloudServicesDisabled} ) {
         $RepositoryCloudList = $PackageObject->RepositoryCloudList();
     }
-
-    # in case Source is present on repository cloud list
-    # the package should be retrieved using the CloudService backend
-    my $FromCloud = 0;
-    if ( $Param{Source} && $RepositoryCloudList->{ $Param{Source} } ) {
-        $FromCloud = 1;
-    }
+    $RepositoryCloudList //= {};
 
     my %Response = $PackageObject->AnalyzePackageFrameworkRequirements(
         Framework => $Structure{Framework},
@@ -2201,6 +2217,7 @@ sub _InstallHandling {
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
 
     }
@@ -2222,7 +2239,7 @@ sub _InstallHandling {
 
         if ( $Verified eq 'verified' && !$Self->{CloudServicesDisabled} ) {
             $LayoutObject->Block(
-                Name => 'OTOBOVerifyLogo',
+                Name => 'CareOnCloud VerifyLogo',
             );
         }
 
@@ -2248,14 +2265,14 @@ sub _InstallHandling {
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
     }
 
     # install package
     elsif (
         $PackageObject->PackageInstall(
-            String    => $Param{Package},
-            FromCloud => $FromCloud
+            String => $Param{Package},
         )
         )
     {
@@ -2295,8 +2312,21 @@ sub _InstallHandling {
 
             if ( $Verified eq 'verified' ) {
                 $LayoutObject->Block(
-                    Name => 'OTOBOVerifyLogo',
+                    Name => 'CareOnCloud VerifyLogo',
                 );
+            }
+
+            # load the ITSM repo after installing ITSMCore
+            if ( $Structure{Name}->{Content} eq 'ITSMCore' ) {
+                my $NewOnlineRepoList = $Kernel::OM->Get('Kernel::Config')->Get('Package::RepositoryList') // {};
+
+                if ( $NewOnlineRepoList->{'https://ftp.otobo.org/pub/otobo/packages-itsm/'} ) {
+                    $Kernel::OM->Get('Kernel::System::AuthSession')->UpdateSessionID(
+                        SessionID => $Self->{SessionID},
+                        Key       => 'UserRepository',
+                        Value     => 'https://ftp.otobo.org/pub/otobo/packages-itsm/',
+                    );
+                }
             }
 
             my $Output = $LayoutObject->Header();
@@ -2305,6 +2335,7 @@ sub _InstallHandling {
                 TemplateFile => 'AdminPackageManager',
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
 
@@ -2379,6 +2410,7 @@ sub _UpgradeHandling {
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
     }
 
@@ -2417,6 +2449,7 @@ sub _UpgradeHandling {
             TemplateFile => 'AdminPackageManager',
         );
         $Output .= $LayoutObject->Footer();
+
         return $Output;
     }
 
@@ -2462,6 +2495,7 @@ sub _UpgradeHandling {
                 TemplateFile => 'AdminPackageManager',
             );
             $Output .= $LayoutObject->Footer();
+
             return $Output;
         }
 
@@ -2517,7 +2551,7 @@ sub _GetFeatureAddonData {
     # as this is the only operation an unsuccessful request means that the operation was also
     # unsuccessful
     if ( !IsHashRefWithData($RequestResult) ) {
-        return Translatable('Can\'t connect to OTOBO Feature Add-on list server!');
+        return Translatable('Can\'t connect to CareOnCloud ESM Feature Add-on list server!');
     }
 
     my $OperationResult = $CloudServiceObject->OperationResultGet(
@@ -2527,10 +2561,10 @@ sub _GetFeatureAddonData {
     );
 
     if ( !IsHashRefWithData($OperationResult) ) {
-        return Translatable('Can\'t get OTOBO Feature Add-on list from server!');
+        return Translatable('Can\'t get CareOnCloud ESM Feature Add-on list from server!');
     }
     elsif ( !$OperationResult->{Success} ) {
-        return $OperationResult->{ErrorMessage} || Translatable('Can\'t get OTOBO Feature Add-on from server!');
+        return $OperationResult->{ErrorMessage} || Translatable('Can\'t get CareOnCloud ESM Feature Add-on from server!');
     }
 
     my $FAOFeed = $OperationResult->{Data}->{FAOs};

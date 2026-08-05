@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -47,6 +47,20 @@ Core.Installer = (function (TargetNS) {
             $('#FormDBSubmit').removeAttr('disabled').removeClass('Disabled');
             $('fieldset.ErrorMsg, fieldset.CheckDB').hide();
             $('fieldset.HideMe, div.HideMe, fieldset.Success').show();
+            Core.UI.InputFields.InitSelect($('#AuthPlugin'));
+            var $Select = $('#AuthPlugin');
+            $.each(json.AvailablePlugins, function(Index, Item) {
+                var Plugin = Item[0];
+
+                if ($Select.find('option[value="' + Plugin + '"]').length === 0) {
+                    $Select.append(
+                        $('<option>', {
+                            value: Plugin,
+                            text: Plugin
+                        })
+                    );
+                }
+            });
         }
     }
 
@@ -266,6 +280,8 @@ Core.Installer = (function (TargetNS) {
 
         // show Log File Location field (only if log module File is selected)
         InitLogModuleSelection();
+
+        Core.UI.InputFields.InitSelect($('select.Modernize'));
     };
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');

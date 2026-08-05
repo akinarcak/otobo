@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,6 +19,12 @@ package Kernel::GenericInterface::Invoker::Test::TestSimple;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+use URI::Escape qw(uri_unescape);
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsString IsStringWithData);
 
 our $ObjectManagerDisabled = 1;
@@ -120,19 +126,26 @@ sub HandleResponse {
         };
     }
 
-    if ( $Param{Data}->{ResponseContent} && $Param{Data}->{ResponseContent} =~ m{ReSchedule=1} ) {
+    if ( !defined $Param{Data} ) {
+        return {
+            Success => 1,
+            Data    => {},
+        };
+    }
+
+    if ( ( ref $Param{Data} eq 'HASH' ) && $Param{Data}->{ResponseContent} && $Param{Data}->{ResponseContent} =~ m{ReSchedule=1} ) {
 
         # ResponseContent has URI like params, convert them into a hash
         my %QueryParams = split /[&=]/, $Param{Data}->{ResponseContent};
 
         # unscape URI strings in query parameters
         for my $Param ( sort keys %QueryParams ) {
-            $QueryParams{$Param} = URI::Escape::uri_unescape( $QueryParams{$Param} );
+            $QueryParams{$Param} = uri_unescape( $QueryParams{$Param} );
         }
 
         # fix ExecutrionTime param
         if ( $QueryParams{ExecutionTime} ) {
-            $QueryParams{ExecutionTime} =~ s{(\d+)\+(\d+)}{$1 $2};
+            $QueryParams{ExecutionTime} =~ s{([0-9]+)\+([0-9]+)}{$1 $2};
         }
 
         return {

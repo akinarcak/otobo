@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 $Kernel::OM->ObjectParamAdd(
     'Kernel::System::UnitTest::Helper' => {
@@ -46,7 +48,7 @@ my $DynamicFieldID = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFi
     ValidID => 1,
     UserID  => 1,
 );
-$Self->True(
+ok(
     $DynamicFieldID,
     "DynamicFieldID $DynamicFieldID is created",
 );
@@ -323,13 +325,13 @@ for my $Test (@Tests) {
         }
 
         # Check results.
-        $Self->Is(
+        is(
             $Return[0],
             $Module->{Return}->{Number},
             "$Test->{Name}: Return number - $Module->{Return}->{Number}, Action - $Module->{Return}->{Action}",
         );
 
-        $Self->True(
+        ok(
             $Return[1],
             "$Test->{Name}: TicketID - $Return[1]",
         );
@@ -340,7 +342,7 @@ for my $Test (@Tests) {
         );
 
         for my $Key ( sort keys %{ $Module->{Check} } ) {
-            $Self->Is(
+            is(
                 $Ticket{$Key},
                 $Module->{Check}->{$Key},
                 "$Test->{Name}: Correct value for key - $Key",
@@ -349,6 +351,4 @@ for my $Test (@Tests) {
     }
 }
 
-# cleanup is done by RestoreDatabase.
-
-$Self->DoneTesting();
+done_testing;

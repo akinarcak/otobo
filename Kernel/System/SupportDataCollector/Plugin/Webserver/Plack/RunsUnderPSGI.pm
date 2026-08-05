@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -35,7 +35,7 @@ sub Run {
     # Skip the plugin, if the support data collection isn't running in a web request.
     return $Self->GetResults() unless $ENV{GATEWAY_INTERFACE};
 
-    # GATEWAY_INTERFACE implies PSGI, as since OTOBO 10.1.1 only PSGI is supported
+    # GATEWAY_INTERFACE implies PSGI, as since CareOnCloud ESM 10.1.1 only PSGI is supported
     $Self->AddResultOk(
         Identifier => 'RunsUnderPSGI',
         Label      => Translatable('Runs under PSGI'),

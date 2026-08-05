@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,17 +24,14 @@ our @ObjectDependencies = (
     'Kernel::System::Log',
     'Kernel::System::Queue',
     'Kernel::System::SystemAddress',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
-
-    # get parser object
-    $Self->{ParserObject} = $Param{ParserObject} || die "Got no ParserObject!";
+    my $Self = bless {}, $Type;
 
     # Get communication log object.
     $Self->{CommunicationLogObject} = $Param{CommunicationLogObject} || die "Got no CommunicationLogObject!";
@@ -65,18 +62,17 @@ sub GetQueueID {
     # get system address object
     my $SystemAddressObject = $Kernel::OM->Get('Kernel::System::SystemAddress');
 
-    # get addresses
-    my @EmailAddresses = $Self->{ParserObject}->SplitAddressLine( Line => $Recipient );
-
     # check addresses
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    my @EmailAddresses     = $EmailAddressObject->ParseAddressLine( Line => $Recipient );
     EMAIL:
     for my $Email (@EmailAddresses) {
 
-        next EMAIL if !$Email;
+        next EMAIL unless $Email;
 
-        my $Address = $Self->{ParserObject}->GetEmailAddress( Email => $Email );
+        my $Address = $EmailAddressObject->GetAddress( AddressObject => $Email );
 
-        next EMAIL if !$Address;
+        next EMAIL unless $Address;
 
         # lookup queue id if recipiend address
         my $QueueID = $SystemAddressObject->SystemAddressQueueID(
@@ -95,7 +91,7 @@ sub GetQueueID {
         }
 
         # Address/Email not matched with any that is configured in the system
-        #   or any error occured while checking it.
+        #   or any error occurred while checking it.
 
         $Self->{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
@@ -106,7 +102,7 @@ sub GetQueueID {
     }
 
     # If we get here means that none of the addresses in the message is defined as a system address
-    #   or an error occured while checking it.
+    #   or an error occurred while checking it.
 
     my $Queue   = $Kernel::OM->Get('Kernel::Config')->Get('PostmasterDefaultQueue');
     my $QueueID = $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup(
@@ -147,18 +143,18 @@ sub GetTrustedQueueID {
     # get email headers
     my %GetParam = %{ $Param{Params} };
 
-    return if !$GetParam{'X-OTOBO-Queue'};
+    return if !$GetParam{'X-CareOnCloud-Queue'};
 
     $Self->{CommunicationLogObject}->ObjectLog(
         ObjectLogType => 'Message',
         Priority      => 'Debug',
         Key           => 'Kernel::System::PostMaster::DestQueue',
-        Value         => "Existing X-OTOBO-Queue header: $GetParam{'X-OTOBO-Queue'} (MessageID:$GetParam{'Message-ID'})!",
+        Value         => "Existing X-CareOnCloud-Queue header: $GetParam{'X-CareOnCloud-Queue'} (MessageID:$GetParam{'Message-ID'})!",
     );
 
     # get dest queue
     return $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup(
-        Queue => $GetParam{'X-OTOBO-Queue'},
+        Queue => $GetParam{'X-CareOnCloud-Queue'},
     );
 }
 

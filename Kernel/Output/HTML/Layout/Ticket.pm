@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,15 +24,21 @@ use namespace::autoclean;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
 =head1 NAME
 
 Kernel::Output::HTML::Layout::Ticket - all Ticket-related HTML functions
+
+=head1 SYNOPSIS
+
+    # No instances of this class should be created directly.
+    # Instead the module is loaded implicitly by Kernel::Output::HTML::Layout
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
 =head1 DESCRIPTION
 
@@ -139,12 +145,29 @@ sub AgentCustomerViewTable {
     # build table
     FIELD:
     for my $Field (@MapNew) {
-        if ( $Field->[3] && $Field->[3] >= $ShownType && $Param{Data}->{ $Field->[0] } ) {
+        next FIELD unless $Field->[3];
+        next FIELD unless $Field->[3] >= $ShownType;
+        next FIELD unless $Param{Data}->{ $Field->[0] };    # TODO: value '0' is not shown
+
+        {
             my %Record = (
                 %{ $Param{Data} },
                 Key   => $Field->[1],
                 Value => $Param{Data}->{ $Field->[0] },
             );
+
+            # handle special case of translatable customer countries
+            if (
+                $ConfigObject->Get('ReferenceData::TranslatedCountryNames')
+                &&
+                $Field->[0] =~ m/^CustomerCompanyCountry/i
+                )
+            {
+                $Record{Value} = $Kernel::OM->Get('Kernel::System::ReferenceData')->CountryCode2Name(
+                    CountryCode => $Record{Value},
+                    Language    => $Self->{UserLanguage},
+                );
+            }
 
             # render dynamic field values
             if ( $Field->[5] eq 'dynamic_field' ) {
@@ -154,7 +177,7 @@ sub AgentCustomerViewTable {
 
                 my $DynamicFieldConfig = $DynamicFieldLookup{ $Field->[2] };
 
-                next FIELD if !$DynamicFieldConfig;
+                next FIELD unless $DynamicFieldConfig;
 
                 my @RenderedValues;
                 VALUE:
@@ -211,6 +234,7 @@ sub AgentCustomerViewTable {
                 Data => \%Record,
             );
 
+            # Mark invalid companies
             if (
                 $Param{Data}->{Config}->{CustomerCompanySupport}
                 && $Field->[0] eq 'CustomerCompanyName'
@@ -407,21 +431,19 @@ sub AgentQueueListOption {
                 Priority => 'error',
                 Message  => 'Need Depend Param Ajax option!',
             );
-            $Self->FatalError();
+            $Self->FatalError;
         }
         if ( !$Param{Ajax}->{Update} ) {
             $LogObject->Log(
                 Priority => 'error',
                 Message  => 'Need Update Param Ajax option()!',
             );
-            $Self->FatalError();
+            $Self->FatalError;
         }
         $Param{OnChange} = "Core.AJAX.FormUpdate(\$('#"
             . $Param{Name} . "'), '"
             . $Param{Ajax}->{Subaction} . "',"
-            . " '$Param{Name}',"
-            . " ['"
-            . join( "', '", @{ $Param{Ajax}->{Update} } ) . "']);";
+            . " '$Param{Name}');";
     }
 
     if ( $Param{OnChange} ) {
@@ -461,7 +483,7 @@ sub AgentQueueListOption {
             HTMLQuote     => 0,
             SelectedID    => $Param{SelectedID} || $Param{SelectedIDRefArray} || '',
             SelectedValue => $Param{Selected},
-            Translation   => 0,
+            Translation   => $TreeView,
         );
         return $Param{MoveQueuesStrg};
     }
@@ -581,11 +603,11 @@ sub AgentQueueListOption {
                             $OptionTitleHTMLValue = ' title="' . $HTMLValue . '"';
                         }
                         $Param{MoveQueuesStrg}
-                            .= '<option value="-" disabled="disabled"'
+                            .= '<option value="-" disabled'
                             . $OptionTitleHTMLValue
                             . '>'
                             . $DSpace
-                            . $Queue[$Index]
+                            . ( $TreeView ? $Self->{LanguageObject}->Translate( $Queue[$Index] ) : $Queue[$Index] )
                             . "</option>\n";
                         $UsedData{$FullQueueName} = 1;
                     }
@@ -593,7 +615,7 @@ sub AgentQueueListOption {
             }
 
             # create selectable elements
-            my $String               = $Space . $Queue[-1];
+            my $String               = $Space . ( $TreeView ? $Self->{LanguageObject}->Translate( $Queue[-1] ) : $Queue[-1] );
             my $OptionTitleHTMLValue = '';
             if ($OptionTitle) {
                 my $HTMLValue = $HTMLUtilsObject->ToHTML(
@@ -613,7 +635,7 @@ sub AgentQueueListOption {
                 )
             {
                 $Param{MoveQueuesStrg}
-                    .= '<option selected="selected" value="'
+                    .= '<option selected value="'
                     . $HTMLValue . '"'
                     . $OptionTitleHTMLValue . '>'
                     . $String
@@ -622,7 +644,7 @@ sub AgentQueueListOption {
             elsif ( $CurrentQueueID eq $_ )
             {
                 $Param{MoveQueuesStrg}
-                    .= '<option value="-" disabled="disabled"'
+                    .= '<option value="-" disabled'
                     . $OptionTitleHTMLValue . '>'
                     . $String
                     . "</option>\n";
@@ -639,7 +661,7 @@ sub AgentQueueListOption {
     }
     $Param{MoveQueuesStrg} .= "</select>\n";
 
-    if ( $Param{TreeView} ) {
+    if ($TreeView) {
         my $TreeSelectionMessage = $Self->{LanguageObject}->Translate("Show Tree Selection");
         $Param{MoveQueuesStrg}
             .= ' <a href="#" title="'
@@ -726,17 +748,14 @@ sub TicketListShow {
         }
     }
 
-    # get layout object
-    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-
-    $LayoutObject->AddJSData(
+    $Self->AddJSData(
         Key   => 'View',
         Value => $View,
     );
 
     # load overview backend module
     if ( !$Kernel::OM->Get('Kernel::System::Main')->Require( $Backends->{$View}->{Module} ) ) {
-        return $Env->{LayoutObject}->FatalError();
+        return $Self->FatalError;
     }
     my $Object = $Backends->{$View}->{Module}->new( %{$Env} );
     return if !$Object;
@@ -820,7 +839,7 @@ sub TicketListShow {
             Name => 'OverviewNavBarPageBack',
             Data => \%Param,
         );
-        $LayoutObject->AddJSData(
+        $Self->AddJSData(
             Key   => 'Profile',
             Value => $Param{Profile},
         );
@@ -1005,8 +1024,8 @@ sub TicketListShow {
         }
     }
 
-    # As of OTOBO 10.0.x some content was printed early.
-    # This has changed in OTOBO 10.1.1.
+    # As of CareOnCloud ESM 10.0.x some content was printed early.
+    # This has changed in CareOnCloud ESM 10.1.1.
 
     # create nav bar and run overview backend module
     return join '',
@@ -1027,6 +1046,7 @@ sub TicketListShow {
 
 sub TicketMetaItemsCount {
     my ( $Self, %Param ) = @_;
+
     return ( 'Priority', 'New Article' );
 }
 

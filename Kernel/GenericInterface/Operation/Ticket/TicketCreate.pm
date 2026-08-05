@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,6 +16,7 @@
 
 package Kernel::GenericInterface::Operation::Ticket::TicketCreate;
 
+use v5.24;
 use strict;
 use warnings;
 
@@ -25,10 +26,12 @@ use parent qw(
 );
 
 # core modules
+use Scalar::Util qw(reftype);
+use MIME::Base64 qw(encode_base64);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsArrayRefWithData IsHashRefWithData IsString IsStringWithData);
 
 our $ObjectManagerDisabled = 1;
@@ -142,6 +145,12 @@ perform TicketCreate Operation. This will return the created ticket number.
                 ForceNotificationToUserID       => [1, 2, 3]                   # optional
                 ExcludeNotificationToUserID     => [1, 2, 3]                   # optional
                 ExcludeMuteNotificationToUserID => [1, 2, 3]                   # optional
+                SendEmail                       => 1                           # optional, defaults to 0.
+                EmailSecurity                   => {                           # optional to enable signing/encryption
+                    Backend => 'SMIME',                                        # Backend, only SMIME supported for now
+                    Sign => 1,                                                 # optional, whether to the sign the email. needs valid SMIME cert for the queue
+                    Encrypt => 1,                                              # optional,whether to encrypt the email. needs valid customer SMIME cert (for the TO addr)
+                }
             },
 
             DynamicField => [                                                  # optional
@@ -159,9 +168,9 @@ perform TicketCreate Operation. This will return the created ticket number.
 
             Attachment => [
                 {
-                    Content     => 'content'                                 # base64 encoded
-                    ContentType => 'some content type'
-                    Filename    => 'some fine name'
+                    Content     => 'content',                                # base64 encoded
+                    ContentType => 'some content type',
+                    Filename    => 'some fine name',
                 },
                 # ...
             ],
@@ -178,9 +187,9 @@ perform TicketCreate Operation. This will return the created ticket number.
         Success         => 1,                       # 0 or 1
         ErrorMessage    => '',                      # in case of error
         Data            => {                        # result data payload after Operation
-            TicketID    => 123,                     # Ticket  ID number in OTOBO (help desk system)
-            TicketNumber => 2324454323322           # Ticket Number in OTOBO (Help desk system)
-            ArticleID   => 43,                      # Article ID number in OTOBO (help desk system)
+            TicketID    => 123,                     # Ticket  ID number in CareOnCloud ESM (help desk system)
+            TicketNumber => 2324454323322           # Ticket Number in CareOnCloud ESM (Help desk system)
+            ArticleID   => 43,                      # Article ID number in CareOnCloud ESM (help desk system)
             Error => {                              # should not return errors
                     ErrorCode    => 'Ticket.Create.ErrorCode'
                     ErrorMessage => 'Error Description'
@@ -324,22 +333,8 @@ sub Run {
     }
 
     # check needed stuff
-    if (
-        !$Param{Data}->{UserLogin}
-        && !$Param{Data}->{CustomerUserLogin}
-        && !$Param{Data}->{SessionID}
-        )
-    {
-        return $Self->ReturnError(
-            ErrorCode    => 'TicketCreate.MissingParameter',
-            ErrorMessage => "TicketCreate: UserLogin, CustomerUserLogin or SessionID is required!",
-        );
-    }
-
     if ( $Param{Data}->{UserLogin} || $Param{Data}->{CustomerUserLogin} ) {
-
-        if ( !$Param{Data}->{Password} )
-        {
+        if ( !$Param{Data}->{Password} ) {
             return $Self->ReturnError(
                 ErrorCode    => 'TicketCreate.MissingParameter',
                 ErrorMessage => "TicketCreate: Password or SessionID is required!",
@@ -393,8 +388,8 @@ sub Run {
     my $Ticket = $Param{Data}->{Ticket};
 
     # remove leading and trailing spaces
-    for my $Attribute ( sort keys %{$Ticket} ) {
-        if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
+    for my $Attribute ( sort keys $Ticket->%* ) {
+        if ( !reftype $Ticket->{$Attribute} ) {
 
             #remove leading spaces
             $Ticket->{$Attribute} =~ s{\A\s+}{};
@@ -403,9 +398,10 @@ sub Run {
             $Ticket->{$Attribute} =~ s{\s+\z}{};
         }
     }
+
     if ( IsHashRefWithData( $Ticket->{PendingTime} ) ) {
-        for my $Attribute ( sort keys %{ $Ticket->{PendingTime} } ) {
-            if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
+        for my $Attribute ( sort keys $Ticket->{PendingTime}->%* ) {
+            if ( !reftype $Ticket->{PendingTime}->{$Attribute} ) {
 
                 #remove leading spaces
                 $Ticket->{PendingTime}->{$Attribute} =~ s{\A\s+}{};
@@ -416,7 +412,7 @@ sub Run {
         }
     }
 
-    # check Ticket attribute values
+    # check attribute values
     my $TicketCheck = $Self->_CheckTicket( Ticket => $Ticket );
 
     if ( !$TicketCheck->{Success} ) {
@@ -442,8 +438,8 @@ sub Run {
     $Article->{UserType} = $UserType;
 
     # remove leading and trailing spaces
-    for my $Attribute ( sort keys %{$Article} ) {
-        if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
+    for my $Attribute ( sort keys $Article->%* ) {
+        if ( !reftype $Article->{$Attribute} ) {
 
             #remove leading spaces
             $Article->{$Attribute} =~ s{\A\s+}{};
@@ -453,8 +449,8 @@ sub Run {
         }
     }
     if ( IsHashRefWithData( $Article->{OrigHeader} ) ) {
-        for my $Attribute ( sort keys %{ $Article->{OrigHeader} } ) {
-            if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
+        for my $Attribute ( sort keys $Article->{OrigHeader}->%* ) {
+            if ( !reftype $Article->{OrigHeader}->{$Attribute} ) {
 
                 #remove leading spaces
                 $Article->{OrigHeader}->{$Attribute} =~ s{\A\s+}{};
@@ -527,8 +523,8 @@ sub Run {
             }
 
             # remove leading and trailing spaces
-            for my $Attribute ( sort keys %{$DynamicFieldItem} ) {
-                if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
+            for my $Attribute ( sort keys $DynamicFieldItem->%* ) {
+                if ( !reftype $DynamicFieldItem->{$Attribute} ) {
 
                     #remove leading spaces
                     $DynamicFieldItem->{$Attribute} =~ s{\A\s+}{};
@@ -547,13 +543,11 @@ sub Run {
         }
     }
 
-    my $Attachment;
     my @AttachmentList;
-
     if ( defined $Param{Data}->{Attachment} ) {
 
         # isolate Attachment parameter
-        $Attachment = $Param{Data}->{Attachment};
+        my $Attachment = $Param{Data}->{Attachment};
 
         # homogenate input to array
         if ( ref $Attachment eq 'HASH' ) {
@@ -574,8 +568,8 @@ sub Run {
             }
 
             # remove leading and trailing spaces
-            for my $Attribute ( sort keys %{$AttachmentItem} ) {
-                if ( ref $Attribute ne 'HASH' && ref $Attribute ne 'ARRAY' ) {
+            for my $Attribute ( sort keys $AttachmentItem->%* ) {
+                if ( !reftype $AttachmentItem->{$Attribute} ) {
 
                     #remove leading spaces
                     $AttachmentItem->{$Attribute} =~ s{\A\s+}{};
@@ -613,11 +607,13 @@ checks if the given ticket parameters are valid.
         Ticket => $Ticket,                          # all ticket parameters
     );
 
-    returns:
+returns:
 
     $TicketCheck = {
         Success => 1,                               # if everything is OK
     }
+
+or
 
     $TicketCheck = {
         ErrorCode    => 'Function.Error',           # if error
@@ -800,7 +796,7 @@ checks if the given article parameter is valid.
     returns:
 
     $ArticleCheck = {
-        Success => 1,                               # if everething is OK
+        Success => 1,                               # if everything is OK
     }
 
     $ArticleCheck = {
@@ -938,7 +934,7 @@ sub _CheckArticle {
     if ( $Article->{ContentType} ) {
 
         # The MIME header field Content-Type is only in some parts case insensitive,
-        # but lowercasing the whole string simplifies the handling in OTOBO.
+        # but lowercasing the whole string simplifies the handling in CareOnCloud ESM.
         $Article->{ContentType} = lc $Article->{ContentType};
 
         if ( !$Self->ValidateContentType( ContentType => $Article->{ContentType} ) ) {
@@ -1056,7 +1052,7 @@ checks if the given dynamic field parameter is valid.
     returns:
 
     $DynamicFieldCheck = {
-        Success => 1,                               # if everething is OK
+        Success => 1,                               # if everything is OK
     }
 
     $DynamicFieldCheck = {
@@ -1094,7 +1090,13 @@ sub _CheckDynamicField {
     }
 
     # check DynamicField->Value
-    if ( !$Self->ValidateDynamicFieldValue( %{$DynamicField} ) ) {
+    if (
+        !$Self->ValidateDynamicFieldValue(
+            %{$DynamicField},
+            ExternalSource => 1,
+        )
+        )
+    {
         return {
             ErrorCode    => 'TicketCreate.InvalidParameter',
             ErrorMessage => "TicketCreate: DynamicField->Value parameter is invalid!",
@@ -1118,7 +1120,7 @@ checks if the given attachment parameter is valid.
     returns:
 
     $AttachmentCheck = {
-        Success => 1,                               # if everething is OK
+        Success => 1,                               # if everything is OK
     }
 
     $AttachmentCheck = {
@@ -1147,7 +1149,7 @@ sub _CheckAttachment {
     if ( $Attachment->{ContentType} ) {
 
         # The MIME header field Content-Type is only in some parts case insensitive,
-        # but lowercasing the whole string simplifies the handling in OTOBO.
+        # but lowercasing the whole string simplifies the handling in CareOnCloud ESM.
         $Attachment->{ContentType} = lc $Attachment->{ContentType};
 
         if ( !$Self->ValidateContentType( ContentType => $Attachment->{ContentType} ) ) {
@@ -1176,16 +1178,18 @@ creates a ticket with its article and sets dynamic fields and attachments if spe
         UserID         => 123,
     );
 
-    returns:
+returns:
 
     $Response = {
-        Success => 1,                               # if everything was OK
+        Success => 1,                               # if everything is OK
         Data => {
             TicketID     => 123,
             TicketNumber => 'TN3422332',
             ArticleID    => 123,
         }
     }
+
+or
 
     $Response = {
         Success      => 0,                         # if unexpected error
@@ -1388,31 +1392,20 @@ sub _TicketCreate {
     }
 
     # set Article From
-    my $From;
+    my $ArticleFrom;
     if ( $Article->{From} ) {
-        $From = $Article->{From};
+        $ArticleFrom = $Article->{From};
     }
 
     # use data from customer user (if customer user is in database)
     elsif ( IsHashRefWithData( \%CustomerUserData ) ) {
-        $From = '"' . $CustomerUserData{UserFullname} . '"'
+        $ArticleFrom = '"' . $CustomerUserData{UserFullname} . '"'
             . ' <' . $CustomerUserData{UserEmail} . '>';
     }
 
     # otherwise use customer user as sent from the request (it should be an email)
     else {
-        $From = $CustomerUser;
-    }
-
-    # set Article To
-    my $To;
-    if ( $Ticket->{Queue} ) {
-        $To = $Ticket->{Queue};
-    }
-    else {
-        $To = $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup(
-            QueueID => $Ticket->{QueueID},
-        );
+        $ArticleFrom = $CustomerUser;
     }
 
     if ( !$Article->{CommunicationChannel} ) {
@@ -1437,8 +1430,141 @@ sub _TicketCreate {
         );
     }
 
-    # Create article.
-    my $ArticleID = $ArticleBackendObject->ArticleCreate(
+    # Create article and optionally send email.
+
+    my $ArticleMethodRef;
+    my $To      = $Article->{To}   // '';
+    my $From    = $Article->{From} // '';
+    my $Cc      = $Article->{Cc}   // '';
+    my $Bcc     = $Article->{Bcc}  // '';
+    my $Subject = $Article->{Subject} || '';
+
+    my $SystemAddressObject = $Kernel::OM->Get('Kernel::System::SystemAddress');
+    my $IsLocalTo           = !$Article->{To} ? 0 : $SystemAddressObject->SystemAddressIsLocalAddress(
+        Address => $Article->{To}
+    );
+
+    my $ShallSendEmail = $Article->{SendEmail} &&
+        $Article->{To}                              &&
+        $Article->{SenderType} eq 'agent'           &&
+        $Article->{CommunicationChannel} eq 'Email' &&
+        !$IsLocalTo;
+
+    if ($ShallSendEmail) {
+
+        my $QueueObject = $Kernel::OM->Get('Kernel::System::Queue');
+
+        my %Queue = $QueueObject->QueueGet(
+            ID => $Ticket->{QueueID},
+        );
+
+        my %SystemAddress = $SystemAddressObject->SystemAddressGet( ID => $Queue{SystemAddressID} );
+
+        my $IsLocalFrom = !$Article->{From} ? 0 : $SystemAddressObject->SystemAddressIsLocalAddress(
+            Address => $Article->{From}
+        );
+
+        $ArticleMethodRef = $ArticleBackendObject->can('ArticleSend');
+        $To               = $Article->{To};
+        $From             = $IsLocalFrom ? $ArticleFrom : $SystemAddress{Name};
+        $Cc               = $Article->{Cc}  if $Article->{Cc}  && !$SystemAddressObject->SystemAddressIsLocalAddress( Address => $Article->{Cc} );
+        $Bcc              = $Article->{Bcc} if $Article->{Bcc} && !$SystemAddressObject->SystemAddressIsLocalAddress( Address => $Article->{Bcc} );
+
+        my $Tn = $TicketObject->TicketNumberLookup( TicketID => $TicketID );
+
+        $Subject = $TicketObject->TicketSubjectBuild(
+            TicketNumber => $Tn,
+            Subject      => $Subject,
+        );
+    }
+    else {
+
+        $ArticleMethodRef = $ArticleBackendObject->can('ArticleCreate');
+        $From             = $ArticleFrom;
+    }
+
+    # support for SMIME encryption and signing
+    my %EmailSecurityOptions;
+
+    if (
+        $ShallSendEmail
+        && $Article->{EmailSecurity}
+        &&
+        $Article->{EmailSecurity}->{Backend} eq 'SMIME'
+        )
+    {
+
+        my $QueueID = $Ticket->{QueueID};
+        if ( !$QueueID ) {
+            $QueueID = $Kernel::OM->Get('Kernel::System::Queue')->QueueLookup(
+                Queue  => $Ticket->{Queue},
+                UserID => $Param{UserID},
+            );
+        }
+
+        # prettify FROM
+        if ($ShallSendEmail) {
+            $From = $Kernel::OM->Get('Kernel::System::TemplateGenerator')->Sender(
+                QueueID => $QueueID,
+                UserID  => $Param{UserID},
+            );
+        }
+
+        my $EmailSecurity = {
+            Backend     => 'SMIME',
+            SignKey     => undef,
+            EncryptKeys => undef,
+        };
+
+        my $SMIMEObject       = $Kernel::OM->Get('Kernel::System::Crypt::SMIME');
+        my $EmailParserObject = Kernel::System::EmailParser->new(
+            Mode  => 'Standalone',
+            Debug => 0,
+        );
+        if ( $Article->{EmailSecurity}->{Sign} ) {
+
+            my $Email  = $EmailParserObject->GetEmailAddress( Email => $From );
+            my @Result = $SMIMEObject->CertificateSearch(
+                Search => $Email,
+            );
+
+            if ( scalar @Result == 1 ) {
+
+                $EmailSecurity->{SignKey} = $Result[0]->{Filename};
+            }
+            else {
+
+                return {
+                    Success      => 0,
+                    ErrorMessage => 'Article could not be send, SMIME Signing was requested but no SMIME signing certificate is avail.'
+                };
+            }
+        }
+        if ( $Article->{EmailSecurity}->{Encrypt} ) {
+
+            my $Email  = $EmailParserObject->GetEmailAddress( Email => $To );
+            my @Result = $SMIMEObject->CertificateSearch(
+                Search => $Email,
+            );
+
+            if ( scalar @Result == 1 ) {
+
+                $EmailSecurity->{EncryptKeys} = [ $Result[0]->{Filename} ];
+            }
+            else {
+
+                return {
+                    Success      => 0,
+                    ErrorMessage => 'Article could not be send, SMIME Encryption was requested but no unique SMIME certificate for encryption could be identified.'
+                };
+            }
+        }
+
+        $EmailSecurityOptions{EmailSecurity} = $EmailSecurity;
+    }
+
+    my $ArticleID = $ArticleMethodRef->(
+        $ArticleBackendObject,
         NoAgentNotify        => $Article->{NoAgentNotify} || 0,
         TicketID             => $TicketID,
         SenderTypeID         => $Article->{SenderTypeID} || '',
@@ -1461,6 +1587,7 @@ sub _TicketCreate {
             Subject => $Article->{Subject},
             Body    => $PlainBody,
         },
+        %EmailSecurityOptions
     );
 
     if ( !$ArticleID ) {
@@ -1640,7 +1767,7 @@ sub _TicketCreate {
     # prepare Article DynamicFields
     my @ArticleDynamicFields;
 
-    # remove all dynamic fields form main ticket hash and set them into an array.
+    # remove all dynamic fields from main ticket hash and set them into an array.
     ARTICLEATTRIBUTE:
     for my $ArticleAttribute ( sort keys %ArticleData ) {
         if ( $ArticleAttribute =~ m{\A DynamicField_(.*) \z}msx ) {
@@ -1667,7 +1794,6 @@ sub _TicketCreate {
         );
 
         my @Attachments;
-        $Kernel::OM->Get('Kernel::System::Main')->Require('MIME::Base64');
         ATTACHMENT:
         for my $FileID ( sort keys %AttachmentIndex ) {
             next ATTACHMENT if !$FileID;
@@ -1679,7 +1805,7 @@ sub _TicketCreate {
             next ATTACHMENT if !IsHashRefWithData( \%Attachment );
 
             # convert content to base64, but prevent 76 chars brake, see bug#14500.
-            $Attachment{Content} = MIME::Base64::encode_base64( $Attachment{Content}, '' );
+            $Attachment{Content} = encode_base64( $Attachment{Content}, '' );
             push @Attachments, {%Attachment};
         }
 
@@ -1691,6 +1817,7 @@ sub _TicketCreate {
 
     $TicketData{Article} = \%ArticleData;
 
+    # return ticket data and article data
     return {
         Success => 1,
         Data    => {

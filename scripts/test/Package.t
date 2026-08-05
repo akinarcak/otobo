@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -13,19 +13,19 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
 use File::Copy qw(copy move);
-use File::stat;
+use File::stat qw(stat);
 
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Self and $Kernel::System::OM
 
 our $Self;
@@ -74,17 +74,17 @@ my $CacheClearedCheck = sub {
 };
 
 my $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
-  <ChangeLog>2022-07-29 Update test package to Framework 11.0.x (some test &lt; &gt; &amp;).</ChangeLog>
+  <ChangeLog>2024-06-21 Update test package to Framework 11.1.x (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
   <ModuleRequired Version="1.112">Encode</ModuleRequired>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2022-07-29 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <CodeInstall>
@@ -116,28 +116,28 @@ my $String = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="Custom/Kernel/Modules/Test.pm" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $StringSecond = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestSecond</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
-  <ChangeLog>2022-07-29 Update test package to Framework 11.0.x (some test &lt; &gt; &amp;).</ChangeLog>
+  <ChangeLog>2024-06-21 Update test package to Framework 11.1.x (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
   <Description Lang="de">Ein Test Paket (some test &lt; &gt; &amp;).</Description>
   <ModuleRequired Version="1.112">Encode</ModuleRequired>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2022-07-29 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="TestSecond" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/TestSecond" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # check if the package is already installed - check by name
@@ -335,11 +335,11 @@ $Self->True(
 
 # reinstall test
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <ChangeLog>2005-11-10 New package (some test &lt; &gt; &amp;).</ChangeLog>
   <Description Lang="en">A test package (some test &lt; &gt; &amp;).</Description>
@@ -376,7 +376,7 @@ $String = '<?xml version="1.0" encoding="utf-8" ?>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
     <File Location="var/Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 # reinstall
@@ -398,22 +398,22 @@ $Self->True(
 $CacheClearedCheck->();
 
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
   <PackageRequired Version="0.1">SomeNotExistingModule</PackageRequired>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 my $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -423,22 +423,22 @@ $Self->True(
 );
 
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestOSDetection1</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
   <OS>NonExistingOS</OS>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -448,24 +448,24 @@ $Self->True(
 );
 
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>TestOSDetection2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
   <OS>darwin</OS>
   <OS>linux</OS>
   <OS>freebsd</OS>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -482,22 +482,22 @@ $Self->True(
 );
 
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
   <ModuleRequired Version="0.1">SomeNotExistingModule</ModuleRequired>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -506,22 +506,22 @@ $Self->True(
     '#3 PackageInstall() - ModuleRequired not installed',
 );
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
   <ModuleRequired Version="12.999">Encode</ModuleRequired>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -532,21 +532,21 @@ $Self->True(
 
 # #5 file exists tests
 my $String1 = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String1 );
 $Self->True(
@@ -554,21 +554,21 @@ $Self->True(
     '#5 PackageInstall() - 1/3 File already exists in package X.',
 );
 my $String2 = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test3</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String2 );
 
@@ -577,39 +577,39 @@ $Self->True(
     '#5 PackageInstall() - 2/3 File already exists in package X.',
 );
 my $String3 = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test3</Name>
   <Version>0.0.2</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test3" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String3 );
 my $String3a = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test3</Name>
   <Version>0.0.3</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
     <File Location="Test" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 my $PackageUpgrade = $PackageObject->PackageUpgrade( String => $String3a );
@@ -621,15 +621,15 @@ $Self->True(
 
 my $TmpDir   = $ConfigObject->Get('TempDir');
 my $String3b = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test3</Name>
   <Version>0.0.3</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <CodeUpgrade Type="pre" Version="0.0.4">
@@ -670,7 +670,7 @@ my $String3b = '<?xml version="1.0" encoding="utf-8" ?>
   <Filelist>
     <File Location="Test3" Permission="644" Encode="Base64">aGVsbG8K</File>
   </Filelist>
-</otobo_package>
+</careoncloud_package>
 ';
 
 $CachePopulate->();
@@ -722,18 +722,18 @@ $Self->True(
 
 # #6 os check
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
   <OS>_non_existing_</OS>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -744,18 +744,18 @@ $Self->True(
 
 # #7 fw check
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
   <Framework>99.0.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -766,15 +766,15 @@ $Self->True(
 
 # 9 pre tests
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
@@ -800,7 +800,7 @@ $String = '<?xml version="1.0" encoding="utf-8" ?>
   <DatabaseUninstall Type="pre">
     <TableDrop Name="test_package"/>
   </DatabaseUninstall>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -830,15 +830,15 @@ $Self->True(
 
 # 10 post tests
 $String = '<?xml version="1.0" encoding="utf-8" ?>
-<otobo_package version="1.0">
+<careoncloud_package version="1.0">
   <Name>Test2</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang="en">A test package.</Description>
   <Description Lang="de">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>
@@ -864,7 +864,7 @@ $String = '<?xml version="1.0" encoding="utf-8" ?>
   <DatabaseUninstall Type="post">
     <TableDrop Name="test_package"/>
   </DatabaseUninstall>
-</otobo_package>
+</careoncloud_package>
 ';
 $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -905,15 +905,15 @@ my $FilesNotAllowed = [
     '/etc/shadow',
 ];
 my $FileNotAllowedString = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>
-<otobo_package version=\"1.0\">
+<careoncloud_package version=\"1.0\">
   <Name>FilesNotAllowed</Name>
   <Version>0.0.1</Version>
   <Vendor>Rother OSS GmbH</Vendor>
-  <URL>https://otobo.de/</URL>
+  <URL>https://otobo.io/</URL>
   <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
   <Description Lang=\"en\">A test package.</Description>
   <Description Lang=\"de\">Ein Test Paket.</Description>
-  <Framework>11.0.x</Framework>
+  <Framework>11.1.x</Framework>
   <BuildDate>2005-11-10 21:17:16</BuildDate>
   <BuildHost>yourhost.example.com</BuildHost>
   <Filelist>\n";
@@ -922,7 +922,7 @@ for my $FileNotAllowed ( $FilesNotAllowed->@* ) {
         "    <File Location=\"$FileNotAllowed\" Permission=\"644\" Encode=\"Base64\">aGVsbG8K</File>\n";
 }
 $FileNotAllowedString .= "  </Filelist>
-</otobo_package>\n";
+</careoncloud_package>\n";
 
 $PackageInstall = $PackageObject->PackageInstall( String => $FileNotAllowedString );
 
@@ -975,25 +975,25 @@ if (
 if ( !$DeveloperSystem ) {
 
     # 12 check "do not remove framework file if no backup exists"
-    my $RemoveFile          = $Home . '/' . 'bin/otobo.CheckSum.pl.save';
-    my $RemoveFileFramework = $Home . '/' . 'bin/otobo.CheckSum.pl';
+    my $RemoveFile          = $Home . '/' . 'bin/careoncloud.CheckSum.pl.save';
+    my $RemoveFileFramework = $Home . '/' . 'bin/careoncloud.CheckSum.pl';
     copy( $RemoveFileFramework, $RemoveFileFramework . '.orig' );
     $String = '<?xml version="1.0" encoding="utf-8" ?>
-    <otobo_package version="1.0">
+    <careoncloud_package version="1.0">
       <Name>TestFrameworkFileCheck</Name>
       <Version>0.0.1</Version>
       <Vendor>Rother OSS GmbH</Vendor>
-      <URL>https://otobo.de/</URL>
+      <URL>https://otobo.io/</URL>
       <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
       <Description Lang="en">A test package.</Description>
       <Description Lang="de">Ein Test Paket.</Description>
-      <Framework>11.0.x</Framework>
+      <Framework>11.1.x</Framework>
       <BuildDate>2005-11-10 21:17:16</BuildDate>
       <BuildHost>yourhost.example.com</BuildHost>
       <Filelist>
-        <File Location="bin/otobo.CheckSum.pl" Permission="644" Encode="Base64">aGVsbG8K</File>
+        <File Location="bin/careoncloud.CheckSum.pl" Permission="644" Encode="Base64">aGVsbG8K</File>
       </Filelist>
-    </otobo_package>
+    </careoncloud_package>
     ';
     $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -1005,20 +1005,20 @@ if ( !$DeveloperSystem ) {
     # check if save file exists
     $Self->True(
         -e $RemoveFile,
-        '#12 PackageInstall() - save file bin/otobo.CheckSum.pl.save exists',
+        '#12 PackageInstall() - save file bin/careoncloud.CheckSum.pl.save exists',
     );
 
     # check if save file exists (should not anymore)
     my $RemoveFileUnlink = unlink $RemoveFile;
     $Self->True(
         $RemoveFileUnlink,
-        '#12 PackageInstall() - save file bin/otobo.CheckSum.pl.save got removed',
+        '#12 PackageInstall() - save file bin/careoncloud.CheckSum.pl.save got removed',
     );
 
     # check if save file exists (should not anymore)
     $Self->True(
         !-e $RemoveFile,
-        '#12 PackageInstall() - save file bin/otobo.CheckSum.pl.save does not exists',
+        '#12 PackageInstall() - save file bin/careoncloud.CheckSum.pl.save does not exists',
     );
 
     # uninstall package
@@ -1031,13 +1031,13 @@ if ( !$DeveloperSystem ) {
     # check if save file exists (should not)
     $Self->True(
         !-e $RemoveFile,
-        '#12 PackageUninstall() - save file bin/otobo.CheckSum.pl.save does not exists',
+        '#12 PackageUninstall() - save file bin/careoncloud.CheckSum.pl.save does not exists',
     );
 
     # check if framework file exists
     $Self->True(
         -e $RemoveFileFramework,
-        '#12 PackageUninstall() - save file bin/otobo.CheckSum.pl exists',
+        '#12 PackageUninstall() - save file bin/careoncloud.CheckSum.pl exists',
     );
     move(
         $RemoveFileFramework . '.orig',
@@ -1049,25 +1049,25 @@ if ( !$DeveloperSystem ) {
 if ( !$DeveloperSystem ) {
 
     # 13 check "do create .save file on reinstall if it's a framework file"
-    my $SaveFile          = $Home . '/' . 'bin/otobo.CheckSum.pl.save';
-    my $SaveFileFramework = $Home . '/' . 'bin/otobo.CheckSum.pl';
+    my $SaveFile          = $Home . '/' . 'bin/careoncloud.CheckSum.pl.save';
+    my $SaveFileFramework = $Home . '/' . 'bin/careoncloud.CheckSum.pl';
     copy( $SaveFileFramework, $SaveFileFramework . '.orig' );
     $String = '<?xml version="1.0" encoding="utf-8" ?>
-    <otobo_package version="1.0">
+    <careoncloud_package version="1.0">
       <Name>TestFrameworkFileCheck</Name>
       <Version>0.0.1</Version>
       <Vendor>Rother OSS GmbH</Vendor>
-      <URL>https://otobo.de/</URL>
+      <URL>https://otobo.io/</URL>
       <License>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</License>
       <Description Lang="en">A test package.</Description>
       <Description Lang="de">Ein Test Paket.</Description>
-      <Framework>11.0.x</Framework>
+      <Framework>11.1.x</Framework>
       <BuildDate>2005-11-10 21:17:16</BuildDate>
       <BuildHost>yourhost.example.com</BuildHost>
       <Filelist>
-        <File Location="bin/otobo.CheckSum.pl" Permission="644" Encode="Base64">aGVsbG8K</File>
+        <File Location="bin/careoncloud.CheckSum.pl" Permission="644" Encode="Base64">aGVsbG8K</File>
       </Filelist>
-    </otobo_package>
+    </careoncloud_package>
     ';
     $PackageInstall = $PackageObject->PackageInstall( String => $String );
 
@@ -1086,7 +1086,7 @@ if ( !$DeveloperSystem ) {
     );
     $Self->True(
         $Write,
-        '#13 FileWrite() - bin/otobo.CheckSum.pl modified',
+        '#13 FileWrite() - bin/careoncloud.CheckSum.pl modified',
     );
     my $ReadOrig = $MainObject->FileRead(
         Location => $SaveFileFramework,
@@ -1101,13 +1101,13 @@ if ( !$DeveloperSystem ) {
     my $SaveFileUnlink = unlink $SaveFile;
     $Self->True(
         $SaveFileUnlink,
-        '#13 PackageInstall() - save file bin/otobo.CheckSum.pl.save got removed',
+        '#13 PackageInstall() - save file bin/careoncloud.CheckSum.pl.save got removed',
     );
 
     # check if save file exists (should not anymore)
     $Self->True(
         !-e $SaveFile,
-        '#13 PackageInstall() - save file bin/otobo.CheckSum.pl.save does not exists',
+        '#13 PackageInstall() - save file bin/careoncloud.CheckSum.pl.save does not exists',
     );
 
     # reinstall
@@ -1124,7 +1124,7 @@ if ( !$DeveloperSystem ) {
     # check if save file exists
     $Self->True(
         -e $SaveFile,
-        '#13 PackageReinstall() - save file bin/otobo.CheckSum.pl.save exists',
+        '#13 PackageReinstall() - save file bin/careoncloud.CheckSum.pl.save exists',
     );
 
     # uninstall package
@@ -1145,15 +1145,15 @@ if ( !$DeveloperSystem ) {
 
     $Self->True(
         ${$ReadOrig} eq ${$ReadLater},
-        '#13 PackageReinstall() - file bin/otobo.CheckSum.pl is still the orig',
+        '#13 PackageReinstall() - file bin/careoncloud.CheckSum.pl is still the orig',
     );
     move(
         $SaveFileFramework . '.orig',
         $SaveFileFramework
     );
 
-    # return the correct permissions to otobo.CheckSum.pl
-    chmod 0755, $Home . '/' . 'bin/otobo.CheckSum.pl';
+    # return the correct permissions to careoncloud.CheckSum.pl
+    chmod 0755, $Home . '/' . 'bin/careoncloud.CheckSum.pl';
 }
 
 done_testing;

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,10 +15,13 @@
 # --
 
 package Kernel::Modules::AgentElasticsearchQuickResult;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::DBObject)
 
 use strict;
 use warnings;
+
+use Path::Class;
 
 our $ObjectManagerDisabled = 1;
 
@@ -69,7 +72,7 @@ sub Run {
         # check module permissions to determine whether results can be shown
         my %Permission;
         MODULE:
-        for my $Module (qw/AgentTicketZoom AdminCustomerCompany AdminCustomerUser AgentITSMConfigItemZoom/) {
+        for my $Module (qw/AgentTicketZoom AgentCustomerInformationCenter AgentCustomerUserInformationCenter AgentITSMConfigItemZoom AgentFAQZoom/) {
             my $ModuleReg = $ConfigObject->Get('Frontend::Module')->{$Module};
 
             # module is not configured
@@ -78,88 +81,129 @@ sub Run {
                 next MODULE;
             }
 
-            # no restrictions
-            if ( ref $ModuleReg->{GroupRo} eq 'ARRAY' && !scalar @{ $ModuleReg->{GroupRo} } ) {
+            # module permission check
+            if (
+                ref $ModuleReg->{GroupRo} eq 'ARRAY'
+                && !scalar @{ $ModuleReg->{GroupRo} }
+                && ref $ModuleReg->{Group} eq 'ARRAY'
+                && !scalar @{ $ModuleReg->{Group} }
+                )
+            {
                 $Permission{$Module} = 1;
-                next MODULE;
-            }
-
-            next MODULE if !$ModuleReg->{GroupRo};
-
-            if ( ref $ModuleReg->{GroupRo} eq 'ARRAY' ) {
-                INNER:
-                for my $GroupName ( @{ $ModuleReg->{GroupRo} } ) {
-                    next INNER if !$GroupName;
-                    next INNER if !$GroupObject->PermissionCheck(
-                        UserID    => $Self->{UserID},
-                        GroupName => $GroupName,
-                        Type      => 'ro',
-                    );
-
-                    $Permission{$Module} = 1;
-                    next MODULE;
-                }
             }
             else {
-                my $HasPermission = $GroupObject->PermissionCheck(
-                    UserID    => $Self->{UserID},
-                    GroupName => $ModuleReg->{GroupRo},
-                    Type      => 'ro',
+                my $AccessRo;
+                my $AccessRw;
+                my $GroupObject = $Kernel::OM->Get('Kernel::System::Group');
 
-                );
-                if ($HasPermission) {
-                    $Permission{$Module} = 1;
+                PERMISSION:
+                for my $Permission (qw(GroupRo Group)) {
+                    my $AccessOk = 0;
+                    my $Group    = $ModuleReg->{$Permission};
+                    next PERMISSION if !$Group;
+                    if ( ref $Group eq 'ARRAY' ) {
+                        INNER:
+                        for my $GroupName ( @{$Group} ) {
+                            next INNER if !$GroupName;
+                            next INNER if !$GroupObject->PermissionCheck(
+                                UserID    => $Self->{UserID},
+                                GroupName => $GroupName,
+                                Type      => $Permission eq 'GroupRo' ? 'ro' : 'rw',
+
+                            );
+                            $AccessOk = 1;
+                            last INNER;
+                        }
+                    }
+                    else {
+                        my $HasPermission = $GroupObject->PermissionCheck(
+                            UserID    => $Self->{UserID},
+                            GroupName => $Group,
+                            Type      => $Permission eq 'GroupRo' ? 'ro' : 'rw',
+
+                        );
+                        if ($HasPermission) {
+                            $AccessOk = 1;
+                        }
+                    }
+                    if ( $Permission eq 'Group' && $AccessOk ) {
+                        $AccessRo = 1;
+                        $AccessRw = 1;
+                    }
+                    elsif ( $Permission eq 'GroupRo' && $AccessOk ) {
+                        $AccessRo = 1;
+                    }
                 }
+                if ( ( !$AccessRo && !$AccessRw ) || ( !$AccessRo && $AccessRw ) ) {
+                    next MODULE;
+                }
+
+                $Permission{$Module} = 1;
             }
         }
 
         # get objects
-        my ( @TicketIDs, @CustomerKeys, @CustomerUserKeys, @ConfigItems );
-
+        my ( @TicketIDs, @CustomerKeys, @CustomerUserKeys, @ConfigItems, @FAQs );
         if ( $SearchObjects->{Ticket} && $SearchObjects->{Ticket}{Count} && $Permission{AgentTicketZoom} ) {
 
             # Search ticket by ES sort by age. Show $Size results (default to 10 in SysConfig)
-            @TicketIDs = $ESObject->TicketSearch(
+            my $SearchResult = $ESObject->TicketSearch(
                 Fulltext => $ParamObject->GetParam( Param => 'FulltextES' ),
                 UserID   => $Self->{UserID},
                 Limit    => $SearchObjects->{Ticket}{Count},
                 Result   => 'FULL',
             );
+            @TicketIDs = $SearchResult->{Data}->@*;
         }
 
         if (
             $SearchObjects->{CustomerCompany}
             && $SearchObjects->{CustomerCompany}{Count}
-            && $Permission{AdminCustomerCompany}
+            && $Permission{AgentCustomerInformationCenter}
             )
         {
             # Search customer by ES.
-            @CustomerKeys = $ESObject->CustomerCompanySearch(
+            my $SearchResult = $ESObject->CustomerCompanySearch(
                 Fulltext => $ParamObject->GetParam( Param => 'FulltextES' ),
                 Limit    => $SearchObjects->{CustomerCompany}{Count},
                 Result   => 'ARRAY',
             );
+            @CustomerKeys = $SearchResult->{Data}->@*;
         }
 
-        if ( $SearchObjects->{CustomerUser} && $SearchObjects->{CustomerUser}{Count} && $Permission{AdminCustomerUser} )
+        if ( $SearchObjects->{CustomerUser} && $SearchObjects->{CustomerUser}{Count} && $Permission{AgentCustomerUserInformationCenter} )
         {
             # Search customer user by ES.
-            @CustomerUserKeys = $ESObject->CustomerUserSearch(
+            my $SearchResult = $ESObject->CustomerUserSearch(
                 Fulltext => $ParamObject->GetParam( Param => 'FulltextES' ),
                 Limit    => $SearchObjects->{CustomerUser}{Count},
                 Result   => 'ARRAY',
             );
+            @CustomerUserKeys = $SearchResult->{Data}->@*;
         }
 
         if ( $SearchObjects->{ConfigItem} && $SearchObjects->{ConfigItem}{Count} && $Permission{AgentITSMConfigItemZoom} )
         {
-            # Search customer user by ES.
-            @ConfigItems = $ESObject->ConfigItemSearch(
+            # Search config item by ES.
+            my $SearchResult = $ESObject->ConfigItemSearch(
                 Fulltext => $ParamObject->GetParam( Param => 'FulltextES' ),
                 Limit    => $SearchObjects->{ConfigItem}{Count},
                 Result   => 'FULL',
                 UserID   => $Self->{UserID},
             );
+            @ConfigItems = $SearchResult->{Data}->@*;
+        }
+        if ( $SearchObjects->{FAQ} && $SearchObjects->{FAQ}{Count} && $Permission{AgentFAQZoom} )
+        {
+            # Search FAQ by ES.
+
+            my $SearchResult = $ESObject->FAQSearch(
+                Fulltext => $ParamObject->GetParam( Param => 'FulltextES' ),
+                Limit    => $SearchObjects->{FAQ}{Count},
+                Result   => 'FULL',
+                UserID   => $Self->{UserID},
+            );
+            @FAQs = $SearchResult->{Data}->@*;
         }
 
         # Start to fill the blockdata for the template
@@ -259,7 +303,6 @@ sub Run {
                 }
             }
         }
-
         if (@CustomerUserKeys) {
             for my $Attr ( @{ $SearchObjects->{CustomerUser}{Attributes} } ) {
                 $LayoutObject->Block(
@@ -328,6 +371,39 @@ sub Run {
                 }
             }
         }
+        if (@FAQs) {
+            for my $Attr ( @{ $SearchObjects->{FAQ}{Attributes} } ) {
+                $LayoutObject->Block(
+                    Name => 'FAQHeader',
+                    Data => {
+                        Header => $SearchObjects->{FAQ}{AttributeHeader}{$Attr},
+                    },
+                );
+            }
+
+            # Block FAQ data
+            for my $FAQ (@FAQs) {
+
+                my ( $FAQItemID, $FAQParam ) = ( %{$FAQ} );
+
+                $LayoutObject->Block(
+                    Name => 'RecordFAQ',
+                    Data => {},
+                );
+
+                # block entries
+                for my $Attr ( @{ $SearchObjects->{FAQ}{Attributes} } ) {
+                    $LayoutObject->Block(
+                        Name => 'FAQEntry',
+                        Data => {
+                            ItemID => $FAQItemID,
+                            Title  => $FAQParam->{Title},
+                            Entry  => $FAQParam->{$Attr},
+                        },
+                    );
+                }
+            }
+        }
 
         # Create output
         my $Output = $LayoutObject->Output(
@@ -338,6 +414,7 @@ sub Run {
                 Companies     => scalar @CustomerKeys,
                 CustomerUsers => scalar @CustomerUserKeys,
                 ConfigItems   => scalar @ConfigItems,
+                FAQs          => scalar @FAQs,
             }
         );
 

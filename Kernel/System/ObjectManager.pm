@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,17 +15,18 @@
 # --
 
 package Kernel::System::ObjectManager;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::PodSpelling)
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::Require)
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::SyntaxCheck)
 
+use v5.24;    # activates the feature 'current_sub' for support of __SUB__, available since Perl 5.16
 use strict;
 use warnings;
-use feature qw(current_sub);    # support for __SUB__
 
 # core modules
-use Carp ();
+use Carp         ();
 use Scalar::Util qw(weaken);
 
 # CPAN modules
@@ -34,19 +35,22 @@ use Try::Tiny;
 # use the "standard" modules directly, so that persistent environments
 # like mod_perl and FastCGI pre-load them at startup
 
-# OTOBO modules
-use Kernel::Output::HTML::Layout;
-use Kernel::System::Auth;
-use Kernel::System::AuthSession;
-use Kernel::System::Cache;
-use Kernel::System::DateTime;
-use Kernel::System::DB;
-use Kernel::System::Encode;
-use Kernel::System::Group;
-use Kernel::System::Log;
-use Kernel::System::Main;
-use Kernel::System::Web::Request;
-use Kernel::System::User;
+# CareOnCloud ESM modules
+## no perlimports
+use Kernel::Output::HTML::Layout ();
+use Kernel::System::Auth         ();
+use Kernel::System::AuthSession  ();
+use Kernel::System::Cache        ();
+use Kernel::System::DateTime     ();
+use Kernel::System::DB           ();
+use Kernel::System::Encode       ();
+use Kernel::System::Group        ();
+use Kernel::System::Log          ();
+use Kernel::System::Main         ();
+use Kernel::System::Web::Request ();
+use Kernel::System::User         ();
+
+## use perlimports
 
 =head1 NAME
 
@@ -54,7 +58,7 @@ Kernel::System::ObjectManager - Central singleton manager and object instance ge
 
 =head1 SYNOPSIS
 
-    # In top level scripts, or otobo.psgi, only!
+    # In top level scripts, or careoncloud.psgi, only!
     local $Kernel::OM = Kernel::System::ObjectManager->new();
 
     # Everywhere: get a singleton instance (and create it, if needed).
@@ -67,7 +71,7 @@ Kernel::System::ObjectManager - Central singleton manager and object instance ge
 
 =head1 DESCRIPTION
 
-The ObjectManager is the central place to create and access singleton OTOBO objects (via C<L</Get()>>)
+The ObjectManager is the central place to create and access singleton CareOnCloud ESM objects (via C<L</Get()>>)
 as well as create regular (unmanaged) object instances (via C<L</Create()>>).
 
 =head2 How does singleton management work?
@@ -77,20 +81,24 @@ are destroyed in the correct order, based on their dependencies (see below).
 
 =head2 How to use it?
 
-The ObjectManager must always be provided to OTOBO by the top level script like this:
+The ObjectManager must always be provided to CareOnCloud ESM by the top level script like this:
 
     use Kernel::System::ObjectManager;
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         # possible options for module constructors here
         LogObject {
-            LogPrefix => 'OTOBO-MyTestScript',
+            LogPrefix => 'CareOnCloud ESM-MyTestScript',
         },
     );
 
 Then in the code any singleton object can be retrieved that the ObjectManager can handle,
 like Kernel::System::DB:
 
-    return if !$Kernel::OM->Get('Kernel::System::DB')->Prepare('SELECT 1');
+    return unless $Kernel::OM->Get('Kernel::System::DB')->Prepare('SELECT 1');
+
+Note that localizing C<$Kernel::OM> is not really necessary in most scripts. The use of C<local> in
+F<careoncloud.psgi> is a special case. There it helps in avoiding that data from one HTTP request carries
+over to the next request.
 
 =head2 Which objects can be loaded?
 
@@ -146,7 +154,7 @@ flag (this will not work with C<L</Get()>>).
 
 Creates a new instance of Kernel::System::ObjectManager.
 
-This is typically B<only> needed in top level (C<bin/>) scripts! All parts of the OTOBO API assume
+This is typically B<only> needed in top level (C<bin/>) scripts! All parts of the CareOnCloud ESM API assume
 the ObjectManager to be present in C<$Kernel::OM> and use it.
 
 Sometimes objects need parameters to be sent to their constructors,
@@ -155,7 +163,7 @@ The hash reference will be flattened and passed to the constructor of the object
 
     local $Kernel::OM = Kernel::System::ObjectManager->new(
         Kernel::System::Log => {
-            LogPrefix => 'OTOBO-MyTestScript',
+            LogPrefix => 'CareOnCloud ESM-MyTestScript',
         },
     );
 
@@ -392,10 +400,10 @@ sub ObjectInstanceRegister {
 
 =head2 ObjectParamAdd()
 
-Adds arguments that will be passed to constructors of classes
-when they are created, in the same format as the C<L<new()>> method
-receives them. Existing constructor arguments are overwritten. Already
-existing constructor arguments are kept.
+Merge the arguments that will be passed to constructors of classes
+when they are created. The format in the same as for the C<L<new()>> method
+of the objects. Existing constructor arguments are overwritten. Already
+existing constructor arguments, that are not in the new list,  are kept.
 
     $Kernel::OM->ObjectParamAdd(
         'Kernel::System::Ticket' => {
@@ -405,6 +413,8 @@ existing constructor arguments are kept.
             KeyZ => [ 1 .. 10 ],
         },
     );
+
+Always returns an empty list.
 
 =cut
 
@@ -429,11 +439,13 @@ sub ObjectParamAdd {
 
 =head2 ObjectEventsHandle()
 
-Execute all queued (C<< Transaction => 1 >>) events for all singleton objects
-that the ObjectManager created before. This can be used to flush the event queue
+Execute the transaction subscribers for all queued events. These events had been queued
+by the singleton objects that the ObjectManager created before. This can be used to flush the event queue
 before destruction, for example.
 
     $Kernel::OM->ObjectEventsHandle();
+
+This method is implicitly called in the F<DESTROY()> method.
 
 =cut
 
@@ -520,7 +532,7 @@ sub ObjectsDiscard {
         push @AllObjects, $Object;
     }
 
-    # During an OTOBO package upgrade the packagesetup code module has just
+    # During a CareOnCloud ESM package upgrade the packagesetup code module has just
     # recently been copied to its location in the file system.
     # In a persistent Perl environment an old version of the module might still be loaded,
     # as watchdogs like Kernel::System::ModuleRefresh haven't had a chance to reload it.

@@ -1,7 +1,7 @@
-/* OTOBO is a web-based ticketing system for service organisations.
+/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -13,10 +13,10 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
-/*  All devices capable of OTOBO minimum solution. Used to hide elements for mobile devices. */
+/*  All devices capable of CareOnCloud ESM minimum solution. Used to hide elements for mobile devices. */
 /* This code has been moved to Core.Defaults.css */
 
-/*  All devices with a smaller resolution than the current OTOBO minimum solution */
+/*  All devices with a smaller resolution than the current CareOnCloud ESM minimum solution */
 @media only screen and (min-width: 0px) and (max-width: 1024px) {
 
     body, html {
@@ -66,7 +66,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         white-space: nowrap;
         overflow-x: scroll;
         border: 0px;
-        background: #00023c;
+        background: var(--colMainDark);
         overflow: auto;
         height: 0px;
     }
@@ -92,7 +92,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         display: inline-block;
         float: none;
         display: inline-block;
-        background-color: #444;
+        background-color: var(--colTextMedium);
         padding: 8px;
         margin-bottom: 10px;
         margin-top: 10px;
@@ -102,7 +102,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     #ToolBar li.UserAvatar i {
         display: block !important;
-        color: #fef235;
+        color: var(--colHighlight);
     }
 
     #ToolBar li.UserAvatar div a:last-child {
@@ -136,7 +136,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     }
 
     #ToolBar li i {
-        color: #fef235;
+        color: var(--colHighlight);
         text-shadow: none;
         font-size: 20px;
         top: -15px;
@@ -171,7 +171,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     }
 
     #ToolBar li.Extended form {
-        display: inline;
+        display: inline-block;
+        float: none;
+    }
+
+    #ToolBar .Extended textarea {
+        resize: none;
+        max-width: 150px;
+    }
+
+    #ToolBar .Extended.SearchFulltext {
+        max-width: 150px;
     }
 
     #Header #Logo {
@@ -210,7 +220,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     .ResponsiveHandle {
         font-size: 30px;
-        color: #fef235;
+        color: var(--colHighlight);
         cursor: pointer;
         display: block;
         position: fixed;
@@ -218,7 +228,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         width: 25px;
         height: 30px;
         padding: 5px 10px;
-        background: #00023c;
+        background: var(--colMainDark);
         background-color: rgba(22, 22, 22, 0.5);
         text-align: center;
         z-index: 999;
@@ -236,7 +246,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         top: 60px;
         left: -45px;
         display: none;
-        color: #ccc;
+        color: var(--colBGDark);
         cursor: default;
     }
 
@@ -247,7 +257,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         top: 0px;
         height: 100%;
         position: fixed;
-        background: #00023c;
+        background: var(--colMainDark);
         width: 280px;
         overflow: auto;
     }
@@ -267,7 +277,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         float: none;
         box-shadow: none !important;
         border: 0px !important;
-        border-top: 1px solid #444 !important;
+        border-top: 1px solid var(--colTextMedium) !important;
     }
 
     #Navigation > li > a {
@@ -292,7 +302,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     #Navigation > .Selected,
     #Navigation > li:hover {
-        color: #fef235;
+        color: var(--colHighlight);
     }
 
     #Navigation > .Active > ul {
@@ -335,7 +345,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     .WidgetSimple span.Pagination a,
     .OverviewActions span.Pagination a {
         display: inline-block;
-        background-color: #aaa;
+        background-color: var(--colTextLight);
         color: #fff;
         font-size: 12px;
         padding: 5px 7px;
@@ -345,7 +355,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     .WidgetSimple span.Pagination a.Selected,
     .OverviewActions span.Pagination a.Selected {
         font-weight: normal;
-        background-color: #555;
+        background-color: var(--colTextMedium);
     }
 
     .WidgetSimple > .Header h2,
@@ -451,6 +461,19 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         margin: 0;
     }
 
+    fieldset.TableLike > .RichTextField {
+        width: unset;
+        max-width: unset;
+    }
+
+    fieldset.TableLike > .RichTextField > *,
+    fieldset.TableLike > .Field > .DnDUpload,
+    fieldset.TableLike > .Field > .AttachmentListContainer,
+    fieldset.TableLike > .Field > .AjaxDnDUpload {
+        width: calc( 90% + 10px );
+        max-width: unset !important;
+    }
+
     body.Popup fieldset.TableLike > .RichTextField,
     body.RealPopup.RTL fieldset.TableLike > .RichTextField {
         padding: 0px;
@@ -482,6 +505,44 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     fieldset.TableLike > .Row > .FieldCell > .Field > input[type=checkbox] {
         width: auto;
     }
+
+    fieldset.TableLike .Row.MultiColumn {
+        margin-left: 0px;
+        width: calc(90% + 8px); /*accounting for padding of other inputs for uniform lengths*/
+    }
+
+    /* DynamicFieldSet */
+
+    fieldset.TableLike .Row.Row_DynamicField .DFSetOuterField {
+        max-width: 100%;
+        width: calc(90% + 8px); /*accounting for padding of other inputs for uniform lengths*/
+    }
+
+    fieldset.TableLike .DynamicFieldSet {
+        width: 100%;
+    }
+
+    fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet .Field {
+        grid-column: 1;
+    }
+
+    fieldset.TableLike > .Row > .FieldCell > .Field.DFSetOuterField .DynamicFieldSet label {
+        text-align: left;
+    }
+
+    fieldset.TableLike .DynamicFieldSet .Row > .FieldCell {
+        columns: 2;
+        grid-template-columns: 1fr 40px;
+    }
+
+    fieldset.TableLike .MultiValue > .FieldCell > .Field > .DynamicFieldSet {
+        max-width: none;
+        width: 100%;
+    }
+
+    fieldset.TableLike .MultiValue > .FieldCell > .AddRemoveValueRow {
+        padding-left: 3px;
+    } 
 
     form label.Mandatory span.Marker {
         display: inline-block;
@@ -541,12 +602,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         width: auto !important;
     }
 
-    fieldset.TableLike > label,
-    fieldset.TableLike > .Row > label,
-    fieldset.TableLike > .Row > .FieldCell > label,
-    .RTL fieldset.TableLike > label,
-    .RTL fieldset.TableLike > .Row > label,
-    .RTL fieldset.TableLike > .Row > .FieldCell > label {
+    fieldset.TableLike > label:not(.ck-label),
+    fieldset.TableLike > .Row > label:not(.ck-label),
+    fieldset.TableLike > .Row > .FieldCell > label:not(.ck-label),
+    .RTL fieldset.TableLike > label:not(.ck-label),
+    .RTL fieldset.TableLike > .Row > label:not(.ck-label),
+    .RTL fieldset.TableLike > .Row > .FieldCell > label:not(.ck-label) {
         float: none;
         width: auto;
         text-align: left;
@@ -591,7 +652,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         margin-right: 2px;
     }
 
-    .RichTextField > .cke {
+    fieldset.TableLike .RichTextField > .cke {
         width: auto !important;
         max-width: 100% !important;
     }
@@ -615,6 +676,69 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         width: 20px;
     }
 
+    /**
+    * @subsection  New Form Styling (ModularForm)
+    */
+
+    fieldset.ModularForm div.Row {
+        position: relative;
+    }
+
+    fieldset.ModularForm div.Row > div.FieldCell {
+        grid-template-areas:
+                                "label                                                                      ."
+                                "field                                                                      multivaluebuttons";
+        grid-template-columns:  calc(100% - (var(--multivalue-buttons-width) + var(--field-column-gap)))    var(--multivalue-buttons-width);
+        grid-template-rows: min-content 1fr;
+    }
+
+    fieldset.ModularForm label {
+        text-align: left;
+        grid-area: label;
+    }
+
+    fieldset.ModularForm .Field {
+        grid-area: field;
+    }
+
+    fieldset.ModularForm .AJAXLoader {
+        --AJAX-loader-size: 14px; /* as set in Core.Defaults.css */
+        top: calc(50% - ( var(--AJAX-loader-size) / 2 + var(--AJAX-loader-margin) ) );
+    }
+
+    fieldset.ModularForm input[type=text],
+    fieldset.ModularForm .DynamicFieldDate * {
+        font-size: 0.9em;
+    }
+
+    fieldset.ModularForm div.InputField_Container {
+        margin-right: 0px;
+    }
+
+    fieldset.ModularForm .DatepickerIcon {
+        margin: 0px;
+    }
+
+    fieldset.ModularForm .DnDUpload {
+        max-width: unset;
+    }
+
+    fieldset.ModularForm .MultiValueButtons {
+        grid-area: multivaluebuttons;
+    }
+
+    fieldset.ModularForm > div.Row.MultiColumn {
+        --left-margin: 0px;
+    }
+
+    fieldset.ModularForm .FieldCell .RichTextField {
+        width: 100%;
+    }
+
+    fieldset.ModularForm .InputField_Container ~ a.GetAllAJAX {
+        margin-right: 3px;
+    }
+    
     /* Widget Actions */
 
     .OverviewActions, .DashboardActions {
@@ -689,7 +813,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         width: 280px;
         right: -300px;
         overflow: auto;
-        background: #00023c;
+        background: var(--colMainDark);
         padding: 0px 10px;
     }
 
@@ -950,7 +1074,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     }
 
     .PreferencesScreen .Size1of3 > .WidgetSimple > .Header {
-        background: #E8E8E8;
+        background: var(--colBGMedium);
         border-bottom: 0px;
         margin: 10px 0px 0px 0px;
         padding: 5px 0px;
@@ -980,7 +1104,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         width: auto;
     }
 
-    .PreferencesScreen .Content form .Field.NoMargin select[multiple="multiple"] {
+    .PreferencesScreen .Content form .Field.NoMargin select[multiple] {
         height: auto;
     }
 
@@ -1031,7 +1155,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     }
 
     .Admin .WidgetSimple > .Content li {
-        border-top: 1px solid #ccc;
+        border-top: 1px solid var(--colBGDark);
         padding: 5px 10px;
     }
 
@@ -1214,7 +1338,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     #ActivityDialogContent .LayoutPopup > .Content {
         padding: 0px;
-        border-top: 1px solid #ccc;
+        border-top: 1px solid var(--colBGDark);
     }
 
     /* Cluster */
@@ -1255,14 +1379,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
     .Cluster ul ul li a:hover {
         background: none;
-        border-bottom: 2px solid #ff9922;
+        border-bottom: 2px solid var(--colHoverDark);
         padding-bottom: 0px !important;
     }
 
     .Cluster .WidgetAction.ArticleView {
         z-index: 100;
-        background: #f5f5f5;
-        background: #f5f5f5;
+        background: var(--colBGLight);
+        background: var(--colBGLight);
         width: 35px;
         text-align: center;
         margin: 0px !important;

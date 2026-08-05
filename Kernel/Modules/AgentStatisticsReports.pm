@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,9 +24,9 @@ use warnings;
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -104,8 +104,6 @@ sub OverviewScreen {
     my ( $Self, %Param ) = @_;
 
     my $LayoutObject      = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $ParamObject       = $Kernel::OM->Get('Kernel::System::Web::Request');
-    my $ConfigObject      = $Kernel::OM->Get('Kernel::Config');
     my $StatsReportObject = $Kernel::OM->Get('Kernel::System::StatsReport');
 
     # get all Stats from the db
@@ -157,7 +155,6 @@ sub AddScreen {
     my ( $Self, %Param ) = @_;
 
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     # In case of page reload because of errors
     my %Errors   = %{ $Param{Errors}   // {} };
@@ -197,7 +194,6 @@ sub AddAction {
 
     my $LayoutObject      = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     my $ParamObject       = $Kernel::OM->Get('Kernel::System::Web::Request');
-    my $ConfigObject      = $Kernel::OM->Get('Kernel::Config');
     my $StatsReportObject = $Kernel::OM->Get('Kernel::System::StatsReport');
 
     my %Errors;
@@ -294,7 +290,7 @@ sub EditScreen {
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    $Frontend{BrowserFound} = $ConfigObject->Get('PhantomJS::Bin') || $ConfigObject->Get('GoogleChrome::Bin') ? 1 : 0;
+    $Frontend{BrowserFound} = $ConfigObject->Get('GoogleChrome::Bin') ? 1 : 0;
 
     my %Format = %{ $ConfigObject->Get('Stats::Format') || {} };
 
@@ -376,7 +372,7 @@ sub EditScreen {
 
         my @ParameterErrors;
 
-        my %GetParam = eval {
+        eval {
             $Kernel::OM->Get('Kernel::Output::HTML::Statistics::View')->StatsParamsGet(
                 Stat         => $Stat,
                 UserGetParam => $StatConfig->{StatGetParams},
@@ -488,7 +484,6 @@ sub EditAction {
 
     my $LayoutObject      = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     my $ParamObject       = $Kernel::OM->Get('Kernel::System::Web::Request');
-    my $ConfigObject      = $Kernel::OM->Get('Kernel::Config');
     my $StatsReportObject = $Kernel::OM->Get('Kernel::System::StatsReport');
 
     my %Errors;
@@ -652,7 +647,7 @@ sub ViewScreen {
             next STAT_CONFIG;
         }
 
-        my %GetParam = eval {
+        eval {
             $Kernel::OM->Get('Kernel::Output::HTML::Statistics::View')->StatsParamsGet(
                 Stat         => $Stat,
                 UserGetParam => $StatConfig->{StatGetParams},
@@ -734,10 +729,11 @@ sub RunAction {
             );
         if ( !$StatsConfigurationValid ) {
             $Frontend{Errors} = 1;
+
             next STAT_CONFIG;
         }
 
-        my %GetParam = eval {
+        eval {
             $Kernel::OM->Get('Kernel::Output::HTML::Statistics::View')->StatsParamsGet(
                 Stat         => $Stat,
                 UserGetParam => $StatConfig->{StatGetParams},
@@ -823,7 +819,7 @@ sub StatsAddWidgetAJAX {
 
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $BrowserFound = $ConfigObject->Get('PhantomJS::Bin') || $ConfigObject->Get('GoogleChrome::Bin') ? 1 : 0;
+    my $BrowserFound = $ConfigObject->Get('GoogleChrome::Bin') ? 1 : 0;
     my %Format       = %{ $ConfigObject->Get('Stats::Format') || {} };
 
     my %FilteredFormats;

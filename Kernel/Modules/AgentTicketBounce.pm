@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,18 +19,20 @@ package Kernel::Modules::AgentTicketBounce;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
-use Mail::Address;
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
 sub new {
     my ( $Type, %Param ) = @_;
 
-    # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
+    my $Self = bless {%Param}, $Type;
 
     # get article ID
     $Self->{ArticleID} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ArticleID' ) || '';
@@ -42,7 +44,8 @@ sub Run {
     my ( $Self, %Param ) = @_;
 
     # get layout object
-    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $LayoutObject       = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
 
     # check needed stuff
     for my $Needed (qw(ArticleID TicketID QueueID)) {
@@ -88,7 +91,7 @@ sub Run {
     my %AclAction = $TicketObject->TicketAclActionData();
 
     # check if ACL restrictions exist
-    if ( $ACL || IsHashRefWithData( \%AclAction ) ) {
+    if ($ACL) {
 
         my %AclActionLookup = reverse %AclAction;
 
@@ -222,10 +225,10 @@ sub Run {
         }
 
         # get template generator object
-        my $TemplateGenerator = $Kernel::OM->ObjectParamAdd(
+        $Kernel::OM->ObjectParamAdd(
             'Kernel::System::TemplateGenerator' => { %{$Self} }
         );
-        $TemplateGenerator = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
+        my $TemplateGenerator = $Kernel::OM->Get('Kernel::System::TemplateGenerator');
 
         # prepare salutation
         $Param{Salutation} = $TemplateGenerator->Salutation(
@@ -250,8 +253,8 @@ sub Run {
         if ( $LayoutObject->{BrowserRichText} ) {
 
             # prepare bounce tags
-            $Param{BounceText} =~ s/<OTOBO_TICKET>/&lt;OTOBO_TICKET&gt;/g;
-            $Param{BounceText} =~ s/<OTOBO_BOUNCE_TO>/&lt;OTOBO_BOUNCE_TO&gt;/g;
+            $Param{BounceText} =~ s/<CareOnCloud_TICKET>/&lt;CareOnCloud_TICKET&gt;/g;
+            $Param{BounceText} =~ s/<CareOnCloud_BOUNCE_TO>/&lt;CareOnCloud_BOUNCE_TO&gt;/g;
 
             $Param{BounceText} = $LayoutObject->Ascii2RichText(
                 String => $Param{BounceText},
@@ -278,7 +281,7 @@ $Param{Signature}";
         my %Address = $Kernel::OM->Get('Kernel::System::Queue')->GetSystemAddress(
             QueueID => $Ticket{QueueID},
         );
-        $Article{From} = "$Address{RealName} <$Address{Email}>";
+        $Article{From} = $Address{FormattedAddress};
 
         # get next states
         my %NextStates = $TicketObject->TicketStateList(
@@ -296,6 +299,7 @@ $Param{Signature}";
             Name          => 'BounceStateID',
             SelectedValue => $Config->{StateDefault},
             Class         => 'Modernize',
+            Translation   => 1,
         );
 
         # add rich text editor
@@ -308,6 +312,13 @@ $Param{Signature}";
             # set up rich text editor
             $LayoutObject->SetRichTextParameters(
                 Data => \%Param,
+            );
+        }
+
+        # explanatory message about asterisk
+        if ( $ConfigObject->Get('Ticket::Frontend::AsteriskExplanation') ) {
+            $LayoutObject->Block(
+                Name => 'AsteriskExplanation',
             );
         }
 
@@ -364,16 +375,14 @@ $Param{Signature}";
         # get check item object
         my $CheckItemObject = $Kernel::OM->Get('Kernel::System::CheckItem');
 
-        for my $Email ( Mail::Address->parse( $Param{BounceTo} ) ) {
-            my $Address = $Email->address();
-            if ( $Kernel::OM->Get('Kernel::System::SystemAddress')->SystemAddressIsLocalAddress( Address => $Address ) )
-            {
+        for my $Email ( $EmailAddressObject->ParseAddressLine( Line => $Param{BounceTo} ) ) {
+            if ( $Kernel::OM->Get('Kernel::System::SystemAddress')->SystemAddressIsLocalAddress( AddressObject => $Email ) ) {
                 $LayoutObject->Block( Name => 'BounceToCustomerGenericServerErrorMsg' );
                 $Error{'BounceToInvalid'} = 'ServerError';
             }
 
             # check email address
-            elsif ( !$CheckItemObject->CheckEmail( Address => $Address ) ) {
+            elsif ( !$CheckItemObject->CheckEmail( AddressObject => $Email ) ) {
                 my $BounceToErrorMsg =
                     'BounceTo'
                     . $CheckItemObject->CheckErrorType()
@@ -391,8 +400,8 @@ $Param{Signature}";
             else {
 
                 # check email address(es)
-                for my $Email ( Mail::Address->parse( $Param{To} ) ) {
-                    if ( !$CheckItemObject->CheckEmail( Address => $Email->address() ) ) {
+                for my $Email ( $EmailAddressObject->ParseAddressLine( Line => $Param{To} ) ) {
+                    if ( !$CheckItemObject->CheckEmail( AddressObject => $Email ) ) {
                         my $ToErrorMsg =
                             'To'
                             . $CheckItemObject->CheckErrorType()
@@ -426,10 +435,11 @@ $Param{Signature}";
                 $NextStates{''} = '-';
             }
             $Param{NextStatesStrg} = $LayoutObject->BuildSelection(
-                Data       => \%NextStates,
-                Name       => 'BounceStateID',
-                SelectedID => $Param{BounceStateID},
-                Class      => 'Modernize',
+                Data        => \%NextStates,
+                Name        => 'BounceStateID',
+                SelectedID  => $Param{BounceStateID},
+                Class       => 'Modernize',
+                Translation => 1,
             );
 
             # add rich text editor
@@ -449,12 +459,19 @@ $Param{Signature}";
             if ( $LayoutObject->{BrowserRichText} ) {
 
                 # prepare bounce tags
-                $Param{Body} =~ s/&lt;OTOBO_TICKET&gt;/&amp;lt;OTOBO_TICKET&amp;gt;/gi;
-                $Param{Body} =~ s/&lt;OTOBO_BOUNCE_TO&gt;/&amp;lt;OTOBO_BOUNCE_TO&amp;gt;/gi;
+                $Param{Body} =~ s/&lt;CareOnCloud_TICKET&gt;/&amp;lt;CareOnCloud_TICKET&amp;gt;/gi;
+                $Param{Body} =~ s/&lt;CareOnCloud_BOUNCE_TO&gt;/&amp;lt;CareOnCloud_BOUNCE_TO&amp;gt;/gi;
             }
 
             $Param{InformationFormat}   = $Param{Body};
             $Param{InformSenderChecked} = $Param{InformSender} ? 'checked ' : '';
+
+            # explanatory message about asterisk
+            if ( $ConfigObject->Get('Ticket::Frontend::AsteriskExplanation') ) {
+                $LayoutObject->Block(
+                    Name => 'AsteriskExplanation',
+                );
+            }
 
             my $Output = $LayoutObject->Header(
                 Type      => 'Small',
@@ -515,8 +532,8 @@ $Param{Signature}";
             }
 
             # replace placeholders
-            $Param{Body} =~ s/(&lt;|<)OTOBO_TICKET(&gt;|>)/$Ticket{TicketNumber}/g;
-            $Param{Body} =~ s/(&lt;|<)OTOBO_BOUNCE_TO(&gt;|>)/$Param{BounceTo}/g;
+            $Param{Body} =~ s/(&lt;|<)CareOnCloud_TICKET(&gt;|>)/$Ticket{TicketNumber}/g;
+            $Param{Body} =~ s/(&lt;|<)CareOnCloud_BOUNCE_TO(&gt;|>)/$Param{BounceTo}/g;
 
             # send
             my $ArticleID = $ArticleBackendObject->ArticleSend(

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,8 +16,15 @@
 
 package Kernel::System::PostMaster::FollowUp;
 
+use v5.24;
 use strict;
 use warnings;
+
+# core modules
+
+# CPAN modules
+
+# OTOB modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -34,8 +41,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # get parser object
     $Self->{ParserObject} = $Param{ParserObject} || die "Got no ParserObject!";
@@ -58,6 +64,7 @@ sub Run {
                 Key           => 'Kernel::System::PostMaster::FollowUp',
                 Value         => "Need $_!",
             );
+
             return;
         }
     }
@@ -66,11 +73,11 @@ sub Run {
     # get ticket object
     my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 
-    my $OwnerID = $GetParam{'X-OTOBO-FollowUp-OwnerID'};
-    if ( $GetParam{'X-OTOBO-FollowUp-Owner'} ) {
+    my $OwnerID = $GetParam{'X-CareOnCloud-FollowUp-OwnerID'};
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Owner'} ) {
 
         my $TmpOwnerID = $Kernel::OM->Get('Kernel::System::User')->UserLookup(
-            UserLogin => $GetParam{'X-OTOBO-FollowUp-Owner'},
+            UserLogin => $GetParam{'X-CareOnCloud-FollowUp-Owner'},
         );
 
         $OwnerID = $TmpOwnerID || $OwnerID;
@@ -84,11 +91,11 @@ sub Run {
         );
     }
 
-    my $ResponsibleID = $GetParam{'X-OTOBO-FollowUp-ResponsibleID'};
-    if ( $GetParam{'X-OTOBO-FollowUp-Responsible'} ) {
+    my $ResponsibleID = $GetParam{'X-CareOnCloud-FollowUp-ResponsibleID'};
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Responsible'} ) {
 
         my $TmpResponsibleID = $Kernel::OM->Get('Kernel::System::User')->UserLookup(
-            UserLogin => $GetParam{'X-OTOBO-FollowUp-Responsible'},
+            UserLogin => $GetParam{'X-CareOnCloud-FollowUp-Responsible'},
         );
 
         $ResponsibleID = $TmpResponsibleID || $ResponsibleID;
@@ -184,18 +191,18 @@ sub Run {
     {
         $State = $ConfigObject->Get('PostmasterFollowUpStateClosed');
     }
-    if ( $GetParam{'X-OTOBO-FollowUp-State'} ) {
-        $State = $GetParam{'X-OTOBO-FollowUp-State'};
+    if ( $GetParam{'X-CareOnCloud-FollowUp-State'} ) {
+        $State = $GetParam{'X-CareOnCloud-FollowUp-State'};
     }
 
-    my $KeepStateHeader = $ConfigObject->Get('KeepStateHeader') || 'X-OTOBO-FollowUp-State-Keep';
+    my $KeepStateHeader = $ConfigObject->Get('KeepStateHeader') || 'X-CareOnCloud-FollowUp-State-Keep';
     if (
-        ( $Ticket{StateType} !~ /^new/ || $GetParam{'X-OTOBO-FollowUp-State'} )
+        ( $Ticket{StateType} !~ /^new/ || $GetParam{'X-CareOnCloud-FollowUp-State'} )
         && !$GetParam{$KeepStateHeader}
         )
     {
         $TicketObject->TicketStateSet(
-            State    => $GetParam{'X-OTOBO-FollowUp-State'} || $State,
+            State    => $GetParam{'X-CareOnCloud-FollowUp-State'} || $State,
             TicketID => $Param{TicketID},
             UserID   => $Param{InmailUserID},
         );
@@ -209,14 +216,14 @@ sub Run {
     }
 
     # set pending time
-    if ( $GetParam{'X-OTOBO-FollowUp-State-PendingTime'} ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-State-PendingTime'} ) {
 
         # You can specify absolute dates like "2010-11-20 00:00:00" or relative dates, based on the arrival time of the email.
         # Use the form "+ $Number $Unit", where $Unit can be 's' (seconds), 'm' (minutes), 'h' (hours) or 'd' (days).
         # Only one unit can be specified. Examples of valid settings: "+50s" (pending in 50 seconds), "+30m" (30 minutes),
         # "+12d" (12 days). Note that settings like "+1d 12h" are not possible. You can specify "+36h" instead.
 
-        my $TargetTimeStamp = $GetParam{'X-OTOBO-FollowUp-State-PendingTime'};
+        my $TargetTimeStamp = $GetParam{'X-CareOnCloud-FollowUp-State-PendingTime'};
 
         my ( $Sign, $Number, $Unit ) = $TargetTimeStamp =~ m{^\s*([+-]?)\s*(\d+)\s*([smhd]?)\s*$}smx;
 
@@ -254,17 +261,17 @@ sub Run {
                 Priority      => 'Debug',
                 Key           => 'Kernel::System::PostMaster::FollowUp',
                 Value         =>
-                    "Pending time update via 'X-OTOBO-FollowUp-State-PendingTime'! State-PendingTime: $GetParam{'X-OTOBO-FollowUp-State-PendingTime'}.",
+                    "Pending time update via 'X-CareOnCloud-FollowUp-State-PendingTime'! State-PendingTime: $GetParam{'X-CareOnCloud-FollowUp-State-PendingTime'}.",
             );
         }
     }
 
     # set priority
-    if ( $GetParam{'X-OTOBO-FollowUp-Priority'} ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Priority'} ) {
 
         $TicketObject->TicketPrioritySet(
             TicketID => $Param{TicketID},
-            Priority => $GetParam{'X-OTOBO-FollowUp-Priority'},
+            Priority => $GetParam{'X-CareOnCloud-FollowUp-Priority'},
             UserID   => $Param{InmailUserID},
         );
 
@@ -273,15 +280,15 @@ sub Run {
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::FollowUp',
             Value         =>
-                "Priority update via 'X-OTOBO-FollowUp-Priority'! Priority: $GetParam{'X-OTOBO-FollowUp-Priority'}.",
+                "Priority update via 'X-CareOnCloud-FollowUp-Priority'! Priority: $GetParam{'X-CareOnCloud-FollowUp-Priority'}.",
         );
     }
 
     # set queue
-    if ( $GetParam{'X-OTOBO-FollowUp-Queue'} ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Queue'} ) {
 
         $TicketObject->TicketQueueSet(
-            Queue    => $GetParam{'X-OTOBO-FollowUp-Queue'},
+            Queue    => $GetParam{'X-CareOnCloud-FollowUp-Queue'},
             TicketID => $Param{TicketID},
             UserID   => $Param{InmailUserID},
         );
@@ -291,15 +298,15 @@ sub Run {
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::FollowUp',
             Value         =>
-                "Queue update via 'X-OTOBO-FollowUp-Queue'! Queue: $GetParam{'X-OTOBO-FollowUp-Queue'}.",
+                "Queue update via 'X-CareOnCloud-FollowUp-Queue'! Queue: $GetParam{'X-CareOnCloud-FollowUp-Queue'}.",
         );
     }
 
     # set lock if ticket does not belong to root@localhost
-    if ( $GetParam{'X-OTOBO-FollowUp-Lock'} && $UserInfo{UserID} ne 1 ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Lock'} && $UserInfo{UserID} ne 1 ) {
 
         $TicketObject->TicketLockSet(
-            Lock     => $GetParam{'X-OTOBO-FollowUp-Lock'},
+            Lock     => $GetParam{'X-CareOnCloud-FollowUp-Lock'},
             TicketID => $Param{TicketID},
             UserID   => $Param{InmailUserID},
         );
@@ -309,15 +316,15 @@ sub Run {
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::FollowUp',
             Value         =>
-                "Lock update via 'X-OTOBO-FollowUp-Lock'! Lock: $GetParam{'X-OTOBO-FollowUp-Lock'}.",
+                "Lock update via 'X-CareOnCloud-FollowUp-Lock'! Lock: $GetParam{'X-CareOnCloud-FollowUp-Lock'}.",
         );
     }
 
     # set ticket type
-    if ( $GetParam{'X-OTOBO-FollowUp-Type'} ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Type'} ) {
 
         $TicketObject->TicketTypeSet(
-            Type     => $GetParam{'X-OTOBO-FollowUp-Type'},
+            Type     => $GetParam{'X-CareOnCloud-FollowUp-Type'},
             TicketID => $Param{TicketID},
             UserID   => $Param{InmailUserID},
         );
@@ -327,15 +334,15 @@ sub Run {
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::FollowUp',
             Value         =>
-                "Type update via 'X-OTOBO-FollowUp-Type'! Type: $GetParam{'X-OTOBO-FollowUp-Type'}.",
+                "Type update via 'X-CareOnCloud-FollowUp-Type'! Type: $GetParam{'X-CareOnCloud-FollowUp-Type'}.",
         );
     }
 
     # set ticket service
-    if ( $GetParam{'X-OTOBO-FollowUp-Service'} ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Service'} ) {
 
         $TicketObject->TicketServiceSet(
-            Service  => $GetParam{'X-OTOBO-FollowUp-Service'},
+            Service  => $GetParam{'X-CareOnCloud-FollowUp-Service'},
             TicketID => $Param{TicketID},
             UserID   => $Param{InmailUserID},
         );
@@ -345,15 +352,15 @@ sub Run {
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::FollowUp',
             Value         =>
-                "Services update via 'X-OTOBO-FollowUp-Service'! Service: $GetParam{'X-OTOBO-FollowUp-Service'}.",
+                "Services update via 'X-CareOnCloud-FollowUp-Service'! Service: $GetParam{'X-CareOnCloud-FollowUp-Service'}.",
         );
     }
 
     # set ticket sla
-    if ( $GetParam{'X-OTOBO-FollowUp-SLA'} ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-SLA'} ) {
 
         $TicketObject->TicketSLASet(
-            SLA      => $GetParam{'X-OTOBO-FollowUp-SLA'},
+            SLA      => $GetParam{'X-CareOnCloud-FollowUp-SLA'},
             TicketID => $Param{TicketID},
             UserID   => $Param{InmailUserID},
         );
@@ -363,7 +370,7 @@ sub Run {
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::FollowUp',
             Value         =>
-                "SLA update via 'X-OTOBO-FollowUp-SLA'! SLA: $GetParam{'X-OTOBO-FollowUp-SLA'}.",
+                "SLA update via 'X-CareOnCloud-FollowUp-SLA'! SLA: $GetParam{'X-CareOnCloud-FollowUp-SLA'}.",
         );
     }
 
@@ -372,20 +379,27 @@ sub Run {
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
     # dynamic fields
-    my $DynamicFieldList =
-        $DynamicFieldObject->DynamicFieldList(
-            Valid      => 1,
-            ResultType => 'HASH',
-            ObjectType => 'Ticket',
-        );
+    my $DynamicFieldID2Name = $DynamicFieldObject->DynamicFieldList(
+        Valid      => 1,
+        ResultType => 'HASH',
+        ObjectType => 'Ticket',
+    );
 
     # set dynamic fields for Ticket object type
-    DYNAMICFIELDID:
-    for my $DynamicFieldID ( sort keys %{$DynamicFieldList} ) {
-        next DYNAMICFIELDID if !$DynamicFieldID;
-        next DYNAMICFIELDID if !$DynamicFieldList->{$DynamicFieldID};
-        my $Key = 'X-OTOBO-FollowUp-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
-        if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
+    DYNAMIC_FIELD_ID:
+    for my $DynamicFieldID ( sort keys $DynamicFieldID2Name->%* ) {
+        next DYNAMIC_FIELD_ID unless $DynamicFieldID;
+
+        my $DynamicFieldName = $DynamicFieldID2Name->{$DynamicFieldID};
+
+        next DYNAMIC_FIELD_ID unless $DynamicFieldName;
+
+        my $Key = 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicFieldName;
+
+        next DYNAMIC_FIELD_ID unless defined $GetParam{$Key};
+        next DYNAMIC_FIELD_ID unless length $GetParam{$Key};
+
+        {
 
             # get dynamic field config
             my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
@@ -397,6 +411,7 @@ sub Run {
                 ObjectID           => $Param{TicketID},
                 Value              => $GetParam{$Key},
                 UserID             => $Param{InmailUserID},
+                ExternalSource     => 1,
             );
 
             $Self->{CommunicationLogObject}->ObjectLog(
@@ -409,110 +424,25 @@ sub Run {
         }
     }
 
-    # reverse dynamic field list
-    my %DynamicFieldListReversed = reverse %{$DynamicFieldList};
-
-    # set ticket free text
-    my %Values =
-        (
-            'X-OTOBO-FollowUp-TicketKey'   => 'TicketFreeKey',
-            'X-OTOBO-FollowUp-TicketValue' => 'TicketFreeText',
-        );
-    for my $Item ( sort keys %Values ) {
-        for my $Count ( 1 .. 16 ) {
-            my $Key = $Item . $Count;
-            if (
-                defined $GetParam{$Key}
-                && length $GetParam{$Key}
-                && $DynamicFieldListReversed{ $Values{$Item} . $Count }
-                )
-            {
-                # get dynamic field config
-                my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
-                    ID => $DynamicFieldListReversed{ $Values{$Item} . $Count },
-                );
-                if ($DynamicFieldGet) {
-                    my $Success = $DynamicFieldBackendObject->ValueSet(
-                        DynamicFieldConfig => $DynamicFieldGet,
-                        ObjectID           => $Param{TicketID},
-                        Value              => $GetParam{$Key},
-                        UserID             => $Param{InmailUserID},
-                    );
-                }
-
-                $Self->{CommunicationLogObject}->ObjectLog(
-                    ObjectLogType => 'Message',
-                    Priority      => 'Debug',
-                    Key           => 'Kernel::System::PostMaster::FollowUp',
-                    Value         =>
-                        "DynamicField (TicketKey$Count) update via '$Key'! Value: $GetParam{$Key}.",
-                );
-            }
-        }
-    }
-
-    # set ticket free time
-    for my $Count ( 1 .. 6 ) {
-
-        my $Key = 'X-OTOBO-FollowUp-TicketTime' . $Count;
-
-        if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
-
-            # get datetime object
-            my $DateTimeObject = $Kernel::OM->Create(
-                'Kernel::System::DateTime',
-                ObjectParams => {
-                    String => $GetParam{$Key}
-                }
-            );
-
-            if ( $DateTimeObject && $DynamicFieldListReversed{ 'TicketFreeTime' . $Count } ) {
-
-                # get dynamic field config
-                my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
-                    ID => $DynamicFieldListReversed{ 'TicketFreeTime' . $Count },
-                );
-
-                if ($DynamicFieldGet) {
-                    my $Success = $DynamicFieldBackendObject->ValueSet(
-                        DynamicFieldConfig => $DynamicFieldGet,
-                        ObjectID           => $Param{TicketID},
-                        Value              => $GetParam{$Key},
-                        UserID             => $Param{InmailUserID},
-                    );
-                }
-
-                $Self->{CommunicationLogObject}->ObjectLog(
-                    ObjectLogType => 'Message',
-                    Priority      => 'Debug',
-                    Key           => 'Kernel::System::PostMaster::FollowUp',
-                    Value         =>
-                        "DynamicField (TicketTime$Count) update via '$Key'! Value: $GetParam{$Key}.",
-                );
-            }
-        }
-    }
-
     my $ArticleObject        = $Kernel::OM->Get('Kernel::System::Ticket::Article');
     my $ArticleBackendObject = $ArticleObject->BackendForChannel(
         ChannelName => 'Email',
     );
 
     my $IsVisibleForCustomer = 1;
-    if ( length $GetParam{'X-OTOBO-FollowUp-IsVisibleForCustomer'} ) {
-        $IsVisibleForCustomer = $GetParam{'X-OTOBO-FollowUp-IsVisibleForCustomer'};
+    if ( length $GetParam{'X-CareOnCloud-FollowUp-IsVisibleForCustomer'} ) {
+        $IsVisibleForCustomer = $GetParam{'X-CareOnCloud-FollowUp-IsVisibleForCustomer'};
     }
 
-    # Check if X-OTOBO-FollowUp-SenderType exists, if not set default 'customer'.
-    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-OTOBO-FollowUp-SenderType'} ) )
-    {
+    # Check if X-CareOnCloud-FollowUp-SenderType exists, if not set default 'customer'.
+    if ( !$ArticleObject->ArticleSenderTypeLookup( SenderType => $GetParam{'X-CareOnCloud-FollowUp-SenderType'} ) ) {
         $Self->{CommunicationLogObject}->ObjectLog(
             ObjectLogType => 'Message',
             Priority      => 'Error',
             Key           => 'Kernel::System::PostMaster::FollowUp',
-            Value         => "Can't find valid SenderType '$GetParam{'X-OTOBO-FollowUp-SenderType'}' in DB, take 'customer'",
+            Value         => "Can't find valid SenderType '$GetParam{'X-CareOnCloud-FollowUp-SenderType'}' in DB, take 'customer'",
         );
-        $GetParam{'X-OTOBO-SenderType'} = 'customer';
+        $GetParam{'X-CareOnCloud-SenderType'} = 'customer';
     }
 
     $Self->{CommunicationLogObject}->ObjectLog(
@@ -525,9 +455,9 @@ sub Run {
     # do db insert
     my $ArticleID = $ArticleBackendObject->ArticleCreate(
         TicketID             => $Param{TicketID},
-        SenderType           => $GetParam{'X-OTOBO-FollowUp-SenderType'},
+        SenderType           => $GetParam{'X-CareOnCloud-FollowUp-SenderType'},
         IsVisibleForCustomer => $IsVisibleForCustomer,
-        From                 => $GetParam{From},
+        From                 => ( $GetParam{'X-CareOnCloud-From'} ? $GetParam{'X-CareOnCloud-From'} : $GetParam{From} ),
         ReplyTo              => $GetParam{ReplyTo},
         To                   => $GetParam{To},
         Cc                   => $GetParam{Cc},
@@ -543,6 +473,7 @@ sub Run {
         AutoResponseType     => $AutoResponseType,
         OrigHeader           => \%GetParam,
     );
+
     return if !$ArticleID;
 
     for my $Flag (qw/Crypted CryptedOK Signed SignedOK/) {
@@ -580,6 +511,7 @@ sub Run {
         next ATTRIBUTE if $CommunicationLogSkipAttributes{$Attribute};
 
         my $Value = $GetParam{$Attribute};
+
         next ATTRIBUTE if !( defined $Value ) || !( length $Value );
 
         $Self->{CommunicationLogObject}->ObjectLog(
@@ -611,21 +543,28 @@ sub Run {
         );
     }
 
-    # dynamic fields
-    $DynamicFieldList =
-        $DynamicFieldObject->DynamicFieldList(
-            Valid      => 1,
-            ResultType => 'HASH',
-            ObjectType => 'Article'
-        );
+    # dynamic fields for articles
+    $DynamicFieldID2Name = $DynamicFieldObject->DynamicFieldList(
+        Valid      => 1,
+        ResultType => 'HASH',
+        ObjectType => 'Article'
+    );
 
     # set dynamic fields for Article object type
-    DYNAMICFIELDID:
-    for my $DynamicFieldID ( sort keys %{$DynamicFieldList} ) {
-        next DYNAMICFIELDID if !$DynamicFieldID;
-        next DYNAMICFIELDID if !$DynamicFieldList->{$DynamicFieldID};
-        my $Key = 'X-OTOBO-FollowUp-DynamicField-' . $DynamicFieldList->{$DynamicFieldID};
-        if ( defined $GetParam{$Key} && length $GetParam{$Key} ) {
+    DYNAMIC_FIELD_ID:
+    for my $DynamicFieldID ( sort keys %{$DynamicFieldID2Name} ) {
+        next DYNAMIC_FIELD_ID unless $DynamicFieldID;
+
+        my $DynamicFieldName = $DynamicFieldID2Name->{$DynamicFieldID};
+
+        next DYNAMIC_FIELD_ID unless $DynamicFieldName;
+
+        my $Key = 'X-CareOnCloud-FollowUp-DynamicField-' . $DynamicFieldName;
+
+        next DYNAMIC_FIELD_ID unless defined $GetParam{$Key};
+        next DYNAMIC_FIELD_ID unless length $GetParam{$Key};
+
+        {
 
             # get dynamic field config
             my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
@@ -637,6 +576,7 @@ sub Run {
                 ObjectID           => $ArticleID,
                 Value              => $GetParam{$Key},
                 UserID             => $Param{InmailUserID},
+                ExternalSource     => 1,
             );
 
             $Self->{CommunicationLogObject}->ObjectLog(
@@ -648,53 +588,11 @@ sub Run {
         }
     }
 
-    # reverse dynamic field list
-    %DynamicFieldListReversed = reverse %{$DynamicFieldList};
-
-    # set free article text
-    %Values =
-        (
-            'X-OTOBO-FollowUp-ArticleKey'   => 'ArticleFreeKey',
-            'X-OTOBO-FollowUp-ArticleValue' => 'ArticleFreeText',
-        );
-    for my $Item ( sort keys %Values ) {
-        for my $Count ( 1 .. 16 ) {
-            my $Key = $Item . $Count;
-            if (
-                defined $GetParam{$Key}
-                && length $GetParam{$Key}
-                && $DynamicFieldListReversed{ $Values{$Item} . $Count }
-                )
-            {
-                # get dynamic field config
-                my $DynamicFieldGet = $DynamicFieldObject->DynamicFieldGet(
-                    ID => $DynamicFieldListReversed{ $Values{$Item} . $Count },
-                );
-                if ($DynamicFieldGet) {
-                    my $Success = $DynamicFieldBackendObject->ValueSet(
-                        DynamicFieldConfig => $DynamicFieldGet,
-                        ObjectID           => $ArticleID,
-                        Value              => $GetParam{$Key},
-                        UserID             => $Param{InmailUserID},
-                    );
-                }
-
-                $Self->{CommunicationLogObject}->ObjectLog(
-                    ObjectLogType => 'Message',
-                    Priority      => 'Debug',
-                    Key           => 'Kernel::System::PostMaster::FollowUp',
-                    Value         =>
-                        "Article DynamicField (ArticleKey) update via '$Key'! Value: $GetParam{$Key}.",
-                );
-            }
-        }
-    }
-
     # set ticket title
-    if ( $GetParam{'X-OTOBO-FollowUp-Title'} ) {
+    if ( $GetParam{'X-CareOnCloud-FollowUp-Title'} ) {
 
         $TicketObject->TicketTitleUpdate(
-            Title    => $GetParam{'X-OTOBO-FollowUp-Title'},
+            Title    => $GetParam{'X-CareOnCloud-FollowUp-Title'},
             TicketID => $Param{TicketID},
             UserID   => $Param{InmailUserID},
         );
@@ -703,7 +601,7 @@ sub Run {
             ObjectLogType => 'Message',
             Priority      => 'Debug',
             Key           => 'Kernel::System::PostMaster::FollowUp',
-            Value         => "Title update via 'X-OTOBO-FollowUp-Title'! Value: $GetParam{'X-OTOBO-FollowUp-Title'}.",
+            Value         => "Title update via 'X-CareOnCloud-FollowUp-Title'! Value: $GetParam{'X-CareOnCloud-FollowUp-Title'}.",
         );
     }
 

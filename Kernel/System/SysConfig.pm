@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,16 +22,17 @@ use warnings;
 use namespace::autoclean;
 use utf8;
 
-use parent qw(Kernel::System::AsynchronousExecutor);
+use parent qw(Kernel::System::AsynchronousExecutor);    # for AsyncCall()
 
 # core modules
-use File::Path qw(make_path);
+use File::Basename qw(basename fileparse);
+use File::Path     qw(make_path);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -154,7 +155,7 @@ Returns:
         ChangeTime               => "2016-05-29 11:04:04",
         ChangeBy                 => 1,
         DefaultValue             => 'Old default value',
-        OverriddenFileName        => '/opt/otobo/Kernel/Config/Files/ZZZ.pm',
+        OverriddenFileName        => '/opt/careoncloud/Kernel/Config/Files/ZZZ.pm',
     );
 
 =cut
@@ -702,7 +703,7 @@ sub SettingUpdate {
     if (
         !$Param{IsValid}
         && !$Param{TargetUserID}
-        && $Self->can('UserSettingValueDelete')    # OTOBO Community Solution
+        && $Self->can('UserSettingValueDelete')    # CareOnCloud ESM Community Solution
         )
     {
         $Self->UserSettingValueDelete(
@@ -759,7 +760,7 @@ Returns:
 
     $ExclusiveLockGUID = 'azzHab72wIlAXDrxHexsI5aENsESxAO7';     # Setting locked
 
-    or
+or
 
     $ExclusiveLockGUID = undef;     # Not locked
 
@@ -2114,7 +2115,7 @@ Returns:
 
     %Result = (
        'ACL::CacheTTL' => {
-            'Category' => 'OTOBO',
+            'Category' => 'CareOnCloud',
             'IsInvisible' => '0',
             'Metadata' => "ACL::CacheTTL--- '3600'
 Cache-Zeit in Sekunden f\x{fc}r Datenbank ACL-Backends.",
@@ -2480,10 +2481,7 @@ sub ConfigurationXML2DB {
         );
 
         # Cleanup filename for cache type
-        my $Filename = $File;
-        $Filename =~ s{\/\/}{\/}g;
-        $Filename =~ s{\A .+ Kernel/Config/Files/XML/ (.+)\.xml\z}{$1}msx;
-        $Filename =~ s{\A .+ scripts/test/sample/SysConfig/XML/ (.+)\.xml\z}{$1}msx;
+        my ($Filename) = fileparse( $File, '.xml' );
 
         my $CacheType = 'SysConfigPersistent';
         my $CacheKey  = "ConfigurationXML2DB::${Filename}::${MD5Sum}";
@@ -2519,23 +2517,21 @@ sub ConfigurationXML2DB {
             next FILE;
         }
 
-        # Extract otobo_config Init attribute. E.g. 'Framework', 'Config'
-        my ($InitValue) = $ConfigFile->$* =~ m{<otobo_config.*?init="(.*?)"}gsmx;
+        # Extract careoncloud_config Init attribute. E.g. 'Framework', 'Config'
+        my ($InitValue) = $ConfigFile->$* =~ m{<careoncloud_config.*?init="(.*?)"}gsmx;
         $InitValue //= '';
 
         # Check if InitValue is Valid.
         if ( !defined $SettingsByInit{$InitValue} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Invalid otobo_config Init value ($InitValue)! Allowed values: Framework, Application, Config, Changes.",
+                Message  => "Invalid careoncloud_config Init value ($InitValue)! Allowed values: Framework, Application, Config, Changes.",
             );
 
             next FILE;
         }
 
-        my $XMLFilename = $File;
-        $XMLFilename =~ s{$Directory(.*\.xml)\z}{$1}gmsx;
-        $XMLFilename =~ s{\A/}{}gmsx;
+        my $XMLFilename = basename($File);
 
         my @ParsedSettings = $SysConfigXMLObject->SettingListParse(
             XMLInput    => $ConfigFile->$*,
@@ -2760,7 +2756,7 @@ Returns navigation tree in the hash format.
         RootNavigation         => 'Parent',     # (optional) If provided only sub groups of the root navigation are returned.
         UserModificationActive => 1,            # (optional) Return settings that can be modified on user level only.
         IsValid                => 1,            # (optional) By default, display all settings.
-        Category               => 'OTOBO'        # (optional)
+        Category               => 'CareOnCloud'        # (optional)
     );
 
 Returns:
@@ -3610,7 +3606,7 @@ sub ConfigurationDeploy {
 
         # If setting is updated on global level, check all user specific settings, maybe it's needed
         #   to remove duplicates.
-        if ( $Self->can('UserConfigurationResetToGlobal') ) {    # OTOBO Community Solution
+        if ( $Self->can('UserConfigurationResetToGlobal') ) {    # CareOnCloud ESM Community Solution
 
             my @DeployedSettings;
             if ( $Param{DirtySettings} ) {
@@ -3796,7 +3792,7 @@ sub ConfigurationDeploySync {
         }
     }
 
-    # Sync also user specific settings, always available in OTOBO
+    # Sync also user specific settings, always available in CareOnCloud ESM
     $Self->UserConfigurationDeploySync();
 
     # then update the file system from S3 if S3 is active
@@ -4144,11 +4140,28 @@ sub ConfigurationDump {
 
                     next SETTING;
                 }
+
+                # Load DefaultSetting to get XMLContentParsed (not included in ModifiedSettingVersionGet)
+                if ( $Setting->{DefaultID} ) {
+                    my %DefaultSetting = $SysConfigDBObject->DefaultSettingGet(
+                        DefaultID => $Setting->{DefaultID},
+                    );
+
+                    if ( %DefaultSetting && $DefaultSetting{XMLContentParsed} ) {
+
+                        # Extract ValueType information for password masking
+                        my $ValueTypeInfo = $Self->_ExtractValueType(
+                            XMLContentParsed => $DefaultSetting{XMLContentParsed},
+                        );
+                        $Setting->{ValueTypeInfo} = $ValueTypeInfo if $ValueTypeInfo;
+                    }
+                }
+
                 $Result{'Modified'}->{ $Setting->{Name} } = $Setting;
             }
         }
 
-        if ( !$Param{SkipUserSettings} && $Self->can('UserConfigurationDump') ) {    # OTOBO Community Solution
+        if ( !$Param{SkipUserSettings} && $Self->can('UserConfigurationDump') ) {    # CareOnCloud ESM Community Solution
             my %UserSettings = $Self->UserConfigurationDump(
                 SettingList => \@SettingsList,
                 OnlyValues  => $Param{OnlyValues},
@@ -4296,7 +4309,7 @@ sub ConfigurationLoad {
 
         # Only deploy user specific settings;
         next SECTION if !$TargetUserID;
-        next SECTION if !$Self->can('UserConfigurationDeploy');    # OTOBO Community Solution
+        next SECTION if !$Self->can('UserConfigurationDeploy');    # CareOnCloud ESM Community Solution
 
         # Deploy user configuration requires another package to be installed.
         my $Success = $Self->UserConfigurationDeploy(
@@ -4387,7 +4400,7 @@ Returns a list of setting names.
 
     my @Result = $SysConfigObject->ConfigurationSearch(
         Search           => 'The search string', # (optional)
-        Category         => 'OTOBO'               # (optional)
+        Category         => 'CareOnCloud'               # (optional)
         IncludeInvisible => 1,                   # (optional) Default 0.
     );
 
@@ -4480,8 +4493,8 @@ Returns:
             DisplayName => 'All Settings',
             Files => [],
         },
-        OTOBO => {
-            DisplayName => 'OTOBO',
+        CareOnCloud => {
+            DisplayName => 'CareOnCloud ESM',
             Files       => ['Calendar.xml', CloudServices.xml', 'Daemon.xml', 'Framework.xml', 'GenericInterface.xml', 'ProcessManagement.xml', 'Ticket.xml' ],
         },
         # ...
@@ -4511,8 +4524,8 @@ sub ConfigurationCategoriesGet {
             DisplayName => Translatable('All Settings'),
             Files       => [],
         },
-        OTOBO => {
-            DisplayName => 'OTOBO',
+        CareOnCloud => {
+            DisplayName => 'CareOnCloud ESM',
             Files       => [
                 'Calendar.xml',         'CloudServices.xml',     'Daemon.xml', 'Framework.xml',
                 'GenericInterface.xml', 'ProcessManagement.xml', 'Ticket.xml',
@@ -4819,7 +4832,7 @@ sub OverriddenFileNameGet {
     # Replace config variables in effective values.
     # NOTE: First level only, make sure to update this code once same mechanism has been improved in Defaults.pm.
     #   Please see bug#12916 and bug#13376 for more information.
-    $EffectiveValue =~ s/\<OTOBO_CONFIG_(.+?)\>/$ConfigObject->{$1}/g;
+    $EffectiveValue =~ s/\<CareOnCloud_CONFIG_(.+?)\>/$ConfigObject->{$1}/g;
 
     my $IsOverridden = DataIsDifferent(
         Data1 => $EffectiveValue       // {},
@@ -5658,6 +5671,7 @@ sub _EffectiveValues2PerlFile {
             $EffectiveValue =~ s/\$VAR1 =//;
             $PerlHashStrg .= "\$Self->{'$Name'} = $EffectiveValue";
         }
+
         ## no critic qw(BuiltinFunctions::ProhibitStringyEval)
         elsif ( eval( '$Self->{ConfigDefaultObject}->{\'' . $Name . '\'}' ) ) {
             $PerlHashStrg .= "delete \$Self->{'$Name'};\n";
@@ -5683,7 +5697,7 @@ sub _EffectiveValues2PerlFile {
 
     # return content of Perl file that contain the SysConfig
     return <<"END_PERL_FILE";
-# OTOBO config file (automatically generated)
+# CareOnCloud ESM config file (automatically generated)
 # VERSION:2.0
 package $TargetPath;
 use strict;
@@ -5901,6 +5915,12 @@ sub _GetSettingsToDeploy {
         KEY:
         for my $Key ( sort keys %SettingsLookup ) {
             next KEY if !$ModifiedSettingsLookup{$Key};
+
+            # In case of "NotDirty" the modified settings are received as the last modified versions
+            # which contain also settings which were "reset to default", even if the default changed
+            # in the meantime. Thus their effective value might be outdated, and we will not overwrite
+            # the default effective value
+            next KEY if $ModifiedSettingsLookup{$Key}{ResetToDefault};
 
             $SettingsLookup{$Key} = {
                 %{ $SettingsLookup{$Key} },
@@ -6121,7 +6141,7 @@ Returns:
 
     %Result = (
        'ACL::CacheTTL' => {
-            'Category' => 'OTOBO',
+            'Category' => 'CareOnCloud',
             'IsInvisible' => '0',
             'Metadata' => "ACL::CacheTTL--- '3600'
 Cache-Zeit in Sekunden f\x{fc}r Datenbank ACL-Backends.",
@@ -6378,6 +6398,244 @@ sub _DefaultSettingAddBulk {
     }
 
     return 1;
+}
+
+=head2 CreateZZZAAutoBackup()
+
+Creates config backup files from '/Kernel/Config/Files/*'.
+
+    my $Success = $SysConfigObject->CreateZZZAAutoBackup();
+
+Returns:
+
+    my $Success = 1;
+
+=cut
+
+sub CreateZZZAAutoBackup {
+    my ( $Self, %Param ) = @_;
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
+
+    # Updates ZZAAuto.pm to the latest deployment found in the database.
+    $Self->ConfigurationDeploySync();
+
+    my $Home                   = $ConfigObject->Get('Home');
+    my $BackupDir              = "$Home/Kernel/Config/Backups/";
+    my $ZZZAAutoFilePath       = "$Home/Kernel/Config/Files/ZZZAAuto.pm";
+    my $ZZZAAutoBackupFilePath = "$Home/Kernel/Config/Backups/ZZZAAuto.pm";
+    my $FileClass              = "Kernel::Config::Files::ZZZAAuto";
+    my $BackupFileClass        = "Kernel::Config::Backups::ZZZAAuto";
+
+    if ( -f $ZZZAAutoBackupFilePath ) {
+        $MainObject->FileDelete(
+            Location => $ZZZAAutoBackupFilePath
+        );
+    }
+    return if !-f $ZZZAAutoFilePath;
+
+    # create backups directory if not existing
+    if ( !-d $BackupDir ) {
+        return if !mkdir $BackupDir;
+    }
+
+    my $ContentSCALARRef = $MainObject->FileRead(
+        Location => $ZZZAAutoFilePath,
+        Mode     => 'utf8',
+        Type     => 'Local',
+        Result   => 'SCALAR',
+    );
+
+    my $ZZZAAutoData = ${$ContentSCALARRef};
+
+    # Search and replace package from Files to Backups
+    $ZZZAAutoData =~ s{package $FileClass}{package $BackupFileClass}g;
+
+    return if !$MainObject->FileWrite(
+        Location => $ZZZAAutoBackupFilePath,
+        Content  => \$ZZZAAutoData,
+    );
+
+    return 1;
+}
+
+=head2 DeleteZZZAAutoBackup()
+
+Deletes config backup.
+
+    my $Success = $SysConfigObject->DeleteZZZAAutoBackup();
+
+Returns:
+
+    my $Success = 1;
+
+=cut
+
+sub DeleteZZZAAutoBackup {
+    my ( $Self, %Param ) = @_;
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
+
+    my $Home                   = $ConfigObject->Get('Home');
+    my $ZZZAAutoBackupFilePath = "$Home/Kernel/Config/Backups/ZZZAAuto.pm";
+
+    return 1 if !-f $ZZZAAutoBackupFilePath;
+
+    my $Success = $MainObject->FileDelete(
+        Location => $ZZZAAutoBackupFilePath
+    );
+
+    return if !$Success;
+
+    return 1;
+}
+
+=head2 _ExtractValueType()
+
+Extracts the ValueType from XMLContentParsed structure.
+Returns a structure that describes which values should be masked.
+
+    my $ValueTypeInfo = $SysConfigObject->_ExtractValueType(
+        XMLContentParsed => $XMLContentParsed,
+    );
+
+Returns:
+
+For simple items (Setting: `ExamplePassword`):
+
+    $ValueTypeInfo = {
+        Type     => 'String',
+        ItemType => 'Password',
+    };
+
+For arrays with DefaultItem (Setting: `TestArrayPassword`):
+
+    $ValueTypeInfo = {
+        Type     => 'Array',
+        ItemType => 'Password',
+    };
+
+For hashes with key-specific types (Setting: `TestHashPassword2`):
+
+    $ValueTypeInfo = {
+        Type    => 'Hash',
+        Default => 'Password',  # optional, from DefaultItem
+        Keys    => {
+            'Password' => 'Password',
+            'APIKey'   => 'Password',
+            'String'   => 'String',
+        },
+    };
+
+=cut
+
+sub _ExtractValueType {
+    my ( $Self, %Param ) = @_;
+
+    return if !$Param{XMLContentParsed};
+    return if !IsHashRefWithData( $Param{XMLContentParsed} );
+
+    my $XMLContentParsed = $Param{XMLContentParsed};
+
+    # Check if Value structure exists
+    return if !IsArrayRefWithData( $XMLContentParsed->{Value} );
+
+    my $Value = $XMLContentParsed->{Value}->[0];
+    return if !IsHashRefWithData($Value);
+
+    # Simple Item (no Hash/Array)
+    if ( IsArrayRefWithData( $Value->{Item} ) ) {
+        my $Item = $Value->{Item}->[0];
+        if ( IsHashRefWithData($Item) && $Item->{ValueType} ) {
+            return {
+                Type     => 'String',
+                ItemType => $Item->{ValueType},
+            };
+        }
+    }
+
+    # Array structure
+    if ( IsArrayRefWithData( $Value->{Array} ) ) {
+        ARRAYITEM:
+        for my $ArrayItem ( @{ $Value->{Array} } ) {
+            next ARRAYITEM if !IsHashRefWithData($ArrayItem);
+
+            # Check DefaultItem for ValueType
+            if ( IsArrayRefWithData( $ArrayItem->{DefaultItem} ) ) {
+                my $DefaultItem = $ArrayItem->{DefaultItem}->[0];
+                if ( IsHashRefWithData($DefaultItem) && $DefaultItem->{ValueType} ) {
+                    return {
+                        Type     => 'Array',
+                        ItemType => $DefaultItem->{ValueType},
+                    };
+                }
+            }
+
+            # Check if any Item has ValueType
+            if ( IsArrayRefWithData( $ArrayItem->{Item} ) ) {
+                ITEM:
+                for my $Item ( @{ $ArrayItem->{Item} } ) {
+                    next ITEM if !IsHashRefWithData($Item);
+                    next ITEM if !$Item->{Key};
+
+                    if ( $Item->{ValueType} ) {
+                        return {
+                            Type     => 'Array',
+                            ItemType => $Item->{ValueType},
+                        };
+                    }
+                }
+            }
+        }
+    }
+
+    # Hash structure - build key-specific mapping
+    if ( IsArrayRefWithData( $Value->{Hash} ) ) {
+        my %Result = (
+            Type => 'Hash',
+            Keys => {},
+        );
+
+        HASHITEM:
+        for my $HashItem ( @{ $Value->{Hash} } ) {
+            next HASHITEM if !IsHashRefWithData($HashItem);
+
+            # Check DefaultItem for default ValueType
+            if ( IsArrayRefWithData( $HashItem->{DefaultItem} ) ) {
+                my $DefaultItem = $HashItem->{DefaultItem}->[0];
+                if ( IsHashRefWithData($DefaultItem) && $DefaultItem->{ValueType} ) {
+                    $Result{Default} = $DefaultItem->{ValueType};
+                }
+            }
+
+            # Check all Items and map Key => ValueType
+            if ( IsArrayRefWithData( $HashItem->{Item} ) ) {
+                ITEM:
+                for my $Item ( @{ $HashItem->{Item} } ) {
+                    next ITEM if !IsHashRefWithData($Item);
+                    next ITEM if !$Item->{Key};
+
+                    if ( $Item->{ValueType} ) {
+                        $Result{Keys}->{ $Item->{Key} } = $Item->{ValueType};
+                    }
+                    elsif ( $Result{Default} ) {
+
+                        # If no explicit ValueType but we have a Default, use it
+                        $Result{Keys}->{ $Item->{Key} } = $Result{Default};
+                    }
+                }
+            }
+        }
+
+        # Return hash structure if we found any ValueTypes
+        if ( $Result{Default} || %{ $Result{Keys} } ) {
+            return \%Result;
+        }
+    }
+
+    return;
 }
 
 1;

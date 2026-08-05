@@ -1,25 +1,28 @@
 # Do not change this file manually except if you want to invalidate the cache just in the GitHub CI workflow.
-# Instead adapt bin/otobo.CheckModules.pl and call
-#    ./bin/otobo.CheckModules.pl --docker-cpanfile > cpanfile.docker
+# Instead adapt bin/careoncloud.CheckModules.pl and call
+#    ./bin/careoncloud.CheckModules.pl --docker-cpanfile > cpanfile.docker
 
 # Required for compressed file generation (in perlcore).
-requires 'Archive::Tar';
+requires 'Archive::Tar', '3.12';
 
-# Required for compressed file generation.
+# Required for compressed file generation. Needed by Excel::Writer::XSLX, which is used in Kernel::System::CSV
 requires 'Archive::Zip';
+
+# Support for readonly Perl variables
+requires 'Const::Fast';
 
 # Neater interface for capturing STDOUT and STDERR.
 requires 'Capture::Tiny';
 
-# JSON parsing and generation
-requires 'JSON::XS';
-
 requires 'Date::Format';
 
-requires 'DateTime', ">= 1.08";
+requires 'DateTime', '>= 1.08';
+
+# Olson time zone database, required for correct time calculations.
+requires 'DateTime::TimeZone', '>= 2.20';
 
 # A CSS minifier written in XS
-requires 'CSS::Minifier::XS', ">= 0.09";
+requires 'CSS::Minifier::XS', '>= 0.09';
 
 requires 'Convert::BinHex';
 
@@ -28,19 +31,40 @@ requires 'DBI';
 # Sane persistent database connection
 requires 'DBIx::Connector';
 
+# (in perlcore)
 requires 'Digest::SHA';
+
+# parse list of mail addresses, substitute for Mail::Address
+requires 'Email::Address::XS', '1.04';
 
 requires 'File::chmod';
 
+# provides HTML::Entities for decoding HTML entities
+requires 'HTML::Parser', '3.75';
+
 # HTTP style message
-requires 'HTTP::Message', ">= 6.18";
+requires 'HTTP::Message', '>= 6.18';
+
+requires 'HTTP::Tiny', '0.096';
+
+# Required for SSL connections to web and mail servers
+# Please consider updating to version 2.066 or higher: This version fixes email sending (bug#14357).
+requires 'IO::Socket::SSL';
 
 # A JavaScript minifier written in XS
 requires 'JavaScript::Minifier::XS';
 
-requires 'List::AllUtils';
+# correct and fast JSON support
+requires 'Cpanel::JSON::XS', '>= 4.0';
+
+requires 'List::Util', '>= 1.45';
+
+requires 'List::AllUtils', '>= 0.11';
 
 requires 'LWP::UserAgent';
+
+# Required for IMAP TLS connections.
+requires 'Mail::IMAPClient', '>= 3.40';
 
 # Required for random number generator.
 requires 'Moo';
@@ -48,7 +72,7 @@ requires 'Moo';
 # clean up imported methodes
 requires 'namespace::autoclean';
 
-requires 'Net::DNS', ">= 1.05";
+requires 'Net::DNS', '>= 1.05';
 
 # Required by Kernel/cpan-lib/Mail/Mailer/smtps.pm
 requires 'Net::SMTP::SSL';
@@ -57,28 +81,32 @@ requires 'Net::SMTP::SSL';
 requires 'Path::Class';
 
 # Perl Superglue for Web frameworks and Web Servers (PSGI toolkit)
-requires 'Plack';
+requires 'Plack', '!= 1.0053';
 
 # needed by Kernel/cpan-lib/Crypt/Random/Source.pm
 requires 'Sub::Exporter';
 
-# Template::Toolkit, the rendering engine of OTOBO.
+# Template::Toolkit, the rendering engine of CareOnCloud ESM.
 requires 'Template::Toolkit';
 
 # The fast data stash for Template::Toolkit.
 requires 'Template::Stash::XS';
 
-requires 'Text::CSV', ">= 1.95";
+requires 'Text::CSV', '>= 1.95';
 
 # A fast backend that is used by Text::CSV
-requires 'Text::CSV_XS', ">= 1.34";
+requires 'Text::CSV_XS', '>= 1.34';
 
 requires 'Text::Trim';
 
-# Required for high resolution timestamps.
+# Required for high resolution timestamps (in perlcore)
 requires 'Time::HiRes';
 
 requires 'Try::Tiny';
+
+requires 'Type::Tiny', '>= 1.008';
+
+requires 'Types::Serialiser';
 
 # for generating properly escaped URLs
 requires 'URI';
@@ -87,7 +115,7 @@ requires 'URI';
 requires 'XML::LibXML';
 
 # Required for fast and correct YAML processing.
-requires 'YAML::XS', ">= 0.62";
+requires 'YAML::XS', '>= 0.62';
 
 # For internationalised sorting
 requires 'Unicode::Collate';
@@ -98,11 +126,8 @@ requires 'Plack::Middleware::Header';
 # Twist some HTTP variables so that the reverse proxy is transparent
 requires 'Plack::Middleware::ReverseProxy';
 
-# Support for readonly Perl variables
-requires 'Const::Fast';
 
-
-# Feature 'apache:mod_perl' is not needed for Docker
+# Feature 'apache:mod_perl' is not needed
 
 
 # feature 'auth:openidconnect', 'Support for feature auth:openidconnect' => sub {
@@ -112,22 +137,19 @@ requires 'Const::Fast';
 # };
 
 # feature 'db:mysql', 'Support for database MySQL' => sub {
-    # Required to connect to a MariaDB or MySQL database.
-    # Version 4.042 not supported: This version had encoding related issues. Version 4.043 was a rollback to 4.0.41
-    # Version 5.001 not supported: This version can't be installed with the MariaDB client library.
-    # Version 5.002 not supported: This version can't be installed with the MariaDB client library.
-    requires 'DBD::mysql', ">= 4.00, != 4.042, != 5.001, != 5.002";
+    # Required to connect to a MySQL or MariaDB database.
+    requires 'DBD::MariaDB', '1.24';
 
 # };
 
 # feature 'db:odbc', 'Support for database access via ODBC' => sub {
     # Required to connect to a MS-SQL database.
     # Version 1.23 not supported: This version is broken and not useable! Please upgrade to a higher version.
-    requires 'DBD::ODBC', "!= 1.23";
+    requires 'DBD::ODBC', '!= 1.23';
 
 # };
 
-# Feature 'db:oracle' is not needed for Docker
+# Feature 'db:oracle' is not needed
 
 
 # feature 'db:postgresql', 'Support for database PostgreSQL' => sub {
@@ -144,10 +166,16 @@ requires 'Const::Fast';
 
 # feature 'devel:debugging', 'Features which can be useful in development environments' => sub {
     # nicer formatting when dumping data structures
-    requires 'Data::Dump', ">= 1.25";
+    requires 'Data::Dump', '>= 1.25';
 
     # convenient and informative dumping data structures
-    requires 'Data::Dx', ">= 0.000010";
+    requires 'Data::Dx', '>= 0.000010';
+
+    # add stack trace to warnings
+    requires 'Devel::Confess', '>= 0.009004';
+
+    # command history in Perl debugger and in Dev::Tools::Shell
+    requires 'Term::ReadLine::Gnu', '>= 1.35';
 
 # };
 
@@ -166,24 +194,36 @@ requires 'Const::Fast';
 
 # };
 
+# Feature 'devel:profiling' is not needed
+
+
 # feature 'devel:test', 'Modules for running the test suite' => sub {
+    # for deeply inspecting scalars, especially strings
+    requires 'Data::Peek';
+
     # used by Kernel::System::UnitTest::Selenium
-    requires 'Selenium::Remote::Driver', ">= 1.49";
+    requires 'Selenium::Remote::Driver', '>= 1.49';
 
     # a quick compile check
     requires 'Test::Compile';
 
+    # check for strictures and warnings
+    requires 'Test::Strict';
+
+    # check whether the test script emits warnings
+    requires 'Test::Warnings';
+
     # basic test functions
     requires 'Test2::Suite';
 
-    # an alternative test runner
-    requires 'Test2::Harness';
-
-    # contains Test2::API which is used in Kernel::System::UnitTest::Driver
+    # contains Test2::API which is used in Kernel::System::UnitTest::Driver, (in perlcore)
     requires 'Test::Simple';
 
     # testing PSGI apps and URLs
     requires 'Test2::Tools::HTTP';
+
+    # bring explain() back to test scripts
+    requires 'Test2::Tools::Explain';
 
     # support for formatting test results
     requires 'Unicode::GCString';
@@ -196,8 +236,55 @@ requires 'Const::Fast';
 
 # };
 
-# Feature 'div:hanextra' is not needed for Docker
+# feature 'div:cldr', 'Support for feature div:cldr' => sub {
+    # localisation from the CLDR project
+    requires 'Locale::CLDR', '== 0.46.0';
 
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Ar', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::De', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Es', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Fr', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Hu', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Ko', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Nb', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Pt', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Ru', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Sr', '== 0.46.0';
+
+    # language packs from the CLDR project
+    requires 'Locale::CLDR::Locales::Zh', '== 0.46.0';
+
+# };
+
+# feature 'div:hanextra', 'Support for feature div:hanextra' => sub {
+    # Required to handle mails with several Chinese character sets.
+    requires 'Encode::HanExtra', '>= 0.23';
+
+# };
+
+# feature 'div:iocompress', 'Support for feature div:iocompress' => sub {
+    requires 'IO::Compress', '2.220';
+
+# };
 
 # feature 'div:ldap', 'Support for feature div:ldap' => sub {
     # Required for directory authentication.
@@ -205,12 +292,27 @@ requires 'Const::Fast';
 
 # };
 
-# Feature 'div:ssl' is not needed for Docker
+# feature 'div:locallib', 'Support for feature div:locallib' => sub {
+    # create and use a local lib/ for perl modules with PERL5LIB
+    requires 'local::lib';
 
+# };
+
+# feature 'div:qrcode', 'Support for feature div:qrcode' => sub {
+    # Support for QR code in PDF files
+    requires 'Text::QRCode';
+
+# };
 
 # feature 'div:xslt', 'Support for feature div:xslt' => sub {
     # Required for Generic Interface XSLT mapping module.
     requires 'XML::LibXSLT';
+
+# };
+
+# feature 'div:zlib', 'Support for feature div:zlib' => sub {
+    # create and use a local lib/ for perl modules with PERL5LIB
+    requires 'Compress::Raw::Zlib', '2.221';
 
 # };
 
@@ -225,38 +327,26 @@ requires 'Const::Fast';
 
 # feature 'graph:graphviz', 'Support for feature graph:graphviz' => sub {
     # A wrapper for AT&T's Graphviz
-    requires 'GraphViz2', ">= 2.67";
+    requires 'GraphViz2', '>= 2.67';
 
 # };
 
-# Feature 'mail' is not needed for Docker
-
-
-# feature 'mail:imap', 'Support for feature mail:imap' => sub {
-    # Required for IMAP TLS connections.
-    requires 'Mail::IMAPClient', ">= 3.22";
-
-# };
-
-# feature 'mail:ntlm', 'Support for feature mail:ntlm' => sub {
+# feature 'mail:ntlm', 'NTLM authentication mechanism in IMAP connections' => sub {
     # Required for NTLM authentication mechanism in IMAP connections.
     requires 'Authen::NTLM';
 
 # };
 
-# feature 'mail:sasl', 'Support for feature mail:sasl' => sub {
-    # Required for MD5 authentication mechanisms in IMAP connections.
+# feature 'mail:sasl', 'DIGEST-MD5 authentication in IMAP and SASL mechanism in SMTP connections' => sub {
+    # Required for DIGEST-MD5 authentication in IMAP and SASL mechanism in SMTP connections.
     requires 'Authen::SASL';
 
 # };
 
-# Feature 'mail:ssl' is not needed for Docker
+# Feature 'optional' is not needed
 
 
-# Feature 'optional' is not needed for Docker
-
-
-# feature 'performance:redis', 'Support for feature performance:redis' => sub {
+# feature 'performance:redis', 'Modules for running with Redis Cache Server' => sub {
     # For usage with Redis Cache Server.
     requires 'Redis';
 
@@ -267,10 +357,7 @@ requires 'Const::Fast';
 
 # feature 'storage:s3', 'AWS S3 compatible storage' => sub {
     # support for the REST requests to the S3 storage
-    requires 'Mojolicious', ">= 9.22";
-
-    # correct and fast JSON support, used by Mojo::JSON
-    requires 'Cpanel::JSON::XS';
+    requires 'Mojolicious', '>= 9.22';
 
     # support for S3 using Mojo::UserAgent
     requires 'Mojolicious::Plugin::AWS';

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,18 +25,14 @@
                 <h2>[% Data.DynamicFieldName | html %] - [% Translate("Details view") | html %]</h2>
             </div>
 
-            <fieldset class="TableLike" id="FilterFieldset" field="DynamicField_[% Data.DynamicFieldName | html %]">
-
+            <div class="DBDetails">
 [% RenderBlockStart("DetailsRow") %]
-                <div>
-                    <label for="FieldFilter[% Data.ColumnHead | html %]">[% Data.ColumnHead | html %]:</label>
-                    <div class="Field">
-                        [% Data.ColumnData | html %]
-                    </div>
+                <div class="DBDetailsRow">
+                    <p>[% Data.ColumnHead | html %]:</p>
+                    <p>[% Data.ColumnData | html %]</p>
                 </div>
 [% RenderBlockEnd("DetailsRow") %]
-
-            </fieldset>
+            </div>
         </div>
 [% RenderBlockEnd("DetailsOverview") %]
     </div>

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -37,9 +37,7 @@ Core.Agent.TicketBulk = (function (TargetNS) {
      */
     TargetNS.Init = function () {
         var TicketBulkURL = Core.Config.Get('TicketBulkURL'),
-            $TicketNumberObj = $('#MergeTo'),
-            Fields = ['StateID', 'TypeID', 'OwnerID', 'ResponsibleID', 'QueueID', 'PriorityID'],
-            ModifiedFields;
+            $TicketNumberObj = $('#MergeTo');
 
         // Initialize autocomplete feature on ticket number field.
         Core.UI.Autocomplete.Init($TicketNumberObj, function (Request, Response) {
@@ -88,15 +86,6 @@ Core.Agent.TicketBulk = (function (TargetNS) {
                 $('#OptionMergeTo').prop('checked', true);
             }
         });
-
-        // Bind events to specific fields
-        $.each(Fields, function(Index, Value) {
-            ModifiedFields = Core.Data.CopyObject(Fields);
-            ModifiedFields.splice(Index, 1);
-
-            FieldUpdate(Value, ModifiedFields);
-        });
-
 
         // execute function in the parent window
         Core.UI.Popup.ExecuteInParentWindow(function(WindowObject) {
@@ -176,23 +165,6 @@ Core.Agent.TicketBulk = (function (TargetNS) {
             }
         });
     };
-
-    /**
-     * @private
-     * @name FieldUpdate
-     * @memberof Core.Agent.TicketBulk.Init
-     * @function
-     * @param {String} Value - FieldID
-     * @param {Array} ModifiedFields - Fields
-     * @description
-     *      Create on change event handler
-     */
-    function FieldUpdate (Value, ModifiedFields) {
-        $('#' + Value).on('change', function () {
-            Core.AJAX.FormUpdate($('.Validate'), 'AJAXUpdate', Value, ModifiedFields);
-        });
-    }
-
 
     Core.Init.RegisterNamespace(TargetNS, 'APP_MODULE');
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,28 +16,30 @@
 
 package Kernel::Modules::AgentTicketLockedView;
 
+use v5.24;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
 sub new {
     my ( $Type, %Param ) = @_;
 
-    # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
-
-    return $Self;
+    return bless {%Param}, $Type;
 }
 
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    # get needed object
+    # get needed objects
     my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
     my $ParamObject   = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $SessionObject = $Kernel::OM->Get('Kernel::System::AuthSession');
@@ -104,14 +106,14 @@ sub Run {
                 $FilterValue = $StoredFilters->{CustomerUserLogin}->[0] || '';
             }
             else {
-                $FilterValue = $StoredFilters->{ $ColumnName . 'IDs' }->[0] || '';
+                $FilterValue = join( ',', @{ $StoredFilters->{ $ColumnName . 'IDs' } || [] } ) || '';
             }
         }
         next COLUMNNAME if $FilterValue eq '';
         next COLUMNNAME if $FilterValue eq 'DeleteFilter';
 
         if ( $ColumnName eq 'CustomerID' ) {
-            push @{ $ColumnFilter{$ColumnName} }, $FilterValue;
+            push @{ $ColumnFilter{$ColumnName} },           $FilterValue;
             push @{ $ColumnFilter{ $ColumnName . 'Raw' } }, $FilterValue;
             $GetColumnFilter{$ColumnName} = $FilterValue;
         }
@@ -121,7 +123,8 @@ sub Run {
             $GetColumnFilter{$ColumnName} = $FilterValue;
         }
         else {
-            push @{ $ColumnFilter{ $ColumnName . 'IDs' } }, $FilterValue;
+            my @FilterValue = split( /,/, $FilterValue );
+            push @{ $ColumnFilter{ $ColumnName . 'IDs' } }, @FilterValue;
             $GetColumnFilter{$ColumnName} = $FilterValue;
         }
     }
@@ -151,8 +154,16 @@ sub Run {
         next DYNAMICFIELD if $FilterValue eq '';
         next DYNAMICFIELD if $FilterValue eq 'DeleteFilter';
 
+        my @FilterValue;
+        if ( ref $FilterValue eq 'ARRAY' ) {
+            @FilterValue = $FilterValue->@*;
+        }
+        else {
+            @FilterValue = split( /,/, $FilterValue );
+        }
+
         $ColumnFilter{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = {
-            Equals => $FilterValue,
+            Equals => \@FilterValue,
         };
         $GetColumnFilter{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = $FilterValue;
     }
@@ -161,10 +172,7 @@ sub Run {
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
     # starting with page ...
-    my $Refresh = '';
-    if ( $Self->{UserRefreshTime} ) {
-        $Refresh = 60 * $Self->{UserRefreshTime};
-    }
+    my $Refresh = $Self->{UserRefreshTime} ? 60 * $Self->{UserRefreshTime} : '';
     my $Output;
     if ( $Self->{Subaction} ne 'AJAXFilterUpdate' ) {
         $Output = $LayoutObject->Header(
@@ -257,7 +265,6 @@ sub Run {
     $HeaderColumn =~ s{\A ColumnFilter }{}msxg;
     my @OriginalViewableTickets;
     my @ViewableTickets;
-    my $ViewableTicketCount = 0;
 
     # get ticket object
     my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
@@ -328,10 +335,6 @@ sub Run {
             Key    => $StoredFiltersKey,
             Value  => $JSONObject->Encode( Data => $StoredFilters ),
         );
-    }
-
-    if ( $ViewableTicketCount > $Limit ) {
-        $ViewableTicketCount = $Limit;
     }
 
     my %NavBarFilter;
@@ -421,7 +424,8 @@ sub Run {
     );
 
     # get page footer
-    $Output .= $LayoutObject->Footer();
+    $Output .= $LayoutObject->Footer;
+
     return $Output;
 }
 

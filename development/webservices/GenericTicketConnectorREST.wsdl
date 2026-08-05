@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- nofilter(TidyAll::Plugin::OTOBO::XML::WSDL::XSDValidator) -->
 <application xmlns="http://wadl.dev.java.net/2009/02">
-  <doc title="OTOBOGenericTicketConnectorREST" xml:lang="en"/>
-  <resources base="http://localhost/otobo/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST">
+  <doc title="CareOnCloudGenericTicketConnectorREST" xml:lang="en"/>
+  <resources base="http://localhost/careoncloud/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST">
     <resource id="Ticket" path="Ticket">
       <doc title="Ticket" xml:lang="en"/>
       <param default="" name="UserLogin" required="false" style="query" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
@@ -15,7 +15,7 @@
           <doc title="GET_TicketGet" xml:lang="en"/>
           <request/>
           <response status="200">
-            <representation element="ns:Response" mediaType="application/json; charset=UTF-8" xmlns:ns="http://localhost/otobo/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST/Ticket/1"/>
+            <representation element="ns:Response" mediaType="application/json; charset=UTF-8" xmlns:ns="http://localhost/careoncloud/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST/Ticket/1"/>
           </response>
         </method>
         <method id="PATCH_TicketUpdate" name="PATCH">
@@ -30,7 +30,7 @@
             <representation element="data" mediaType="text/plain; charset=UTF-8"/>
           </response>
           <response status="200">
-            <representation element="tic:Response" mediaType="application/json; charset=UTF-8" xmlns:tic="http://localhost/otobo/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST/Ticket/"/>
+            <representation element="tic:Response" mediaType="application/json; charset=UTF-8" xmlns:tic="http://localhost/careoncloud/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST/Ticket/"/>
           </response>
         </method>
       </resource>
@@ -63,7 +63,7 @@
           <doc title="GET_SessionGet" xml:lang="en"/>
           <request/>
           <response status="200">
-            <representation element="ns:Response" mediaType="application/json; charset=UTF-8" xmlns:ns="http://localhost/otobo/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST/Session/1"/>
+            <representation element="ns:Response" mediaType="application/json; charset=UTF-8" xmlns:ns="http://localhost/careoncloud/nph-genericinterface.pl/Webservice/GenericTicketConnectorREST/Session/1"/>
           </response>
         </method>
       </resource>

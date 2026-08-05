@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -28,6 +28,7 @@ our @ObjectDependencies = (
     'Kernel::Config',
     'Kernel::System::DynamicField',
     'Kernel::System::DynamicField::Backend',
+    'Kernel::System::HTMLUtils',
     'Kernel::System::LinkObject',
     'Kernel::System::Log',
     'Kernel::System::State',
@@ -216,6 +217,11 @@ sub Params {
             Value    => '1 (can overwrite the logged in user)',
             Optional => 1,
         },
+        {
+            Key      => 'StoreTicketIDDynamicField',
+            Value    => 'NameX (name of DynamicField holding the id of the created ticket in the original ticket)',
+            Optional => 1,
+        },
     );
 
     return @Params;
@@ -296,6 +302,35 @@ sub Run {
 
     # override UserID if specified as a parameter in the TA config
     $Param{UserID} = $Self->_OverrideUserID(%Param);
+
+    my $DynamicFieldObject        = $Kernel::OM->Get('Kernel::System::DynamicField');
+    my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
+
+    # Convert DynamicField value to HTML string, see bug#14229.
+    my $HTMLUtilsObject = $Kernel::OM->Get('Kernel::System::HTMLUtils');
+    if ( $Param{Config}->{Body} =~ /CareOnCloud_TICKET_DynamicField_/ ) {
+        MATCH:
+        for my $Match ( sort keys %{ $Param{Ticket} } ) {
+            if ( $Match =~ m/DynamicField_(.*)/ && $Param{Ticket}->{$Match} ) {
+
+                my $DynamicFieldConfig = $DynamicFieldObject->DynamicFieldGet(
+                    Name => $1,
+                );
+
+                # Check if there is HTML content.
+                my $IsHTMLContent = $DynamicFieldBackendObject->HasBehavior(
+                    DynamicFieldConfig => $DynamicFieldConfig,
+                    Behavior           => 'IsHTMLContent',
+                );
+
+                # Avoid double conversion to HTML for dynamic fields with HTML content.
+                next MATCH if $IsHTMLContent;
+                $Param{Ticket}->{$Match} = $HTMLUtilsObject->ToHTML(
+                    String => $Param{Ticket}->{$Match},
+                );
+            }
+        }
+    }
 
     # use ticket attributes if needed
     $Self->_ReplaceTicketAttributes(%Param);
@@ -486,14 +521,10 @@ sub Run {
     # set a field filter (all valid dynamic fields have to have set to 1 like NameX => 1)
     my %FieldFilter;
     for my $Attribute ( sort keys %{ $Param{Config} } ) {
-        if ( $Attribute =~ m{\A DynamicField_ ( [a-zA-Z0-9]+ ) \z}msx ) {
+        if ( $Attribute =~ m{\A DynamicField_ ( [a-zA-Z0-9\-]+ ) \z}msx ) {
             $FieldFilter{$1} = 1;
         }
     }
-
-    # get dynamic field objects
-    my $DynamicFieldObject        = $Kernel::OM->Get('Kernel::System::DynamicField');
-    my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
     # get the dynamic fields for ticket
     my $DynamicFieldList = $DynamicFieldObject->DynamicFieldListGet(
@@ -532,6 +563,42 @@ sub Run {
                     . " $ObjectID from Ticket: "
                     . $Param{Ticket}->{TicketID} . '!',
             );
+            return;
+        }
+    }
+
+    # store created ticket id
+    if ( $Param{Config}->{StoreTicketIDDynamicField} ) {
+        my $DynamicFieldConfig = $DynamicFieldObject->DynamicFieldGet(
+            Name => $Param{Config}->{StoreTicketIDDynamicField},
+        );
+
+        if ( !$DynamicFieldConfig || !IsHashRefWithData($DynamicFieldConfig) ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => $CommonMessage
+                    . "Couldn't get DynamicField $Param{Config}->{StoreTicketIDDynamicField} for Ticket $Param{Ticket}->{TicketID}."
+            );
+
+            return;
+        }
+
+        # set the value
+        my $Success = $DynamicFieldBackendObject->ValueSet(
+            DynamicFieldConfig => $DynamicFieldConfig,
+            ObjectID           => $Param{Ticket}->{TicketID},
+            Value              => $TicketID,
+            UserID             => $Param{UserID},
+        );
+
+        if ( !$Success ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => $CommonMessage
+                    . "Couldn't set DynamicField Value on $DynamicFieldConfig->{ObjectType}:"
+                    . " for Ticket: $Param{Ticket}->{TicketID}!",
+            );
+
             return;
         }
     }

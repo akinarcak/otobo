@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,15 +19,15 @@ package Kernel::System::Ticket::Article::Backend::Email;
 use strict;
 use warnings;
 
+use parent 'Kernel::System::Ticket::Article::Backend::MIMEBase';
+
 # core modules
 
 # CPAN modules
-use Mail::Address;
+use Email::Address::XS ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-
-use parent 'Kernel::System::Ticket::Article::Backend::MIMEBase';
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -44,6 +44,7 @@ our @ObjectDependencies = (
     'Kernel::System::Ticket::Article',
     'Kernel::System::DateTime',
     'Kernel::System::MailQueue',
+    'Kernel::System::EmailAddress',
 );
 
 =head1 NAME
@@ -326,7 +327,7 @@ sub ArticleSend {
     $Kernel::OM->Get('Kernel::System::Log')->Log(
         Priority => 'info',
         Message  => sprintf(
-            "Queued email to '%s' from '%s'. HistoryType => %s, Subject => %s;",
+            q{Queued email to '%s' from '%s'. HistoryType => %s, Subject => %s;},
             $Param{To},
             $Param{From},
             $HistoryType,
@@ -484,9 +485,9 @@ sub SendAutoResponse {
     );
 
     # return if no valid auto response exists
-    return if !$AutoResponse{Text};
-    return if !$AutoResponse{SenderRealname};
-    return if !$AutoResponse{SenderAddress};
+    return unless $AutoResponse{Text};
+    return unless $AutoResponse{SenderRealname};    # the unquoted phrase of the system address
+    return unless $AutoResponse{SenderAddress};
 
     # send if notification should be sent (not for closed tickets)!?
     my %State = $Kernel::OM->Get('Kernel::System::State')->StateGet( ID => $Ticket{StateID} );
@@ -510,7 +511,7 @@ sub SendAutoResponse {
     }
 
     # log that no auto response was sent!
-    if ( $OrigHeader{'X-OTOBO-Loop'} && $OrigHeader{'X-OTOBO-Loop'} !~ /^(false|no)$/i ) {
+    if ( $OrigHeader{'X-CareOnCloud-Loop'} && $OrigHeader{'X-CareOnCloud-Loop'} !~ /^(false|no)$/i ) {
 
         # add history row
         $TicketObject->HistoryAdd(
@@ -526,6 +527,7 @@ sub SendAutoResponse {
                 . "$Ticket{TicketNumber}] ($OrigHeader{From}) because the "
                 . "sender doesn't want an auto-response (e. g. loop or precedence header)"
         );
+
         return;
     }
 
@@ -537,16 +539,14 @@ sub SendAutoResponse {
     # get loop protection object
     my $LoopProtectionObject = $Kernel::OM->Get('Kernel::System::PostMaster::LoopProtection');
 
-    # create email parser object
-    my $EmailParser = Kernel::System::EmailParser->new(
-        Mode => 'Standalone',
-    );
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
 
     my @AutoReplyAddresses;
-    my @Addresses = $EmailParser->SplitAddressLine( Line => $OrigHeader{From} );
+    my @AddressObjects = $EmailAddressObject->ParseAddressLine( Line => $OrigHeader{From} );
     ADDRESS:
-    for my $Address (@Addresses) {
-        my $Email = $EmailParser->GetEmailAddress( Email => $Address );
+    for my $AddressObject (@AddressObjects) {
+        my $Email   = $EmailAddressObject->GetAddress( AddressObject => $AddressObject );
+        my $Address = $EmailAddressObject->Format( AddressObject => $AddressObject );
         if ( !$Email ) {
 
             # add it to ticket history
@@ -562,6 +562,7 @@ sub SendAutoResponse {
                 Priority => 'notice',
                 Message  => "Sent no auto response to '$Address' because of invalid address.",
             );
+
             next ADDRESS;
 
         }
@@ -581,12 +582,13 @@ sub SendAutoResponse {
                 Message  => "Sent no '$Param{AutoResponseType}' for Ticket ["
                     . "$Ticket{TicketNumber}] ($Email) because of loop protection."
             );
+
             next ADDRESS;
         }
         else {
 
             # increase loop count
-            return if !$LoopProtectionObject->SendEmail( To => $Email );
+            return unless $LoopProtectionObject->SendEmail( To => $Email );
         }
 
         # check if sender is e. g. MAILER-DAEMON or Postmaster
@@ -660,9 +662,12 @@ sub SendAutoResponse {
         return;
     }
 
-    # Format sender realname and address conformant to RFC 5322. This is relevant when the real name contain commas
+    # Format sender realname and address compliant to RFC 5322. This is relevant when the real name contain commas
     # or other special symbols.
-    my $From = Mail::Address->new( $AutoResponse{SenderRealname}, $AutoResponse{SenderAddress} );
+    my $From = $EmailAddressObject->Format(
+        RealName => $AutoResponse{SenderRealname},
+        Address  => $AutoResponse{SenderAddress},
+    );
 
     # send email
     my $ArticleID = $Self->ArticleSend(
@@ -671,7 +676,7 @@ sub SendAutoResponse {
         TicketID             => $Param{TicketID},
         HistoryType          => $HistoryType,
         HistoryComment       => "\%\%$AutoReplyAddresses",
-        From                 => $From->format(),
+        From                 => $From,
         To                   => $AutoReplyAddresses,
         Cc                   => $Cc,
         Charset              => 'utf-8',

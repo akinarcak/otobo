@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -14,18 +14,20 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
-# This file demonstrates how to use the autoload mechanism of OTOBO to change existing functionality.
+# This file demonstrates how to use the autoload mechanism of CareOnCloud ESM to change existing functionality.
 # Please note that all autoload files have to be registered via SysConfig (see AutoloadPerlPackages###1000-Test).
 
 # First, we add a method to Kernel::System::Valid.
 
-use Kernel::System::Valid;    ## no critic (Modules::RequireExplicitPackage)
+## no critic (Modules::RequireExplicitPackage)
 
-package Kernel::System::Valid;    ## no critic (Modules::RequireFilenameMatchesPackage)
+use Kernel::System::Valid ();    ## no perlimports
 
+package Kernel::System::Valid;   ## no critic (Modules::RequireFilenameMatchesPackage)
+
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 sub AutoloadTest {
@@ -36,12 +38,12 @@ sub AutoloadTest {
 
 package Kernel::Autoload::Test;    ## no critic qw(Modules::ProhibitMultiplePackages)
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
-use Kernel::System::State;
+use Kernel::System::State ();      ## no perlimports
 
 our @ObjectDependencies = (
     'Kernel::System::Log'
@@ -57,6 +59,7 @@ our @ObjectDependencies = (
     *Kernel::System::State::StateLookup = sub {
         my $Self = shift;
 
+        $Kernel::OM = $Kernel::OM;    # avoid 'once' warning
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'info',
             Message  => 'Calling the modified method Kernel::System::State::StateLookup',

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -59,6 +59,8 @@ $Self->True( $FirstUserID, 'Creation of first agent' );
 my $FirstUserName = $UserObject->UserName(
     UserID => $FirstUserID,
 );
+my %FirstUserPreferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences( UserID => $FirstUserID );
+my $FirstUserNameStrg    = qq{"$FirstUserName" <$FirstUserPreferences{UserEmail}>};
 
 my $SecondUserID = $UserObject->UserAdd(
     UserFirstname => 'Test',
@@ -74,6 +76,8 @@ $Self->True( $SecondUserID, 'Creation of second agent' );
 my $SecondUserName = $UserObject->UserName(
     UserID => $SecondUserID,
 );
+my %SecondUserPreferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences( UserID => $SecondUserID );
+my $SecondUserNameStrg    = qq{"$SecondUserName" <$SecondUserPreferences{UserEmail}>};
 
 # create customer companies
 my $FirstCustomerCompanyID = $CustomerCompanyObject->CustomerCompanyAdd(
@@ -105,9 +109,10 @@ my $FirstCustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
 );
 $Self->True( $FirstCustomerUserLogin, 'Creation of first customer user' );
 
-my $FirstCustomerUserName = $CustomerUserObject->CustomerName(
-    UserLogin => $FirstCustomerUserLogin,
+my %FirstCustomerUserData = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserDataGet(
+    User => $FirstCustomerUserLogin,
 );
+my $FirstCustomerUserStrg = $FirstCustomerUserData{UserMailString};
 
 my $SecondCustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
     Source         => 'CustomerUser',
@@ -121,9 +126,14 @@ my $SecondCustomerUserLogin = $CustomerUserObject->CustomerUserAdd(
 );
 $Self->True( $SecondCustomerUserLogin, 'Creation of second customer user' );
 
-my $SecondCustomerUserName = $CustomerUserObject->CustomerName(
-    UserLogin => $SecondCustomerUserLogin,
+my %SecondCustomerUserData = $Kernel::OM->Get('Kernel::System::CustomerUser')->CustomerUserDataGet(
+    User => $SecondCustomerUserLogin,
 );
+my $SecondCustomerUserStrg = $SecondCustomerUserData{UserMailString};
+
+# prepare information for building ticket description
+my $ParamHook = $Kernel::OM->Get('Kernel::Config')->Get('Ticket::Hook')      || 'Ticket#';
+$ParamHook .= $Kernel::OM->Get('Kernel::Config')->Get('Ticket::HookDivider') || '';
 
 # create a source ticket
 my $SourceTicketID = $TicketObject->TicketCreate(
@@ -153,6 +163,17 @@ my $FirstReferenceTicketID = $TicketObject->TicketCreate(
 );
 $Self->True( $FirstReferenceTicketID, 'Creation of first reference ticket' );
 
+# create ticket description
+my %FirstReferenceTicket = $TicketObject->TicketGet(
+    TicketID => $FirstReferenceTicketID,
+    UserID   => $UserID,
+);
+
+my %FirstReferenceTicketDescription = (
+    Normal => $ParamHook . "$FirstReferenceTicket{TicketNumber}",
+    Long   => $ParamHook . "$FirstReferenceTicket{TicketNumber}: $FirstReferenceTicket{Title}",
+);
+
 my $SecondReferenceTicketID = $TicketObject->TicketCreate(
     Title        => 'Some Ticket Title',
     Queue        => 'Raw',
@@ -165,6 +186,17 @@ my $SecondReferenceTicketID = $TicketObject->TicketCreate(
     UserID       => $UserID,
 );
 $Self->True( $SecondReferenceTicketID, 'Creation of second reference ticket' );
+
+# create ticket description
+my %SecondReferenceTicket = $TicketObject->TicketGet(
+    TicketID => $SecondReferenceTicketID,
+    UserID   => $UserID,
+);
+
+my %SecondReferenceTicketDescription = (
+    Normal => $ParamHook . "$SecondReferenceTicket{TicketNumber}",
+    Long   => $ParamHook . "$SecondReferenceTicket{TicketNumber}: $SecondReferenceTicket{Title}",
+);
 
 # theres is not really needed to add the dynamic fields for this test, we can define a static
 # set of configurations
@@ -447,7 +479,7 @@ my %DynamicFieldConfigs = (
         Name          => 'TicketRef',
         Label         => 'TicketRef',
         FieldOrder    => 123,
-        FieldType     => 'TicketReference',
+        FieldType     => 'Ticket',
         ObjectType    => 'Ticket',
         Config        => {
             EditFieldMode        => 'Dropdown',
@@ -468,7 +500,7 @@ my %DynamicFieldConfigs = (
         Name          => 'TicketRefMS',
         Label         => 'TicketRefMS',
         FieldOrder    => 123,
-        FieldType     => 'TicketReference',
+        FieldType     => 'Ticket',
         ObjectType    => 'Ticket',
         Config        => {
             EditFieldMode        => 'Dropdown',
@@ -489,7 +521,7 @@ my %DynamicFieldConfigs = (
         Name          => 'TicketRefMV',
         Label         => 'TicketRefMV',
         FieldOrder    => 123,
-        FieldType     => 'TicketReference',
+        FieldType     => 'Ticket',
         ObjectType    => 'Ticket',
         Config        => {
             EditFieldMode        => 'Dropdown',
@@ -903,8 +935,8 @@ my @Tests = (
             Value              => $FirstUserID,
         },
         ExpectedResults => {
-            Value => $FirstUserName,
-            Title => $FirstUserName,
+            Value => $FirstUserNameStrg,
+            Title => $FirstUserNameStrg,
         },
         Success => 1,
     },
@@ -915,8 +947,8 @@ my @Tests = (
             Value              => [$FirstUserID],
         },
         ExpectedResults => {
-            Value => $FirstUserName,
-            Title => $FirstUserName,
+            Value => $FirstUserNameStrg,
+            Title => $FirstUserNameStrg,
         },
         Success => 1,
     },
@@ -953,8 +985,8 @@ my @Tests = (
             Value              => $FirstUserID,
         },
         ExpectedResults => {
-            Value => $FirstUserName,
-            Title => $FirstUserName,
+            Value => $FirstUserNameStrg,
+            Title => $FirstUserNameStrg,
         },
         Success => 1,
     },
@@ -965,8 +997,8 @@ my @Tests = (
             Value              => [$FirstUserID],
         },
         ExpectedResults => {
-            Value => $FirstUserName,
-            Title => $FirstUserName,
+            Value => $FirstUserNameStrg,
+            Title => $FirstUserNameStrg,
         },
         Success => 1,
     },
@@ -977,8 +1009,8 @@ my @Tests = (
             Value              => [ $FirstUserID, $SecondUserID ],
         },
         ExpectedResults => {
-            Value => "$FirstUserName, $SecondUserName",
-            Title => "$FirstUserName, $SecondUserName",
+            Value => "$FirstUserNameStrg, $SecondUserNameStrg",
+            Title => "$FirstUserNameStrg, $SecondUserNameStrg",
         },
         Success => 1,
     },
@@ -1015,8 +1047,8 @@ my @Tests = (
             Value              => $FirstUserID,
         },
         ExpectedResults => {
-            Value => $FirstUserName,
-            Title => $FirstUserName,
+            Value => $FirstUserNameStrg,
+            Title => $FirstUserNameStrg,
         },
         Success => 1,
     },
@@ -1027,8 +1059,8 @@ my @Tests = (
             Value              => [$FirstUserID],
         },
         ExpectedResults => {
-            Value => $FirstUserName,
-            Title => $FirstUserName,
+            Value => $FirstUserNameStrg,
+            Title => $FirstUserNameStrg,
         },
         Success => 1,
     },
@@ -1039,8 +1071,8 @@ my @Tests = (
             Value              => [ $FirstUserID, $SecondUserID ],
         },
         ExpectedResults => {
-            Value => "$FirstUserName, $SecondUserName",
-            Title => "$FirstUserName, $SecondUserName",
+            Value => "$FirstUserNameStrg, $SecondUserNameStrg",
+            Title => "$FirstUserNameStrg, $SecondUserNameStrg",
         },
         Success => 1,
     },
@@ -1063,8 +1095,8 @@ my @Tests = (
             Value              => [ $FirstUserID, undef, $SecondUserID ],
         },
         ExpectedResults => {
-            Value => "$FirstUserName, , $SecondUserName",
-            Title => "$FirstUserName, , $SecondUserName",
+            Value => "$FirstUserNameStrg, , $SecondUserNameStrg",
+            Title => "$FirstUserNameStrg, , $SecondUserNameStrg",
         },
         Success => 1,
     },
@@ -1145,8 +1177,8 @@ my @Tests = (
             Value              => $FirstCustomerUserLogin,
         },
         ExpectedResults => {
-            Value => $FirstCustomerUserName,
-            Title => $FirstCustomerUserName,
+            Value => $FirstCustomerUserStrg,
+            Title => $FirstCustomerUserStrg,
         },
         Success => 1,
     },
@@ -1157,8 +1189,8 @@ my @Tests = (
             Value              => [$FirstCustomerUserLogin],
         },
         ExpectedResults => {
-            Value => $FirstCustomerUserName,
-            Title => $FirstCustomerUserName,
+            Value => $FirstCustomerUserStrg,
+            Title => $FirstCustomerUserStrg,
         },
         Success => 1,
     },
@@ -1195,8 +1227,8 @@ my @Tests = (
             Value              => $FirstCustomerUserLogin,
         },
         ExpectedResults => {
-            Value => $FirstCustomerUserName,
-            Title => $FirstCustomerUserName,
+            Value => $FirstCustomerUserStrg,
+            Title => $FirstCustomerUserStrg,
         },
         Success => 1,
     },
@@ -1207,8 +1239,8 @@ my @Tests = (
             Value              => [$FirstCustomerUserLogin],
         },
         ExpectedResults => {
-            Value => $FirstCustomerUserName,
-            Title => $FirstCustomerUserName,
+            Value => $FirstCustomerUserStrg,
+            Title => $FirstCustomerUserStrg,
         },
         Success => 1,
     },
@@ -1219,8 +1251,8 @@ my @Tests = (
             Value              => [ $FirstCustomerUserLogin, $SecondCustomerUserLogin ],
         },
         ExpectedResults => {
-            Value => "$FirstCustomerUserName, $SecondCustomerUserName",
-            Title => "$FirstCustomerUserName, $SecondCustomerUserName",
+            Value => "$FirstCustomerUserStrg, $SecondCustomerUserStrg",
+            Title => "$FirstCustomerUserStrg, $SecondCustomerUserStrg",
         },
         Success => 1,
     },
@@ -1243,8 +1275,8 @@ my @Tests = (
             Value              => [ $FirstCustomerUserLogin, undef, $SecondCustomerUserLogin ],
         },
         ExpectedResults => {
-            Value => "$FirstCustomerUserName, , $SecondCustomerUserName",
-            Title => "$FirstCustomerUserName, , $SecondCustomerUserName",
+            Value => "$FirstCustomerUserStrg, , $SecondCustomerUserStrg",
+            Title => "$FirstCustomerUserStrg, , $SecondCustomerUserStrg",
         },
         Success => 1,
     },
@@ -1282,8 +1314,8 @@ my @Tests = (
             Value              => $FirstReferenceTicketID,
         },
         ExpectedResults => {
-            Value => $FirstReferenceTicketID,
-            Title => $FirstReferenceTicketID,
+            Value => $FirstReferenceTicketDescription{Long},
+            Title => $FirstReferenceTicketDescription{Long},
         },
         Success => 1,
     },
@@ -1294,8 +1326,8 @@ my @Tests = (
             Value              => [$FirstReferenceTicketID],
         },
         ExpectedResults => {
-            Value => $FirstReferenceTicketID,
-            Title => $FirstReferenceTicketID,
+            Value => $FirstReferenceTicketDescription{Long},
+            Title => $FirstReferenceTicketDescription{Long},
         },
         Success => 1,
     },
@@ -1332,8 +1364,8 @@ my @Tests = (
             Value              => $FirstReferenceTicketID,
         },
         ExpectedResults => {
-            Value => $FirstReferenceTicketID,
-            Title => $FirstReferenceTicketID,
+            Value => $FirstReferenceTicketDescription{Long},
+            Title => $FirstReferenceTicketDescription{Long},
         },
         Success => 1,
     },
@@ -1344,8 +1376,8 @@ my @Tests = (
             Value              => [$FirstReferenceTicketID],
         },
         ExpectedResults => {
-            Value => $FirstReferenceTicketID,
-            Title => $FirstReferenceTicketID,
+            Value => $FirstReferenceTicketDescription{Long},
+            Title => $FirstReferenceTicketDescription{Long},
         },
         Success => 1,
     },
@@ -1356,8 +1388,8 @@ my @Tests = (
             Value              => [ $FirstReferenceTicketID, $SecondReferenceTicketID ],
         },
         ExpectedResults => {
-            Value => "$FirstReferenceTicketID, $SecondReferenceTicketID",
-            Title => "$FirstReferenceTicketID, $SecondReferenceTicketID",
+            Value => "$FirstReferenceTicketDescription{Long}, $SecondReferenceTicketDescription{Long}",
+            Title => "$FirstReferenceTicketDescription{Long}, $SecondReferenceTicketDescription{Long}",
         },
         Success => 1,
     },
@@ -1394,8 +1426,8 @@ my @Tests = (
             Value              => $FirstReferenceTicketID,
         },
         ExpectedResults => {
-            Value => $FirstReferenceTicketID,
-            Title => $FirstReferenceTicketID,
+            Value => $FirstReferenceTicketDescription{Long},
+            Title => $FirstReferenceTicketDescription{Long},
         },
         Success => 1,
     },
@@ -1406,8 +1438,8 @@ my @Tests = (
             Value              => [$FirstReferenceTicketID],
         },
         ExpectedResults => {
-            Value => $FirstReferenceTicketID,
-            Title => $FirstReferenceTicketID,
+            Value => $FirstReferenceTicketDescription{Long},
+            Title => $FirstReferenceTicketDescription{Long},
         },
         Success => 1,
     },
@@ -1418,8 +1450,8 @@ my @Tests = (
             Value              => [ $FirstReferenceTicketID, $SecondReferenceTicketID ],
         },
         ExpectedResults => {
-            Value => "$FirstReferenceTicketID, $SecondReferenceTicketID",
-            Title => "$FirstReferenceTicketID, $SecondReferenceTicketID",
+            Value => "$FirstReferenceTicketDescription{Long}, $SecondReferenceTicketDescription{Long}",
+            Title => "$FirstReferenceTicketDescription{Long}, $SecondReferenceTicketDescription{Long}",
         },
         Success => 1,
     },
@@ -1442,8 +1474,8 @@ my @Tests = (
             Value              => [ $FirstReferenceTicketID, undef, $SecondReferenceTicketID ],
         },
         ExpectedResults => {
-            Value => "$FirstReferenceTicketID, , $SecondReferenceTicketID",
-            Title => "$FirstReferenceTicketID, , $SecondReferenceTicketID",
+            Value => "$FirstReferenceTicketDescription{Long}, , $SecondReferenceTicketDescription{Long}",
+            Title => "$FirstReferenceTicketDescription{Long}, , $SecondReferenceTicketDescription{Long}",
         },
         Success => 1,
     },

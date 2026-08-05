@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -29,7 +29,7 @@ use Time::HiRes ();
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -51,7 +51,7 @@ sub Run {
     # get home directory
     my $HomeDir = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 
-    # get all avaliable backend modules
+    # get all available backend modules
     my @BackendModuleFiles = $Kernel::OM->Get('Kernel::System::Main')->DirectoryRead(
         Directory => $HomeDir . '/Kernel/System/Cache/',
         Filter    => '*.pm',
@@ -89,9 +89,8 @@ sub Run {
         );
 
         # create unique ID for this session
-        my @Dictionary = ( "A" .. "Z" );
-        my $SID;
-        $SID .= $Dictionary[ rand @Dictionary ] for 1 .. 8;
+        my @Dictionary = ( 'A' .. 'Z' );
+        my $SID        = join '', map { $Dictionary[ rand @Dictionary ] } ( 1 .. 8 );
 
         my $Result;
         my $SetOK;

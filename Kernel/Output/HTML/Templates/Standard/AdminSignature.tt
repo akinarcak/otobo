@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -38,6 +38,17 @@
 
     <div class="Clear"></div>
     <div class="SidebarColumn">
+[% RenderBlockStart("IncludeInvalid") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include invalid signatures") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include invalid signatures") | html %]</label>
+            </div>
+        </div>
+[% RenderBlockEnd("IncludeInvalid") %]
 [% RenderBlockStart("ActionList") %]
         <div class="WidgetSimple">
             <div class="Header">
@@ -201,39 +212,39 @@
             <div class="Content">
                 <p>[% Translate("You can use the following tags") | html %]:</p>
                 <dl>
-                    <dt><code>&lt;OTOBO_OWNER_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_OWNER_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket owner options") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_OWNER_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_OWNER_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_RESPONSIBLE_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_RESPONSIBLE_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket responsible options") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_RESPONSIBLE_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_RESPONSIBLE_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CURRENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CURRENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current user who requested this action") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_CURRENT_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_CURRENT_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the ticket data") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_TICKET_TicketNumber>, &lt;OTOBO_TICKET_TicketID&gt;, &lt;OTOBO_TICKET_Queue&gt;, &lt;OTOBO_TICKET_State&gt;</code>).
+                        <code>&lt;CareOnCloud_TICKET_TicketNumber>, &lt;CareOnCloud_TICKET_TicketID&gt;, &lt;CareOnCloud_TICKET_Queue&gt;, &lt;CareOnCloud_TICKET_State&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_DATA_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_DATA_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current customer user data") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_CUSTOMER_DATA_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_CUSTOMER_DATA_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CONFIG_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CONFIG_*&gt;</code></dt>
                     <dd>
-                        [% Translate("Config options") | html %] ([% Translate("e. g.") | html %] <code>&lt;OTOBO_CONFIG_HttpType&gt;</code>).
+                        [% Translate("Config options") | html %] ([% Translate("e. g.") | html %] <code>&lt;CareOnCloud_CONFIG_HttpType&gt;</code>).
                     </dd>
                 </dl>
 
@@ -241,16 +252,16 @@
                     [% Translate("Example signature") | html %]:
                 </p>
                 <textarea rows="5" cols="60" name="Response">
-Your OTOBO-Team
+Your CareOnCloud ESM-Team
 
-&lt;OTOBO_CURRENT_UserFirstname&gt; &lt;OTOBO_CURRENT_UserLastname&gt;
+&lt;CareOnCloud_CURRENT_UserFirstname&gt; &lt;CareOnCloud_CURRENT_UserLastname&gt;
 
 --
 Super Support Company Inc. - Waterford Business Park
 5201 Blue Lagoon Drive - 8th Floor & 9th Floor - Miami, 33126 USA
 Email: hot@florida.com - Web: http://hot.florida.com/
 --
-PS: Your email address in our database is "&lt;OTOBO_CUSTOMER_DATA_UserEmail&gt;".
+PS: Your email address in our database is "&lt;CareOnCloud_CUSTOMER_DATA_UserEmail&gt;".
                 </textarea>
             </div>
         </div>

@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -39,6 +39,35 @@ Core.Agent.Admin = Core.Agent.Admin || {};
     TargetNS.Init = function () {
         Core.UI.Table.InitTableFilter($('#Filter'), $('#Templates'));
 
+        // init checkbox to include invalid elements
+        $('input#IncludeInvalid').off('change').on('change', function () {
+            var URL = Core.Config.Get("Baselink") + 'Action=' + Core.Config.Get("Action") + ';IncludeInvalid=' + ( $(this).is(':checked') ? 1 : 0 );
+            window.location.href = URL;
+        });
+
+        // show state selection for template types forward and response, hide otherwise
+        if ( Core.Config.Get("Subaction") == 'Add' || Core.Config.Get("Subaction") == 'Change' ) {
+
+            let TemplateType = $('#TemplateType').val();
+            if ( TemplateType == 'Answer' || TemplateType == 'Forward' ) {
+                $('#PreSelectedTicketStateID').parents('div.Field').show();
+                $('label[for="PreSelectedTicketStateID"]').show();
+            }
+
+            // bind event to toggle visibility of state selection
+            $('#TemplateType').on('change', function () {
+                let TemplateType = $('#TemplateType').val();
+                if ( TemplateType == 'Answer' || TemplateType == 'Forward' ) {
+                    $('#PreSelectedTicketStateID').parents('div.Field').show();
+                    $('label[for="PreSelectedTicketStateID"]').show();
+                }
+                else {
+                    $('#PreSelectedTicketStateID').parents('div.Field').hide();
+                    $('label[for="PreSelectedTicketStateID"]').hide();
+                }
+            });
+        }
+
         // delete template
         TargetNS.InitTemplateDelete();
     };
@@ -48,7 +77,7 @@ Core.Agent.Admin = Core.Agent.Admin || {};
      * @memberof Core.Agent.Admin.Template
      * @function
      * @description
-     *      This function deletes template on buton click.
+     *      This function deletes template on button click.
      */
     TargetNS.InitTemplateDelete = function () {
         $('.TemplateDelete').on('click', function () {

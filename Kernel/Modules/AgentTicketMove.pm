@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -40,7 +40,7 @@ sub new {
     {
         $Self->{LoadedFormDraftID} = $Kernel::OM->Get('Kernel::System::Web::Request')->LoadFormDraft(
             FormDraftID => $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'FormDraftID' ),
-            UserID      => $Self->{UserID},
+            ObjectID    => $Self->{TicketID},
         );
     }
 
@@ -50,7 +50,7 @@ sub new {
     my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
 
     # get the dynamic fields for this screen
-    $Self->{DynamicField} = $DynamicFieldObject->DynamicFieldListGet(
+    my $DynamicFieldList = $DynamicFieldObject->DynamicFieldListGet(
         Valid => 1,
 
         # only screens that add notes can modify Article dynamic fields
@@ -62,10 +62,11 @@ sub new {
         Mask => $Self->{Action},
     ) || {};
 
+    $Self->{DynamicField}   = [];
     $Self->{MaskDefinition} = $Definition->{Mask};
 
     # align sysconfig and ticket mask data I
-    for my $DynamicField ( @{ $Self->{DynamicField} // [] } ) {
+    for my $DynamicField ( @{ $DynamicFieldList // [] } ) {
         if ( exists $Definition->{DynamicFields}{ $DynamicField->{Name} } ) {
             my $Parameters = delete $Definition->{DynamicFields}{ $DynamicField->{Name} } // {};
 
@@ -78,7 +79,13 @@ sub new {
                 DF        => $DynamicField->{Name},
                 Mandatory => $Config->{DynamicField}{ $DynamicField->{Name} } == 2 ? 1 : 0,
             };
+
+            if ( $Config->{DynamicField}{ $DynamicField->{Name} } == 2 ) {
+                $DynamicField->{Mandatory} = 1;
+            }
         }
+
+        push $Self->{DynamicField}->@*, $DynamicField;
     }
 
     # align sysconfig and ticket mask data II
@@ -95,12 +102,10 @@ sub new {
     }
 
     # get form id
-    $Self->{FormID} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'FormID' );
-
-    # create form id
-    if ( !$Self->{FormID} ) {
-        $Self->{FormID} = $Kernel::OM->Get('Kernel::System::Web::UploadCache')->FormIDCreate();
-    }
+    $Self->{FormID} = $Kernel::OM->Get('Kernel::System::Web::FormCache')->PrepareFormID(
+        ParamObject  => $Kernel::OM->Get('Kernel::System::Web::Request'),
+        LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+    );
 
     return $Self;
 }
@@ -150,7 +155,7 @@ sub Run {
     my %AclAction = $TicketObject->TicketAclActionData();
 
     # check if ACL restrictions exist
-    if ( $ACL || IsHashRefWithData( \%AclAction ) ) {
+    if ($ACL) {
 
         my %AclActionLookup = reverse %AclAction;
 
@@ -175,39 +180,33 @@ sub Run {
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    # check if lock check is needed or disabled
-    my $MoveTicketEvenItIsLocked = $ConfigObject->Get('Ticket::Frontend::MoveType::Dropdown::MoveTicketEvenItIsLocked');
+    # check if ticket is locked
+    if ( !$ConfigObject->Get('Ticket::Frontend::MoveType::Dropdown::MoveEvenIfLocked') && $TicketObject->TicketLockGet( TicketID => $Self->{TicketID} ) ) {
+        my $AccessOk = $TicketObject->OwnerCheck(
+            TicketID => $Self->{TicketID},
+            OwnerID  => $Self->{UserID},
+        );
 
-    if ( !$MoveTicketEvenItIsLocked ) {
-
-        # check if ticket is locked
-        if ( $TicketObject->TicketLockGet( TicketID => $Self->{TicketID} ) ) {
-            my $AccessOk = $TicketObject->OwnerCheck(
-                TicketID => $Self->{TicketID},
-                OwnerID  => $Self->{UserID},
+        if ( !$AccessOk ) {
+            my $Output = $LayoutObject->Header(
+                Type      => 'Small',
+                BodyClass => 'Popup',
+            );
+            $Output .= $LayoutObject->Warning(
+                Message => Translatable('Sorry, you need to be the ticket owner to perform this action.'),
+                Comment => Translatable('Please change the owner first.'),
             );
 
-            if ( !$AccessOk ) {
-                my $Output = $LayoutObject->Header(
-                    Type      => 'Small',
-                    BodyClass => 'Popup',
-                );
-                $Output .= $LayoutObject->Warning(
-                    Message => Translatable('Sorry, you need to be the ticket owner to perform this action.'),
-                    Comment => Translatable('Please change the owner first.'),
-                );
+            # show back link
+            $LayoutObject->Block(
+                Name => 'TicketBack',
+                Data => { %Param, TicketID => $Self->{TicketID} },
+            );
 
-                # show back link
-                $LayoutObject->Block(
-                    Name => 'TicketBack',
-                    Data => { %Param, TicketID => $Self->{TicketID} },
-                );
-
-                $Output .= $LayoutObject->Footer(
-                    Type => 'Small',
-                );
-                return $Output;
-            }
+            $Output .= $LayoutObject->Footer(
+                Type => 'Small',
+            );
+            return $Output;
         }
     }
 
@@ -338,7 +337,6 @@ sub Run {
                 ObjectType => 'Ticket',
                 ObjectID   => $Self->{TicketID},
                 Action     => $Self->{Action},
-                UserID     => $Self->{UserID},
             );
             DRAFT:
             for my $FormDraft ( @{$FormDraftList} ) {
@@ -400,7 +398,7 @@ sub Run {
         elsif ( $FormDraftAction eq 'Delete' && $GetParam{FormDraftID} ) {
             $FormDraftActionOk = $Kernel::OM->Get('Kernel::System::FormDraft')->FormDraftDelete(
                 FormDraftID => $GetParam{FormDraftID},
-                UserID      => $Self->{UserID},
+                ObjectID    => $Self->{TicketID},
             );
         }
 
@@ -486,7 +484,7 @@ sub Run {
             QueueID  => $GetParam{DestQueueID} || $Ticket{QueueID},
         );
 
-        # update Dynamc Fields Possible Values via AJAX
+        # update Dynamic Fields Possible Values via AJAX
         my @DynamicFieldAJAX;
 
         # cycle trough the activated Dynamic Fields for this screen
@@ -597,7 +595,7 @@ sub Run {
                     );
                 }
 
-                # send a list of attachments in the upload cache back to the clientside JavaScript
+                # send a list of attachments in the upload cache back to the client-side JavaScript
                 # which renders then the list of currently uploaded attachments
                 @TicketAttachments = $UploadCacheObject->FormIDGetAllFilesMeta(
                     FormID => $Self->{FormID},
@@ -875,8 +873,9 @@ sub Run {
                 DynamicFieldConfig   => $DynamicFieldConfig,
                 PossibleValuesFilter => $PossibleValuesFilter,
                 ParamObject          => $ParamObject,
-                Mandatory            =>
-                    $Config->{DynamicField}->{ $DynamicFieldConfig->{Name} } == 2,
+
+                # Mandatory is added to the configs by $Self->new
+                Mandatory => $DynamicFieldConfig->{Mandatory},
             );
 
             if ( !IsHashRefWithData($ValidationResult) ) {
@@ -1069,6 +1068,7 @@ sub Run {
         TicketID           => $Self->{TicketID},
         SendNoNotification => $GetParam{NewUserID},
         Comment            => $BodyAsText,
+        Action             => $Self->{Action},
     );
     if ( !$Move ) {
         return $LayoutObject->ErrorScreen();
@@ -1237,8 +1237,8 @@ sub Run {
             );
         }
 
-        # remove pre-submitted attachments
-        $UploadCacheObject->FormIDRemove( FormID => $Self->{FormID} );
+        # remove all form data
+        $Kernel::OM->Get('Kernel::System::Web::FormCache')->FormIDRemove( FormID => $Self->{FormID} );
     }
 
     # only set the dynamic fields if the new window was displayed (link), otherwise if ticket was
@@ -1251,7 +1251,7 @@ sub Run {
         for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
             next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
 
-            # set the object ID (TicketID or ArticleID) depending on the field configration
+            # set the object ID (TicketID or ArticleID) depending on the field configuration
             my $ObjectID = $DynamicFieldConfig->{ObjectType} eq 'Article' ? $ArticleID : $Self->{TicketID};
 
             # set dynamic field; when ObjectType=Article and no article will be created ignore
@@ -1285,7 +1285,7 @@ sub Run {
         $GetParam{FormDraftID}
         && !$Kernel::OM->Get('Kernel::System::FormDraft')->FormDraftDelete(
             FormDraftID => $GetParam{FormDraftID},
-            UserID      => $Self->{UserID},
+            ObjectID    => $Self->{TicketID},
         )
         )
     {
@@ -1361,16 +1361,6 @@ sub AgentMove {
     my %Data       = %{ $Param{MoveQueues} };
     my %MoveQueues = %Data;
 
-    my $DynamicFieldNames = $Self->_GetFieldsToUpdate(
-        OnlyDynamicFields => 1
-    );
-
-    # send data to JS
-    $LayoutObject->AddJSData(
-        Key   => 'DynamicFieldNames',
-        Value => $DynamicFieldNames
-    );
-
     # build next states string
     $Param{NextStatesStrg} = $LayoutObject->BuildSelection(
         Data         => $Param{NextStates},
@@ -1378,7 +1368,7 @@ sub AgentMove {
         SelectedID   => $Param{NewStateID},
         Translation  => 1,
         PossibleNone => 1,
-        Class        => 'Modernize '
+        Class        => 'Modernize FormUpdate '
             . ( $Config->{StateMandatory} ? 'Validate_Required ' : '' )
             . ( $Param{NewStateInvalid} || '' ),
     );
@@ -1390,7 +1380,7 @@ sub AgentMove {
         SelectedID   => $Param{NewPriorityID},
         Translation  => 1,
         PossibleNone => 1,
-        Class        => 'Modernize',
+        Class        => 'Modernize FormUpdate',
     );
 
     # build owner string
@@ -1403,7 +1393,7 @@ sub AgentMove {
         SelectedID   => $Param{NewUserID},
         Translation  => 0,
         PossibleNone => 1,
-        Class        => 'Modernize',
+        Class        => 'Modernize FormUpdate',
         Filters      => {
             OldOwners => {
                 Name   => $LayoutObject->{LanguageObject}->Translate('Previous Owner'),
@@ -1443,6 +1433,8 @@ sub AgentMove {
                 SLAID   => $Param{SLAID},
             );
 
+            my $QuickDateButtons = $Config->{QuickDateButtons} // $ConfigObject->Get('Ticket::Frontend::DefaultQuickDateButtons');
+
             $Param{DateString} = $LayoutObject->BuildDateSelection(
                 Format           => 'DateInputFormatLong',
                 YearPeriodPast   => 0,
@@ -1454,7 +1446,9 @@ sub AgentMove {
                 Validate             => 1,
                 ValidateDateInFuture => 1,
                 Calendar             => $Calendar,
+                QuickDateButtons     => $QuickDateButtons,
             );
+
             $LayoutObject->Block(
                 Name => 'StatePending',
                 Data => \%Param,
@@ -1476,7 +1470,7 @@ sub AgentMove {
         Data           => { %MoveQueues, '' => '-' },
         Multiple       => 0,
         Size           => 0,
-        Class          => 'Modernize Validate_Required' . ' ' . $Param{DestQueueIDInvalid},
+        Class          => 'Modernize Validate_Required FormUpdate ' . $Param{DestQueueIDInvalid},
         Name           => 'DestQueueID',
         SelectedID     => $Param{DestQueueID},
         TreeView       => $TreeView,
@@ -1500,7 +1494,6 @@ sub AgentMove {
         my $DynamicFieldHTML = $Kernel::OM->Get('Kernel::Output::HTML::DynamicField::Mask')->EditSectionRender(
             Content              => $Self->{MaskDefinition},
             DynamicFields        => \%DynamicFieldConfigs,
-            UpdatableFields      => $Self->_GetFieldsToUpdate(),
             LayoutObject         => $LayoutObject,
             ParamObject          => $Kernel::OM->Get('Kernel::System::Web::Request'),
             DynamicFieldValues   => \%DynamicFieldValues,
@@ -1508,13 +1501,13 @@ sub AgentMove {
             Errors               => $Param{DFErrors},
             Object               => {
                 CustomerID     => $Param{CustomerID},
-                CustomerUserID => $Param{CustomerIserID},
+                CustomerUserID => $Param{CustomerUserID},
                 UserID         => $Self->{UserID},
                 %DynamicFieldValues,
             },
         );
 
-        if ( $Self->{DynamicField} ) {
+        if ( IsArrayRefWithData( $Self->{DynamicField} ) ) {
             $LayoutObject->Block(
                 Name => 'WidgetDynamicFields',
                 Data => {
@@ -1557,7 +1550,7 @@ sub AgentMove {
             Data => {%Param},
         );
 
-        # fillup configured default vars
+        # fill-up configured default vars
         if ( $Param{Body} eq '' && $Config->{Body} ) {
             $Param{Body} = $LayoutObject->Output(
                 Template => $Config->{Body},
@@ -1685,8 +1678,8 @@ sub AgentMove {
     if ( $Self->{LoadedFormDraftID} ) {
         $LoadedFormDraft = $Kernel::OM->Get('Kernel::System::FormDraft')->FormDraftGet(
             FormDraftID => $Self->{LoadedFormDraftID},
+            ObjectID    => $Self->{TicketID},
             GetContent  => 0,
-            UserID      => $Self->{UserID},
         );
 
         my @Articles = $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList(
@@ -1726,6 +1719,13 @@ sub AgentMove {
 
         $LoadedFormDraft->{ChangeByName} = $Kernel::OM->Get('Kernel::System::User')->UserName(
             UserID => $LoadedFormDraft->{ChangeBy},
+        );
+    }
+
+    # explanatory message about asterisk
+    if ( $ConfigObject->Get('Ticket::Frontend::AsteriskExplanation') ) {
+        $LayoutObject->Block(
+            Name => 'AsteriskExplanation',
         );
     }
 
@@ -1864,33 +1864,6 @@ sub _GetNextStates {
         );
     }
     return \%NextStates;
-}
-
-sub _GetFieldsToUpdate {
-    my ( $Self, %Param ) = @_;
-
-    my @UpdatableFields;
-
-    # set the fields that can be updatable via AJAXUpdate
-    if ( !$Param{OnlyDynamicFields} ) {
-        @UpdatableFields = qw( DestQueueID NewUserID NewStateID NewPriorityID );
-    }
-
-    # cycle trough the activated Dynamic Fields for this screen
-    DYNAMICFIELD:
-    for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
-        next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
-
-        my $IsACLReducible = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->HasBehavior(
-            DynamicFieldConfig => $DynamicFieldConfig,
-            Behavior           => 'IsACLReducible',
-        );
-        next DYNAMICFIELD if !$IsACLReducible;
-
-        push @UpdatableFields, 'DynamicField_' . $DynamicFieldConfig->{Name};
-    }
-
-    return \@UpdatableFields;
 }
 
 sub _GetStandardTemplates {

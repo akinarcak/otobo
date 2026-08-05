@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,10 +19,14 @@ package Kernel::System::Stats::Dynamic::ArticleList;
 use strict;
 use warnings;
 
-use List::Util qw( first );
+# core modules
+use List::Util qw(first);
 
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -56,7 +60,7 @@ sub new {
     # get the dynamic fields for ticket object
     $Self->{DynamicField} = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldListGet(
         Valid      => 1,
-        ObjectType => ['Ticket', 'Article'],
+        ObjectType => [ 'Ticket', 'Article' ],
     );
 
     return $Self;
@@ -376,7 +380,7 @@ sub GetObjectAttributes {
             UseAsValueSeries => 0,
             UseAsRestriction => 1,
             Element          => 'ArticleCreateTime',
-            TimePeriodFormat => 'DateInputFormat',             # 'DateInputFormatLong',
+            TimePeriodFormat => 'DateInputFormat',                     # 'DateInputFormatLong',
             Block            => 'Time',
             Values           => {
                 TimeStart => 'ArticleCreateTimeNewerDate',
@@ -506,7 +510,7 @@ sub GetObjectAttributes {
             UseAsValueSeries => 0,
             UseAsRestriction => 1,
             Element          => 'ArticleID',
-	    Block            => 'InputField',
+            Block            => 'InputField',
         },
     );
 
@@ -952,7 +956,7 @@ sub GetStatTable {
     my %DynamicFieldRestrictions;
     for my $ParameterName ( sort keys %{ $Param{Restrictions} } ) {
         if (
-            $ParameterName =~ m{ \A DynamicField_ ( [a-zA-Z\d]+ ) (?: _ ( [a-zA-Z\d]+ ) )? \z }xms
+            $ParameterName =~ m{ \A DynamicField_ ( [a-zA-Z\d\-]+ ) (?: _ ( [a-zA-Z\d]+ ) )? \z }xms
             )
         {
             my $FieldName = $1;
@@ -1017,12 +1021,12 @@ sub GetStatTable {
 
     # OlderTicketsExclude for historic searches
     # takes tickets that were closed before the
-    # start of the searched time periode
+    # start of the searched time period
     my %OlderTicketsExclude;
 
     # NewerTicketExclude for historic searches
     # takes tickets that were created after the
-    # searched time periode
+    # searched time period
     my %NewerTicketsExclude;
     my %StateList = $StateObject->StateList( UserID => 1 );
 
@@ -1030,8 +1034,8 @@ sub GetStatTable {
     my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
 
     # UnixTimeStart & End:
-    # The Time periode the historic search is executed
-    # if no time periode has been selected we take
+    # The Time period the historic search is executed
+    # if no time period has been selected we take
     # Unixtime 0 as StartTime and SystemTime as EndTime
     my $UnixTimeStart = 0;
     my $UnixTimeEnd   = $DateTimeObject->ToEpoch();
@@ -1113,13 +1117,13 @@ sub GetStatTable {
     }
 
     # if we had Tickets we need to reduce the found tickets
-    # to those not beeing in %OlderTicketsExclude
+    # to those not being in %OlderTicketsExclude
     # as well as not in %NewerTicketsExclude
     if ( %OlderTicketsExclude || %NewerTicketsExclude ) {
-        @TicketIDs = grep {
-            !defined $OlderTicketsExclude{$_}
-                && !defined $NewerTicketsExclude{$_}
-        } @TicketIDs;
+        @TicketIDs =
+            grep { !defined $OlderTicketsExclude{$_} }
+            grep { !defined $NewerTicketsExclude{$_} }
+            @TicketIDs;
     }
 
     # if we have to deal with history states
@@ -1196,7 +1200,6 @@ sub GetStatTable {
 
             # And now get the StatesByType
             # Result is a Hash {ID => StateName,}
-            my @StateTypes = keys %StateTypeHash;
             %StateIDs = $StateObject->StateGetStatesByType(
                 StateType => [ keys %StateTypeHash ],
                 Result    => 'HASH',
@@ -1250,7 +1253,7 @@ sub GetStatTable {
                         }
 
                         # if it is not in the searched states
-                        # a state change happend ->
+                        # a state change happened ->
                         # delete the record
                         else {
                             delete $FoundTickets{$TicketID};
@@ -1324,14 +1327,14 @@ sub GetStatTable {
             # convert param date to system time
             $ArticleCreateTimeNewerDate = $Kernel::OM->Create(
                 'Kernel::System::DateTime',
-                    ObjectParams => {
-                        Year   => $1,
-                        Month  => $2,
-                        Day    => $3,
-                        Hour   => $4,
-                        Minute => $5,
-                        Second => $6,
-                    }
+                ObjectParams => {
+                    Year   => $1,
+                    Month  => $2,
+                    Day    => $3,
+                    Hour   => $4,
+                    Minute => $5,
+                    Second => $6,
+                }
             );
 
             if ( !$ArticleCreateTimeNewerDate ) {
@@ -1356,14 +1359,14 @@ sub GetStatTable {
             # convert param date to system time
             $ArticleCreateTimeOlderDate = $Kernel::OM->Create(
                 'Kernel::System::DateTime',
-                    ObjectParams => {
-                        Year   => $1,
-                        Month  => $2,
-                        Day    => $3,
-                        Hour   => $4,
-                        Minute => $5,
-                        Second => $6,
-                    }
+                ObjectParams => {
+                    Year   => $1,
+                    Month  => $2,
+                    Day    => $3,
+                    Hour   => $4,
+                    Minute => $5,
+                    Second => $6,
+                }
             );
 
             if ( !$ArticleCreateTimeOlderDate ) {
@@ -1401,30 +1404,29 @@ sub GetStatTable {
 
         # add the number of articles if needed
         if ( $TicketAttributes{NumberOfArticles} ) {
-             $Ticket{NumberOfArticles} = $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList(
+            $Ticket{NumberOfArticles} = $Kernel::OM->Get('Kernel::System::Ticket::Article')->ArticleList(
                 TicketID => $TicketID,
                 UserID   => 1
             );
         }
 
-        # get time object
-        # remember current time to prevent searches for future timestamps
-        my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
-
-    	my $Count = 0;
+        my $Count = 0;
 
         METAARTICLE:
-    	for my $MetaArticle (@ArticleList) {
-	        my @ResultRow;
-	        $Count++;
+        for my $MetaArticle (@ArticleList) {
+            $Count++;
 
-	        my %Article = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForArticle( %{$MetaArticle} )->ArticleGet( %{$MetaArticle}, DynamicFields => 1 );
+            # We get the complete article info and look if the times are valid
+            my %Article = $Kernel::OM->Get('Kernel::System::Ticket::Article')->BackendForArticle( %{$MetaArticle} )->ArticleGet(
+                %{$MetaArticle},
+                DynamicFields => 1
+            );
 
-            # We become all article and need to look if the times are valid
             # get articles created newer than xxxx-xx-xx xx:xx date
             if ( defined $Param{Restrictions}->{ArticleCreateTimeNewerDate} ) {
 
-                $Article{CreateTime} =~ m/(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/;
+                # only consider articles where the create time can be checked
+                next METAARTICLE unless $Article{CreateTime} =~ m/(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/;
 
                 # convert param date to system time
                 my $ArticleTime = $Kernel::OM->Create(
@@ -1447,7 +1449,8 @@ sub GetStatTable {
             # get articles created newer than xxxx-xx-xx xx:xx date
             if ( defined $Param{Restrictions}->{ArticleCreateTimeOlderDate} ) {
 
-                $Article{CreateTime} =~ m/(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/;
+                # only consider articles where the create time can be checked
+                next METAARTICLE unless $Article{CreateTime} =~ m/(\d\d\d\d)-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)/;
 
                 # convert param date to system time
                 my $ArticleTime = $Kernel::OM->Create(
@@ -1470,35 +1473,34 @@ sub GetStatTable {
                 ArticleID => $Article{ArticleID},
             );
 
-    	    if ( $Article{ArticleAccountedTime} == 0 ) {
-                next METAARTICLE;
-            }
+            # only articles with accounted time are considered
+            next METAARTICLE if $Article{ArticleAccountedTime} == 0;
 
-	        KEY:
+            KEY:
             for my $ArticleKey ( keys %Article ) {
-
-		        if ( $ArticleKey eq 'CreateTime' ) {
+                if ( $ArticleKey eq 'CreateTime' ) {
                     $Ticket{ArticleCreateTime} = $Article{$ArticleKey};
-		            next KEY;
-		        }
+
+                    next KEY;
+                }
                 $Ticket{$ArticleKey} = $Article{$ArticleKey};
             }
 
             # add the ticket accounted time if needed
             if ( $TicketAttributes{AccountedTime} ) {
-		        if ( $Count == 1 ) { 
+                if ( $Count == 1 ) {
                     $Ticket{AccountedTime} = $TicketObject->TicketAccountedTimeGet( TicketID => $TicketID );
                 }
-		        else {
+                else {
                     $Ticket{AccountedTime} = '';
-	            }
-	        }
+                }
+            }
 
             my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
             my @ArticleDynField;
 
-	        ATTRIBUTE:
-            for my $ArticleDynField (keys %TicketAttributes) {
+            ATTRIBUTE:
+            for my $ArticleDynField ( keys %TicketAttributes ) {
                 next ATTRIBUTE if $ArticleDynField !~ /DynamicField_/;
 
                 $ArticleDynField =~ s/DynamicField_//;
@@ -1507,14 +1509,15 @@ sub GetStatTable {
                     Name => $ArticleDynField,
                 );
 
-  	        next ATTRIBUTE if $DynamicField->{ObjectType} ne "Article";
-	        push(@ArticleDynField, $ArticleDynField);
+                next ATTRIBUTE unless $DynamicField->{ObjectType} eq 'Article';
+
+                push @ArticleDynField, $ArticleDynField;
             }
 
-  	    if ( IsArrayRefWithData(\@ArticleDynField) ) {
+            if ( IsArrayRefWithData( \@ArticleDynField ) ) {
 
-                for my $ArticleA ( @ArticleDynField ) {
-		    $Ticket{"DynamicField_".$ArticleA} = $Article{"DynamicField_".$ArticleA} || '';
+                for my $ArticleA (@ArticleDynField) {
+                    $Ticket{ "DynamicField_" . $ArticleA } = $Article{ "DynamicField_" . $ArticleA } || '';
                 }
             }
 
@@ -1539,14 +1542,14 @@ sub GetStatTable {
             $Ticket{NumberOfArticles}            ||= 0;
 
             for my $ParameterName ( sort keys %Ticket ) {
-                if ( $ParameterName =~ m{\A DynamicField_ ( [a-zA-Z\d]+ ) \z}xms ) {
-  
+                if ( $ParameterName =~ m{\A DynamicField_ ( [a-zA-Z\d\-]+ ) \z}xms ) {
+
                     # loop over the dynamic fields configured
                     DYNAMICFIELD:
                     for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
                         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
                         next DYNAMICFIELD if !$DynamicFieldConfig->{Name};
-    		        next DYNAMICFIELD if $DynamicFieldConfig->{ObjectType} ne "Ticket";
+                        next DYNAMICFIELD if $DynamicFieldConfig->{ObjectType} ne "Ticket";
 
                         # skip all fields that does not match with current field name ($1)
                         # without the 'DynamicField_' prefix
@@ -1555,6 +1558,7 @@ sub GetStatTable {
                         # prevent unitilization errors
                         if ( !defined $Ticket{$ParameterName} ) {
                             $Ticket{$ParameterName} = '';
+
                             next DYNAMICFIELD;
                         }
 
@@ -1591,19 +1595,22 @@ sub GetStatTable {
                     }
                 }
             }
+
+            my @ResultRow;
             ATTRIBUTE:
             for my $Attribute ( @{$SortedAttributesRef} ) {
                 next ATTRIBUTE if !$TicketAttributes{$Attribute};
-                # convert from OTOBO time zone to given time zone
+
+                # convert from CareOnCloud ESM time zone to given time zone
                 if (
                     $Param{TimeZone}
-                    && $Param{TimeZone} ne Kernel::System::DateTime->OTOBOTimeZoneGet()
+                    && $Param{TimeZone} ne Kernel::System::DateTime->CareOnCloudTimeZoneGet()
                     && $Ticket{$Attribute}
                     && $Ticket{$Attribute} =~ /\A(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2}):(\d{2})\z/
-                   )
+                    )
                 {
 
-                    $Ticket{$Attribute} = $StatsObject->_FromOTOBOTimeZone(
+                    $Ticket{$Attribute} = $StatsObject->_FromCareOnCloudTimeZone(
                         String   => $Ticket{$Attribute},
                         TimeZone => $Param{TimeZone},
                     );
@@ -1619,7 +1626,7 @@ sub GetStatTable {
                 push @ResultRow, $Ticket{$Attribute};
             }
 
-        push @StatArray, \@ResultRow;
+            push @StatArray, \@ResultRow;
         }
     }
 
@@ -1909,31 +1916,29 @@ sub _TicketAttributes {
         SolutionTimeDestinationDate => 'SolutionTimeDestinationDate',
         SolutionTimeWorkingTime     => 'SolutionTimeWorkingTime',
 
-# Article Fields
-	ArticleID => 'Article ArticleID',
-        ReplyTo => 'Article ReplyTo',
-        ChangeBy => 'Article ChangeBy',
-        ContentType => 'Article ContentType',
-        IncomingTime => 'Article IncomingTime',
-        MimeType => 'Article MimeType',
-        CreateBy => 'Article CreateBy',
-        References => 'Article References',
-        Cc => 'Article Cc',
+        # Article Fields
+        ArticleID            => 'Article ArticleID',
+        ReplyTo              => 'Article ReplyTo',
+        ChangeBy             => 'Article ChangeBy',
+        ContentType          => 'Article ContentType',
+        IncomingTime         => 'Article IncomingTime',
+        MimeType             => 'Article MimeType',
+        CreateBy             => 'Article CreateBy',
+        References           => 'Article References',
+        Cc                   => 'Article Cc',
         IsVisibleForCustomer => 'Article IsVisibleForCustomer',
-        InReplyTo => 'Article InReplyTo',
-        ArticleCreateTime => 'Article CreateTime',
-        SenderType => 'Article SenderType',
-        Subject => 'Article Subject',
-        ChangeTime => 'Article ChangeTime',
-        To => 'Article To',
-        Body => 'Article Body',
-        From => 'Article From',
-        Bcc => 'Article Bcc',
-        ArticleNumber => 'Article Bcc',
+        InReplyTo            => 'Article InReplyTo',
+        ArticleCreateTime    => 'Article CreateTime',
+        SenderType           => 'Article SenderType',
+        Subject              => 'Article Subject',
+        ChangeTime           => 'Article ChangeTime',
+        To                   => 'Article To',
+        Body                 => 'Article Body',
+        From                 => 'Article From',
+        Bcc                  => 'Article Bcc',
+        ArticleNumber        => 'Article Bcc',
         ArticleAccountedTime => 'Article Accounted Time',
     );
-
-
 
     if ( $ConfigObject->Get('Ticket::Service') ) {
         $TicketAttributes{Service} = 'Service';
@@ -2036,29 +2041,29 @@ sub _SortedAttributes {
         RealTillTimeNotUsed
         NumberOfArticles
 
-	ArticleID
-	ReplyTo
-	ChangeBy
-	ContentType
-	IncomingTime
-	MimeType
-	CreateBy
-	References
-	Cc
-	IsVisibleForCustomer
-	InReplyTo
-	ArticleCreateTime
-	SenderType
-	Subject
-	ChangeTime
-	To
-	Body
-	From
-	Bcc
-	ArticleNumber
+        ArticleID
+        ReplyTo
+        ChangeBy
+        ContentType
+        IncomingTime
+        MimeType
+        CreateBy
+        References
+        Cc
+        IsVisibleForCustomer
+        InReplyTo
+        ArticleCreateTime
+        SenderType
+        Subject
+        ChangeTime
+        To
+        Body
+        From
+        Bcc
+        ArticleNumber
     );
 
-    # cycle trought the Dynamic Fields
+    # cycle through the Dynamic Fields
     DYNAMICFIELD:
     for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
@@ -2125,7 +2130,7 @@ sub _OrderByIsValueOfTicketSearchSort {
     # get dynamic field backend object
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
-    # cycle trought the Dynamic Fields
+    # cycle through the Dynamic Fields
     DYNAMICFIELD:
     for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
@@ -2152,7 +2157,7 @@ sub _IndividualResultOrder {
     my @Unsorted = @{ $Param{StatArray} };
     my @Sorted;
 
-    # find out the positon of the values which should be
+    # find out the position of the values which should be
     # used for the order
     my $Counter          = 0;
     my $SortedAttributes = $Self->_SortedAttributes();

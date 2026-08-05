@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -44,7 +44,7 @@ Creates a system error message and sends an email with the error messages form a
     my $Success = $TaskWorkerObject->_HandleError(
         TaskName     => 'some name',
         TaskType      => 'some type',
-        LogMessage   => 'some message',       # message to set in the OTOBO error log
+        LogMessage   => 'some message',       # message to set in the CareOnCloud ESM error log
         ErrorMessage => 'some message',       # message to be sent as a body of the email, usually contains
                                               #     all messages from STDERR including tracebacks
     );
@@ -71,7 +71,7 @@ sub _HandleError {
         my $Sent = $Kernel::OM->Get('Kernel::System::Email')->Send(
             From     => $From,
             To       => $To,
-            Subject  => "OTOBO Scheduler Daemon $Param{TaskType}: $Param{TaskName}",
+            Subject  => "CareOnCloud ESM Scheduler Daemon $Param{TaskType}: $Param{TaskName}",
             Charset  => 'utf-8',
             MimeType => 'text/plain',
             Body     => $Param{ErrorMessage},

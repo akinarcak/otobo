@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,8 +19,12 @@ package Kernel::Output::HTML::TicketZoom::Agent::Base;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
 use Digest::MD5 qw(md5_hex);
 
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsHashRefWithData);
 
 our @ObjectDependencies = (
@@ -31,8 +35,10 @@ our @ObjectDependencies = (
     'Kernel::System::Encode',
     'Kernel::System::Log',
     'Kernel::System::SystemAddress',
+    'Kernel::System::Ticket',
     'Kernel::System::Ticket::Article',
     'Kernel::System::User',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
@@ -126,13 +132,29 @@ sub ArticleMetaFields {
         }
     }
 
+    # check if ticket is normal or process ticket
+    my $IsProcessTicket = $Kernel::OM->Get('Kernel::System::Ticket')->TicketCheckForProcessType(
+        TicketID => $Param{TicketID}
+    );
+
+    # get zoom settings
+    my $DisplaySettings = $ConfigObject->Get("Ticket::Frontend::AgentTicketZoom");
+
     # get dynamic field config for frontend module
     my $DynamicFieldFilter = {
-        %{ $ConfigObject->Get("Ticket::Frontend::AgentTicketZoom")->{DynamicField} || {} },
-        %{
-            $ConfigObject->Get("Ticket::Frontend::AgentTicketZoom")->{ProcessWidgetDynamicField}
+        %{ $DisplaySettings->{DynamicField} || {} },
+        IsHashRefWithData( $DisplaySettings->{DynamicFieldWidgetDisplay} )
+        ? %{
+            $DisplaySettings->{DynamicFieldWidgetDynamicField}
                 || {}
-        },
+            }
+        : (),
+        $IsProcessTicket
+        ? %{
+            $DisplaySettings->{ProcessWidgetDynamicField}
+                || {}
+            }
+        : (),
     };
 
     # get the dynamic fields for article object
@@ -202,18 +224,15 @@ sub _ArticleSenderImage {
 
     my $Result = '';
 
-    return $Result if !$Param{Sender};
+    return $Result unless $Param{Sender};
 
     my $Size = 80;
 
     # Get email address from sender field.
-    my $EmailParser = Kernel::System::EmailParser->new(
-        %{$Self},
-        Mode => 'Standalone',
-    );
-    my @Addresses = $EmailParser->SplitAddressLine( Line => $Param{Sender} );
-    if (@Addresses) {
-        my $Email = $EmailParser->GetEmailAddress( Email => $Addresses[0] );
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    my ($Address) = $EmailAddressObject->ParseAddressLine( Line => $Param{Sender} );
+    if ( defined $Address ) {
+        my $Email = $EmailAddressObject->GetAddress( AddressObject => $Address );
         if ($Email) {
             my $DefaultIcon = $Kernel::OM->Get('Kernel::Config')->Get('Frontend::Gravatar::ArticleDefaultImage') || 'mp';
 
@@ -221,7 +240,7 @@ sub _ArticleSenderImage {
             if ( $Param{UserID} ) {
                 my %CurrentUserData = $Kernel::OM->Get('Kernel::System::User')->GetUserData( UserID => $Param{UserID} );
                 if ( $Email eq $CurrentUserData{UserEmail} ) {
-                    $DefaultIcon = $Kernel::OM->Get('Kernel::Config')->Get('Frontend::Gravatar::DefaultImage') | 'mp';
+                    $DefaultIcon = $Kernel::OM->Get('Kernel::Config')->Get('Frontend::Gravatar::DefaultImage') || 'mp';
                 }
             }
             $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( \$Email );

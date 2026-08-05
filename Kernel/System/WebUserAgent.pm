@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,10 +19,15 @@ package Kernel::System::WebUserAgent;
 use strict;
 use warnings;
 
-use HTTP::Headers;
+# core modules
 use List::Util qw(first);
-use LWP::UserAgent;
 
+# CPAN modules
+use HTTP::Headers  ();
+use HTTP::Request  ();
+use LWP::UserAgent ();
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -59,8 +64,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # get database object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -103,6 +107,16 @@ alternatively, you can use an arrayref like this:
         NoLog               => 1, # (optional)
     );
 
+For an exact raw request body, for example canonical JSON, use C<RawData>.
+C<Data> and C<RawData> are mutually exclusive:
+
+    my %Response = $WebUserAgentObject->Request(
+        URL     => 'https://example.com/webhook',
+        Type    => 'POST',
+        RawData => '{"event":"request.approved"}',
+        Header  => { 'Content-Type' => 'application/json' },
+    );
+
 returns
 
     %Response = (
@@ -133,11 +147,12 @@ If you need to set credentials
         Credentials  => {
             User     => 'otobo_user',
             Password => 'otobo_password',
-            Realm    => 'OTOBO Unittests',
+            Realm    => 'CareOnCloud ESM Unittests',
             Location => 'ftp.otobo.org:80',
         },
-        SkipSSLVerification => 1, # (optional)
-        NoLog               => 1, # (optional)
+        SkipSSLVerification => 1,         # (optional)
+        SkipSSLHostnameVerification => 1, # (Optional)
+        NoLog               => 1,         # (optional)
     );
 
 =cut
@@ -157,6 +172,18 @@ sub Request {
     #   SSL certificate validation.
     if (
         $Param{SkipSSLVerification}
+
+        || $Kernel::OM->Get('Kernel::Config')->Get('WebUserAgent::DisableSSLVerification')
+        )
+    {
+        $UserAgent->ssl_opts(
+            SSL_verify_mode => 0,
+        );
+    }
+
+    if (
+        $Param{SkipSSLHostnameVerification}
+
         || $Kernel::OM->Get('Kernel::Config')->Get('WebUserAgent::DisableSSLVerification')
         )
     {
@@ -209,8 +236,21 @@ sub Request {
 
     else {
 
+        if ( defined $Param{RawData} ) {
+            if ( ref $Param{RawData} || defined $Param{Data} ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => 'WebUserAgent request: RawData must be a scalar and cannot be combined with Data.',
+                );
+                return ( Status => 0 );
+            }
+            my $Request = HTTP::Request->new( $Param{Type}, $Param{URL} );
+            $Request->content( $Param{RawData} );
+            $Response = $UserAgent->request($Request);
+        }
+
         # check for Data param
-        if ( !IsArrayRefWithData( $Param{Data} ) && !IsHashRefWithData( $Param{Data} ) ) {
+        elsif ( !IsArrayRefWithData( $Param{Data} ) && !IsHashRefWithData( $Param{Data} ) ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
                 Message  =>
@@ -220,7 +260,9 @@ sub Request {
         }
 
         # perform post request plus data
-        $Response = $UserAgent->post( $Param{URL}, $Param{Data} );
+        else {
+            $Response = $UserAgent->post( $Param{URL}, $Param{Data} );
+        }
     }
 
     if ( !$Response->is_success() ) {

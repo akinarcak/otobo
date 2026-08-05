@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -41,22 +41,22 @@ Kernel::System::Registration - Registration lib
 
 All Registration functions.
 
-The Registration API contains calls needed to communicate with the OTOBO Team Portal.
+The Registration API contains calls needed to communicate with the CareOnCloud ESM Team Portal.
 The steps to register are:
 
- - Validate OTOBO-ID (this results in a token)
+ - Validate CareOnCloud ID (this results in a token)
  - Register the system - this requires the token.
 
-This assures that all registered systems are registered against an existing OTOBO-ID.
+This assures that all registered systems are registered against an existing CareOnCloud ID.
 
-After registration a registration key is stored in the OTOBO System. This key is,
-along with system attributes such as OTOBO version and Perl version, sent to OTOBO in a
-weekly update. This ensures the OTOBO Team Portal contains up-to-date information on
-the current state of the OTOBO System.
+After registration a registration key is stored in the CareOnCloud ESM System. This key is,
+along with system attributes such as CareOnCloud ESM version and Perl version, sent to CareOnCloud ESM in a
+weekly update. This ensures the CareOnCloud ESM Team Portal contains up-to-date information on
+the current state of the CareOnCloud ESM System.
 
 In order to make sure that registration keys are not used on multiple systems -
 something that can happen quite easily when copying a database to a different system -
-every update will retrieve a new UpdateID from the OTOBO Team Portal. This is used
+every update will retrieve a new UpdateID from the CareOnCloud ESM Team Portal. This is used
 when communicating the next update; if the received update would not contain the correct
 UpdateID the Portal refuses the update and an updated registration is required.
 
@@ -92,10 +92,10 @@ sub new {
 =head2 TokenGet()
 
 Get a token needed for system registration.
-To obtain this token, you need to pass a valid OTOBO ID and password.
+To obtain this token, you need to pass a valid CareOnCloud ESM ID and password.
 
     my %Result = $RegistrationObject->TokenGet(
-        OTOBOID   => 'myname@example.com',
+        CareOnCloudID   => 'myname@example.com',
         Password => 'mysecretpass',
     );
 
@@ -126,7 +126,7 @@ sub TokenGet {
     my ( $Self, %Param ) = @_;
 
     # check needed parameters
-    for my $Needed (qw(OTOBOID Password)) {
+    for my $Needed (qw(CareOnCloudID Password)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -240,7 +240,7 @@ Register the system;
 
     my $Success = $RegistrationObject->Register(
         Token       => '8a85ad4c-e5ff-4b91-a4b3-0b9ea8e2a3dc'
-        OTOBOID      => 'myname@example.com'
+        CareOnCloudID      => 'myname@example.com'
         Type        => 'production',
         Description => 'Main ticketing system',  # optional
     );
@@ -251,7 +251,7 @@ sub Register {
     my ( $Self, %Param ) = @_;
 
     # check needed parameters
-    for my $Needed (qw(Token OTOBOID Type)) {
+    for my $Needed (qw(Token CareOnCloudID Type)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -271,10 +271,10 @@ sub Register {
     # load operating system info from environment object
     my %OSInfo = $Kernel::OM->Get('Kernel::System::Environment')->OSInfoGet();
     my %System = (
-        PerlVersion        => sprintf( "%vd", $^V ),
+        PerlVersion        => sprintf( '%vd', $^V ),
         OSType             => $OSInfo{OS},
         OSVersion          => $OSInfo{OSName},
-        OTOBOVersion       => $ConfigObject->Get('Version'),
+        CareOnCloudVersion       => $ConfigObject->Get('Version'),
         FQDN               => $ConfigObject->Get('FQDN'),
         DatabaseVersion    => $Kernel::OM->Get('Kernel::System::DB')->Version(),
         SupportDataSending => $SupportDataSending,
@@ -317,7 +317,7 @@ sub Register {
                         OldUniqueID => $OldRegistration{UniqueID} || '',
                         OldAPIKey   => $OldRegistration{APIKey}   || '',
                         Token       => $Param{Token},
-                        OTOBOID     => $Param{OTOBOID},
+                        CareOnCloudID     => $Param{CareOnCloudID},
                         Type        => $Param{Type},
                         Description => $Param{Description},
                     },
@@ -546,10 +546,10 @@ sub RegistrationDataGet {
         # read data from environment object
         my %OSInfo = $Kernel::OM->Get('Kernel::System::Environment')->OSInfoGet();
         $RegistrationData{System} = {
-            PerlVersion     => sprintf( "%vd", $^V ),
+            PerlVersion     => sprintf( '%vd', $^V ),
             OSType          => $OSInfo{OS},
             OSVersion       => $OSInfo{OSName},
-            OTOBOVersion    => $ConfigObject->Get('Version'),
+            CareOnCloudVersion    => $ConfigObject->Get('Version'),
             FQDN            => $ConfigObject->Get('FQDN'),
             DatabaseVersion => $Kernel::OM->Get('Kernel::System::DB')->Version(),
         };
@@ -561,7 +561,7 @@ sub RegistrationDataGet {
 =head2 RegistrationUpdateSend()
 
 Register the system as Active.
-This also updates any information on Database, OTOBO Version and Perl version that
+This also updates any information on Database, CareOnCloud ESM Version and Perl version that
 might have changed.
 
 If you provide Type and Description, these will be sent to the registration server.
@@ -609,10 +609,10 @@ sub RegistrationUpdateSend {
     # read data from environment object
     my %OSInfo = $Kernel::OM->Get('Kernel::System::Environment')->OSInfoGet();
     my %System = (
-        PerlVersion     => sprintf( "%vd", $^V ),
+        PerlVersion     => sprintf( '%vd', $^V ),
         OSType          => $OSInfo{OS},
         OSVersion       => $OSInfo{OSName},
-        OTOBOVersion    => $ConfigObject->Get('Version'),
+        CareOnCloudVersion    => $ConfigObject->Get('Version'),
         FQDN            => $ConfigObject->Get('FQDN'),
         DatabaseVersion => $Kernel::OM->Get('Kernel::System::DB')->Version(),
     );
@@ -874,7 +874,7 @@ Deregister the system. Deregistering also stops any update jobs.
 
     my $Success = $RegistrationObject->Deregister(
         Token  => '8a85ad4c-e5ff-4b91-a4b3-0b9ea8e2a3dc',
-        OTOBOID => 'myname@example.com',
+        CareOnCloudID => 'myname@example.com',
     );
 
     returns '1' for success or a description if there was no success
@@ -885,7 +885,7 @@ sub Deregister {
     my ( $Self, %Param ) = @_;
 
     # check needed parameters
-    for my $Needed (qw(Token OTOBOID)) {
+    for my $Needed (qw(Token CareOnCloudID)) {
         if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
@@ -910,7 +910,7 @@ sub Deregister {
                     Operation => $Operation,
                     Data      => {
                         APIVersion => $Self->{APIVersion},
-                        OTOBOID    => $Param{OTOBOID},
+                        CareOnCloudID    => $Param{CareOnCloudID},
                         Token      => $Param{Token},
                         APIKey     => $RegistrationInfo{APIKey},
                         UniqueID   => $RegistrationInfo{UniqueID},

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,9 +16,15 @@
 
 package Kernel::Output::HTML::ArticleAction::AgentTicketCompose;
 
+use v5.24;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
 
 our @ObjectDependencies = (
@@ -28,6 +34,7 @@ our @ObjectDependencies = (
     'Kernel::System::Queue',
     'Kernel::System::SystemAddress',
     'Kernel::System::Ticket',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
@@ -132,28 +139,31 @@ sub GetConfig {
     # use this array twice (also for Reply All), so copy it first
     my @StandardResponseArrayReplyAll = @StandardResponseArray;
 
-    # build HTML string
-    my $StandardResponsesStrg = $LayoutObject->BuildSelection(
-        Name         => 'ResponseID',
-        ID           => 'ResponseID' . $Param{Article}->{ArticleID},
-        Class        => 'Modernize Small',
-        Data         => \@StandardResponseArray,
-        PossibleNone => 1,
-    );
-
     my @MenuItems;
+    if (@StandardResponseArray) {
 
-    push @MenuItems, {
-        ItemType              => 'Dropdown',
-        DropdownType          => 'Reply',
-        StandardResponsesStrg => $StandardResponsesStrg,
-        Name                  => Translatable('Reply'),
-        Class                 => 'AsPopup PopupType_TicketAction',
-        Action                => 'AgentTicketCompose',
-        FormID                => 'Reply' . $Param{Article}->{ArticleID},
-        ResponseElementID     => 'ResponseID' . $Param{Article}->{ArticleID},
-        Type                  => $Param{Type},
-    };
+        # build HTML string
+        my $StandardResponsesStrg = $LayoutObject->BuildSelection(
+            Name         => 'ResponseID',
+            ID           => 'ResponseID' . $Param{Article}->{ArticleID},
+            Class        => 'Modernize Small',
+            Data         => \@StandardResponseArray,
+            PossibleNone => 1,
+            Translation  => 1,
+        );
+
+        push @MenuItems, {
+            ItemType              => 'Dropdown',
+            DropdownType          => 'Reply',
+            StandardResponsesStrg => $StandardResponsesStrg,
+            Name                  => Translatable('Reply'),
+            Class                 => 'AsPopup PopupType_TicketAction',
+            Action                => 'AgentTicketCompose',
+            FormID                => 'Reply' . $Param{Article}->{ArticleID},
+            ResponseElementID     => 'ResponseID' . $Param{Article}->{ArticleID},
+            Type                  => $Param{Type},
+        };
+    }
 
     # check if reply all is needed
     my $Recipients = '';
@@ -167,30 +177,32 @@ sub GetConfig {
     }
     my $RecipientCount = 0;
     if ($Recipients) {
-        my $EmailParser = Kernel::System::EmailParser->new(
-            %{$Self},
-            Mode => 'Standalone',
-        );
-        my @Addresses = $EmailParser->SplitAddressLine( Line => $Recipients );
+        my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+        my @Addresses          = $EmailAddressObject->ParseAddressLine( Line => $Recipients );
         ADDRESS:
         for my $Address (@Addresses) {
-            my $Email = $EmailParser->GetEmailAddress( Email => $Address );
-            next ADDRESS if !$Email;
+            my $Email = $EmailAddressObject->GetAddress( AddressObject => $Address );
+
+            next ADDRESS unless $Email;
+
             my $IsLocal = $Kernel::OM->Get('Kernel::System::SystemAddress')->SystemAddressIsLocalAddress(
                 Address => $Email,
             );
+
             next ADDRESS if $IsLocal;
+
             $RecipientCount++;
         }
     }
-    if ( $RecipientCount > 1 ) {
+    if ( @StandardResponseArrayReplyAll && $RecipientCount > 1 ) {
 
-        $StandardResponsesStrg = $LayoutObject->BuildSelection(
+        my $StandardResponsesStrg = $LayoutObject->BuildSelection(
             Name         => 'ResponseID',
             ID           => 'ResponseIDAll' . $Param{Article}->{ArticleID},
             Class        => 'Modernize Small',
             Data         => \@StandardResponseArrayReplyAll,
             PossibleNone => 1,
+            Translation  => 1,
         );
 
         push @MenuItems, {

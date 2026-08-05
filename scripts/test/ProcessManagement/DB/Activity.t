@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,15 +18,17 @@ use strict;
 use warnings;
 use utf8;
 
+# core modules
+
+# CPAN modules
 use Test2::V0;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeAddSeconds FixedTimeSet);
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
+use Kernel::System::VariableCheck qw(:all);
 
 our $Self;
-
-use Kernel::System::VariableCheck qw(:all);
 
 # get needed objects
 my $CacheObject          = $Kernel::OM->Get('Kernel::System::Cache');
@@ -73,7 +75,9 @@ my $AcitivityDialogID1 = $ActivityDialogObject->ActivityDialogAdd(
         Fields           => {},
         FieldOrder       => [],
     },
-    UserID => $UserID,
+    Namespace       => undef,
+    ProcessEntityID => undef,
+    UserID          => $UserID,
 );
 
 # sanity test
@@ -90,7 +94,9 @@ my $AcitivityDialogID2 = $ActivityDialogObject->ActivityDialogAdd(
         Fields           => {},
         FieldOrder       => [],
     },
-    UserID => $UserID,
+    Namespace       => undef,
+    ProcessEntityID => undef,
+    UserID          => $UserID,
 );
 
 # sanity test
@@ -107,7 +113,9 @@ my $AcitivityDialogID3 = $ActivityDialogObject->ActivityDialogAdd(
         Fields           => {},
         FieldOrder       => [],
     },
-    UserID => $UserID,
+    Namespace       => undef,
+    ProcessEntityID => undef,
+    UserID          => $UserID,
 );
 
 # sanity test
@@ -138,20 +146,24 @@ my @Tests = (
     {
         Name   => 'ActivityAdd Test 2: No EntityID',
         Config => {
-            EntityID => undef,
-            Name     => 'Activity-$RandomID',
-            Config   => {},
-            UserID   => $UserID,
+            EntityID        => undef,
+            Name            => 'Activity-$RandomID',
+            Config          => {},
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
     },
     {
         Name   => 'ActivityAdd Test 3: No Name',
         Config => {
-            EntityID => $RandomID,
-            Name     => undef,
-            Config   => {},
-            UserID   => $UserID,
+            EntityID        => $RandomID,
+            Name            => undef,
+            Config          => {},
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
 
@@ -159,20 +171,24 @@ my @Tests = (
     {
         Name   => 'ActivityAdd Test 4: No UserID',
         Config => {
-            EntityID => $RandomID,
-            Name     => "Activity-$RandomID",
-            Config   => {},
-            UserID   => undef,
+            EntityID        => $RandomID,
+            Name            => "Activity-$RandomID",
+            Config          => {},
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => undef,
         },
         Success => 0,
     },
     {
         Name   => 'ActivityAdd Test 5: Wrong Config format',
         Config => {
-            EntityID => $RandomID,
-            Name     => "Activity-$RandomID",
-            Config   => 'Config',
-            UserID   => $UserID,
+            EntityID        => $RandomID,
+            Name            => "Activity-$RandomID",
+            Config          => 'Config',
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
     },
@@ -186,7 +202,9 @@ my @Tests = (
                     1 => $ActivityDialogEntityID1,
                 },
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 1,
     },
@@ -200,7 +218,9 @@ my @Tests = (
                     1 => $ActivityDialogEntityID1,
                 },
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
     },
@@ -216,7 +236,9 @@ my @Tests = (
                     2 => $ActivityDialogEntityID2,
                 },
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 1,
     },
@@ -233,7 +255,9 @@ my @Tests = (
                     3 => $ActivityDialogEntityID3,
                 },
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 1,
     },
@@ -250,7 +274,9 @@ my @Tests = (
                     3 => $ActivityDialogEntityID3,
                 },
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 1,
     },
@@ -305,7 +331,7 @@ for my $Test (@Tests) {
     {
         Name         => "ActivitySearch Test2 - Correct UTF8 1",
         ActivityName => "Activity-$RandomID-!Â§\$%&/()=?Ã*ÃÃL:L@,.-",
-        ,
+
         Result => ["$RandomID-1"],
         Count  => 1,
     },
@@ -645,7 +671,9 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description',
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
     },
@@ -658,7 +686,9 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description',
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
     },
@@ -671,18 +701,22 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description',
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
     },
     {
         Name   => 'ActivityUpdate Test 5: No Config',
         Config => {
-            ID       => 1,
-            EntityID => $RandomID . '-U',
-            Name     => "Activity-$RandomID",
-            Config   => undef,
-            UserID   => $UserID,
+            ID              => 1,
+            EntityID        => $RandomID . '-U',
+            Name            => "Activity-$RandomID",
+            Config          => undef,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success => 0,
     },
@@ -695,7 +729,9 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description',
             },
-            UserID => undef,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => undef,
         },
         Success => 0,
     },
@@ -708,7 +744,9 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description-U',
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success  => 1,
         UpdateDB => 1,
@@ -722,7 +760,9 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description !Â§$%&/()=?Ã*ÃÃL:L@,.--U',
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success  => 1,
         UpdateDB => 1
@@ -736,7 +776,9 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description -äöüßÄÖÜ€исáéíúóúÁÉÍÓÚñÑ-U',
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success  => 1,
         UpdateDB => 1
@@ -750,7 +792,9 @@ for my $Test (@Tests) {
             Config   => {
                 Description => 'a Description-U',
             },
-            UserID => $UserID,
+            Namespace       => undef,
+            ProcessEntityID => undef,
+            UserID          => $UserID,
         },
         Success  => 1,
         UpdateDB => 0,

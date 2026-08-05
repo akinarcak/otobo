@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@ use strict;
 use warnings;
 
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
@@ -425,7 +425,7 @@ sub _ChangeAction {
         $WebserviceData->{Config}->{Provider}->{ErrorHandling} = $ErrorHandlingConfig;
     }
 
-    # added for OTOBOTicketInvoker
+    # added for CareOnCloudTicketInvoker
 
     # Take care of operation dependent configuration if operation was renamed.
     if ( $GetParam->{OldOperation} ne $GetParam->{Operation} ) {

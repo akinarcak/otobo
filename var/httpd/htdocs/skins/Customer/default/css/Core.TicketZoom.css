@@ -1,7 +1,7 @@
-/* OTOBO is a web-based ticketing system for service organisations.
+/* CareOnCloud ESM is a web-based ticketing system for service organisations.
 
 Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
@@ -12,6 +12,7 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
+
 
 @media only screen and (max-width: 767px) {
 
@@ -113,7 +114,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
         height: 48px;
         z-index: 600;
         box-shadow: 0 12px 16px 0 rgba(0, 27, 255, 0.24);
-        box-shadow: 0 12px 16px 0 val(--colShadowMain);
+        box-shadow: 0 12px 16px 0 var(--colShadowLight);
         border-radius: 24px;
     }
 
@@ -144,6 +145,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
    -moz-transition: height 0.1s ease, padding-top 0.1s ease;
      -o-transition: height 0.1s ease, padding-top 0.1s ease;
         transition: height 0.1s ease, padding-top 0.1s ease;
+    }
+
+    #oooHeader.oooTicketInfoPermanent {
+        grid-template-columns: 5fr 32px 159px 162px 32px;
     }
 
     #oooCategories {
@@ -228,7 +233,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
     padding: 24px;
 }
 
-button.oooM.ActivityStartButton {
+button.oooM.ActivityStartButton,
+button.oooM.ActivitySubmitButton {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -248,6 +254,13 @@ button.oooM.ActivityStartButton {
         grid-row-gap: 0px;
     }
 
+    #oooArticleListExpanded.oooTicketInfoPermanent {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 5;
+    }
+
     #ProcessActivities {
         grid-area: 1 / 1 / 2 / 3;
     }
@@ -264,6 +277,24 @@ button.oooM.ActivityStartButton {
         overflow-y: auto;
         overflow-x: hidden;
         -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+
+    #oooArticleList.oooTicketInfoPermanent {
+        max-height: calc(50vh - 93px);
+    }
+
+    #oooTicketInfo.oooTicketInfoPermanent {
+        display: inline;
+        position: sticky;
+        margin-top: 24px;
+        width: unset;
+        max-width: unset;
+        min-width: unset;
+        box-shadow: 0 1px 4px 0 rgba(4, 0, 71, 0.16);
+        top: calc(50vh + 29px);
+        max-height: calc(50vh - 93px);
+        overflow-y: auto;
+        box-sizing: border-box;
     }
     
     #oooArticleList > li {
@@ -311,13 +342,13 @@ button.oooM.ActivityStartButton {
     }
 
     #oooArticleList .oooAge {
-        display: inline-block;
+        display: block;
         text-align: right;
         float: right;
         line-height: 19px;
         margin-top: 14px;
         margin-right: 56px;
-        max-width: 50px;
+        max-width: 80px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -344,7 +375,7 @@ button.oooM.ActivityStartButton {
     height: auto;
     border-radius: 15px;
     box-shadow: 0 1px 4px 0 rgba(4, 0, 71, 0.16);
-    box-shadow: 0 12px 16px 0 val(--colShadowDark);
+    box-shadow: 0 1px 4px 0 var(--colShadowDark);
     background-color: #ffffff;
 }
 
@@ -469,7 +500,12 @@ button.oooM.ActivityStartButton {
     text-align: right;
 }
 
-#NextActivities > button {
+#NextActivities > form {
+    display: inline;
+}
+
+#NextActivities > button,
+#NextActivities > form > button {
     margin-left: 16px;
 }
 
@@ -507,52 +543,6 @@ button.oooM.ActivityStartButton {
     margin-top: 32px;
 }
 
-.Row_DynamicField {
-    grid-row-gap: 16px;
-    grid-column-gap: 40px;
-}
-
-@media only screen and (min-width: 1024px) {
-
-    .AddRemoveValueRow {
-        position: absolute;
-        display: inline;
-        margin-top: 20px;
-        left: calc( 100% - 44px );
-        width: 33px;
-    }
-
-}
-@media only screen and (min-width: 1444px) {
-
-    .AddRemoveValueRow {
-        left: calc( 50% + 380px );
-    }
-
-}
-
-.Row > .FieldCell,
-.Row > .FieldCell > div.Field,
-.Row > div.Field,
-.Row > div.InputField_Container,
-.Row > select {
-    width: 100%;
-}
-
-.RichTextHolder .cke {
-    width: 100% !important;
-}
-
-#Subject {
-    width: calc( 100% - 32px);
-}
-
-.FieldCell > label,
-.Row > label,
-.RichTextHolder > label {
-    left: calc( -100% + 24px );
-}
-
 .MessageContent iframe {
     width: 100%;
     max-height: 80vh;
@@ -573,93 +563,13 @@ button.oooM.ActivityStartButton {
 .CloseButton:hover,
 .CloseButton:focus {
     background-color: #000099;
-    background-color: var(--colHoverDark);
+    background-color: var(--colMainHover);
 }
 
-/* IE */
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+/*
+ * @subsection Reply
+ */
 
-    #oooHeader {
-        display: -ms-grid;
-        -ms-grid-columns: 5fr 32px 4fr 159px 162px 32px;
-        -ms-grid-rows: 48px 1fr;
-    }
-
-    #oooHeader > .oooWithSub {
-        -ms-grid-column: 1;
-        -ms-grid-row-align: center;
-        margin-left: 8px;
-    }
-
-    #oooHeader > .oooAvatar {
-        -ms-grid-column: 2;
-        -ms-grid-row-align: center;
-        margin-left: 8px;
-    }
-
-    #oooHeader > p {
-        -ms-grid-column: 3;
-        -ms-grid-row-align: center;
-        margin-left: 8px;
-    }
-
-    #oooHeader > .oooInfoBlock {
-        -ms-grid-column: 4;
-        -ms-grid-row-align: center;
-        margin-left: 8px;
-    }
-
-    #oooHeader > button {
-        -ms-grid-column: 5;
-        -ms-grid-row-align: center;
-        margin-left: 8px;
-    }
-
-    #oooHeader > i {
-        -ms-grid-column: 6;
-        -ms-grid-column-span: 1;
-        -ms-grid-row-align: center;
-        display: block;
-    }
-
-    #oooCategories {
-        -ms-grid-column: 1;
-        -ms-grid-column-span: 6;
-        -ms-grid-row: 2;
-        margin-top: 2px;
-        -ms-grid-row-align: center;
-    }
-
-    #oooArticleList {
-        display: none;
-    }
-
-    @supports (display: grid) {
-        #oooHeader {
-            display: grid;
-        }
-        #oooHeader > .oooWithSub {
-            margin-left: 0px;
-        }
-        #oooHeader > .oooAvatar {
-            margin-left: 0px;
-        }
-        #oooHeader > p {
-            margin-left: 0px;
-        }
-        #oooHeader > .oooInfoBlock {
-            margin-left: 0px;
-        }
-        #oooHeader > button {
-            margin-left: 0px;
-        }
-        #oooCategories {
-            margin-top: 0px;
-        }
-        @media only screen and (min-width: 1024px) {
-            #oooArticleList {
-                display: block;
-            }
-        }
-    }
+fieldset.ModularForm {
+    width: auto;
 }

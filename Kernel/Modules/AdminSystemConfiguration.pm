@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,9 +19,15 @@ package Kernel::Modules::AdminSystemConfiguration;
 use strict;
 use warnings;
 
-our $ObjectManagerDisabled = 1;
+# core modules
 
+# CPAN modules
+use URI::Escape qw(uri_unescape);
+
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
+
+our $ObjectManagerDisabled = 1;
 
 sub new {
     my ( $Type, %Param ) = @_;
@@ -106,7 +112,7 @@ sub Run {
             my @SettingList = $Kernel::OM->Get('Kernel::System::SysConfig')->ConfigurationList();
 
             SETTING:
-            for my $Setting ( sort @SettingList ) {
+            for my $Setting ( sort { $a->{Name} cmp $b->{Name} } @SettingList ) {
 
                 # Skip setting if search term doesn't match.
                 next SETTING if $Setting->{Name} !~ m{\Q$Search\E}msi;
@@ -229,7 +235,7 @@ sub Run {
         my $SettingName = $ParamObject->GetParam( Param => 'Name' ) || '';
 
         my %UsersList;
-        if ( $SysConfigObject->can('UserSettingModifiedValueList') ) {    # OTOBO Community Solution
+        if ( $SysConfigObject->can('UserSettingModifiedValueList') ) {    # CareOnCloud ESM Community Solution
             %UsersList = $SysConfigObject->UserSettingModifiedValueList(
                 Name => $SettingName,
             );
@@ -380,7 +386,7 @@ sub Run {
         if ($SettingName) {
 
             # URL-decode setting name, just in case. Please see bug#13271 for more information.
-            $SettingName = URI::Escape::uri_unescape($SettingName);
+            $SettingName = uri_unescape($SettingName);
 
             my $SysConfigObject = $Kernel::OM->Get('Kernel::System::SysConfig');
             my %Setting         = $SysConfigObject->SettingGet(
@@ -464,6 +470,7 @@ sub Run {
         $Output .= $LayoutObject->Output(
             TemplateFile => 'AdminSystemConfigurationView',
             Data         => {
+                %OutputData,
                 Type               => 'CustomList',
                 SettingList        => \@SettingList,
                 SettingListInvalid => \@SettingListInvalid,
@@ -576,14 +583,14 @@ sub Run {
             UserID            => $Self->{UserID},
         );
 
-        my $ExtraParams;
+        my $ExtraParams = '';
 
         if ( !$ConfigurationLoad ) {
 
             return $LayoutObject->ErrorScreen(
                 Message =>
                     Translatable(
-                        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.'
+                        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.'
                     ),
             );
         }

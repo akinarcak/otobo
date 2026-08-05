@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<otobo_stats>
+<careoncloud_stats>
 <Cache>0</Cache>
 <Description>Not existing static object module.</Description>
 <Format>CSV</Format>
@@ -13,4 +13,4 @@
 <SumRow>1</SumRow>
 <Title>Not existing static object module</Title>
 <Valid>1</Valid>
-</otobo_stats>
+</careoncloud_stats>

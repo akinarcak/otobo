@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,13 +18,15 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # get needed objects
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -61,7 +63,7 @@ my $QueueID = $QueueObject->QueueAdd(
     Comment         => 'Some comment',
     UserID          => 1,
 );
-$Self->True(
+ok(
     $QueueID,
     "Queue created."
 );
@@ -75,7 +77,7 @@ my @Tests = (
                                     # 2 = follow up / open/reopen
                                     # 3 = follow up / close -> new ticket
                                     # 4 = follow up / close -> reject
-                                    # 5 = ignored (because of X-OTOBO-Ignore header)
+                                    # 5 = ignored (because of X-CareOnCloud-Ignore header)
     },
     {
         TicketState     => 'open',
@@ -192,7 +194,7 @@ my $TicketID = $TicketObject->TicketCreate(
 );
 $TicketID //= '';
 
-$Self->True(
+ok(
     $TicketID,
     "Ticket created - TicketID=$TicketID."
 );
@@ -222,7 +224,7 @@ for my $Test (@Tests) {
         Comment         => 'Some comment',
         UserID          => 1,
     );
-    $Self->True(
+    ok(
         $QueueUpdated,
         "Queue updated."
     );
@@ -232,7 +234,7 @@ for my $Test (@Tests) {
         TicketID => $TicketID,
         UserID   => 1,
     );
-    $Self->True(
+    ok(
         $TicketUpdated,
         "TicketStateSet updated."
     );
@@ -265,11 +267,11 @@ Some Content in Body",
         Status => 'Successful',
     );
 
-    $Self->Is(
+    is(
         $Return[0] || 0,
         $Test->{ExpectedResult},
         "Check result (State=$Test->{TicketState}, FollowUpID=$Test->{QueueFollowUpID}).",
     );
 }
 
-$Self->DoneTesting();
+done_testing;

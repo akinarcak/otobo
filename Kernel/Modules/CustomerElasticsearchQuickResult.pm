@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package Kernel::Modules::CustomerElasticsearchQuickResult;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::DBObject)
 
 use strict;
@@ -68,6 +69,75 @@ sub Run {
     # Subaction eq SearchUpdate is returned by on click and on input events of the ESfulltext-field. See Core.UI.Elasticsearch.js
     if ( $Self->{Subaction} eq 'SearchUpdate' && $ESStrLength > 1 && $Count ) {
 
+        my $Url = $ParamObject->GetParam(
+            Param => 'URL'
+        );
+
+        # check whether FAQ is installed
+        my $PackageObject  = $Kernel::OM->Get('Kernel::System::Package');
+        my $FAQIsInstalled = $PackageObject->PackageIsInstalled(
+            Name => 'FAQ',
+        );
+
+        if ( $FAQIsInstalled && $Url =~ /Action=CustomerFAQ/ ) {
+
+            # Search FAQ by ES sort by Number. Show $Size results.
+            my $SearchResult = $ESObject->FAQSearch(
+                Fulltext       => $ParamObject->GetParam( Param => 'FulltextES' ),
+                UserID         => $Self->{UserID},
+                UserLogin      => $Self->{UserLogin},
+                Limit          => $Count,
+                Result         => 'FULL',
+                ExtendedSearch => 0,
+            );
+            my @FAQIDs = $SearchResult->{Data}->@*;
+
+            $LayoutObject->Block(
+                Name => 'FAQHeader',
+            );
+            for my $FAQ (@FAQIDs) {
+                my ( $FAQID, $FAQParam ) = ( %{$FAQ} );
+
+                $LayoutObject->Block(
+                    Name => 'FAQRecord',
+                    Data => {
+                        FAQID => $FAQID,
+                    },
+                );
+
+                $LayoutObject->Block(
+                    Name => 'RecordFAQNumber',
+                    Data => {
+                        FAQID     => $FAQID,
+                        FAQNumber => $FAQParam->{Number},
+                    },
+                );
+                $LayoutObject->Block(
+                    Name => 'RecordFAQTitle',
+                    Data => {
+                        FAQID    => $FAQID,
+                        FAQTitle => $FAQParam->{Title},
+                    },
+                );
+            }
+
+            # Create output
+            my $Output = $LayoutObject->Output(
+                TemplateFile => 'CustomerElasticsearchQuickResult',
+                Data         => \%Param,
+            );
+
+            #Return HTML-output back to callback function in Core.UI.Elasticsearch.js
+            return $LayoutObject->Attachment(
+                NoCache     => 1,
+                ContentType => 'text/html',
+                Charset     => $LayoutObject->{UserCharset},
+                Content     => $Output || '',
+                Type        => 'inline',
+            );
+
+        }
+
         # Add filter for customer company if the company tickets are not disabled.
         my %Selection;
         if ( !$DisableCompanyTickets ) {
@@ -81,13 +151,19 @@ sub Run {
         }
 
         # Search ticket by ES sort by age. Show $Size results.
-        my @TicketIDs = $ESObject->TicketSearch(
+        # Block ticket data
+        my $SearchResult = $ESObject->TicketSearch(
             %Selection,
             Fulltext       => $ParamObject->GetParam( Param => 'FulltextES' ),
             CustomerUserID => $Self->{UserID},
             Limit          => $Count,
             Permission     => 'ro',
             Result         => 'FULL',
+            ExtendedSearch => 0,
+        );
+        my @TicketIDs = $SearchResult->{Data}->@*;
+        $LayoutObject->Block(
+            Name => 'TicketHeader',
         );
 
         # Block ticket data
@@ -106,6 +182,7 @@ sub Run {
             my $Age = $LayoutObject->CustomerAge(
                 Age   => $TicketParam->{Age},
                 Space => ' ',
+                Date  => $TicketParam->{Created},
             );
 
             $LayoutObject->Block(

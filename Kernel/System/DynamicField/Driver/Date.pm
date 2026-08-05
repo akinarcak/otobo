@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -30,9 +30,9 @@ use parent qw(Kernel::System::DynamicField::Driver::BaseDateTime);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -77,7 +77,12 @@ sub new {
         'IsFiltrable'                  => 0,
         'IsStatsCondition'             => 1,
         'IsCustomerInterfaceCapable'   => 1,
+        'IsSetCapable'                 => 1,
     };
+
+    # Date dynamic fields are stored in the database table attribute dynamic_field_value.value_datetime
+    $Self->{ValueKey}       = 'ValueDateTime';
+    $Self->{TableAttribute} = 'value_datetime';
 
     # get the Dynamic Field Backend custom extensions
     my $DynamicFieldDriverExtensions = $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Extension::Driver::Date');
@@ -139,8 +144,8 @@ sub ValueSet {
 
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
-            Message  => "The value for the field Date is invalid!\n"
-                . "The date must be valid and the time must be 00:00:00",
+            Message  => "The value $ValueItem for the field Date is invalid!\n"
+                . "The date must be in format YYYY-MM-DD and the time must be 00:00:00",
         );
 
         return;
@@ -156,7 +161,6 @@ sub ValueSet {
 sub ValueValidate {
     my ( $Self, %Param ) = @_;
 
-    my $Prefix          = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
     my $DateRestriction = $Param{DynamicFieldConfig}->{Config}->{DateRestriction};
 
     # check values
@@ -167,10 +171,6 @@ sub ValueValidate {
 
     # get necessary object
     my $DynamicFieldValueObject = $Kernel::OM->Get('Kernel::System::DynamicFieldValue');
-
-    # init system datetime object
-    my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
-    my $SystemTime     = $DateTimeObject->ToEpoch();
 
     my $Success;
     for my $Value (@Values) {
@@ -291,14 +291,12 @@ sub SearchSQLGet {
     return $SQL;
 }
 
-# TODO Check if this function is really necessary since it looks roughly the same as in BaseDateTime
 sub EditFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
     my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
     my $FieldName   = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
 
     my $Value = '';
 
@@ -335,8 +333,8 @@ sub EditFieldRender {
     my @ValueParts;
     for my $ValueItem ( $Value->@* ) {
         $ValueItem //= '';
-        my ( $Year, $Month, $Day, $Hour, $Minute, $Second ) = $ValueItem =~
-            m{ \A ( \d{4} ) - ( \d{2} ) - ( \d{2} ) \s ( \d{2} ) : ( \d{2} ) : ( \d{2} ) \z }xms;
+        my ( $Year, $Month, $Day, $Hour, $Minute ) = $ValueItem =~
+            m{ \A ( \d{4} ) - ( \d{2} ) - ( \d{2} ) \s ( \d{2} ) : ( \d{2} ) : \d{2} \z }xms;
 
         # If a value is sent this value must be active, then the Used part needs to be set to 1
         #   otherwise user can easily forget to mark the checkbox and this could lead into data
@@ -357,9 +355,17 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
+    }
+
+    # set readonly css class
+    if ( $Param{Readonly} ) {
+        $FieldClass .= ' Readonly';
     }
 
     # set error css class
@@ -479,6 +485,8 @@ sub EditFieldRender {
         );
     }
 
+    # We do not rewrite Validate_DateYear etc. to Validate_DateYear_IfVisible as one valid option is always selected
+
     # call EditLabelRender on the common Driver
     my $LabelString = $Self->EditLabelRender(
         %Param,
@@ -536,12 +544,16 @@ sub EditFieldValueGet {
                 $Data{$Type} = \@ValueColumn;
             }
 
-            # NOTE used data in multivalue case come as value index (e.g. 0, 1, 2, ...)
-            #   this is for the purpose to identify unchecked values (e.g. 0, 2, 4, ...)
+            # NOTE used data in multivalue case come as value index (e.g. 1, 3, 5, ...)
+            #   this is for the purpose to identify unchecked values (e.g. 2, 4, ...)
             #   so, every index arriving here means that the corresponding value was checked and is therefor set to Used => 1
+            #   note that the index in the following loop is shifted by one
             my @Used;
+            INDEX:
             for my $Index ( $Data{Used}->@* ) {
-                $Used[$Index] = 1;
+                next INDEX unless $Index;
+
+                $Used[ $Index - 1 ] = 1;
             }
             $Data{Used} = \@Used;
 
@@ -549,7 +561,7 @@ sub EditFieldValueGet {
             for my $Index ( 0 .. $#{ $Data{Year} } ) {
                 my %ValueRow = ();
                 for my $Type (qw(Used Year Month Day)) {
-                    $ValueRow{ $Prefix . $Type } = $Data{$Type}[$Index] // 0;
+                    $ValueRow{ $Prefix . $Type } = $Data{$Type}[$Index] || 0;
                 }
                 push $Value->@*, \%ValueRow;
             }
@@ -559,7 +571,11 @@ sub EditFieldValueGet {
             for my $Type (qw(Used Year Month Day)) {
                 $ValueRow{ $Prefix . $Type } = $Param{ParamObject}->GetParam(
                     Param => $Prefix . $Type,
-                ) || 0;
+                );
+                if ( $Type eq 'Used' && $ValueRow{ $Prefix . $Type } ) {
+                    $ValueRow{ $Prefix . $Type } = 1;
+                }
+                $ValueRow{ $Prefix . $Type } ||= 0;
             }
             $Value = \%ValueRow;
         }
@@ -849,10 +865,12 @@ sub SearchFieldRender {
     # take config from field config
     my $FieldConfig = $Param{DynamicFieldConfig}->{Config};
     my $FieldName   = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel  = $Param{DynamicFieldConfig}->{Label};
 
     # set the default type
     $Param{Type} ||= 'TimeSlot';
+
+    # is it rendered for the customer interface?
+    my $CustomerInterface = $Param{CustomerInterface} || 0;
 
     # add type to FieldName
     $FieldName .= $Param{Type};
@@ -944,12 +962,17 @@ sub SearchFieldRender {
     # set as checked if necessary
     my $FieldChecked = ( defined $Value->{$FieldName} && $Value->{$FieldName} == 1 ? 'checked' : '' );
 
-    my $HTMLString = <<"EOF";
+    my $HTMLString = '';
+    if ( $CustomerInterface == 1 ) {
+        $HTMLString .= '<div class=' . $FieldClass . '>';
+    }
+
+    $HTMLString .= <<"EOF";
     <input type="hidden" id="$FieldName" name="$FieldName" value="1">
 EOF
 
     if ( $Param{ConfirmationCheckboxes} ) {
-        $HTMLString = <<"EOF";
+        $HTMLString .= <<"EOF";
     <input type="checkbox" id="$FieldName" name="$FieldName" value="1" $FieldChecked>
 EOF
     }
@@ -999,6 +1022,10 @@ EOF
             AdditionalText => $AdditionalText,
         );
 
+        if ( $CustomerInterface == 1 ) {
+            $HTMLString .= '</div>';
+        }
+
         return {
             Field => $HTMLString,
             Label => $LabelString,
@@ -1015,6 +1042,11 @@ EOF
     }
 
     # build HTML for start value set
+
+    if ( $CustomerInterface == 1 ) {
+        $HTMLString .= '<div class="oooDate">';
+    }
+
     $HTMLString .= $Param{LayoutObject}->BuildDateSelection(
         %Param,
         Prefix               => $FieldName . 'Start',
@@ -1026,6 +1058,10 @@ EOF
         %YearsPeriodRange,
         OverrideTimeZone => 1,
     );
+
+    if ( $CustomerInterface == 1 ) {
+        $HTMLString .= '</div>';
+    }
 
     # to put a line break between the two search dates
     my $LineBreak = ' <br>';
@@ -1039,6 +1075,11 @@ EOF
     $HTMLString .= ' ' . $Param{LayoutObject}->{LanguageObject}->Translate("and") . "$LineBreak\n";
 
     # build HTML for stop value set
+
+    if ( $CustomerInterface == 1 ) {
+        $HTMLString .= '<div class="oooDate">';
+    }
+
     $HTMLString .= $Param{LayoutObject}->BuildDateSelection(
         %Param,
         Prefix               => $FieldName . 'Stop',
@@ -1051,6 +1092,10 @@ EOF
         OverrideTimeZone => 1,
     );
 
+    if ( $CustomerInterface == 1 ) {
+        $HTMLString .= '</div>';
+    }
+
     my $AdditionalText;
     if ( $Param{UseLabelHints} ) {
         $AdditionalText = Translatable('between');
@@ -1062,6 +1107,10 @@ EOF
         FieldName      => $FieldName,
         AdditionalText => $AdditionalText,
     );
+
+    if ( $CustomerInterface == 1 ) {
+        $HTMLString .= '</div>';
+    }
 
     return {
         Field => $HTMLString,
@@ -1487,8 +1536,6 @@ sub RandomValueSet {
 
     my $Value;
 
-    # TODO Suggestion to reduce code here: Unify this into one for loop and use LoopCount as limiter
-    # my $LoopCount = $Param{DynamicFieldConfig}{Config}{MultiValue} ? 0 : int( rand(3) );
     if ( $Param{DynamicFieldConfig}{Config}{MultiValue} ) {
         for my $j ( 0 .. int( rand(3) ) ) {
 
@@ -1500,12 +1547,9 @@ sub RandomValueSet {
         }
     }
     else {
-        my $YearValue   = int( rand(40) ) + 1_990;
-        my $MonthValue  = int( rand(9) ) + 1;
-        my $DayValue    = int( rand(10) ) + 10;
-        my $HourValue   = int( rand(12) ) + 10;
-        my $MinuteValue = int( rand(30) ) + 10;
-        my $SecondValue = int( rand(30) ) + 10;
+        my $YearValue  = int( rand(40) ) + 1_990;
+        my $MonthValue = int( rand(9) ) + 1;
+        my $DayValue   = int( rand(10) ) + 10;
 
         $Value = $YearValue . '-0' . $MonthValue . '-' . $DayValue . ' 00:00:00';
     }

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -319,8 +319,8 @@ my $ArticleID1 = $ArticleBackendObject->ArticleCreate(
     HistoryComment       => 'Some free text!',
     UserID               => 1,
     From                 => "$CustomerUserLogin\@localunittest.com",
-    To                   => 'test1@otoboexample.com',
-    Cc                   => 'test2@otoboexample.com',
+    To                   => 'test1@careoncloudexample.com',
+    Cc                   => 'test2@careoncloudexample.com',
 );
 
 $Self->True(
@@ -341,8 +341,8 @@ my $ArticleID2 = $ArticleBackendObject->ArticleCreate(
     HistoryComment       => 'Some free text!',
     UserID               => 1,
     From                 => "$CustomerUserLogin\@localunittest.com",
-    To                   => 'test3@otoboexample.com',
-    Cc                   => 'test4@otoboexample.com',
+    To                   => 'test3@careoncloudexample.com',
+    Cc                   => 'test4@careoncloudexample.com',
 );
 
 $Self->True(
@@ -381,8 +381,8 @@ my $CustomerArticleID1 = $ArticleBackendObject->ArticleCreate(
     HistoryComment       => 'Some free text!',
     UserID               => 1,
     From                 => "$CustomerUserLogin\@localunittest.com",
-    To                   => 'test1@otoboexample.com',
-    Cc                   => 'test2@otoboexample.com',
+    To                   => 'test1@careoncloudexample.com',
+    Cc                   => 'test2@careoncloudexample.com',
 );
 
 $Self->True(
@@ -967,7 +967,7 @@ my @Tests = (
         Data => {
             Events          => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
             RecipientAgents => [$UserID],
-            RecipientEmail  => ['test@otoboexample.com'],
+            RecipientEmail  => ['test@careoncloudexample.com'],
         },
         Config => {
             Event => 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update',
@@ -983,7 +983,7 @@ my @Tests = (
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['test@otoboexample.com'],
+                ToArray => ['test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1129,7 +1129,7 @@ my @Tests = (
         Name => 'RecipientEmail filter by unchecked dynamic field',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT1' . $RandomID . 'Update' ],
-            RecipientEmail => ['test@otoboexample.com'],
+            RecipientEmail => ['test@careoncloudexample.com'],
 
             # Filter by unchecked checbox dynamic field value. Note that the search value (-1) is
             #   different than the match value (0). See bug#12257 for more information.
@@ -1145,7 +1145,7 @@ my @Tests = (
         },
         ExpectedResults => [
             {
-                ToArray => ['test@otoboexample.com'],
+                ToArray => ['test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1155,7 +1155,7 @@ my @Tests = (
         Name => 'RecipientEmail additional recipient by dynamic field',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update' ],
-            RecipientEmail => ["<OTOBO_TICKET_DynamicField_DFT2${RandomID}>"],
+            RecipientEmail => ["<CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>"],
         },
         Config => {
             Event => 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update',
@@ -1177,7 +1177,7 @@ my @Tests = (
         Name => 'RecipientEmail additional recipient by dynamic field (first position)',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update' ],
-            RecipientEmail => ["<OTOBO_TICKET_DynamicField_DFT2${RandomID}>, test\@otoboexample.com"],
+            RecipientEmail => ["<CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>, test\@careoncloudexample.com"],
         },
         Config => {
             Event => 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update',
@@ -1193,7 +1193,7 @@ my @Tests = (
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['test@otoboexample.com'],
+                ToArray => ['test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1203,7 +1203,7 @@ my @Tests = (
         Name => 'RecipientEmail additional recipient by dynamic field (last position)',
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update' ],
-            RecipientEmail => ["test\@otoboexample.com, <OTOBO_TICKET_DynamicField_DFT2${RandomID}>"],
+            RecipientEmail => ["test\@careoncloudexample.com, <CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>"],
         },
         Config => {
             Event => 'TicketDynamicFieldUpdate_DFT2' . $RandomID . 'Update',
@@ -1219,7 +1219,7 @@ my @Tests = (
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => ['test@otoboexample.com'],
+                ToArray => ['test@careoncloudexample.com'],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1230,7 +1230,7 @@ my @Tests = (
         Data => {
             Events         => [ 'TicketDynamicFieldUpdate_DFT3' . $RandomID . 'Update' ],
             RecipientEmail => [
-                "<OTOBO_TICKET_DynamicField_DFT3${RandomID}>, <OTOBO_TICKET_DynamicField_DFT2${RandomID}>"
+                "<CareOnCloud_TICKET_DynamicField_DFT3${RandomID}>, <CareOnCloud_TICKET_DynamicField_DFT2${RandomID}>"
             ],
         },
         Config => {
@@ -1270,7 +1270,7 @@ my @Tests = (
         ExpectedResults => [
             {
                 ToArray =>
-                    [ "$CustomerUserLogin\@localunittest.com", 'test1@otoboexample.com', 'test2@otoboexample.com' ],
+                    [ "$CustomerUserLogin\@localunittest.com", 'test1@careoncloudexample.com', 'test2@careoncloudexample.com' ],
                 Body => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1293,7 +1293,7 @@ my @Tests = (
         ExpectedResults => [
             {
                 ToArray =>
-                    [ "$CustomerUserLogin\@localunittest.com", 'test3@otoboexample.com', 'test4@otoboexample.com' ],
+                    [ "$CustomerUserLogin\@localunittest.com", 'test3@careoncloudexample.com', 'test4@careoncloudexample.com' ],
                 Body => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1316,7 +1316,7 @@ my @Tests = (
         ExpectedResults => [
             {
                 ToArray =>
-                    [ "$CustomerUserLogin\@localunittest.com", 'test1@otoboexample.com', 'test2@otoboexample.com' ],
+                    [ "$CustomerUserLogin\@localunittest.com", 'test1@careoncloudexample.com', 'test2@careoncloudexample.com' ],
                 Body => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1339,7 +1339,7 @@ my @Tests = (
         ExpectedResults => [
             {
                 ToArray =>
-                    [ "$CustomerUserLogin\@localunittest.com", 'test3@otoboexample.com', 'test4@otoboexample.com' ],
+                    [ "$CustomerUserLogin\@localunittest.com", 'test3@careoncloudexample.com', 'test4@careoncloudexample.com' ],
                 Body => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1362,11 +1362,11 @@ my @Tests = (
         ExpectedResults => [
             {
                 ToArray =>
-                    [ "$CustomerUserLogin\@localunittest.com", 'test1@otoboexample.com', 'test2@otoboexample.com' ],
+                    [ "$CustomerUserLogin\@localunittest.com", 'test1@careoncloudexample.com', 'test2@careoncloudexample.com' ],
                 Body => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
             {
-                ToArray => [ 'test3@otoboexample.com', 'test4@otoboexample.com' ],
+                ToArray => [ 'test3@careoncloudexample.com', 'test4@careoncloudexample.com' ],
                 Body    => "JobName $TicketID Kernel::System::Email::Test $UserData{UserFirstname}=\n",
             },
         ],
@@ -1546,12 +1546,12 @@ for my $Test (@Tests) {
         Message => {
             en => {
                 Subject     => 'JobName',
-                Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+                Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
                 ContentType => 'text/plain',
             },
             de => {
                 Subject     => 'JobName',
-                Body        => 'JobName <OTOBO_TICKET_TicketID> <OTOBO_CONFIG_SendmailModule> <OTOBO_OWNER_UserFirstname>',
+                Body        => 'JobName <CareOnCloud_TICKET_TicketID> <CareOnCloud_CONFIG_SendmailModule> <CareOnCloud_OWNER_UserFirstname>',
                 ContentType => 'text/plain',
             },
         },

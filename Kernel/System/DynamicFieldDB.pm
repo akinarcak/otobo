@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2019 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,8 +16,17 @@
 
 package Kernel::System::DynamicFieldDB;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
+
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
     'Kernel::System::DynamicField',
@@ -26,8 +35,6 @@ our @ObjectDependencies = (
     'Kernel::System::Main',
     'Kernel::System::Ticket',
 );
-
-use Kernel::System::VariableCheck qw(:all);
 
 =head1 NAME
 
@@ -87,10 +94,15 @@ sub new {
         }
     }
     else {
+
+        # The driver module DBD::MariaDB expects an integer value for the port when given.
+        # Therefore set the port only when there actually is a port.
         $DatabaseDSN = 'DBI:' . $Self->{DynamicFieldConfig}->{Config}->{DBType}
             . ':database=' . $Self->{DynamicFieldConfig}->{Config}->{DBName}
-            . ';host=' . $Self->{DynamicFieldConfig}->{Config}->{Server}
-            . ';port=' . $Self->{DynamicFieldConfig}->{Config}->{Port};
+            . ';host=' . $Self->{DynamicFieldConfig}->{Config}->{Server};
+        if ( $Self->{DynamicFieldConfig}->{Config}->{Port} ) {
+            $DatabaseDSN .= ";port=$Self->{DynamicFieldConfig}->{Config}->{Port}";
+        }
     }
 
     # get the correct database type
@@ -103,11 +115,15 @@ sub new {
     }
 
     # get the specific database object
+    # Passing a not defined 'Attribute' enables the fallback to attributes in the SysConfig.
+    # Passing an empty hashref as 'Attribute' overrides the attributes from the SysConfig
     $Self->{DBObject} = Kernel::System::DB->new(
-        DatabaseDSN  => $DatabaseDSN,
-        DatabaseUser => $Self->{DynamicFieldConfig}->{Config}->{User},
-        DatabasePw   => $Self->{DynamicFieldConfig}->{Config}->{Password},
-        Type         => $DatabaseType,
+        DatabaseDSN             => $DatabaseDSN,
+        DatabaseUser            => $Self->{DynamicFieldConfig}->{Config}->{User},
+        DatabasePw              => $Self->{DynamicFieldConfig}->{Config}->{Password},
+        Attribute               => $Self->{DynamicFieldConfig}->{Config}->{Attribute},
+        Type                    => $DatabaseType,
+        DisconnectOnDestruction => 1,
     );
 
     $Self->{LikeEscapeString} = $Self->{DBObject}->GetDatabaseFunction('LikeEscapeString');
@@ -120,8 +136,11 @@ sub new {
 returns an array with the search results and additional meta information
 
     my @Result = $DynamicFieldDBObject->DatabaseSearchByConfig(
-        Config => $DynamicFieldConfig->{Config},
-        Search => 'My Search Term',
+        Config      => $DynamicFieldConfig->{Config},
+        Search      => 'My Search Term',              # optional when Identifier is passed
+        Identifier  => ???                            # optional when Search is passed
+        TicketID    => 123,                           # optional
+        ResultLimit => 1_000,
     );
 
 Returns:
@@ -644,7 +663,7 @@ sub DatabaseSearchDetails {
     my @PossibleValuesKeys;
 
     KEY:
-    for my $Key ( sort keys %{$PreparedPossibleValues} ) {
+    for my $Key ( sort { $a <=> $b } keys %{$PreparedPossibleValues} ) {
 
         next KEY if !$Key;
 
@@ -863,7 +882,6 @@ sub DatabaseSearchByAttributes {
 
     # extract the SELECT items out of the possible values
     my $SQL = 'SELECT ';
-    my @ResultDataTemplate;
     my @SELECTItems;
     my @WHERESQL;
     my $Counter       = 0;

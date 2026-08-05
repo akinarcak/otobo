@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,28 +23,27 @@ use namespace::autoclean;
 use utf8;
 
 # core modules
-use File::Path qw(remove_tree);
-use Time::HiRes qw();
-use File::Spec qw();
-use File::Copy qw(copy);
+use File::Path  qw(remove_tree);
+use Time::HiRes ();
+use File::Spec  ();
+use File::Copy  qw(copy);
 
 # CPAN modules
 use Test2::V0;
-use Test2::API qw(context run_subtest);
-use Net::DNS::Resolver;
+use Test2::API         qw(context run_subtest);
+use Net::DNS::Resolver ();
 use Moo;
 use Try::Tiny;
-use URI;
+use URI ();
 
-# OTOBO modules
-use Kernel::System::User;
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsArrayRefWithData);
 
 our $ObjectManagerDisabled = 1;
 
 # Extend Selenium::Remote::Driver only when Selenium testing is activated.
 # Otherwise Selenium::Remote::Driver::BUILD would be called with missing paramters.
-# Extending with 'around' is only done when the the class is actually extended.
+# Extending with 'around' is only done when the class is actually extended.
 {
     # Check whether Selenium testing is activated.
     # Note that $Kernel::OM must exist before this module is loaded.
@@ -112,11 +111,13 @@ has LogExecuteCommandActive => (
 
 Kernel::System::UnitTest::Selenium - run front end tests
 
+=head1 DESCRIPTION
+
 This class extends Selenium::Remote::Driver when Selenium testing is activated.
 You can use the full API of the base object. See L<https://metacpan.org/pod/Selenium::Remote::Driver>.
 
 Activating Selenium is done by adding a hash element in F<Kernel/Config.pm>.
-You need a running C<selenium> or C<phantomjs> server in order to do this successfully.
+You need a running C<selenium> server in order to do this successfully.
 Here are some examples:
 
     # For testing with Firefox until v. 47 (testing with recent FF and marionette is currently not supported):
@@ -202,7 +203,7 @@ around BUILDARGS => sub {
         $Kernel::OM->Get('Kernel::System::UnitTest::Helper')->GetTestHTTPHostname();
 
     # Remember the start system time for the selenium test run.
-    # This is needed for cleaning up OTOBO sessions.
+    # This is needed for cleaning up CareOnCloud ESM sessions.
     my $TestStartSystemTime = time;
 
     return $Class->$Orig(
@@ -236,6 +237,8 @@ sub BUILD {
 
     return;
 }
+
+=head1 PUBLIC INTERFACE
 
 =head2 RunTest()
 
@@ -273,7 +276,7 @@ sub RunTest {
 
 =head2 VerifiedGet()
 
-perform a get() call, but wait for the page to be fully loaded (works only within OTOBO).
+perform a get() call, but wait for the page to be fully loaded (works only within CareOnCloud ESM).
 Will throw an exception when the verification fails.
 
     $SeleniumObject->VerifiedGet(
@@ -316,7 +319,7 @@ sub VerifiedGet {
 
 =head2 VerifiedRefresh()
 
-perform a refresh() call, but wait for the page to be fully loaded (works only within OTOBO).
+perform a refresh() call, but wait for the page to be fully loaded (works only within CareOnCloud ESM).
 Will throw an exception if the verification fails.
 
     $SeleniumObject->VerifiedRefresh();
@@ -492,10 +495,20 @@ Exactly one condition (JavaScript or WindowCount) must be specified.
         AlertPresent   => 1,                                 # Wait until an alert, confirm or prompt dialog is present
         Callback       => sub { ... }                        # Wait until function returns true
         ElementExists  => 'xpath-selector'                   # Wait until an element is present
-        ElementExists  => ['css-selector', 'css'],
+        ElementExists  => [
+            'css-selector',
+            'css'
+        ],
         ElementMissing => 'xpath-selector',                  # Wait until an element is not present
-        ElementMissing => ['css-selector', 'css'],
+        ElementMissing => [
+            'css-selector',
+            'css'
+        ],
         JavaScript     => 'return $(".someclass").length',   # Javascript code that checks condition
+        JavaScript     => [                                  # pass an arrayref when arguments are needed
+            q{return arguments[0].length},
+            $SomeElement
+        ],
         WindowCount    => 2,                                 # Wait until this many windows are open
         Time           => 20,                                # optional, wait time in seconds (default 20)
     );
@@ -519,15 +532,15 @@ sub WaitFor {
         $Context->throw("Need JavaScript, WindowCount, ElementExists, ElementMissing, Callback or AlertPresent.");
     }
 
-    my $TimeOut                 = $Param{Time} // 20;             # time span after which WaitFor() gives up
-    my $WaitedSeconds           = 0;                              # counting up to $TimeOut
-                                                                  # Apparently some WaitFor() call fail because some elements show up only briefly.
-                                                                  # This might cause heisenbugs.
-                                                                  # Therefore fine tune the initial sleep times.
-    my @Intervals               = ( 0.025, 0.050, 0.075, 0.1 );
-    my $DefaultInterval         = 0.1;
-    my $Interval                = $DefaultInterval;
-    my $FindElementSleepSeconds = 0.5;                            # sleep after a successful find_element(), no idea why this is useful
+    my $TimeOut                 = $Param{Time} // 20;              # time span after which WaitFor() gives up
+    my $WaitedSeconds           = 0;                               # counting up to $TimeOut
+                                                                   # Apparently some WaitFor() call fail because some elements show up only briefly.
+                                                                   # This might cause heisenbugs.
+                                                                   # Therefore fine tune the initial sleep times.
+    my $Interval                = 0.1;                             # starting value of intervals, except for find_element()
+    my @FindElementIntervals    = ( 0.025, 0.050, 0.075, 0.1 );    # shorter initials intervals for find_element()
+    my $IntervalIncrement       = 0.1;                             # make the intervals larger the longer the wait time is
+    my $FindElementSleepSeconds = 0.5;                             # sleep after a successful find_element(), no idea why this is useful
 
     my $Success = 0;
 
@@ -535,10 +548,11 @@ sub WaitFor {
     while ( $WaitedSeconds <= $TimeOut ) {
 
         if ( $Param{JavaScript} ) {
+            my @Arguments                   = ref $Param{JavaScript} eq 'ARRAY' ? $Param{JavaScript}->@* : $Param{JavaScript};
             my $PrevLogExecuteCommandActive = $Self->LogExecuteCommandActive;
             $Self->LogExecuteCommandActive(0);
 
-            my $Ret = $Self->execute_script( $Param{JavaScript} );
+            my $Ret = $Self->execute_script(@Arguments);
 
             $Self->LogExecuteCommandActive($PrevLogExecuteCommandActive);
 
@@ -593,7 +607,7 @@ sub WaitFor {
             }
         }
         elsif ( $Param{ElementExists} ) {
-            my @Arguments = ref( $Param{ElementExists} ) eq 'ARRAY' ? @{ $Param{ElementExists} } : $Param{ElementExists};
+            my @Arguments = ref $Param{ElementExists} eq 'ARRAY' ? $Param{ElementExists}->@* : $Param{ElementExists};
 
             my $PrevLogExecuteCommandActive = $Self->LogExecuteCommandActive;
             $Self->LogExecuteCommandActive(0);
@@ -611,7 +625,7 @@ sub WaitFor {
             }
         }
         elsif ( $Param{ElementMissing} ) {
-            my @Arguments = ref( $Param{ElementMissing} ) eq 'ARRAY' ? @{ $Param{ElementMissing} } : $Param{ElementMissing};
+            my @Arguments = ref $Param{ElementMissing} eq 'ARRAY' ? $Param{ElementMissing}->@* : $Param{ElementMissing};
 
             my $PrevLogExecuteCommandActive = $Self->LogExecuteCommandActive;
             $Self->LogExecuteCommandActive(0);
@@ -630,12 +644,12 @@ sub WaitFor {
         }
 
         # Interval timing is solely trial and error
-        if ( @Intervals && ( $Param{ElementExists} || $Param{ElementMissing} ) ) {
-            $Interval = shift @Intervals;
+        if ( @FindElementIntervals && ( $Param{ElementExists} || $Param{ElementMissing} ) ) {
+            $Interval = shift @FindElementIntervals;
         }
         Time::HiRes::sleep($Interval);
         $WaitedSeconds += $Interval;
-        $Interval      += 0.1;
+        $Interval      += $IntervalIncrement;
 
         $Context->note("waited for $WaitedSeconds s");
     }
@@ -796,8 +810,8 @@ use this method to handle any Selenium exceptions.
 
     $SeleniumObject->HandleError($@);
 
-It will store a screen shot of the page in $OTOBO_HOME/var/httpd/htdocs/SeleniumScreenshots.
-If the folder /var/otobo-unittest exists, then a copy of the screenshot will be placed there too.
+It will store a screen shot of the page in $CareOnCloud_HOME/var/httpd/htdocs/SeleniumScreenshots.
+If the folder /var/careoncloud-unittest exists, then a copy of the screenshot will be placed there too.
 
 =cut
 
@@ -819,9 +833,9 @@ sub HandleError {
 
     # If a shared screenshot folder is present, then we also store the screenshot there for external use.
     my $SharedScreenshotDir;
-    if ( -d -w '/var/otobo-unittest/' ) {
+    if ( -d -w '/var/careoncloud-unittest/' ) {
 
-        $SharedScreenshotDir = '/var/otobo-unittest/SeleniumScreenshots';
+        $SharedScreenshotDir = '/var/careoncloud-unittest/SeleniumScreenshots';
         mkdir $SharedScreenshotDir unless -e $SharedScreenshotDir;
         if ( !-d $SharedScreenshotDir ) {
             $Context->note("Could not create the directory $SharedScreenshotDir: $!");
@@ -876,7 +890,7 @@ sub HandleError {
         # If a shared screenshot folder is present, then we also store the screenshot there for external use.
         next WINDOW_HANDLE unless $SharedScreenshotDir;
 
-        my $SharedScreenshotDir = '/var/otobo-unittest/SeleniumScreenshots';
+        my $SharedScreenshotDir = '/var/careoncloud-unittest/SeleniumScreenshots';
         mkdir $SharedScreenshotDir unless -e $SharedScreenshotDir;
         if ( !-d $SharedScreenshotDir ) {
             $Context->note("Could not create the directory $SharedScreenshotDir: $!");
@@ -1057,6 +1071,7 @@ Sometimes a longer timeout is needed.
         Value   => 3,                           # (optional) Value
         Time    => 60,                          # (optional) timeout in seconds
     );
+
 =cut
 
 sub InputFieldValueSet {
@@ -1214,6 +1229,34 @@ sub find_no_element_by_css_ok {
     $Context->fail_and_release($TestDescription);
 
     return 0;
+}
+
+=head2 get_selected_value
+
+Helper to get the value property of form elements, defined by using a CSS Selector
+
+=cut
+
+sub get_selected_value {
+    my ( $Self, $CssSelector ) = @_;
+
+    return $Self->execute_script("return \$('$CssSelector')[0].value;");
+}
+
+=for stopwords DOM
+
+=head2 get_value_by_id
+
+Helper to get the value property of form elements, similar to the above helper,
+but using a DOM id and getElementById() to allow for IDs that are not valid
+CSS Selectors.
+
+=cut
+
+sub get_value_by_id {
+    my ( $Self, $ID ) = @_;
+
+    return $Self->execute_script("return document.getElementById('$ID').value;");
 }
 
 1;

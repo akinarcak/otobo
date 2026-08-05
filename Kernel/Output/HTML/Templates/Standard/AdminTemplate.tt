@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -37,6 +37,17 @@
     [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
 
     <div class="SidebarColumn">
+[% RenderBlockStart("IncludeInvalid") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include invalid templates") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include invalid templates") | html %]</label>
+            </div>
+        </div>
+[% RenderBlockEnd("IncludeInvalid") %]
 [% RenderBlockStart("ActionList") %]
         <div class="WidgetSimple">
             <div class="Header"><h2>[% Translate("Actions") | html %]</h2></div>
@@ -82,6 +93,68 @@
                 </p>
             </div>
         </div>
+[% RenderBlockStart("ImportExportWidget") %]
+        <div class='WidgetSimple' id='TemplateImportExportWidget'>
+            <div class='Header'>
+                <h1 class="InvisibleText">
+                    [% Translate("Import / Export") | html %]
+                </h1>
+            </div>
+
+            [% BreadcrumbPath = [
+                    {
+                        Name => Translate('Import / Export'),
+                    },
+                ]
+            %]
+
+            [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
+
+            <div class='Content'>
+                <p class='FieldExplanation'>
+                    [% Translate('Here you can upload a configuration file to import templates to your system. The file needs to be in .yml format as exported by the template management module.') | html %]
+                </p>
+                <ul class='ActionList SpacingTop'>
+                    <li>
+                        <form action='[% Env("CGIHandle") %]' method='post' enctype='multipart/form-data' class='Validate PreventMultipleSubmits'>
+                            <input type='hidden' name='ChallengeToken' value=[% Env("UserChallengeToken") | JSON %]>
+                            <input type='hidden' name='Action' value='AdminTemplateImportExport'/>
+                            <input type='hidden' name='Subaction' value='Import'/>
+                            <input name='FileUpload' id='FileUpload' type='file' size='18' class='Fixed W100pc Validate_Required [% Data.FileUploadInvalid | html %]'/>
+                            <div id='FileUploadError' class='TooltipErrorMessage'>
+                                <p>
+                                    [% Translate('This field is required.') | html %]
+                                </p>
+                            </div>
+                            <div id='FileUploadServerError' class='TooltipErrorMessage'>
+                                <p>
+                                    % Translate('This field is required.') | html %]
+                                </p>
+                            </div>
+                            <fieldset class='SpacingTop'>
+                                <input type='checkbox' id='OverwriteExistingEntitiesExample' name='OverwriteExistingEntities' value='1'/>
+                                <label for='OverwriteExistingEntitiesExample'>
+                                    [% Translate('Overwrite existing entities') | html %]
+                                </label>
+                            </fieldset>
+                            <button class='CallForAction Fullsize Center SpacingTop' id='TemplateImport' type='submit'>
+                                <span><i class='fa fa-upload'></i>
+                                    [% Translate('Templates Import') | html %]
+                                </span>
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <a href='[% Env("Baselink") %]Action=AdminTemplateImportExport;Subaction=Export' id='TemplateExport' class='CallForAction Fullsize Center'>
+                            <span><i class='fa fa-download'></i>
+                                [% Translate('Templates Export') | html %]
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+[% RenderBlockEnd("ImportExportWidget") %]
     </div>
     <div class="ContentColumn">
 
@@ -96,6 +169,7 @@
                         <tr>
                             <th>[% Translate("Type") | html %]</th>
                             <th>[% Translate("Name") | html %]</th>
+                            <th>[% Translate("Pre-selected ticket state") | html %]</th>
                             <th>[% Translate("Attachments") | html %]</th>
                             <th>[% Translate("Comment") | html %]</th>
                             <th>[% Translate("Validity") | html %]</th>
@@ -106,11 +180,11 @@
                     </thead>
                     <tbody>
                         <tr class="FilterMessage Hidden">
-                            <td colspan="7">[% Translate("No matches found.") | html %]</td>
+                            <td colspan="8">[% Translate("No matches found.") | html %]</td>
                         </tr>
 [% RenderBlockStart("NoDataFoundMsg") %]
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 [% Translate("No data found.") | html %]
                             </td>
                         </tr>
@@ -121,16 +195,19 @@
                             <td>
                                 <a class="AsBlock" href="[% Env("Baselink") %]Action=[% Env("Action") %];Subaction=Change;ID=[% Data.ID | uri %];Type=[% Data.TemplateType | uri %]">[% Data.Name | html %]</a>
                             </td>
+                            <td>[% Translate(Data.PreSelectedTicketState) | html %]</td>
                             <td>[% Data.Attachments | html %]</td>
                             <td title="[% Data.Comment | html %]">[% Data.Comment | truncate(26) | html %]</td>
                             <td>[% Translate(Data.Valid) | html %]</td>
                             <td>[% Data.ChangeTime | Localize("TimeShort") %]</td>
                             <td>[% Data.CreateTime | Localize("TimeShort") %]</td>
                             <td class="Center">
+                            [% IF Data.Permission != 'ro' %]
                                 <a class="TrashCan TemplateDelete" href="#" data-query-string="Action=[% Env("Action") %];Subaction=Delete;ID=[% Data.ID | uri %];[% Env("ChallengeTokenParam") | html %]" title="[% Translate("Delete this entry") | html %]">
                                     [% Translate("Delete this entry") | html %]
                                     <i class="fa fa-trash-o"></i>
                                 </a>
+                            [% END %]
                             </td>
                         </tr>
 [% RenderBlockEnd("OverviewResultRow") %]
@@ -221,6 +298,13 @@
                         </div>
                         <div class="Clear"></div>
 
+                        <label for="PreSelectedTicketStateID">[% Translate("Pre-selected ticket state") | html %]:</label>
+                        <div class="Field">
+                            [% Data.States %]
+                        </div>
+                        <div class="Clear"></div>
+
+                    [% IF Data.Permission != 'ro' %]
                         <div class="Field">
                             [% IF Data.Action == 'Change' %]
                                 <button class="CallForAction Primary" id="SubmitAndContinue" type="button" value="[% Translate("Save") | html %]"><span>[% Translate("Save") | html %]</span></button>
@@ -233,6 +317,7 @@
                             <a href="[% Env("Baselink") %]Action=[% Env("Action") %]">[% Translate("Cancel") | html %]</a>
                         </div>
                         <div class="Clear"></div>
+                    [% END %]
                     </fieldset>
                 </form>
             </div>
@@ -245,73 +330,73 @@
 
                 <p>[% Translate("You can use the following tags") | html %]:</p>
                 <dl>
-                    <dt><code>&lt;OTOBO_AGENT_SUBJECT[20]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_AGENT_SUBJECT[20]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 20 characters of the subject of the current/latest agent article (current for Answer and Forward, latest for Note template type). This tag is not supported for other template types.") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_AGENT_BODY[5]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_AGENT_BODY[5]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 5 lines of the body of the current/latest agent article (current for Answer and Forward, latest for Note template type). This tag is not supported for other template types.") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_SUBJECT[20]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_SUBJECT[20]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 20 characters of the subject of the current/latest article (current for Answer and Forward, latest for Note template type). This tag is not supported for other template types.") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_BODY[5]&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_BODY[5]&gt;</code></dt>
                     <dd>
                         [% Translate("To get the first 5 lines of the body of the current/latest article (current for Answer and Forward, latest for Note template type). This tag is not supported for other template types.") | html %]
                     </dd>
 
-                    <dt><code>&lt;OTOBO_OWNER_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_OWNER_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket owner options") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_OWNER_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_OWNER_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_RESPONSIBLE_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_RESPONSIBLE_*&gt;</code></dt>
                     <dd>
                         [% Translate("Ticket responsible options") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_RESPONSIBLE_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_RESPONSIBLE_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CURRENT_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CURRENT_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current user who requested this action") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_CURRENT_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_CURRENT_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the ticket data") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_TICKET_TicketNumber>, &lt;OTOBO_TICKET_TicketID&gt;, &lt;OTOBO_TICKET_Queue&gt;, &lt;OTOBO_TICKET_State&gt;</code>).
+                        <code>&lt;CareOnCloud_TICKET_TicketNumber>, &lt;CareOnCloud_TICKET_TicketID&gt;, &lt;CareOnCloud_TICKET_Queue&gt;, &lt;CareOnCloud_TICKET_State&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_DynamicField_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_DynamicField_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of ticket dynamic fields internal key values") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_DynamicField_TestField&gt;,
-                        &lt;OTOBO_TICKET_DynamicField_TicketFreeText1&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_DynamicField_TestField&gt;,
+                        &lt;CareOnCloud_TICKET_DynamicField_TicketFreeText1&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_TICKET_DynamicField_*_Value&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_TICKET_DynamicField_*_Value&gt;</code></dt>
                     <dd>
                         [% Translate("Options of ticket dynamic fields display values, useful for Dropdown and Multiselect fields") | html %]
-                        ([% Translate(" e. g.") | html %] <code>&lt;OTOBO_TICKET_DynamicField_TestField_Value&gt;,
-                        &lt;OTOBO_TICKET_DynamicField_TicketFreeText1_Value&gt;</code>).
+                        ([% Translate(" e. g.") | html %] <code>&lt;CareOnCloud_TICKET_DynamicField_TestField_Value&gt;,
+                        &lt;CareOnCloud_TICKET_DynamicField_TicketFreeText1_Value&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CUSTOMER_DATA_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CUSTOMER_DATA_*&gt;</code></dt>
                     <dd>
                         [% Translate("Options of the current customer user data") | html %] ([% Translate("e. g.") | html %]
-                        <code>&lt;OTOBO_CUSTOMER_DATA_UserFirstname&gt;</code>).
+                        <code>&lt;CareOnCloud_CUSTOMER_DATA_UserFirstname&gt;</code>).
                     </dd>
 
-                    <dt><code>&lt;OTOBO_CONFIG_*&gt;</code></dt>
+                    <dt><code>&lt;CareOnCloud_CONFIG_*&gt;</code></dt>
                     <dd>
-                        [% Translate("Config options") | html %] ([% Translate("e. g.") | html %] <code>&lt;OTOBO_CONFIG_HttpType&gt;</code>).
+                        [% Translate("Config options") | html %] ([% Translate("e. g.") | html %] <code>&lt;CareOnCloud_CONFIG_HttpType&gt;</code>).
                     </dd>
                 </dl>
 
@@ -319,16 +404,16 @@
                 <p>
                     <strong>[% Translate("Note") | html %]:</strong>
                     [% Translate("Create type templates only supports this smart tags") | html %]:
-                    <code><strong> &lt;OTOBO_CURRENT_*&gt;</strong></code> [% Translate("and") | html %] <code><strong> &lt;OTOBO_CONFIG_*&gt;</strong></code>
+                    <code><strong> &lt;CareOnCloud_CURRENT_*&gt;</strong></code> [% Translate("and") | html %] <code><strong> &lt;CareOnCloud_CONFIG_*&gt;</strong></code>
                 </p>
 
                 <p class="SpacingTop">
                     [% Translate("Example template") | html %]:
                 </p>
                 <textarea rows="5" cols="60" name="Templatee">
-[% Translate("The current ticket state is") | html %]: "&lt;OTOBO_TICKET_State&gt;"
+[% Translate("The current ticket state is") | html %]: "&lt;CareOnCloud_TICKET_State&gt;"
 
-[% Translate("Your email address is") | html %]: "&lt;OTOBO_CUSTOMER_UserEmail&gt;"
+[% Translate("Your email address is") | html %]: "&lt;CareOnCloud_CUSTOMER_UserEmail&gt;"
                 </textarea>
             </div>
         </div>

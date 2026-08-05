@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,8 +25,9 @@ use utf8;
 # core modules
 
 # CPAN modules
+use List::AllUtils qw(any last_index);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(DataIsDifferent IsHashRefWithData IsArrayRefWithData IsPositiveInteger);
 
 our @ObjectDependencies = (
@@ -45,14 +46,55 @@ Kernel::System::DynamicField::Driver::Base - common dynamic field backend functi
 sub ValueIsDifferent {
     my ( $Self, %Param ) = @_;
 
+    # handle array comparison
+    if ( ref $Param{Value1} eq 'ARRAY' ) {
+
+        # strip trailing empty values and map empty strings to undef
+        #   for comparison of frontend value with database value
+        my @Values = map { ( defined $_ && $_ eq '' ) ? undef : $_ } $Param{Value1}->@*;
+        if ( any { defined $_ } @Values ) {
+            splice( @Values, ( last_index { defined $_ } @Values ) + 1 );
+        }
+        else {
+            @Values = ();
+        }
+        $Param{Value1} = \@Values;
+
+        # special case where the values are different but they should be reported as equals
+        if ( !defined $Param{Value2} && !$Param{Value1}->@* ) {
+            return;
+        }
+    }
+
+    if ( ref $Param{Value2} eq 'ARRAY' ) {
+
+        # strip trailing empty values and map empty strings to undef
+        #   for comparison of frontend value with database value
+        my @Values = map { ( defined $_ && $_ eq '' ) ? undef : $_ } $Param{Value2}->@*;
+        if ( any { defined $_ } @Values ) {
+            splice( @Values, ( last_index { defined $_ } @Values ) + 1 );
+        }
+        else {
+            @Values = ();
+        }
+        $Param{Value2} = \@Values;
+
+        # special case where the values are different but they should be reported as equals
+        if ( !defined $Param{Value1} && !$Param{Value2}->@* ) {
+            return;
+        }
+    }
+
     # special cases where the values are different but they should be reported as equals
+    # NOTE in case that either Value1 or Value2 is an array ref, we rely on stringified
+    #   array references not being empty for this to work
     return if !defined $Param{Value1} && ( defined $Param{Value2} && $Param{Value2} eq '' );
     return if !defined $Param{Value2} && ( defined $Param{Value1} && $Param{Value1} eq '' );
 
     # compare the results
     return DataIsDifferent(
         Data1 => \$Param{Value1},
-        Data2 => \$Param{Value2}
+        Data2 => \$Param{Value2},
     );
 }
 
@@ -81,8 +123,11 @@ sub HasBehavior {
     # return fail if Behaviors hash does not exists
     return unless IsHashRefWithData( $Self->{Behaviors} );
 
+    # avoid hash lookup with an undefined value
+    return unless defined $Param{Behavior};
+
     # return success if the dynamic field has the expected behavior
-    return IsPositiveInteger( $Self->{Behaviors}->{ $Param{Behavior} } );
+    return $Self->{Behaviors}->{ $Param{Behavior} } ? 1 : undef;
 }
 
 sub SearchFieldPreferences {
@@ -307,7 +352,7 @@ sub ValueStructureFromDB {
         if ( $Param{MultiValue} ) {
             my @ReturnValue;
             for my $Value ( $Param{ValueDB}->@* ) {
-                $ReturnValue[ $Value->{IndexSet} ][ $Value->{IndexValue} ] = $Value->{ $Param{ValueKey} };
+                $ReturnValue[ $Value->{IndexSet} // 0 ][ $Value->{IndexValue} // 0 ] = $Value->{ $Param{ValueKey} };
             }
 
             return \@ReturnValue;
@@ -316,7 +361,7 @@ sub ValueStructureFromDB {
         if ( $Param{BaseArray} ) {
             my @ReturnValue;
             for my $Value ( $Param{ValueDB}->@* ) {
-                $ReturnValue[ $Value->{IndexSet} ] = [ $Value->{ $Param{ValueKey} } ];
+                $ReturnValue[ $Value->{IndexSet} // 0 ] = [ $Value->{ $Param{ValueKey} } ];
             }
 
             return \@ReturnValue;
@@ -324,7 +369,7 @@ sub ValueStructureFromDB {
 
         my @ReturnValue;
         for my $Value ( $Param{ValueDB}->@* ) {
-            $ReturnValue[ $Value->{IndexSet} ] = $Value->{ $Param{ValueKey} };
+            $ReturnValue[ $Value->{IndexSet} // 0 ] = $Value->{ $Param{ValueKey} };
         }
 
         return \@ReturnValue;
@@ -333,7 +378,7 @@ sub ValueStructureFromDB {
     if ( $Param{MultiValue} ) {
         my @ReturnValue;
         for my $Value ( $Param{ValueDB}->@* ) {
-            $ReturnValue[ $Value->{IndexValue} ] = $Value->{ $Param{ValueKey} };
+            $ReturnValue[ $Value->{IndexValue} // 0 ] = $Value->{ $Param{ValueKey} };
         }
 
         return \@ReturnValue;
@@ -360,7 +405,7 @@ Sets IndexValue and IndexSet for complex structures, if necessary.
 sub ValueStructureToDB {
     my ( $Self, %Param ) = @_;
 
-    return unless defined $Param{Value};
+    return [ { $Param{ValueKey} => undef } ] unless defined $Param{Value};
 
     if ( $Param{Set} ) {
         my @ReturnValue;

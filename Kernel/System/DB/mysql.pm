@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,14 +16,16 @@
 
 package Kernel::System::DB::mysql;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
 
 # core modules
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -72,17 +74,16 @@ sub LoadPreferences {
     # this is primarily needed during migration
     $Self->{'DB::Substring'} = 'SUBSTRING(%s, %s, %s)';
 
-    # DBI/DBD::mysql attributes
-    # disable automatic reconnects as they do not execute DB::Connect, which will
-    # cause charset problems
-    $Self->{'DB::Attribute'} = {
-        mysql_auto_reconnect => 0,
-    };
+    # DBI/DBD::mysql attributes. These will be passed when connecting to the database.
+    # Note that "mysql_auto_reconnect => 0" is set by DBIx::Connector::Driver::mysql.
+    $Self->{'DB::Attribute'} = {};
 
     # set current time stamp if different to "current_timestamp"
     $Self->{'DB::CurrentTimestamp'} = '';
 
-    # set encoding of selected data to utf8
+    # DBD::MariaDB provides sane Perl strings.
+    # But traditionally CareOnCloud ESM expect that the utf8-flag is on.
+    # even for binary data
     $Self->{'DB::Encode'} = 1;
 
     # shell setting
@@ -90,11 +91,6 @@ sub LoadPreferences {
     $Self->{'DB::ShellCommit'} = ';';
 
     #$Self->{'DB::ShellConnect'} = '';
-
-    # init sql setting on db connect
-    if ( !$Kernel::OM->Get('Kernel::Config')->Get('Database::ShellOutput') ) {
-        $Self->{'DB::Connect'} = 'SET NAMES utf8mb4';
-    }
 
     return 1;
 }
@@ -163,19 +159,19 @@ sub TableCreate {
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $SQLStart     = '';
-    my $SQLEnd       = '';
-    my $SQL          = '';
-    my @Column       = ();
-    my $TableName    = '';
-    my $ForeignKey   = ();
-    my %Foreign      = ();
-    my $IndexCurrent = ();
-    my %Index        = ();
-    my $UniqCurrent  = ();
-    my %Uniq         = ();
-    my $PrimaryKey   = '';
-    my @Return       = ();
+    my $SQLStart = '';
+    my $SQLEnd   = '';
+    my $SQL      = '';
+    my @Column;
+    my $TableName = '';
+    my $ForeignKey;
+    my %Foreign;
+    my $IndexCurrent;
+    my %Index;
+    my $UniqCurrent;
+    my %Uniq;
+    my $PrimaryKey = '';
+    my @Return;
 
     for my $Tag (@Param) {
 
@@ -223,6 +219,7 @@ sub TableCreate {
             push @{ $Foreign{$ForeignKey} }, $Tag;
         }
     }
+
     for my $Tag (@Column) {
 
         # type translation
@@ -255,7 +252,7 @@ sub TableCreate {
         }
 
         # auto increment
-        if ( $Tag->{AutoIncrement} && $Tag->{AutoIncrement} =~ /^true$/i ) {
+        if ( $Tag->{AutoIncrement} && lc $Tag->{AutoIncrement} eq 'true' ) {
             $SQL .= ' AUTO_INCREMENT';
         }
 
@@ -358,14 +355,14 @@ sub TableAlter {
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    my $SQLStart      = '';
-    my @SQL           = ();
-    my @Index         = ();
+    my $SQLStart = '';
+    my @SQL;
+    my @Index;
     my $IndexName     = '';
     my $ForeignTable  = '';
     my $ReferenceName = '';
-    my @Reference     = ();
-    my $Table         = '';
+    my @Reference;
+    my $Table = '';
 
     for my $Tag (@Param) {
 
@@ -402,8 +399,9 @@ sub TableAlter {
                 $Default = defined $Tag->{Default} ? "'$Tag->{Default}'" : "''";
             }
 
-            # investigate the require
-            my $Required = ( $Tag->{Required} && lc $Tag->{Required} eq 'true' ) ? 1 : 0;
+            # investigate Required and AutoIncrement
+            my $Required      = ( $Tag->{Required}      && lc $Tag->{Required} eq 'true' )      ? 1 : 0;
+            my $AutoIncrement = ( $Tag->{AutoIncrement} && lc $Tag->{AutoIncrement} eq 'true' ) ? 1 : 0;
 
             # handle default and require
             if ( $Required || defined $Tag->{Default} ) {
@@ -418,13 +416,11 @@ sub TableAlter {
                     $SQLAlter .= " DEFAULT $Default";
                 }
 
-                # add require
-                if ($Required) {
-                    $SQLAlter .= ' NOT NULL';
-                }
-                else {
-                    $SQLAlter .= ' NULL';
-                }
+                # add Required
+                $SQLAlter .= $Required ? ' NOT NULL' : ' NULL';
+
+                # add AutoIncrement, assuming the AutoIncrement fields are marked as Required
+                $SQLAlter .= $AutoIncrement ? ' AUTO_INCREMENT' : '';
 
                 push @SQL, $SQLAlter;
             }
@@ -434,47 +430,56 @@ sub TableAlter {
             # Type translation
             $Tag = $Self->_TypeTranslation($Tag);
 
-            # normal data type
-            push @SQL, $SQLStart . " CHANGE $Tag->{NameOld} $Tag->{NameNew} $Tag->{Type} NULL";
+            # When the altered column is a primary key then 'NOT NULL' is sensible,
+            # and 'NULL' is not sensible. Setting the column to 'NULL' is only
+            # useful for supporting default values. But default values are not needed
+            # for primary keys anyways. So, for supporting altering primary keyse we
+            # have the flag 'NoDefault' which evades all handling of default values.
+            my $WithDefault = ( $Tag->{NoDefault} && lc $Tag->{NoDefault} eq 'true' ) ? 0 : 1;
+            my $Default;
 
-            # set default as NULL (not on TEXT/BLOB/LONGBLOB type, not supported by mysql)
-            if ( $Tag->{Type} !~ /^(TEXT|MEDIUMTEXT|BLOB|LONGBLOB)$/i ) {
-                push @SQL, "ALTER TABLE $Table CHANGE $Tag->{NameNew} $Tag->{NameNew} $Tag->{Type} DEFAULT NULL";
+            # normal data type with NULL values allowed
+            if ($WithDefault) {
+                push @SQL, $SQLStart . " CHANGE $Tag->{NameOld} $Tag->{NameNew} $Tag->{Type} NULL";
+
+                # set default as NULL (not on TEXT/BLOB/LONGBLOB type, not supported by mysql)
+                if ( $Tag->{Type} !~ /^(TEXT|MEDIUMTEXT|BLOB|LONGBLOB)$/i ) {
+                    push @SQL, "ALTER TABLE $Table CHANGE $Tag->{NameNew} $Tag->{NameNew} $Tag->{Type} DEFAULT NULL";
+                }
+
+                # investigate the default value
+                if ( $Tag->{Type} =~ /int/i ) {
+                    $Default = defined $Tag->{Default} ? $Tag->{Default} : 0;
+                }
+                else {
+                    $Default = defined $Tag->{Default} ? "'$Tag->{Default}'" : "''";
+                }
             }
 
-            # investigate the default value
-            my $Default = '';
-            if ( $Tag->{Type} =~ /int/i ) {
-                $Default = defined $Tag->{Default} ? $Tag->{Default} : 0;
-            }
-            else {
-                $Default = defined $Tag->{Default} ? "'$Tag->{Default}'" : "''";
-            }
-
-            # investigate the require
-            my $Required = ( $Tag->{Required} && lc $Tag->{Required} eq 'true' ) ? 1 : 0;
+            # investigate Required and AutoIncrement
+            my $Required      = ( $Tag->{Required}      && lc $Tag->{Required} eq 'true' )      ? 1 : 0;
+            my $AutoIncrement = ( $Tag->{AutoIncrement} && lc $Tag->{AutoIncrement} eq 'true' ) ? 1 : 0;
 
             # handle default and require
-            if ( $Required || defined $Tag->{Default} ) {
+            if ( !$WithDefault || $Required || defined $Tag->{Default} ) {
 
                 # fill up empty rows
-                push @SQL,
-                    "UPDATE $Table SET $Tag->{NameNew} = $Default WHERE $Tag->{NameNew} IS NULL";
+                if ($WithDefault) {
+                    push @SQL, "UPDATE $Table SET $Tag->{NameNew} = $Default WHERE $Tag->{NameNew} IS NULL";
+                }
 
                 my $SQLAlter = "ALTER TABLE $Table CHANGE $Tag->{NameNew} $Tag->{NameNew} $Tag->{Type}";
 
                 # add default
-                if ( defined $Tag->{Default} ) {
-                    $SQLAlter .= " DEFAULT $Default";
+                if ($WithDefault) {
+                    $SQLAlter .= defined $Tag->{Default} ? " DEFAULT $Default" : '';
                 }
 
-                # add require
-                if ($Required) {
-                    $SQLAlter .= ' NOT NULL';
-                }
-                else {
-                    $SQLAlter .= ' NULL';
-                }
+                # add Required
+                $SQLAlter .= $Required ? ' NOT NULL' : ' NULL';
+
+                # add AutoIncrement, assuming the AutoIncrement fields are marked as Required
+                $SQLAlter .= $AutoIncrement ? ' AUTO_INCREMENT' : '';
 
                 push @SQL, $SQLAlter;
             }
@@ -843,13 +848,16 @@ sub Insert {
     return $SQL;
 }
 
+# This method changes the attribute 'Type' of the passed in hashref
 sub _TypeTranslation {
     my ( $Self, $Tag ) = @_;
 
-    if ( $Tag->{Type} =~ /^DATE$/i ) {
+    # The types SMALLINT, BIGINT, INTEGER, DECIMAL, and LONGBLOB are supported natively
+
+    if ( $Tag->{Type} =~ m/^DATE$/i ) {
         $Tag->{Type} = 'DATETIME';
     }
-    if ( $Tag->{Type} =~ /^VARCHAR$/i ) {
+    elsif ( $Tag->{Type} =~ m/^VARCHAR$/i ) {
         if ( $Tag->{Size} > 16777215 ) {
             $Tag->{Type} = 'LONGTEXT';
         }
@@ -863,7 +871,7 @@ sub _TypeTranslation {
             $Tag->{Type} = 'VARCHAR (' . $Tag->{Size} . ')';
         }
     }
-    if ( $Tag->{Type} =~ /^DECIMAL$/i ) {
+    elsif ( $Tag->{Type} =~ m/^DECIMAL$/i ) {
         $Tag->{Type} = 'DECIMAL (' . $Tag->{Size} . ')';
     }
 

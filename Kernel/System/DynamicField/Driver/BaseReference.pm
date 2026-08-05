@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,20 +26,24 @@ use utf8;
 use parent qw(Kernel::System::DynamicField::Driver::BaseEntity);
 
 # core modules
+use List::Util qw(none);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
-use Kernel::System::VariableCheck qw(DataIsDifferent IsArrayRefWithData IsHashRefWithData IsStringWithData);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
+use Kernel::System::VariableCheck qw(DataIsDifferent IsArrayRefWithData IsStringWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
+    'Kernel::Language',
+    'Kernel::Output::HTML::Layout',
     'Kernel::System::DB',
-    'Kernel::System::DynamicField',
     'Kernel::System::DynamicFieldValue',
+    'Kernel::System::DynamicField::Backend',
     'Kernel::System::Log',
-    'Kernel::System::Main',
+    'Kernel::System::LinkObject',
+    'Kernel::System::Web::FormCache',
 );
 
 =head1 NAME
@@ -56,6 +60,43 @@ This dynamic field driver module implements the public interface of L<Kernel::Sy
 Please look there for a detailed reference of the functions.
 
 =cut
+
+sub ValueSet {
+    my ( $Self, %Param ) = @_;
+
+    my $Result = $Self->SUPER::ValueSet(%Param);
+
+    if ($Result) {
+
+        # optional classic LinkObject links
+        my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+
+        my $ValueType = ref( $Param{Value} );
+        my @Values    = $ValueType && $ValueType eq 'ARRAY'
+            ? $Param{Value}->@*
+            : $Param{Value} ? ( $Param{Value} ) : ();
+
+        if ( $Param{Set} ) {
+
+            # in sets we expect either array references or undef for the single set indices
+            # from [ [Val11, Val12], undef, [Val31] ]
+            # via  ( [Val11, Val12], undef, [Val31] )
+            # to   ( Val11, Val12, Val31 )
+            @Values = map { $_ ? $_->@* : () } @Values;
+        }
+
+        for my $Value (@Values) {
+            $Self->_CreateAutoLinkObjectLink(
+                UserID       => $Param{UserID},
+                ObjectID     => $Param{ObjectID},
+                DynamicField => $DynamicFieldConfig,
+                Value        => $Value,
+            );
+        }
+    }
+
+    return $Result;
+}
 
 sub ValueValidate {
     my ( $Self, %Param ) = @_;
@@ -158,13 +199,25 @@ sub SearchSQLGet {
     }
 
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
-    my $Lower    = '';
-    if ( $DBObject->GetDatabaseFunction('CaseSensitive') ) {
-        $Lower = 'LOWER';
-    }
 
-    my $SQL = " $Lower($Param{TableAlias}.$Self->{TableAttribute}) $Operators{ $Param{Operator} } ";
-    $SQL .= "$Lower('" . $DBObject->Quote( $Param{SearchTerm} ) . "') ";
+    # TODO: this should be changed to bind variables
+    my $SQL;
+    if ( $Self->{TableAttribute} eq 'value_int' ) {
+        $SQL = " $Param{TableAlias}.$Self->{TableAttribute} $Operators{ $Param{Operator} } $Param{SearchTerm}";
+    }
+    elsif ( $Self->{TableAttribute} eq 'value_text' ) {
+        my $Lower = '';
+        if ( $DBObject->GetDatabaseFunction('CaseSensitive') ) {
+            $Lower = 'LOWER';
+        }
+
+        $SQL = " $Lower($Param{TableAlias}.$Self->{TableAttribute}) $Operators{ $Param{Operator} } ";
+        $SQL .= "$Lower('" . $DBObject->Quote( $Param{SearchTerm} ) . "') ";
+    }
+    else {
+        $SQL = " $Param{TableAlias}.$Self->{TableAttribute} $Operators{ $Param{Operator} } '";
+        $SQL .= $DBObject->Quote( $Param{SearchTerm} ) . "' ";
+    }
 
     return $SQL;
 }
@@ -179,9 +232,12 @@ sub EditFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
-    my $DFDetails  = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName  = 'DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel = $Param{DynamicFieldConfig}->{Label};
+    my $DFDetails         = $Param{DynamicFieldConfig}{Config};
+    my $FieldName         = 'DynamicField_' . $Param{DynamicFieldConfig}{Name};
+    my $FieldLabel        = $Param{DynamicFieldConfig}->{Label};
+    my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
+    );
 
     my $Value = '';
 
@@ -216,8 +272,11 @@ sub EditFieldRender {
         $FieldClass .= ' ' . $Param{Class};
     }
 
-    # set field as mandatory
-    if ( $Param{Mandatory} ) {
+    # set classes according to mandatory and acl hidden params
+    if ( $Param{ACLHidden} && $Param{Mandatory} ) {
+        $FieldClass .= ' Validate_Required_IfVisible';
+    }
+    elsif ( $Param{Mandatory} ) {
         $FieldClass .= ' Validate_Required';
     }
 
@@ -227,9 +286,11 @@ sub EditFieldRender {
     }
 
     my %FieldTemplateData = (
-        FieldClass => $FieldClass,
-        FieldName  => $FieldName,
-        Readonly   => $Param{DynamicFieldConfig}->{Readonly},
+        FieldClass      => $FieldClass,
+        FieldLabel      => $FieldLabelEscaped,
+        FormUpdateClass => $Param{AJAXUpdate} ? 'FormUpdate' : '',
+        FieldName       => $FieldName,
+        Readonly        => $Param{DynamicFieldConfig}->{Readonly},
     );
 
     my $FieldTemplateFile = $Param{CustomerInterface}
@@ -258,32 +319,40 @@ sub EditFieldRender {
 
         if ( $DFDetails->{MultiValue} ) {
             for my $ValueIndex ( 0 .. $#{$Value} ) {
+                my $DataValues = $Self->BuildSelectionDataGet(
+                    DynamicFieldConfig => $Param{DynamicFieldConfig},
+                    PossibleValues     => $PossibleValues,
+                    Value              => $Value->[$ValueIndex],
+                );
                 my $FieldID = $FieldName . '_' . $ValueIndex;
                 push @SelectionHTML, $Param{LayoutObject}->BuildSelection(
-                    Data         => $PossibleValues || {},
-                    Disabled     => $Param{Readonly},
-                    Name         => $FieldName,
-                    ID           => $FieldID,
-                    SelectedID   => $Value->[$ValueIndex],
-                    Class        => $FieldClass,
-                    HTMLQuote    => 1,
-                    Translation  => $DFDetails->{Translation},
-                    PossibleNone => 0,
+                    Data       => $DataValues,
+                    Sort       => 'AlphanumericValue',
+                    Disabled   => $Param{Readonly},
+                    Name       => $FieldName,
+                    ID         => $FieldID,
+                    SelectedID => $Value->[$ValueIndex],
+                    Class      => $FieldClass . ( $Param{AJAXUpdate} ? ' FormUpdate' : '' ),
+                    HTMLQuote  => 1,
                 );
             }
         }
         else {
             my @SelectedIDs = grep {$_} $Value->@*;
+            my $DataValues  = $Self->BuildSelectionDataGet(
+                DynamicFieldConfig => $Param{DynamicFieldConfig},
+                PossibleValues     => $PossibleValues,
+                Value              => \@SelectedIDs,
+            );
             push @SelectionHTML, $Param{LayoutObject}->BuildSelection(
-                Data         => $PossibleValues || {},
-                Disabled     => $Param{Readonly},
-                Name         => $FieldName,
-                SelectedID   => \@SelectedIDs,
-                Class        => $FieldClass,
-                HTMLQuote    => 1,
-                Multiple     => $DFDetails->{Multiselect},
-                Translation  => $DFDetails->{Translation},
-                PossibleNone => 0,
+                Data       => $DataValues,
+                Sort       => 'AlphanumericValue',
+                Disabled   => $Param{Readonly},
+                Name       => $FieldName,
+                SelectedID => \@SelectedIDs,
+                Class      => $FieldClass . ( $Param{AJAXUpdate} ? ' FormUpdate' : '' ),
+                HTMLQuote  => 1,
+                Multiple   => $DFDetails->{Multiselect},
             );
         }
     }
@@ -307,18 +376,20 @@ sub EditFieldRender {
             }
         }
 
-        # The actual value is the techical ID of the referenced object.
-        # This might be empty e.g. in a ticket createion mask.
-        my $VisibleValue;
+        # The actual value is the technical ID of the referenced object.
+        # This might be empty e.g. in a ticket creation mask.
+        my $ValueEscaped;
         my $ReferencedObjectID = $Value->[$ValueIndex];
         if ($ReferencedObjectID) {
 
             # The visible value depends on the referenced object
             my %Description = $Self->ObjectDescriptionGet(
-                ObjectID => $ReferencedObjectID,
-                UserID   => 1,                     # TODO: what about Permission check
+                DynamicFieldConfig => $DFDetails,
+                LayoutObject       => $Param{LayoutObject},
+                ObjectID           => $ReferencedObjectID,
+                UserID             => 1,                      # TODO: what about Permission check
             );
-            $VisibleValue = $Param{LayoutObject}->Ascii2Html(
+            $ValueEscaped = $Param{LayoutObject}->Ascii2Html(
                 Text => $Description{Long},
             );
         }
@@ -330,7 +401,7 @@ sub EditFieldRender {
                 %Error,
                 FieldID       => $FieldID,
                 Value         => ( $Value->[$ValueIndex] // '' ),
-                VisibleValue  => ( $VisibleValue         // '' ),
+                ValueEscaped  => ( $ValueEscaped         // '' ),
                 SelectionHTML => ( $DFDetails->{EditFieldMode} ne 'AutoComplete' ? $SelectionHTML[$ValueIndex] : undef ),
             },
         );
@@ -341,14 +412,14 @@ sub EditFieldRender {
         $FieldTemplateData{FieldID} = $FieldName . '_Template';
 
         my $SelectionHTML = $Param{LayoutObject}->BuildSelection(
-            Data        => $PossibleValues || {},
-            Disabled    => $Param{Readonly},
-            Name        => $FieldName,
-            ID          => $FieldTemplateData{FieldID},
-            Class       => $FieldClass,
-            HTMLQuote   => 1,
-            Multiple    => $DFDetails->{Multiselect},
-            Translation => $DFDetails->{TranslatableValues} || 0,
+            Data      => $PossibleValues || {},
+            Sort      => 'AlphanumericValue',
+            Disabled  => $Param{Readonly},
+            Name      => $FieldName,
+            ID        => $FieldTemplateData{FieldID},
+            Class     => $FieldClass . ( $Param{AJAXUpdate} ? ' FormUpdate' : '' ),
+            HTMLQuote => 1,
+            Multiple  => $DFDetails->{Multiselect},
         );
         $TemplateHTML = $Param{LayoutObject}->Output(
             TemplateFile => $FieldTemplateFile,
@@ -359,29 +430,13 @@ sub EditFieldRender {
         );
     }
 
-    if ( $Param{AJAXUpdate} ) {
-
-        my $FieldSelector = '#' . $FieldName;
-
-        my $FieldsToUpdate = '';
-        if ( IsArrayRefWithData( $Param{UpdatableFields} ) ) {
-
-            # Remove current field from updatable fields list
-            my @FieldsToUpdate = grep { $_ ne $FieldName } @{ $Param{UpdatableFields} };
-
-            # quote all fields, put commas in between them
-            $FieldsToUpdate = join( ', ', map {"'$_'"} @FieldsToUpdate );
-        }
-
-        # add js to call FormUpdate()
-        $Param{LayoutObject}->AddJSOnDocumentComplete( Code => <<"EOF");
-\$('$FieldSelector').bind('change', function (Event) {
-    Core.AJAX.FormUpdate(\$(this).parents('form'), 'AJAXUpdate', '$FieldName', [ $FieldsToUpdate ]);
-});
-Core.App.Subscribe('Event.AJAX.FormUpdate.Callback', function(Data) {
-    var FieldName = '$FieldName';
-});
-EOF
+    # write rendered value to FormCache for later usage in EditFieldValueValidate
+    if ( $Value && !$Param{ServerError} ) {
+        $Kernel::OM->Get('Kernel::System::Web::FormCache')->SetFormData(
+            LayoutObject => $Param{LayoutObject},
+            Key          => 'RenderedValue_DynamicField_' . $Param{DynamicFieldConfig}{Name},
+            Value        => $Value,
+        );
     }
 
     # call EditLabelRender on the common Driver
@@ -410,9 +465,11 @@ EOF
 sub EditFieldValueValidate {
     my ( $Self, %Param ) = @_;
 
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+
     # get the field value from the http request
     my $Value = $Self->EditFieldValueGet(
-        DynamicFieldConfig => $Param{DynamicFieldConfig},
+        DynamicFieldConfig => $DynamicFieldConfig,
         ParamObject        => $Param{ParamObject},
 
         # not necessary for this Driver but place it for consistency reasons
@@ -421,12 +478,82 @@ sub EditFieldValueValidate {
 
     my $ServerError;
     my $ErrorMessage;
+    my $ValueItemsPresent = 0;
 
-    if ( !$Param{DynamicFieldConfig}->{Config}->{MultiValue} ) {
-        $Value = [$Value];
+    if ( $Value->@* ) {
+
+        my $DFName = $DynamicFieldConfig->{Name};
+
+        if ( defined $Param{SetIndex} ) {
+            $DFName .= "_$Param{SetIndex}";
+        }
+
+        # if the value would change, we need to verify that the user is really allowed
+        # to access the provided referenced data via this form
+        # this is the case if either the referenced data was shown via a search (1)
+        # or is currently stored for the edited ticket/ci/... (2)
+        my $LastSearchResults = $Kernel::OM->Get('Kernel::System::Web::FormCache')->GetFormData(
+            LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+            Key          => 'PossibleValues_DynamicField_' . $DFName,
+        );
+
+        # if no LastSearchResult is present, use rendered value
+        $LastSearchResults //= $Kernel::OM->Get('Kernel::System::Web::FormCache')->GetFormData(
+            LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+            Key          => 'RenderedValue_DynamicField_' . $DFName,
+        );
+
+        if ( $DynamicFieldConfig->{Config}{PossibleNone} ) {
+            push $LastSearchResults->@*, '';
+        }
+
+        # in set case, we fetch the template values and either concatenate them to the search results
+        #   or, if no search results are present, use the template values entirely
+        if ( defined $Param{SetIndex} ) {
+            my $TemplateName          = $DynamicFieldConfig->{Name} . '_Template';
+            my $TemplateSearchResults = $Kernel::OM->Get('Kernel::System::Web::FormCache')->GetFormData(
+                LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+                Key          => 'PossibleValues_' . $TemplateName,
+            );
+
+            if ( ref $LastSearchResults && ref $TemplateSearchResults ) {
+                push $LastSearchResults->@*, $TemplateSearchResults->@*;
+            }
+            elsif ( ref $TemplateSearchResults ) {
+                $LastSearchResults = $TemplateSearchResults;
+            }
+        }
+
+        # check if EditFieldValue is present in last search results
+        my $Allowed;
+        for my $ValueItem ( $Value->@* ) {
+
+            $Allowed = ( grep { $_ eq $ValueItem } $LastSearchResults->@* ) ? 1 : 0;
+
+            if ($Allowed) {
+
+                $ValueItemsPresent++;
+            }
+            elsif ($ValueItem) {
+                return {
+                    ServerError  => 1,
+                    ErrorMessage => 'Value invalid!',
+                };
+            }
+        }
+    }
+    elsif ( $Param{Mandatory} ) {
+        return {
+            ServerError  => 1,
+            ErrorMessage => 'This field is required.',
+        };
     }
 
-    # TODO validate by re-executing SearchObject()?
+    if ( $Param{Mandatory} && $ValueItemsPresent == 0 ) {
+
+        $ServerError  = 1;
+        $ErrorMessage = 'The field content is invalid';
+    }
 
     # create resulting structure
     return {
@@ -458,13 +585,13 @@ sub DisplayValueRender {
     my @LongObjectDescriptions;
     my $Link;
     {
-        my $DFDetails = $Param{DynamicFieldConfig}->{Config};
         for my $ObjectID (@ObjectIDs) {
             if ($ObjectID) {
                 my %Description = $Self->ObjectDescriptionGet(
-                    ObjectID     => $ObjectID,
-                    Link         => $HTMLOutput,
-                    LayoutObject => $Param{LayoutObject},
+                    DynamicFieldConfig => $Param{DynamicFieldConfig},
+                    ObjectID           => $ObjectID,
+                    Link               => $HTMLOutput,
+                    LayoutObject       => $Param{LayoutObject},
                 );
                 push @LongObjectDescriptions, $Description{Long};
                 $Link = $Description{Link};
@@ -559,9 +686,8 @@ sub SearchFieldRender {
     my ( $Self, %Param ) = @_;
 
     # take config from field config
-    my $DFDetails  = $Param{DynamicFieldConfig}->{Config};
-    my $FieldName  = 'Search_DynamicField_' . $Param{DynamicFieldConfig}->{Name};
-    my $FieldLabel = $Param{DynamicFieldConfig}->{Label};
+    my $FieldName  = 'Search_DynamicField_' . $Param{DynamicFieldConfig}{Name};
+    my $FieldLabel = $Param{DynamicFieldConfig}{Label};
 
     # set the field value
     my $Value = $Param{DefaultValue} // '';
@@ -580,30 +706,25 @@ sub SearchFieldRender {
     }
 
     # check and set class if necessary
-    my $FieldClass = $Self->{FieldCSSClass};    # for field specific JS
+    my $FieldClass = "W50pc $Self->{FieldCSSClass}";    # for field specific JS
 
     my $ValueEscaped = $Param{LayoutObject}->Ascii2Html(
         Text => $Value,
     );
 
     my $FieldLabelEscaped = $Param{LayoutObject}->Ascii2Html(
-        Text => $FieldLabel,
+        Text => $Param{LayoutObject}{LanguageObject}->Translate($FieldLabel),
     );
 
     my $HTMLString = <<"EOF";
-<input type="text" class="$FieldClass" id="$FieldName" name="$FieldName" title="$FieldLabelEscaped" value="$ValueEscaped" />
+<input type="hidden" id="$FieldName" name="$FieldName" value="$ValueEscaped" />
+<input type="text" class="$FieldClass" id="Autocomplete_$FieldName" name="Autocomplete_$FieldName" title="$FieldLabelEscaped" value="$ValueEscaped" />
 EOF
-
-    my $AdditionalText;
-    if ( $Param{UseLabelHints} ) {
-        $AdditionalText = Translatable('e.g. Text or Te*t');
-    }
 
     # call EditLabelRender on the common Driver
     my $LabelString = $Self->EditLabelRender(
         %Param,
-        FieldName      => $FieldName,
-        AdditionalText => $AdditionalText,
+        FieldName => $FieldName,
     );
 
     return {
@@ -710,8 +831,37 @@ sub ReadableValueRender {
         @Values = ( $Param{Value} );
     }
 
+    # get descriptive names for the values, e.g. TicketNumber for TicketID
+    my @LongObjectDescriptions;
+    {
+        for my $ObjectID (@Values) {
+            if ($ObjectID) {
+
+                # perform external source transformation if necessary
+                if ( $Param{ExternalSource} && $Param{DynamicFieldConfig}{Config}{ImportSearchAttribute} && $Self->can('SearchObjects') ) {
+                    my $TransformResult = $Self->_TransformExternalSource(
+                        DynamicFieldConfig => $Param{DynamicFieldConfig},
+                        ValueArray         => [$ObjectID],
+                        UserID             => 1,
+                    );
+                    $ObjectID = $TransformResult->[0];
+                }
+
+                my %Description = $Self->ObjectDescriptionGet(
+                    DynamicFieldConfig => $Param{DynamicFieldConfig},
+                    ObjectID           => $ObjectID,
+                );
+
+                push @LongObjectDescriptions, $Description{Long};
+            }
+            else {
+                push @LongObjectDescriptions, '';
+            }
+        }
+    }
+
     # prevent joining undefined values
-    @Values = map { $_ // '' } @Values;
+    @Values = map { $_ // '' } @LongObjectDescriptions;
 
     # set new line separator
     my $ItemSeparator = ', ';
@@ -845,7 +995,7 @@ sub GetFieldTypeSettings {
             {
                 ConfigParamName => 'ReferencedObjectType',
                 Label           => Translatable('Referenced object type'),
-                Explanation     => Translatable('Select the type of the referenced object'),
+                Explanation     => Translatable('Select the type of the referenced object.'),
                 InputType       => 'Selection',
                 SelectionData   => { $Self->{ReferencedObjectType} => $Self->{ReferencedObjectType} },
                 PossibleNone    => 0,
@@ -887,7 +1037,7 @@ sub GetFieldTypeSettings {
     }
 
     # set up the field type specific settings
-    # This dynamic field support multiple values.
+    # This dynamic field supports multiple values.
     {
         my %MultiValueSelectionData = (
             0 => Translatable('No'),
@@ -905,6 +1055,81 @@ sub GetFieldTypeSettings {
             };
     }
 
+    my $LinkObject            = $Kernel::OM->Get('Kernel::System::LinkObject');
+    my $ReferencingObjectType = $Param{ObjectType};
+
+    # Create the selectable type list from the possible types from the SysConfig.
+    my @SelectionData;
+
+    # get possible types list,
+    # actually the order of Object1 and Object2 is not relevant
+    my $Object1           = $ReferencingObjectType        =~ s/^ITSMConfigItemVersion$/ITSMConfigItem/r;
+    my $Object2           = $Self->{ReferencedObjectType} =~ s/^ITSMConfigItemVersion$/ITSMConfigItem/r;
+    my %PossibleTypesList = $LinkObject->PossibleTypesList(
+        Object1 => $Object1,    # the entity that holds the Reference dynamic field can be a config item or a ticket
+        Object2 => $Object2,    # the referenced object
+    );
+
+    # only show selection if there are any valid link types
+    if ( scalar keys %PossibleTypesList != 0 ) {
+
+        POSSIBLETYPE:
+        for my $PossibleType ( sort { lc $a cmp lc $b } keys %PossibleTypesList ) {
+
+            # look up type id,
+            # insert the name into the table link_type if it does not exist yet
+            my $TypeID = $LinkObject->TypeLookup(
+                Name   => $PossibleType,
+                UserID => 1,               # TODO: get the actual id of the current user
+            );
+
+            # get type
+            my %Type = $LinkObject->TypeGet(
+                TypeID => $TypeID,
+                UserID => $Self->{UserID},
+            );
+
+            push @SelectionData,
+                {
+                    Key   => $PossibleType,
+                    Value => "Source -$Type{SourceName}\-> Target ($Type{TargetName})",
+                };
+        }
+
+        push @GenericSettings,
+            {
+                InputType       => 'Selection',
+                ConfigParamName => $Self->{ReferencedObjectType} =~ '^ITSMConfigItem' ? 'LinkType' : 'LinkObjectForReferenceType',
+                Label           => Translatable('Link type'),
+                Explanation     => Translatable('Select the link type.'),
+                SelectionData   => \@SelectionData,
+                PossibleNone    => 1,
+            };
+
+        my @SelectionDirectionData = (
+            {
+                Key   => 'ReferencingIsSource',
+                Value => Translatable('Forwards: Referencing (Source) -> Referenced (Target)'),
+            },
+            {
+                Key   => 'ReferencingIsTarget',
+                Value => Translatable('Backwards: Referenced (Source) -> Referencing (Target)'),
+            },
+        );
+
+        push @GenericSettings,
+            {
+                ConfigParamName => 'LinkDirection',
+                Label           => Translatable('Link Direction'),
+                Explanation     =>
+                Translatable('The referencing object is the one containing this dynamic field, the referenced object is the one selected as value of the dynamic field.'),
+                InputType     => 'Selection',
+                SelectionData => \@SelectionDirectionData,
+                DefaultKey    => 'ReferencingIsSource',
+                PossibleNone  => 0,
+            };
+    }
+
     return @GenericSettings;
 }
 
@@ -917,12 +1142,19 @@ A wrapper for SearchObjects method.
         Object             => {                         # optional
             %TicketData,
         },
+        ParamObject        => $ParamObject,             # optional
     );
 
 =cut
 
 sub PossibleValuesGet {
     my ( $Self, %Param ) = @_;
+
+    # if no ParamObject and no Object data are present, we assume existing possible values as valid
+    #   this prevents performing a search with empty result and thus overwriting of valid values in FormCache
+    if ( $Param{PossibleValues} && !( $Param{ParamObject} || $Param{Object} ) ) {
+        return $Param{PossibleValues};
+    }
 
     my %PossibleValues;
 
@@ -936,27 +1168,347 @@ sub PossibleValuesGet {
     }
 
     # set none value if defined on field config
+    #   NOTE  this is done here instead of passing it to $LayoutObject->BuildSelection() in $Self->EditFieldRender() on purpose.
+    #         The reason is that some ACL mechanisms only work when the empty value is present in the PossibleValues data,
+    #         e.g. removing it via ACL.
     if ($FieldPossibleNone) {
         %PossibleValues = ( '' => '-' );
     }
 
-    # passing $Param{Object} to SearchObjects()
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+
+    # passing $Param{ParamObject} or $Param{Object} to SearchObjects()
     my @SearchResult = $Self->SearchObjects(
         %Param,
+        UserID => $LayoutObject->{UserID},
     );
+
+    # if we are in an edit mask, FormID and SessionID will be provided by the LayoutObject
+    # in this case we store the possible values for later verification
+    if ( $LayoutObject->{FormID} && $LayoutObject->{SessionID} ) {
+        $Kernel::OM->Get('Kernel::System::Web::FormCache')->SetFormData(
+            LayoutObject => $LayoutObject,
+            Key          => 'PossibleValues_DynamicField_' . $Param{DynamicFieldConfig}{Name},
+            Value        => \@SearchResult,
+        );
+    }
 
     for my $ResultItem (@SearchResult) {
         my %ItemDescription = $Self->ObjectDescriptionGet(
-            ObjectID => $ResultItem,
-            UserID   => 1,
+            DynamicFieldConfig => $Param{DynamicFieldConfig},
+            LayoutObject       => $LayoutObject,
+            ObjectID           => $ResultItem,
+            UserID             => 1,
         );
         %PossibleValues = (
             %PossibleValues,
-            $ResultItem => $ItemDescription{Long},
+            $ResultItem => $ItemDescription{Normal},
         );
     }
 
     return \%PossibleValues;
+}
+
+sub GetFieldState {
+    my ( $Self, %Param ) = @_;
+
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+
+    # in case of lens pointing to a reference field, execution is necessary
+    if ( !$Param{NeedsReset} ) {
+        return () if !IsArrayRefWithData( $DynamicFieldConfig->{Config}{ReferenceFilterList} );
+        return () if none { $Param{ChangedElements}->{ $_->{EqualsObjectAttribute} // '' } } $DynamicFieldConfig->{Config}{ReferenceFilterList}->@*;
+    }
+
+    my $Value = $Param{GetParam}{DynamicField}{ 'DynamicField_' . $DynamicFieldConfig->{Name} };
+
+    # currently, all reference field values are array refs, but just to be safe, include value transformation
+    if ( !ref $Value ) {
+        $Value = [$Value];
+    }
+
+    my %Object = (
+        $Param{GetParam}->%*,
+        $Param{GetParam}{DynamicField}->%*,
+
+        # ticket specific
+        CustomerUserID => $Param{CustomerUser} || $Param{GetParam}{CustomerUserID},
+    );
+
+    if ( $DynamicFieldConfig->{Config}{EditFieldMode} eq 'AutoComplete' ) {
+        return if !$Value->[0];
+
+        # value holds object id(s) at this point
+        my @CheckedValues;
+        my %PossibleValues;
+        my $ValueChanged = 0;
+        ITEM:
+        for my $ValueItem ( $Value->@* ) {
+
+            # do not execute search for empty values for performance reasons
+            if ( !defined $ValueItem || $ValueItem eq '' ) {
+                push @CheckedValues, $ValueItem;
+
+                next ITEM;
+            }
+
+            # check if $ValueItem is still valid
+            my @ObjectIDs = $Self->SearchObjects(
+                %Param,
+                Object   => \%Object,
+                ObjectID => $ValueItem,
+            );
+
+            # collect values and set change flag if needed
+            if ( !@ObjectIDs ) {
+                push @CheckedValues, '';
+                $ValueChanged = 1;
+            }
+            else {
+                my %Description = $Self->ObjectDescriptionGet(
+                    DynamicFieldConfig => $DynamicFieldConfig,
+                    ObjectID           => $ValueItem,
+                );
+                $PossibleValues{$ValueItem} = $Description{Long};
+                push @CheckedValues, $ValueItem;
+            }
+
+            $Kernel::OM->Get('Kernel::System::Web::FormCache')->SetFormData(
+                LayoutObject => $Kernel::OM->Get('Kernel::Output::HTML::Layout'),
+                Key          => 'PossibleValues_DynamicField_' . $DynamicFieldConfig->{Name},
+                Value        => \@CheckedValues,
+            );
+        }
+
+        # PossibleValues are needed for display value in frontend
+        #   e.g. '"Tina Tester" <tina@example.com>' (CustomerUser MailString) vs. 'tina' (CustomerUserID)
+        if ($ValueChanged) {
+            return (
+                NewValue       => \@CheckedValues,
+                PossibleValues => \%PossibleValues,
+            );
+        }
+
+        return (
+            PossibleValues => \%PossibleValues,
+        );
+    }
+
+    # fetch possible values for dynamic field
+    my $PossibleValues = $Self->PossibleValuesGet(
+        %Param,
+        DynamicFieldConfig => $DynamicFieldConfig,
+        Object             => \%Object,
+    );
+
+    my %Return = (
+        PossibleValues => $PossibleValues,
+    );
+
+    # filter values which are no longer allowed
+    my @CheckedValues = map { $PossibleValues->{$_} ? $_ : '' } $Value->@*;
+
+    # check if value has changed
+    if (
+        DataIsDifferent(
+            Data1 => $Value,
+            Data2 => \@CheckedValues
+        )
+        )
+    {
+        $Return{NewValue} = \@CheckedValues;
+    }
+
+    return %Return;
+}
+
+sub _CreateAutoLinkObjectLink {
+
+    my ( $Self, %Param ) = @_;
+
+    my $LinkObject = $Kernel::OM->Get('Kernel::System::LinkObject');
+
+    for my $Needed (qw(DynamicField ObjectID UserID)) {
+        if ( !$Param{$Needed} ) {
+
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'debug',
+                Message  => "Missing Input Param '$Needed' needed to create Link\n",
+            );
+            return;
+        }
+    }
+
+    return unless $Param{Value};
+
+    my $DynamicField  = $Param{DynamicField};
+    my $LinkDirection = $DynamicField->{Config}->{LinkDirection};
+    my $LinkType      = $DynamicField->{Config}->{LinkObjectForReferenceType} || $DynamicField->{Config}->{LinkType};
+
+    # if linking disabled in DF config, do nothing
+    return unless $LinkType;
+
+    # object types for linking
+    my $TargetObject = $DynamicField->{FieldType};
+    $TargetObject =~ s/^ConfigItem/ITSMConfigItem/;
+    $TargetObject =~ s/^ITSMConfigItemVersion/ITSMConfigItem/;
+
+    my $SourceObject = $DynamicField->{ObjectType};
+    $SourceObject =~ s/^ConfigItem/ITSMConfigItem/;
+    $SourceObject =~ s/^ITSMConfigItemVersion/ITSMConfigItem/;
+
+    # object key IDs for linking
+    my $TargetKey = $Self->_GetEntityIDForLinking(
+        LinkKey  => 'Target',
+        TypeName => $DynamicField->{FieldType},
+        ID       => $Param{Value},
+    );
+
+    my $SourceKey = $Self->_GetEntityIDForLinking(
+        LinkKey  => 'Source',
+        TypeName => $DynamicField->{ObjectType},
+        ID       => $Param{ObjectID},
+    );
+
+    # link direction
+    if ( $LinkDirection ne 'ReferencingIsSource' ) {
+
+        # swap variables around
+        ( $SourceObject, $TargetObject ) = ( $TargetObject, $SourceObject );
+        ( $SourceKey,    $TargetKey )    = ( $TargetKey,    $SourceKey );
+    }
+
+    # check if link already exists
+
+    my $LinkList = $LinkObject->LinkList(
+        Object  => $SourceObject,
+        Key     => $SourceKey,
+        Object2 => $TargetObject,
+        State   => 'Valid',
+        UserID  => $Param{UserID},
+    );
+
+    my $Links = $LinkList->{$SourceObject}->{$LinkType};
+    for my $LinkTypeKey ( keys $Links->%* ) {
+
+        my $References = $Links->{$LinkTypeKey};
+        for my $Key ( keys $References->%* ) {
+
+            return if $Key == $SourceKey;
+        }
+    }
+
+    # and the other way round
+    $Links = $LinkList->{$TargetObject}->{$LinkType};
+    for my $LinkTypeKey ( keys $Links->%* ) {
+
+        my $References = $Links->{$LinkTypeKey};
+        for my $Key ( keys $References->%* ) {
+
+            return if $Key == $TargetKey;
+        }
+    }
+
+    if ( IsStringWithData($TargetKey) ) {
+
+        # do the actual linking
+        my $Success = $LinkObject->LinkAdd(
+            SourceObject => $SourceObject,    # eg 'Ticket',
+            SourceKey    => $SourceKey,
+            TargetObject => $TargetObject,    # eg 'ITSMConfigItem',
+            TargetKey    => $TargetKey,
+            Type         => $LinkType,        # eg 'RelevantTo',
+            State        => 'Valid',
+            UserID       => $Param{UserID},
+        );
+
+        if ( !$Success ) {
+
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Unable to create Link $SourceObject ($SourceKey) -- $LinkType -> $TargetObject $TargetKey\n",
+            );
+            return;
+        }
+        else {
+            return 1;
+        }
+    }
+    elsif ( IsArrayRefWithData($TargetKey) ) {
+
+        TARGET:
+        for my $Target ( @{$TargetKey} ) {
+            next TARGET if !IsStringWithData($Target);
+
+            # do the actual linking
+            my $Success = $LinkObject->LinkAdd(
+                SourceObject => $SourceObject,    # eg 'Ticket',
+                SourceKey    => $SourceKey,
+                TargetObject => $TargetObject,    # eg 'ITSMConfigItem',
+                TargetKey    => $Target,
+                Type         => $LinkType,        # eg 'RelevantTo',
+                State        => 'Valid',
+                UserID       => $Param{UserID},
+            );
+
+            if ( !$Success ) {
+                $Kernel::OM->Get('Kernel::System::Log')->Log(
+                    Priority => 'error',
+                    Message  => "Unable to create Link $SourceObject ($SourceKey) -- $LinkType -> $TargetObject $TargetKey\n",
+                );
+            }
+        }
+        return 1;
+    }
+
+    $Kernel::OM->Get('Kernel::System::Log')->Log(
+        Priority => 'error',
+        Message  => "Unable to create Link $SourceObject ($SourceKey) -- $LinkType -> $TargetObject \n",
+    );
+
+    return;
+}
+
+sub _GetEntityIDForLinking {
+
+    my ( $Self, %Param ) = @_;
+
+    my $ID       = $Param{ID};
+    my $TypeName = $Param{TypeName};
+    my $LinkKey  = $Param{LinkKey};
+
+    # determine name for the K/S/DynamicField/ObjectType/* ObjectTypeHandler class
+    # upgrade ConfigItem typenames to long form (starting with ITSM*)
+    # and treat ConfigItemVersion like ConfigItem
+    $TypeName =~ s/^ConfigItem/ITSMConfigItem/;
+    $TypeName =~ s/^ITSMConfigItemVersion/ITSMConfigItem/;
+
+    # BackendObject has all the ObjectType Handlers loaded as properties
+    my $BackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
+
+    # determine the property name for our typename
+    my $BackendTypeObjectKey = "DynamicField" . $TypeName . 'HandlerObject';
+
+    # if there is a TypeObject handler object ...
+    if ( exists $BackendObject->{$BackendTypeObjectKey} ) {
+
+        my $BackendTypeObject = $BackendObject->{$BackendTypeObjectKey};
+
+        # ask TypeObject if it supports linking ID resolution
+        my $HasGetEntityIDforLinking = $BackendTypeObject->can('GetEntityIDforLinking');
+
+        if ($HasGetEntityIDforLinking) {
+
+            return $BackendTypeObject->GetEntityIDforLinking(
+                ID       => $ID,
+                LinkKey  => $LinkKey,
+                TypeName => $Param{TypeName},
+            );
+        }
+    }
+
+    # otherwise ID stays as is
+    return $ID;
 }
 
 1;

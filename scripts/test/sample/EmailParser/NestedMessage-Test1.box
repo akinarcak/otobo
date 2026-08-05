@@ -33,7 +33,7 @@ Content-Type: text/plain;
 Content-Transfer-Encoding: 7bit
 
 When sending an email attachment of type *.msg (Outlook-Message) to an
-otobo-ticket (creation/follow-up via email - NOT!! from the
+careoncloud-ticket (creation/follow-up via email - NOT!! from the
 customer-interface)
 the msg-attachment is converted to a plain text-file and renamed to e.g.
 "file-n".
@@ -129,7 +129,7 @@ div.Section1
 <div class=3DSection1><pre><span lang=3DEN-US>When sending an email =
 attachment of type *.msg (Outlook-Message) to =
 an<o:p></o:p></span></pre><pre><span
-lang=3DEN-US>otobo-ticket (creation/follow-up via email - NOT!! from the =
+lang=3DEN-US>careoncloud-ticket (creation/follow-up via email - NOT!! from the =
 customer-interface)&nbsp; <o:p></o:p></span></pre><pre><span
 lang=3DEN-US>the msg-attachment is converted to a plain text-file and =
 renamed to e.g.<o:p></o:p></span></pre><pre><span

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -39,6 +39,17 @@
     <div class="Clear"></div>
     <div class="SidebarColumn">
 
+[% RenderBlockStart("IncludeInvalid") %]
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include invalid states") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include invalid states") | html %]</label>
+            </div>
+        </div>
+[% RenderBlockEnd("IncludeInvalid") %]
 [% RenderBlockStart("ActionList") %]
         <div class="WidgetSimple">
             <div class="Header">
@@ -80,7 +91,7 @@
                     [% Translate("Attention") | html %]: [% Translate("Please also update the states in SysConfig where needed.") | html %]
                 </p>
                 <p class="FieldExplanation">
-                    [% Translate("See also") | html %]: <a href="https://doc.otobo.org/" target="_blank">https://doc.otobo.org/</a>
+                    [% Translate("See also") | html %]: <a href="https://esm.arcak.net/" target="_blank">https://esm.arcak.net/</a>
                 </p>
             </div>
         </div>
@@ -158,9 +169,9 @@
                             </div>
                             <div id="NameServerError" class="TooltipErrorMessage">
                                 <p>
-[% RenderBlockStart("RequiredValidOptionServerError") %]
+[% RenderBlockStart("RequiredNameServerError") %]
                                     [% Translate("This field is required.") | html %]
-[% RenderBlockEnd("RequiredValidOptionServerError") %]
+[% RenderBlockEnd("RequiredNameServerError") %]
 [% RenderBlockStart("InSettingNameServerError") %]
                                     [% Translate("This state is present in a SysConfig setting, confirmation for updating settings to point to the new type is needed!") | html %]
 [% RenderBlockEnd("InSettingNameServerError") %]

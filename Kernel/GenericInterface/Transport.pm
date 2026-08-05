@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,16 +16,15 @@
 
 package Kernel::GenericInterface::Transport;
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 
 # core modules
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::ObjectManager;    # avoid warning: Name "Kernel::OM" used only once
+# CareOnCloud ESM modules
 
 our $ObjectManagerDisabled = 1;
 
@@ -148,8 +147,8 @@ sub ProviderGenerateResponse {
     if ( !defined $Param{Success} ) {
         $ErrorMessage = 'Missing parameter Success.';
     }
-    elsif ( $Param{Data} && ref $Param{Data} ne 'HASH' ) {
-        $ErrorMessage = 'Data is not a hash reference.';
+    elsif ( $Param{Data} && ref $Param{Data} ne 'HASH' && ref $Param{Data} ne 'ARRAY' ) {
+        $ErrorMessage = 'Data is not a hash or array reference.';
     }
 
     # throw errors as an exception
@@ -195,6 +194,8 @@ The actual work is done by the backend objects.
         },
     );
 
+Returns:
+
     $Result = {
         Success         => 1,                   # 0 or 1
         ErrorMessage    => '',                  # in case of error
@@ -215,10 +216,10 @@ sub RequesterPerformRequest {
         );
     }
 
-    if ( $Param{Data} && ref $Param{Data} ne 'HASH' ) {
+    if ( $Param{Data} && ref $Param{Data} ne 'HASH' && ref $Param{Data} ne 'ARRAY' ) {
 
         return $Self->{DebuggerObject}->Error(
-            Summary => 'Data is not a hash reference.',
+            Summary => 'Data is not a hash or array reference.',
         );
     }
 

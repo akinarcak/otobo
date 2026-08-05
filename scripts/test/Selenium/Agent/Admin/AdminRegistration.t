@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 
 our $Self;
-
-use Kernel::Language;
 
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
@@ -35,7 +37,7 @@ my $Running = $Kernel::OM->Get('Kernel::System::Cache')->Set(
     Value => 1,
 );
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::Selenium;
 my $Selenium = Kernel::System::UnitTest::Selenium->new( LogExecuteCommandActive => 1 );
 
@@ -52,7 +54,6 @@ $Selenium->RunTest(
         );
 
         # Get needed variables.
-        my $Daemon   = $ConfigObject->Get('Home') . '/bin/otobo.Daemon.pl';
         my $RandomID = $Helper->GetRandomID();
 
         # Create test user and login.
@@ -99,11 +100,11 @@ $Selenium->RunTest(
                 SystemRegistration => [
                     {
                         Success      => '0',
-                        ErrorMessage => 'Wrong OTOBOID or Password',
+                        ErrorMessage => 'Wrong CareOnCloudID or Password',
                         Operation    => 'TokenGet',
                         Data         => {
                             Auth   => 'invalid',
-                            Reason => 'Wrong OTOBOID or Password',
+                            Reason => 'Wrong CareOnCloudID or Password',
                         }
                     },
                 ],
@@ -161,29 +162,29 @@ EOS
 
         for my $Test (@Tests) {
 
-            $Selenium->find_element( "#OTOBOID",  'css' )->clear();
-            $Selenium->find_element( "#OTOBOID",  'css' )->send_keys( $Test->{Value} );
+            $Selenium->find_element( "#CareOnCloudID",  'css' )->clear();
+            $Selenium->find_element( "#CareOnCloudID",  'css' )->send_keys( $Test->{Value} );
             $Selenium->find_element( "#Password", 'css' )->clear();
             $Selenium->find_element( "#Password", 'css' )->send_keys( $Test->{Value} );
             $Selenium->find_element( "#Submit",   'css' )->click();
 
             if ( $Test->{Name} ne 'Wrong email address' ) {
                 $Selenium->WaitFor(
-                    JavaScript => 'return typeof($) === "function" && $("#OTOBOID.Error").length',
+                    JavaScript => 'return typeof($) === "function" && $("#CareOnCloudID.Error").length',
                 );
                 $Self->True(
-                    $Selenium->execute_script("return \$('#OTOBOID.Error').length"),
+                    $Selenium->execute_script("return \$('#CareOnCloudID.Error').length"),
                     "$Test->{Name} - class Error found",
                 );
             }
             else {
                 $Selenium->WaitFor(
                     JavaScript =>
-                        'return typeof($) === "function" && $("div.MessageBox.Error p:contains(\'Wrong OTOBOID or Password\')").length',
+                        'return typeof($) === "function" && $("div.MessageBox.Error p:contains(\'Wrong CareOnCloudID or Password\')").length',
                 );
                 $Self->True(
                     $Selenium->execute_script(
-                        'return $("div.MessageBox.Error p:contains(\'Wrong OTOBOID or Password\')").length',
+                        'return $("div.MessageBox.Error p:contains(\'Wrong CareOnCloudID or Password\')").length',
                     ),
                     "$Test->{Name} - error message is correct",
                 );

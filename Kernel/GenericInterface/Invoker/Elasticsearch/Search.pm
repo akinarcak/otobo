@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -128,6 +128,10 @@ sub PrepareRequest {
         $SearchQuery{size} = $Param{Data}{Limit};
     }
 
+    if ( $Param{Data}{From} ) {
+        $SearchQuery{from} = $Param{Data}{From};
+    }
+
     # sort the results
     if ( $Param{Data}{Sort} ) {
         $SearchQuery{sort} = $Param{Data}{Sort};
@@ -172,7 +176,11 @@ sub HandleResponse {
     # if there was an error in the response, forward it
     if ( !$Param{ResponseSuccess} ) {
         return {
-            Success      => 0,
+            Success => 0,
+            Data    => {
+                Records => [],
+                Total   => 0,
+            },
             ErrorMessage => $Param{ResponseErrorMessage},
         };
     }
@@ -188,8 +196,74 @@ sub HandleResponse {
 
     return {
         Success => 1,
-        Data    => \@Return,
+        Data    => {
+            Records => \@Return,
+            Total   => $Param{Data}{hits}{total}{value},
+        }
     };
+}
+
+sub AssessResponse {
+
+    my ( $Self, %Param ) = @_;
+
+    my ( $RestClient, $ErrorMessage ) = @Param{qw(RestClient ErrorMessage)};
+
+    my $JSONObject = $Kernel::OM->Get('Kernel::System::JSON');
+
+    my $ResponseContent = $RestClient->responseContent;
+    my $Content         = $JSONObject->Decode(
+        Data => $ResponseContent,
+    );
+
+    if ( defined $Content && ref $Content eq 'HASH' ) {
+
+        if ( $Content && $Content->{error} && $Content->{error}->{root_cause} ) {
+
+            my @RootCause = $Content->{error}->{root_cause}->@*;
+
+            if ( scalar @RootCause ) {
+
+                my $Cause  = $RootCause[0];
+                my $Reason = $Cause->{reason};
+
+                if ( $Reason =~ /Failed to parse query/ ) {
+
+                    $Kernel::OM->Get('Kernel::System::Log')->Log(
+                        Priority => 'debug',
+                        Message  => "Elasticsearch Parsing Error: " . $Reason,
+                    );
+                    return;
+                }
+            }
+        }
+    }
+
+    # fallback to same handling as in Transport::REST
+    my $ResponseCode = $RestClient->responseCode;
+    my $ResponseError;    # will be returned
+
+    if ( !IsStringWithData($ResponseCode) ) {
+        $ResponseError = $ErrorMessage;
+    }
+
+    if ( $ResponseCode !~ m{ \A 20 \d \z }xms ) {
+        $ResponseError = $ErrorMessage . " Response code '$ResponseCode'.";
+    }
+
+    if ( $ResponseCode ne '204' && !IsStringWithData($ResponseContent) ) {
+        $ResponseError .= ' No content provided.';
+    }
+
+    if ($ResponseError) {
+
+        $Kernel::OM->Get('Kernel::System::Log')->Log(
+            Priority => 'debug',
+            Message  => "Elasticsearch Error: " . $ResponseError,
+        );
+    }
+
+    return $ResponseError;
 }
 
 1;

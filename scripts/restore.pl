@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,24 +15,24 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 
 # use ../ as lib location
-use File::Basename;
-use FindBin qw($RealBin);
+use File::Basename qw(dirname);
+use FindBin        qw($RealBin);
 use lib dirname($RealBin);
 use lib dirname($RealBin) . "/Kernel/cpan-lib";
 
 # core modules
-use File::Spec qw();
-use Getopt::Std;
+use File::Spec  ();
+use Getopt::Std qw(getopt);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::System::ObjectManager;
+# CareOnCloud ESM modules
+use Kernel::System::ObjectManager ();
 
 # get options
 my %Opts;
@@ -41,14 +41,14 @@ getopt( 'hbd', \%Opts );
 if ( exists $Opts{h} ) {
     print <<'END_HELP';
 
-Restore an OTOBO system from backup.
+Restore a CareOnCloud ESM system from backup.
 
 Usage:
- restore.pl -b /data_backup/<TIME>/ -d /opt/otobo/
+ restore.pl -b /data_backup/<TIME>/ -d /opt/careoncloud/
 
 Options:
  -b                     - Directory of the backup files.
- -d                     - Target OTOBO home directory.
+ -d                     - Target CareOnCloud ESM home directory.
  [-h]                   - Display help for this command.
 
 END_HELP
@@ -65,6 +65,7 @@ elsif ( !-d $Opts{b} ) {
 
     exit 1;
 }
+
 if ( !$Opts{d} ) {
     say STDERR "ERROR: Need -d for destination directory";
 
@@ -76,33 +77,42 @@ elsif ( !-d $Opts{d} ) {
     exit 1;
 }
 
-my $DecompressCMD = '';
-if ( -e File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.bz2' ) ) {
-    $DecompressCMD = 'bunzip2';
-}
-else {
-    $DecompressCMD = 'gunzip';
-}
-
-# check needed programs
-for my $CMD ( 'cp', 'tar', $DecompressCMD ) {
-    my $IsInstalled = 0;
-    open( my $Input, '-|', "which $CMD" );    ## no critic qw(OTOBO::ProhibitOpen InputOutput::RequireBriefOpen)
-    while (<$Input>) {
-        $IsInstalled = 1;
+# Check needed programs.
+# The DecompressCMD is determined only from the database backup even if
+# in theory the different backup files could be compressed with different algorithms.
+{
+    my $DecompressCMD = '';
+    if ( -e File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.bz2' ) ) {
+        $DecompressCMD = 'bunzip2';
     }
-    if ( !$IsInstalled ) {
-        say STDERR "ERROR: Can't locate $CMD!";
+    elsif ( -e File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.zst' ) ) {
+        $DecompressCMD = 'zstd';
+    }
+    else {
+        $DecompressCMD = 'gunzip';
+    }
 
-        exit 1;
+    for my $CMD ( 'cp', 'tar', $DecompressCMD ) {
+        my $IsInstalled = 0;
+        open( my $Input, '-|', "which $CMD" );    ## no critic qw(OTOBO::ProhibitOpen InputOutput::RequireBriefOpen)
+        while ( my $s = <$Input> ) {
+            $IsInstalled = 1;
+        }
+
+        if ( !$IsInstalled ) {
+            say STDERR "ERROR: Can't locate $CMD!";
+
+            exit 1;
+        }
     }
 }
 
 # restore config
 chdir( $Opts{d} );
 
-my $ConfigBackupGz  = File::Spec->catfile( $Opts{b}, 'Config.tar.gz' );
-my $ConfigBackupBz2 = File::Spec->catfile( $Opts{b}, 'Config.tar.bz2' );
+my $ConfigBackupGz   = File::Spec->catfile( $Opts{b}, 'Config.tar.gz' );
+my $ConfigBackupBz2  = File::Spec->catfile( $Opts{b}, 'Config.tar.bz2' );
+my $ConfigBackupZstd = File::Spec->catfile( $Opts{b}, 'Config.tar.zst' );
 if ( -e $ConfigBackupGz ) {
     say "Restore $ConfigBackupGz ...";
     system("tar -xzf $ConfigBackupGz");
@@ -111,11 +121,15 @@ elsif ( -e $ConfigBackupBz2 ) {
     say "Restore $ConfigBackupBz2 ...";
     system("tar -xjf $ConfigBackupBz2");
 }
+elsif ( -e $ConfigBackupZstd ) {
+    say "Restore $ConfigBackupZstd ...";
+    system("tar --zstd -xf $ConfigBackupZstd");
+}
 
 # create common objects
 local $Kernel::OM = Kernel::System::ObjectManager->new(
     'Kernel::System::Log' => {
-        LogPrefix => 'OTOBO-restore.pl',
+        LogPrefix => 'CareOnCloud ESM-restore.pl',
     },
 );
 
@@ -124,7 +138,6 @@ my $Database     = $Kernel::OM->Get('Kernel::Config')->Get('Database');
 my $DatabaseUser = $Kernel::OM->Get('Kernel::Config')->Get('DatabaseUser');
 my $DatabasePw   = $Kernel::OM->Get('Kernel::Config')->Get('DatabasePw');
 my $DatabaseDSN  = $Kernel::OM->Get('Kernel::Config')->Get('DatabaseDSN');
-my $ArticleDir   = $Kernel::OM->Get('Kernel::Config')->Get('Ticket::Article::Backend::MIMEBase::ArticleDataDir');
 
 # decrypt pw (if needed)
 if ( $DatabasePw =~ m/^\{(.*)\}$/ ) {
@@ -134,13 +147,13 @@ if ( $DatabasePw =~ m/^\{(.*)\}$/ ) {
 # check db backup support
 my $DB     = '';
 my $DBDump = '';
-if ( $DatabaseDSN =~ m/:mysql/i ) {
+if ( $DatabaseDSN =~ m/:mariadb/i || $DatabaseDSN =~ m/:mysql/i ) {
     $DB     = 'MySQL';
     $DBDump = 'mysql';
 
     my $IsInstalled = 0;
     open( my $Input, '-|', "which $DBDump" );    ## no critic qw(OTOBO::ProhibitOpen InputOutput::RequireBriefOpen)
-    while (<$Input>) {
+    while ( my $s = <$Input> ) {
         $IsInstalled = 1;
     }
     if ( !$IsInstalled ) {
@@ -158,7 +171,7 @@ elsif ( $DatabaseDSN =~ m/:pg/i ) {
 
     my $IsInstalled = 0;
     open( my $Input, '-|', "which $DBDump" );    ## no critic qw(OTOBO::ProhibitOpen)
-    while (<$Input>) {
+    while ( my $s = <$Input> ) {
         $IsInstalled = 1;
     }
     close $Input;
@@ -191,7 +204,7 @@ if ( $DB =~ m/mysql/i ) {
 else {
     $Kernel::OM->Get('Kernel::System::DB')->Prepare(
         SQL =>
-            "SELECT table_name FROM information_schema.tables WHERE table_catalog = 'otobo' AND table_schema = 'public'",
+            "SELECT table_name FROM information_schema.tables WHERE table_catalog = 'careoncloud' AND table_schema = 'public'",
     );
     my $Check = 0;
     while ( my @RowTmp = $Kernel::OM->Get('Kernel::System::DB')->FetchrowArray() ) {
@@ -210,8 +223,9 @@ my $Home = $Kernel::OM->Get('Kernel::Config')->Get('Home');
 chdir($Home);
 
 # extract application
-my $ApplicationBackupGz  = File::Spec->catfile( $Opts{b}, 'Application.tar.gz' );
-my $ApplicationBackupBz2 = File::Spec->catfile( $Opts{b}, 'Application.tar.bz2' );
+my $ApplicationBackupGz   = File::Spec->catfile( $Opts{b}, 'Application.tar.gz' );
+my $ApplicationBackupBz2  = File::Spec->catfile( $Opts{b}, 'Application.tar.bz2' );
+my $ApplicationBackupZstd = File::Spec->catfile( $Opts{b}, 'Application.tar.zst' );
 if ( -e $ApplicationBackupGz ) {
     say "Restore $ApplicationBackupGz ...";
     system("tar -xzf $ApplicationBackupGz");
@@ -220,10 +234,15 @@ elsif ( -e $ApplicationBackupBz2 ) {
     say "Restore $ApplicationBackupBz2 ...";
     system("tar -xjf $ApplicationBackupBz2");
 }
+elsif ( -e $ApplicationBackupZstd ) {
+    say "Restore $ApplicationBackupZstd ...";
+    system("tar --zstd -xf $ApplicationBackupZstd");
+}
 
 # extract vardir
-my $VarDirBackupGz  = File::Spec->catfile( $Opts{b}, 'VarDir.tar.gz' );
-my $VarDirBackupBz2 = File::Spec->catfile( $Opts{b}, 'VarDir.tar.bz2' );
+my $VarDirBackupGz   = File::Spec->catfile( $Opts{b}, 'VarDir.tar.gz' );
+my $VarDirBackupBz2  = File::Spec->catfile( $Opts{b}, 'VarDir.tar.bz2' );
+my $VarDirBackupZstd = File::Spec->catfile( $Opts{b}, 'VarDir.tar.zst' );
 if ( -e $VarDirBackupGz ) {
     say "Restore $VarDirBackupGz ...";
     system("tar -xzf $VarDirBackupGz");
@@ -232,10 +251,15 @@ elsif ( -e $VarDirBackupBz2 ) {
     say "Restore $VarDirBackupBz2 ...";
     system("tar -xjf $VarDirBackupBz2");
 }
+elsif ( -e $VarDirBackupZstd ) {
+    say "Restore $VarDirBackupZstd ...";
+    system("tar --zstd -xf $VarDirBackupZstd");
+}
 
 # extract datadir
-my $DataDirBackupGz  = File::Spec->catfile( $Opts{b}, 'DataDir.tar.gz' );
-my $DataDirBackupBz2 = File::Spec->catfile( $Opts{b}, 'DataDir.tar.bz2' );
+my $DataDirBackupGz   = File::Spec->catfile( $Opts{b}, 'DataDir.tar.gz' );
+my $DataDirBackupBz2  = File::Spec->catfile( $Opts{b}, 'DataDir.tar.bz2' );
+my $DataDirBackupZstd = File::Spec->catfile( $Opts{b}, 'DataDir.tar.zst' );
 if ( -e $DataDirBackupGz ) {
     say "Restore $DataDirBackupGz ...";
     system("tar -xzf $DataDirBackupGz");
@@ -244,10 +268,15 @@ if ( -e $DataDirBackupBz2 ) {
     say "Restore $DataDirBackupBz2 ...";
     system("tar -xjf $DataDirBackupBz2");
 }
+if ( -e $DataDirBackupZstd ) {
+    say "Restore $DataDirBackupZstd ...";
+    system("tar --zstd -xf $DataDirBackupZstd");
+}
 
 # import database
-my $DatabaseBackupGz  = File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.gz' );
-my $DatabaseBackupBz2 = File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.bz2' );
+my $DatabaseBackupGz   = File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.gz' );
+my $DatabaseBackupBz2  = File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.bz2' );
+my $DatabaseBackupZstd = File::Spec->catfile( $Opts{b}, 'DatabaseBackup.sql.zst' );
 if ( $DB =~ m/mysql/i ) {
     say "create $DB";
     if ($DatabasePw) {
@@ -263,6 +292,12 @@ if ( $DB =~ m/mysql/i ) {
         say "Restore database into $DB ...";
         system(
             "bunzip2 -c $DatabaseBackupBz2 | mysql -f -u$DatabaseUser $DatabasePw -h$DatabaseHost $Database"
+        );
+    }
+    elsif ( -e $DatabaseBackupZstd ) {
+        say "Restore database into $DB ...";
+        system(
+            "zstd -dcf $DatabaseBackupZstd | mysql -f -u$DatabaseUser $DatabasePw -h$DatabaseHost $Database"
         );
     }
 }
@@ -291,6 +326,17 @@ else {
         say "Restore database into $DB ...";
         system(
             "bunzip2 -c $DatabaseBackupBz2 | psql -U$DatabaseUser $DatabaseHost $Database"
+        );
+    }
+    elsif ( -e $DatabaseBackupZstd ) {
+
+        # set password via environment variable if there is one
+        if ($DatabasePw) {
+            $ENV{PGPASSWORD} = $DatabasePw;    ## no critic qw(Variables::RequireLocalizedPunctuationVars)
+        }
+        say "Restore database into $DB ...";
+        system(
+            "zstd -dcf $DatabaseBackupZstd | psql -U$DatabaseUser $DatabaseHost $Database"
         );
     }
 }

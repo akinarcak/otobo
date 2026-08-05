@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,11 +25,11 @@ use namespace::autoclean;
 # core modules
 
 # CPAN modules
-use Text::Diff;
+use Text::Diff qw(diff);
 use Test2::API qw(context);
 
-# OTOBO modules
-use Kernel::System::UnitTest::Helper;    # needed to override the builtin time functions!
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::Helper;    ## no perlimports, needed to override the builtin time functions!
 use Kernel::System::VariableCheck qw(DataIsDifferent);
 
 our @ObjectDependencies = (
@@ -255,7 +255,7 @@ sub IsDeeply {
         my $TestDump     = $Kernel::OM->Get('Kernel::System::Main')->Dump($Test);
         my $ShouldBeDump = $Kernel::OM->Get('Kernel::System::Main')->Dump($ShouldBe);
         local $ENV{DIFF_OUTPUT_UNICODE} = 1;
-        my $Diff = Text::Diff::diff(
+        my $Diff = diff(
             \$TestDump,
             \$ShouldBeDump,
             {
@@ -330,7 +330,7 @@ together with the test results.
 
 =cut
 
-# TODO: is that feature still useful ? AFAIK OTOBO has no test result upload service.
+# TODO: is that feature still useful ? AFAIK CareOnCloud ESM has no test result upload service.
 sub AttachSeleniumScreenshot {
     my ( $Self, %Param ) = @_;
 

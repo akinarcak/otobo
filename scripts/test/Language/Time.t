@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,11 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet FixedTimeUnset);
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 my $HelperObject = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 
@@ -105,25 +108,15 @@ for my $Test (@Tests) {
         Mode   => 'NotNumeric',
         Action => 'return',
     );
-
-    $Self->Is(
-        $Result,
-        $Test->{ResultReturn},
-        "$Test->{Name} - return",
-    );
+    is( $Result, $Test->{ResultReturn}, "$Test->{Name} - return" );
 
     $Result = $LanguageObject->Time(
         %{ $Test->{Data} },
         Action => 'get',
     );
-
-    $Self->Is(
-        $Result,
-        $Test->{ResultGet},
-        "$Test->{Name} - get",
-    );
+    is( $Result, $Test->{ResultGet}, "$Test->{Name} - get" );
 
     FixedTimeUnset();
 }
 
-$Self->DoneTesting();
+done_testing;

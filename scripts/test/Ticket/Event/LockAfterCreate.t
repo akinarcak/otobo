@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 use Test2::V0;
 use HTTP::Request::Common qw(GET);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # Get config object.
@@ -58,13 +58,13 @@ $Success = $ConfigObject->Set(
     Key   => 'CheckMXRecord',
     Value => 0,
 );
-ok( $Success, "Disabled CheckMXRecord" );
+ok( $Success, 'Disabled CheckMXRecord' );
 
 $Success = $ConfigObject->Set(
     Key   => 'CheckEmailAddresses',
     Value => 0,
 );
-ok( $Success, "Disabled CheckEmailAddress" );
+ok( $Success, 'Disabled CheckEmailAddresses' );
 
 # Enable lock after create event.
 $Success = $ConfigObject->Set(

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,20 +23,33 @@ use namespace::autoclean;
 use utf8;
 
 # core modules
+use List::Util qw(any);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
-use Kernel::System::CheckItem;
+use Kernel::Language              qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
 
 sub new {
     my ( $Type, %Param ) = @_;
 
-    return bless {%Param}, $Type;
+    # allocate new hash for object
+    my $Self = {%Param};
+    bless( $Self, $Type );
+
+    # set pref for columns key
+    $Self->{PrefKeyIncludeInvalid} = 'IncludeInvalid' . '-' . $Self->{Action};
+
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+        UserID => $Self->{UserID},
+    );
+
+    $Self->{IncludeInvalid} = $Preferences{ $Self->{PrefKeyIncludeInvalid} };
+
+    return $Self;
 }
 
 sub Run {
@@ -131,6 +144,19 @@ sub _ShowOverview {
     my $ObjectTypeFilter   = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'ObjectTypeFilter' ) || '';
     my $NamespaceFilter    = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'NamespaceFilter' )  || '';
 
+    $Param{IncludeInvalid} = $Kernel::OM->Get('Kernel::System::Web::Request')->GetParam( Param => 'IncludeInvalid' );
+
+    if ( defined $Param{IncludeInvalid} ) {
+        $Kernel::OM->Get('Kernel::System::User')->SetPreferences(
+            UserID => $Self->{UserID},
+            Key    => $Self->{PrefKeyIncludeInvalid},
+            Value  => $Param{IncludeInvalid},
+        );
+
+        $Self->{IncludeInvalid} = $Param{IncludeInvalid};
+    }
+    $Param{IncludeInvalidChecked} = $Self->{IncludeInvalid} ? 'checked' : '';
+
     my $Output = join '',
         $LayoutObject->Header,
         $LayoutObject->NavigationBar;
@@ -174,7 +200,9 @@ sub _ShowOverview {
     }
 
     my $ObjectTypeConfig = $ConfigObject->Get('DynamicFields::ObjectType');
-    my $Namespaces       = $ConfigObject->Get('DynamicField::Namespaces');
+    my @DFNamespaces     = $Kernel::OM->Get('Kernel::System::Namespace')->NamespacesList(
+        Scope => 'DynamicField',
+    );
 
     if ( !IsHashRefWithData($ObjectTypeConfig) ) {
         return $LayoutObject->ErrorScreen(
@@ -201,13 +229,19 @@ sub _ShowOverview {
         my $SelectName = $ObjectType . 'DynamicField';
 
         my @FieldList;
+        my @ReferenceDynamicFields;
         FIELDTYPE:
         for my $FieldTypeName ( sort { $FieldDialogs{$a} cmp $FieldDialogs{$b} } keys %FieldTypes ) {
+
+            if ( IsArrayRefWithData( $FieldTypeConfig->{$FieldTypeName}{ObjectTypes} ) ) {
+                next FIELDTYPE unless any { $ObjectType eq $_ } $FieldTypeConfig->{$FieldTypeName}{ObjectTypes}->@*;
+            }
 
             # group reference field types to show in tree view
             my $Value = $FieldTypes{$FieldTypeName};
             if ( $FieldDialogs{$FieldTypeName} =~ /^AdminDynamicFieldReference$/ ) {
                 $Value = 'Reference::' . $Value;
+                push @ReferenceDynamicFields, $FieldTypeName;
             }
 
             push @FieldList, {
@@ -239,7 +273,8 @@ sub _ShowOverview {
         # Inject additional data into the option tag.
         # E.g. <option value="Reference::ITSMConfigItem" data-referenced_object_type="ITSMConfigItem">&nbsp;&nbsp;ITSMConfigItem</option>
         # See https://www.w3schools.com/tags/att_data-.asp
-        $AddDynamicFieldStrg =~ s[ (value="(\w+)Reference")>][ $1 data-referenced_object_type="$2">]g;
+        my $ReferenceFieldsStrg = join( '|', @ReferenceDynamicFields );
+        $AddDynamicFieldStrg =~ s[ (value="($ReferenceFieldsStrg)")>][ $1 data-referenced_object_type="$2">]g;
 
         my $ObjectTypeName = $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::ObjectType')
             ->{$ObjectType}->{DisplayName} || $ObjectType;
@@ -269,7 +304,7 @@ sub _ShowOverview {
         PossibleNone => 1,
         Sort         => 'AlphanumericValue',
         SelectedID   => $ObjectTypeFilter,
-        Class        => 'Modernize W95pc',
+        Class        => 'Modernize',
     );
 
     $LayoutObject->Block(
@@ -280,10 +315,10 @@ sub _ShowOverview {
         },
     );
 
-    if ( IsArrayRefWithData($Namespaces) ) {
+    if (@DFNamespaces) {
         my %NamespaceSelection = (
             '<none>' => '<' . $LayoutObject->{LanguageObject}->Translate('none') . '>',
-            map { $_ => $_ } $Namespaces->@*,
+            map { $_ => $_ } @DFNamespaces,
         );
 
         my $DynamicFieldNamespaceStrg = $LayoutObject->BuildSelection(
@@ -293,7 +328,7 @@ sub _ShowOverview {
             PossibleNone => 1,
             Translation  => 0,
             Sort         => 'AlphanumericValue',
-            Class        => 'Modernize W95pc',
+            Class        => 'Modernize',
         );
 
         $LayoutObject->Block(
@@ -341,7 +376,7 @@ sub _ShowOverview {
     my $DynamicFieldsListFiltered = $DynamicFieldObject->DynamicFieldList(
         ObjectType => $ObjectTypeFilterArrayRef,
         Namespace  => $NamespaceFilter,
-        Valid      => 0,
+        Valid      => $Self->{IncludeInvalid} ? 0 : 1,
     );
 
     my $FilterStrg = '';
@@ -354,7 +389,7 @@ sub _ShowOverview {
         );
     }
 
-    if ( IsArrayRefWithData($Namespaces) ) {
+    if (@DFNamespaces) {
         if ( IsStringWithData($NamespaceFilter) ) {
             $FilterStrg .= ";NamespaceFilter=" . $LayoutObject->Output(
                 Template => '[% Data.Filter | uri %]',
@@ -397,7 +432,7 @@ sub _DynamicFieldsListShow {
 
     # get personal page shown count
     my $PageShownPreferencesKey = 'AdminDynamicFieldsOverviewPageShown';
-    my $PageShown               = $Self->{$PageShownPreferencesKey} || 35;
+    my $PageShown               = $Self->{Session}{$PageShownPreferencesKey} || 35;
     my $Group                   = 'DynamicFieldsOverviewPageShown';
 
     # get data selection
@@ -507,6 +542,16 @@ sub _DynamicFieldsListShow {
                             ConfigDialog   => $ConfigDialog,
                             FieldTypeName  => $FieldTypeName,
                             ObjectTypeName => $ObjectTypeName,
+                        },
+                    );
+                    $LayoutObject->Block(
+                        Name => 'CloneLink',
+                        Data => {
+                            %{$DynamicFieldData},
+                            Valid          => $Valid,
+                            ConfigDialog   => $ConfigDialog,
+                            FieldTypeName  => $FieldTypeName,
+                            ObjectTypeName => $DynamicFieldData->{ObjectType},
                         },
                     );
                 }

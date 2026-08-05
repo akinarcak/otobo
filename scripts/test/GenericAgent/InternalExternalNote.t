@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,7 +23,6 @@ use Kernel::System::UnitTest::RegisterDriver;
 
 our $Self;
 
-my $ConfigObject         = $Kernel::OM->Get('Kernel::Config');
 my $TicketObject         = $Kernel::OM->Get('Kernel::System::Ticket');
 my $ArticleObject        = $Kernel::OM->Get('Kernel::System::Ticket::Article');
 my $ArticleBackendObject = $ArticleObject->BackendForChannel( ChannelName => 'Internal' );
@@ -87,9 +86,9 @@ my %NewJob = (
         TicketNumber                => $Ticket{TicketNumber},
         EventValues                 => 'TicketLockUpdate',
         NewNoteIsVisibleForCustomer => 1,
-        NewNoteBody                 => '<OTOBO_TICKET_TicketNumber>',
+        NewNoteBody                 => '<CareOnCloud_TICKET_TicketNumber>',
         NewNoteFrom                 => 'UnitTest@Example.com',
-        NewNoteSubject              => '<OTOBO_TICKET_TicketID>',
+        NewNoteSubject              => '<CareOnCloud_TICKET_TicketID>',
         NewSendNoNotification       => 1,
         StateIDs                    => [ 1, 4 ],
         LockIDs                     => 2,
@@ -130,7 +129,7 @@ for my $Article (@Articles) {
 $Self->Is(
     $ArticleBox[1]->{Body},
     $Ticket{TicketNumber},
-    'TicketNumber found. OTOBO Tag used.'
+    'TicketNumber found. CareOnCloud ESM Tag used.'
 );
 
 # Get articles visible to customer.
@@ -151,7 +150,7 @@ for my $Article (@Articles) {
 $Self->Is(
     $ArticleBoxCustomer[0]->{Body},
     $Ticket{TicketNumber},
-    'Article found in customer view. TicketNumber found. OTOBO Tag used.'
+    'Article found in customer view. TicketNumber found. CareOnCloud ESM Tag used.'
 );
 
 # Add a new job with note visible internally.
@@ -162,9 +161,9 @@ $Name   = 'UnitTestInternal_' . $RandomID;
         TicketNumber                => $Ticket{TicketNumber},
         EventValues                 => 'TicketLockUpdate',
         NewNoteIsVisibleForCustomer => 0,
-        NewNoteBody                 => '<OTOBO_TICKET_TicketNumber>',
+        NewNoteBody                 => '<CareOnCloud_TICKET_TicketNumber>',
         NewNoteFrom                 => 'UnitTest@Example.com',
-        NewNoteSubject              => '<OTOBO_TICKET_TicketID>',
+        NewNoteSubject              => '<CareOnCloud_TICKET_TicketID>',
         NewSendNoNotification       => 1,
         StateIDs                    => [ 1, 4 ],
         LockIDs                     => 2,
@@ -205,7 +204,7 @@ for my $Article (@Articles) {
 $Self->Is(
     $ArticleBox[1]->{Body},
     $Ticket{TicketNumber},
-    'TicketNumber found. OTOBO Tag used.'
+    'TicketNumber found. CareOnCloud ESM Tag used.'
 );
 
 # Get all articles visible to customer.

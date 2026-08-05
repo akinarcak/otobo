@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,10 +22,11 @@ use namespace::autoclean;
 use utf8;
 
 # core modules
+use List::Util qw(none);
 
 # CPAN modules
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(IsHashRefWithData);
 
 our $ObjectManagerDisabled = 1;
@@ -45,8 +46,8 @@ sub Run {
     # only search is supported
     return $LayoutObject->JSONReply(
         Data => {
-            Success  => 0,
-            Messsage => qq{Subaction '$Self->{Subaction}' is not supported!},
+            Success => 0,
+            Message => qq{Subaction '$Self->{Subaction}' is not supported!},
         },
     ) if $Self->{Subaction};
 
@@ -55,59 +56,138 @@ sub Run {
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $Field       = $ParamObject->GetParam( Param => 'Field' );
     my $FieldName;
-    if (
-        !$Field
-        ||
-        $Field !~ m{ \A (?: Autocomplete | Search ) _DynamicField_ (.*?) (?:_[0-9a-f]+)? \z }xms
-        )
-    {
+
+    # check if we deal with process and if so, retrieve activity dialog id
+    my $ActivityDialogEntityID;
+    my $ProcessSuffix               = '';
+    my $ActivityDialogEntityIDParam = $ParamObject->GetParam( Param => 'ActivityDialogEntityID' ) || '';
+    if ( $ActivityDialogEntityIDParam =~ /^ActivityDialog-([0-9a-f]+)/ ) {
+        $ActivityDialogEntityID = $1;
+    }
+
+    # possible prefix constellations:
+    #   Autocomplete_DynamicField_Fieldname
+    #   Autocomplete_Search_DynamicField_Fieldname
+    # possible suffix constellations:
+    #   [...]_FieldName
+    #   [...]_FieldName_0          (set or multivalue)
+    #   [...]_FieldName_0_0        (set and multivalue)
+    #   [...]_FieldName_0a1b2c     (process suffix)
+    #   [...]_FieldName_0a1b2c_0   (process suffix with set or multivalue)
+    #   [...]_FieldName_0a1b2c_0_0 (process suffix with set and multivalue)
+
+    my $Error = 1;
+    if ($Field) {
+
+        # match with activity dialog entity id is needed
+        if ( $ActivityDialogEntityID && $LayoutObject->{SessionSource} eq 'CustomerInterface' ) {
+            if ( $Field && $Field =~ m{ \A (?: Autocomplete (?: _Search )? ) _DynamicField_ ([A-Za-z0-9\-]*?) (_$ActivityDialogEntityID) (?:_[0-9]+){0,2} \z }xms ) {
+                $FieldName     = $1;    # remove either the prefix 'Autocomplete_DynamicField_' or the prefix 'Search_DynamicField_'
+                $ProcessSuffix = $2;
+                $Error         = 0;
+            }
+        }
+
+        # match without activity dialog entity id is needed
+        else {
+            if ( $Field =~ m{ \A (?: Autocomplete (?: _Search )? ) _DynamicField_ ([A-Za-z0-9\-]*?) (?:_[0-9]+){0,2} \z }xms ) {
+                $FieldName = $1;        # remove either the prefix 'Autocomplete_DynamicField_' or the prefix 'Search_DynamicField_'
+                $Error     = 0;
+            }
+        }
+    }
+
+    if ($Error) {
         return $LayoutObject->JSONReply(
             Data => {
-                Success  => 0,
-                Messsage => 'Need Field!',
+                Success => 0,
+                Message => 'Need Field!',
             },
         );
     }
-    else {
-        $FieldName = $1;    # remove either the prefix 'Autocomplete_DynamicField_' or the prefix 'Search_DynamicField_'
-    }
 
     # Get config for the dynamic field and check the sanity.
-    my $DynamicFieldConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+    my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
+    my $DynamicFieldConfig        = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
         Name => $FieldName,
     );
     if (
         !IsHashRefWithData($DynamicFieldConfig)
         ||
-        $DynamicFieldConfig->{FieldType} !~ /^\w+Reference$/
+        !$DynamicFieldBackendObject->HasBehavior(
+            DynamicFieldConfig => $DynamicFieldConfig,
+            Behavior           => 'IsReferenceField',
+        )
         )
     {
         return $LayoutObject->JSONReply(
             Data => {
-                Success  => 0,
-                Messsage => qq{Error reading the dynamic field '$FieldName'!},
+                Success => 0,
+                Message => qq{Error reading the dynamic field '$FieldName'!},
             }
         );
     }
 
     # search referenced object
-    my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
-    my $MaxResults                = int( $ParamObject->GetParam( Param => 'MaxResults' ) || 20 );
-    my $Term                      = $ParamObject->GetParam( Param => 'Term' ) || '';
+    my $MaxResults = int( $ParamObject->GetParam( Param => 'MaxResults' ) || 20 );
+    my $Term       = $ParamObject->GetParam( Param => 'Term' ) || '';
+    my $SetIndex   = $ParamObject->GetParam( Param => 'SetIndex' );
+
+    my %UserData;
+    if ( $LayoutObject->{SessionSource} eq 'CustomerInterface' ) {
+        $UserData{CustomerUserID} = $Self->{UserID};
+    }
+    else {
+        $UserData{UserID} = $Self->{UserID};
+    }
 
     my @ObjectIDs = $DynamicFieldBackendObject->SearchObjects(
         DynamicFieldConfig => $DynamicFieldConfig,    # this might contain search restrictions
         Term               => $Term,
         MaxResults         => $MaxResults,
-        UserID             => 1,                      # TODO: what about Permission check
+        ParamObject        => $ParamObject,
+        %UserData,
     );
+
+    my $FormID = $ParamObject->GetParam( Param => 'FormID' );
+
+    # differentiate depending on whether field is multivalue
+    my @FormDataObjectIDs = @ObjectIDs;
+    if ( $DynamicFieldConfig->{Config}{MultiValue} && $FormID ) {
+
+        # if so, do GetFormData() and store value combined with ObjectIDs
+        my $LastSearchResults = $Kernel::OM->Get('Kernel::System::Web::FormCache')->GetFormData(
+            LayoutObject => $LayoutObject,
+            FormID       => $FormID,
+            Key          => 'PossibleValues_DynamicField_' . $DynamicFieldConfig->{Name} . $ProcessSuffix,
+        );
+
+        if ($LastSearchResults) {
+            for my $ResultItem ( $LastSearchResults->@* ) {
+                if ( none { $_ eq $ResultItem } @FormDataObjectIDs ) {
+                    push @FormDataObjectIDs, $ResultItem;
+                }
+            }
+        }
+    }
+
+    # store all possible values for this field and form id for later verification
+    if ($FormID) {
+        $Kernel::OM->Get('Kernel::System::Web::FormCache')->SetFormData(
+            LayoutObject => $LayoutObject,
+            FormID       => $FormID,
+            Key          => 'PossibleValues_DynamicField_' . $DynamicFieldConfig->{Name} . $ProcessSuffix . ( defined $SetIndex ? "_$SetIndex" : '' ),
+            Value        => \@FormDataObjectIDs,
+        );
+    }
 
     my @Results;
     for my $ObjectID (@ObjectIDs) {
         my %Description = $DynamicFieldBackendObject->ObjectDescriptionGet(
             DynamicFieldConfig => $DynamicFieldConfig,
+            LayoutObject       => $LayoutObject,
             ObjectID           => $ObjectID,
-            UserID             => 1,                     # TODO: what about Permission check
+            UserID             => 1,
         );
 
         push @Results, {
@@ -115,6 +195,9 @@ sub Run {
             Value => $Description{Long},
         };
     }
+
+    # sort results by value
+    @Results = sort { $a->{Value} cmp $b->{Value} } @Results;
 
     return $LayoutObject->JSONReply(
         Data => \@Results,

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -21,9 +21,12 @@ use parent 'Kernel::Output::HTML::Base';
 use strict;
 use warnings;
 
-use Mail::Address;
-use Kernel::Language qw(Translatable);
+# core modules
 
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -32,6 +35,7 @@ our @ObjectDependencies = (
     'Kernel::System::Crypt::SMIME',
     'Kernel::Output::HTML::Layout',
     'Kernel::System::Queue',
+    'Kernel::System::EmailAddress',
 );
 
 sub Option {
@@ -97,7 +101,6 @@ sub Run {
         # Get default signing key from the queue (if apply) or any other key from queue system
         #   address that fits.
         if ( $Param{QueueID} ) {
-
             $Param{SignKeyID} = $Self->_PickSignKeyID(%Param) || '';
         }
     }
@@ -184,9 +187,10 @@ sub Data {
 
     return %KeyList if !$Param{From};
 
-    my @SearchAddress = Mail::Address->parse( $Param{From} );
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    my @SearchAddresses    = $EmailAddressObject->ParseAddressLine( Line => $Param{From} );
 
-    return %KeyList if !$Param{EmailSecurityOptions};
+    return %KeyList unless $Param{EmailSecurityOptions};
 
     # Get email security options.
     my ( $Backend, $Sign, $Encrypt ) = split /::/, $Param{EmailSecurityOptions};
@@ -200,7 +204,7 @@ sub Data {
 
         my $PGPObject = $Kernel::OM->Get('Kernel::System::Crypt::PGP');
 
-        return %KeyList if !$PGPObject;
+        return %KeyList unless $PGPObject;
 
         # Get PGP method (Detached or In-line).
         my $PGPMethod = $ConfigObject->Get('PGP::Method') || 'Detached';
@@ -211,7 +215,7 @@ sub Data {
             )
         {
             my @PrivateKeys = $PGPObject->PrivateKeySearch(
-                Search => $SearchAddress[0]->address(),
+                Search => $EmailAddressObject->GetAddress( AddressObject => $SearchAddresses[0] ),
             );
             for my $DataRef (@PrivateKeys) {
                 my $Expires = '';
@@ -237,10 +241,10 @@ sub Data {
 
         my $SMIMEObject = $Kernel::OM->Get('Kernel::System::Crypt::SMIME');
 
-        return %KeyList if !$SMIMEObject;
+        return %KeyList unless $SMIMEObject;
 
         my @PrivateKeys = $SMIMEObject->PrivateSearch(
-            Search => $SearchAddress[0]->address(),
+            Search => $EmailAddressObject->GetAddress( AddressObject => $SearchAddresses[0] ),
         );
         for my $DataRef (@PrivateKeys) {
             my $Expired = '';
@@ -329,13 +333,14 @@ sub _CheckSender {
 
     my $MissingSelectedKeyFlag;
     my $MissingKeysFlag;
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
 
-    my @SearchAddress = Mail::Address->parse( $Param{From} );
+    my @SearchAddresses = $EmailAddressObject->ParseAddressLine( Line => $Param{From} );
 
     ADDRESS:
-    for my $Address (@SearchAddress) {
+    for my $Address (@SearchAddresses) {
 
-        my $EmailAddress = $Address->address();
+        my $EmailAddress = $EmailAddressObject->GetAddress( AddressObject => $Address );
 
         my @PrivateKeys;
         if ( $Backend eq 'PGP' ) {
@@ -438,22 +443,23 @@ sub _PickSignKeyID {
     my $EncryptObject = $Kernel::OM->Get("Kernel::System::Crypt::$Backend");
 
     # Return nothing if encrypt object was not created
-    return if !$EncryptObject;
+    return unless $EncryptObject;
 
-    my @SearchAddress = Mail::Address->parse( $Param{From} );
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+    my @SearchAddresses    = $EmailAddressObject->ParseAddressLine( Line => $Param{From} );
 
     # Search for privates keys for queue system address.
     my @PrivateKeys;
     if ( $Backend eq 'PGP' ) {
         @PrivateKeys = $EncryptObject->PrivateKeySearch(
-            Search => $SearchAddress[0]->address(),
+            Search => $EmailAddressObject->GetAddress( AddressObject => $SearchAddresses[0] ),
         );
 
         @PrivateKeys = sort { $a->{Expires} cmp $b->{Expires} } grep { $_->{Status} eq 'good' } @PrivateKeys;
     }
     else {
         @PrivateKeys = $EncryptObject->PrivateSearch(
-            Search => $SearchAddress[0]->address(),
+            Search => $EmailAddressObject->GetAddress( AddressObject => $SearchAddresses[0] ),
             Valid  => 1,
         );
         @PrivateKeys = sort { $a->{ShortEndDate} cmp $b->{ShortEndDate} } @PrivateKeys;
@@ -512,24 +518,25 @@ sub _GetUniqueSignKeyIDsToRemove {
     my $EncryptObject = $Kernel::OM->Get("Kernel::System::Crypt::$Backend");
 
     # Return nothing if encrypt object was not created
-    return if !$EncryptObject;
+    return unless $EncryptObject;
 
     my %UniqueSignKeyIDsToRemove;
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
 
-    my @SearchAddress = Mail::Address->parse( $Param{From} );
+    my @SearchAddresses = $EmailAddressObject->ParseAddressLine( Line => $Param{From} );
 
     ADDRESS:
-    for my $Address (@SearchAddress) {
+    for my $Address (@SearchAddresses) {
 
         my @PrivateKeys;
         if ( $Backend eq 'PGP' ) {
             @PrivateKeys = $EncryptObject->PrivateKeySearch(
-                Search => $Address->address(),
+                Search => $EmailAddressObject->GetAddress( AddressObject => $Address ),
             );
         }
         else {
             @PrivateKeys = $EncryptObject->PrivateSearch(
-                Search => $Address->address(),
+                Search => $EmailAddressObject->GetAddress( AddressObject => $Address ),
             );
         }
 

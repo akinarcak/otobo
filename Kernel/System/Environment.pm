@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,18 +19,17 @@ package Kernel::System::Environment;
 use v5.24;
 use strict;
 use warnings;
-use namespace::autoclean;
 use utf8;
 
 # core modules
-use POSIX;
-use ExtUtils::MakeMaker;
-use File::Spec qw();
+use POSIX qw(uname);
+use ExtUtils::MakeMaker;    # makes MM->parse_version available ## no perlimports
+use File::Spec ();
 
 # CPAN modules
-use Sys::Hostname::Long;    # imports hostname_long()
+use Sys::Hostname::Long qw(hostname_long);    # available from Kernel/cpan-lib
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -44,7 +43,8 @@ Kernel::System::Environment - collect environment info
 
 =head1 DESCRIPTION
 
-Functions to collect environment info
+Functions to collect environment info.
+Provide a list of Perl modules that are installed in F<Kernel/cpan-lib>.
 
 =head1 PUBLIC INTERFACE
 
@@ -76,7 +76,7 @@ returns:
         Hostname     => "servername.example.com",
         OS           => "Linux",
         OSName       => "debian 7.1",
-        Path         => "/home/otobo/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games",
+        Path         => "/home/careoncloud/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games",
         POSIX        => [
                         "Linux",
                         "servername",
@@ -84,7 +84,7 @@ returns:
                         "#1 SMP Debian 3.2.46-1",
                         "i686",
                       ],
-        User         => "otobo",
+        User         => "careoncloud",
     );
 
 =cut
@@ -92,7 +92,7 @@ returns:
 sub OSInfoGet {
     my ( $Self, %Param ) = @_;
 
-    my @Data = POSIX::uname();
+    my @Data = uname();
 
     # get main object
     my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
@@ -246,8 +246,7 @@ sub PerlInfoGet {
 
         # Add bundled modules and their version.
         # Only the modules that correspond to their distribution are listed here.
-        # E.g. Error::TypeTiny and Types::TypeTiny are not listed, as they belong to the distro Type::Tiny.
-        # Devel::REPL::Plugin::OTOBO is supplied by OTOBO
+        # Some modules, like Devel::REPL::Plugin::CareOnCloud, are supplied by CareOnCloud ESM
         my @BundledModules = Kernel::System::Environment->BundleModulesDeclarationGet;
         my %ModuleToVersion =
             map { $_ => $Self->ModuleVersionGet( Module => $_ ) }
@@ -270,9 +269,10 @@ returns list of hashrefs:
 
     my @BundledModules = (
         {
-            'Module'       => 'Algorithm::Diff',
-            'Required'     => 1,
-            'VersionExact' => '1.1903',
+            'Comment'         => 'Needed by Text::Diff',
+            'Module'          => 'Algorithm::Diff',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.1903',
         },
         ...
     );
@@ -284,307 +284,306 @@ sub BundleModulesDeclarationGet {
 
     return (
         {
-            'Comment'      => 'Needed by Text::Diff',
-            'Module'       => 'Algorithm::Diff',
-            'Required'     => 1,
-            'VersionExact' => '1.1903',
+            'Comment'         => 'Needed by Text::Diff',
+            'Module'          => 'Algorithm::Diff',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.1903',
         },
         {
-            'Comment'      => 'needed by e.g. Data::ICal, but not used by OTOBO itself',
-            'Module'       => 'Class::Accessor',
-            'Required'     => 1,
-            'VersionExact' => '0.34',
+            'Comment'         => 'needed by e.g. Data::ICal, but not used by CareOnCloud ESM itself',
+            'Module'          => 'Class::Accessor',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.34',
         },
         {
-            'Comment'      => 'needed by SOAP::Lite',
-            'Module'       => 'Class::Inspector',
-            'Required'     => 1,
-            'VersionExact' => '1.31'
+            'Comment'         => 'needed by Text::vFile::asData',
+            'Module'          => 'Class::Accessor::Chained',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.01',
         },
         {
-            'Comment'      => 'needed by Data::ICal',
-            'Module'       => 'Class::ReturnValue',
-            'Required'     => 1,
-            'VersionExact' => '0.55',
+            'Comment'         => 'needed by Sisimai',
+            'Module'          => 'Class::Accessor::Lite',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.08',
         },
         {
-            'Module'       => 'CPAN::Audit',
-            'Required'     => 1,
-            'VersionExact' => '20230826.001',
+            'Comment'         => 'needed by SOAP::Lite',
+            'Module'          => 'Class::Inspector',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.31'
         },
         {
-            'Comment'      => 'needed by CPAN::Audit',
-            'Module'       => 'CPAN::DistnameInfo',
-            'Required'     => 1,
-            'VersionExact' => '0.12',
+            'Comment'         => 'needed by Data::ICal',
+            'Module'          => 'Class::ReturnValue',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.55',
         },
         {
-            'Module'       => 'Data::ICal',
-            'Required'     => 1,
-            'VersionExact' => '0.22',
+            # audit Perl code using the data provided in CPANSA::DB
+            'Module'          => 'CPAN::Audit',
+            'Required'        => 1,
+            'VersionRequired' => '== 20260622.001',
         },
         {
-            'Module'       => 'Date::ICal',
-            'Required'     => 1,
-            'VersionExact' => '2.678',
+            'Comment'         => 'database of adbisories used by CPAN::Audit',
+            'Module'          => 'CPANSA::DB',
+            'Required'        => 1,
+            'VersionRequired' => '== 20260715.001',
         },
         {
-            'Module'       => 'Crypt::PasswdMD5',
-            'Required'     => 1,
-            'VersionExact' => '1.40',
+            'Comment'         => 'needed by CPAN::Audit',
+            'Module'          => 'CPAN::DistnameInfo',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.12',
         },
         {
-            'Comment'      => 'needed by Math::Random::Secure, needed in Kernel::System::Main',
-            'Module'       => 'Crypt::Random::Source',
-            'Required'     => 1,
-            'VersionExact' => '0.14',
+            'Module'          => 'Crypt::PasswdMD5',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.40',
         },
         {
-            'Comment'      => 'needed by Kernel::System::CheckItem',
-            'Module'       => 'Email::Valid',
-            'Required'     => 1,
-            'VersionExact' => '1.202',
+            'Comment'         => 'needed by Math::Random::Secure, needed in Kernel::System::Main',
+            'Module'          => 'Crypt::Random::Source',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.14',
         },
         {
-            'Comment'      => 'needed by Kernel::System::CSV',
-            'Module'       => 'Excel::Writer::XLSX',
-            'Required'     => 1,
-            'VersionExact' => '0.95',
+            'Module'          => 'CSS::Minifier',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.01',
         },
         {
-            'Comment'      => 'needed by Type::Tiny',
-            'Module'       => 'Exporter::Tiny',
-            'Required'     => 1,
-            'VersionExact' => '1.002001',
+            'Module'          => 'Data::ICal',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.22',
         },
         {
-            'Comment'      => 'needed by Text::Diff::FormattedHTML ',
-            'Module'       => 'File::Slurp',
-            'Required'     => 1,
-            'VersionExact' => '9999.32',
+            'Module'          => 'Date::ICal',
+            'Required'        => 1,
+            'VersionRequired' => '== 2.678',
         },
         {
-            'Comment'      => 'needed by PDF::API2',
-            'Module'       => 'Font::TTF',
-            'Required'     => 1,
-            'VersionExact' => '1.06',
+            'Comment'         => 'needed by Kernel::System::CheckItem',
+            'Module'          => 'Email::Valid',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.202',
         },
         {
-            'Comment'      => 'needed by console commands',
-            'Module'       => 'IO::Interactive',
-            'Required'     => 1,
-            'VersionExact' => '1.022',
+            'Comment'         => 'needed by Kernel::System::CSV',
+            'Module'          => 'Excel::Writer::XLSX',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.95',
         },
         {
-            'Comment'      => 'needed by Font::TTF',
-            'Module'       => 'IO::String',
-            'Required'     => 1,
-            'VersionExact' => '1.08',
+            'Comment'         => 'needed by PDF::API2',
+            'Module'          => 'Font::TTF',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.06',
         },
         {
-            'Comment'      => 'needed by Sisimai',
-            'Module'       => 'JSON',
-            'Required'     => 1,
-            'VersionExact' => '2.94',
+            'Comment'         => 'needed by HTMLUtils, contains adaption by CareOnCloud ESM',
+            'Module'          => 'HTML::Scrubber',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.20',
         },
         {
-            'Comment'      => 'needed by JSON, but there also in backportPP included in JSON',
-            'Module'       => 'JSON::PP',
-            'Required'     => 1,
-            'VersionExact' => '2.27203',
+            'Comment'         => 'needed by console commands',
+            'Module'          => 'IO::Interactive',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.022',
         },
         {
-            'Comment'      => 'needed by the console command Dev::Tools::TranslationsUpdate',
-            'Module'       => 'Lingua::Translit',
-            'Required'     => 1,
-            'VersionExact' => '0.27',
+            'Comment'         => 'needed by Font::TTF',
+            'Module'          => 'IO::String',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.08',
         },
         {
-            'Comment'      => 'needed by otobo.CheckModules.pl',
-            'Module'       => 'Linux::Distribution',
-            'Required'     => 1,
-            'VersionExact' => '0.23',
+            'Module'          => 'JSON',
+            'Comment'         => 'needed by Sisimai and other CPAN distributions',
+            'Required'        => 1,
+            'VersionRequired' => '== 4.10',                                          # current version as of 2024-11-17
         },
         {
-            'Comment'      => 'needed by Kernel::System::ReferenceData, Locale::Country',
-            'Module'       => 'Locale::Codes',
-            'Required'     => 1,
-            'VersionExact' => '3.76',
+            'Comment'         => 'needed by the console command Dev::Tools::TranslationsUpdate',
+            'Module'          => 'Lingua::Translit',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.27',
         },
         {
-            'Comment'      => 'needed by webservices',
-            'Module'       => 'LWP::Protocol::https',
-            'Required'     => 1,
-            'VersionExact' => '6.11',
+            'Comment'         => 'needed by careoncloud.CheckModules.pl',
+            'Module'          => 'Linux::Distribution',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.23',
         },
         {
-            'Comment'      => 'needed in frontend and system OTOBO modules',
-            'Module'       => 'Mail::Address',
-            'Required'     => 1,
-            'VersionExact' => '2.18',
+            'Comment'         => 'needed by Kernel::System::ReferenceData, which uses Locale::Country',
+            'Module'          => 'Locale::Codes',
+            'Required'        => 1,
+            'VersionRequired' => '== 3.86',
         },
         {
-            'Comment'      => 'needed by Kernel::System::Mail',
-            'Module'       => 'Mail::Internet',
-            'Required'     => 1,
-            'VersionExact' => '2.18',
+            'Comment'         => 'needed by webservices',
+            'Module'          => 'LWP::Protocol::https',
+            'Required'        => 1,
+            'VersionRequired' => '== 6.11',
         },
         {
-            'Comment'      => 'needed by Math::Random::Secure, needed in Kernel::System::Main',
-            'Module'       => 'Math::Random::ISAAC',
-            'Required'     => 1,
-            'VersionExact' => '1.004',
+            'Comment'         => 'not used in CareOnCloud ESM core except in Email::Valid, please switch to Email::Address::XS',
+            'Module'          => 'Mail::Address',
+            'Required'        => 1,
+            'VersionRequired' => '== 2.18',
         },
         {
-            'Comment'      => 'needed by Kernel::System::Main for GenerateRandomString()',
-            'Module'       => 'Math::Random::Secure',
-            'Required'     => 1,
-            'VersionExact' => '0.080001',
+            'Comment'         => 'needed by Kernel::System::Email and by MIME::Tools',
+            'Module'          => 'Mail::Internet',
+            'Required'        => 1,
+            'VersionRequired' => '== 2.18',
         },
         {
-            'Comment'      => 'needed by Kernel::System::Mail',
-            'Module'       => 'MIME::Tools',
-            'Required'     => 1,
-            'VersionExact' => '5.509',
+            'Comment'         => 'needed by Math::Random::Secure, needed in Kernel::System::Main',
+            'Module'          => 'Math::Random::ISAAC',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.004',
         },
         {
-            'Comment'      => 'needed by CPAN::Audit',
-            'Module'       => 'Module::CPANfile',
-            'Required'     => 1,
-            'VersionExact' => '1.1004',
+            'Comment'         => 'needed by Kernel::System::Main for GenerateRandomString()',
+            'Module'          => 'Math::Random::Secure',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.080001',
         },
         {
-            'Comment'      => 'needed by CPAN::Audit, could be useful in OTOBO as well',
-            'Module'       => 'Module::Extract::VERSION',
-            'Required'     => 1,
-            'VersionExact' => '1.116',
+            'Comment'         => 'needed by Kernel::System::Mail and Kernel::System::EmailParser',
+            'Module'          => 'MIME::Tools',
+            'Required'        => 1,
+            'VersionRequired' => '== 5.514',
         },
         {
-            'Comment'      => 'needed by Crypt::Random::Source',
-            'Module'       => 'Module::Find',
-            'Required'     => 1,
-            'VersionExact' => '0.15',
+            'Comment'         => 'needed by CPAN::Audit',
+            'Module'          => 'Module::CPANfile',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.1004',
         },
         {
-            'Comment'      => 'needed by otobo.psgi',
-            'Module'       => 'Module::Refresh',
-            'Required'     => 1,
-            'VersionExact' => '0.17',
+            'Comment'         => 'needed by CPAN::Audit, could be useful in CareOnCloud ESM as well',
+            'Module'          => 'Module::Extract::VERSION',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.121',
         },
         {
-            'Comment'      => 'needed by LWP::Protocol::https',
-            'Module'       => 'Mozilla::CA',
-            'Required'     => 1,
-            'VersionExact' => '20200520',
+            'Comment'         => 'needed by Crypt::Random::Source',
+            'Module'          => 'Module::Find',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.15',
         },
         {
-            'Comment'      => 'needed by Kernel::System::MailAccount::IMAP',
-            'Module'       => 'Net::IMAP::Simple',
-            'Required'     => 1,
-            'VersionExact' => '1.2209',
+            'Comment'         => 'needed by careoncloud.psgi',
+            'Module'          => 'Module::Refresh',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.17',
         },
         {
-            'Comment'      => 'needed by LWP::Protocol::https',
-            'Module'       => 'Net::HTTP',
-            'Required'     => 1,
-            'VersionExact' => '6.17',
+            'Comment'         => 'needed by LWP::Protocol::https',
+            'Module'          => 'Mozilla::CA',
+            'Required'        => 1,
+            'VersionRequired' => '== 20250602',
         },
         {
-            'Comment'      => 'needed by OTOBO email modules',
-            'Module'       => 'Net::SSLGlue',
-            'Required'     => 1,
-            'VersionExact' => '1.058',
+            'Comment'         => 'needed by LWP::Protocol::https',
+            'Module'          => 'Net::HTTP',
+            'Required'        => 1,
+            'VersionRequired' => '== 6.24',
         },
         {
-            'Comment'      => 'needed by Kernel::System::PDF',
-            'Module'       => 'PDF::API2',
-            'Required'     => 1,
-            'VersionExact' => '2.033',
+            'Comment'         => 'needed by Kernel::System::PDF',
+            'Module'          => 'PDF::API2',
+            'Required'        => 1,
+            'VersionRequired' => '== 2.048',
         },
         {
-            'Comment'      => 'needed by console command Dev::Tools::TranslationsUpdate',
-            'Module'       => 'Pod::Strip',
-            'Required'     => 1,
-            'VersionExact' => '1.02',
+            'Comment'         => 'needed by console command Dev::Tools::TranslationsUpdate',
+            'Module'          => 'Pod::Strip',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.02',
         },
         {
-            'Comment'      => 'needed by OTOBO generic interface',
-            'Module'       => 'REST::Client',
-            'Required'     => 1,
-            'VersionExact' => '273',
+            'Comment'         => 'needed by CareOnCloud ESM generic interface',
+            'Module'          => 'REST::Client',
+            'Required'        => 1,
+            'VersionRequired' => '== 273',
         },
         {
-            'Comment'      => 'needed by Kernel::System::CronEvent',
-            'Module'       => 'Schedule::Cron::Events',
-            'Required'     => 1,
-            'VersionExact' => '1.95',
+            'Comment'         => 'needed by Kernel::System::CronEvent',
+            'Module'          => 'Schedule::Cron::Events',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.95',
         },
         {
-            'Module'       => 'needed for detecting bounced mails',
-            'Module'       => 'Sisimai',
-            'Required'     => 1,
-            'VersionExact' => 'v4.24.1'
+            'Module'          => 'needed for detecting bounced mails',
+            'Module'          => 'Sisimai',
+            'Required'        => 1,
+            'VersionRequired' => '== v4.24.1'
         },
         {
-            'Comment'      => 'needed by OTOBO generic interface',
-            'Module'       => 'SOAP::Lite',
-            'Required'     => 1,
-            'VersionExact' => '1.20',
+            'Comment'         => 'needed by CareOnCloud ESM generic interface',
+            'Module'          => 'SOAP::Lite',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.20',
         },
         {
-            'Comment'      => 'needed by Kernel::System::Environment',
-            'Module'       => 'Sys::Hostname::Long',
-            'Required'     => 1,
-            'VersionExact' => '1.5',
+            'Module'          => 'String::Diff',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.07',
         },
         {
-            'Comment'      => 'needed by Kernel::System::Diff',
-            'Module'       => 'Text::Diff',
-            'Required'     => 1,
-            'VersionExact' => '1.44',
+            'Comment'         => 'needed by Kernel::System::Environment',
+            'Module'          => 'Sys::Hostname::Long',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.5',
         },
         {
-            'Comment'      => 'needed by Kernel::System::Diff',
-            'Module'       => 'Text::Diff::FormattedHTML',
-            'Required'     => 1,
-            'VersionExact' => '0.08',
+            'Comment'         => 'needed by Kernel::System::Diff',
+            'Module'          => 'Text::Diff',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.44',
         },
         {
-            'Comment'      => 'needed by Crypt::Random::Source',
-            'Module'       => 'Type::Tiny',
-            'Required'     => 1,
-            'VersionExact' => '1.010000',
+            'Comment'         => 'needed by Data::ICal',
+            'Module'          => 'Text::vFile::asData',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.08',
         },
         {
-            'Comment'      => 'needed by Kernel::Output::HTML::Dashboard::RSS',
-            'Module'       => 'XML::FeedPP',
-            'Required'     => 1,
-            'VersionExact' => '0.43',
+            'Comment'         => 'needed by Kernel::Output::HTML::Dashboard::RSS',
+            'Module'          => 'XML::FeedPP',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.43',
         },
         {
-            'Comment'      => 'needed by Kernel::System::XML::Simple',
-            'Module'       => 'XML::LibXML::Simple',
-            'Required'     => 1,
-            'VersionExact' => '1.01',
+            'Comment'         => 'needed by Kernel::System::XML::Simple',
+            'Module'          => 'XML::LibXML::Simple',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.01',
         },
         {
-            'Comment'      => 'needed by Kernel::GenericInterface::Mapping::XSLT',
-            'Module'       => 'XML::Simple',
-            'Required'     => 1,
-            'VersionExact' => '2.25',
+            'Comment'         => 'needed by Kernel::GenericInterface::Mapping::XSLT',
+            'Module'          => 'XML::Simple',
+            'Required'        => 1,
+            'VersionRequired' => '== 2.25',
         },
         {
-            'Comment'      => 'needed by XML::FeedPP',
-            'Module'       => 'XML::TreePP',
-            'Required'     => 1,
-            'VersionExact' => '0.43',
+            'Comment'         => 'needed by XML::FeedPP',
+            'Module'          => 'XML::TreePP',
+            'Required'        => 1,
+            'VersionRequired' => '== 0.43',
         },
         {
-            'Comment'      => 'needed by Sisimai, OTOBO itself uses YAML::XS',
-            'Module'       => 'YAML',
-            'Required'     => 1,
-            'VersionExact' => '1.30',
-        }
+            'Comment'         => 'needed by Sisimai, CareOnCloud ESM itself uses YAML::XS',
+            'Module'          => 'YAML',
+            'Required'        => 1,
+            'VersionRequired' => '== 1.30',
+        },
     );
 }
 
@@ -597,9 +596,9 @@ collect database information
 returns
 
     %DBInfo = (
-        Database => "otoboproduction",
+        Database => "careoncloudproduction",
         Host     => "dbserver.example.com",
-        User     => "otobouser",
+        User     => "careonclouduser",
         Type     => "mysql",
         Version  => "MySQL 5.5.31-0+wheezy1",
     )
@@ -625,33 +624,33 @@ sub DBInfoGet {
     return %EnvDB;
 }
 
-=head2 OTOBOInfoGet()
+=head2 CareOnCloudInfoGet()
 
-collect OTOBO information
+collect CareOnCloud ESM information
 
-    my %OTOBOInfo = $EnvironmentObject->OTOBOInfoGet();
+    my %CareOnCloudInfo = $EnvironmentObject->CareOnCloudInfoGet();
 
 returns:
 
-    %OTOBOInfo = (
-        Product         => "OTOBO",
+    %CareOnCloudInfo = (
+        Product         => "CareOnCloud ESM",
         Version         => "3.3.1",
         DefaultLanguage => "en",
-        Home            => "/opt/otobo",
-        Host            => "otobo.example.org",
+        Home            => "/opt/careoncloud",
+        Host            => "careoncloud.example.org",
         SystemID        => 70,
     );
 
 =cut
 
-sub OTOBOInfoGet {
+sub CareOnCloudInfoGet {
     my ( $Self, %Param ) = @_;
 
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
-    # collect OTOBO data
-    my %EnvOTOBO = (
+    # collect CareOnCloud ESM data
+    my %EnvCareOnCloud = (
         Version         => $ConfigObject->Get('Version'),
         Home            => $ConfigObject->Get('Home'),
         Host            => $ConfigObject->Get('FQDN'),
@@ -660,7 +659,7 @@ sub OTOBOInfoGet {
         DefaultLanguage => $ConfigObject->Get('DefaultLanguage'),
     );
 
-    return %EnvOTOBO;
+    return %EnvCareOnCloud;
 }
 
 1;

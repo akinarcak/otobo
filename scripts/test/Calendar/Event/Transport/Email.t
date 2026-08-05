@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,12 +18,14 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self
 
 our $Self;
-
-use Kernel::System::MailQueue;
 
 # get config object
 my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
@@ -200,20 +202,20 @@ my @Tests = (
         Name => 'Multiple valid RecipientEmail',
         Data => {
             Events           => ['CalendarUpdate'],
-            RecipientEmail   => ['zz1test@otoboexample.com, zz2test@otoboexample.com; zz3test@otoboexample.com'],
+            RecipientEmail   => ['zz1test@careoncloudexample.com, zz2test@careoncloudexample.com; zz3test@careoncloudexample.com'],
             NotificationType => ['Appointment'],
         },
         ExpectedResults => [
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz3test@otoboexample.com'],
+                ToArray => ['zz3test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
         ],
@@ -222,20 +224,20 @@ my @Tests = (
         Name => 'Multiple valid RecipientEmail not separated by space with additional commas and semmi-colons',
         Data => {
             Events           => ['CalendarUpdate'],
-            RecipientEmail   => ['zz1test@otoboexample.com,;,zz2test@otoboexample.com;;zz3test@otoboexample.com'],
+            RecipientEmail   => ['zz1test@careoncloudexample.com,;,zz2test@careoncloudexample.com;;zz3test@careoncloudexample.com'],
             NotificationType => ['Appointment'],
         },
         ExpectedResults => [
             {
-                ToArray => ['zz1test@otoboexample.com'],
+                ToArray => ['zz1test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz2test@otoboexample.com'],
+                ToArray => ['zz2test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zz3test@otoboexample.com'],
+                ToArray => ['zz3test@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
         ],
@@ -244,16 +246,16 @@ my @Tests = (
         Name => 'Multiple valid and invalid RecipientEmail',
         Data => {
             Events           => ['CalendarUpdate'],
-            RecipientEmail   => ['aaatest@otoboexample.com, asdfqwe; zzztest@otoboexample.com; e212355qwe.com'],
+            RecipientEmail   => ['aaatest@careoncloudexample.com, asdfqwe; zzztest@careoncloudexample.com; e212355qwe.com'],
             NotificationType => ['Appointment'],
         },
         ExpectedResults => [
             {
-                ToArray => ['aaatest@otoboexample.com'],
+                ToArray => ['aaatest@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
             {
-                ToArray => ['zzztest@otoboexample.com'],
+                ToArray => ['zzztest@careoncloudexample.com'],
                 Body    => "Calender: -=\n",
             },
         ],
@@ -287,7 +289,7 @@ for my $Test (@Tests) {
         Message => {
             en => {
                 Subject     => 'JobName',
-                Body        => 'Calender: <OTOBO_CALENDAR_CALENDARNAME>',
+                Body        => 'Calender: <CareOnCloud_CALENDAR_CALENDARNAME>',
                 ContentType => 'text/plain',
             },
         },

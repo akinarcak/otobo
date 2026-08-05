@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -81,20 +81,13 @@
                     <p>Rother OSS GmbH</p>
                     <p>Oberwalting 31</p>
                     <p>94339 Leiblfing</p>
-                    <p>[% Translate("Phone") | html %]: <a href="tel:+4994276839000">+49 (0) 9427 68 39 000</a></p>
-                </div>
-                <div class="Size1of2">
-                    <h4>[% Translate("Germany") | html %]</h4>
-                    <p>Rother OSS GmbH</p>
-                    <p>Straubinger Straße 14</p>
-                    <p>94339 Leiblfing</p>
-                    <p>[% Translate("Phone") | html %]: <a href="tel:+4994276839000">+41 (0) 9427 68 39 000</a></p>
+                    <p>[% Translate("Phone") | html %]: <a href="tel:+4994276839000">+49 9427 68 39 000</a></p>
                 </div>
             </div>
             <div class="Clear"></div>
             <div class="LayoutGrid Content">
-                <p>[% Translate("Web site") | html %]: <a href="http://otobo.de" target="_blank">www.otobo.de</a></p>
-                <p>[% Translate("Email") | html %]: <a href="mailto:hello@otobo.de">hello@otobo.de</a></p>
+                <p>[% Translate("Web site") | html %]: <a href="https://esm.arcak.net" target="_blank">esm.arcak.net</a></p>
+                <p>[% Translate("Email") | html %]: <a href="mailto:hello@careoncloud.example.com">hello@careoncloud.example.com</a></p>
             </div>
             <div class="Clear"></div>
         </div>

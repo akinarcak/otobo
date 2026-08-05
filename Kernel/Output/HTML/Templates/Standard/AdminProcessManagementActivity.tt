@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@
 [% RenderBlockEnd("ClosePopup") %]
 [% RenderBlockStart("GoBack") %]
         <p>
-            <a class="GoBack" href="[% Env("Baselink") %]Action=[% Data.Action | uri %];Subaction=[% Data.Subaction | uri %];ID=[% Data.ID | uri %];EntityID=[% Data.EntityID | uri %]">[% Translate("Go Back") | html %]</a>
+            <a class="GoBack" href="[% Env("Baselink") %]Action=[% Data.Action | uri %];Subaction=[% Data.Subaction | uri %];ID=[% Data.ID | uri %];EntityID=[% Data.EntityID | uri %];ProcessEntityID=[% Data.ProcessEntityID | uri %]">[% Translate("Go Back") | html %]</a>
         </p>
 [% RenderBlockEnd("GoBack") %]
     </div>
@@ -35,12 +35,14 @@
                 <input type="hidden" name="Subaction" value="Activity[% Data.Action | html %]Action"/>
                 <input type="hidden" name="EntityID" value="[% Data.EntityID | html %]"/>
                 <input type="hidden" name="ID" value="[% Data.ID | html %]"/>
+                <input type="hidden" name="ProcessEntityID" value="[% Data.ProcessEntityID | html %]"/>
                 <input type="hidden" name="ActivityDialogs" value=""/>
                 <input type="hidden" name="PopupRedirect" value="" id="PopupRedirect"/>
                 <input type="hidden" name="PopupRedirectAction" value="" id="PopupRedirectAction"/>
                 <input type="hidden" name="PopupRedirectSubaction" value="" id="PopupRedirectSubaction"/>
                 <input type="hidden" name="PopupRedirectID" value="" id="PopupRedirectID"/>
                 <input type="hidden" name="PopupRedirectEntityID" value="" id="PopupRedirectEntityID"/>
+                <input type="hidden" name="PopupRedirectProcessEntityID" value="" id="PopupRedirectProcessEntityID"/>
 
 [% RenderBlockStart("EditWarning") %]
                 <div class="WidgetSimple Expanded WidgetNotice">
@@ -68,6 +70,23 @@
                                 </div>
                             </div>
                             <div class="Clear"></div>
+
+[% RenderBlockStart("NamespaceSelection") %]
+                            <label for="Namespace">[% Translate("Namespace") | html %]:</label>
+                            <div class="Field">
+                                [% Data.NamespaceSelectionHTML %]
+                            </div>
+                            <div class="Clear"></div>
+[% RenderBlockEnd("NamespaceSelection") %]
+
+                            <label for="Global">[% Translate("Global") | html %]:</label>
+                            <div class="Field">
+                                <input type="checkbox" name="Global" id="Global" value="1" class="[% Data.GlobalServerError | html %]" [% Data.Global | html %] />
+                                <div id="GlobalServerError" class="TooltipErrorMessage">
+                                    <p>[% Data.GlobalServerErrorMessage | html %]</p>
+                                </div>
+                            </div>
+                            <div class="Clear"></div>
                         </fieldset>
                     </div>
                 </div>
@@ -86,8 +105,10 @@
                                 [% Translate("Ordering the elements within the list is also possible by drag 'n' drop.") | html %]
                             </p>
                         </div>
+                        <div class="Size1of1">
+                            <input type="text" id="FilterAvailableActivityDialogs" class="W33pc AvailableFieldsFilter" name="FilterAvailableActivityDialogs" value="" title="[% Translate("Filter available Activity Dialogs") | html %]" placeholder="[% Translate("Filter available Activity Dialogs") | html %]..." />
+                        </div>
                         <div class="Size1of2">
-                            <input type="text" id="FilterAvailableActivityDialogs" class="W75pc" name="FilterAvailableActivityDialogs" value="" title="[% Translate("Filter available Activity Dialogs") | html %]" placeholder="[% Translate("Filter available Activity Dialogs") | html %]..." />
                             <ul class="Tablelike W90pc SpacingTop">
                                 <li class="Header">
                                     [% Translate("Available Activity Dialogs") | html %]
@@ -95,11 +116,11 @@
                             </ul>
                             <ul class="AllocationList Tablelike W90pc" id="AvailableActivityDialogs">
 [% RenderBlockStart("AvailableActivityDialogRow") %]
-                                <li data-id="[% Data.ID | html %]" title="[% Translate("Name: %s, EntityID: %s", Data.Name, Data.EntityID) | html %]">
-                                    [% Data.Name | html %]
+                                <li data-id="[% Data.ID | html %]" data-dialogprocess="[% Data.DialogProcessEntityID | html %]" title="[% Translate("Name: %s, EntityID: %s", (Data.Namespace ? Data.Namespace _ ' – ' _ Data.Name : Data.Name), Data.EntityID) | html %]" class="[% IF Data.DialogProcessEntityID %]NonGlobalDialog[% END %]">
+                                    [% IF Data.Namespace %][% Data.Namespace %] – [% END %][% Data.Name | html %][% IF !Data.DialogProcessEntityID %] (global) [% END %]
                                     <span class="Functions">
                                         <span class="AvailableIn">[% Translate(Data.AvailableIn) | html %]</span>
-                                        <a href="#" data-entity="[% Data.EntityID | html %]" data-id="[% Data.ID | html %]" data-action="AdminProcessManagementActivityDialog" data-subaction="ActivityDialogEdit" class="AsPopup_Redirect Edit_Confirm PopupType_ActivityDialog Icon" title="[% Translate("Edit") | html %]">
+                                        <a href="#" data-entity="[% Data.EntityID | html %]" data-id="[% Data.ID | html %]" data-process="[% Data.ProcessEntityID | html %]" data-action="AdminProcessManagementActivityDialog" data-subaction="ActivityDialogEdit" class="AsPopup_Redirect Edit_Confirm PopupType_ActivityDialog Icon" title="[% Translate("Edit") | html %]">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </span>
@@ -107,26 +128,23 @@
 [% RenderBlockEnd("AvailableActivityDialogRow") %]
                             </ul>
                             <div class="SpacingTop">
-#                                <button>[% Translate("Create New Activity Dialog") | html %]</button>
-<!-- TODO Re-implemented as link, but it can be a button if needed (button is disabled by leading #)  -->
-                                <a href="#" data-entity="" data-id="" data-action="AdminProcessManagementActivityDialog" data-subaction="ActivityDialogNew" class="CallForAction AsPopup_Redirect" ><span>[% Translate("Create New Activity Dialog") | html %]</span></a>
-
+                                <a href="#" data-entity="" data-id="" data-process="[% Data.ProcessEntityID | html %]" data-action="AdminProcessManagementActivityDialog" data-subaction="ActivityDialogNew" class="CallForAction AsPopup_Redirect" ><span>[% Translate("Create New Activity Dialog") | html %]</span></a>
 
                             </div>
                         </div>
                         <div class="Size1of2">
-                            <ul class="Tablelike W90pc">
+                            <ul class="Tablelike W90pc SpacingTop">
                                 <li class="Header">
                                     [% Translate("Assigned Activity Dialogs") | html %]
                                 </li>
                             </ul>
                             <ul class="AllocationList Tablelike W90pc" id="AssignedActivityDialogs">
 [% RenderBlockStart("AssignedActivityDialogRow") %]
-                                <li data-id="[% Data.ID | html %]" title="[% Translate("Name: %s, EntityID: %s", Data.Name, Data.EntityID) | html %]">
-                                    [% Data.Name | html %]
+                                <li data-id="[% Data.ID | html %]" data-dialogprocess="[% Data.DialogProcessEntityID | html %]" title="[% Translate("Name: %s, EntityID: %s", (Data.Namespace ? Data.Namespace _ ' – ' _ Data.Name : Data.Name), Data.EntityID) | html %]" class="[% IF Data.DialogProcessEntityID %]NonGlobalDialog[% END %]">
+                                    [% IF Data.Namespace %][% Data.Namespace %] – [% END %][% Data.Name | html %][% IF !Data.DialogProcessEntityID %] (global) [% END %]
                                     <span class="Functions">
                                         <span class="AvailableIn">[% Translate(Data.AvailableIn) | html %]</span>
-                                        <a href="#" data-entity="[% Data.EntityID | html %]" data-id="[% Data.ID | html %]" data-action="AdminProcessManagementActivityDialog" data-subaction="ActivityDialogEdit" class="AsPopup_Redirect Edit_Confirm PopupType_ActivityDialog Icon" title="[% Translate("Edit") | html %]">
+                                        <a href="#" data-entity="[% Data.EntityID | html %]" data-id="[% Data.ID | html %]" data-process="[% Data.ProcessEntityID | html %]" data-action="AdminProcessManagementActivityDialog" data-subaction="ActivityDialogEdit" class="AsPopup_Redirect Edit_Confirm PopupType_ActivityDialog Icon" title="[% Translate("Edit") | html %]">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </span>

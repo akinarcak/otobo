@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@
     [% BreadcrumbPath = [
             {
                 Name => Translate('Dynamic Fields Management'),
-                Link => 'AdminDynamicField',
+                Link => 'AdminDynamicField' _ Data.FilterStrg,
             },
         ]
     %]
@@ -217,18 +217,26 @@
 
 
                         <label for="DefaultValue">[% Translate("Default value") | html %]:</label>
-                        <div class="Field">
 [% RenderBlockStart("DefaultValueText") %]
+                        <div class="Field">
                             <input id="DefaultValue" class="W50pc" type="text" maxlength="200" value="[% Data.DefaultValue | html %]" name="DefaultValue"/>
-[% RenderBlockEnd("DefaultValueText") %]
-[% RenderBlockStart("DefaultValueTextArea") %]
-                            <textarea id="DefaultValue" class="W50pc" rows="10" cols="60" name="DefaultValue">[% Data.DefaultValue | html %]</textarea>
-[% RenderBlockEnd("DefaultValueTextArea") %]
-[% RenderBlockStart("DefaultValueRichText") %]
-                            <textarea id="DefaultValue" class="RichText W50pc" name="DefaultValue">[% Data.DefaultValue | html %]</textarea>
-[% RenderBlockEnd("DefaultValueRichText") %]
                             <p class="FieldExplanation">[% Translate("This is the default value for this field.") | html %]</p>
                         </div>
+[% RenderBlockEnd("DefaultValueText") %]
+[% RenderBlockStart("DefaultValueTextArea") %]
+                        <div class="Field">
+                            <textarea id="DefaultValue" class="W50pc" rows="10" cols="60" name="DefaultValue">[% Data.DefaultValue | html %]</textarea>
+                            <p class="FieldExplanation">[% Translate("This is the default value for this field.") | html %]</p>
+                        </div>
+[% RenderBlockEnd("DefaultValueTextArea") %]
+[% RenderBlockStart("DefaultValueRichText") %]
+                        <div class="RichTextField">
+                            <textarea id="DefaultValue" class="RichText W50pc" name="DefaultValue">[% Data.DefaultValue | html %]</textarea>
+                        </div>
+                        <div class="Field">
+                            <p class="FieldExplanation">[% Translate("This is the default value for this field.") | html %]</p>
+                        </div>
+[% RenderBlockEnd("DefaultValueRichText") %]
                         <div class="Clear"></div>
 [% RenderBlockStart("Link") %]
                         <label for="Link">[% Translate("Show link") | html %]:</label>
@@ -242,6 +250,10 @@
                                 [% Translate("Example") | html %]: http://some.example.com/handle?query=<span>[</span>% Data.Field1 | uri %<span>]</span>
                                 <br/>
                                 [% Translate("You can reference the field with its own field name. You can also refer to other fields, e.g. with 'DynamicField_OtherFieldName'.") | html %]
+                                <br/>
+                                [% Translate("If a dynamic field with a namespace is to be referenced, the field name needs to be stored in a variable and called.") | html %]
+                                <br/>
+                                [% Translate("Example") | html %]: http://some.example.com/handle?query=<span>[</span>% FieldName = 'Namespace-Field1'; Data.$FieldName %<span>]</span>
                             </p>
                         </div>
                         <div class="Clear"></div>
@@ -323,6 +335,8 @@
                         <label for="[% Data.ConfigParamName | html %]">[% Translate(Data.Label) | html %]</label>
                         <div class="Field">
                             [% Data.FieldStrg %]
+                            <div id="[% Data.ConfigParamName | html %]Error" class="TooltipErrorMessage"><p>[% Translate("This field is required, and the value should be alphabetic and numeric characters only.") | html %]</p></div>
+                            <div id="[% Data.ConfigParamName | html %]ServerError" class="TooltipErrorMessage"><p>[% Translate(Data.ServerErrorMessage) | html %]</p></div>
                             <p class="FieldExplanation">[% Translate(Data.Explanation) | html %]</p>
                         </div>
                         <div class="Clear"></div>

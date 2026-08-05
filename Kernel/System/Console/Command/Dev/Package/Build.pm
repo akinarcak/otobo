@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -29,7 +29,7 @@ our @ObjectDependencies = (
 sub Configure {
     my ( $Self, %Param ) = @_;
 
-    $Self->Description('Create an OTOBO package (opm) file from an OTOBO package source (sopm) file.');
+    $Self->Description('Create a CareOnCloud ESM package (opm) file from a CareOnCloud ESM package source (sopm) file.');
     $Self->AddOption(
         Name        => 'version',
         Description => "Specify the version to be used (overrides version from sopm file).",
@@ -40,14 +40,14 @@ sub Configure {
     $Self->AddOption(
         Name        => 'module-directory',
         Description =>
-            "Specify the directory containing the module sources (otherwise the OTOBO home directory will be used).",
+            "Specify the directory containing the module sources (otherwise the CareOnCloud ESM home directory will be used).",
         Required   => 0,
         HasValue   => 1,
         ValueRegex => qr/.*/smx,
     );
     $Self->AddArgument(
         Name        => 'source-path',
-        Description => "Specify the path to an OTOBO package source (sopm) file that should be built.",
+        Description => "Specify the path to a CareOnCloud ESM package source (sopm) file that should be built.",
         Required    => 1,
         ValueRegex  => qr/.*/smx,
     );
@@ -119,26 +119,27 @@ sub Run {
         $Structure{Version}->{Content} = $Self->GetOption('version');
     }
 
-    # build from given package directory, if any (otherwise default to OTOBO home)
+    # build from given package directory, if any (otherwise default to CareOnCloud ESM home)
     if ( $Self->GetOption('module-directory') ) {
         $Structure{Home} = $Self->GetOption('module-directory');
     }
 
     my $Filename = $Structure{Name}->{Content} . '-' . $Structure{Version}->{Content} . '.opm';
+    my $Location = $Self->GetArgument('target-directory') . '/' . $Filename;
     my $Content  = $Kernel::OM->Get('Kernel::System::Package')->PackageBuild(%Structure);
     if ( !$Content ) {
         $Self->PrintError("Package build failed.\n");
         return $Self->ExitCodeError();
     }
     my $File = $Kernel::OM->Get('Kernel::System::Main')->FileWrite(
-        Location   => $Self->GetArgument('target-directory') . '/' . $Filename,
+        Location   => $Location,
         Content    => \$Content,
-        Mode       => 'utf8',                                                     # binmode|utf8
-        Type       => 'Local',                                                    # optional - Local|Attachment|MD5
-        Permission => '644',                                                      # unix file permissions
+        Mode       => 'utf8',      # binmode|utf8
+        Type       => 'Local',     # optional - Local|Attachment|MD5
+        Permission => '644',       # unix file permissions
     );
     if ( !$File ) {
-        $Self->PrintError("File $File could not be written.\n");
+        $Self->PrintError("File $Location could not be written.\n");
         return $Self->ExitCodeError();
     }
 

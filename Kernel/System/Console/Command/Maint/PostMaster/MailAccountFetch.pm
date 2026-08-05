@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,13 +18,19 @@
 
 package Kernel::System::Console::Command::Maint::PostMaster::MailAccountFetch;
 
+use v5.24;
 use strict;
 use warnings;
 
 use parent qw(Kernel::System::Console::BaseCommand);
 
-use POSIX ":sys_wait_h";
+# core modules
+use POSIX 'WNOHANG';    ## no perlimports
 use Time::HiRes qw(sleep);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::System::Log',
@@ -51,7 +57,7 @@ sub Configure {
     );
     $Self->AddOption(
         Name        => 'debug',
-        Description => "Print debug info to the OTOBO log.",
+        Description => "Print debug info to the CareOnCloud ESM log.",
         Required    => 0,
         HasValue    => 0,
     );
@@ -89,7 +95,7 @@ sub PreRun {
     if ($Debug) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'debug',
-            Message  => "OTOBO email handle ($Name) started.",
+            Message  => "CareOnCloud ESM email handle ($Name) started.",
         );
     }
 
@@ -109,10 +115,12 @@ sub Run {
     if ( !%List ) {
         if ($MailAccountID) {
             $Self->PrintError("Could not find mail account $MailAccountID.");
+
             return $Self->ExitCodeError();
         }
 
         $Self->Print("\n<yellow>No configured mail accounts found!</yellow>\n\n");
+
         return $Self->ExitCodeOk();
     }
 
@@ -188,7 +196,9 @@ sub Run {
             # Hide password contained in error message and print message back to standard error.
             # Please see bug#12829 for more information.
             if ($ErrorMessage) {
-                $ErrorMessage =~ s/\Q$Data{Password}\E/********/g;
+                if ( $Data{Password} ) {
+                    $ErrorMessage =~ s/\Q$Data{Password}\E/********/g;
+                }
                 print STDERR $ErrorMessage;
             }
 
@@ -225,10 +235,11 @@ sub Run {
     WAIT:
     while (1) {
 
-        last WAIT if !$Self->{ChildPID};
+        last WAIT unless $Self->{ChildPID};
 
         sleep 0.1;
 
+        # Do not suspend the calling process until a child process changes state but instead return immediately
         my $WaitResult = waitpid( $PID, WNOHANG );
 
         if ( $WaitResult == -1 ) {
@@ -247,6 +258,7 @@ sub Run {
     alarm 0;
 
     $Self->Print("<green>Done.</green>\n\n");
+
     return $Self->ExitCodeOk();
 }
 
@@ -267,7 +279,7 @@ sub PostRun {
     if ($Debug) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'debug',
-            Message  => "OTOBO email handle ($Name) stopped.",
+            Message  => "CareOnCloud ESM email handle ($Name) stopped.",
         );
     }
 

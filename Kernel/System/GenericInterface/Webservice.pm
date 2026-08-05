@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,6 +19,11 @@ package Kernel::System::GenericInterface::Webservice;
 use strict;
 use warnings;
 
+# core modules
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -55,10 +60,7 @@ sub new {
     my ( $Webservice, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Webservice );
-
-    return $Self;
+    return bless {}, $Webservice;
 }
 
 =head2 WebserviceAdd()
@@ -587,7 +589,7 @@ sub _WebserviceConfigUpgrade {
 
     return if !IsHashRefWithData( $Param{Config} );
 
-    # Updates of SOAP and REST transport in OTOBO 10:
+    # Updates of SOAP and REST transport in CareOnCloud ESM 10:
     #   Authentication, SSL and Proxy option changes, introduction of timeout param.
     # Upgrade is considered necessary if the new (and now mandatory) parameter 'Timeout' isn't set.
     if (

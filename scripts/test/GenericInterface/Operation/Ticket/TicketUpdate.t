@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,14 +24,14 @@ use MIME::Base64 qw(encode_base64);
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Kernel::OM and the test driver $Self::main
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::GenericInterface::Debugger;
-use Kernel::GenericInterface::Operation::Ticket::TicketUpdate;
-use Kernel::GenericInterface::Operation::Session::SessionCreate;
-use Kernel::GenericInterface::Requester;
-use Kernel::System::VariableCheck qw(IsArrayRefWithData IsHashRefWithData IsStringWithData);
+use Kernel::System::UnitTest::MockTime                          qw(FixedTimeSet);
+use Kernel::GenericInterface::Debugger                          ();
+use Kernel::GenericInterface::Operation::Ticket::TicketUpdate   ();                                                         ## no perlimports, new() from string
+use Kernel::GenericInterface::Operation::Session::SessionCreate ();                                                         ## no perlimports, new() from string
+use Kernel::GenericInterface::Requester                         ();
+use Kernel::System::VariableCheck                               qw(IsArrayRefWithData IsHashRefWithData IsStringWithData);
 
 our $Self;
 
@@ -867,7 +867,7 @@ my @Tests = (
         Operation => 'TicketUpdate',
     },
     {
-        Name           => 'Add article (with To, Cc and Bcc parameters)',
+        Name           => 'Add article (with To,Cc and Bcc parameters)',
         SuccessRequest => '1',
         RequestData    => {
             TicketID => $TicketID1,
@@ -1171,11 +1171,16 @@ for my $Test (@Tests) {
                 && defined $Test->{RequestData}->{Article}->{Bcc}
                 )
             {
+                #                $Self->Is(
+                #                    $RequesterResult->{Data}->{Ticket}->{Article}->{To},
+                #                    $Ticket{CustomerUserID},
+                #                    "Article parameter To is set well after TicketUpdate() - $Ticket{CustomerUserID}",
+                #                );
 
                 for my $Item (qw(To Cc Bcc)) {
                     $Self->Is(
-                        $Test->{RequestData}->{Article}->{$Item},
                         $RequesterResult->{Data}->{Ticket}->{Article}->{$Item},
+                        $Test->{RequestData}->{Article}->{$Item},
                         "Article parameter $Item is set well after TicketUpdate() - $Test->{RequestData}->{Article}->{$Item}",
                     );
                 }

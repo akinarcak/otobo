@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -32,7 +32,7 @@ sub Data {
     $Self->{DateFormatShort}     = '%D/%M/%Y';
     $Self->{DateInputFormat}     = '%D/%M/%Y';
     $Self->{DateInputFormatLong} = '%D/%M/%Y - %T';
-    $Self->{Completeness}        = 0.613128270175995;
+    $Self->{Completeness}        = 0.54932799542465;
 
     # csv separator
     $Self->{Separator}         = ',';
@@ -43,7 +43,10 @@ sub Data {
 
         # Template: AdminACL
         'ACL Management' => 'Manajement ACL',
+        'Filter by valid state' => '',
+        'Include invalid ACLs' => '',
         'Actions' => 'Tindakan',
+        'Object Type' => '',
         'Create New ACL' => 'Buat ACL baru',
         'Deploy ACLs' => 'Sebarkan ACL',
         'Export ACLs' => 'Eksport ACL',
@@ -61,6 +64,8 @@ sub Data {
             'Untuk membuat ACL baru, anda dapat mengimpor ACL yang telah di ekspor dari sistem lain ataupun membuat baru dari awal.',
         'Changes to the ACLs here only affect the behavior of the system, if you deploy the ACL data afterwards. By deploying the ACL data, the newly made changes will be written to the configuration.' =>
             'Pengubahan terhadap ACL disini hanya berpengaruh kepada perilaku sistem ini, Jika anda menyebarkan data ACL setelahnya. Dengan penyebaran data ACL, pengubahan terbaru akan tercatat pada konfigurasinya.',
+        'To delete an existing ACL you have to set the validity to invalid and save it. Afterwards a new button to delete the ACL will appear.' =>
+            '',
         'ACLs' => 'ACL',
         'Please note: This table represents the execution order of the ACLs. If you need to change the order in which ACLs are executed, please change the names of the affected ACLs.' =>
             'Harap dicatat: Tabel ini menunjukan urutan eksekusi ACL. Jika anda perlu mengubah urutan eksekusi ACL, Mohon ubah nama-nama dari ACL yang terpengaruh.',
@@ -82,8 +87,8 @@ sub Data {
         'Set up matching criteria for this ACL. Use \'Properties\' to match the current screen or \'PropertiesDatabase\' to match attributes of the current ticket that are in the database.' =>
             'Tentukan kriteria kecocokan untuk ACL ini. Gunakan \'Properti\' untuk mencocokan  tampilan sekarang atai \'DatabaseProperti\' untuk mencocokan dengan atribut tiket saat ini yang ada di database',
         'Change settings' => 'Ubah pengaturan',
-        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is a white list, \'PossibleNot\' a black list.' =>
-            'Tentukan apa yang anda ingin ubah jika kriterianya cocok. Mohon di ingat bahwa \'Mungkin\' adalah daftar putih, \'TidakMungkin\' adalah daftar hitam',
+        'Set up what you want to change if the criteria match. Keep in mind that \'Possible\' is an exclusive white list, \'PossibleAdd\' a white list, \'PossibleNot\' a black list. \'Possible\' also hides the empty value, which you could add again with \'[empty]\'.' =>
+            '',
         'Check the official %sdocumentation%s.' => '',
         'Show or hide the content' => 'Tunjukan atau Sembunyikan konten',
         'Edit ACL Information' => '',
@@ -119,11 +124,12 @@ sub Data {
         'Calendar Management' => '',
         'Add Calendar' => '',
         'Edit Calendar' => '',
+        'Include invalid calendars' => '',
         'Calendar Overview' => '',
         'Add new Calendar' => '',
         'Import Appointments' => '',
         'Calendar Import' => '',
-        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by calendar management module.' =>
+        'Here you can upload a configuration file to import a calendar to your system. The file needs to be in .yml format as exported by the calendar management module.' =>
             '',
         'Overwrite existing entities' => 'Menimpa entitas yang ada',
         'Upload calendar configuration' => '',
@@ -152,6 +158,7 @@ sub Data {
         'Calendar with same name already exists.' => '',
         'Color' => '',
         'Permission group' => '',
+        'Insufficient group permissions.' => '',
         'Ticket Appointments' => '',
         'Rule' => 'Peraturan',
         'Remove this entry' => 'Hapus entri ini',
@@ -187,6 +194,7 @@ sub Data {
         'Appointment Notification Management' => '',
         'Add Notification' => 'Tambah pemberitahuan',
         'Edit Notification' => 'Ubah pemberitahuan',
+        'Include invalid appointment notifications' => '',
         'Export Notifications' => 'Expor pemberitahuan',
         'Filter for Notifications' => '',
         'Filter for notifications' => '',
@@ -271,6 +279,7 @@ sub Data {
         'Attachment Management' => 'Manajemen lampiran',
         'Add Attachment' => 'Tambahkan lampira',
         'Edit Attachment' => 'Ubah lampiran',
+        'Include invalid attachments' => '',
         'Filter for Attachments' => 'Filter untuk lampiran',
         'Filter for attachments' => '',
         'Filename' => 'Nama Berkas',
@@ -283,6 +292,7 @@ sub Data {
         'Auto Response Management' => 'Manajemen Respon otomatis',
         'Add Auto Response' => 'Tambahkan respon otomatis',
         'Edit Auto Response' => 'Ubah respon otomatis',
+        'Include invalid auto responses' => '',
         'Filter for Auto Responses' => 'Filter untuk respon otomatis',
         'Filter for auto responses' => '',
         'Response' => 'Respon',
@@ -308,25 +318,25 @@ sub Data {
         'Support data collector' => 'Pengumpul data pendukung',
         'Hint' => 'Petunjuk',
         'Currently support data is only shown in this system.' => 'Saat ini data pendukung hanya ditunjukan pada sistem ini',
-        'It is sometimes recommended to send this data to the OTOBO team in order to get better support.' =>
+        'It is sometimes recommended to send this data to the CareOnCloud ESM team in order to get better support.' =>
             '',
         'Configuration' => 'konfigurasi',
         'Send support data' => 'Kirimkan data pendukung',
-        'This will allow the system to send additional support data information to the OTOBO team.' =>
+        'This will allow the system to send additional support data information to the CareOnCloud ESM team.' =>
             '',
         'Update' => 'Pembaruan',
         'System Registration' => 'Pendaftaran sistem',
-        'To enable data sending, please register your system with the OTOBO team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with the CareOnCloud ESM team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'Register this System' => 'Daftarkan sistem ini',
         'System Registration is disabled for your system. Please check your configuration.' =>
             'Pendaftaran sistem tidak diaktifkan pada sistem anda. Mohon periksa konfigurasi anda.',
 
         # Template: AdminCloudServices
-        'System registration is a service of OTOBO team, which provides a lot of advantages!' =>
+        'System registration is a service of CareOnCloud ESM team, which provides a lot of advantages!' =>
             '',
-        'Please note that the use of OTOBO cloud services requires the system to be registered.' =>
-            'Mohon dicatat bahwa penggunaan Layanan cloud OTOBO memerlukan pendaftaran sistem',
+        'Please note that the use of CareOnCloud ESM cloud services requires the system to be registered.' =>
+            'Mohon dicatat bahwa penggunaan Layanan cloud CareOnCloud ESM memerlukan pendaftaran sistem',
         'Register this system' => 'Daftarkan sistem ini',
         'Here you can configure available cloud services that communicate securely with %s.' =>
             'Disini anda dapat mengkonfigurasi layanan cloud yang tersedia yang berkomunikasi secara aman dengan %s',
@@ -425,12 +435,34 @@ sub Data {
         'Customer Management' => 'Manajemen Pelanggan',
         'Add Customer' => 'Tambahkan Pelanggan',
         'Edit Customer' => 'Ubah Pelanggan',
+        'Include invalid customer companies' => '',
         'List (only %s shown - more available)' => 'Urutan (Tampilkan %s saja - lebih tersedia)',
         'total' => 'Total',
         'Please enter a search term to look for customers.' => 'Mohon masukan kata pencarian untuk mencari pelanggan',
         'Customer ID' => 'ID pelanggan',
         'Please note' => '',
         'This customer backend is read only!' => '',
+
+        # Template: AdminCustomerDashboardInfoTile
+        'Customer Info' => '',
+        'Customer Info Management' => '',
+        'Create new info tile entry' => '',
+        'Filter for info tile entries' => '',
+        'Create a new entry to be displayed on the info tile on the customer dashboard.' =>
+            '',
+        'Stop date' => 'Tanggal berhenti',
+        'Delete info tile entry' => '',
+
+        # Template: AdminCustomerDashboardInfoTileEdit
+        'Edit customer dashboard info tile entry' => '',
+        'Date invalid!' => 'Tanggal tidak sah',
+        'Tile content' => '',
+        'Content Body' => '',
+        'Marquee content' => '',
+        'Group Selection' => '',
+
+        # Template: AdminCustomerDashboardInfoTileNew
+        'Create new customer dashboard info tile entry' => '',
 
         # Template: AdminCustomerGroup
         'Manage Customer-Group Relations' => 'Kelola Hubungan Pelanggan-Grup',
@@ -466,6 +498,7 @@ sub Data {
         'Customer User Management' => 'Manajemen Pelanggan pengguna',
         'Add Customer User' => 'Tambah Pelanggan pengguna',
         'Edit Customer User' => 'Ubah Pelanggan pengguna',
+        'Include invalid customer users' => '',
         'Customer user are needed to have a customer history and to login via customer panel.' =>
             'Pelanggan pengguna diperlukan untuk memiliki riwayat pelanggan dan untuk login melalui panel pelanggan',
         'List (%s total)' => 'List (%s total)',
@@ -530,9 +563,14 @@ sub Data {
 
         # Template: AdminDynamicField
         'Dynamic Fields Management' => 'Manajemen Bidang dinamis',
-        'Add new field for object' => 'Tambahkan bidang baru untuk objek',
+        'Include invalid dynamic fields' => '',
         'Filter for Dynamic Fields' => '',
         'Filter for dynamic fields' => '',
+        'Filter field by object type' => '',
+        'Filter field by namespace' => '',
+        'Add new field for object' => 'Tambahkan bidang baru untuk objek',
+        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
+            'Untuk menambahkan bidang baru, pilih satu tipe bidang dari daftar objek, object tersebut mendefinisikan batas dari bidang tersebut dan tidak akan dapat diubah setelah penciptaan bidang tersebut.',
         'New Dynamic Fields' => '',
         'Would you like to benefit from additional dynamic field types? You have full access to the following field types:' =>
             '',
@@ -544,18 +582,17 @@ sub Data {
             '',
         'This feature allows to add (multiple) contacts with data to tickets.' =>
             '',
-        'To add a new field, select the field type from one of the object\'s list, the object defines the boundary of the field and it can\'t be changed after the field creation.' =>
-            'Untuk menambahkan bidang baru, pilih satu tipe bidang dari daftar objek, object tersebut mendefinisikan batas dari bidang tersebut dan tidak akan dapat diubah setelah penciptaan bidang tersebut.',
         'Dynamic Fields List' => 'Daftar bidang dinamis',
         'Dynamic fields per page' => 'Bidang dinamis per halaman',
         'Label' => 'Label',
         'Order' => 'Urutan',
         'Object' => 'Objek',
+        'Copy this field' => '',
         'Delete this field' => 'Hapus bidang ini',
 
         # Template: AdminDynamicFieldAdvanced
         'Import / Export' => '',
-        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by dynamic field management module.' =>
+        'Here you can upload a configuration file to import dynamic fields to your system. The file needs to be in .yml format as exported by the dynamic field management module.' =>
             '',
         'DynamicFields Import' => '',
         'DynamicFields Export' => '',
@@ -579,6 +616,9 @@ sub Data {
         'This field is required and must be numeric.' => 'Bidang ini diwajibkan dan harus numerik',
         'This is the order in which this field will be shown on the screens where is active.' =>
             'Ini adalah urutan dimana bidang akan ditunjukan pada layar dimana ia aktif.',
+        'Namespace' => 'Namespace',
+        'This is the namespace in which this field will be used as prefix with the name.' =>
+            '',
         'Tooltip message:' => '',
         'This is the tooltip message shown inside the customer interface.' =>
             '',
@@ -637,6 +677,8 @@ sub Data {
         'Example' => 'Contoh',
         'You can reference the field with its own field name. You can also refer to other fields, e.g. with \'DynamicField_OtherFieldName\'.' =>
             '',
+        'If a dynamic field with a namespace is to be referenced, the field name needs to be stored in a variable and called.' =>
+            '',
         'Link for preview' => 'Hubungkan untuk preview',
         'If filled in, this URL will be used for a preview which is shown when this link is hovered in ticket zoom. Please note that for this to work, the regular URL field above needs to be filled in, too.' =>
             'Jika diisi, URL ini akan digunakan untuk preview yang ditampilkan bila link ini melayang di zoom tiket. Harap dicatat bahwa untuk bekerja, bidang URL reguler di atas perlu diisi, juga.',
@@ -655,6 +697,9 @@ sub Data {
         'Searchsuffix' => '',
         'Result Limit' => '',
         'Case Sensitive' => '',
+        'Multiple Values' => '',
+        'Activate this option to allow multiple values for this field.' =>
+            '',
 
         # Template: AdminDynamicFieldDateTime
         'Default date difference' => 'Perbedaan tanggal default',
@@ -693,11 +738,28 @@ sub Data {
         'Fields' => 'Bidang',
         'Screens' => '',
 
+        # Template: AdminDynamicFieldReference
+        'Check ReferenceFilter' => '',
+        'Below you can configure filters to restrict the list of referenced objects. The filters compare an attribute of the referenced object either to an attribute of the mask you are currently editing or to a fixed string.' =>
+            '',
+        'Object attribute' => '',
+        'Select an attribute of the referenced object by which the selectable entries will be filtered.' =>
+            '',
+        'Invalid ReferenceFilter_ReferenceObjectAttribute' => '',
+        'matches mask attribute' => '',
+        'Select an attribute of the edit mask to compare the selected attribute of the referenced object against.' =>
+            '',
+        'matches string' => '',
+        'Type a string to compare the selected attribute of the referenced object against.' =>
+            '',
+        'Add Reference Filter' => '',
+
         # Template: AdminDynamicFieldScreen
         'Management of Dynamic Fields <-> Screens' => '',
+        'Filter by object type' => '',
         'Overview' => 'Peninjauan luas',
         'Default Columns Screens' => '',
-        'Add DynamicField' => '',
+        'Add Dynamic Field' => '',
         'You can assign elements to this Screen/Field by dragging the elements with the mouse from the left list to the right list.' =>
             '',
         'Ordering the elements within the list is also possible by drag \'n\' drop.' =>
@@ -719,13 +781,18 @@ sub Data {
         'Assigned Required Elements' => '',
         'Reset' => 'Reset',
 
-        # Template: AdminDynamicFieldText
-        'Number of rows' => 'Jumlah barisan',
-        'Specify the height (in lines) for this field in the edit mode.' =>
-            'Spesifikasikan tinggi (dalam garis) untuk bidang ini pada mode pengubahan.',
-        'Number of cols' => 'Jumlah kolom',
-        'Specify the width (in characters) for this field in the edit mode.' =>
-            'Spesifikasikan lebar (dalam karakter) untuk bidang ini pada mode pengubahan.',
+        # Template: AdminDynamicFieldScript
+        'Expression' => '',
+        'The function which will be evaluated.' => '',
+        'Requirements' => '',
+        'If set, the function will only be evaluated if all chosen attributes are set.' =>
+            '',
+        'Preview Triggers' => '',
+        'If set, the field will be recalculated upon AJAX updates in edit masks.' =>
+            '',
+        'Storage Triggers (Events)' => '',
+        'If set, the field will be recalculated for the following events.' =>
+            '',
         'Check RegEx' => 'Periksa RegEx',
         'Here you can specify a regular expression to check the value. The regex will be executed with the modifiers xms.' =>
             'Disini anda dapat mengspesifikasikan pernyataan reguler untuk memeriksa nilai tersebut. Regex akan di eksekusi dengan xms pengubah.',
@@ -733,6 +800,23 @@ sub Data {
         'Invalid RegEx' => 'RegEx tidak valid',
         'Error Message' => 'Pesan error',
         'Add RegEx' => 'Tambah RegEx',
+
+        # Template: AdminDynamicFieldSet
+        'Auto Indent Code' => '',
+        'Comment/Uncomment Code' => '',
+        'Search & Replace' => '',
+        'Select All' => '',
+        'Full Screen' => '',
+        'The YAML array of included dynamic fields. Syntax: \'--- [{DF: Name},...]\'' =>
+            '',
+
+        # Template: AdminDynamicFieldText
+        'Number of rows' => 'Jumlah barisan',
+        'Specify the height (in lines) for this field in the edit mode.' =>
+            'Spesifikasikan tinggi (dalam garis) untuk bidang ini pada mode pengubahan.',
+        'Number of cols' => 'Jumlah kolom',
+        'Specify the width (in characters) for this field in the edit mode.' =>
+            'Spesifikasikan lebar (dalam karakter) untuk bidang ini pada mode pengubahan.',
 
         # Template: AdminDynamicFieldTitle
         'Template' => 'Template',
@@ -778,8 +862,13 @@ sub Data {
         'Edit Job' => '',
         'Add Job' => '',
         'Run Job' => '',
+        'Include invalid jobs' => '',
         'Filter for Jobs' => '',
         'Filter for jobs' => '',
+        'Here you can upload a configuration file to import generic agents to your system. The file needs to be in .yml format as exported by the generic agent management module.' =>
+            '',
+        'Generic Agents Import' => '',
+        'Generic Agents Export' => '',
         'Last run' => 'Terakhir dijalankan',
         'Run Now!' => 'Jalankan sekarang!`',
         'Delete this task' => 'Hapus tugas ini',
@@ -904,6 +993,12 @@ sub Data {
         'Affected Tickets' => 'Tiket yang terpengaruh',
         'Age' => 'Usia',
 
+        # Template: AdminGenericAgentImportExport
+        'Generic Agents' => '',
+        'Here you can export a configuration file of generic agents to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Generic Agents List' => '',
+
         # Template: AdminGenericInterfaceDebugger
         'GenericInterface Web Service Management' => 'Manajemen generik antarmuka layanan web',
         'Web Service Management' => '',
@@ -935,7 +1030,7 @@ sub Data {
             '',
         'Please provide a unique name for this web service.' => 'Berikan nama yang unik untuk layanan web ini',
         'Error handling module backend' => '',
-        'This OTOBO error handling backend module will be called internally to process the error handling mechanism.' =>
+        'This CareOnCloud ESM error handling backend module will be called internally to process the error handling mechanism.' =>
             '',
         'Processing options' => '',
         'Configure filters to control error handling module execution.' =>
@@ -1027,15 +1122,15 @@ sub Data {
         'The name is typically used to call up an operation of a remote web service.' =>
             'Nama ini biasanya digunakan untuk memanggil operasi dari layanan web jarak jauh ',
         'Invoker backend' => 'Invoker backend',
-        'This OTOBO invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
-            'Modul backend Invoker OTOBO ini akan dipanggil untuk menyiapkan data yang akan dikirim ke sistem remote , dan akan diproses data tanggapannya.',
+        'This CareOnCloud ESM invoker backend module will be called to prepare the data to be sent to the remote system, and to process its response data.' =>
+            'Modul backend Invoker CareOnCloud ESM ini akan dipanggil untuk menyiapkan data yang akan dikirim ke sistem remote , dan akan diproses data tanggapannya.',
         'Mapping for outgoing request data' => 'Pemetaan untuk permintaan data yang keluar`',
         'Configure' => 'Menkonfigurasi`',
-        'The data from the invoker of OTOBO will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
-            'Data dari Invoker dari OTOBO akan diproses oleh pemetaan ini , untuk mengubahnya dengan jenis data sistem remote yang diharapkan.',
+        'The data from the invoker of CareOnCloud ESM will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
+            'Data dari Invoker dari CareOnCloud ESM akan diproses oleh pemetaan ini , untuk mengubahnya dengan jenis data sistem remote yang diharapkan.',
         'Mapping for incoming response data' => 'Pemetaan untuk data respon yang masuk',
-        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of OTOBO expects.' =>
-            'Data respon akan diproses oleh pemetaan ini , untuk mengubahnya dengan jenis data Invoker dari OTOBO sesuai harapan.`',
+        'The response data will be processed by this mapping, to transform it to the kind of data the invoker of CareOnCloud ESM expects.' =>
+            'Data respon akan diproses oleh pemetaan ini , untuk mengubahnya dengan jenis data Invoker dari CareOnCloud ESM sesuai harapan.`',
         'Asynchronous' => 'sinkronis',
         'Condition' => 'Syarat',
         'Edit this event' => '',
@@ -1043,8 +1138,8 @@ sub Data {
         'Add Event' => 'Tambahkan event',
         'To add a new event select the event object and event name and click on the "+" button' =>
             'Untuk menambahkan even baru, pilih objek event dan nama event dan klik tombol "+".',
-        'Asynchronous event triggers are handled by the OTOBO Scheduler Daemon in background (recommended).' =>
-            'Asynchronous ditangani oleh OTOBO Scheduler Daemon di latar belakang ( dianjurkan ) .',
+        'Asynchronous event triggers are handled by the CareOnCloud ESM Scheduler Daemon in background (recommended).' =>
+            'Asynchronous ditangani oleh CareOnCloud ESM Scheduler Daemon di latar belakang ( dianjurkan ) .',
         'Synchronous event triggers would be processed directly during the web request.' =>
             'Sinkron pemicu akan diproses langsung selama permintaan web.',
 
@@ -1131,15 +1226,15 @@ sub Data {
         # Template: AdminGenericInterfaceMappingXSLT
         'General Shortcuts' => '',
         'MacOS Shortcuts' => '',
-        'Comment code' => '',
-        'Uncomment code' => '',
-        'Auto format code' => '',
-        'Expand/Collapse code block' => '',
+        'Comment/Uncomment code' => '',
+        'Auto indent code' => '',
+        'Jump to line' => '',
+        'Autocomplete' => '',
         'Find' => '',
         'Find next' => '',
         'Find previous' => '',
         'Find and replace' => '',
-        'Find and replace all' => '',
+        'Exit full screen' => '',
         'XSLT Mapping' => '',
         'XSLT stylesheet' => '',
         'The entered data is not a valid XSLT style sheet.' => '',
@@ -1178,6 +1273,11 @@ sub Data {
             '',
         'Regular expressions defined here will be applied after the XSLT mapping.' =>
             '',
+        'Enable Extended XSLT Mapping' => '',
+        'Extended XSLT Mapping' => '',
+        'Enable' => '',
+        'Extended XSLT mapping allows for more fine-grained configuration of XSLT mapping. When enabled, the resulting JSON type can be forced by specifying an \'careoncloudXslType\' XML attribute. Possible values for that attribute are \'int\', \'bool\', \'float\', and \'array\'.' =>
+            '',
 
         # Template: AdminGenericInterfaceOperationDefault
         'Add Operation' => '',
@@ -1187,11 +1287,11 @@ sub Data {
         'The name is typically used to call up this web service operation from a remote system.' =>
             'Nama ini biasanya digunakan untuk memanggil operasi layanan web dari sistem remote',
         'Operation backend' => 'Backend operasi',
-        'This OTOBO operation backend module will be called internally to process the request, generating data for the response.' =>
-            'Modul backend operasi OTOBO ini akan dipanggil secara internal untuk memproses permintaan tersebut, menghasilkan data untuk respon .',
+        'This CareOnCloud ESM operation backend module will be called internally to process the request, generating data for the response.' =>
+            'Modul backend operasi CareOnCloud ESM ini akan dipanggil secara internal untuk memproses permintaan tersebut, menghasilkan data untuk respon .',
         'Mapping for incoming request data' => 'Pemetaan untuk permintaan data yang masuk',
-        'The request data will be processed by this mapping, to transform it to the kind of data OTOBO expects.' =>
-            'Data permintaan akan diproses oleh pemetaan ini , untuk mengubahnya dengan jenis OTOBO data tersebut',
+        'The request data will be processed by this mapping, to transform it to the kind of data CareOnCloud ESM expects.' =>
+            'Data permintaan akan diproses oleh pemetaan ini , untuk mengubahnya dengan jenis CareOnCloud ESM data tersebut',
         'Mapping for outgoing response data' => 'Pemetaan untuk mengeluarkan data respon',
         'The response data will be processed by this mapping, to transform it to the kind of data the remote system expects.' =>
             'Data respon akan diproses oleh pemetaan ini , untuk mengubahnya dengan jenis data sistem remote tersebut',
@@ -1209,8 +1309,8 @@ sub Data {
             'Batas operasi ini untuk metode permintaan khusus . Jika tidak ada metode yang dipilih semua permintaan akan diterima .',
         'Maximum message length' => 'Maksimum pesan panjang',
         'This field should be an integer number.' => 'Bidang ini harus bilangan bulat ',
-        'Here you can specify the maximum size (in bytes) of REST messages that OTOBO will process.' =>
-            'Di sini Anda dapat menentukan ukuran maksimum ( dalam byte ) dari pesan SISA dimana OTOBO akan memproses ',
+        'Here you can specify the maximum size (in bytes) of REST messages that CareOnCloud ESM will process.' =>
+            'Di sini Anda dapat menentukan ukuran maksimum ( dalam byte ) dari pesan SISA dimana CareOnCloud ESM akan memproses ',
         'Send Keep-Alive' => 'Kirim keep-alive',
         'This configuration defines if incoming connections should get closed or kept alive.' =>
             'Konfigurasi ini mendefinisikan jika koneksi masuk harus bisa ditutup atau tetap hidup ',
@@ -1219,7 +1319,7 @@ sub Data {
         'Endpoint' => 'Endpoint',
         'URI to indicate specific location for accessing a web service.' =>
             '',
-        'e.g. https://www.otobo.de:10745/api/v1.0 (without trailing backslash)' =>
+        'e.g. https://careoncloud.example.com:10745/api/v1.0 (without trailing backslash)' =>
             '',
         'Timeout' => '',
         'Timeout value for requests.' => '',
@@ -1230,6 +1330,13 @@ sub Data {
         'The user name to be used to access the remote system.' => 'Nama pengguna yang digunakan untuk mengakses sistem remote .',
         'BasicAuth Password' => '',
         'The password for the privileged user.' => 'Password untuk pengguna istimewa ',
+        'Kerberos User' => '',
+        'Kerberos keytab file' => '',
+        'The Kerberos keytab file for the privileged user.' => '',
+        'OAuth2 Functional Account' => '',
+        'Select the Functional-Account to use for OAuth2 authentication. Functional-Accounts can be configured here:' =>
+            '',
+        'OAuth2 Functional Accounts' => '',
         'Use Proxy Options' => '',
         'Show or hide Proxy options to connect to the remote system.' => '',
         'Proxy Server' => 'Server proxi',
@@ -1246,24 +1353,27 @@ sub Data {
         'Client Certificate' => '',
         'The full path and name of the SSL client certificate file (must be in PEM, DER or PKCS#12 format).' =>
             '',
-        'e.g. /opt/otobo/var/certificates/SOAP/certificate.pem' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/certificate.pem' => '',
         'Client Certificate Key' => '',
         'The full path and name of the SSL client certificate key file (if not already included in certificate file).' =>
             '',
-        'e.g. /opt/otobo/var/certificates/SOAP/key.pem' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/key.pem' => '',
         'Client Certificate Key Password' => '',
         'The password to open the SSL certificate if the key is encrypted.' =>
             '',
         'Certification Authority (CA) Certificate' => '',
         'The full path and name of the certification authority certificate file that validates SSL certificate.' =>
             'Path lengkap dan nama berkas otoritas sertifikat yang mengesahkan sertifikat SSL.',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA/ca.pem' => 'Misalnya  /opt/otobo/var/certificates/SOAP/CA/ca.pem',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA/ca.pem' => 'Misalnya  /opt/careoncloud/var/certificates/SOAP/CA/ca.pem',
         'Certification Authority (CA) Directory' => 'Buku alamat otoritas sertifikasi (CA)',
         'The full path of the certification authority directory where the CA certificates are stored in the file system.' =>
             'Path lengkap direktori otoritas sertifikasi di mana sertifikat CA disimpan dalam berkas sistem ',
-        'e.g. /opt/otobo/var/certificates/SOAP/CA' => 'Misalnya /opt/otobo/var/certificates/SOAP/CA',
-        'SSL hostname verification.' => '',
+        'e.g. /opt/careoncloud/var/certificates/SOAP/CA' => 'Misalnya /opt/careoncloud/var/certificates/SOAP/CA',
+        'SSL hostname verification' => '',
         'Abort the request if the hostname cannot be verified. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
+            '',
+        'SSL verify mode' => '',
+        'Abort the request if SSL verification fails. Disabling skips SSL verification entirely. Disable with caution! Skipping verification is a security risk! Mainly for testing purposes in case of self-signed SSL certificates, or if you know what you are doing.' =>
             '',
         'Controller mapping for Invoker' => 'Kontroler pemetaan untuk invoker',
         'The controller that the invoker should send requests to. Variables marked by a \':\' will get replaced by the data value and passed along with the request. (e.g. /Ticket/:TicketID?UserLogin=:UserLogin&Password=:Password).' =>
@@ -1273,6 +1383,9 @@ sub Data {
             'Perintah HTTP tertentu untuk menggunakan permintaan dengan Invoker ini ( opsional ) ',
         'Default command' => 'Perintah default',
         'The default HTTP command to use for the requests.' => 'Perintah default HTTP digunakan untuk permintaan .',
+        'Use multipart/form-data:' => '',
+        'Select requesters to send attachments as binary data with content type \'multipart/form-data\' instead of the default Base64 encoded inline JSON.' =>
+            '',
         'Additional request headers (all invokers)' => '',
         'Additional request headers (invoker specific)' => '',
         'Remove all headers for this invoker' => '',
@@ -1305,9 +1418,8 @@ sub Data {
         'Usually .Net web services use "/" as separator.' => '',
         'SOAPAction free text' => '',
         'Text to be used to as SOAPAction.' => '',
-        'Namespace' => 'Namespace',
         'URI to give SOAP methods a context, reducing ambiguities.' => 'URI memberikan metode SOAP konteks, mengurangi ambiguitas.',
-        'e.g. urn:otobo-com:soap:functions or http://www.otobo.de/GenericInterface/actions' =>
+        'e.g. urn:careoncloud-com:soap:functions or http://careoncloud.example.com/GenericInterface/actions' =>
             '',
         'Request name scheme' => 'Permintaan nama skema',
         'Select how SOAP request function wrapper should be constructed.' =>
@@ -1325,8 +1437,8 @@ sub Data {
         'Select how SOAP response function wrapper should be constructed.' =>
             'Pilih bagaimana fungsi respon sampul SOAP harus dibangun',
         'Response name free text' => 'Nama respon teks bebas',
-        'Here you can specify the maximum size (in bytes) of SOAP messages that OTOBO will process.' =>
-            'Di sini anda dapat menentukan ukuran maksimum (dalam byte) dari pesanan SOAP bahwa OTOBO akan diproses',
+        'Here you can specify the maximum size (in bytes) of SOAP messages that CareOnCloud ESM will process.' =>
+            'Di sini anda dapat menentukan ukuran maksimum (dalam byte) dari pesanan SOAP bahwa CareOnCloud ESM akan diproses',
         'Encoding' => 'Menyandi',
         'The character encoding for the SOAP message contents.' => 'Karakter pengkodean untuk isi pesan SOAP',
         'e.g. utf-8, latin1, iso-8859-1, cp1250, Etc.' => '',
@@ -1339,6 +1451,7 @@ sub Data {
         # Template: AdminGenericInterfaceWebservice
         'Add Web Service' => '',
         'Edit Web Service' => '',
+        'Include invalid webservices' => '',
         'Clone Web Service' => '',
         'The name must be unique.' => 'Nama harus ditetapkan sebagai unik',
         'Clone' => 'Klon',
@@ -1365,10 +1478,10 @@ sub Data {
         'Provider transport' => 'Transpor penyedia',
         'Requester transport' => 'Transpor pemohon',
         'Debug threshold' => 'Permulaan eror',
-        'In provider mode, OTOBO offers web services which are used by remote systems.' =>
-            'Dalam mode penyedia, OTOBO menawarkan layanan web yang digunakan oleh sistem remote.',
-        'In requester mode, OTOBO uses web services of remote systems.' =>
-            'Dalam mode pemohon, OTOBO menggunakan layanan web dari sistem remote.',
+        'In provider mode, CareOnCloud ESM offers web services which are used by remote systems.' =>
+            'Dalam mode penyedia, CareOnCloud ESM menawarkan layanan web yang digunakan oleh sistem remote.',
+        'In requester mode, CareOnCloud ESM uses web services of remote systems.' =>
+            'Dalam mode pemohon, CareOnCloud ESM menggunakan layanan web dari sistem remote.',
         'Network transport' => 'Jaringan transpor',
         'Error Handling Modules' => '',
         'Error handling modules are used to react in case of errors during the communication. Those modules are executed in a specific order, which can be changed by drag and drop.' =>
@@ -1405,11 +1518,61 @@ sub Data {
         'Group Management' => 'Kelompok managemen',
         'Add Group' => 'Tambah kelompok',
         'Edit Group' => 'Ubah kelompok',
+        'Include invalid groups' => '',
         'The admin group is to get in the admin area and the stats group to get stats area.' =>
             'Kelompok admin adalah untuk mendapatkan di admin area dan kelompok statistik untuk mendapatkan daerah statistik.',
         'Create new groups to handle access permissions for different groups of agent (e. g. purchasing department, support department, sales department, ...). ' =>
             'Membuat grup baru untuk menangani akses berbagai kelompok agen (misalnya Departemen pembelian, departemen dukungan, departemen penjualan, ...).',
         'It\'s useful for ASP solutions. ' => 'Berguna untuk solusi ASP',
+        'Here you can upload a configuration file to import groups to your system. The file needs to be in .yml format as exported by the group management module.' =>
+            '',
+        'Groups Import' => '',
+        'Groups Export' => '',
+
+        # Template: AdminGroupImportExport
+        'Here you can export a configuration file of groups to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Groups List' => '',
+
+        # Template: AdminImportExport
+        'Import/Export Management' => 'Manajamen Impor/Ekspor',
+        'Add template' => 'Tambahkan templat',
+        'Create a template to import and export object information.' => 'Buat sebuah template untuk mengimpor dan ekspor obyek informasi.',
+        'To use this module, you need to install ITSMConfigurationManagement or any other package that provides back end for objects to be imported and exported.' =>
+            '',
+        'Number' => 'Nomor',
+        'Format' => 'Format',
+        'Start Import' => 'Mulai Impor',
+        'Start Export' => 'Mulai Ekspor',
+        'Delete this template' => '',
+        'Step 1 of 5 - Edit common information' => '',
+        'Name is required!' => 'Nama dibutuhkan!',
+        'Object is required!' => 'Obyek dibutuhkan!',
+        'Format is required!' => 'Format dibutuhkan!',
+        'Next' => 'Lanjut',
+        'Step 2 of 5 - Edit object information' => '',
+        'Back' => 'Kembali',
+        'Step 3 of 5 - Edit format information' => '',
+        'is required!' => 'dibutuhkan!',
+        'Step 4 of 5 - Edit mapping information' => '',
+        'No map elements found.' => 'Tidak ditemukan elemen peta.',
+        'Up' => 'Atas',
+        'Down' => 'Bawah',
+        'Add Mapping Element' => 'Tambah Elemen Pemetaan',
+        'Step 5 of 5 - Edit search information' => '',
+        'Template Name' => 'Nama template',
+        'Restrict export per search' => 'Batas ekspor per pencarian',
+        'Finish' => 'Selesei',
+        'Import information' => 'Informasi impor ',
+        'Source File' => 'Berkas Sumber',
+        'Import summary for %s' => '',
+        'Records' => 'Data',
+        'Success' => 'Berhasil',
+        'Failed' => 'Gagal',
+        'Duplicate names' => 'Nama duplikat',
+        'Last processed line number of import file' => 'Nomor baris terakhir berkas impor yang diproses',
+        'Ok' => 'Ok',
+        'Do you really want to delete this template item?' => '',
 
         # Template: AdminLog
         'System Log' => 'Sistem logaritma',
@@ -1424,11 +1587,12 @@ sub Data {
         'Add Mail Account' => 'Tambahkan akun surat',
         'Edit Mail Account for host' => '',
         'and user account' => '',
+        'Include invalid Mail Accounts' => '',
         'Filter for Mail Accounts' => '',
         'Filter for mail accounts' => '',
         'All incoming emails with one account will be dispatched in the selected queue.' =>
             '',
-        'If your account is marked as trusted, the X-OTOBO headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
+        'If your account is marked as trusted, the X-CareOnCloud ESM headers already existing at arrival time (for priority etc.) will be kept and used, for example in PostMaster filters.' =>
             '',
         'Outgoing email can be configured via the Sendmail* settings in %s.' =>
             '',
@@ -1437,6 +1601,9 @@ sub Data {
         'Delete account' => 'Hapuskan akun',
         'Fetch mail' => 'Menarik surat',
         'Do you really want to delete this mail account?' => '',
+        'OIDC Account' => '',
+        'Select the' => '',
+        'Account to use for OAuth2 authentication.' => '',
         'Example: mail.example.com' => 'Contoh: surat.contoh.com',
         'IMAP Folder' => 'Berkas IMAP',
         'Only modify this if you need to fetch mail from a different folder than INBOX.' =>
@@ -1459,6 +1626,7 @@ sub Data {
 
         # Template: AdminNotificationEvent
         'Ticket Notification Management' => 'Notifikasi manajamen tiket',
+        'Include invalid notifications' => '',
         'Here you can upload a configuration file to import Ticket Notifications to your system. The file needs to be in .yml format as exported by the Ticket Notification module.' =>
             'Di sini Anda dapat memuat file konfigurasi untuk mengimpor Pemberitahuan Tiket ke sistem anda. File harus dalam format .yml seperti yang diekspor oleh modul Pemberitahuan Tiket.',
         'Here you can choose which events will trigger this notification. An additional ticket filter can be applied below to only send for ticket with certain criteria.' =>
@@ -1497,15 +1665,125 @@ sub Data {
 
         # Template: AdminNotificationEventTransportEmailSettings
         'Use comma or semicolon to separate email addresses.' => '',
-        'You can use OTOBO-tags like <OTOBO_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+        'You can use CareOnCloud ESM-tags like <CareOnCloud_TICKET_DynamicField_...> to insert values from the current ticket.' =>
+            '',
+
+        # Template: AdminOAuthTokenStore
+        'OAuth2 Token Management (OIDC)' => '',
+        'OpenID Connect Functional OAuth2 Account Management' => '',
+        'Add Account' => '',
+        'Edit Account' => '',
+        'About OIDC Functional Accounts' => '',
+        'This page displays an overview of configured functional OAuth accounts and their corresponding token status.' =>
+            '',
+        'You can test your configuration with a click on the \'Renew\' button, which will try to fetch or refresh a new token.' =>
+            '',
+        'OIDC profiles to link your OIDC functional account to can be created here:' =>
+            '',
+        'OAuth2 OIDC profiles' => '',
+        'Delete Account' => '',
+        'OIDC Functional Accounts and their active OAuth2 Tokens' => '',
+        'Since you do not have any OIDC provider profiles configured, you cannot add an OAuth2 functional account. You have to first configure at least one OIDC provider profile here:' =>
+            '',
+        'OIDC profiles' => '',
+        'There are no OAuth2 accounts defined.' => '',
+        'Account Name' => '',
+        'Profile Name' => '',
+        'Flow' => '',
+        'Has Token?' => '',
+        'Refresh Token Expires' => '',
+        'Renew Token(s)' => '',
+        'Renew' => '',
+        'Add Invoker Account' => '',
+        'Edit Invoker Account' => '',
+        'The unique name for this account.' => '',
+        'OIDC Profile' => '',
+        'The OpenID Connect profile to link to this functional account. OIDC profiles can be configured here:' =>
+            '',
+        'Grant Type' => '',
+        'The OAuth2 grant_type to use for acquiring tokens for this account.' =>
+            '',
+        'Selecting \'authorization_code\' will redirect you to your OpenID Connect provider\'s login page to validate your account once you click \'Save\'.' =>
+            '',
+        'The username if grant type is \'password\'.' => '',
+        'The password to use if grant type is \'password\'.' => '',
+        'OAuth2 Scopes' => '',
+        'Space separate list of OAuth2 scopes to use. Usual values include openid, email, profile, and roles.' =>
+            '',
+        'Advanced Invoker Settings' => '',
+        'Resources' => '',
+        'Optional (space separated list) for the resource parameter if required. Leave empty unless instructed otherwise.' =>
+            '',
+        'Resource Parameter Name' => '',
+        'Name of the resource parameter to use. Defaults to \'resource\'. Do not change unless instructed.' =>
+            '',
+        'Token Type' => '',
+        'The token type to use for external API calls. Usually \'access_token\'.' =>
+            '',
+
+        # Template: AdminOIDCProfiles
+        'OpenID Connect Profiles' => '',
+        'OpenID Connect Provider Profiles Management' => '',
+        'Add Profile' => '',
+        'Edit Profile' => '',
+        'About OIDC Provider Profiles' => '',
+        'This page displays an overview of configured OIDC provider profiles.' =>
+            '',
+        'You can connect OIDC profiles with a OIDC functional account' =>
+            '',
+        'here' => '',
+        'Delete Profile' => '',
+        'OpenID Connect Provider Profiles for Outgoing Web Service Calls (GenericInterface Invoker)' =>
+            '',
+        'There are no OIDC provider profiles defined.' => '',
+        'Client ID' => '',
+        'Provider' => '',
+        'Add OIDC Provider Profile' => '',
+        'Edit OIDC Provider Profile' => '',
+        'Since you are using OIDC as authentication module, these values have been pre-populated with the OIDC provider configuration used for login.' =>
+            '',
+        'The unique name for this profile.' => '',
+        'Metadata URL.' => '',
+        'The well-known provider metadata URL.' => '',
+        'The client ID of your OAuth2 application.' => '',
+        'Client Secret' => '',
+        'The client secret of your OAuth2 application.' => '',
+        'Time in seconds for caching provider data.' => '',
+        'SSL Options (Optional)' => '',
+        'SSL Certificate' => '',
+        'SSL certificate path.' => '',
+        'SSL Certificate Key' => '',
+        'SSL certificate private key path.' => '',
+        'SSL Password' => '',
+        'The SSL password.' => '',
+        'SSL CA File' => '',
+        'SSL certificate authority file path.' => '',
+        'SSL CA Directory' => '',
+        'SSL certificate authority directory path.' => '',
+        'SSL Verify Hostname' => '',
+        'Enable or disable SSL hostname verification. Only disable for debugging purposes!' =>
+            '',
+        'SSL Verify Mode' => '',
+        'Enable or disable SSL verification. Only disable for debugging purposes!' =>
+            '',
+        'Misc Options (Optional)' => '',
+        'Use Nonce' => '',
+        'Rand Length' => '',
+        'Random string length used for state and nonce parameters. Default is \'22\'.' =>
+            '',
+        'Rand TTL' => '',
+        'Time-to-live for state and nonce in seconds. Default is \'300\' (5 min).' =>
+            '',
+        'Leeway' => '',
+        'Time drift allowance between servers to be allowed. Default \'2\' seconds.' =>
             '',
 
         # Template: AdminPGP
         'PGP Management' => 'Manajemen PGP',
         'Add PGP Key' => 'Tambahkan kunci PGP',
         'PGP support is disabled' => 'Dukungan PGP dinonaktifkan',
-        'To be able to use PGP in OTOBO, you have to enable it first.' =>
-            'Untuk dapat menggunakan PGP di OTOBO, Anda harus mengaktifkannya terlebih dahulu.',
+        'To be able to use PGP in CareOnCloud ESM, you have to enable it first.' =>
+            'Untuk dapat menggunakan PGP di CareOnCloud ESM, Anda harus mengaktifkannya terlebih dahulu.',
         'Enable PGP support' => 'Aktifkan dukungan PGP',
         'Faulty PGP configuration' => 'Konfigurasi PGP rusak',
         'PGP support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -1530,21 +1808,21 @@ sub Data {
         'Do you really want to reinstall this package? Any manual changes will be lost.' =>
             'Apakah anda ingin menginstal ulang paket ini? Semua perubahan manual akan hilang.',
         'Go to updating instructions' => '',
-        'Go to the OTOBO customer portal' => '',
+        'Go to the CareOnCloud ESM customer portal' => '',
         'package information' => 'informasi paket',
-        'Package installation requires a patch level update of OTOBO.' =>
+        'Package installation requires a patch level update of CareOnCloud ESM.' =>
             '',
-        'Package update requires a patch level update of OTOBO.' => '',
-        'Please note that your installed OTOBO version is %s.' => '',
-        'To install this package, you need to update OTOBO to version %s or newer.' =>
+        'Package update requires a patch level update of CareOnCloud ESM.' => '',
+        'Please note that your installed CareOnCloud ESM version is %s.' => '',
+        'To install this package, you need to update CareOnCloud ESM to version %s or newer.' =>
             '',
-        'This package can only be installed on OTOBO version %s or older.' =>
+        'This package can only be installed on CareOnCloud ESM version %s or older.' =>
             '',
-        'This package can only be installed on OTOBO version %s or newer.' =>
+        'This package can only be installed on CareOnCloud ESM version %s or newer.' =>
             '',
-        'Why should I keep OTOBO up to date?' => 'Kenapa Saya harus membuat OTOBO selalu terbarukan?',
+        'Why should I keep CareOnCloud ESM up to date?' => 'Kenapa Saya harus membuat CareOnCloud ESM selalu terbarukan?',
         'You will receive updates about relevant security issues.' => 'Anda akan menerima pembaruan terkait isu keamanan yang relevan.',
-        'You will receive updates for all other relevant OTOBO issues.' =>
+        'You will receive updates for all other relevant CareOnCloud ESM issues.' =>
             '',
         'How can I do a patch level update if I don’t have a contract?' =>
             '',
@@ -1561,7 +1839,7 @@ sub Data {
         'Install' => 'Instal',
         'Update repository information' => 'Memperbarui informasi repositori',
         'Cloud services are currently disabled.' => 'Layanan cloud saat ini di non-aktifkan',
-        'OTOBO Verify can not continue!' => '',
+        'CareOnCloud ESM Verify can not continue!' => '',
         'Enable cloud services' => 'Mengaktifkan layanan cloud',
         'Update all installed packages' => '',
         'Online Repository' => 'Repository secara online',
@@ -1569,7 +1847,7 @@ sub Data {
         'Action' => 'Tindakan',
         'Module documentation' => 'Modul dokumentasi',
         'Local Repository' => 'Lokal repositori',
-        'This package is verified by OTOBOverify (tm)' => 'Paket ini telah di verifikasi oleh OTOBOverify (tm)',
+        'This package is verified by CareOnCloud Verify (tm)' => 'Paket ini telah di verifikasi oleh CareOnCloud Verify (tm)',
         'Uninstall' => 'Uninstal',
         'Package not correctly deployed! Please reinstall the package.' =>
             'Paket tidak disebarkan dengan benar! Silahkan untuk menginstal ulang paket ini.',
@@ -1619,8 +1897,13 @@ sub Data {
         'PostMaster Filter Management' => 'Manajemen PostMaster Filter',
         'Add PostMaster Filter' => 'Tambah penyaring PostMaster',
         'Edit PostMaster Filter' => 'Ubah penyaring PostMaster',
+        'Include invalid PostMaster Filters' => '',
         'Filter for PostMaster Filters' => '',
         'Filter for PostMaster filters' => '',
+        'Search through PostMaster filters' => '',
+        'Search all filter attributes' => '',
+        'Limit search to selected header fields' => '',
+        'Limit search to selected set fields' => '',
         'To dispatch or filter incoming emails based on email headers. Matching using Regular Expressions is also possible.' =>
             'Untuk mengirimkan atau menyaring email yang masuk berdasarkan header email. Kemungkinan dapat menyesuaikan dengan menggunakan Regular Expressions ',
         'If you want to match only the email address, use EMAILADDRESS:info@example.com in From, To or Cc.' =>
@@ -1650,6 +1933,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Priority Management' => 'Prioritas manajemen',
         'Add Priority' => 'Tambah prioritas',
         'Edit Priority' => 'Ubah prioritas',
+        'Include invalid priorities' => '',
         'Filter for Priorities' => '',
         'Filter for priorities' => '',
         'This priority is present in a SysConfig setting, confirmation for updating settings to point to the new priority is needed!' =>
@@ -1658,12 +1942,13 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
 
         # Template: AdminProcessManagement
         'Process Management' => 'Proses manajemen',
+        'Include inactive processes' => '',
         'Filter for Processes' => 'Menyaring proses',
         'Filter for processes' => '',
         'Create New Process' => 'Membuat proses baru',
         'Deploy All Processes' => 'Menyebarkan semua proses',
-        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by process management module.' =>
-            'Disini anda bisa memuat naik file konfigurasi untuk mengimport sebuah proses kepada sistem anda. File diperlukan didalam format .yml sebagai expor oleh modul proses manajemen',
+        'Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by the process management module.' =>
+            '',
         'Upload process configuration' => 'Memuat naik proses konfigurasi',
         'Import process configuration' => 'Impor proses konfigurasi',
         'Ready2Adopt Processes' => '',
@@ -1687,6 +1972,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
             'Perhatikan, mengubah aktivitas dapat mempengaruhi proses berikutnya',
         'Activity' => 'Aktivitas',
         'Activity Name' => 'Nama activitas',
+        'Global' => '',
         'Activity Dialogs' => 'Dialog activitas',
         'You can assign Activity Dialogs to this Activity by dragging the elements with the mouse from the left list to the right list.' =>
             'Anda dapat menetapkan Kegiatan Dialog untuk Kegiatan ini dengan menyeret elemen dengan mouse dari daftar kiri ke daftar yang benar.',
@@ -1713,6 +1999,10 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'The selected required lock does not exist.' => 'Kunci yang diperlukan tidak ada.',
         'Submit Advice Text' => 'Menghantar saran teks',
         'Submit Button Text' => 'Menghantar tombol teks',
+        'Input Field Definition' => '',
+        'Direct submit' => '',
+        'This property won\'t take effect because there are fields configured as visible.' =>
+            '',
         'You can assign Fields to this Activity Dialog by dragging the elements with the mouse from the left list to the right list.' =>
             'Anda dapat menetapkan bidang untuk Kegiatan Dialog dengan cara menyeret elemen menggunakan mouse dari daftar yang kiri ke daftar yang kanan',
         'Filter available fields' => 'Penyaringan bidang tersedia',
@@ -1720,6 +2010,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Assigned Fields' => 'Fields ditugaskan',
         'Communication Channel' => '',
         'Is visible for customer' => '',
+        'Standard Templates' => '',
         'Display' => 'Tampilkan',
 
         # Template: AdminProcessManagementPath
@@ -1797,10 +2088,43 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Transition actions are not being used in this process.' => 'Aksi transisi tidak dapat digunakan didalam proses',
 
         # Template: AdminProcessManagementTransition
-        'Please note that changing this transition will affect the following processes' =>
-            'Perlu diingat bahwa perubahan transisi ini akan mempengaruhi proses berikut',
+        'Please note that changing this transition will affect the following processes:' =>
+            '',
         'Transition' => 'Transisi',
         'Transition Name' => 'Nama transisi',
+        'Transition Reference for "Fields" Settings' => '',
+        'Name of the ticket attribute that should be used for validation. In general, all attributes returned by the TicketGet function can be used.' =>
+            '',
+        'There are several possibilities to validate whether this transition is valid.' =>
+            '',
+        'Exact match' => 'Benar-benar cocok',
+        'Value must exactly match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must exactly match the string specified in "Value".' =>
+            '',
+        'Exact match - negated' => '',
+        'Value must not match the string. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the string specified in "Value".' =>
+            '',
+        'Regular Expression' => '',
+        'Value must contain a matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), at least one value must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - all' => '',
+        'In an array (for example: multi-value dynamic field or dynamic field of type "Set"), all values must match the regular expression specified in "Value".' =>
+            '',
+        'Regular Expression - negated' => '',
+        'Value must contain a non-matching regular expression. In an array (for example: multi-value dynamic field or dynamic field of type "Set"), no value may match the regular expression specified in "Value".' =>
+            '',
+        'Transition validation module' => 'Modul transisi valid',
+        '"Name" is currently irrelevant, "Value" must contain the path to the module, usually Kernel::System::Process::Transition::<TA_Name>.' =>
+            '',
+        'Value must always contain a string or a regular expression used for comparison.' =>
+            '',
+        'Examples' => '',
+        'The process ticket should move to the next process step as soon as a status containing "closed" in its name is set. Therefore, configure Name="State", Type="Regular Expression" and Value="closed" (or the long form "^.*closed.*$").' =>
+            '',
+        'If a dynamic field should be used, configure Name="DynamicField_<FieldName>". To access a field inside a dynamic field of type "Set", the following syntax can be used: ' =>
+            '',
 
         # Template: AdminProcessManagementTransitionAction
         'Please note that changing this transition action will affect the following processes' =>
@@ -1816,8 +2140,13 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Queue Management' => '',
         'Add Queue' => 'Tambahkan Queue',
         'Edit Queue' => 'Mengubah Queue',
+        'Include invalid queues' => '',
         'Filter for Queues' => 'Filter untuk Queues',
         'Filter for queues' => '',
+        'Here you can upload a configuration file to import queues to your system. The file needs to be in .yml format as exported by the queue management module.' =>
+            '',
+        'Queues Import' => '',
+        'Queues Export' => '',
         'A queue with this name already exists!' => 'Nama queue berikut sudah ada',
         'This queue is present in a SysConfig setting, confirmation for updating settings to point to the new queue is needed!' =>
             '',
@@ -1844,6 +2173,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
             'Jika tiket ditutup dan pelanggan mengirimkan tindakan lanjut tiket akan terkunci untuk pemilik lama.',
         'System address' => 'Alamat sistem',
         'Will be the sender address of this queue for email answers.' => 'Akan menjadi alamat pengirim antrian ini untuk jawaban email.',
+        'Is defined in Admin > Email Addresses.' => '',
         'Default sign key' => 'kunci tanda ',
         'To use a sign key, PGP keys or S/MIME certificates need to be added with identifiers for selected queue system address.' =>
             '',
@@ -1851,6 +2181,10 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'The salutation for email answers.' => 'Penghargaan untuk penjawab email',
         'Signature' => 'Tanda tangan',
         'The signature for email answers.' => 'Tandatangan untuk penjawab email',
+        'The business calendar for unlock time and the escalation times. No selection means that the default calendar is used.' =>
+            '',
+        'Is defined in Admin > SystemConfiguration > Core > Time (default calendar) or in calendars 1 through 9.' =>
+            '',
         'This queue is used in the following config settings:' => '',
 
         # Template: AdminQueueAutoResponse
@@ -1862,38 +2196,52 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Show All Queues' => '',
         'Auto Responses' => 'Respon otomatis',
 
+        # Template: AdminQueueImportExport
+        'Here you can export a configuration file of queues to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Queues List' => '',
+
         # Template: AdminQueueTemplates
         'Manage Template-Queue Relations' => 'Mengelola hubungan Template-Queue',
         'Filter for Templates' => 'Filter untuk sebuah klise',
         'Filter for templates' => '',
+        'Here you can upload a configuration file to import queue-template relations to your system. The file needs to be in .yml format as exported by the queue-template management module.' =>
+            '',
+        'Queue-Templates Import' => '',
+        'Queue-Templates Export' => '',
         'Templates' => 'Klise',
+
+        # Template: AdminQueueTemplatesImportExport
+        'Queue-Template Relations' => '',
+        'Here you can export a configuration file of queue-template relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
 
         # Template: AdminRegistration
         'System Registration Management' => 'Manajemen sistem registrasi',
         'Edit System Registration' => '',
         'System Registration Overview' => '',
         'Register System' => '',
-        'Validate OTOBO-ID' => '',
+        'Validate CareOnCloud ID' => '',
         'Deregister System' => 'Sistem deregister',
         'Edit details' => 'Mengubah rincian',
         'Show transmitted data' => 'Tampilkan data dikirimkan',
         'Deregister system' => 'Sistem deregister',
         'Overview of registered systems' => 'Ikhtisar sistem yang terdaftar',
-        'This system is registered with OTOBO Team.' => '',
+        'This system is registered with CareOnCloud ESM Team.' => '',
         'System type' => 'Jenis sistem',
         'Unique ID' => 'Unique ID',
         'Last communication with registration server' => 'Komunikasi terakhir dengan server registrasi',
         'System Registration not Possible' => '',
-        'Please note that you can\'t register your system if OTOBO Daemon is not running correctly!' =>
-            'Perlu diingat bahwa anda tidak dapat mendaftarkan sistem anda apabila OTOBO Daemon tidak berjalan dengan baik',
+        'Please note that you can\'t register your system if CareOnCloud ESM Daemon is not running correctly!' =>
+            'Perlu diingat bahwa anda tidak dapat mendaftarkan sistem anda apabila CareOnCloud ESM Daemon tidak berjalan dengan baik',
         'Instructions' => 'Instruksi',
         'System Deregistration not Possible' => '',
-        'OTOBO-ID Login' => 'OTOBO-ID masuk',
-        'System registration is a service of OTOBO Team, which provides a lot of advantages!' =>
+        'CareOnCloud ID Login' => 'CareOnCloud ID masuk',
+        'System registration is a service of CareOnCloud ESM Team, which provides a lot of advantages!' =>
             '',
         'Read more' => 'Baca lagi',
-        'You need to log in with your OTOBO-ID to register your system.' =>
-            'Anda perlu masuk dengan menggunakan OTOBO-ID anda ke dalam sistem pendaftaran anda',
+        'You need to log in with your CareOnCloud ID to register your system.' =>
+            'Anda perlu masuk dengan menggunakan CareOnCloud ID anda ke dalam sistem pendaftaran anda',
         'Your OTOBO-ID is the email address you used to sign up on the OTOBO.com webpage.' =>
             'OTOBO-ID anda merupakan alamat email anda yang digunakan saat pendaftaran di layanan web OTOBO.com',
         'Data Protection' => 'Perlindungan data',
@@ -1904,45 +2252,44 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'This is only the beginning!' => 'Ini hanya permulaan!',
         'We will inform you about our new services and offerings soon.' =>
             'Kami akan memberitahu anda tentang layanan baru kami dan akan mempersembahkannya dengan segera.',
-        'Can I use OTOBO without being registered?' => 'Apakah saya bisa menggunakan OTOBO tanpa melakukan pendaftaran?',
+        'Can I use CareOnCloud ESM without being registered?' => 'Apakah saya bisa menggunakan CareOnCloud ESM tanpa melakukan pendaftaran?',
         'System registration is optional.' => 'Sistem pendaftaran adalah pilihan',
-        'You can download and use OTOBO without being registered.' => 'Anda bisa memuat naik dan menggunakan OTOBO tanpa harus daftar',
+        'You can download and use CareOnCloud ESM without being registered.' => 'Anda bisa memuat naik dan menggunakan CareOnCloud ESM tanpa harus daftar',
         'Is it possible to deregister?' => 'Apakah mungkin untuk melakukan deregister?',
         'You can deregister at any time.' => 'Anda bisa melakukan deregister kapan saja',
         'Which data is transfered when registering?' => 'Data manakah yang ditransfer saat mendaftar?',
-        'A registered system sends the following data to OTOBO Team:' => '',
-        'Fully Qualified Domain Name (FQDN), OTOBO version, Database, Operating System and Perl version.' =>
-            'Nama Fully Qualified Domain (FQDN), versi OTOBO, Database, Sistem Operasi dan versi Perl.',
+        'A registered system sends the following data to CareOnCloud ESM Team:' => '',
+        'Fully Qualified Domain Name (FQDN), CareOnCloud ESM version, Database, Operating System and Perl version.' =>
+            'Nama Fully Qualified Domain (FQDN), versi CareOnCloud ESM, Database, Sistem Operasi dan versi Perl.',
         'Why do I have to provide a description for my system?' => 'Mengapa saya harus memberikan keterangan untuk sistem saya?',
         'The description of the system is optional.' => 'Deskripsi dari sistem ini adalah opsional.',
         'The description and system type you specify help you to identify and manage the details of your registered systems.' =>
             'Deskripsi dan jenis sistem yang anda tentukan untuk membantu anda mengidentifikasi dan mengelola rincian sistem yang terdaftar.',
-        'How often does my OTOBO system send updates?' => 'Seberapa sering sistem OTOBO saya mengirim pembaruan?',
+        'How often does my CareOnCloud ESM system send updates?' => 'Seberapa sering sistem CareOnCloud ESM saya mengirim pembaruan?',
         'Your system will send updates to the registration server at regular intervals.' =>
             'Sistem anda akan mengirimkan pembaruan ke server pendaftaran secara berkala.',
         'Typically this would be around once every three days.' => 'Biasanya ini akan menjadi sekitar tiga hari sekali.',
         'If you deregister your system, you will lose these benefits:' =>
             'Jika anda melakukan deregister sistem anda, maka anda akan kehilangan manfaat berikut:',
-        'You need to log in with your OTOBO-ID to deregister your system.' =>
-            'Anda perlu masuk dengan menggunakan ID OTOBO anda ke dalam sistem deregister anda',
-        'OTOBO-ID' => 'ID OTOBO',
-        'You don\'t have an OTOBO-ID yet?' => 'Anda tidak mempunyai ID OTOBO?',
+        'You need to log in with your CareOnCloud ID to deregister your system.' =>
+            'Anda perlu masuk dengan menggunakan ID CareOnCloud ESM anda ke dalam sistem deregister anda',
+        'CareOnCloud ID' => 'ID CareOnCloud ESM',
+        'You don\'t have a CareOnCloud ID yet?' => 'Anda tidak mempunyai ID CareOnCloud ESM?',
         'Sign up now' => 'Daftarkan sekarang',
         'Forgot your password?' => 'Anda lupa password?',
         'Retrieve a new one' => 'Mengambil yang baru',
-        'Next' => 'Lanjut',
-        'This data will be frequently transferred to OTOBO Team when you register this system.' =>
+        'This data will be frequently transferred to CareOnCloud ESM Team when you register this system.' =>
             '',
         'Attribute' => 'Atribut',
         'FQDN' => 'FQDN',
-        'OTOBO Version' => 'Versi OTOBO',
+        'CareOnCloud ESM Version' => 'Versi CareOnCloud ESM',
         'Operating System' => 'Sistem operasi',
         'Perl Version' => 'Versi Perl',
         'Optional description of this system.' => 'Deskripsi opsional sistem ini',
-        'This will allow the system to send additional support data information to OTOBO Team.' =>
+        'This will allow the system to send additional support data information to CareOnCloud ESM Team.' =>
             '',
         'Register' => 'Daftar',
-        'Continuing with this step will deregister the system from OTOBO Team.' =>
+        'Continuing with this step will deregister the system from CareOnCloud ESM Team.' =>
             '',
         'Deregister' => 'Tidak terdaftar',
         'You can modify registration settings here.' => 'Anda bisa mengubah pengaturan disini',
@@ -1959,32 +2306,59 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Role Management' => 'Tugas manajemen',
         'Add Role' => 'Tambahkan peran',
         'Edit Role' => 'Mengubah peran',
+        'Include invalid roles' => '',
         'Filter for Roles' => 'Filter untuk peran',
         'Filter for roles' => '',
         'Create a role and put groups in it. Then add the role to the users.' =>
             'Membuat sebuah tugas dan menyimpannya ke dalam grup. Kemudian menambahkan tugas untuk pengguna',
+        'Here you can upload a configuration file to import roles to your system. The file needs to be in .yml format as exported by the role management module.' =>
+            '',
+        'Roles Import' => '',
+        'Roles Export' => '',
         'There are no roles defined. Please use the \'Add\' button to create a new role.' =>
             'Tidak ada peran didefinisikan. Silahkan gunakan tombol \'Add\' untuk membuat peran baru.',
 
         # Template: AdminRoleGroup
         'Manage Role-Group Relations' => 'Mengelola hubungan peran didalam grup',
+        'Here you can upload a configuration file to import role-group relations to your system. The file needs to be in .yml format as exported by the role-group management module.' =>
+            '',
+        'Role-Group Import' => '',
+        'Role-Group Export' => '',
         'Roles' => 'Peran',
         'Select the role:group permissions.' => 'Select the role:group permissions.',
         'If nothing is selected, then there are no permissions in this group (tickets will not be available for the role).' =>
             'Jika tidak ada yang dipilih, maka tidak ada izin di grup ini (tiket tidak akan tersedia untuk peran tersebut).',
         'Toggle %s permission for all' => 'Beralih izin %s untuk semua',
+        'Read only access to the ticket in this group/queue. The ticket can be found via a search and its TicketZoom can be accessed. If used for a calendar, users can see and export all appointments in the calendar.' =>
+            '',
         'move_into' => 'move_into',
-        'Permissions to move tickets into this group/queue.' => 'Pengijinan untuk memindahkan tiket ke dalam grup/queue',
+        'Permissions to move tickets into this group/queue. If used for a calendar, users can modify appointments in the calendar, but without changing the calendar selection.' =>
+            '',
         'create' => 'Menciptkan',
-        'Permissions to create tickets in this group/queue.' => 'Pengijinan untuk membuat tiket di dalam grup/queue ini',
+        'Permissions to create tickets in this group/queue. If used for a calendar, users can create and delete appointments in the calendar.' =>
+            '',
         'note' => 'Catatan',
-        'Permissions to add notes to tickets in this group/queue.' => 'Izin untuk menambahkan catatan ke dalam tiket di grup/queue',
+        'Permissions to add notes to tickets in this group/queue. It also allows agents to be informed via the \'Inform Agents\' section in the Notes.' =>
+            '',
         'owner' => 'Pemilik',
-        'Permissions to change the owner of tickets in this group/queue.' =>
-            'Izin untuk mengubah pemilik tiket di dalam grup/queue ini',
+        'Permissions to be become the owner of tickets in this group/queue. One can be selected as an owner while creating a ticket or changing the owner. Being the owner gives full rw permissions to this ticket.' =>
+            '',
         'priority' => 'Prioritas',
-        'Permissions to change the ticket priority in this group/queue.' =>
-            'Izin untuk mengubah prioritas tiket di dalam grup/queue',
+        'Permissions to open the priority action in this group/queue.' =>
+            '',
+        'Full read and write access to the tickets in this group/queue. If used for a calendar, users can manage the calendar itself.' =>
+            '',
+
+        # Template: AdminRoleGroupImportExport
+        'Role-Group Relations' => '',
+        'Here you can export a configuration file of role-group relations to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Role-Group relations List' => '',
+
+        # Template: AdminRoleImportExport
+        'Here you can export a configuration file of roles to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Roles List' => '',
 
         # Template: AdminRoleUser
         'Manage Agent-Role Relations' => 'Mengelola hubungan Agent-Role',
@@ -1998,16 +2372,27 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'SLA Management' => 'Manajemen SLA',
         'Edit SLA' => 'Mengubah SLA',
         'Add SLA' => 'Tambahkan SLA',
+        'Include invalid SLAs' => '',
         'Filter for SLAs' => '',
+        'Here you can upload a configuration file to import SLAs to your system. The file needs to be in .yml format as exported by the SLA management module.' =>
+            '',
+        'SLAs Import' => '',
+        'SLAs Export' => '',
         'Please write only numbers!' => 'Silahkan tulis angka saja',
+
+        # Template: AdminSLAImportExport
+        'SLAs' => '',
+        'Here you can export a configuration file of SLAs to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'SLAs List' => '',
 
         # Template: AdminSMIME
         'S/MIME Management' => 'Manajemen S/MIME',
         'Add Certificate' => 'Tambahkan sertifikat',
         'Add Private Key' => 'Tambahkan kunci pribadi',
         'SMIME support is disabled' => 'Dukungan S MIME dinonaktifkan',
-        'To be able to use SMIME in OTOBO, you have to enable it first.' =>
-            'Untuk dapat menggunakan SMIME di OTOBO, Anda harus mengaktifkannya terlebih dahulu.',
+        'To be able to use SMIME in CareOnCloud ESM, you have to enable it first.' =>
+            'Untuk dapat menggunakan SMIME di CareOnCloud ESM, Anda harus mengaktifkannya terlebih dahulu.',
         'Enable SMIME support' => 'Aktifkan dukungan SMIME',
         'Faulty SMIME configuration' => 'Konfigurasi SMIME rusak',
         'SMIME support is enabled, but the relevant configuration contains errors. Please check the configuration using the button below.' =>
@@ -2045,6 +2430,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Salutation Management' => 'Manajemen penghargaan',
         'Add Salutation' => 'Tambahkan penghargaan',
         'Edit Salutation' => 'Ubah Salutasi',
+        'Include invalid salutations' => '',
         'Filter for Salutations' => '',
         'Filter for salutations' => '',
         'e. g.' => 'Contoh',
@@ -2080,9 +2466,19 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Service Management' => 'Manajemen servis',
         'Add Service' => 'Tambahkan Layanan',
         'Edit Service' => 'Ubah layanan',
+        'Include invalid services' => '',
+        'Here you can upload a configuration file to import services to your system. The file needs to be in .yml format as exported by the service management module.' =>
+            '',
+        'Services Import' => '',
+        'Services Export' => '',
         'Service name maximum length is 200 characters (with Sub-service).' =>
             '',
         'Sub-service of' => 'Sub-layanan dari',
+
+        # Template: AdminServiceImportExport
+        'Here you can export a configuration file of services to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Services List' => '',
 
         # Template: AdminSession
         'Session Management' => 'Manajemen sesi',
@@ -2104,6 +2500,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Signature Management' => 'Tandatangan manajemen',
         'Add Signature' => 'Tambahkan Tandatangan',
         'Edit Signature' => 'Ubah tandatangan',
+        'Include invalid signatures' => '',
         'Filter for Signatures' => '',
         'Filter for signatures' => '',
         'Example signature' => 'Contoh tandatangan',
@@ -2112,6 +2509,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'State Management' => 'Manajemen pilihan',
         'Add State' => 'Tambahkan Pilihan',
         'Edit State' => 'Ubah Pilihan',
+        'Include invalid states' => '',
         'Filter for States' => '',
         'Filter for states' => '',
         'Attention' => 'Perhatian',
@@ -2124,17 +2522,17 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'This state is used in the following config settings:' => '',
 
         # Template: AdminSupportDataCollector
-        'Sending support data to OTOBO Team is not possible!' => '',
+        'Sending support data to CareOnCloud ESM Team is not possible!' => '',
         'Enable Cloud Services' => 'Mengadakan layanan cloud',
-        'This data is sent to OTOBO Team on a regular basis. To stop sending this data please update your system registration.' =>
+        'This data is sent to CareOnCloud ESM Team on a regular basis. To stop sending this data please update your system registration.' =>
             '',
         'You can manually trigger the Support Data sending by pressing this button:' =>
             'Anda dapat secara manual memicu Data Dukungan pengiriman dengan menekan tombol:',
         'Send Update' => 'Hantar pembaruan',
         'Currently this data is only shown in this system.' => 'Saat ini data hanya menampilkan sistem ini',
-        'It is highly recommended to send this data to OTOBO Team in order to get better support.' =>
+        'It is highly recommended to send this data to CareOnCloud ESM Team in order to get better support.' =>
             '',
-        'To enable data sending, please register your system with OTOBO Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
+        'To enable data sending, please register your system with CareOnCloud ESM Team or update your system registration information (make sure to activate the \'send support data\' option.)' =>
             '',
         'A support bundle (including: system registration information, support data, a list of installed packages and all locally modified source code files) can be generated by pressing this button:' =>
             'Sebuah bundel dukungan (termasuk: informasi pendaftaran sistem, data pendukung, daftar paket yang diinstal dan semua sumber kode yang diubah secara manual) dapat dihasilkan dengan menekan tombol ini:',
@@ -2147,10 +2545,10 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'The email address for this user is invalid, this option has been disabled.' =>
             'Alamat email untuk pengguna ini tidak sah, pilihan ini ditiadakan',
         'Sending' => 'Menghantar',
-        'The support bundle will be sent to OTOBO Team via email automatically.' =>
+        'The support bundle will be sent to CareOnCloud ESM Team via email automatically.' =>
             '',
         'Download File' => 'Memuat turun file',
-        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the OTOBO Team, using an alternate method.' =>
+        'A file containing the support bundle will be downloaded to the local system. Please save the file and send it to the CareOnCloud ESM Team, using an alternate method.' =>
             '',
         'Error: Support data could not be collected (%s).' => 'Eror: data pendukung tidak dapat dikumpulkan (%s)',
         'Details' => 'Rincian',
@@ -2159,6 +2557,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'System Email Addresses Management' => 'Sistem manajemen alamat email',
         'Add System Email Address' => 'Tambahkan sistem alamat email',
         'Edit System Email Address' => 'Ubah sistem alamat email',
+        'Include invalid system addresses' => '',
         'Add System Address' => '',
         'Filter for System Addresses' => '',
         'Filter for system addresses' => '',
@@ -2169,6 +2568,8 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'This email address is already used as system email address.' => '',
         'The display name and email address will be shown on mail you send.' =>
             'Paparkan nama dan alamat email yang akan ditunjukkan di email yang anda kirim',
+        'Only relevant if the postmaster mail account is set to dispatching by To-field.' =>
+            '',
         'This system address cannot be set to invalid.' => '',
         'This system address cannot be set to invalid, because it is used in one or more queue(s) or auto response(s).' =>
             '',
@@ -2183,7 +2584,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Find out how to use the system configuration by reading the %s.' =>
             '',
         'Search in all settings...' => '',
-        'There are currently no settings available. Please make sure to run \'otobo.Console.pl Maint::Config::Rebuild\' before using the software.' =>
+        'There are currently no settings available. Please make sure to run \'careoncloud.Console.pl Maint::Config::Rebuild\' before using the software.' =>
             '',
 
         # Template: AdminSystemConfigurationDeployment
@@ -2278,6 +2679,7 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
 
         # Template: AdminSystemMaintenance
         'System Maintenance Management' => 'Manajemen sistem pemeliharan',
+        'Include invalid system maintenances' => '',
         'Schedule New System Maintenance' => 'Jadwal sistem pemeliharaan baru',
         'Filter for System Maintenances' => '',
         'Filter for system maintenances' => '',
@@ -2285,13 +2687,11 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
             'Jadwal sistem periode pemeliharaan untuk mengumumkan agen dan pelanggan bahwa sistem tidak bisa diakses selama beberapa waktu',
         'Some time before this system maintenance starts the users will receive a notification on each screen announcing about this fact.' =>
             'Beberapa waktu sebelum pemeliharaan sistem ini dimulai pengguna akan menerima notifikasi di setiap layar mengumumkan tentang fakta ini.',
-        'Stop date' => 'Tanggal berhenti',
         'Delete System Maintenance' => 'Hapuskan sistem pemeliharaan',
 
         # Template: AdminSystemMaintenanceEdit
         'Edit System Maintenance' => '',
         'Edit System Maintenance Information' => '',
-        'Date invalid!' => 'Tanggal tidak sah',
         'Login message' => 'Masukkan surat',
         'This field must have less then 250 characters.' => '',
         'Show login message' => 'Tampilkan surat',
@@ -2306,9 +2706,15 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Template Management' => '',
         'Add Template' => 'Tambahkan template',
         'Edit Template' => 'Ubah template',
+        'Include invalid templates' => '',
         'A template is a default text which helps your agents to write faster tickets, answers or forwards.' =>
             'Template adalah teks default yang membantu agen anda untuk menulis tiket lebih cepat, jawab atau lanjutkan.',
         'Don\'t forget to add new templates to queues.' => 'Jangan lupa untuk menambahkan templat queues',
+        'Here you can upload a configuration file to import templates to your system. The file needs to be in .yml format as exported by the template management module.' =>
+            '',
+        'Templates Import' => '',
+        'Templates Export' => '',
+        'Pre-selected ticket state' => '',
         'Attachments' => 'Lampiran',
         'Delete this entry' => 'Hapuskan entri ini',
         'Do you really want to delete this template?' => 'Apakah Anda benar-benar ingin menghapus template ini?',
@@ -2331,20 +2737,75 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Toggle active for all' => 'Beralih aktif untuk semua',
         'Link %s to selected %s' => 'Link ke operator %s',
 
+        # Template: AdminTemplateImportExport
+        'Here you can export a configuration file of templates to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Templates List' => '',
+
+        # Template: AdminTicketMask
+        'Ticket Mask Management' => '',
+        'Edit mask' => '',
+        'Change mask definition' => '',
+        'Ticket Mask' => '',
+        'Change' => '',
+        'Definition' => '',
+
+        # Template: AdminTranslations
+        'Translation Management' => '',
+        'Add Translations' => '',
+        'Edit Translations' => '',
+        'Language' => 'Bahasa',
+        'Deploy Translations' => '',
+        'Translation States' => '',
+        'New Translation' => '',
+        'Editing Translation' => '',
+        'Translation Marked for Deletion' => '',
+        'Deployed Translation' => '',
+        'Changes made here only affect the system behavior after your draft translations have been deployed. By deploying them, all changes will be written to the language files.' =>
+            '',
+        'Select an object to start adding translations. Depending on your selection, single or multiple translations can be added.' =>
+            '',
+        'Edit active translations using provided text fields!' => '',
+        'List custom translations for' => '',
+        'Draft Translations' => '',
+        'Filter for Draft Translations' => '',
+        'Active Translations' => '',
+        'Filter for Active Translations' => '',
+        'Content' => 'Konten',
+        'Translation' => '',
+        'Marked for Deletion' => '',
+        'Edit Translation' => '',
+        'Overwrites CareOnCloud ESM translation' => '',
+        'Undo Delete Translation' => '',
+        'Delete Translation' => '',
+        'Translations' => '',
+
         # Template: AdminType
         'Type Management' => 'Jenis manajemen',
         'Add Type' => 'Tambahkan jenis',
         'Edit Type' => 'Ubah jenis',
+        'Include invalid types' => '',
         'Filter for Types' => '',
         'Filter for types' => '',
+        'Here you can upload a configuration file to import types to your system. The file needs to be in .yml format as exported by the type management module.' =>
+            '',
+        'Types Import' => '',
+        'Types Export' => '',
         'A type with this name already exists!' => 'Jenis dengan nama ini sudah ada',
         'This type is present in a SysConfig setting, confirmation for updating settings to point to the new type is needed!' =>
             '',
         'This type is used in the following config settings:' => '',
 
+        # Template: AdminTypeImportExport
+        'Types' => 'Jenis',
+        'Here you can export a configuration file of types to import these on another system. The configuration file is exported in yml format.' =>
+            '',
+        'Types List' => '',
+
         # Template: AdminUser
         'Agent Management' => 'Agen manajemen',
         'Edit Agent' => 'Ubah agen',
+        'Include invalid users' => '',
         'Edit personal preferences for this agent' => '',
         'Agents will be needed to handle tickets.' => 'Agen akan diperlukan untuk menangani tiket',
         'Don\'t forget to add a new agent to groups and/or roles!' => 'Jangn lupa untu menambahkan agen baru ke dalam grup dan/atau peran!',
@@ -2364,6 +2825,13 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
 
         # Template: AdminUserGroup
         'Manage Agent-Group Relations' => 'Mengatur hubungan Grup-Agen ',
+        'Permissions to move tickets into this group/queue.' => 'Pengijinan untuk memindahkan tiket ke dalam grup/queue',
+        'Permissions to create tickets in this group/queue.' => 'Pengijinan untuk membuat tiket di dalam grup/queue ini',
+        'Permissions to add notes to tickets in this group/queue.' => 'Izin untuk menambahkan catatan ke dalam tiket di grup/queue',
+        'Permissions to change the owner of tickets in this group/queue.' =>
+            'Izin untuk mengubah pemilik tiket di dalam grup/queue ini',
+        'Permissions to change the ticket priority in this group/queue.' =>
+            'Izin untuk mengubah prioritas tiket di dalam grup/queue',
 
         # Template: AgentAppointmentAgendaOverview
         'Agenda Overview' => '',
@@ -2479,18 +2947,23 @@ EMAILADDRESS:info@example.com dari, kepada atau Cc.',
         'Customer User Information Center' => '',
 
         # Template: AgentDaemonInfo
-        'The OTOBO Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
-            'The OTOBO Daemon adalah proses daemon yang melakukan tugas-tugas asynchronous, misalnya eskalasi tiket trigger, pengiriman email, dll.',
-        'A running OTOBO Daemon is mandatory for correct system operation.' =>
-            'Menjalankan Daemon OTOBO adalah wajib untuk operasi sistem yang benar.',
-        'Starting the OTOBO Daemon' => 'Memulai dengan Daemon OTOBO',
-        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the OTOBO Daemon is running and start it if needed.' =>
-            'Pastikan fail tersebut %s ada (tanpa .dist tambahan). Tugas cron ini akan memeriksa setiap 5 menit jika OTOBO Daemon berjalan dan memulainya jika diperlukan.',
-        'Execute \'%s start\' to make sure the cron jobs of the \'otobo\' user are active.' =>
-            'Mengeksekusi \'%s start\' untuk memastikan pekerjaan cron dari pengguna OTOBO \'yang aktif.',
-        'After 5 minutes, check that the OTOBO Daemon is running in the system (\'bin/otobo.Daemon.pl status\').' =>
-            'Setelah 5 menit, periksa OTOBO Daemon menjalankan dengan system (
-bin/otobo.Daemon.pl status\').',
+        'The CareOnCloud ESM Daemon is a daemon process that performs asynchronous tasks, e.g. ticket escalation triggering, email sending, etc.' =>
+            'The CareOnCloud ESM Daemon adalah proses daemon yang melakukan tugas-tugas asynchronous, misalnya eskalasi tiket trigger, pengiriman email, dll.',
+        'A running CareOnCloud ESM Daemon is mandatory for correct system operation.' =>
+            'Menjalankan Daemon CareOnCloud ESM adalah wajib untuk operasi sistem yang benar.',
+        'Starting the CareOnCloud ESM Daemon' => 'Memulai dengan Daemon CareOnCloud ESM',
+        'Make sure that the file \'%s\' exists (without .dist extension). This cron job will check every 5 minutes if the CareOnCloud ESM Daemon is running and start it if needed.' =>
+            'Pastikan fail tersebut %s ada (tanpa .dist tambahan). Tugas cron ini akan memeriksa setiap 5 menit jika CareOnCloud ESM Daemon berjalan dan memulainya jika diperlukan.',
+        'Execute \'%s start\' to make sure the cron jobs of the \'careoncloud\' user are active.' =>
+            'Mengeksekusi \'%s start\' untuk memastikan pekerjaan cron dari pengguna CareOnCloud ESM \'yang aktif.',
+        'After 5 minutes, check that the CareOnCloud ESM Daemon is running in the system (\'bin/careoncloud.Daemon.pl status\').' =>
+            'Setelah 5 menit, periksa CareOnCloud ESM Daemon menjalankan dengan system (
+bin/careoncloud.Daemon.pl status\').',
+        'Running the CareOnCloud ESM Daemon in a Docker based installation' => '',
+        'Check with \'docker compose ps\' whether a service with the name daemon is running.' =>
+            '',
+        'When the service daemon is not running then try starting it with \'docker compose start daemon\'' =>
+            '',
 
         # Template: AgentDashboard
         'Dashboard' => 'Dasbor',
@@ -2585,16 +3058,19 @@ bin/otobo.Daemon.pl status\').',
         'until' => 'Sampai',
 
         # Template: AgentDynamicFieldDBDetailedSearch
-        'Back' => 'Kembali',
         'Detailed search' => '',
         'Add an additional attribute' => '',
 
         # Template: AgentDynamicFieldDBDetails
         'Details view' => '',
 
+        # Template: AgentElasticsearchCommon
+        'Elasticsearch Results' => '',
+
         # Template: AgentElasticsearchQuickResult
         'Tickets' => 'Tiket',
         'ConfigItems' => '',
+        'FAQs' => '',
 
         # Template: AgentInfo
         'To accept some news, a license or some changes.' => 'Untuk menerima berita, lisensi atau beberapa perubahan.',
@@ -2651,7 +3127,7 @@ bin/otobo.Daemon.pl status\').',
         'This setting can currently not be saved.' => '',
         'This setting can currently not be saved' => '',
         'Save this setting' => '',
-        'Did you know? You can help translating OTOBO at %s.' => 'Tahukah kamu? Anda dapat membantu menerjemahkan OTOBO di%s.',
+        'Did you know? You can help translating CareOnCloud ESM at %s.' => 'Tahukah kamu? Anda dapat membantu menerjemahkan CareOnCloud ESM di%s.',
 
         # Template: SettingsList
         'Reset to default' => '',
@@ -2671,7 +3147,7 @@ bin/otobo.Daemon.pl status\').',
         # Template: AgentStatisticsAdd
         'Statistics Management' => '',
         'Add Statistics' => '',
-        'Read more about statistics in OTOBO' => '',
+        'Read more about statistics in CareOnCloud ESM' => '',
         'Dynamic Matrix' => 'Matrik dinamis',
         'Each cell contains a singular data point.' => '',
         'Dynamic List' => 'Daftar dinamis',
@@ -2710,7 +3186,6 @@ bin/otobo.Daemon.pl status\').',
             '',
         'Please note that you can only select charts as statistics output format if you configured one of the renderer binaries on your system.' =>
             '',
-        'Configure PhantomJS' => '',
         'Configure GoogleChrome' => '',
         'General settings' => '',
         'Automatic generation settings' => '',
@@ -2768,12 +3243,14 @@ bin/otobo.Daemon.pl status\').',
         'Set Pending Time for %s%s%s' => 'Set Waktu Tertunda untuk %s%s%s',
         'Change Priority of %s%s%s' => 'Tukar prioritas dari %s%s%s',
         'Change Responsible of %s%s%s' => 'Ubah tanggung jawab dari %s%s%s',
+        'Edit Article "%s" of %s%s%s' => '',
         'The ticket has been locked' => 'Tiket telah dikunci',
         'Undo & close' => 'Undur & tutup',
+        'All fields marked with an asterisk (*) are mandatory.' => 'Semua bidang yang ditandai dengan tanda bintang (*) wajib diisi.',
         'Ticket Settings' => 'Pengaturan email',
-        'Queue invalid.' => '',
         'Service invalid.' => 'Layanan tidak sah',
         'SLA invalid.' => '',
+        'Queue invalid.' => '',
         'New Owner' => 'Pemilik baru',
         'Please set a new owner!' => 'Silahkan set sebagain owner baru!',
         'Owner invalid.' => '',
@@ -2793,6 +3270,12 @@ bin/otobo.Daemon.pl status\').',
         'Text Template' => 'Template teks',
         'Setting a template will overwrite any text or attachment.' => 'Pengaturan template akan menimpa teks atau lampiran.',
         'Invalid time!' => 'Waktu tidak sah!',
+
+        # Template: AgentTicketArticleEdit
+        'Edit Article' => '',
+
+        # Template: AgentTicketArticleVersionView
+        'Viewing Article Version#%s of current Article: #%s %s' => '',
 
         # Template: AgentTicketBounce
         'Bounce %s%s%s' => 'Bounce %s%s%s',
@@ -2843,7 +3326,6 @@ bin/otobo.Daemon.pl status\').',
 
         # Template: AgentTicketEmail
         'Create New Email Ticket' => 'Mencipta tiket email baru',
-        'Example Template' => 'Contoh template',
         'To customer user' => 'Untuk pengguna pelanggan',
         'Please include at least one customer user for the ticket.' => 'Tolong sertakan minimal satu pengguna pelanggan untuk tiket',
         'Select this customer as the main customer.' => 'Pilih pelanggan ini sebagai pelanggan utama',
@@ -2899,6 +3381,7 @@ bin/otobo.Daemon.pl status\').',
         'First Response Time' => 'Waktu respon yang pertama',
         'Update Time' => 'Memperbaru waktu',
         'Solution Time' => 'Solusi waktu',
+        'Accounted Time' => '',
         'Move ticket to a different queue' => 'Pindahkan tiket ke queue yang berbeda',
         'Change queue' => 'Ubah queue',
 
@@ -2919,8 +3402,6 @@ bin/otobo.Daemon.pl status\').',
         'Create New Phone Ticket' => 'Menciptakan telepon tiket yang baru',
         'Please include at least one customer for the ticket.' => 'Tolong sertakan minimal satu pelanggan untuk tiket',
         'To queue' => 'Untuk queue',
-        'Chat protocol' => 'Protokol obrolan',
-        'The chat will be appended as a separate article.' => 'Obroloan akan ditambahkan sebagain artikel yang terpisah',
 
         # Template: AgentTicketPhoneCommon
         'Phone Call for %s%s%s' => 'Panggilan telepon untuk %s%s%s',
@@ -2987,12 +3468,15 @@ bin/otobo.Daemon.pl status\').',
         'No.' => 'Tidak.',
         'Unread articles' => 'Artikel tidak terbaca',
         'Via' => '',
+        'Article Edited' => '',
+        'Time Units' => '',
         'Important' => 'Penting',
         'Unread Article!' => 'Artikel belum dibaca!',
         'Incoming message' => 'Pesan yang masuk',
         'Outgoing message' => 'Pesan yang keluar',
         'Internal message' => 'Pesan yang internal',
         'Sending of this message has failed.' => '',
+        'The article was edited' => '',
         'Resize' => 'Mengubah ukuran',
         'Mark this article as read' => 'Tandakan artikel ini sebagai telah dibaca',
         'Show Full Text' => 'Tampikan teks penuh',
@@ -3064,10 +3548,11 @@ bin/otobo.Daemon.pl status\').',
         'Ticket Search' => '',
         'New Ticket' => 'Tiket baru',
 
+        # Template: CustomerElasticsearchQuickResult
+        'FAQ#' => '',
+
         # Template: CustomerError
         'An Error Occurred' => 'Terjadi kesalahan',
-        'Error Details' => 'Rincian eror',
-        'Traceback' => 'Melacak kembali',
 
         # Template: CustomerFooterJS
         '%s detected possible network issues. You could either try reloading this page manually or wait until your browser has re-established the connection on its own.' =>
@@ -3125,7 +3610,7 @@ bin/otobo.Daemon.pl status\').',
         'Click here for an unfiltered list of all your tickets.' => '',
 
         # Template: CustomerTicketMessage
-        'Issue a new Ticket' => '',
+        'Create a new Ticket' => '',
         'Service level agreement' => 'Persetujuan tingkat layanan',
 
         # Template: CustomerTicketOverview
@@ -3134,11 +3619,11 @@ bin/otobo.Daemon.pl status\').',
         'Sort' => '',
 
         # Template: CustomerTicketSearch
+        'Search for a Ticket' => '',
         'Profile' => 'Profil',
         'e. g. 10*5155 or 105658*' => 'Contoh : 10*5155 atau 105658*',
         'CustomerID' => 'ID Pelanggan',
         'Fulltext Search in Tickets (e. g. "John*n" or "Will*")' => '',
-        'Types' => 'Jenis',
         'Time Restrictions' => '',
         'No time settings' => 'Tidak ada pengaturan waktu',
         'All' => 'Semua',
@@ -3148,9 +3633,8 @@ bin/otobo.Daemon.pl status\').',
         'Only tickets created between' => 'Hanya tiket yang dibuat diantara',
         'Ticket Archive System' => '',
         'Save Search as Template?' => '',
-        'Save as Template?' => 'Simpan sebagai template',
         'Save as Template' => 'Simpan sebagai template',
-        'Template Name' => 'Nama template',
+        'Save as Template?' => 'Simpan sebagai template',
         'Pick a profile name' => 'Memilih nama profil',
         'Output to' => 'Keluarkan',
 
@@ -3162,9 +3646,6 @@ bin/otobo.Daemon.pl status\').',
         # Template: CustomerTicketZoom
         'Reply' => 'Balas',
         'Discard' => '',
-        'Ticket Information' => 'Informasi tiket',
-        'Categories' => '',
-        'Further actions' => '',
 
         # Template: Chat
         'Expand article' => 'Memperluas artikel',
@@ -3172,18 +3653,22 @@ bin/otobo.Daemon.pl status\').',
         # Template: MIMEBase
         'Article Information' => '',
 
+        # Template: TicketInfo
+        'Ticket Information' => 'Informasi tiket',
+        'Categories' => '',
+        'Further actions' => '',
+
         # Template: CustomerWarning
         'Warning' => 'Peringatan',
 
         # Template: TileNewTicket
-        'Issue%sa ticket' => '',
+        'Create%sa ticket' => '',
 
         # Template: DashboardEventsTicketCalendar
         'Event Information' => 'Informasi acara',
 
         # Template: Error
         'Send a bugreport' => 'Hantar laporan kesalahan',
-        'Expand' => 'Perluas',
 
         # Template: Footer
         'Powered by %s' => '',
@@ -3214,7 +3699,6 @@ bin/otobo.Daemon.pl status\').',
         'License' => 'Lisensi',
         'Database Settings' => 'Pengaturan database',
         'General Specifications and Mail Settings' => 'Spesifikasi umum dan Pengaturan Surat',
-        'Finish' => 'Selesei',
         'Welcome to %s' => 'Selamat datang di %s',
         'Germany' => '',
         'Phone' => 'Telepon',
@@ -3254,8 +3738,8 @@ bin/otobo.Daemon.pl status\').',
 
         # Template: InstallerDBStart
         'Install Type' => 'Jenis instal',
-        'Create a new database for OTOBO' => 'Membuat database baru untuk OTOBO',
-        'Use an existing database for OTOBO' => 'Menggunakan database yang ada untuk OTOBO',
+        'Create a new database for CareOnCloud ESM' => 'Membuat database baru untuk CareOnCloud ESM',
+        'Use an existing database for CareOnCloud ESM' => 'Menggunakan database yang ada untuk CareOnCloud ESM',
 
         # Template: InstallerDBmssql
         'If you have set a root password for your database, it must be entered here. If not, leave this field empty.' =>
@@ -3266,15 +3750,18 @@ bin/otobo.Daemon.pl status\').',
         'Database check successful.' => 'Database berhasil diperiksa',
         'Database User' => 'Pengguna database',
         'New' => 'Baru',
-        'A new database user with limited permissions will be created for this OTOBO system.' =>
-            'Pengguna database baru dengan hak akses yang terbatas akan dibuat untuk sistem OTOBO ini.',
+        'A new database user with limited permissions will be created for this CareOnCloud ESM system.' =>
+            'Pengguna database baru dengan hak akses yang terbatas akan dibuat untuk sistem CareOnCloud ESM ini.',
         'Generated password' => 'Mengeluarkan kata sandi',
         'Repeat Password' => 'Ulang kata sandi',
         'Passwords do not match' => 'Kata sandi tidak sesuai',
 
+        # Template: InstallerDBmysql
+        'Authentication Plugin' => '',
+
         # Template: InstallerFinish
         'Start page' => 'Memulai halaman',
-        'Your OTOBO Team' => 'Tim OTOBO anda',
+        'Your CareOnCloud ESM Team' => 'Tim CareOnCloud ESM anda',
 
         # Template: InstallerLicense
         'Don\'t accept license' => 'Dilarang menerima lisensi',
@@ -3304,9 +3791,9 @@ bin/otobo.Daemon.pl status\').',
             'alamat email yang dimasukkan secara manual diperiksa terhadap catatan MX yang ditemukan di DNS. Jangan gunakan opsi ini jika DNS Anda lambat atau tidak menyelesaikan alamat publik.',
         'Elasticsearch' => '',
         'Initialize Elasticsearch' => '',
-        'Elasticsearch server was found, and it has been activated automatically for OTOBO.' =>
+        'Elasticsearch server was found, and it has been activated automatically for CareOnCloud ESM.' =>
             '',
-        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the otobo.Console command \'Maint::Elasticsearch::Migration\'.' =>
+        'Seemingly either no clean Elasticsearch server is running, or it is not using the standard configuration. To activate Elasticsearch manually, please edit the web service in the admin interface if necessary, activate \'Elasticsearch::Active\' and \'Frontend::ToolBarModule###250-Ticket::ElasticsearchFulltext\' in the SysConfig and run the careoncloud.Console command \'Maint::Elasticsearch::Migration\'.' =>
             '',
 
         # Template: LinkObject
@@ -3336,15 +3823,15 @@ bin/otobo.Daemon.pl status\').',
         'Clean up and finish' => '',
 
         # Template: Finish
-        'The migration is complete, thank you for trying out OTOBO - we hope you will like it.' =>
+        'The migration is complete, thank you for trying out CareOnCloud ESM - we hope you will like it.' =>
             '',
-        'To be able to use OTOBO you have to enter the following line in your command line (Terminal/Shell) as root.' =>
-            'Untuk menggunakan OTOBO, anda perlu memasukkan command line berikut (Terminal/Shell) sebagai root',
+        'To be able to use CareOnCloud ESM you have to enter the following line in your command line (Terminal/Shell) as root.' =>
+            'Untuk menggunakan CareOnCloud ESM, anda perlu memasukkan command line berikut (Terminal/Shell) sebagai root',
         'Restart your webserver' => 'Mengulang kembali webserver anda',
-        'After doing so your OTOBO is up and running.' => 'Setelah itu OTOBO anda akan berjalan',
+        'After doing so your CareOnCloud ESM is up and running.' => 'Setelah itu CareOnCloud ESM anda akan berjalan',
 
         # Template: Intro
-        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to OTOBO 10.' =>
+        'This migration script will lead you step by step through the process of migrating your ticket system from OTRS or ((OTRS)) Community Edition version 6 to CareOnCloud ESM 10.' =>
             '',
         'There is no danger whatsoever for your original system: nothing is changed there.' =>
             '',
@@ -3354,21 +3841,19 @@ bin/otobo.Daemon.pl status\').',
             '',
         'All entered passwords are cached until the migration is finished.' =>
             '',
-        ' Anyone with access to this page, or read permission for the OTOBO Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
+        ' Anyone with access to this page, or read permission for the CareOnCloud ESM Home Directory will be able to read them. If you abort the migration, you are given the option to clear the cache by visiting this page again.' =>
             '',
-        'If you need support, just ask our experts – either at' => '',
-        'OTOBO forum' => '',
-        'or directly via mail to' => '',
+        'If you need support, just ask our experts – either at %sOTOBO forum%s or directly via mail to %ssales@otobo.io%s.' =>
+            '',
         'Cached data found' => '',
         'You will continue where you aborted the migration last time. If you do not want this, please discard your previous progress.' =>
             '',
-        'An error occured.' => '',
+        'An error occurred.' => '',
         'Discard previous progress' => '',
         'Insecure HTTP connection' => '',
-        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the OTOBO server will be able to read them! Please consider setting up https instead.' =>
+        'You are using the migration script via http. This is highly insecure as various passwords are required during the process, and will be transferred unencrypted. Anyone between you and the CareOnCloud ESM server will be able to read them! Please consider setting up https instead.' =>
             '',
         'Continue anyways :(' => '',
-        ' Continue anyways :(' => '',
 
         # Template: OTRSDBSettings
         'DSN' => '',
@@ -3390,8 +3875,8 @@ bin/otobo.Daemon.pl status\').',
 
         # Template: MobileNotAvailableWidget
         'Feature not Available' => '',
-        'Sorry, but this feature of OTOBO is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
-            'Maaf, fitur OTOBO saat ini tidak tersedia untuk perangkat mobile. Jika Anda ingin menggunakannya, anda dapat beralih ke mode desktop atau menggunakan perangkat desktop biasa anda.',
+        'Sorry, but this feature of CareOnCloud ESM is currently not available for mobile devices. If you\'d like to use it, you can either switch to desktop mode or use your regular desktop device.' =>
+            'Maaf, fitur CareOnCloud ESM saat ini tidak tersedia untuk perangkat mobile. Jika Anda ingin menggunakannya, anda dapat beralih ke mode desktop atau menggunakan perangkat desktop biasa anda.',
 
         # Template: Motd
         'Message of the Day' => 'Pesanan',
@@ -3431,8 +3916,8 @@ bin/otobo.Daemon.pl status\').',
 
         # Template: PublicDefault
         'Welcome' => 'Selamat datang',
-        'This is the default public interface of OTOBO! There was no action parameter given.' =>
-            'Ini adalah antarmuka publik default OTOBO! Tidak ada parameter tindakan yang diberikan.',
+        'This is the default public interface of CareOnCloud ESM! There was no action parameter given.' =>
+            'Ini adalah antarmuka publik default CareOnCloud ESM! Tidak ada parameter tindakan yang diberikan.',
         'You could install a custom public module (via the package manager), for example the FAQ module, which has a public interface.' =>
             'Anda bisa menginstal modul kustom publik (melalui manajer paket), misalnya FAQ modul, yang memiliki antarmuka publik.',
 
@@ -3484,7 +3969,6 @@ bin/otobo.Daemon.pl status\').',
             'Dilarang merubah elemen ini ketika setatistik dihasilkan',
 
         # Template: StatsParamsWidget
-        'Format' => 'Format',
         'Exchange Axis' => 'Pertukaran Axls',
         'Configurable Params of Static Stat' => '',
         'No element selected.' => 'Tidak ada unsur yang dipilih',
@@ -3529,7 +4013,6 @@ bin/otobo.Daemon.pl status\').',
         'Disable this setting, so it is no longer effective' => '',
         'Disable' => '',
         'Enable this setting, so it becomes effective' => '',
-        'Enable' => '',
         'Reset this setting to its default state' => '',
         'Reset setting' => '',
         'Allow users to adapt this setting from within their personal preferences' =>
@@ -3590,10 +4073,15 @@ bin/otobo.Daemon.pl status\').',
         'Delete user\'s value.' => '',
 
         # Template: Test
-        'OTOBO Test Page' => 'Halaman uji OTOBO',
+        'CareOnCloud ESM Test Page' => 'Halaman uji CareOnCloud ESM',
         'Unlock' => 'Buka kunci',
         'Welcome %s %s' => 'Selamat datang %s %s',
         'Counter' => 'Konter',
+
+        # Template: TranslationsTable
+        'Filter Content' => '',
+        'Filter for Translations' => '',
+        'No content available to translate.' => '',
 
         # Template: Warning
         'Go back to the previous page' => 'Kembali ke halaman sebelumnya',
@@ -3630,7 +4118,7 @@ bin/otobo.Daemon.pl status\').',
 
         # JS Template: PackageResolve
         'Package' => '',
-        'Uninstall from OTOBO' => '',
+        'Uninstall from CareOnCloud ESM' => '',
         'Ignore' => '',
         'Migrate' => '',
 
@@ -3678,16 +4166,24 @@ bin/otobo.Daemon.pl status\').',
         'Country' => 'Negara',
         'Mr.' => 'Tuan.',
         'Mrs.' => 'Nyonya.',
+        'Manager' => '',
         'Address' => 'Alamat',
         'View system log messages.' => 'Melihat pesan log sistem.',
         'Edit the system configuration settings.' => 'Ubah pengaturan konfigurasi sistem.',
         'Update and extend your system with software packages.' => 'Memperbarui dan memperluas sistem Anda dengan paket perangkat lunak.',
 
+        # Perl Module: Kernel/GenericInterface/Transport/HTTP/REST.pm
+        'Error fetching the OAuth2 Token' => '',
+        'Attached OAuth2 Bearer Token' => '',
+
+        # Perl Module: Kernel/Language.pm
+        '(in process)' => 'Sedang diproses',
+
         # Perl Module: Kernel/Modules/AdminACL.pm
         'ACL information from database is not in sync with the system configuration, please deploy all ACLs.' =>
             'Informasi ACL dari database tidak sinkron dengan konfigurasi sistem, tolong sebarkan semua ACL.',
-        'ACLs could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'ACL tidak dapat diimpor karena kesalahan yang tidak diketahui, silahkan cek OTOBO log untuk informasi lebih lanjut',
+        'ACLs could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'ACL tidak dapat diimpor karena kesalahan yang tidak diketahui, silahkan cek CareOnCloud ESM log untuk informasi lebih lanjut',
         'The following ACLs have been added successfully: %s' => 'ACLs berikutnya telah berhasil ditambah: %s',
         'The following ACLs have been updated successfully: %s' => 'The ACLs berikutnya telah berhasil diperbarui: %s',
         'There where errors adding/updating the following ACLs: %s. Please check the log file for more information.' =>
@@ -3703,7 +4199,6 @@ bin/otobo.Daemon.pl status\').',
         '%s (copy) %s' => '',
         'Please note that ACL restrictions will be ignored for the Superuser account (UserID 1).' =>
             '',
-        'Exact match' => 'Benar-benar cocok',
         'Negated exact match' => 'pencocokan secara tepat',
         'Regular expression' => 'ekspresi reguler',
         'Regular expression (ignore case)' => 'ekspresi reguler (ignorecase)',
@@ -3731,6 +4226,7 @@ bin/otobo.Daemon.pl status\').',
         '+15 minutes' => '',
         '+30 minutes' => '',
         '+1 hour' => '',
+        '+1 day' => '',
 
         # Perl Module: Kernel/Modules/AdminAppointmentImport.pm
         'No permissions' => '',
@@ -3745,8 +4241,8 @@ bin/otobo.Daemon.pl status\').',
         'Unknown Notification %s!' => 'Diketahui Pemberitahuan %s!',
         '%s (copy)' => '',
         'There was an error creating the Notification' => 'Ada kesalahan saat membuat Pemberitahuan tersebut',
-        'Notifications could not be Imported due to a unknown error, please check OTOBO logs for more information' =>
-            'Pemberitahuan tidak dapat diimpor karena kesalahan yang tidak diketahui, silahkan cek OTOBO log untuk informasi lebih lanjut',
+        'Notifications could not be Imported due to a unknown error, please check CareOnCloud ESM logs for more information' =>
+            'Pemberitahuan tidak dapat diimpor karena kesalahan yang tidak diketahui, silahkan cek CareOnCloud ESM log untuk informasi lebih lanjut',
         'The following Notifications have been added successfully: %s' =>
             'Pemberitahuan berikut telah berhasil ditambahkan: %s',
         'The following Notifications have been updated successfully: %s' =>
@@ -3761,6 +4257,7 @@ bin/otobo.Daemon.pl status\').',
             '',
 
         # Perl Module: Kernel/Modules/AdminAttachment.pm
+        'No permission to edit this attachment.' => '',
         'Attachment added!' => 'Lampiran telah ditambahkan!',
 
         # Perl Module: Kernel/Modules/AdminAutoResponse.pm
@@ -3779,7 +4276,6 @@ bin/otobo.Daemon.pl status\').',
         'Invalid StartTime: %s!' => '',
         'Successful' => '',
         'Processing' => '',
-        'Failed' => 'Gagal',
         'Invalid Filter: %s!' => 'Filter tidak sah: %s!',
         'Less than a second' => '',
         'sorted descending' => 'Urutan turun',
@@ -3817,6 +4313,24 @@ bin/otobo.Daemon.pl status\').',
         'Customer Company %s already exists!' => 'Pelanggan perusahaan %s sudah ada!',
         'Customer company added!' => 'Perusahaan pelanggan telah ditambahkan!',
 
+        # Perl Module: Kernel/Modules/AdminCustomerDashboardInfoTile.pm
+        'Start date shouldn\'t be defined after Stop date!' => 'Tanggal mulai tidak boleh didefinisikan setelah tanggal Berhenti!',
+        'Name is missing!' => '',
+        'Content is missing!' => '',
+        'ValidID is missing!' => '',
+        'Group is missing!' => '',
+        'There was an error creating the info tile entry' => '',
+        'Need ID!' => '',
+        'This Entry does not exist, or you don\'t have permissions to access it in its current state.' =>
+            '',
+        'Could not get data for ID %s' => '',
+        'Info tile entry was added successfully!' => '',
+        'Info tile entry was updated successfully!' => '',
+        'Session has been killed!' => 'Sesi telah dihapus!',
+        'All sessions have been killed, except for your own.' => 'Semua sesi telah dihapus, kecuali sesi anda.',
+        'There was an error updating the info tile entry' => '',
+        'It was not possible to delete the info tile entry: %s!' => '',
+
         # Perl Module: Kernel/Modules/AdminCustomerGroup.pm
         'No configuration for \'CustomerGroupPermissionContext\' found!' =>
             '',
@@ -3851,9 +4365,9 @@ bin/otobo.Daemon.pl status\').',
         'Undefined subaction.' => 'Subaksi tidak terdefinisi',
         'Need %s' => 'Perlu %s',
         'Add %s field' => '',
+        'The field must be numeric.' => 'Field harus numerik',
         'The field does not contain only ASCII letters and numbers.' => 'Field ini tidak hanya berisi huruf ASCII dan angka ',
         'There is another field with the same name.' => 'Ada field yang lain dengan nama yang sama',
-        'The field must be numeric.' => 'Field harus numerik',
         'Need ValidID' => 'Membutuhkan ValidID',
         'Could not create the new field' => 'Tidak dapat membuat bidang yang baru',
         'Need ID' => 'Membutuhkan ID',
@@ -3881,12 +4395,48 @@ bin/otobo.Daemon.pl status\').',
         'An element is used as parent element, but not included itself. Please include it.' =>
             '',
 
+        # Perl Module: Kernel/Modules/AdminDynamicFieldLens.pm
+        'The referenced dynamic field' => '',
+        'Select the dynamic field that references an object' => '',
+        'The attribute of the referenced object' => '',
+        'Select the attribute dynamic field that references an object' =>
+            '',
+        'A field of type %s is currently not usable as lens attribute.' =>
+            '',
+        'Field %s is not a reference field.' => '',
+        'Not a valid dynamic field.' => '',
+
         # Perl Module: Kernel/Modules/AdminDynamicFieldScreen.pm
         'Settings were saved.' => '',
         'System was not able to save the setting!' => '',
         'Setting is locked by another user!' => '',
         'System was not able to reset the setting!' => '',
         'Settings were reset.' => '',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldScript.pm
+        'Need valid field driver.' => '',
+        'Erroneous value in RequiredArgs.' => '',
+        'Erroneous value in PreviewTriggers.' => '',
+        'Erroneous value in StorageTriggers.' => '',
+
+        # Perl Module: Kernel/Modules/AdminDynamicFieldSet.pm
+        'Missing Dynamic Field.' => '',
+        'No valid dynamic field "%s".' => '',
+        'The dynamic field type "%s" of dynamic field "%s" can not be used in sets.' =>
+            '',
+        'The dynamic field "%s" can not be used in sets as it is either a Set field or a Lens field pointing to a Set field.' =>
+            '',
+        'The dynamic field "%s" is already in use in a ticket mask.' => '',
+        'The object type of the dynamic field "%s" does not match the object type of the Set field.' =>
+            '',
+        'Misconfigured Grid - need Rows as Array!' => '',
+        'Misconfigured Grid - need Columns as integer > 0!' => '',
+        'Misconfigured Grid - Rows can\'t be empty!' => '',
+        'Misconfigured Grid - Rows must contain entries with key \'DF\'!' =>
+            '',
+        'Missing Dynamic Field or Grid.' => '',
+        'The field must be a valid YAML containing an array of dynamic fields.' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminEmail.pm
         'Select at least one recipient.' => 'Pilih minimal satu penerima',
@@ -4020,6 +4570,8 @@ bin/otobo.Daemon.pl status\').',
             '',
         'Outgoing error handler data after error handling (ProviderErrorHandlingOutput)' =>
             '',
+        'Disabled' => 'Cacat',
+        'Enabled' => 'Diaktifkan',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceOperationDefault.pm
         'Could not determine config for operation %s' => 'Tidak dapat menentukan konfigurasi untuk operasi %s',
@@ -4029,6 +4581,8 @@ bin/otobo.Daemon.pl status\').',
         'Need valid Subaction!' => '',
         'This field should be an integer.' => '',
         'File or Directory not found.' => '',
+        'This key is already used' => '',
+        'This key is not allowed' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebservice.pm
         'There is another web service with the same name.' => 'Ada layanan web lain dengan nama yang sama',
@@ -4040,12 +4594,12 @@ bin/otobo.Daemon.pl status\').',
         'Could not load %s.' => '',
         'Could not read %s!' => 'Tidak dapat dibaca %s!',
         'Need a file to import!' => 'Butuh sebuah file untuk di impor!',
-        'The imported file has not valid YAML content! Please check OTOBO log for details' =>
-            'file yang diimpor memiliki konten YAML tidak valid! Silakan periksa rincian log OTOBO ',
+        'The imported file has not valid YAML content! Please check CareOnCloud ESM log for details' =>
+            'file yang diimpor memiliki konten YAML tidak valid! Silakan periksa rincian log CareOnCloud ESM ',
         'Web service "%s" deleted!' => 'layanan web "menghapus!',
-        'OTOBO as provider' => 'OTOBO sebagai penyedia',
+        'CareOnCloud ESM as provider' => 'CareOnCloud ESM sebagai penyedia',
         'Operations' => '',
-        'OTOBO as requester' => 'OTOBO sebagai pemohon',
+        'CareOnCloud ESM as requester' => 'CareOnCloud ESM sebagai pemohon',
         'Invokers' => '',
 
         # Perl Module: Kernel/Modules/AdminGenericInterfaceWebserviceHistory.pm
@@ -4055,6 +4609,23 @@ bin/otobo.Daemon.pl status\').',
         # Perl Module: Kernel/Modules/AdminGroup.pm
         'Group updated!' => 'Grup telah di perbarui!',
 
+        # Perl Module: Kernel/Modules/AdminImportExport.pm
+        'No object backend found!' => '',
+        'No format backend found!' => '',
+        'Template not found!' => '',
+        'Can\'t insert/update template!' => '',
+        'Needed TemplateID!' => '',
+        'Error occurred. Import impossible! See Syslog for details.' => '',
+        'Error occurred. Export impossible! See Syslog for details.' => '',
+        'Template List' => '',
+        'number' => '',
+        'number bigger than zero' => '',
+        'integer' => '',
+        'integer bigger than zero' => '',
+        'Element required, please insert data' => '',
+        'Invalid data, please insert a valid %s' => '',
+        'Format not found!' => '',
+
         # Perl Module: Kernel/Modules/AdminMailAccount.pm
         'Mail account added!' => 'Akun surat telah di tambahkan!',
         'Email account fetch already fetched by another process. Please try again later!' =>
@@ -4063,6 +4634,9 @@ bin/otobo.Daemon.pl status\').',
         'Dispatching by selected Queue.' => 'Pengiriman melalui Antrian yang dipilih.',
 
         # Perl Module: Kernel/Modules/AdminNotificationEvent.pm
+        'No permission to edit this ticket notification.' => '',
+        'You need %s permissions!' => 'Anda perlu %s izin!',
+        'Agent who created the first article' => '',
         'Agent who created the ticket' => '',
         'Agent who owns the ticket' => 'Agen yang mempunyai tiket',
         'Agent who is responsible for the ticket' => 'Agen yang bertanggung jawab untuk tiket',
@@ -4075,8 +4649,35 @@ bin/otobo.Daemon.pl status\').',
         'Customer user of the ticket' => '',
         'All recipients of the first article' => '',
         'All recipients of the last article' => '',
+        'Only send within working hours' => '',
+        'Only send outside working hours' => '',
         'Invisible to customer' => '',
         'Visible to customer' => '',
+
+        # Perl Module: Kernel/Modules/AdminOAuthTokenStore.pm
+        'Account Name is missing!' => '',
+        'Username is required!' => '',
+        'Password is required!' => '',
+        'Account Name is taken!' => '',
+        'Error creating/updating %s!' => '',
+        'Unable to generate OIDC provider authentication URL for login. Invalid OIDC configuration!' =>
+            '',
+        'Account %s deleted!' => '',
+        'Token %s updated!' => '',
+        'Invalid OAuth State!' => '',
+        'Invalid Account %s for Token!' => '',
+        'Invalid Issuer %s for Token %s!' => '',
+
+        # Perl Module: Kernel/Modules/AdminOIDCProfiles.pm
+        'Profile Name is missing!' => '',
+        'Provider metadata url is missing!' => '',
+        'Provider client id is missing!' => '',
+        'Provider client secret is missing!' => '',
+        'Profile Name is taken!' => '',
+        'Error creating/updating Profile %s!' => '',
+        'Profile %s deleted!' => '',
+        'Profile %s could not be deleted - do you have any Functional Accounts referencing this Profile?' =>
+            '',
 
         # Perl Module: Kernel/Modules/AdminPGP.pm
         'PGP environment is not working. Please check log for more info!' =>
@@ -4092,7 +4693,7 @@ bin/otobo.Daemon.pl status\').',
         'Can\'t read %s!' => 'Tidak bisa dibaca %s!',
         'File is OK' => '',
         'Package has locally modified files.' => 'Paket telah diubah secara lokal',
-        'Package not verified by the OTOBO Team!' => '',
+        'Package not verified by the CareOnCloud ESM Team!' => '',
         'Not Started' => '',
         'Updated' => '',
         'Already up-to-date' => '',
@@ -4113,9 +4714,9 @@ bin/otobo.Daemon.pl status\').',
             '',
         'Package not verified due a communication issue with verification server!' =>
             'Paket tidak diverifikasi karena masalah komunikasi dengan server verifikasi!',
-        'Can\'t connect to OTOBO Feature Add-on list server!' => 'Tidak dapat terhubung ke Fitur OTOBO Add-on list server!',
-        'Can\'t get OTOBO Feature Add-on list from server!' => 'Tidak mendapatkan fitur OTOBO yang ditambah sebagai daftar dari server!',
-        'Can\'t get OTOBO Feature Add-on from server!' => 'tidak bisa mendapatkan Fitur OTOBO tambahan dari server!',
+        'Can\'t connect to CareOnCloud ESM Feature Add-on list server!' => 'Tidak dapat terhubung ke Fitur CareOnCloud ESM Add-on list server!',
+        'Can\'t get CareOnCloud ESM Feature Add-on list from server!' => 'Tidak mendapatkan fitur CareOnCloud ESM yang ditambah sebagai daftar dari server!',
+        'Can\'t get CareOnCloud ESM Feature Add-on from server!' => 'tidak bisa mendapatkan Fitur CareOnCloud ESM tambahan dari server!',
 
         # Perl Module: Kernel/Modules/AdminPostMasterFilter.pm
         'No such filter: %s' => 'Tidak ada filter seperti: %s',
@@ -4127,6 +4728,8 @@ bin/otobo.Daemon.pl status\').',
         'Process Management information from database is not in sync with the system configuration, please synchronize all processes.' =>
             'Informasi manajemen proses dari database tidak sinkron dengan konfigurasi sistem, Silahkan untuk mengsinkronisasikan semua proses.',
         'Need ExampleProcesses!' => 'Perlu contoh proses!',
+        'There was an error setting the entity sync status for Process entity: %s' =>
+            'Terjadi kesalahan pengaturan status badan sinkronisasi untuk Proses entitas: %s',
         'Need ProcessID!' => 'Perlu Proses ID!',
         'Yes (mandatory)' => 'Ya (wajib)',
         'Unknown Process %s!' => 'Proses tidak diketahui %s!',
@@ -4134,10 +4737,17 @@ bin/otobo.Daemon.pl status\').',
             'Terjadi kesalahan menghasilkan ID Entitas baru untuk Proses ini',
         'The StateEntityID for state Inactive does not exists' => 'State ID Entitas bagi negara aktif tidak ada',
         'There was an error creating the Process' => 'Ada kesalahan saat membuat Proses',
-        'There was an error setting the entity sync status for Process entity: %s' =>
-            'Terjadi kesalahan pengaturan status badan sinkronisasi untuk Proses entitas: %s',
-        'Could not get data for ProcessID %s' => 'Tidak dapat data untuk proses ID: %s',
+        'There was an error generating a new EntityID while copying an associated Element' =>
+            '',
+        'There was an error copying an associated Element' => '',
+        'There was an error setting the entity sync status for an associated Element entity: %s' =>
+            '',
         'There was an error updating the Process' => 'Terjadi kesalahan memperbarui Proses',
+        'Could not get data for ProcessID %s' => 'Tidak dapat data untuk proses ID: %s',
+        'Process: %s successfully deleted, but failed to delete an associated Element' =>
+            '',
+        'Process: %s successfully deleted, but there was an error setting the entity sync status for an associated Element entity' =>
+            '',
         'Process: %s could not be deleted' => 'Proses: %s tidak bisa dihapus',
         'There was an error synchronizing the processes.' => 'Terjadi kesalahan saat proses sinkronisasi',
         'The %s:%s is still in use' => '%s:%s masih bisa digunakan',
@@ -4146,24 +4756,30 @@ bin/otobo.Daemon.pl status\').',
         'There was an error setting the entity sync status for %s entity: %s' =>
             'Terjadi kesalahan pada pengaturan entity sinkron status untuk %s entity: %s',
         'Could not get %s' => 'Tidak dapat %s',
+        'Need ProcessEntityID!' => '',
         'Need %s!' => 'Membutuhkan %s!',
         'Process: %s is not Inactive' => 'Proses: %s tidak aktif',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementActivity.pm
-        'There was an error generating a new EntityID for this Activity' =>
-            'Terjadi kesalahan menghasilkan ID Entitas baru untuk Kegiatan ini',
-        'There was an error creating the Activity' => 'Ada kesalahan saat membuat Kegiatan',
-        'There was an error setting the entity sync status for Activity entity: %s' =>
-            'Terjadi kesalahan pengaturan status sinkronisasi untuk entitas Kegiatan: %s',
-        'Need ActivityID!' => 'Membutuhkan ActivityID!',
-        'Could not get data for ActivityID %s' => 'Tidak bisa mendapatkan data untuk ActivityID %s',
-        'There was an error updating the Activity' => 'Terjadi kesalahan memperbarui Kegiatan',
+        'Non-global activity dialogs may not be assigned to global activities.' =>
+            '',
+        'There was an error generating a new entity ID for this activity.' =>
+            '',
+        'There was an error creating the activity.' => '',
+        'There was an error setting the entity sync status for activity entity: %s' =>
+            '',
+        'Need ActivityID and ProcessEntityID!' => '',
+        'Could not get data for activity ID %s' => '',
+        'This activity is not available to the current process.' => '',
+        'Activities currently shared by other processes may not be set to non-global.' =>
+            '',
+        'There was an error updating the activity.' => '',
         'Missing Parameter: Need Activity and ActivityDialog!' => 'Parameter telah kehilangan: Aktivitas Kebutuhan dan Kegiatan Dialog!',
         'Activity not found!' => 'Aktivitas tidak ditemukan!',
         'ActivityDialog not found!' => 'Kegiatan Dialog tidak ditemukan!',
-        'ActivityDialog already assigned to Activity. You cannot add an ActivityDialog twice!' =>
-            'Kegiatan Dialog sudah ditugaskan untuk aktivitas. Anda tidak dapat menambahkan Activity Dialog dua kali!',
-        'Error while saving the Activity to the database!' => 'Kesalahan saat menyimpan Aktivitas ke database!',
+        'Activity dialog already assigned to activity. You cannot add an activity dialog twice.' =>
+            '',
+        'Error while saving the activity to the database.' => '',
         'This subaction is not valid' => 'Subaction tidak valid',
         'Edit Activity "%s"' => 'Edit aktivitas "%s"',
 
@@ -4173,8 +4789,12 @@ bin/otobo.Daemon.pl status\').',
         'There was an error creating the ActivityDialog' => 'Terjadi kesalahan dalam membuat Aktivitas dialog',
         'There was an error setting the entity sync status for ActivityDialog entity: %s' =>
             'Terjadi kesalahan pengaturan status sinkronisasi untuk entitas Kegiatan Dialog :%s',
-        'Need ActivityDialogID!' => 'Perlu ID aktivitas dialog',
+        'Need ActivityDialogID and ProcessEntityID!' => '',
         'Could not get data for ActivityDialogID %s' => 'Tidak bisa mendapatkan data untuk dialog Kegiatan',
+        'This Activity Dialog is not available to the current Process!' =>
+            '',
+        'ActivityDialogs currently used in gobal ' => '',
+        'ActivityDialogs currently used in non-gobal Activities ' => '',
         'There was an error updating the ActivityDialog' => 'Terjadi kesalahan dalam memperbarui kegiatan dialog',
         'Edit Activity Dialog "%s"' => 'Mensunting kegiatan dialog',
         'Agent Interface' => 'Antarmuka Agen',
@@ -4193,11 +4813,15 @@ bin/otobo.Daemon.pl status\').',
         'There was an error creating the Transition' => 'Ada kesalahan saat membuat Transisi',
         'There was an error setting the entity sync status for Transition entity: %s' =>
             'Terjadi kesalahan pengaturan status sinkronisasi untuk entitas Transisi: %s',
-        'Need TransitionID!' => 'Membutuhkan TansisiID!',
+        'Need TransitionID and ProcessEntityID!' => '',
         'Could not get data for TransitionID %s' => 'Tidak bisa mendapatkan data untuk dialihkan %s',
+        'This Transition is not available to the current Process!' => '',
+        'Transitions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the Transition' => 'Terjadi kesalahan disaat memperbarui Transisi',
         'Edit Transition "%s"' => 'Edit transisi "%s"',
-        'Transition validation module' => 'Modul transisi valid',
+        'Regular expression - all' => '',
+        'Regular expression - negated' => '',
 
         # Perl Module: Kernel/Modules/AdminProcessManagementTransitionAction.pm
         'At least one valid config parameter is required.' => 'Setidaknya satu parameter konfigurasi yang valid diperlukan.',
@@ -4206,8 +4830,12 @@ bin/otobo.Daemon.pl status\').',
         'There was an error creating the TransitionAction' => 'Ada kesalahan saat membuat Aksi Transisi',
         'There was an error setting the entity sync status for TransitionAction entity: %s' =>
             'Terjadi kesalahan pengaturan status sinkronisasi untuk Transisi Action entitas: %s',
-        'Need TransitionActionID!' => 'Membutuhkan TransisiAksiID!',
+        'Need TransitionActionID and ProcessEntityID!' => '',
         'Could not get data for TransitionActionID %s' => 'Tidak bisa mendapatkan data untuk TransitionActionID%s',
+        'This Transition Action is not available to the current Process!' =>
+            '',
+        'TransitionActions currently shared by other Processes may not be set to non-global!' =>
+            '',
         'There was an error updating the TransitionAction' => 'Terjadi kesalahan saat memutakhirkan Action Transisi',
         'Edit Transition Action "%s"' => 'Menyunting tindakan transisi',
         'Error: Not all keys seem to have values or vice versa.' => 'Kesalahan: Tidak semua kunci tampaknya yang memiliki nilai-nilai atau sebaliknya.',
@@ -4286,12 +4914,12 @@ bin/otobo.Daemon.pl status\').',
         'You currently don\'t have any favourite settings.' => '',
         'The following settings could not be found: %s' => '',
         'Import not allowed!' => 'Impor tidak diperbolehkan!',
-        'System Configuration could not be imported due to an unknown error, please check OTOBO logs for more information.' =>
+        'System Configuration could not be imported due to an unknown error, please check CareOnCloud ESM logs for more information.' =>
             '',
         'Category Search' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeployment.pm
-        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the OTOBO log for more information.' =>
+        'Some imported settings are not present in the current state of the configuration or it was not possible to update them. Please check the CareOnCloud ESM log for more information.' =>
             '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationDeploymentHistory.pm
@@ -4309,6 +4937,7 @@ bin/otobo.Daemon.pl status\').',
         'System was not able to lock the setting!' => '',
         'Missing setting name.' => '',
         'Setting not found.' => '',
+        'Missing setting key!' => '',
         'Missing Settings!' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemConfigurationSettingHistory.pm
@@ -4324,24 +4953,38 @@ bin/otobo.Daemon.pl status\').',
         'System was not able to delete the user setting values!' => '',
 
         # Perl Module: Kernel/Modules/AdminSystemMaintenance.pm
-        'Start date shouldn\'t be defined after Stop date!' => 'Tanggal mulai tidak boleh didefinisikan setelah tanggal Berhenti!',
         'There was an error creating the System Maintenance' => 'Ada kesalahan saat membuat Pemeliharaan Sistem',
         'Need SystemMaintenanceID!' => 'Butuh Pemeliharaan Sistem ID!',
         'Could not get data for SystemMaintenanceID %s' => 'Tidak bisa mendapatkan data untuk Pemeliharaan Sistem %s',
         'System Maintenance was added successfully!' => '',
         'System Maintenance was updated successfully!' => '',
-        'Session has been killed!' => 'Sesi telah dihapus!',
-        'All sessions have been killed, except for your own.' => 'Semua sesi telah dihapus, kecuali sesi anda.',
         'There was an error updating the System Maintenance' => 'Terjadi kesalahan saat memperbarukan Pemeliharaan Sistem',
         'Was not possible to delete the SystemMaintenance entry: %s!' => 'Itu tidak mungkin untuk menghapus entri Pemeliharaan Sistem :%s!',
 
         # Perl Module: Kernel/Modules/AdminTemplate.pm
+        'No permission to edit this template.' => '',
         'Template updated!' => 'Template diperbarui!',
         'Template added!' => 'Template ditambah!',
 
         # Perl Module: Kernel/Modules/AdminTemplateAttachment.pm
         'Change Attachment Relations for Template' => 'Ubah lampiran hubungan untuk template',
         'Change Template Relations for Attachment' => 'Ubah template relations untuk lampiran',
+
+        # Perl Module: Kernel/Modules/AdminTranslations.pm
+        'Translation unmarked for deletion!' => '',
+        'Error trying unmark translation for delete!' => '',
+        'Translations changed!' => '',
+        'No translations were changed!' => '',
+        'Errors trying to change translations!' => '',
+        'Translations added!' => '',
+        'No translations were given to add!' => '',
+        'Translation already exists!' => '',
+        'Translations deployed successfully!' => '',
+        'Nothing to do!' => '',
+        'Errors occurred when trying to deploy translation. Please check system logs!' =>
+            '',
+        'All Items' => '',
+        'Deployment Results' => '',
 
         # Perl Module: Kernel/Modules/AdminType.pm
         'Need Type!' => 'Perlu diketik!',
@@ -4461,7 +5104,6 @@ bin/otobo.Daemon.pl status\').',
 
         # Perl Module: Kernel/Modules/AgentTicketActionCommon.pm
         'No TicketID is given!' => 'Tidak ada TicketID diberikan!',
-        'You need %s permissions!' => 'Anda perlu %s izin!',
         'Loading draft failed!' => '',
         'Sorry, you need to be the ticket owner to perform this action.' =>
             'Maaf, Untuk melakukan tindakan ini anda harus menjadi pemilik tiket.',
@@ -4476,6 +5118,14 @@ bin/otobo.Daemon.pl status\').',
         'wrote' => 'Tertulis',
         'Message from' => 'Pesan dari',
         'End message' => 'Akhiri pesan',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleEdit.pm
+        'No ArticleID is given!' => '',
+        'This action is not permitted on the article!' => '',
+        'This article is not editable!' => '',
+
+        # Perl Module: Kernel/Modules/AgentTicketArticleStatus.pm
+        'Can\'t set this Ticket option, no TicketID is given!' => '',
 
         # Perl Module: Kernel/Modules/AgentTicketBounce.pm
         '%s is needed!' => '%s diperlukan!',
@@ -4514,9 +5164,6 @@ bin/otobo.Daemon.pl status\').',
         # Perl Module: Kernel/Modules/AgentTicketEmailOutbound.pm
         'Got no TicketID!' => 'Tidak ada TicketID!',
         'System Error!' => 'Sistem eror',
-
-        # Perl Module: Kernel/Modules/AgentTicketEmailResend.pm
-        'No ArticleID is given!' => '',
 
         # Perl Module: Kernel/Modules/AgentTicketEscalationView.pm
         'Next week' => 'Minggu depan',
@@ -4614,14 +5261,14 @@ bin/otobo.Daemon.pl status\').',
         'This step does not belong anymore to the current activity in process for ticket \'%s%s%s\'! Another user changed this ticket in the meantime. Please close this window and reload the ticket.' =>
             '',
         'Missing ProcessEntityID in Ticket %s!' => 'ProcessEntityID hilang di Tiket %s!',
-        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
-            'Tidak bisa set SynamicField nilai untuk %s dari Ticket dengan ID "%s" di ActivityDialog "%s"!',
         'Could not set PendingTime for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             'Tidak bisa set PendingTime untuk Ticket dengan ID "%s" di ActivityDialog "%s"!',
         'Wrong ActivityDialog Field config: %s can\'t be Display => 1 / Show field (Please change its configuration to be Display => 0 / Do not show field or Display => 2 / Show field as mandatory)!' =>
             'Salah Kegiatan Dialog Lapangan config:%s tidak bisa Tampilkan => 1 / Tampilkan lapangan (Silahkan ubah konfigurasi menjadi Tampilan => 0 / Jangan tampilkan lapangan atau Tampilan => 2 / Tampilkan lapangan sebagai wajib)!',
         'Could not set %s for Ticket with ID "%s" in ActivityDialog "%s"!' =>
             'Tidak bisa mengatur %s untuk Ticket dengan ID "%s" di Dialog Activity "!',
+        'Could not set DynamicField value for %s of Ticket with ID "%s" in ActivityDialog "%s"!' =>
+            'Tidak bisa set SynamicField nilai untuk %s dari Ticket dengan ID "%s" di ActivityDialog "%s"!',
         'Default Config for Process::Default%s missing!' => 'Default Config untuk Proses :: Default hilang!',
         'Default Config for Process::Default%s invalid!' => 'Default Config untuk Proses :: bawaan% tidak valid!',
 
@@ -4709,12 +5356,11 @@ bin/otobo.Daemon.pl status\').',
         'Notification Was Sent' => '',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state.' =>
             '',
+        'Could not delete form draft.' => '',
         'Missing FormDraftID!' => '',
         'Can\'t get for ArticleID %s!' => 'Tidak bisa mendapatkan ArticleID %s!',
         'Article filter settings were saved.' => 'Pengaturan filter artikel telah disimpan',
         'Event type filter settings were saved.' => 'Jenis acara setelan filter diselamatkan.',
-        'Need ArticleID!' => 'Perlu ArticleID!',
-        'Invalid ArticleID!' => 'AricleID tidak sah!',
         'Forward article via mail' => 'Teruskan artikel melalui surat',
         'Forward' => 'Teruskan',
         'Fields with no group' => 'Fields tanpa ada grup',
@@ -4729,10 +5375,13 @@ bin/otobo.Daemon.pl status\').',
         'Error: the file could not be deleted properly. Please contact your administrator (missing FileID).' =>
             '',
 
+        # Perl Module: Kernel/Modules/BasePassword.pm
+        'Can`t remove SessionID.' => '',
+
         # Perl Module: Kernel/Modules/CustomerDashboardCommon.pm
-        'Registration for tile %s of CustomerDashboard is invalid! Either Module or Template needed.' =>
+        'Registration for tile \'%s\' of CustomerDashboard is invalid! Order needs to be a number and unique.' =>
             '',
-        'Registration for tile %s of CustomerDashboard is invalid! Order needs to be a unique number.' =>
+        'Registration for tile %s of customer dashboard is invalid! Either Module or Template needed.' =>
             '',
 
         # Perl Module: Kernel/Modules/CustomerGenericContent.pm
@@ -4740,6 +5389,9 @@ bin/otobo.Daemon.pl status\').',
         'Invalid Key!' => '',
         'Failed to load Content!' => '',
         'Destination unknown.' => '',
+
+        # Perl Module: Kernel/Modules/CustomerPreferences.pm
+        'No valid config for %s' => '',
 
         # Perl Module: Kernel/Modules/CustomerTicketArticleContent.pm
         'ArticleID is needed!' => '',
@@ -4760,12 +5412,9 @@ bin/otobo.Daemon.pl status\').',
         'Need CustomerID!' => 'Perlu CustomerID!',
         'My Tickets' => 'Tiket saya',
         'Company Tickets' => 'Tiket perusahaan',
-        'Untitled!' => 'Tanpa judul!',
 
         # Perl Module: Kernel/Modules/CustomerTicketSearch.pm
         'Customer Realname' => 'Namaasli pelanggan',
-        'Created within the last' => 'Dibuat dalam terakhir',
-        'Created more than ... ago' => 'Dibuat lebih dari .... yang lalu',
         'Please remove the following words because they cannot be used for the search:' =>
             'Tolong hapuskan kalimat berikut karena tidak dapat dicari',
 
@@ -4782,7 +5431,7 @@ bin/otobo.Daemon.pl status\').',
         'Configure "Home" in Kernel/Config.pm first!' => 'Konfigur "Home" di Kernel/Config.pm first!',
         'File "%s/Kernel/Config.pm" not found!' => 'Fail "%s/Kernel/Config.pm" tidak ditemukan',
         'Directory "%s" not found!' => 'Direktori "%s" tidak ditemukan!',
-        'Install OTOBO' => 'Instal OTOBO',
+        'Install CareOnCloud ESM' => 'Instal CareOnCloud ESM',
         'Intro' => 'Pendahuluan',
         'Kernel/Config.pm isn\'t writable!' => 'Kernel / Config.pm tidak dapat ditulis!',
         'If you want to use the installer, set the Kernel/Config.pm writable for the webserver user!' =>
@@ -4799,7 +5448,7 @@ bin/otobo.Daemon.pl status\').',
         'Unknown database type "%s".' => 'Diketahui tipe database "%s".',
         'Please go back.' => '',
         'Create Database' => 'Buat database',
-        'Install OTOBO - Error' => 'Menginstal OTOBO - Kesalahan',
+        'Install CareOnCloud ESM - Error' => 'Menginstal CareOnCloud ESM - Kesalahan',
         'File "%s/%s.xml" not found!' => 'File "%s/%s.xml" tidak ditemukan!',
         'Contact your Admin!' => 'Hubungi Admin Anda!',
         'Execution of SQL statement failed: ' => '',
@@ -4814,6 +5463,8 @@ bin/otobo.Daemon.pl status\').',
             'Tidak dapat terhubung ke database, Perl modul DBD ::%s tidak terpasang!',
         'Can\'t connect to database, read comment!' => 'Tidak dapat terhubung ke database, membaca komentar!',
         'Database already contains data - it should be empty!' => 'Database telah terisi data - database seharusnya kosong!',
+        'Error: database version requirement not satisfied. Have version: %s Want version: %s' =>
+            '',
         'Error: Please make sure your database accepts packages over %s MB in size (it currently only accepts packages up to %s MB). Please adapt the max_allowed_packet setting of your database in order to avoid errors.' =>
             'Kesalahan: Pastikan database Anda menerima paket lebih dari %s MB (itu saat ini hanya menerima paket sampai %s MB). Silahkan menyesuaikan pengaturan max_allowed_packet dari database Anda untuk menghindari kesalahan.',
         'Error: Please set the value for innodb_log_file_size on your database to at least %s MB (current: %s MB, recommended: %s MB). For more information, please have a look at %s.' =>
@@ -4822,7 +5473,7 @@ bin/otobo.Daemon.pl status\').',
         # Perl Module: Kernel/Modules/MigrateFromOTRS.pm
         'If you want to re-run the MigrateFromOTRS Tool, disable the SecureMode in the SysConfig.' =>
             '',
-        'OTRS to OTOBO migration' => '',
+        'OTRS to CareOnCloud ESM migration' => '',
 
         # Perl Module: Kernel/Modules/PublicCalendar.pm
         'No %s!' => '',
@@ -4837,6 +5488,15 @@ bin/otobo.Daemon.pl status\').',
 
         # Perl Module: Kernel/Output/HTML/Article/Chat.pm
         'Chat' => 'Obrolan',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleDelete.pm
+        'Delete this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleEdit.pm
+        'Edit this article' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketArticleRestore.pm
+        'Restore this article' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/AgentTicketBounce.pm
         'Bounce Article to a different mail address' => 'Lompatkan artikel kepada alamat surat yang berbeda',
@@ -4867,8 +5527,12 @@ bin/otobo.Daemon.pl status\').',
         'Print this article' => 'Cetak artikel ini',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/GetHelpLink.pm
-        'Contact us at hello@otobo.de' => '',
+        'Contact us at hello@otobo.io' => '',
         'Get Help' => '',
+
+        # Perl Module: Kernel/Output/HTML/ArticleAction/MarkArticleSeenUnseen.pm
+        'Mark article as unseen' => '',
+        'Mark as unseen' => '',
 
         # Perl Module: Kernel/Output/HTML/ArticleAction/MarkAsImportant.pm
         'Mark' => 'Tandai',
@@ -4946,8 +5610,8 @@ bin/otobo.Daemon.pl status\').',
         'Shown Tickets' => 'Tiket yang telah ditunjukan',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/News.pm
-        'Can\'t connect to OTOBO News server!' => '',
-        'Can\'t get OTOBO News from server!' => '',
+        'Can\'t connect to CareOnCloud ESM News server!' => '',
+        'Can\'t get CareOnCloud ESM News from server!' => '',
 
         # Perl Module: Kernel/Output/HTML/Dashboard/ProductNotify.pm
         'Can\'t connect to Product News server!' => '',
@@ -4969,6 +5633,12 @@ bin/otobo.Daemon.pl status\').',
         'User set their status to unavailable.' => '',
         'Unavailable' => '',
 
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchGeneric.pm
+        'Shown Elasticsearch Results' => '',
+
+        # Perl Module: Kernel/Output/HTML/Elasticsearch/ElasticsearchTicketGeneric.pm
+        'Shown Elsticsearch Results' => '',
+
         # Perl Module: Kernel/Output/HTML/Layout.pm
         'Standard' => 'Standar',
         'The following tickets are not updated: %s.' => '',
@@ -4977,10 +5647,6 @@ bin/otobo.Daemon.pl status\').',
         'd' => 'h',
         'This ticket does not exist, or you don\'t have permissions to access it in its current state. You can take one of the following actions:' =>
             '',
-        'This is a' => 'Ini adalah',
-        'email' => 'email',
-        'click here' => 'klik disini',
-        'to open it in a new window.' => 'Untuk membukanya di jendela baru',
         'Year' => 'Tahun',
         'Hours' => 'jam',
         'Minutes' => 'menit',
@@ -5031,7 +5697,7 @@ bin/otobo.Daemon.pl status\').',
             '',
 
         # Perl Module: Kernel/Output/HTML/Notification/DaemonCheck.pm
-        'OTOBO Daemon is not running.' => 'OTOBO Daemon tidak berjalan',
+        'CareOnCloud ESM Daemon is not running.' => 'CareOnCloud ESM Daemon tidak berjalan',
 
         # Perl Module: Kernel/Output/HTML/Notification/OutofOfficeCheck.pm
         'You have Out of Office enabled, would you like to disable it?' =>
@@ -5057,9 +5723,6 @@ bin/otobo.Daemon.pl status\').',
         'Please make sure you\'ve chosen at least one transport method for mandatory notifications.' =>
             'Pastikan Anda telah memilih setidaknya satu metode transportasi untuk pemberitahuan wajib.',
         'Preferences updated successfully!' => 'Pilihan telah berhasil diperbarui!',
-
-        # Perl Module: Kernel/Output/HTML/Preferences/Language.pm
-        '(in process)' => 'Sedang diproses',
 
         # Perl Module: Kernel/Output/HTML/Preferences/OutOfOffice.pm
         'Please specify an end date that is after the start date.' => 'Silakan tentukan tanggal akhir yaitu setelah tanggal mulai.',
@@ -5121,11 +5784,16 @@ bin/otobo.Daemon.pl status\').',
         'Cancel editing and unlock this setting' => '',
         'Reset this setting to its default value.' => '',
         'Unable to load %s!' => '',
-        'Content' => 'Konten',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/Lock.pm
         'Unlock to give it back to the queue' => 'Buka kuncu untuk mengembalikannya pada antrian',
         'Lock it to work on it' => 'Kunci untuk dikerjakan',
+
+        # Perl Module: Kernel/Output/HTML/TicketMenu/ShowHideDeletedArticles.pm
+        'Hide deleted articles' => '',
+        'Click to hide deleted articles' => '',
+        'Show deleted articles' => '',
+        'Click to show deleted articles' => '',
 
         # Perl Module: Kernel/Output/HTML/TicketMenu/TicketWatcher.pm
         'Unwatch' => 'Berhenti amati',
@@ -5135,6 +5803,9 @@ bin/otobo.Daemon.pl status\').',
 
         # Perl Module: Kernel/Output/HTML/TicketOverviewMenu/Sort.pm
         'Order by' => 'Dipesan oleh',
+
+        # Perl Module: Kernel/Output/HTML/TicketZoom/SimilarTickets.pm
+        'Similar Tickets' => '',
 
         # Perl Module: Kernel/Output/HTML/ToolBar/TicketLocked.pm
         'Locked Tickets New' => 'Tiket terkunci baru',
@@ -5209,137 +5880,213 @@ bin/otobo.Daemon.pl status\').',
         'This email address is already in use for another customer user.' =>
             '',
 
+        # Perl Module: Kernel/System/DynamicField/Driver/Agent.pm
+        'Group of the agents' => '',
+        'Select the group of the agents.' => '',
+        'External source key' => '',
+        'When set via an external source (e.g. web service or import / export), the value will be interpreted as this attribute.' =>
+            '',
+
         # Perl Module: Kernel/System/DynamicField/Driver/BaseDateTime.pm
         'before/after' => 'sebelum/sesudah',
         'between' => 'antara',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/BaseText.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseReference.pm
+        'Referenced object type' => '',
+        'Select the type of the referenced object.' => '',
+        'Input mode of edit field' => '',
+        'Select the input mode for the edit field.' => '',
+        'Link type' => '',
+        'Select the link type.' => '',
+        'Forwards: Referencing (Source) -> Referenced (Target)' => '',
+        'Backwards: Referenced (Source) -> Referencing (Target)' => '',
+        'Link Direction' => '',
+        'The referencing object is the one containing this dynamic field, the referenced object is the one selected as value of the dynamic field.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/BaseScript.pm
         'e.g. Text or Te*t' => '',
 
         # Perl Module: Kernel/System/DynamicField/Driver/Checkbox.pm
         'Ignore this field.' => '',
 
-        # Perl Module: Kernel/System/DynamicField/Driver/TextArea.pm
+        # Perl Module: Kernel/System/DynamicField/Driver/CustomerCompany.pm
+        'Attribute which will be searched on autocomplete' => '',
+        'Select the attribute which customer companies will be searched by.' =>
+            '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/RichText.pm
         'This field is required or' => 'Bidang ini dibutuhkan untuk',
         'The field content is too long!' => 'Konten dari bidang ini terlalu panjang!',
         'Maximum size is %s characters.' => 'Ukuran maksimum adalah %s karakter',
+        'Full %s Text' => '',
+
+        # Perl Module: Kernel/System/DynamicField/Driver/Ticket.pm
+        'Queue of the ticket' => '',
+        'Select the queue of the ticket.' => '',
+        'Type of the ticket' => '',
+        'Select the type of the ticket.' => '',
+        'Select the attribute which tickets will be searched by.' => '',
+        'Attribute which is displayed for values' => '',
+        'Select the type of display.' => '',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/CSV.pm
+        'Column Separator' => 'Pemisah Kolom',
+        'Tabulator (TAB)' => 'Tab (TAB)',
+        'Semicolon (;)' => 'Titikkoma (;)',
+        'Colon (:)' => 'Titikdua (:)',
+        'Dot (.)' => 'Titik (.)',
+        'Comma (,)' => '',
+        'Charset' => 'Karakter',
+        'Include Column Headers' => 'Sertakan Kepala Kolom',
+        'Column' => 'Kolom',
+
+        # Perl Module: Kernel/System/ImportExport/FormatBackend/JSON.pm
+        'Pretty print the exported concatenated JSON' => '',
+
+        # Perl Module: Kernel/System/ImportExport/ObjectBackend/Ticket.pm
+        'Default Queue' => '',
+        'Default Type' => '',
+        'Default Service' => '',
+        'Default SLA' => '',
+        'Default state' => '',
+        'Default priority' => '',
+        'Default owner' => '',
+        'Default responsible' => '',
+        'Default lock' => '',
+        'Default CustomerID' => '',
+        'Default CustomerUserID' => '',
+        'Default ArchiveFlag' => '',
+        'Default subject' => '',
+        'Default body' => '',
+        'Default sender type' => '',
+        'Default is visible to customer' => '',
+        'Empty fields indicate that the current values are kept' => '',
+        'Do not update existing tickets' => '',
+        'Only update tickets of this user in the target system' => '',
+        'Import/Export articles' => '',
+        'Default Backend' => '',
+        'Store articles on separate lines indicated by a blank first entry' =>
+            '',
+        'Import/Export attachments (as the last entries per line)' => '',
 
         # Perl Module: Kernel/System/MigrateFromOTRS/CloneDB/Backend.pm
         'Sanity checks for database.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOACLDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudACLDeploy.pm
         'Deploy the ACL configuration.' => '',
         'Deployment completed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOAutoResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudAutoResponseTemplatesMigrate.pm
         'Migrate database table auto_responses.' => '',
         'Migration failed.' => '',
         'Migrate database table auto_response.' => '',
         'Migration completed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCacheCleanup.pm
-        'OTOBO Cache cleanup.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCacheCleanup.pm
+        'CareOnCloud ESM Cache cleanup.' => '',
         'Completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOCopyFilesFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudCopyFilesFromOTRS.pm
         'Need OTRSData->%s!' => '',
-        'Can\'t access OTRS Home: %s!' => '',
+        'Can\'t access OTRS home directory: %s!' => '',
         'All needed files copied and migrated, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBODatabaseMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudDatabaseMigrate.pm
         'Copy database.' => '',
         'Skipped...' => '',
         'System was unable to connect to OTRS database.' => '',
         'System was unable to complete data transfer.' => '',
         'Data transfer completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOFrameworkVersionCheck.pm
-        'Check if OTOBO version is correct.' => '',
-        'Check if OTOBO and OTRS connect is possible.' => '',
-        'Can\'t open RELEASE file from OTRSHome: %s!' => '',
-        'Check if OTOBO and OTRS version is correct.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudFrameworkVersionCheck.pm
+        'Check if CareOnCloud ESM version is correct.' => '',
+        'Check if CareOnCloud ESM and OTRS connect is possible.' => '',
+        'Can\'t open RELEASE file from OTRS home directory: %s!' => '',
+        'Check if CareOnCloud ESM and OTRS version is correct.' => '',
         '%s does not exist!' => '',
-        'No OTOBO system found!' => '',
+        'No CareOnCloud ESM system found!' => '',
         'You are trying to run this script on the wrong framework version %s!' =>
             '',
-        'OTOBO Version is correct: %s.' => '',
+        'CareOnCloud ESM Version is correct: %s.' => '',
         'Check if OTRS version is correct.' => '',
         'OTRS RELEASE file %s does not exist!' => '',
         'Can\'t read OTRS RELEASE file: %s' => '',
         'No OTRS system found!' => '',
-        'Unknown PRODUCT found in OTRS RELASE file: %s. Expected values are %s.' =>
+        'Unknown PRODUCT found in OTRS RELEASE file: %s. Expected values are %s.' =>
             '',
         'OTRS Version is correct: %s.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOItsmTablesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudItsmTablesMigrate.pm
         'Migrate ITSM database tables.' => '',
-        'Nothing to do, as the the table \'%s\' does not exist.' => '',
+        'Nothing to do, as the table \'%s\' does not exist.' => '',
         'UPDATE of the table \'%s\' failed.' => '',
         'Migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateConfigFromOTRS.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateConfigFromOTRS.pm
         'Migrate configuration settings.' => '',
-        'An error occured during SysConfig data migration or no configuration exists.' =>
+        'An error occurred during system configuration data migration or no configuration exists.' =>
             '',
-        'An error occured during SysConfig migration when writing XML to DB.' =>
+        'An error occurred during system configuration migration when writing XML to DB.' =>
             '',
         'SysConfig data migration completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOMigrateWebServiceConfiguration.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudMigrateWebServiceConfiguration.pm
         'Migrate web service configuration.' => '',
         'Failed - see the log!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBONotificationMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudNotificationMigrate.pm
         'Migrate database table notification.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSConnectionCheck.pm
-        'Can\'t open Kernel/Config.pm file from OTRSHome: %s!' => '',
-        'Check if Kernel/Config.pm exists in OTOBO home.' => '',
-        'Kernel/Config.pm exists in OTOBO home' => '',
-        'Check if we are able to connect to OTRS Home.' => '',
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSConnectionCheck.pm
+        'Can\'t open Kernel/Config.pm file from OTRS home directory: %s!' =>
+            '',
+        'Check if Kernel/Config.pm exists in CareOnCloud ESM home.' => '',
+        'Kernel/Config.pm exists in CareOnCloud ESM home' => '',
+        'Check if we are able to connect to OTRS home directory.' => '',
         'Can\'t connect to OTRS file directory.' => '',
         'Connect to OTRS file directory is possible.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSDBCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSDBCheck.pm
         'Try database connect and sanity checks.' => '',
         'Could not create database object.' => '',
         'Database connect and sanity checks completed.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOOTRSPackageCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudOTRSPackageCheck.pm
         'Check if all necessary packages are installed.' => '',
         'The following packages are only installed in OTRS:' => '',
         'Please install (or uninstall) the packages before migration. If a package doesn\'t exist for OTOBO so far, please contact the OTOBO Team at bugs\@otobo.org. We will find a solution.' =>
             '',
         'The same packages are installed on both systems, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPackageSpecifics.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPackageSpecifics.pm
         'Package specific tasks' => '',
         'Done -' => '',
         'Failed at -' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPerlModulesCheck.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPerlModulesCheck.pm
         'Check if all needed Perl modules have been installed.' => '',
         '%s script does not exist.' => '',
         'One or more required Perl modules are missing. Please install them as recommended, and run the migration script again.' =>
             '',
         'All required Perl modules have been installed, perfect!' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOPostmasterFilterMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudPostmasterFilterMigrate.pm
         'Migrate postmaster filter.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOProcessDeploy.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudProcessDeploy.pm
         'Deploy the process management configuration.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOResponseTemplatesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudResponseTemplatesMigrate.pm
         'Migrate database table response_template.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSalutationsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSalutationsMigrate.pm
         'Migrate database table salutation.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOSignaturesMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudSignaturesMigrate.pm
         'Migrate database table signature.' => '',
 
-        # Perl Module: Kernel/System/MigrateFromOTRS/OTOBOStatsMigrate.pm
+        # Perl Module: Kernel/System/MigrateFromOTRS/CareOnCloudStatsMigrate.pm
         'Migrate statistics.' => '',
 
         # Perl Module: Kernel/System/NotificationEvent.pm
@@ -5348,18 +6095,33 @@ bin/otobo.Daemon.pl status\').',
         'Imported notification has body text with more than 4000 characters.' =>
             '',
 
+        # Perl Module: Kernel/System/OpenIDConnect/OAuth2.pm
+        'Error fetching Token: %s' => '',
+        'Need ClientID and ClientSecret!' => '',
+        'Got no content when requesting Token. Response Code: %s' => '',
+        'Got no JSON object when requesting Token. Response: %s' => '',
+
+        # Perl Module: Kernel/System/OpenIDConnect/TokenProvider.pm
+        'AccountName %s not found!' => '',
+        'No valid refresh_token for Account %s using grant_type \'authorization code\' !' =>
+            '',
+        'Need functional account Invoker settings in System Configuration for %s.' =>
+            '',
+        'Did not receive the desired TokenType \'%s\' in OIDC provider response for Invoker %s!' =>
+            '',
+        'Time left on fresh token is: %s s for Invoker %s!' => '',
+        'Could not get the OAuth2 token_endpoint for Invoker ' => '',
+
         # Perl Module: Kernel/System/Package.pm
         'not installed' => 'Tidak diinstall',
         'installed' => 'Telah diinstal',
         'Unable to parse repository index document.' => 'Tidak dapat untuk mengurai dokumen indeks repositori .',
-        'No packages for your framework version found in this repository, it only contains packages for other framework versions.' =>
-            'Paket untuk versi kerangka anda tidak ditemui pada repositori ini, repository ini hanya memiliki paket untuk kerangka versi lainnya.',
         'File is not installed!' => '',
         'File is different!' => '',
         'Can\'t read file!' => '',
-        '<p>Additional packages can enhance OTOBO with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify OTOBO in any possible way.</p>' =>
+        '<p>Additional packages can enhance CareOnCloud ESM with plenty of useful features. Ensure, however, that the origin of this package is trustworthy, as it can modify CareOnCloud ESM in any possible way.</p>' =>
             '',
-        'Package not verified by the OTOBO community!' => '',
+        'Package not verified by the CareOnCloud ESM community!' => '',
         '<p>The installation of packages which are not verified is disabled. You can activate the installation of not verified packages via the "Package::AllowNotVerifiedPackages" system configuration setting.</p>' =>
             '',
         'Verification not possible (e.g. no internet connection)!' => '',
@@ -5386,13 +6148,20 @@ bin/otobo.Daemon.pl status\').',
         'quarter' => 'Quarter',
         'half-year' => 'semester',
 
-        # Perl Module: Kernel/System/Stats/Dynamic/Ticket.pm
+        # Perl Module: Kernel/System/Stats/Dynamic/ArticleList.pm
+        'unlimited' => 'Tanpa batas',
+        'Attributes to be printed' => 'Atribut yang akan dicetak',
+        'Sort sequence' => 'Urutan sesuai berikut',
+        'State Historic' => 'State Histori',
         'State Type' => 'Jenis stat',
+        'State Type Historic' => 'Jenis sejarah state',
         'Created Priority' => 'dibuat Prioritas',
         'Created State' => 'Menciptakan State',
         'Create Time' => 'Buat Waktu',
+        'Article Create Time' => '',
         'Pending until time' => '',
         'Close Time' => 'Tutup Waktu',
+        'Historic Time Range' => 'Sejarah Rentang Waktu',
         'Escalation' => 'Eskalasi',
         'Escalation - First Response Time' => 'Eskalasi - Waktu respon pertama',
         'Escalation - Update Time' => 'Eskalasi - Update Waktu',
@@ -5400,6 +6169,7 @@ bin/otobo.Daemon.pl status\').',
         'Agent/Owner' => 'Agen/Pemilik',
         'Created by Agent/Owner' => 'Dibuat oleh Agen/Pemilik',
         'Assigned to Customer User Login' => '',
+        'Last Changed' => '',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketAccountedTime.pm
         'Evaluation by' => 'Evaluasi oleh',
@@ -5416,16 +6186,6 @@ bin/otobo.Daemon.pl status\').',
         'Article Min Time' => 'Minimal waktu ',
         'Article Max Time' => 'Maksimal waktu artikel',
         'Number of Articles' => 'Nomor artikel',
-
-        # Perl Module: Kernel/System/Stats/Dynamic/TicketList.pm
-        'unlimited' => 'Tanpa batas',
-        'Attributes to be printed' => 'Atribut yang akan dicetak',
-        'Sort sequence' => 'Urutan sesuai berikut',
-        'State Historic' => 'State Histori',
-        'State Type Historic' => 'Jenis sejarah state',
-        'Historic Time Range' => 'Sejarah Rentang Waktu',
-        'Number' => 'Nomor',
-        'Last Changed' => '',
 
         # Perl Module: Kernel/System/Stats/Dynamic/TicketSolutionResponseTime.pm
         'Solution Average' => 'Rata-rata solusi',
@@ -5470,6 +6230,11 @@ bin/otobo.Daemon.pl status\').',
         'Internal Error: Could not read file.' => 'Kesalahan Internal: Tidak dapat membaca file',
         'Tables found which are not present in the database.' => 'Terdapat beberapa didalam database',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/Type.pm
+        'Database Type' => '',
+        'The type of the database looks strange as it contain no Latin letters.' =>
+            '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mssql/Size.pm
         'Database Size' => 'Ukuran database',
         'Could not determine database size.' => 'Tidak dapat menentukan ukuran basis data.',
@@ -5488,13 +6253,16 @@ bin/otobo.Daemon.pl status\').',
         'There were tables found which do not have \'utf8mb4\' as charset.' =>
             '',
 
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Connection.pm
+        'SSL Version' => '',
+
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InnoDBLogFileSize.pm
         'InnoDB Log File Size' => 'InnoDB Log Ukuran File',
         'The setting innodb_log_file_size must be at least 256 MB.' => 'Pengaturan innodb_log_file_size harus minimal 256 MB.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/InvalidDefaultValues.pm
         'Invalid Default Values' => '',
-        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/otobo.Console.pl Maint::Database::Check --repair' =>
+        'Tables with invalid default values were found. In order to fix it automatically, please run: bin/careoncloud.Console.pl Maint::Database::Check --repair' =>
             '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/MaxAllowedPacket.pm
@@ -5514,6 +6282,8 @@ bin/otobo.Daemon.pl status\').',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/mysql/Version.pm
         'MySQL 5.x or higher is required.' => 'MySQL 5.x atau yang lebih tinggi diperlukan.',
+        'Client Info' => '',
+        'Perl Client Info' => '',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Database/oracle/NLS.pm
         'NLS_LANG Setting' => 'NLS_LANG Pengaturan',
@@ -5548,8 +6318,8 @@ bin/otobo.Daemon.pl status\').',
         'Certificate check' => '',
         'Found obsolete cryptographic function.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionOTOBO.pm
-        'OTOBO Disk Partition' => 'OTOBO Disk Partisi',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskPartitionCareOnCloud.pm
+        'CareOnCloud ESM Disk Partition' => 'CareOnCloud ESM Disk Partisi',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/DiskSpacePartitions.pm
         'Disk Partitions Usage' => '',
@@ -5573,8 +6343,6 @@ bin/otobo.Daemon.pl status\').',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/OS/PerlModulesAudit.pm
         'Perl Modules Audit' => '',
-        'CPAN::Audit reported that one or more installed Perl modules have known vulnerabilities. Please note that there might be false positives for distributions patching Perl modules without changing their version number.' =>
-            '',
         'CPAN::Audit did not report any known vulnerabilities in the installed Perl modules.' =>
             '',
 
@@ -5585,37 +6353,37 @@ bin/otobo.Daemon.pl status\').',
         'There should be more than 60% free swap space.' => 'Harus ada lebih dari 60% ruang swap gratis.',
         'There should be no more than 200 MB swap space used.' => 'Seharusnya tidak ada ruang swap lebih dari 200 MB yang digunakan.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticleSearchIndexStatus.pm
-        'OTOBO' => 'OTOBO',
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticleSearchIndexStatus.pm
+        'CareOnCloud ESM' => 'CareOnCloud ESM',
         'Article Search Index Status' => '',
         'Indexed Articles' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ArticlesPerCommunicationChannel.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ArticlesPerCommunicationChannel.pm
         'Articles Per Communication Channel' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLog.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLog.pm
         'Incoming communications' => '',
         'Outgoing communications' => '',
         'Failed communications' => '',
         'Average processing time of communications (s)' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/CommunicationLogAccountStatus.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/CommunicationLogAccountStatus.pm
         'Communication Log Account Status (last 24 hours)' => '',
         'No connections found.' => '',
         'ok' => '',
         'permanent connection errors' => '',
         'intermittent connection errors' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/ConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/ConfigSettings.pm
         'Config Settings' => '',
         'Could not determine value.' => 'Tidak dapat menentukan nilai.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DaemonRunning.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DaemonRunning.pm
         'Daemon' => 'Daemon',
         'Daemon is running.' => '',
         'Daemon is not running.' => 'Daemon tidak berjalan',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DatabaseRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DatabaseRecords.pm
         'Database Records' => '',
         'Ticket History Entries' => 'Tiket Sejarah Entries',
         'Articles' => 'Artikel',
@@ -5630,26 +6398,26 @@ bin/otobo.Daemon.pl status\').',
         'Tickets Per Month (avg)' => 'Tiket Per Bulan (avg)',
         'Open Tickets' => 'Buka tiket',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/DefaultUser.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/DefaultUser.pm
         'Default Admin Password' => 'Katasandi admin default',
         'Security risk: the agent account root@localhost still has the default password. Please change it or invalidate the account.' =>
             'Risiko keamanan: akun agen root@localhost masih memiliki katasandi yang default. Ubah atau membatalkan account.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/EmailQueue.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/EmailQueue.pm
         'Email Sending Queue' => '',
         'Emails queued for sending' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FQDN.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FQDN.pm
         'FQDN (domain name)' => 'FQDN (domain name)',
         'Please configure your FQDN setting.' => 'Konfigurasikan pengaturan FQDN Anda.',
         'Domain Name' => 'Nama domain',
         'Your FQDN setting is invalid.' => 'Pengaturan FQDN Anda tidak valid.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/FileSystemWritable.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/FileSystemWritable.pm
         'File System Writable' => 'File System ditulis',
-        'The file system on your OTOBO partition is not writable.' => 'Sistem file pada partisi OTOBO Anda tidak dapat ditulis.',
+        'The file system on your CareOnCloud ESM partition is not writable.' => 'Sistem file pada partisi CareOnCloud ESM Anda tidak dapat ditulis.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/LegacyConfigBackups.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/LegacyConfigBackups.pm
         'Legacy Configuration Backups' => '',
         'No legacy configuration backup files found.' => '',
         'Legacy configuration backup files found in Kernel/Config/Backups folder, but they might still be required by some packages.' =>
@@ -5657,77 +6425,77 @@ bin/otobo.Daemon.pl status\').',
         'Legacy configuration backup files are no longer needed for the installed packages, please remove them from Kernel/Config/Backups folder.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageDeployment.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageDeployment.pm
         'Package Installation Status' => 'Status Instalasi paket',
         'Some packages have locally modified files.' => 'Beberapa paket telah lokal memodifikasi file.',
         'Some packages are not correctly installed.' => 'Beberapa paket tidak terpasang dengan benar.',
         'Package Verification Status' => '',
-        'Some packages are not verified by the OTOBO Team.' => '',
+        'Some packages are not verified by the CareOnCloud ESM Team.' => '',
         'Package Framework Version Status' => '',
         'Some packages are not allowed for the current framework version.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/PackageList.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/PackageList.pm
         'Package List' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SessionConfigSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SessionConfigSettings.pm
         'Session Config Settings' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SpoolMails.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SpoolMails.pm
         'Spooled Emails' => '',
-        'There are emails in var/spool that OTOBO could not process.' => '',
+        'There are emails in var/spool that CareOnCloud ESM could not process.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/SystemID.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/SystemID.pm
         'Your SystemID setting is invalid, it should only contain digits.' =>
             'Pengaturan Sistem Anda tidak valid, hanya harus berisi angka.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/DefaultType.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/DefaultType.pm
         'Default Ticket Type' => 'Jenis Tiket ',
         'The configured default ticket type is invalid or missing. Please change the setting Ticket::Type::Default and select a valid ticket type.' =>
             'Jenis tiket default dikonfigurasi tidak valid atau hilang. Silahkan ubah pengaturan Tiket::Jenis::default dan pilih jenis tiket yang sah.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/IndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/IndexModule.pm
         'Ticket Index Module' => 'Indeks tiket Modul',
         'You have more than 60,000 tickets and should use the StaticDB backend. See admin manual (Performance Tuning) for more information.' =>
             'Anda memiliki lebih dari 60.000 tiket dan harus menggunakan backend Static DB. Lihat admin user (Performance Tuning) untuk informasi lebih lanjut.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/InvalidUsersWithLockedTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/InvalidUsersWithLockedTickets.pm
         'Invalid Users with Locked Tickets' => 'Pengguna tidak valid dengan Tiket Terkunci',
         'There are invalid users with locked tickets.' => 'Ada pengguna yang tidak valid dengan tiket terkunci.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/OpenTickets.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/OpenTickets.pm
         'You should not have more than 8,000 open tickets in your system.' =>
             'Anda tidak harus memiliki lebih dari 8.000 tiket yang terbuka di sistem Anda.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/SearchIndexModule.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/SearchIndexModule.pm
         'Ticket Search Index Module' => 'Indeks Cari tiket Modul',
         'The indexing process forces the storage of the original article text in the article search index, without executing filters or applying stop word lists. This will increase the size of the search index and thus may slow down fulltext searches.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/Ticket/StaticDBOrphanedRecords.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/Ticket/StaticDBOrphanedRecords.pm
         'Orphaned Records In ticket_lock_index Table' => 'Rekaman yatim Dalam ticket_lock_index Table',
-        'Table ticket_lock_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
-            'Tabel ticket_lock_index berisi catatan yatim. Jalankan bin/otobo.Console.pl "Maint::Ticket::AntrianIndeksCleanup" untuk membersihkan indeks StaticDB.',
+        'Table ticket_lock_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+            'Tabel ticket_lock_index berisi catatan yatim. Jalankan bin/careoncloud.Console.pl "Maint::Ticket::AntrianIndeksCleanup" untuk membersihkan indeks StaticDB.',
         'Orphaned Records In ticket_index Table' => 'Rekaman yatim Dalam Indeks tiket Table',
-        'Table ticket_index contains orphaned records. Please run bin/otobo.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
+        'Table ticket_index contains orphaned records. Please run bin/careoncloud.Console.pl "Maint::Ticket::QueueIndexCleanup" to clean the StaticDB index.' =>
             '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/TimeSettings.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/TimeSettings.pm
         'Time Settings' => '',
         'Server time zone' => 'Zona waktu server',
-        'OTOBO time zone' => '',
-        'OTOBO time zone is not set.' => '',
+        'CareOnCloud ESM time zone' => '',
+        'CareOnCloud ESM time zone is not set.' => '',
         'User default time zone' => '',
         'User default time zone is not set.' => '',
         'Calendar time zone is not set.' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentSkinUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentSkinUsage.pm
         'UI - Agent Skin Usage' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/AgentThemeUsage.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/AgentThemeUsage.pm
         'UI - Agent Theme Usage' => '',
 
-        # Perl Module: Kernel/System/SupportDataCollector/Plugin/OTOBO/UI/SpecialStats.pm
+        # Perl Module: Kernel/System/SupportDataCollector/Plugin/CareOnCloud/UI/SpecialStats.pm
         'UI - Special Statistics' => '',
         'Agents using custom main menu ordering' => '',
         'Agents using favourites for the admin overview' => '',
@@ -5738,8 +6506,8 @@ bin/otobo.Daemon.pl status\').',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/MPMModel.pm
         'MPM model' => 'Model MPM',
-        'OTOBO requires apache to be run with the \'prefork\' MPM model.' =>
-            'OTOBO membutuhkan apache dijalankan dengan model \'prefork\' MPM.',
+        'CareOnCloud ESM requires apache to be run with the \'prefork\' MPM model.' =>
+            'CareOnCloud ESM membutuhkan apache dijalankan dengan model \'prefork\' MPM.',
 
         # Perl Module: Kernel/System/SupportDataCollector/Plugin/Webserver/Apache/Performance.pm
         'CGI Accelerator Usage' => 'CGI Accelerator Penggunaan',
@@ -5769,7 +6537,7 @@ bin/otobo.Daemon.pl status\').',
         'Webserver Version' => 'Versi Webserver',
         'Could not determine webserver version.' => 'Tidak dapat menentukan versi web server.',
 
-        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/OTOBO/ConcurrentUsers.pm
+        # Perl Module: Kernel/System/SupportDataCollector/PluginAsynchronous/CareOnCloud ESM/ConcurrentUsers.pm
         'Concurrent Users Details' => '',
         'Concurrent Users' => 'Pengguna bersamaan',
 
@@ -5795,16 +6563,12 @@ bin/otobo.Daemon.pl status\').',
         'Value is not correct! Please, consider updating this field.' => '',
         'Value doesn\'t satisfy regex (%s).' => '',
 
-        # Perl Module: Kernel/System/SysConfig/ValueType/Checkbox.pm
-        'Enabled' => 'Diaktifkan',
-        'Disabled' => 'Cacat',
-
         # Perl Module: Kernel/System/SysConfig/ValueType/Date.pm
-        'System was not able to calculate user Date in OTOBOTimeZone!' =>
+        'System was not able to calculate user Date in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/DateTime.pm
-        'System was not able to calculate user DateTime in OTOBOTimeZone!' =>
+        'System was not able to calculate user DateTime in CareOnCloudTimeZone!' =>
             '',
 
         # Perl Module: Kernel/System/SysConfig/ValueType/FrontendNavigation.pm
@@ -5822,13 +6586,20 @@ bin/otobo.Daemon.pl status\').',
         'Chat Participant' => '',
         'Chat Message Text' => '',
 
+        # Perl Module: Kernel/System/Ticket/Mask.pm
+        'Base structure is not valid. Please provide an array with data in YAML format.' =>
+            '',
+        'Error parsing dynamic fields.' => '',
+        'No dynamic field "%s".' => '',
+        'Dynamic field "%s" not valid.' => '',
+        'Dynamic field "%s" already in use in a Set.' => '',
+
         # Perl Module: Kernel/System/Web/InterfaceAgent.pm
         'Too many failed login attempts, please retry in %s s.' => '',
         'Login failed! Your user name or password was entered incorrectly.' =>
             'Login gagal! Nama pengguna atau kata sandi yang di masukan salah.',
         'Authentication succeeded, but no user data record is found in the database. Please contact the administrator.' =>
             '',
-        'Can`t remove SessionID.' => '',
         'Logout successful.' => 'Logout sukses.',
         'Feature not active!' => 'Fitur tidak aktif!',
         'Sent password reset instructions. Please check your email.' => 'Instruksi untuk mereset kode sandi telah dikirimkan. Silahkan untuk memeriksa email anda.',
@@ -5864,7 +6635,7 @@ bin/otobo.Daemon.pl status\').',
         # Perl Module: Kernel/System/Web/InterfacePublic.pm
         'Could not connect to the database.' => '',
 
-        # Database XML / SOPM Definition: scripts/database/otobo-initial_insert.xml
+        # Database XML / SOPM Definition: scripts/database/careoncloud-initial_insert.xml
         'invalid-temporarily' => 'tidak valid sementara',
         'Group for default access.' => 'Kelompok untuk akses default.',
         'Group of all administrators.' => 'Grup semua administrator',
@@ -5929,8 +6700,8 @@ bin/otobo.Daemon.pl status\').',
         'Auto remove will be sent out after a customer removed the request.' =>
             'Menghapus secara otomatis akan dihantar keluar setelah pelanggan menghapus permintaan',
         'default reply (after new ticket has been created)' => 'balasan default (setelah tiket baru telah dibuat)',
-        'default reject (after follow-up and rejected of a closed ticket)' =>
-            'Default menolak (setelah tindak lanjut dan menolak dari tiket tertutup)',
+        'default reject (after follow-up and rejection of a closed ticket)' =>
+            '',
         'default follow-up (after a ticket follow-up has been added)' => 'bawaan tindak lanjut (setelah tiket tindak lanjut telah ditambahkan)',
         'default reject/new ticket created (after closed follow-up with new ticket creation)' =>
             'default menolak/tiket baru dibuat (setelah ditutup tindak lanjut dengan penciptaan tiket baru)',
@@ -6000,6 +6771,10 @@ bin/otobo.Daemon.pl status\').',
         'There was an error deleting the attachment. Please check the logs for more information.' =>
             '',
         'Attachment was deleted successfully.' => '',
+
+        # JS File: Core.Agent.Admin.CustomerDashboardInfoTile
+        'Do you really want to delete this customer dashboard info tile entry?' =>
+            '',
 
         # JS File: Core.Agent.Admin.DynamicField
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!' =>
@@ -6078,7 +6853,7 @@ bin/otobo.Daemon.pl status\').',
         'Currently not possible' => '',
         'This is currently disabled because of an ongoing package upgrade.' =>
             '',
-        'This option is currently disabled because the OTOBO Daemon is not running.' =>
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.' =>
             '',
         'Are you sure you want to update all installed packages?' => '',
         'No response from get package upgrade run status.' => '',
@@ -6111,6 +6886,8 @@ bin/otobo.Daemon.pl status\').',
         'This TransitionAction is already used in this Path. You cannot use it twice!' =>
             'TransitionAction telah digunakan didalam path. Anda tidak bisa menggunakannya 2 kali',
         'Hide EntityIDs' => 'Sembunyikan EntityIDs',
+        'Non-global ActivityDialogs may not be assigned to global Activities!' =>
+            '',
         'Edit Field Details' => 'Ubah rincian fields',
         'Customer interface does not support articles not visible for customers.' =>
             '',
@@ -6172,13 +6949,17 @@ bin/otobo.Daemon.pl status\').',
         'Deleting the template and its data. This may take a while...' =>
             '',
 
+        # JS File: Core.Agent.Admin.Translations
+        'Missing Translations' => '',
+        'At least one translation must be filled!' => '',
+        'All translations must be filled!' => '',
+
         # JS File: Core.Agent.AppointmentCalendar
         'Jump' => '',
         'Timeline Month' => '',
         'Timeline Week' => '',
         'Timeline Day' => '',
         'Previous' => 'Sebelumnya',
-        'Resources' => '',
         'Su' => 'Minggu',
         'Mo' => 'Senin',
         'Tu' => 'Selasa',
@@ -6198,6 +6979,16 @@ bin/otobo.Daemon.pl status\').',
         'Are you sure you want to delete this appointment? This operation cannot be undone.' =>
             '',
 
+        # JS File: Core.Agent.ArticleFeatures
+        'Article Delete' => '',
+        'Are you sure you want to delete this article?' => '',
+        'Article deleted successfully!' => '',
+        'Article already marked as deleted.' => '',
+        'Article Restore' => '',
+        'Are you sure you want to restore this article?' => '',
+        'Article restored successfully!' => '',
+        'Article not available for restoring.' => '',
+
         # JS File: Core.Agent.CustomerSearch
         'First select a customer user, then select a customer ID to assign to this ticket.' =>
             '',
@@ -6209,7 +7000,7 @@ bin/otobo.Daemon.pl status\').',
             'Tolong masukkan minimal nilai pencarian or * untuk penemuan apapun.',
 
         # JS File: Core.Agent.Daemon
-        'Information about the OTOBO Daemon' => 'Informasi yang mengenai Daemon OTOBO',
+        'Information about the CareOnCloud ESM Daemon' => 'Informasi yang mengenai Daemon CareOnCloud ESM',
 
         # JS File: Core.Agent.Dashboard
         'Please check the fields marked as red for valid inputs.' => 'Silahkan periksa bidang yang ditandai sebagai warna merah untuk pemasukkan yang sah',
@@ -6315,6 +7106,10 @@ bin/otobo.Daemon.pl status\').',
         'Do you really want to revert this setting to its historical value?' =>
             '',
 
+        # JS File: Core.UI.CodeMirrorEditor
+        'Error trying to create CodeMirror instance, please check configuration!' =>
+            '',
+
         # JS File: Core.UI.Datepicker
         'Open date selection' => 'Seleksi tanggal terbuka',
         'Invalid date (need a future date)!' => 'Tanggal tidak sah (membutuhkan tanggal yang mendatang)!',
@@ -6357,6 +7152,7 @@ bin/otobo.Daemon.pl status\').',
         'Sorry, you can only upload one file here.' => '',
         'Sorry, you can only upload %s files.' => '',
         'Please only select at most %s files for upload.' => '',
+        'Upload information' => '',
         'The following files are not allowed to be uploaded: %s' => '',
         'The following files exceed the maximum allowed size per file of %s and were not uploaded: %s' =>
             '',
@@ -6364,9 +7160,14 @@ bin/otobo.Daemon.pl status\').',
             '',
         'No space left for the following files: %s' => '',
         'Available space %s of %s.' => '',
-        'Upload information' => '',
         'An unknown error occurred when deleting the attachment. Please try again. If the error persists, please contact your system administrator.' =>
             '',
+
+        # JS File: ITSM.Admin.ImportExport
+        'Deleting template...' => '',
+        'There was an error deleting the template. Please check the logs for more information.' =>
+            '',
+        'Template was deleted successfully.' => '',
 
         # JS File: Core.Language.UnitTest
         'yes' => 'ya',
@@ -6374,22 +7175,18 @@ bin/otobo.Daemon.pl status\').',
         'This is %s' => '',
         'Complex %s with %s arguments' => '',
 
-        # JS File: OTOBOLineChart
+        # JS File: CareOnCloudLineChart
         'No Data Available.' => '',
 
-        # JS File: OTOBOMultiBarChart
+        # JS File: CareOnCloudMultiBarChart
         'Grouped' => 'Grup',
         'Stacked' => 'Ditumpuk',
 
-        # JS File: OTOBOStackedAreaChart
+        # JS File: CareOnCloudStackedAreaChart
         'Stream' => 'Aliran',
         'Expanded' => 'Diperpanjang',
 
         # SysConfig
-        '
-            Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown
-            in an extra table
-        ' => '',
         '
 Dear Customer,
 
@@ -6417,8 +7214,6 @@ Helpdesk Team Anda
         ' 2 minutes' => '2 menit',
         ' 5 minutes' => '5 menit',
         ' 7 minutes' => '7 menit',
-        '"Slim" skin which tries to save screen space for power users.' =>
-            '"Slim" kulit yang mencoba untuk menghemat ruang layar untuk tenaga pengguna',
         '%s' => '%s',
         '(UserLogin) Firstname Lastname' => '(Pengguna Masuk) Nama depan Nama akhir',
         '(UserLogin) Lastname Firstname' => '(Pengguna masuk) Nama akhir Nama depan',
@@ -6438,10 +7233,13 @@ Helpdesk Team Anda
         '30 Minutes' => '',
         '300 (Beginner)' => '300 (Pemula)',
         '5 Minutes' => '',
+        '7 days' => '',
         'A TicketWatcher Module.' => 'Modul Sebuah TicketWatcher ',
         'A Website' => 'Sebuah situs',
         'A list of dynamic fields that are merged into the main ticket during a merge operation. Only dynamic fields that are empty in the main ticket will be set.' =>
             'Daftar bidang dinamis yang bergabung ke dalam tiket utama selama operasi gabungan. Hanya bidang dinamis yang kosong dalam tiket utama akan ditetapkan.',
+        'A list of parameters which can be updated via the UpdateAJAX.' =>
+            '',
         'A picture' => 'Sebuah gambar',
         'ACL module that allows closing parent tickets only if all its children are already closed ("State" shows which states are not available for the parent ticket until all child tickets are closed).' =>
             'ACL modul yang memungkinkan penutupan tiket orangtua hanya jika semua anak-anaknya sudah ditutup ("State"  yang menyatakan tidak tersedia untuk tiket orangtua sampai semua tiket anak ditutup).',
@@ -6450,13 +7248,13 @@ Helpdesk Team Anda
         'Activate Elasticsearch.' => '',
         'Activate the customer frontend.' => '',
         'Activate the public frontend.' => '',
-        'Activates Rendering of DynamicFields outside of the DynamicField block.' =>
-            '',
         'Activates a blinking mechanism of the queue that contains the oldest ticket.' =>
             'Mengaktifkan mekanisme berkedip dari antrian yang berisi tiket tertua.',
         'Activates lost password feature for agents, in the agent interface.' =>
             'Mengaktifkan kehilangan fitur password untuk agen, dalam antarmuka agen.',
         'Activates lost password feature for customers.' => 'Akan mengaktifkan kehilangan fitur password untuk pelanggan.',
+        'Activates rendering of dynamic fields outside of the dynamic field block.' =>
+            '',
         'Activates support for customer and customer user groups.' => '',
         'Activates the article filter in the zoom view to specify which articles should be shown.' =>
             'Mengaktifkan artikel saringan dalam tampilan zoom untuk menentukan artikel harus ditampilkan.',
@@ -6481,8 +7279,10 @@ Helpdesk Team Anda
         'Added subscription for user "%s".' => 'Ditambahkan langganan bagi pengguna "%s".',
         'Added system request (%s).' => '',
         'Added web request from customer.' => '',
-        'Adds a suffix with the actual year and month to the OTOBO log file. A logfile for every month will be created.' =>
-            'Menambahkan akhiran dengan tahun aktual dan bulan ke file log OTOBO. Sebuah file log untuk setiap bulan akan dibuat.',
+        'Adds a suffix with the actual year and month to the CareOnCloud ESM log file. A logfile for every month will be created.' =>
+            'Menambahkan akhiran dengan tahun aktual dan bulan ke file log CareOnCloud ESM. Sebuah file log untuk setiap bulan akan dibuat.',
+        'Adds customer visibility of the article to the article edit screen of the agent interface.' =>
+            '',
         'Adds customers email addresses to recipients in the ticket compose screen of the agent interface. The customers email address won\'t be added if the article type is email-internal.' =>
             'Menambahkan pelanggan email alamat ke penerima di layar compose tiket dari antarmuka agen. Alamat pelanggan email tidak akan ditambahkan jika jenis artikel adalah email-internal.',
         'Adds the one time vacation days for the indicated calendar.' => '',
@@ -6508,6 +7308,7 @@ Helpdesk Team Anda
         'Agent Name' => 'Nama agen',
         'Agent Name + FromSeparator + System Address Display Name' => 'Agen Nama + Dari Separator + Sistem Alamat Nama Tampilan',
         'Agent Preferences.' => 'Preferensi agen.',
+        'Agent Reference Dynamic Field With Data Search' => '',
         'Agent Statistics.' => '',
         'Agent User Search' => '',
         'Agent User Search.' => '',
@@ -6536,11 +7337,14 @@ Helpdesk Team Anda
             'Agen modul pemberitahuan antarmuka untuk melihat jumlah tiket di Layanan saya. kontrol akses tambahan untuk menampilkan atau tidak menampilkan link ini dapat dilakukan dengan menggunakan Key "Group" dan konten seperti  "rw:group1;move_into:group2".',
         'Agent interface notification module to see the number of watched tickets. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'Agen modul pemberitahuan antarmuka untuk melihat jumlah tiket yang ditonton. kontrol akses tambahan untuk menampilkan atau tidak menampilkan link ini dapat dilakukan dengan menggunakan Key "group" dan konten seperti "rw:group1;move_into:group2".',
+        'Agent reference dynamic field with data search.' => '',
         'AgentTicketZoom widget that displays Contact with data dynamic field in the side bar.' =>
             '',
         'AgentTicketZoom widget that displays a table of objects linked to the ticket.' =>
             '',
         'AgentTicketZoom widget that displays customer information for the ticket in the side bar.' =>
+            '',
+        'AgentTicketZoom widget that displays similar ticket data in the side bar. Elasticsearch needs to be enabled beofre you can enable this widget.' =>
             '',
         'AgentTicketZoom widget that displays ticket data in the side bar.' =>
             '',
@@ -6650,11 +7454,16 @@ Helpdesk Team Anda
         'Appointment notifications' => '',
         'Appointments' => '',
         'Arabic (Saudi Arabia)' => 'Arab (Saudi Arabia)',
+        'Article ID: %s was deleted by "%s" (%s)' => '',
+        'Article ID: %s was edited by "%s" (%s)' => '',
+        'Article ID: %s was restored by "%s" (%s)' => '',
+        'Article Version View' => '',
         'Article attributes that should be available in ticket invoker configuration frontend (0 = visible/selectable, 1 = default/preselected).' =>
             '',
         'ArticleTree' => 'ArticleTree',
+        'As soon as the move queue option dropdown is enabled for example in the AgentTicketZoom dialogue, it is possible to move tickets locked to other agents to another queue by activating this option.' =>
+            '',
         'Attachment Name' => 'Lampirkan nama',
-        'Autoloading of Znuny4OTOBOPasswordPolicy extensions.' => '',
         'Automated line break in text messages after x number of chars.' =>
             'Baris istirahat otomatis dalam pesan teks setelah x jumlah karakter.',
         'Automatically change the state of a ticket with an invalid owner once it is unlocked. Maps from a state type to a new ticket state.' =>
@@ -6670,13 +7479,13 @@ Helpdesk Team Anda
         'Automatically sets the responsible of a ticket (if it is not set yet) after the first owner update.' =>
             'Secara otomatis set yang bertanggung jawab dari tiket (jika tidak diatur belum) setelah update pemilik pertama.',
         'Avatar' => '',
-        'Balanced white skin by Felix Niklas (slim version).' => 'kulit putih yang seimbang oleh Felix Niklas (versi slim).',
-        'Balanced white skin by Felix Niklas.' => 'kulit putih yang seimbang oleh Felix Niklas ',
         'Based on global RichText setting' => 'Berdasarkan pengaturan global Rich Text ',
-        'Basic fulltext index settings. Execute "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
+        'Basic Auth' => '',
+        'Basic fulltext index settings. Execute "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild" in order to generate a new index.' =>
             '',
-        'Blocks all the incoming emails that do not have a valid ticket number in subject with From: @example.com address.' =>
-            'Blok semua email masuk yang tidak memiliki nomor tiket yang valid dalam subjek dengan Dari: @ example.com sebagai alamat email',
+        'Blocks all the incoming emails that do not have a valid ticket number in subject with (in this example) From: @example.com address. You can use RegEx here. You can also add a new line in Match to look up multiple fields, e.g. "To" and use RegEx as well. You can define an Auto Reject Message with PostMaster::PreFilterModule::NewTicketReject::Body and PostMaster::PreFilterModule::NewTicketReject::Subject and PostMaster::PreFilterModule::NewTicketReject::Sender. A Match (e.g. From -> . ) is needed for the functionality to work.' =>
+            '',
+        'Both' => '',
         'Bounced to "%s".' => 'Terpental ke "%s".',
         'Bulgarian' => 'Bulgaria',
         'Bulk Action' => 'Tindakan masal',
@@ -6733,7 +7542,7 @@ Helpdesk Team Anda
         'Checks for queued outgoing emails to be sent.' => '',
         'Checks if an E-Mail is a followup to an existing ticket by searching the subject for a valid ticket number.' =>
             'Cek jika E-Mail merupakan tindak lanjut ke tiket yang ada dengan mencari subjek untuk sejumlah tiket yang sah.',
-        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module.' =>
+        'Checks if an email is a follow-up to an existing ticket with external ticket number which can be found by ExternalTicketNumberRecognition filter module. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew. Please define a rule set in the settings "000-ExternalTicketNumberRecognition1" through "000-ExternalTicketNumberRecognition4".' =>
             '',
         'Checks the SystemID in ticket number detection for follow-ups. If not enabled, SystemID will be changed after using the system.' =>
             '',
@@ -6755,6 +7564,11 @@ Helpdesk Team Anda
         'Cloud service admin module registration for the transport layer.' =>
             'Layanan modul pendaftaran cloud admin untuk transpor layer',
         'Collect support data for asynchronous plug-in modules.' => 'Mengumpulkan data dukungan untuk modul plugin asynchronous.',
+        'Color definitions for agent interface high contrast skin.' => '',
+        'Color definitions for customer interface high contrast skin.' =>
+            '',
+        'Color definitions for the agent interface (default skin). MainDark, -Light and Hover are the navigation background, buttons and some other main elements. Highlight are e.g. icons and selected elements in the navbar. BG- and Text colors are various background, and text colors. Hover colors are used in selections and tables. Notify colors are the background of notifications.' =>
+            '',
         'Color definitions for the customer interface.' => '',
         'Column ticket filters for Ticket Overviews type "Small".' => 'Filter tiket kolom untuk Ticket Ikhtisar Jenis "Kecil".',
         'Columns that can be filtered in the escalation view of the agent interface. Note: Only Ticket attributes, Dynamic Fields (DynamicField_NameX) and Customer attributes (e.g. CustomerUserPhone, CustomerCompanyName, ...) are allowed.' =>
@@ -6785,19 +7599,22 @@ Helpdesk Team Anda
         'Company Tickets.' => 'Tiket perusahaan',
         'Company name which will be included in outgoing emails as an X-Header.' =>
             'Nama perusahaan yang akan dimasukkan dalam email keluar sebagai X-header.',
-        'Compat module for AgentZoom to AgentTicketZoom.' => 'Modul compat untuk Agen Zoom ke Agen Tiket Zoom.',
         'Complex' => 'Rumits',
         'Compose' => 'Susun',
         'Configure Processes.' => 'Proses konfigurasi',
         'Configure and manage ACLs.' => 'Konfigurasi dan mengatus ACLs',
         'Configure any additional readonly mirror databases that you want to use.' =>
             'Konfigurasi tambahan hanya membaca database cermin yang ingin Anda gunakan.',
-        'Configure sending of support data to OTOBO Team for improved support.' =>
+        'Configure sending of support data to CareOnCloud ESM Team for improved support.' =>
             '',
         'Configure the About information.' => '',
         'Configure the privacy policy.' => '',
         'Configure which screen should be shown after a new ticket has been created.' =>
             'Konfigurasi yang layar harus ditampilkan setelah tiket baru telah dibuat.',
+        'Configure which screen should be shown after a ticket has been marked as seen.' =>
+            '',
+        'Configure which screen should be shown after a ticket has been marked as unseen.' =>
+            '',
         'Configure your own log text for PGP.' => 'Mengkonfigurasi teks log Anda sendiri untuk PGP.',
         'Configures a default TicketDynamicField setting. "Name" defines the dynamic field which should be used, "Value" is the data that will be set, and "Event" defines the trigger event. Please check the developer manual (https://doc.otobo.org/), chapter "Ticket Event Module".' =>
             '',
@@ -6818,16 +7635,22 @@ Helpdesk Team Anda
             '',
         'Controls if the ticket and article seen flags are removed when a ticket is archived.' =>
             'Kontrol jika bendera tiket dan artikel dilihat dikeluarkan ketika tiket diarsipkan.',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'Controls shown in the enhanced mode CKEditor toolbar. Each array defines a button group that will be visibly separated in the editor. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'Converts HTML mails into text messages.' => 'Mengkonversi mail HTML dalam pesan teks.',
         'Create New process ticket.' => 'Membuat tiket proses Baru.',
         'Create Templates for AdminDynamicFieldTitle.' => '',
         'Create Ticket' => '',
         'Create a new calendar appointment linked to this ticket' => '',
         'Create and manage Service Level Agreements (SLAs).' => 'Membuat dan mengelola Service Level Agreements (SLA).',
+        'Create and manage advanced definitions for ticket masks.' => '',
         'Create and manage agents.' => 'Membuat dan mengelola agen.',
         'Create and manage appointment notifications.' => '',
         'Create and manage attachments.' => 'Membuat dan mengelola lampiran.',
         'Create and manage calendars.' => '',
+        'Create and manage custom translations.' => '',
         'Create and manage customer users.' => 'Membuat dan mengelola pengguna pelanggan.',
         'Create and manage customers.' => 'Membuat dan mengelola pelanggan.',
         'Create and manage dynamic fields.' => 'Membuat dan mengelola bidang dinamis.',
@@ -6856,12 +7679,15 @@ Helpdesk Team Anda
         'Created ticket [%s] in "%s" with priority "%s" and state "%s".' =>
             '',
         'Croatian' => 'Kroasia',
+        'Custom CSS styles for RichText articles.' => '',
         'Custom RSS Feed' => 'Kustom RSS feed',
         'Custom text for the page shown to customers that have no tickets yet (if you need those text translated add them to a custom translation module).' =>
             'Kustom teks untuk halaman ditampilkan kepada pelanggan yang tidak memiliki tiket (jika Anda perlu teks yang diterjemahkan menambahkannya ke modul terjemahan khusus).',
         'Customer Administration' => 'Administrasi pelanggan',
         'Customer Companies' => 'Perusahaan Pelanggan',
+        'Customer Company' => '',
         'Customer Dashboard' => '',
+        'Customer Dashboard Info Tile' => '',
         'Customer Dynamic Field Database Detailed Search' => '',
         'Customer Dynamic Field Database Details' => '',
         'Customer Dynamic Field Database Search' => '',
@@ -6870,6 +7696,7 @@ Helpdesk Team Anda
         'Customer Information Center search.' => '',
         'Customer Information Center.' => 'Pusat Informasi pelanggan.',
         'Customer Password.' => '',
+        'Customer Reference Dynamic Field With Data Search' => '',
         'Customer Ticket Print Module.' => 'Tiket pelanggan Print Modul.',
         'Customer User Administration' => 'Administrasi Nasabah Pengguna',
         'Customer User Information' => '',
@@ -6887,6 +7714,7 @@ Helpdesk Team Anda
         'Customer item (icon) which shows the open tickets of this customer as info block. Setting CustomerUserLogin to 1 searches for tickets based on login name rather than CustomerID.' =>
             'Item pelanggan (icon) yang menunjukkan tiket terbuka pelanggan ini sebagai informasi blok. Pengaturan Pengguna Khusus Login ke 1 pencarian tiket berdasarkan nama login dan bukan ID Pelanggan.',
         'Customer preferences.' => 'preferensi pelanggan.',
+        'Customer reference dynamic field with data search.' => '',
         'Customer ticket overview' => 'Keseluruhan tiket pelanggan',
         'Customer ticket search.' => 'pencarian tiket pelanggan.',
         'Customer ticket zoom' => 'zoom tiket pelanggan',
@@ -6902,7 +7730,6 @@ Helpdesk Team Anda
         'Dashboard overview.' => '',
         'Data used to export the search result in CSV format.' => 'Data yang digunakan untuk mengekspor hasil pencarian dalam format CSV.',
         'Date / Time' => 'Tanggal / Waktu',
-        'Default (Slim)' => 'Default (Slim)',
         'Default ACL values for ticket actions.' => 'Nilai default ACL untuk tindakan tiket.',
         'Default ProcessManagement entity prefixes for entity IDs that are automatically generated.' =>
             'Proses Manajemen awalan entitas default untuk ID entitas yang secara otomatis dihasilkan.',
@@ -6917,7 +7744,6 @@ Helpdesk Team Anda
             'display Jenis default untuk jenis kelamin (Dari) nama di Agen Tiket Zoom dan TicketZoom Pelanggan.',
         'Default loop protection module.' => 'Default lingkaran modul ',
         'Default queue ID used by the system in the agent interface.' => 'ID antrian default yang digunakan oleh sistem dalam antarmuka agen.',
-        'Default skin for the agent interface (slim version).' => 'kulit default untuk antarmuka agen (versi slim).',
         'Default skin for the agent interface.' => 'kulit default untuk antarmuka agen.',
         'Default skin for the customer interface.' => 'Default skin untuk antarmuka pelanggan',
         'Default ticket ID used by the system in the agent interface.' =>
@@ -6927,8 +7753,8 @@ Helpdesk Team Anda
         'Default value for NameX' => 'Nilai default untuk nama',
         'Define Actions where a settings button is available in the linked objects widget (LinkObject::ViewMode = "complex"). Please note that these Actions must have registered the following JS and CSS files: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.' =>
             'Tentukan Tindakan adalah tombol pengaturan tersedia di objek widget terkait (LinkObject::ViewMode = "complex"). Harap dicatat bahwa Tindakan ini harus telah mendaftarkan berikut JS dan CSS file: Core.AllocationList.css, Core.UI.AllocationList.js, Core.UI.Table.Sort.js, Core.Agent.TableFilters.js.',
-        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Tentukan filter untuk output html untuk menambahkan link balik string yang didefinisikan. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misalnya faq.png). Dalam hal ini path gambar OTOBO akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
+        'Define a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Tentukan filter untuk output html untuk menambahkan link balik string yang didefinisikan. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misalnya faq.png). Dalam hal ini path gambar CareOnCloud ESM akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
         'Define a mapping between variables of the customer user data (keys) and dynamic fields of a ticket (values). The purpose is to store customer user data in ticket dynamic fields. The dynamic fields must be present in the system and should be enabled for AgentTicketFreeText, so that they can be set/updated manually by the agent. They mustn\'t be enabled for AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer. If they were, they would have precedence over the automatically set values. To use this mapping, you have to also activate the Ticket::EventModulePost###4100-DynamicFieldFromCustomerUser setting.' =>
             '',
         'Define a result field for the TicketID of the invoker response per web service (WebserviceID => DynamicFieldName).' =>
@@ -6937,6 +7763,12 @@ Helpdesk Team Anda
             'Menentukan nama field dinamis untuk waktu akhir. Bidang ini harus secara manual ditambahkan ke sistem sebagai Tiket: "Date / Time" dan harus diaktifkan dalam layar pembuatan tiket dan/atau dalam layar tindakan tiket lainnya.',
         'Define dynamic field name for start time. This field has to be manually added to the system as Ticket: "Date / Time" and must be activated in ticket creation screens and/or in any other ticket action screens.' =>
             'Menentukan nama field dinamis untuk waktu mulai. Bidang ini harus secara manual ditambahkan ke sistem sebagai Ticket: "Date/Time" dan harus diaktifkan dalam layar pembuatan tiket dan / atau dalam layar tindakan tiket lainnya.',
+        'Define possible namespaces for dynamic fields. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces for global usage (currently dynamic fields and process elements). Must only contain alphanumeric characters. A namespace must not be longer than 64 characters. Namespace plus dynamic field name must not exceed 190 characters.' =>
+            '',
+        'Define possible namespaces specifically for process elements. Must only contain alphanumeric characters. A namespace must not be longer than 64 characters.' =>
+            '',
         'Define the max depth of queues.' => 'Tentukan max kedalaman antrian.',
         'Define the queue comment 2.' => 'Tentukan max kedalaman antrian.',
         'Define the service comment 2.' => 'Mendefinisikan layanan komentar 2.',
@@ -6962,14 +7794,14 @@ Helpdesk Team Anda
             'Mendefinisikan item pelanggan, yang menghasilkan ikon google di ujung blok Info pelanggan.',
         'Defines a customer item, which generates a google maps icon at the end of a customer info block.' =>
             'Mendefinisikan item pelanggan, yang menghasilkan ikon peta google di ujung blok Info pelanggan.',
-        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link balik nomor CVE. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misal faq.png). Dalam hal ini path gambar OTOBO akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
-        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link balik nomor MS Bulletin. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misalnya faq.png). Dalam hal ini path gambar OTOBO akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
-        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link dimana bisa mendefinisikan string. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misal faq.png). Dalam hal ini path gambar OTOBO akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
-        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the OTOBO image path will be used. The second possiblity is to insert the link to the image.' =>
-            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link balik nomor bugtraq. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misal faq.png). Dalam hal ini path gambar OTOBO akan digunakan. Kemungkinan keduanya adalah untuk memasukkan link ke gambar',
+        'Defines a filter for html output to add links behind CVE numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link balik nomor CVE. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misal faq.png). Dalam hal ini path gambar CareOnCloud ESM akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
+        'Defines a filter for html output to add links behind MSBulletin numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link balik nomor MS Bulletin. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misalnya faq.png). Dalam hal ini path gambar CareOnCloud ESM akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
+        'Defines a filter for html output to add links behind a defined string. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link dimana bisa mendefinisikan string. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misal faq.png). Dalam hal ini path gambar CareOnCloud ESM akan digunakan. Kemungkinan kedua adalah untuk memasukkan link ke gambar.',
+        'Defines a filter for html output to add links behind bugtraq numbers. The element Image allows two input kinds. At once the name of an image (e.g. faq.png). In this case the CareOnCloud ESM image path will be used. The second possiblity is to insert the link to the image.' =>
+            'Mendefinisikan sebuah filter untuk output html untuk menambahkan link balik nomor bugtraq. Elemen Gambar memungkinkan dua jenis masukan. Sekaligus nama dari suatu gambar (misal faq.png). Dalam hal ini path gambar CareOnCloud ESM akan digunakan. Kemungkinan keduanya adalah untuk memasukkan link ke gambar',
         'Defines a filter to collect CVE numbers from article texts in AgentTicketZoom. The results will be displayed in a meta box next to the article. Fill in URLPreview if you would like to see a preview when moving your mouse cursor above the link element. This could be the same URL as in URL, but also an alternate one. Please note that some websites deny being displayed within an iframe (e.g. Google) and thus won\'t work with the preview mode.' =>
             'Mendefinisikan sebuah filter untuk mengumpulkan nomor CVE dari teks artikel di AgentTicketZoom. Hasilnya akan ditampilkan dalam meta kotak di samping artikel. Isi URLPreview jika Anda ingin melihat pratinjau ketika memindahkan kursor mouse Anda di atas elemen link. Ini bisa menjadi URL yang sama seperti di URL, tetapi juga salah satu alternatif. Harap dicatat bahwa beberapa situs menyangkal ditampilkan dalam iframe (misalnya Google) dan dengan demikian tidak akan bekerja dengan modus pratinjau.',
         'Defines a filter to process the text in the articles, in order to highlight predefined keywords.' =>
@@ -7001,7 +7833,7 @@ Helpdesk Team Anda
         'Defines all the possible stats output formats.' => 'Mendefinisikan semua kemungkinan format statistik output.',
         'Defines an alternate URL, where the login link refers to.' => 'Mendefinisikan URL alternatif, di mana link login mengacu pada.',
         'Defines an alternate URL, where the logout link refers to.' => 'Mendefinisikan URL alternatif, di mana link logout mengacu pada.',
-        'Defines an alternate login URL for the customer panel..' => 'Mendefinisikan sebuah URL masuk alternatif untuk panel pelanggan',
+        'Defines an alternate login URL for the customer panel.' => '',
         'Defines an alternate logout URL for the customer panel.' => 'endefinisikan sebuah URL logout secara alternatif untuk panel pelanggan.',
         'Defines an external link to the database of the customer (e.g. \'http://yourhost/customer.php?CID=[% Data.CustomerID %]\' or \'\').' =>
             'Mendefinisikan link eksternal ke database pelanggan (misalnya \'http://yourhost/customer.php?CID=[% Data.Customer ID%]\' atau \'\').',
@@ -7009,15 +7841,16 @@ Helpdesk Team Anda
             '',
         'Defines an overview module to show the address book view of a customer user list.' =>
             '',
-        'Defines available article actions for Chat articles.' => '',
-        'Defines available article actions for Email articles.' => '',
         'Defines available article actions for Internal articles.' => '',
         'Defines available article actions for Phone articles.' => '',
+        'Defines available article actions for e-mail articles.' => '',
         'Defines available article actions for invalid articles.' => '',
         'Defines available groups for the admin overview screen.' => '',
         'Defines chat communication channel.' => '',
         'Defines default headers for outgoing emails.' => '',
         'Defines email communication channel.' => '',
+        'Defines for which article types the editing of subject, body and attachment is enabled. "Both" includes "Phone" and "Internal".' =>
+            '',
         'Defines from which ticket attributes the agent can select the result order.' =>
             'Mendefinisikan dari mana atribut tiket agen dapat memilih urutan hasil.',
         'Defines groups for preferences items.' => '',
@@ -7063,14 +7896,17 @@ Helpdesk Team Anda
             'Mendefinisikan jika kunci tiket diperlukan untuk mengubah pelanggan tiket di antarmuka agen (jika tiket tidak terkunci lagi, tiket akan terkunci dan agen saat ini akan diatur secara otomatis sebagai pemiliknya).',
         'Defines if agents should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             'Mendefinisikan jika agen harus diizinkan untuk login jika mereka tidak memiliki rahasia bersama disimpan dalam preferensi mereka dan oleh karena itu tidak menggunakan 2 faktor yang otentik',
+        'Defines if articles written by the customer are editable.' => '',
         'Defines if customers should be allowed to login if they have no shared secret stored in their preferences and therefore are not using two-factor authentication.' =>
             'Mendefinisikan jika pelanggan harus diizinkan untuk login jika mereka tidak memiliki rahasia bersama disimpan dalam preferensi mereka dan oleh karena itu tidak menggunakan otentikasi dua faktor.',
+        'Defines if parent-child translations for queues and services should be generated automatically.' =>
+            '',
         'Defines if the communication between this system and the servers that provide cloud services is possible. If set to \'Disable cloud services\', some functionality will be lost such as support data sending, Package Verify™ and product News dashboard widgets, among others.' =>
+            '',
+        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in agent interface.' =>
             '',
         'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.) in customer interface.' =>
             '',
-        'Defines if the enhanced mode should be used (enables use of table, replace, subscript, superscript, paste from word, etc.).' =>
-            'Mendefinisikan jika modus ditingkatkan harus digunakan (memungkinkan penggunaan tabel, mengganti, subscript, superscript, pasta dari kata, dll).',
         'Defines if the first article should be displayed as expanded, that is visible for the related customer. If nothing defined, latest article will be expanded.' =>
             '',
         'Defines if the message in the email outbound screen of the agent interface is visible for the customer by default.' =>
@@ -7099,19 +7935,23 @@ Helpdesk Team Anda
             '',
         'Defines if the previously valid token should be accepted for authentication. This is slightly less secure but gives users 30 seconds more time to enter their one-time password.' =>
             'Mendefinisikan jika token sebelumnya valid harus diterima untuk otentikasi. Ini adalah sedikit kurang aman tetapi memberikan pengguna 30 detik lebih banyak waktu untuk memasukkan password satu waktu mereka.',
+        'Defines if the ticket info widget is displayed permanently on the left below the article list or is available via click on the \'Information\' button.' =>
+            '',
         'Defines if the values for filters should be retrieved from all available tickets. If enabled, only values which are actually used in any ticket will be available for filtering. Please note: The list of customers will always be retrieved like this.' =>
             '',
-        'Defines if time accounting is mandatory in the agent interface. If enabled, a note must be entered for all ticket actions (no matter if the note itself is configured as active or is originally mandatory for the individual ticket action screen).' =>
+        'Defines if time accounting is mandatory in the agent interface, if a note is entered.' =>
             '',
         'Defines if time accounting must be set to all tickets in bulk action.' =>
             'Mendefinisikan jika akuntansi waktu harus ditetapkan untuk semua tiket dalam aksi massal.',
+        'Defines if user can modify all possible values/labels of dynamic fields in one data table.' =>
+            '',
         'Defines internal communication channel.' => '',
         'Defines out of office message template. Two string parameters (%s) available: end date and number of days left.' =>
             'Mendefinisikan dari pesan kantor Template. Dua parameter String (%s) yang tersedia: tanggal akhir dan jumlah hari yang tersisa.',
         'Defines phone communication channel.' => '',
         'Defines queues that\'s tickets are used for displaying as calendar events.' =>
             'Mendefinisikan antrian bahwa tiket yang digunakan untuk menampilkan sebagai acara kalender.',
-        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
+        'Defines the HTTP hostname for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
             '',
         'Defines the IP regular expression for accessing the local repository. You need to enable this to have access to your local repository and the package::RepositoryList is required on the remote host.' =>
             'Mendefinisikan IP ekspresi reguler untuk mengakses repositori lokal. Anda perlu mengaktifkan ini untuk memiliki akses ke repositori lokal Anda dan Daftar paket::Repository diperlukan pada remote host.',
@@ -7145,9 +7985,13 @@ Helpdesk Team Anda
         'Defines the close state for quick close.' => '',
         'Defines the column to store the keys for the preferences table.' =>
             'Mendefinisikan kolom untuk menyimpan kunci tabel preferensi.',
-        'Defines the communication chanel for the quick close article action.' =>
+        'Defines the communication channel for the quick close article action.' =>
             '',
         'Defines the config options for the autocompletion feature.' => 'Mendefinisikan pilihan konfigurasi untuk fitur autocomplete.',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketSeenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
+        'Defines the config parameters available in the preferences view. The default redirect URL from SysConfig \'MarkTicketUnseenRedirectDefaultURL\' is used if no selection is made by the agent.' =>
+            '',
         'Defines the config parameters of this item, to be shown in the preferences view.' =>
             'Mendefinisikan parameter konfigurasi dari item ini, akan ditampilkan dalam preferensi tampilan.',
         'Defines the config parameters of this item, to be shown in the preferences view. \'PasswordRegExp\' allows to match passwords against a regular expression. Define the minimum number of characters using \'PasswordMinSize\'. Define if at least 2 lowercase and 2 uppercase letter characters are needed by setting the appropriate option to \'1\'. \'PasswordMin2Characters\' defines if the password needs to contain at least 2 letter characters (set to 0 or 1). \'PasswordNeedDigit\' controls the need of at least 1 digit (set to 0 or 1 to control). \'PasswordMaxLoginFailed\' allows to set an agent to invalid-temporarily if max failed logins reached. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -7157,9 +8001,9 @@ Helpdesk Team Anda
         'Defines the connections for http/ftp, via a proxy.' => 'Mendefinisikan koneksi untuk http / ftp, melalui proxy.',
         'Defines the customer preferences key where the shared secret key is stored.' =>
             'Mendefinisikan kunci preferensi pelanggan di mana kunci rahasia bersama disimpan.',
+        'Defines the data objects available to be translated.' => '',
         'Defines the date input format used in forms (option or input fields).' =>
             'Mendefinisikan format tanggal input yang digunakan dalam bentuk (pilihan atau masukan bidang).',
-        'Defines the default CSS used in rich text editors.' => 'Mendefinisikan CSS default yang digunakan dalam editor teks kaya.',
         'Defines the default agent name in the ticket zoom view of the customer interface.' =>
             '',
         'Defines the default auto response type of the article for this operation.' =>
@@ -7168,12 +8012,12 @@ Helpdesk Team Anda
             'Mendefinisikan tubuh default catatan dalam tiket layar teks bebas dari antarmuka agen.',
         'Defines the default filter fields in the customer user address book search (CustomerUser or CustomerCompany). For the CustomerCompany fields a prefix \'CustomerCompany_\' must be added.' =>
             '',
-        'Defines the default front-end (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
+        'Defines the default frontend (HTML) theme to be used by the agents and customers. If you like, you can add your own theme. Please refer the administrator manual located at https://doc.otobo.org/.' =>
             '',
-        'Defines the default front-end language. All the possible values are determined by the available language files on the system (see the next setting).' =>
-            'Mendefinisikan bahasa default front-end. Semua nilai yang mungkin ditentukan oleh file bahasa yang tersedia pada sistem (lihat pengaturan berikutnya).',
+        'Defines the default frontend language. All the possible values are determined by the available language files on the system. These values are listed as the keys in the setting \'DefaultUsedLanguages\'.' =>
+            '',
         'Defines the default history type in the customer interface.' => 'Mendefinisikan jenis sejarah default dalam antarmuka pelanggan.',
-        'Defines the default interface. Unknown pathes below the script alias are redirected to the selected interface.' =>
+        'Defines the default interface. Unknown paths below the script alias are redirected to the selected interface.' =>
             '',
         'Defines the default maximum number of X-axis attributes for the time scale.' =>
             'Mendefinisikan jumlah maksimum default X-axis atribut untuk skala waktu.',
@@ -7325,6 +8169,8 @@ Helpdesk Team Anda
             '',
         'Defines the displayed style of the From field in notes that are visible for customers. A default agent name can be defined in Ticket::Frontend::CustomerTicketZoom###DefaultAgentName setting.' =>
             '',
+        'Defines the dynamic field to identify tickets by for this operation. Please put in the field name only without the \'DynamicField_\' prefix.' =>
+            '',
         'Defines the dynamic fields that are used for displaying on calendar events.' =>
             'Mendefinisikan bidang dinamis yang digunakan untuk menampilkan pada acara kalender.',
         'Defines the event object types that will be handled via AdminAppointmentNotificationEvent.' =>
@@ -7336,18 +8182,14 @@ Helpdesk Team Anda
             'Mendefinisikan filter yang memproses teks dalam artikel, dalam rangka untuk menyoroti URL.',
         'Defines the format of responses in the ticket compose screen of the agent interface ([% Data.OrigFrom | html %] is From 1:1, [% Data.OrigFromName | html %] is only realname of From).' =>
             'Mendefinisikan format tanggapan di layar compose tiket dari agen antarmuka ([% Data.OrigDari | html%] adalah Dari 1: , [% Data.OrigDariNama | html%] hanya realname Dari).',
-        'Defines the fully qualified domain name of the system. This setting is used as a variable, OTOBO_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
-            'Mendefinisikan nama domain berkualifikasi lengkap dari sistem. Pengaturan ini digunakan sebagai variabel, OTOBO_CONFIG_FQDN yang ditemukan dalam semua bentuk pesan yang digunakan oleh aplikasi, untuk membangun link ke tiket dalam sistem Anda.',
+        'Defines the fully qualified domain name of the system. This setting is used as a variable, CareOnCloud_CONFIG_FQDN which is found in all forms of messaging used by the application, to build links to the tickets within your system.' =>
+            'Mendefinisikan nama domain berkualifikasi lengkap dari sistem. Pengaturan ini digunakan sebagai variabel, CareOnCloud_CONFIG_FQDN yang ditemukan dalam semua bentuk pesan yang digunakan oleh aplikasi, untuk membangun link ke tiket dalam sistem Anda.',
         'Defines the groups every customer user will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer user for these groups).' =>
             '',
         'Defines the groups every customer will be in (if CustomerGroupSupport is enabled and you don\'t want to manage every customer for these groups).' =>
             '',
         'Defines the headers which will be shown to generic content for the requested key.' =>
             '',
-        'Defines the height for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
-            'Mendefinisikan tinggi untuk komponen editor teks kaya untuk layar ini. Masukkan nomor (piksel) atau nilai persen (relatif).',
-        'Defines the height for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            'Mendefinisikan tinggi untuk orang kaya komponen editor teks. Masukkan nomor (piksel) atau nilai persen (relatif).',
         'Defines the history comment for the close ticket screen action, which gets used for ticket history in the agent interface.' =>
             'Mendefinisikan komentar sejarah untuk aksi layar tiket dekat, yang akan digunakan untuk sejarah tiket di antarmuka agen.',
         'Defines the history comment for the email ticket screen action, which gets used for ticket history in the agent interface.' =>
@@ -7381,7 +8223,7 @@ Helpdesk Team Anda
         'Defines the history type for the phone ticket screen action, which gets used for ticket history in the agent interface.' =>
             'Mendefinisikan jenis sejarah untuk aksi layar tiket ponsel, yang akan digunakan sebagai sejarah tiket di antarmuka agen.',
         'Defines the history type for the ticket free text screen action, which gets used for ticket history.' =>
-            'Mendefinisikan nama domain berkualifikasi lengkap dari sistem. Pengaturan ini digunakan sebagai variabel, OTOBO_CONFIG_FQDN yang ditemukan dalam semua bentuk pesan yang digunakan oleh aplikasi, untuk membangun link ke tiket dalam sistem Anda.',
+            'Mendefinisikan nama domain berkualifikasi lengkap dari sistem. Pengaturan ini digunakan sebagai variabel, CareOnCloud_CONFIG_FQDN yang ditemukan dalam semua bentuk pesan yang digunakan oleh aplikasi, untuk membangun link ke tiket dalam sistem Anda.',
         'Defines the history type for the ticket note screen action, which gets used for ticket history in the agent interface.' =>
             'Mendefinisikan jenis sejarah untuk aksi layar catatan tiket, yang akan digunakan untuk sejarah tiket di antarmuka agen.',
         'Defines the history type for the ticket owner screen action, which gets used for ticket history in the agent interface.' =>
@@ -7403,6 +8245,10 @@ Helpdesk Team Anda
         'Defines the hours and week days of the indicated calendar, to count the working time.' =>
             'Mendefinisikan jam dan minggu hari kalender menunjukkan, untuk menghitung waktu kerja.',
         'Defines the hours and week days to count the working time.' => 'Mendefinisikan jam dan hari minggu untuk menghitung waktu kerja.',
+        'Defines the initial height for the rich text editor component. Enter number (pixels).' =>
+            '',
+        'Defines the initial height in pixels for the rich text editor component for this screen.' =>
+            '',
         'Defines the key to be checked with Kernel::Modules::AgentInfo module. If this user preferences key is true, the message is accepted by the system.' =>
             'Mendefinisikan kunci untuk diperiksa dengan Kernel::Modul::AgentInfo. Jika tombol preferensi pengguna ini benar, pesan akan diterima oleh sistem.',
         'Defines the key to check with CustomerAccept. If this user preferences key is true, then the message is accepted by the system.' =>
@@ -7413,8 +8259,8 @@ Helpdesk Team Anda
             'Mendefinisikan jenis link \'Parent Child\'. Jika nama sumber dan nama target mengandung nilai yang sama, link yang dihasilkan adalah non-directional satu; jika tidak, hasilnya adalah link directional.',
         'Defines the link type groups. The link types of the same group cancel one another. Example: If ticket A is linked per a \'Normal\' link with ticket B, then these tickets could not be additionally linked with link of a \'ParentChild\' relationship.' =>
             'Mendefinisikan kelompok jenis link. Jenis link dari kelompok yang sama membatalkan satu sama lain. Contoh: Jika tiket A dihubungkan per satu \'normal\' hubungan dengan tiket B, maka tiket tersebut tidak dapat tambahan terkait dengan link dari sebuah hubungan \'ParentChild\'.',
-        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/otobo/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
-            'Mendefinisikan daftar repositori online. instalasi lain dapat digunakan sebagai repositori, misalnya: Key = "http://example.com/otobo/public.pl?Action=PublicRepository;File=" dan Content = "Beberapa Nama".',
+        'Defines the list of online repositories. Another installations can be used as repository, for example: Key="http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" and Content="Some Name".' =>
+            'Mendefinisikan daftar repositori online. instalasi lain dapat digunakan sebagai repositori, misalnya: Key = "http://example.com/careoncloud/public.pl?Action=PublicRepository;File=" dan Content = "Beberapa Nama".',
         'Defines the list of params that can be passed to ticket search function.' =>
             '',
         'Defines the list of possible next actions on an error screen, a full path is required, then is possible to add external links if needed.' =>
@@ -7424,8 +8270,8 @@ Helpdesk Team Anda
             'Mendefinisikan lokasi untuk mendapatkan urutan repositori onlline dan tambahan paket. Hasil yang pertama akan digunakan',
         'Defines the log module for the system. "File" writes all messages in a given logfile, "SysLog" uses the syslog daemon of the system, e.g. syslogd.' =>
             'Mendefinisikan modul log untuk sistem. "File" tertulis di semua pesan yang diberikan oleh logfile, "SysLog" digunakan untuk syslog daemon untuk sistem, contoh: syslogd.',
-        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your OTOBO instance to stop working (probably any mask which takes input from the user).' =>
-            'Mendefinisikan ukuran maksimal (dalam byte) untuk upload file melalui browser. Peringatan: Mengatur opsi ini untuk nilai yang terlalu rendah dapat menyebabkan banyak topeng dalam hal OTOBO Anda untuk berhenti bekerja (mungkin setiap topeng yang mengambil input dari user).',
+        'Defines the maximal size (in bytes) for file uploads via the browser. Warning: Setting this option to a value which is too low could cause many masks in your CareOnCloud ESM instance to stop working (probably any mask which takes input from the user).' =>
+            'Mendefinisikan ukuran maksimal (dalam byte) untuk upload file melalui browser. Peringatan: Mengatur opsi ini untuk nilai yang terlalu rendah dapat menyebabkan banyak topeng dalam hal CareOnCloud ESM Anda untuk berhenti bekerja (mungkin setiap topeng yang mengambil input dari user).',
         'Defines the maximal valid time (in seconds) for a session id.' =>
             'Mendefinisikan maksimum waktu yang berlaku (dalam detik) untuk sesi id',
         'Defines the maximum number of affected tickets per job.' => 'Mendefinisikan jumlah maksimum tiket yang terkena per pekerjaan.',
@@ -7446,8 +8292,8 @@ Helpdesk Team Anda
         'Defines the module that shows the currently logged in customers in the customer interface.' =>
             '',
         'Defines the module to authenticate customers.' => 'Mendefinisikan modul untuk mengotentikasi pelanggan.',
-        'Defines the module to display a notification in the agent interface if the OTOBO Daemon is not running.' =>
-            'Mendefinisikan modul untuk menampilkan pemberitahuan di antarmuka agen jika OTOBO Daemon tidak berjalan.',
+        'Defines the module to display a notification in the agent interface if the CareOnCloud ESM Daemon is not running.' =>
+            'Mendefinisikan modul untuk menampilkan pemberitahuan di antarmuka agen jika CareOnCloud ESM Daemon tidak berjalan.',
         'Defines the module to display a notification in the agent interface if the system configuration is out of sync.' =>
             '',
         'Defines the module to display a notification in the agent interface, if the agent has not yet selected a time zone.' =>
@@ -7468,9 +8314,11 @@ Helpdesk Team Anda
             '',
         'Defines the module to display a notification in the customer interface, if the customer user has not yet selected a time zone.' =>
             '',
+        'Defines the module to display a notification in the customer interface. UseMarquee options: 1/0. NotifyPriority options: Notice/Error/Success/Info.' =>
+            '',
         'Defines the module to generate code for periodic page reloads.' =>
             'Mendefinisikan modul untuk menghasilkan kode untuk ulang halaman periodik.',
-        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $OTOBO_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
+        'Defines the module to send emails. "DoNotSendEmail" doesn\'t send emails at all. Any of the "SMTP" mechanisms use a specified (external) mailserver. "Sendmail" directly uses the sendmail binary of your operating system. "Test" doesn\'t send emails, but writes them to $CareOnCloud_HOME/var/tmp/CacheFileStorable/EmailTest/ for testing purposes.' =>
             '',
         'Defines the module used to store the session data. With "DB" the frontend server can be splitted from the db server. "FS" is faster.' =>
             'Mendefinisikan modul yang digunakan untuk menyimpan data sesi. Dengan "DB" server frontend dapat splitted dari server db. "FS" lebih cepat.',
@@ -7484,8 +8332,8 @@ Helpdesk Team Anda
             'Mendefinisikan nama kolom untuk menyimpan pengidentifikasi pengguna dalam tabel preferensi.',
         'Defines the name of the indicated calendar.' => 'Mendefinisikan nama kalender yang ditunjukkan.',
         'Defines the name of the key for customer sessions.' => 'Mendefinisikan nama kunci untuk sesi pelanggan.',
-        'Defines the name of the session key. E.g. Session, SessionID or OTOBO.' =>
-            'Mendefinisikan nama kunci sesi. Misalnya. Sesi, sessionid atau OTOBO.',
+        'Defines the name of the session key. E.g. Session, SessionID or CareOnCloud ESM.' =>
+            'Mendefinisikan nama kunci sesi. Misalnya. Sesi, sessionid atau CareOnCloud ESM.',
         'Defines the name of the table where the user preferences are stored.' =>
             'Mendefinisikan nama tabel dimana preferensi pengguna disimpan.',
         'Defines the next possible states after composing / answering a ticket in the ticket compose screen of the agent interface.' =>
@@ -7535,6 +8383,8 @@ Helpdesk Team Anda
             '',
         'Defines the parameters for the dashboard backend. "Limit" defines the number of entries displayed by default. "Group" is used to restrict access to the plugin (e. g. Group: admin;group1;group2;). "Default" indicates if the plugin is enabled by default or if the user needs to enable it manually. "CacheTTLLocal" defines the cache expiration period in minutes for the plugin. "Mandatory" determines if the plugin is always shown and can not be removed by agents.' =>
             '',
+        'Defines the parameters for the elasticsearch widget backend.' =>
+            '',
         'Defines the path and TTF-File to handle bold italic monospaced font in PDF documents.' =>
             'Mendefinisikan jalur dan TTF-File untuk menangani bold font yang monospace miring di dokumen PDF',
         'Defines the path and TTF-File to handle bold italic proportional font in PDF documents.' =>
@@ -7556,10 +8406,7 @@ Helpdesk Team Anda
         'Defines the path to PGP binary.' => 'Mendefinisikan jalan untuk binari PGP ',
         'Defines the path to open ssl binary. It may need a HOME env ($ENV{HOME} = \'/var/lib/wwwrun\';).' =>
             'Mendefinisikan jalur untuk membuka binari ssl. diperlukan HOME env ($ENV{HOME} = \'/var/lib/wwwrun\';).',
-        'Defines the path to the Google Chrome or Chromium binary. If set, this binary will be used instead of PhantomJS::Bin.' =>
-            '',
-        'Defines the path to the PhantomJS binary. You can use a static build from http://phantomjs.org/download.html for an easy installation process.' =>
-            '',
+        'Defines the path to the Google Chrome or Chromium binary.' => '',
         'Defines the period of time (in minutes) before agent is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
             '',
         'Defines the period of time (in minutes) before customer is marked as "away" due to inactivity (e.g. in the "Logged-In Users" widget or for the chat).' =>
@@ -7571,6 +8418,10 @@ Helpdesk Team Anda
             'Mendefinisikan target penerima tiket telepon dan pengirim tiket email ("Antrian" menunjukkan semua antrian, "alamat Sistem" menampilkan semua alamat sistem) dalam antarmuka agen.',
         'Defines the recipient target of the tickets ("Queue" shows all queues, "SystemAddress" shows only the queues which are assigned to system addresses) in the customer interface.' =>
             'Mendefinisikan target penerima tiket ("Antrian" menunjukkan semua antrian, "Sistem Alamat" hanya menunjukkan permintaan yang ditugaskan ke alamat sistem) dalam antarmuka pelanggan.',
+        'Defines the redirect URL for setting a ticket article to \'seen\'.' =>
+            '',
+        'Defines the redirect URL for setting a ticket article to \'unseen\'.' =>
+            '',
         'Defines the required permission to show a ticket in the escalation view of the agent interface.' =>
             'Mendefinisikan izin yang diperlukan untuk menunjukkan tiket dalam tampilan eskalasi antarmuka agen.',
         'Defines the search limit for the stats.' => 'Mendefinisikan batas pencarian untuk bintang.',
@@ -7581,7 +8432,7 @@ Helpdesk Team Anda
             'Mendefinisikan pemisah antara agen nama asli dan alamat email antrian diberikan.',
         'Defines the shown columns and the position in the AgentCustomerUserAddressBook result screen.' =>
             '',
-        'Defines the shown links in the footer area of the customer interface of this OTOBO system. The value in "Key" is the external URL, the value in "Content" is the shown label. <OTOBO_CONFIG_HttpType>, <OTOBO_CONFIG_FQDN> and <OTOBO_CONFIG_ScriptAlias> will be substituted.' =>
+        'Defines the shown links in the footer area of the customer interface of this CareOnCloud ESM system. The value in "Key" is the external URL, the value in "Content" is the shown label. <CareOnCloud_CONFIG_HttpType>, <CareOnCloud_CONFIG_FQDN> and <CareOnCloud_CONFIG_ScriptAlias> will be substituted.' =>
             '',
         'Defines the source dynamic field for storing historical data.' =>
             '',
@@ -7607,8 +8458,8 @@ Helpdesk Team Anda
             '',
         'Defines the system administrator\'s email address. It will be displayed in the error screens of the application.' =>
             'Mendefinisikan alamat email administrator sistem. Akan ditampilkan di layar dimana terjadi kesalahan pada aplikasi.',
-        'Defines the system identifier. Every ticket number and http session string contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of OTOBO).' =>
-            'Mendefinisikan sistem identifier. Setiap nomor tiket dan sesi http string berisi ID ini. Hal ini memastikan bahwa hanya tiket yang milik sistem anda akan diproses sebagai tindak lanjut (berguna ketika berkomunikasi antara dua contoh OTOBO).',
+        'Defines the system identifier. Every ticket number contains this ID. This ensures that only tickets which belong to your system will be processed as follow-ups (useful when communicating between two instances of CareOnCloud ESM). The SystemID may also be used in HTTP session backends.' =>
+            '',
         'Defines the target attribute in the link to external customer database. E.g. \'AsPopup PopupType_TicketAction\'.' =>
             'Mendefinisikan atribut target link ke database pelanggan eksternal.Contoh \'AsPopup PopupType_TicketAction\'.',
         'Defines the target attribute in the link to external customer database. E.g. \'target="cdb"\'.' =>
@@ -7626,11 +8477,11 @@ Helpdesk Team Anda
         'Defines the ticket plugin for calendar appointments.' => '',
         'Defines the time zone of the indicated calendar, which can be assigned later to a specific queue.' =>
             'Mendefinisikan zona waktu kalender ditunjukkan, yang dapat diberikan kemudian untuk antrian tertentu.',
-        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the OTOBO Daemon).' =>
+        'Defines the timeout (in seconds, minimum is 20 seconds) for the support data collection with the public module \'PublicSupportDataCollector\' (e.g. used from the CareOnCloud ESM Daemon).' =>
             '',
         'Defines the two-factor module to authenticate agents.' => 'Mendefinisikan modul dua faktor untuk otentikasi agen.',
         'Defines the two-factor module to authenticate customers.' => 'Mendefinisikan modul dua faktor untuk mengotentikasi pelanggan.',
-        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable OTOBO_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
+        'Defines the type of protocol that is used by the web server to serve the application. If the webserver uses HTTP instead of of HTTPS, then \'http\' must be specified here. The setting of \'HttpType\' has no affect on the web server\'s settings or behavior. Specifically, it will not change the method of access to the application. If the setting is wrong, it will not prevent you from logging into the application. This setting is used mainly via the template variable CareOnCloud_CONFIG_HttpType. This variable is found in all forms of messaging used by the application. It is used to build links to the tickets within your system. Another effect of keeping \'HttpType\' set to \'https\' is that the session management cookie will only be set for secure connections.' =>
             '',
         'Defines the used character for plaintext email quotes in the ticket compose screen of the agent interface. If this is empty or inactive, original emails will not be quoted but appended to the response.' =>
             'Mendefinisikan karakter yang digunakan untuk kutipan email plaintext di layar compose tiket dari antarmuka agen. Jika ini kosong atau tidak aktif, email asli tidak akan dikutip tetapi ditambahkan ke respon.',
@@ -7639,14 +8490,16 @@ Helpdesk Team Anda
             '',
         'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed.' =>
             '',
-        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
-            'Mendefinisikan negara berlaku untuk tiket dibuka. Untuk membuka tiket script "bin/otobo.Console.pl Maint::Ticket::UnlockTimeout" dapat digunakan',
+        'Defines the valid state types for a ticket. If a ticket is in a state which have any state type from this setting, this ticket will be considered as open, otherwise as closed. This setting e.g. controls if a state type is visible in AgentTicketStatusView in the Open Tickets or Closed Tickets section. It might be necessary to delete your system\'s cache in order to see any changes (/opt/careoncloud/bin/careoncloud.Console.pl Maint::Cache::Delete).' =>
+            '',
+        'Defines the valid states for unlocked tickets. To unlock tickets the script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" can be used.' =>
+            'Mendefinisikan negara berlaku untuk tiket dibuka. Untuk membuka tiket script "bin/careoncloud.Console.pl Maint::Ticket::UnlockTimeout" dapat digunakan',
+        'Defines the value of the SameSite attribute of the CareOnCloud ESM session cookies. Used in careoncloud.psgi.' =>
+            '',
         'Defines the viewable locks of a ticket. NOTE: When you change this setting, make sure to delete the cache in order to use the new value. Default: unlock, tmp_lock.' =>
             '',
         'Defines the width for the rich text editor component for this screen. Enter number (pixels) or percent value (relative).' =>
             'Mendefinisikan lebar untuk komponen editor teks ini. Masukkan nomor (piksel) atau nilai persen (relatif).',
-        'Defines the width for the rich text editor component. Enter number (pixels) or percent value (relative).' =>
-            'Mendefinisikan lebar untuk rich komponen editor teks. Masukkan nomor (piksel) atau nilai persen (relatif).',
         'Defines time in minutes since last modification for drafts of specified type before they are considered expired.' =>
             '',
         'Defines whether to index archived tickets for fulltext searches.' =>
@@ -7664,6 +8517,7 @@ Helpdesk Team Anda
         'Defines, which tickets of which ticket state types should not be listed in linked ticket lists.' =>
             'Mendefinisikan, tiket jenis state tidak harus tercantum dalam daftar tiket terkait.',
         'Delete expired cache from core modules.' => 'Hapus tembolok kadaluarsa dari modul inti.',
+        'Delete expired form cache hourly.' => '',
         'Delete expired loader cache weekly (Sunday mornings).' => 'Hapus loader yang sudah jatuh tempo setiap minggu (Minggu pagi).',
         'Delete expired sessions.' => 'Hapus sesi tamat tempo',
         'Delete expired ticket draft entries.' => '',
@@ -7681,6 +8535,8 @@ Helpdesk Team Anda
             '',
         'Determines if the list of possible queues to move to ticket into should be displayed in a dropdown list or in a new window in the agent interface. If "New Window" is set you can add a move note to the ticket.' =>
             'Menentukan apakah daftar antrian untuk pindah ke tiket harus ditampilkan dalam daftar dropdown atau di jendela baru di antarmuka agen. Jika "New Window" diatur Anda dapat menambahkan catatan pindah ke tiket.',
+        'Determines if the statistics module may generate article lists.' =>
+            '',
         'Determines if the statistics module may generate ticket lists.' =>
             'Menentukan apakah modul statistik dapat menghasilkan daftar tiket.',
         'Determines the next possible ticket states, after the creation of a new email ticket in the agent interface.' =>
@@ -7711,9 +8567,11 @@ Helpdesk Team Anda
             'Menentukan opsi yang akan berlaku jika penerima (tiket ponsel) dan pengirim (tiket email) dalam antarmuka agen.',
         'Determines which queues will be valid for ticket\'s recepients in the customer interface.' =>
             'Menentukan antrian yang akan berlaku untuk tiket penerima di antarmuka pelanggan.',
+        'Dialog to show after marking a ticket as seen' => '',
+        'Dialog to show after marking a ticket as unseen' => '',
         'Disable HTTP header "Content-Security-Policy" to allow loading of external script contents. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             '',
-        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow OTOBO to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
+        'Disable HTTP header "X-Frame-Options: SAMEORIGIN" to allow CareOnCloud ESM to be included as an IFrame in other websites. Disabling this HTTP header can be a security issue! Only disable it, if you know what you are doing!' =>
             'Nonaktifkan HTTP header "X-Frame-Options: SAMEORIGIN" untuk memungkinkan OTHERS untuk dimasukkan sebagai iFrame di situs-situs lain. Menonaktifkan HTTP header ini bisa menjadi masalah keamanan! Hanya menonaktifkannya, jika Anda tahu apa yang Anda lakukan!',
         'Disable autocomplete in the login screen.' => '',
         'Disable cloud services' => '',
@@ -7721,37 +8579,61 @@ Helpdesk Team Anda
             '',
         'Disables the redirection to the last screen overview / dashboard after a ticket is closed.' =>
             '',
+        'Display a message explaining that the asterisk indicates mandatory fields.' =>
+            '',
         'Display a warning and prevent search when using stop words within fulltext search.' =>
             'Menampilkan peringatan dan mencegah pencarian ketika menggunakan kata-kata berhenti dalam pencarian fulltext.',
         'Display communication log entries.' => '',
         'Display settings to override defaults for Process Tickets.' => 'pengaturan tampilan untuk menimpa default untuk Proses Tiket.',
+        'Display settings to override defaults for dynamic field widget for Tickets.' =>
+            '',
+        'Displayable via click' => '',
         'Displays the accounted time for an article in the ticket zoom view.' =>
             'Menampilkan waktu sebuah artikel dalam tampilan zoom tiket.',
         'Displays the number of all tickets with the same CustomerID as current ticket in the ticket zoom view.' =>
             '',
-        'Down' => 'Bawah',
         'Dropdown' => 'Jatuhkan ke bawah',
         'Dutch' => '',
         'Dutch stop words for fulltext index. These words will be removed from the search index.' =>
             'kata berhenti Belanda untuk indeks fulltext. Kata-kata ini akan dihapus dari indeks pencarian.',
+        'Dynamic Field Contents' => '',
+        'Dynamic Field Information' => '',
+        'Dynamic Field Labels' => '',
+        'Dynamic Field Screen' => '',
+        'Dynamic Field Set' => '',
+        'Dynamic Field Set Backend GUI' => '',
         'Dynamic Fields Checkbox Backend GUI' => 'GUI dinamis Fields Checkbox Backend',
         'Dynamic Fields Contact Data Backend GUI' => '',
         'Dynamic Fields Database Backend GUI' => '',
         'Dynamic Fields Date Time Backend GUI' => 'Dinamis Fields Tanggal GUI Waktu Backend',
         'Dynamic Fields Drop-down Backend GUI' => 'Dinamis Fields drop-down GUI Backend',
         'Dynamic Fields GUI' => 'GUI dinamis Fields',
+        'Dynamic Fields Lens Backend GUI' => '',
         'Dynamic Fields Multiselect Backend GUI' => 'Dinamis Fields Multiselect Backend GUI',
         'Dynamic Fields Overview Limit' => 'Dinamis Fields Batas keseluruhannya',
+        'Dynamic Fields Reference Backend GUI' => '',
         'Dynamic Fields Text Backend GUI' => 'Dinamis Bidang Teks GUI Backend',
         'Dynamic Fields Web Service Backend GUI' => '',
         'Dynamic Fields used to export the search result in CSV format.' =>
             'Dinamis Fields digunakan untuk mengekspor hasil pencarian dalam format CSV.',
+        'Dynamic field event module that deletes script field events if a dynamic field of type script gets deleted.' =>
+            '',
+        'Dynamic field event module that updates PartOfSet attributes of fields which are included in a set.' =>
+            '',
+        'Dynamic field event module that updates the MultiValue attribute of the Lens field configuration to match the MultiValue attribute of the attribute field.' =>
+            '',
+        'Dynamic fields available as attributes for the settings \'Ticket::Frontend::CustomerTicketCategories###DynamicField\', which are shown in the ticket overview screen of the customer interface.' =>
+            '',
+        'Dynamic fields groups for dynamic field widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
+            '',
         'Dynamic fields groups for process widget. The key is the name of the group, the value contains the fields to be shown. Example: \'Key => My Group\', \'Content: Name_X, NameY\'.' =>
             'kelompok bidang dinamis untuk proses widget. Kuncinya adalah nama kelompok, nilai berisi bidang yang akan ditampilkan. Contoh: \'Key => Grup saya\', \'Isi: Nama X, Nama Y\'.',
         'Dynamic fields limit per page for Dynamic Fields Overview.' => '',
         'Dynamic fields options shown in the ticket message screen of the customer interface. NOTE. If you want to display these fields also in the ticket zoom of the customer interface, you have to enable them in CustomerTicketZoom###DynamicField.' =>
             '',
         'Dynamic fields options shown in the ticket reply section in the ticket zoom screen of the customer interface.' =>
+            '',
+        'Dynamic fields shown in the dynamic field widget in ticket zoom screen of the agent interface.' =>
             '',
         'Dynamic fields shown in the email outbound screen of the agent interface.' =>
             '',
@@ -7774,8 +8656,6 @@ Helpdesk Team Anda
         'Dynamic fields shown in the ticket move screen of the agent interface.' =>
             '',
         'Dynamic fields shown in the ticket note screen of the agent interface.' =>
-            '',
-        'Dynamic fields shown in the ticket overview screen of the customer interface.' =>
             '',
         'Dynamic fields shown in the ticket owner screen of the agent interface.' =>
             '',
@@ -7810,7 +8690,6 @@ Helpdesk Team Anda
         'DynamicField' => 'DynamicField',
         'DynamicField backend registration.' => 'DynamicField pendaftaran backend.',
         'DynamicField object registration.' => 'DynamicField pendaftaran obyek.',
-        'DynamicFieldScreen' => '',
         'DynamicField_%s' => '',
         'E-Mail Outbound' => 'EMail Outbound',
         'Edit Customer Companies.' => 'Mengatur perusahaan pelanggan',
@@ -7819,6 +8698,7 @@ Helpdesk Team Anda
         'Edit contacts with data' => '',
         'Edit contacts with data.' => '',
         'Edit customer company' => 'Mengatur perusahaan pelanggan',
+        'Elasticsearch (u)' => '',
         'Elasticsearch quick result module.' => '',
         'Email Addresses' => 'Alamat email',
         'Email Outbound' => 'Email keluar',
@@ -7829,15 +8709,18 @@ Helpdesk Team Anda
         'Enable this if you trust in all your public and private pgp keys, even if they are not certified with a trusted signature.' =>
             '',
         'Enabled filters.' => 'Filter diaktifkan',
-        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the OTOBO user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
-            'Memungkinkan dukungan PGP. Ketika dukungan PGP diaktifkan untuk menandatangani dan mengenkripsi email, itu sangat dianjurkan bahwa web server berjalan sebagai pengguna OTOBO. Jika tidak, akan ada masalah dengan hak ketika mengakses .gnupg folder.',
+        'Enables PGP support. When PGP support is enabled for signing and encrypting mail, it is HIGHLY recommended that the web server runs as the CareOnCloud ESM user. Otherwise, there will be problems with the privileges when accessing .gnupg folder.' =>
+            'Memungkinkan dukungan PGP. Ketika dukungan PGP diaktifkan untuk menandatangani dan mengenkripsi email, itu sangat dianjurkan bahwa web server berjalan sebagai pengguna CareOnCloud ESM. Jika tidak, akan ada masalah dengan hak ketika mengakses .gnupg folder.',
         'Enables S/MIME support.' => 'Mengaktifkan dukungan S/MIME ',
         'Enables customers to create their own accounts.' => 'Mengaktifkan pelanggan untuk membuat account mereka sendiri.',
         'Enables fetch S/MIME from CustomerUser backend support.' => '',
         'Enables file upload in the package manager frontend.' => 'Mengaktifkan file upload di frontend paket manajer ',
         'Enables or disables the caching for templates. WARNING: Do NOT disable template caching for production environments for it will cause a massive performance drop! This setting should only be disabled for debugging reasons!' =>
             'Mengaktifkan atau menonaktifkan caching untuk template. PERINGATAN: JANGAN menonaktifkan caching template untuk lingkungan produksi karena akan menyebabkan penurunan kinerja besar! Pengaturan ini hanya harus dinonaktifkan untuk debugging!',
+        'Enables or disables the debug mode for translations module.' => '',
         'Enables or disables the debug mode over frontend interface.' => 'Mengaktifkan atau menonaktifkan mode debug lebih antarmuka front end.',
+        'Enables or disables the editing of articles which are visible for the customer in general.' =>
+            '',
         'Enables or disables the ticket watcher feature, to keep track of tickets without being the owner nor the responsible.' =>
             'Mengaktifkan atau menonaktifkan fitur pengamat tiket, untuk melacak tiket tanpa  menjadi pemilik atau pihak yang bertanggung jawab.',
         'Enables performance log (to log the page response time). It will affect the system performance. Frontend::Module###AdminPerformanceLog must be enabled.' =>
@@ -7852,7 +8735,7 @@ Helpdesk Team Anda
             'Memungkinkan tiket fitur bertanggung jawab, untuk melacak tiket tertentu.',
         'Enables ticket type feature.' => '',
         'Enables ticket watcher feature only for the listed groups.' => 'Memungkinkan fitur watcher tiket hanya untuk kelompok terdaftar.',
-        'Enabling SecureMode disables the web installer (http://yourhost.example.com/otobo/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
+        'Enabling SecureMode disables the web installer (http://yourhost.example.com/careoncloud/installer.pl) and the migrations. This is done in order to prevent the system from being hijacked. When SecureMode is not enabled the system can be reinstalled. In this case the current basic configuration will be used to pre-populate the questions within the installer script. Enabling SecureMode also enables GenericAgent, PackageManager and SQL Box.' =>
             '',
         'English (Canada)' => 'English (Kanada)',
         'English (United Kingdom)' => 'English (United Kingdom)',
@@ -7866,6 +8749,7 @@ Helpdesk Team Anda
         'Escalation view' => 'lihat eskalasi',
         'EscalationTime' => 'Waktu Eskalasi',
         'Estonian' => 'Estonia',
+        'Evaluate all script fields.' => '',
         'Event module registration (store historical data in dynamic fields).' =>
             '',
         'Event module registration. For more performance you can define a trigger event (e. g. Event => TicketCreate).' =>
@@ -7895,7 +8779,7 @@ Helpdesk Team Anda
             'Mengeksekusi perintah kustom atau modul. Catatan: jika modul yang digunakan, fungsi diperlukan.',
         'Executes follow-up checks on In-Reply-To or References headers for mails that don\'t have a ticket number in the subject.' =>
             'Mengeksekusi cek menindaklanjuti In-Reply-To atau References header untuk email yang tidak memiliki nomor tiket di subjek.',
-        'Executes follow-up checks on OTOBO Header \'X-OTOBO-Bounce\'.' =>
+        'Executes follow-up checks on CareOnCloud ESM Header \'X-CareOnCloud-Bounce\'.' =>
             '',
         'Executes follow-up checks on attachment contents for mails that don\'t have a ticket number in the subject.' =>
             'Mengeksekusi cek menindaklanjuti isi lampiran untuk mail yang tidak memiliki nomor tiket di subjek.',
@@ -7914,22 +8798,22 @@ Helpdesk Team Anda
             'Menjemput paket melalui proxy. menimpa "WebUserAgent::Proxy".',
         'Fields of the customer company index, used for the company fulltext search. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '',
-        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
+        'Fields of the ticket index, used for the ticket fulltext search. Fields are also stored, but are not mandatory for the overall functionality. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
             '',
         'Fields stored in the customer company index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '',
         'Fields stored in the customer user index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory.' =>
             '',
-        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially DynamicFields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch webservice!' =>
+        'Fields stored in the ticket index which are used for other things besides fulltext searches. For the complete functionality all fields are mandatory. If fields are added which can be updated (especially dynamic fields), their respective update event has to be added to the TicketManagement invoker of the Elasticsearch web service!' =>
             '',
         'Fields to be searched in ticket index. Fields are also stored, but are not mandatory for the overall functionality.' =>
             '',
         'File that is displayed in the Kernel::Modules::AgentInfo module, if located under Kernel/Output/HTML/Templates/Standard/AgentInfo.tt.' =>
             'File yang ditampilkan dalam Kernel::Modules::AgentInfo modul, terletak di bawah Kernel/Output/HTML/Template/Standard/AgentInfo.tt',
-        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'Filter untuk debugging ACL. Catatan: atribut tiket lebih lanjut dapat ditambahkan dalam format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.',
-        'Filter for debugging Transitions. Note: More filters can be added in the format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.' =>
-            'Filter untuk debugging Transisi. Catatan: Lebih filter dapat ditambahkan dalam format <OTOBO_TICKET_Attribute> e.g. <OTOBO_TICKET_Priority>.',
+        'Filter for debugging ACLs. Note: More ticket attributes can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'Filter untuk debugging ACL. Catatan: atribut tiket lebih lanjut dapat ditambahkan dalam format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.',
+        'Filter for debugging Transitions. Note: More filters can be added in the format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.' =>
+            'Filter untuk debugging Transisi. Catatan: Lebih filter dapat ditambahkan dalam format <CareOnCloud_TICKET_Attribute> e.g. <CareOnCloud_TICKET_Priority>.',
         'Filter incoming emails.' => 'Menyaring email yang masuk.',
         'Finnish' => 'Selesei',
         'First Christmas Day' => 'Hari Natal',
@@ -7960,6 +8844,8 @@ Helpdesk Team Anda
         'French stop words for fulltext index. These words will be removed from the search index.' =>
             'kata berhenti Perancis untuk indeks fulltext. Kata-kata ini akan dihapus dari indeks pencarian.',
         'Frontend' => 'paling depan',
+        'Frontend module for dashboard info tile in customer interface.' =>
+            '',
         'Frontend module registration (disable AgentTicketService link if Ticket Service feature is not used).' =>
             '',
         'Frontend module registration (disable company link if no company feature is used).' =>
@@ -7973,11 +8859,13 @@ Helpdesk Team Anda
         'Frontend module registration for the customer interface.' => 'Frontend pendaftaran modul untuk antarmuka pelanggan.',
         'Frontend module registration for the public interface.' => 'Pendaftaran modul Halamandepan untuk antarmuka umum.',
         'Full value' => 'nilai penuh',
+        'Fulltext Elasticsearch' => '',
         'Fulltext index regex filters to remove parts of the text.' => 'Fulltext filter Indeks regex untuk menghapus bagian-bagian dari teks.',
         'Fulltext search' => 'Pencarian Teks Penuh',
         'Fulltext search using Elasticsearch.' => '',
-        'FulltextES' => '',
+        'Functional Account and Token Management.' => '',
         'Galician' => 'Galician',
+        'General Label' => '',
         'General ticket data shown in the ticket overviews (fall-back). Note that TicketNumber can not be disabled, because it is necessary.' =>
             '',
         'Generate HTML comment hooks for the specified blocks so that filters can use them.' =>
@@ -8025,11 +8913,12 @@ Helpdesk Team Anda
         'Graph: Stacked Area Chart' => 'Grafik: Tumpukan Bagan Lokasi',
         'Greek' => 'Yunani',
         'Hebrew' => 'Ibrani',
-        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/otobo.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
+        'Helps to extend your articles full-text search (From, To, Cc, Subject and Body search). It will strip all articles and will build an index after article creation, increasing fulltext searches about 50%. To create an initial index use "bin/careoncloud.Console.pl Maint::Ticket::FulltextIndex --rebuild".' =>
             '',
         'High Contrast' => '',
         'High contrast skin for visually impaired users.' => '',
         'Hindi' => 'Hindi',
+        'How many rotated careoncloud.log files to keep. Default is 3.' => '',
         'Hungarian' => 'Hongaria',
         'If "DB" was selected for Customer::AuthModule, a database driver (normally autodetection is used) can be specified.' =>
             'Jika "DB" dipilih untuk  Customer::AuthModule, sebuah driver database (biasanya autodetection digunakan) dapat ditentukan.',
@@ -8041,7 +8930,7 @@ Helpdesk Team Anda
             'Jika "DB" dipilih untuk Customer::AuthModule, DSN untuk koneksi ke tabel pelanggan harus ditentukan.',
         'If "DB" was selected for Customer::AuthModule, the column name for the CustomerPassword in the customer table must be specified.' =>
             'Jika "DB" dipilih untuk Customer::AuthModule, nama kolom untuk Sandi Pelanggan di tabel pelanggan harus ditentukan.',
-        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified.' =>
+        'If "DB" was selected for Customer::AuthModule, the encryption type of passwords must be specified. It is discouraged to configure the not really secure algorithms like \'md5\', \'apr1\', \'crypt\', and \'plain\'.' =>
             '',
         'If "DB" was selected for Customer::AuthModule, the name of the column for the CustomerKey in the customer table must be specified.' =>
             'If "DB" was selected for Customer::AuthModule, nama kolom untuk Key Pelanggan di tabel pelanggan harus ditentukan.',
@@ -8077,8 +8966,8 @@ Helpdesk Team Anda
             'Jika "HTTPBasicAuth" dipilih untuk Customer::AuthModule, Anda dapat menentukan atribut akses di sini.',
         'If "LDAP" was selected for Customer::AuthModule, you can specify if the applications will stop if e. g. a connection to a server can\'t be established due to network problems.' =>
             'Jika "HTTPBasicAuth" dipilih untuk Customer::AuthModule, Anda dapat menentukan apakah aplikasi akan berhenti jika e. g. koneksi ke server tidak dapat dibangun karena masalah jaringan.',
-        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use OTOBO. Specify the group, who may access the system.' =>
-            'Jika "HTTPBasicAuth" dipilih untuk Customer::AuthModule, Anda dapat memeriksa apakah pengguna diijinkan untuk otentikasi karena ia berada dalam posixGroup, misalnya kebutuhan pengguna berada dalam xyz kelompok untuk menggunakan OTOBO. Tentukan kelompok, yang dapat mengakses sistem.',
+        'If "LDAP" was selected for Customer::Authmodule, you can check if the user is allowed to authenticate because he is in a posixGroup, e.g. user needs to be in a group xyz to use CareOnCloud ESM. Specify the group, who may access the system.' =>
+            'Jika "HTTPBasicAuth" dipilih untuk Customer::AuthModule, Anda dapat memeriksa apakah pengguna diijinkan untuk otentikasi karena ia berada dalam posixGroup, misalnya kebutuhan pengguna berada dalam xyz kelompok untuk menggunakan CareOnCloud ESM. Tentukan kelompok, yang dapat mengakses sistem.',
         'If "LDAP" was selected, you can add a filter to each LDAP query, e.g. (mail=*), (objectclass=user) or (!objectclass=computer).' =>
             'Jika "LDAP" dipilih, Anda dapat menambahkan filter untuk setiap query LDAP, (email = *), (objectclass=user) atau (!Objectclass=komputer).',
         'If "Radius" was selected for Customer::AuthModule, the password to authenticate to the radius host must be specified.' =>
@@ -8097,6 +8986,12 @@ Helpdesk Team Anda
             '',
         'If "file" was selected for LogModule, a logfile must be specified. If the file doesn\'t exist, it will be created by the system.' =>
             'Jika "file" dipilih untuk LogModule, file log harus ditentukan. Jika file tidak ada, maka akan dibuat oleh sistem.',
+        'If \'XOAUTH2\' or \'OAUTHBEARER\' is selected in the \'SendmailModule::OAuth2Method\' setting, then this setting needs to be enabled and set to a valid OIDC Functional Account. OIDC Accounts can be configured in the Admin UI \'OAuth Functional Accounts\' Module.' =>
+            '',
+        'If activated additional data such as the history and links will be read from a foreign DB containing the exported tickets and added to the imported tickets on this system. This is only available for created, not for updated tickets.' =>
+            '',
+        'If activated, a clicked activity button will be hidden in the customer ticket zoom frontend.' =>
+            '',
         'If active, none of the regular expressions may match the user\'s email address to allow registration.' =>
             'Jika aktif, tidak ada ekspresi reguler dapat mencocokkan alamat email pengguna untuk memungkinkan pendaftaran.',
         'If active, one of the regular expressions has to match the user\'s email address to allow registration.' =>
@@ -8109,6 +9004,8 @@ Helpdesk Team Anda
             'Jika salah satu "SMTP" mekanisme terpilih sebagai Sendmail Modul, yang mailhost yang mengirimkan kiriman harus ditentukan.',
         'If any of the "SMTP" mechanisms was selected as SendmailModule, the port where your mailserver is listening for incoming connections must be specified.' =>
             'Jika salah satu "SMTP" mekanisme terpilih sebagai Sendmail Modul, port mana mail server Anda mendengarkan koneksi masuk harus ditentukan.',
+        'If any of the "SSL" mechanisms was selected as SendmailModule than declare whether the mail server should be verified.' =>
+            '',
         'If enabled debugging information for ACLs is logged.' => 'Jika informasi debugging diaktifkan untuk ACL login.',
         'If enabled debugging information for transitions is logged.' => 'Jika diaktifkan informasi untuk transisi debug login.',
         'If enabled defines the preselected state for customer follow-up in the customer interface.' =>
@@ -8117,15 +9014,15 @@ Helpdesk Team Anda
             'Jika diaktifkan daemon akan mengarahkan aliran standard error ke file log.',
         'If enabled the daemon will redirect the standard output stream to a log file.' =>
             'Jika diaktifkan daemon akan mengarahkan output stream standar untuk file log.',
-        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$OTOBOHome>/var/run/ can not be used.' =>
+        'If enabled the daemon will use this directory to create its PID files. Note: Please stop the daemon before any change and use this setting only if <$CareOnCloudHome>/var/run/ can not be used.' =>
             '',
-        'If enabled, OTOBO will deliver all CSS files in minified form.' =>
+        'If enabled, CareOnCloud ESM will deliver all CSS files in minified form.' =>
             '',
-        'If enabled, OTOBO will deliver all JavaScript files in minified form.' =>
-            'Jika diaktifkan, OTOBO akan memberikan semua file JavaScript dalam bentuk minified.',
+        'If enabled, CareOnCloud ESM will deliver all JavaScript files in minified form.' =>
+            'Jika diaktifkan, CareOnCloud ESM akan memberikan semua file JavaScript dalam bentuk minified.',
         'If enabled, TicketPhone and TicketEmail will be open in new windows.' =>
             'Jika diaktifkan, Telepon Tiket dan Ticket Email akan terbuka di jendela baru.',
-        'If enabled, the OTOBO version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
+        'If enabled, the CareOnCloud ESM version tag will be removed from the Webinterface, the HTTP headers and the X-Headers of outgoing mails. NOTE: If you change this option, please make sure to delete the cache.' =>
             '',
         'If enabled, the cache data be held in memory.' => '',
         'If enabled, the cache data will be stored in cache backend.' => '',
@@ -8136,7 +9033,7 @@ Helpdesk Team Anda
         'If enabled, the first level of the main menu opens on mouse hover (instead of click only).' =>
             'Jika diaktifkan, tingkat pertama dari menu utama terbuka pada mouse hover (bukan klik saja).',
         'If enabled, the quick close action will create an article.' => '',
-        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) OTOBOTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
+        'If enabled, users that haven\'t selected a time zone yet will be notified to do so. Note: Notification will not be shown if (1) user has not yet selected a time zone and (2) CareOnCloudTimeZone and UserDefaultTimeZone do match and (3) are not set to UTC.' =>
             '',
         'If no SendmailNotificationEnvelopeFrom is specified, this setting makes it possible to use the email\'s from address instead of an empty envelope sender (required in certain mail server configurations).' =>
             '',
@@ -8144,11 +9041,13 @@ Helpdesk Team Anda
             '',
         'If set, this address is used as envelope sender in outgoing messages (not notifications - see below). If no address is specified, the envelope sender is equal to queue e-mail address.' =>
             'Jika diatur, alamat ini digunakan sebagai pengirim amplop di pesan keluar (tidak pemberitahuan - lihat di bawah). Jika tidak ada alamat yang ditentukan, pengirim amplop sama dengan antrian alamat e-mail.',
+        'If the accounted time units for articles are shown in the article list. Only showing if at least one article has any accounted time.' =>
+            '',
         'If this option is enabled, tickets created via the web interface, via Customers or Agents, will receive an autoresponse if configured. If this option is not enabled, no autoresponses will be sent.' =>
             '',
         'If this regex matches, no message will be send by the autoresponder.' =>
             'Jika regex ini cocok, tidak ada pesan akan dikirim oleh autoresponder.',
-        'If this setting is enabled, it is possible to install packages which are not verified by OTOBO Team. These packages could threaten your whole system!' =>
+        'If this setting is enabled, it is possible to install packages which are not verified by CareOnCloud ESM Team. These packages could threaten your whole system!' =>
             '',
         'If this setting is enabled, local modifications will not be highlighted as errors in the package manager and support data collector.' =>
             '',
@@ -8157,21 +9056,28 @@ Helpdesk Team Anda
         'Ignore system sender article types (e. g. auto responses or email notifications) to be flagged as \'Unread Article\' in AgentTicketZoom or expanded automatically in Large view screens.' =>
             '',
         'Ignores not ticket related attributes.' => '',
+        'Import and export object information.' => 'Informasi obyek impor dan ekspor.',
         'Import appointments screen.' => '',
+        'Import/Export' => 'Impor/Ekspor',
+        'In case only one value in a dropdown is left, (0) you do nothing with the field and show it, (1) that single value is selected automatically but the field is still shown or (2) that single value is selected automatically and the field is hidden (but still has the value). Possible dropdown fields could be e.g. Dest (destination queue), ServiceID, SLAID, TypeID, DynamicFields (list your DF names without "DynamicField_" as a prefix) and more.' =>
+            '',
         'Include tickets of subqueues per default when selecting a queue.' =>
             'Termasuk tiket dari subqueues per default ketika memilih antrian.',
         'Include unknown customers in ticket filter.' => 'Termasuk pelanggan yang tidak diketahui dalam filter tiket.',
         'Includes article create times in the ticket search of the agent interface.' =>
             'Termasuk artikel untuk membuat waktu dalam pencarian tiket dari antarmuka agen.',
         'Incoming Phone Call.' => 'Masuk Panggilan Telepon.',
-        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/otobo.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
-            'IndexAccelerator: untuk memilih modul backend TicketViewAccelerator Anda. "RuntimeDB" menghasilkan setiap tampilan antrian pada terbang dari meja tiket (tidak ada masalah kinerja sampai dengan kira-kira. 60.000 tiket total dan 6.000 tiket terbuka dalam sistem). "StaticDB" adalah modul yang paling kuat, itu menggunakan tiket-indeks tabel tambahan yang bekerja seperti pandangan (dianjurkan jika lebih dari 80.000 dan 6.000 tiket terbuka disimpan dalam sistem). Gunakan perintah "bin / otobo.Console.pl Maint :: Ticket :: QueueIndexRebuild" untuk penciptaan indeks awal.',
+        'IndexAccelerator: to choose your backend TicketViewAccelerator module. "RuntimeDB" generates each queue view on the fly from ticket table (no performance problems up to approx. 60.000 tickets in total and 6.000 open tickets in the system). "StaticDB" is the most powerful module, it uses an extra ticket-index table that works like a view (recommended if more than 80.000 and 6.000 open tickets are stored in the system). Use the command "bin/careoncloud.Console.pl Maint::Ticket::QueueIndexRebuild" for initial index creation.' =>
+            'IndexAccelerator: untuk memilih modul backend TicketViewAccelerator Anda. "RuntimeDB" menghasilkan setiap tampilan antrian pada terbang dari meja tiket (tidak ada masalah kinerja sampai dengan kira-kira. 60.000 tiket total dan 6.000 tiket terbuka dalam sistem). "StaticDB" adalah modul yang paling kuat, itu menggunakan tiket-indeks tabel tambahan yang bekerja seperti pandangan (dianjurkan jika lebih dari 80.000 dan 6.000 tiket terbuka disimpan dalam sistem). Gunakan perintah "bin / careoncloud.Console.pl Maint :: Ticket :: QueueIndexRebuild" untuk penciptaan indeks awal.',
         'Indicates if a bounce e-mail should always be treated as normal follow-up.' =>
             '',
         'Indonesian' => 'Indonesia',
         'Inline' => '',
         'Input' => 'Input',
         'Interface language' => 'bahasa antarmuka',
+        'Interfaces for which the restoring of pending information is activated.' =>
+            '',
+        'Internal' => '',
         'Internal communication channel.' => '',
         'International Workers\' Day' => 'Hari Pekerja Internasional',
         'It is possible to configure different skins, for example to distinguish between diferent agents, to be used on a per-domain basis within the application. Using a regular expression (regex), you can configure a Key/Content pair to match a domain. The value in "Key" should match the domain, and the value in "Content" should be a valid skin on your system. Please see the example entries for the proper form of the regex.' =>
@@ -8185,13 +9091,11 @@ Helpdesk Team Anda
         'Italian' => 'Italia',
         'Italian stop words for fulltext index. These words will be removed from the search index.' =>
             'kata berhenti Italia untuk indeks fulltext. Kata-kata ini akan dihapus dari indeks pencarian.',
-        'Ivory' => 'Gading',
-        'Ivory (Slim)' => 'Ivory (slim)',
         'Japanese' => 'Jepang',
         'JavaScript function for the search frontend.' => 'Fungsi JavaScript untuk pencarian frontend ',
-        'Jump to OTOBO!' => '',
+        'Jump to CareOnCloud ESM!' => '',
         'Korean' => '',
-        'Language' => 'Bahasa',
+        'Languages' => '',
         'Large' => 'Besar',
         'Last Screen Overview' => '',
         'Last customer subject' => 'subjek pelanggan terakhir',
@@ -8201,7 +9105,9 @@ Helpdesk Team Anda
         'Lastname, Firstname (UserLogin)' => 'Nama akhir, nama pertama (Pengguna Masuk)',
         'LastnameFirstname' => '',
         'Latvian' => 'Latvia',
+        'Lax' => '',
         'Left' => 'Kiri',
+        'Lens' => '',
         'Link Object' => 'Hubungkan objek',
         'Link Object.' => 'Hubungkan objek',
         'Link agents to groups.' => 'Hubungkan agen ke grup',
@@ -8218,6 +9124,10 @@ Helpdesk Team Anda
         'Links 2 tickets with a "Normal" type link.' => 'Link 2 tiket dengan jenis link "Normal"',
         'Links 2 tickets with a "ParentChild" type link.' => 'Link 2 tiket dengan jenis link "ParentChild" ',
         'Links appointments and tickets with a "Normal" type link.' => '',
+        'List of Active CKEditor Plugins. (Only used if `CustomerFrontend::RichText::EnhancedMode` is enabled).' =>
+            '',
+        'List of Active CKEditor Plugins. (Only used if `Frontend::RichText::EnhancedMode` is enabled).' =>
+            '',
         'List of CSS files to always be loaded for the agent interface.' =>
             'Daftar file CSS untuk selalu dimuat ke antarmuka agen.',
         'List of CSS files to always be loaded for the customer interface.' =>
@@ -8246,8 +9156,12 @@ Helpdesk Team Anda
         'List of responsive CSS files to always be loaded for the customer interface.' =>
             'Daftar file CSS responsif untuk selalu dimuat ke antarmuka pelanggan.',
         'List of states for which escalations should be suspended.' => '',
+        'List of ticket masks which can be altered using AdminTicketMask.' =>
+            '',
         'List view' => 'Daftar tampilan',
         'Lithuanian' => 'Lithuania',
+        'Loader module for dashboard info tile in customer interface.' =>
+            '',
         'Loader module registration for the agent interface.' => '',
         'Loader module registration for the customer interface.' => '',
         'Lock / unlock this ticket' => 'Mengunci / membuka tiket ini',
@@ -8269,10 +9183,10 @@ Helpdesk Team Anda
         'Makes the application check the MX record of email addresses before sending an email or submitting a telephone or email ticket.' =>
             'Membuat aplikasi untuk memeriksa catatan MX alamat email sebelum mengirim email   telepon atau email tiket.',
         'Makes the application check the syntax of email addresses.' => 'Membuat aplikasi memeriksa catatan MX alamat email sebelum mengirim email untuk mengirimkan telepon atau email tiket.',
-        'Makes the session management use html cookies. If html cookies are disabled or if the client browser disabled html cookies, then the system will work as usual and append the session id to the links.' =>
-            'Membuat manajemen sesi cookie penggunaan html. Jika html cookies dinonaktifkan atau jika cookies html browser klien dinonaktifkan, maka sistem akan bekerja seperti biasa dan menambahkan sesi id ke link.',
         'Malay' => 'Melayu',
-        'Manage OTOBO Team cloud services.' => '',
+        'Manage Customer Dashboard Info Tile Entries' => '',
+        'Manage CareOnCloud ESM Team cloud services.' => '',
+        'Manage OpendID Connect OAuth2 Profiles.' => '',
         'Manage PGP keys for email encryption.' => 'Mengelola kunci PGP untuk enkripsi email.',
         'Manage POP3 or IMAP accounts to fetch email from.' => 'Mengelola POP3 atau IMAP account untuk mengambil email dari.',
         'Manage S/MIME certificates for email encryption.' => 'Mengelola sertifikat  S/MIME untuk enkripsi email.',
@@ -8280,11 +9194,17 @@ Helpdesk Team Anda
         'Manage different calendars.' => '',
         'Manage dynamic field in screens.' => '',
         'Manage existing sessions.' => 'Mengelola sesi yang ada.',
+        'Manage import and export of objects.' => '',
         'Manage support data.' => 'Mengelola data dukungan.',
         'Manage system registration.' => 'Mengelola sistem pendaftaran.',
         'Manage tasks triggered by event or time based execution.' => 'Mengelola tugas dipicu oleh peristiwa atau waktu eksekusi berdasarkan.',
+        'Mark as (un)seen' => '',
         'Mark as Spam!' => 'Tandai sebagai Spam!',
+        'Mark as seen' => '',
         'Mark this ticket as junk!' => 'Tandai tiket ini sebagai sampah!',
+        'Mark ticket as seen' => '',
+        'Mark ticket as unseen' => '',
+        'Mark tickets as seen or unseen via bulk action' => '',
         'Max size (in characters) of the customer information table (phone and email) in the compose screen.' =>
             'Ukuran Max (dalam karakter) dari meja informasi pelanggan (telepon dan email) di layar compose.',
         'Max size (in rows) of the informed agents box in the agent interface.' =>
@@ -8293,6 +9213,8 @@ Helpdesk Team Anda
             'Ukuran Max (dalam baris) yang terlibat dengan agen kotak di antarmuka agen.',
         'Max size of the subjects in an email reply and in some overview screens.' =>
             'Ukuran Max subjek dalam email balasan dan di beberapa layar gambar',
+        'MaxSize in Bytes until careoncloud.log gets rotated. Default is 524288000 (500 MB = 500 * 1024 * 1024).' =>
+            '',
         'Maximal auto email responses to own email-address a day (Loop-Protection).' =>
             'email tanggapan auto maksimum untuk email-address sendiri hari (Loop-Protection).',
         'Maximal auto email responses to own email-address a day, configurable by email address (Loop-Protection).' =>
@@ -8319,7 +9241,8 @@ Helpdesk Team Anda
         'Medium' => 'Medium',
         'Merge this ticket and all articles into another ticket' => '',
         'Merged Ticket (%s/%s) to (%s/%s).' => '',
-        'Merged Ticket <OTOBO_TICKET> to <OTOBO_MERGE_TO_TICKET>.' => 'igabung Tiket <OTOBO TIKET> ke <OTOBO MERGE_TO_TICKET>.',
+        'Merged Ticket <CareOnCloud_TICKET> to <CareOnCloud_MERGE_TO_TICKET>.' => 'igabung Tiket <CareOnCloud ESM TIKET> ke <CareOnCloud ESM MERGE_TO_TICKET>.',
+        'Message of the day' => '',
         'Minute' => '',
         'Miscellaneous' => 'bermacam-macam',
         'Module for To-selection in new ticket screen in the customer interface.' =>
@@ -8381,7 +9304,7 @@ Helpdesk Team Anda
         'New Year\'s Day' => 'Hari Tahun Baru',
         'New Year\'s Eve' => 'Malam Tahun Baru',
         'New process ticket' => 'Proses tiket baru',
-        'News about OTOBO.' => '',
+        'News about CareOnCloud ESM.' => '',
         'Next possible ticket states after adding a phone note in the ticket phone inbound screen of the agent interface.' =>
             'Berikutnya state tiket memungkinkan setelah menambahkan catatan telepon di telepon tiket layar masuk dari interface agen.',
         'Next possible ticket states after adding a phone note in the ticket phone outbound screen of the agent interface.' =>
@@ -8399,26 +9322,35 @@ Helpdesk Team Anda
             'Jumlah baris (per tiket) yang ditunjukkan oleh utilitas pencarian di antarmuka agen.',
         'Number of shards (NS), replicas (NR) and fields limit for the index \'ticket\'.' =>
             '',
+        'Number of shards (NS), replicas (NR) and fields limit for the index \'tmpattachments\'.' =>
+            '',
         'Number of shards (NS), replicas (NR) and fields limit for the index. Note: \'Elasticsearch::ArticleIndexCreationSettings\' is deprecated. For upwards compatibility use \'Elasticsearch::IndexSettings###Default\' instead.' =>
             '',
-        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices.\'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
+        'Number of shards (NS), replicas (NR) and fields limit for the indices. This replaces \'Elasticsearch::ArticleIndexCreationSettings\' in future versions. If both are present and not equal this one has priority. Use \'Elasticsearch::IndexSettings###...\' if you want to define special settings for single indices. \'...\' may be one of \'Customer\', \'CustomerUser\', \'Ticket\' or \'ConfigItem\'.' =>
             '',
         'Number of tickets to be displayed in each page of a search result in the agent interface.' =>
             'Jumlah tiket yang akan ditampilkan di setiap halaman hasil pencarian di antarmuka agen.',
         'Number of tickets to be displayed in each page of a search result in the customer interface.' =>
             'Jumlah tiket yang akan ditampilkan di setiap halaman hasil pencarian di antarmuka pelanggan.',
-        'OTOBO News' => 'Berita OTOBO',
-        'OTOBO Team Services' => '',
-        'OTOBO can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
-            'OTOBO dapat menggunakan satu atau lebih database cermin dibaca untuk operasi mahal seperti penuh pencarian teks atau statistik generasi. Di sini Anda dapat menentukan DSN untuk database cermin pertama.',
-        'OTOBO doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
+        'OAUTHBEARER' => '',
+        'OAuth Functional Accounts' => '',
+        'OAuth Tokens' => '',
+        'OIDC Profile Management' => '',
+        'OIDC Profiles' => '',
+        'CareOnCloud ESM News' => 'Berita CareOnCloud ESM',
+        'CareOnCloud ESM Team Services' => '',
+        'CareOnCloud ESM can use one or more readonly mirror databases for expensive operations like fulltext search or statistics generation. Here you can specify the DSN for the first mirror database.' =>
+            'CareOnCloud ESM dapat menggunakan satu atau lebih database cermin dibaca untuk operasi mahal seperti penuh pencarian teks atau statistik generasi. Di sini Anda dapat menentukan DSN untuk database cermin pertama.',
+        'CareOnCloud ESM doesn\'t support recurring Appointments without end date or number of iterations. During import process, it might happen that ICS file contains such Appointments. Instead, system creates all Appointments in the past, plus Appointments for the next N months (120 months/10 years by default).' =>
             '',
-        'Objects to search for, how many entries and which attributs to show.' =>
+        'Object backend module registration for the import/export module.' =>
             '',
-        'Objects to search for, how many entries and which attributs to show. Ticket attributes, except queue, have to explicitely be stored via Elasticsearch.' =>
+        'Objects to search for, how many entries and which attributes to show.' =>
+            '',
+        'Objects to search for, how many entries and which attributes to show. Ticket attributes, except queue, have to explicitly be stored via Elasticsearch.' =>
             '',
         'Open an external link!' => '',
-        'Open the OTOBO home page in a new window' => '',
+        'Open the CareOnCloud ESM home page in a new window' => '',
         'Open tickets (customer user)' => 'Tiket terbuka (pelanggan pengguna)',
         'Open tickets (customer)' => 'Buka tiket (pelanggan)',
         'Option' => 'Pilihan',
@@ -8526,10 +9458,15 @@ Helpdesk Team Anda
         'ParentChild' => 'Parentchild',
         'Path for the log file (it only applies if "FS" was selected for LoopProtectionModule and it is mandatory).' =>
             'Path untuk file log (hanya berlaku jika "FS" dipilih untuk loop Modul Perlindungan dan itu adalah wajib).',
+        'Path to CKEditor content CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
+        'Path to CKEditor editor CSS file. Changes to this setting will only consistently apply after deleting the CareOnCloud ESM Cache via the Maint::Cache::Delete command!' =>
+            '',
         'Pending time' => '',
         'People' => 'Orang',
         'Performs the configured action for each event (as an Invoker) for each configured web service.' =>
             '',
+        'Permanent' => '',
         'Permitted width for compose email windows.' => 'lebar diizinkan untuk windows email compose.',
         'Permitted width for compose note windows.' => 'lebar diizinkan untuk windows catatan tulis.',
         'Persian' => 'Persia',
@@ -8557,6 +9494,7 @@ Helpdesk Team Anda
         'Process Management Path GUI' => 'Proses manajemen GUI',
         'Process Management Transition Action GUI' => 'Proses Manajemen aksi transisi GUI',
         'Process Management Transition GUI' => 'Proses manajemen transisi GUI',
+        'Process dialog' => '',
         'Process pending tickets.' => 'Proses pending tiket',
         'ProcessID' => 'ProcessID',
         'Processes & Automation' => '',
@@ -8579,11 +9517,23 @@ Helpdesk Team Anda
             '',
         'Rebuilds the ACL preselection cache.' => '',
         'Rebuilds the escalation index.' => '',
-        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value.' =>
+        'Recognize if a ticket is a follow-up to an existing ticket using an external ticket number. Note: the first capturing group from the \'NumberRegExp\' expression will be used as the ticket number value. In case the module finds a new ticket, the ticket number is being written to the defined Dynamic Field. For already existing ticket, it can not set that Dynamic Field anew.' =>
             '',
         'Redis server address. Example: 127.0.0.1:6379.' => '',
         'Refresh interval' => 'refresh interval',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu of ticket overviews to mark all articles of the ticket as unseen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as seen.' =>
+            '',
+        'Registers a link in the ticket menu to mark a ticket as unseen.' =>
+            '',
         'Registers a log module, that can be used to log communication related information.' =>
+            '',
+        'Registration of the CSV format backend module for the ImportExport feature.' =>
+            '',
+        'Registration of the JSON format backend module for the ImportExport feature.' =>
             '',
         'Reminder Tickets' => 'Tiket pengingat',
         'Removed subscription for user "%s".' => 'Hapus berlangganan untuk pengguna "%s".',
@@ -8645,6 +9595,7 @@ Helpdesk Team Anda
             '',
         'Retains all services in listings even if they are children of invalid elements.' =>
             'Mempertahankan semua layanan dalam daftar bahkan jika mereka adalah anak-anak dari elemen yang tidak valid.',
+        'Richtext' => '',
         'Right' => 'Kanan',
         'Roles ↔ Groups' => '',
         'Romanian' => '',
@@ -8661,19 +9612,21 @@ Helpdesk Team Anda
             '',
         'Russian' => 'Rusia',
         'S/MIME Certificates' => 'Sertifikat S/MIME',
+        'SSL_VERIFY_NONE - no verification of mail server host' => '',
+        'SSL_VERIFY_PEER - verify the mail server host' => '',
         'Salutations' => 'Salam Pembuka',
         'Sample command output' => 'Contoh perintah output',
-        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the OTOBO user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
+        'Saves the attachments of articles. "DB" stores all data in the database (not recommended for storing big attachments). "FS" stores the data on the filesystem; this is faster but the webserver should run under the CareOnCloud ESM user. You can switch between the modules even on a system that is already in production without any loss of data. Note: Searching for attachment names is not supported when "FS" is used. "S3" is experimental.' =>
             '',
         'Schedule a maintenance period.' => 'Jadwalkan masa pemeliharaan.',
         'Screen after new ticket' => 'Layar setelah tiket baru',
+        'Script (Template Toolkit)' => '',
         'Search Customer' => 'Cari Pelanggan',
         'Search Ticket.' => 'Cari Tiket.',
         'Search Tickets.' => 'Cari Tiket.',
         'Search User' => 'Cari Pengguna',
         'Search backend default router.' => 'Cari backend default router.',
         'Search backend router.' => 'Cari router backend.',
-        'Search.' => 'Mencari',
         'Second Christmas Day' => 'Hari Natal kedia',
         'Second Queue' => 'Antrian kedua',
         'Select after which period ticket overviews should refresh automatically.' =>
@@ -8688,7 +9641,7 @@ Helpdesk Team Anda
         'Select your personal time zone. All times will be displayed relative to this time zone.' =>
             '',
         'Select your preferred layout for the software.' => '',
-        'Select your preferred theme for OTOBO.' => '',
+        'Select your preferred theme for CareOnCloud ESM.' => '',
         'Selects the cache backend to use.' => 'Memilih backend cache untuk digunakan.',
         'Selects the module to handle uploads via the web interface. "DB" stores all uploads in the database, "FS" uses the file system.' =>
             'Memilih modul untuk menangani upload melalui antarmuka web. "DB" toko semua upload dalam database, "FS" menggunakan sistem file.',
@@ -8702,7 +9655,7 @@ Helpdesk Team Anda
         'Sends all outgoing email via bcc to the specified address. Please use this only for backup reasons.' =>
             'Mengirimkan semua email keluar melalui bcc ke alamat yang ditentukan. Silakan gunakan ini hanya untuk alasan cadangan.',
         'Sends customer notifications just to the mapped customer.' => '',
-        'Sends registration information to OTOBO group.' => 'Mengirimkan informasi pendaftaran untuk kelompok OTOBO.',
+        'Sends registration information to Rother OSS.' => '',
         'Sends reminder notifications of unlocked ticket after reaching the reminder date (only sent to ticket owner).' =>
             'Mengirimkan pemberitahuan amaran terkunci tiket setelah mencapai tanggal yang ditetapkan (hanya dikirim ke pemilik tiket).',
         'Sends the notifications which are configured in the admin interface under "Ticket Notifications".' =>
@@ -8840,8 +9793,8 @@ Helpdesk Team Anda
         'Sets the prefered time units (e.g. work units, hours, minutes).' =>
             'Mengatur unit waktu prefered (misalnya unit kerja, jam, menit).',
         'Sets the preferred digest to be used for PGP binary.' => '',
-        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, OTOBO_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
-            'Menetapkan awalan ke script folder di server, sebagai dikonfigurasi pada server web. Pengaturan ini digunakan sebagai variabel, OTOBO_CONFIG_ScriptAlias yang ditemukan dalam semua bentuk pesan yang digunakan oleh aplikasi, untuk membangun link ke tiket dalam sistem.',
+        'Sets the prefix to the scripts folder on the server, as configured on the web server. This setting is used as a variable, CareOnCloud_CONFIG_ScriptAlias which is found in all forms of messaging used by the application, to build links to the tickets within the system.' =>
+            'Menetapkan awalan ke script folder di server, sebagai dikonfigurasi pada server web. Pengaturan ini digunakan sebagai variabel, CareOnCloud_CONFIG_ScriptAlias yang ditemukan dalam semua bentuk pesan yang digunakan oleh aplikasi, untuk membangun link ke tiket dalam sistem.',
         'Sets the queue in the ticket close screen of a zoomed ticket in the agent interface.' =>
             'Set antrian dalam tiket layar penutupan tiket diperbesar dalam antarmuka agen.',
         'Sets the queue in the ticket free text screen of a zoomed ticket in the agent interface.' =>
@@ -8935,13 +9888,16 @@ Helpdesk Team Anda
             '',
         'Sets the ticket type in the ticket responsible screen of the agent interface (Ticket::Type needs to be enabled).' =>
             '',
-        'Sets the time zone being used internally by OTOBO to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+        'Sets the time units in the ticket note screen of the agent interface.' =>
             '',
-        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the OTOBO time zone and the user\'s time zone.' =>
+        'Sets the time zone being used internally by CareOnCloud ESM to e. g. store dates and times in the database. WARNING: This setting must not be changed once set and tickets or any other data containing date/time have been created.' =>
+            '',
+        'Sets the time zone that will be assigned to newly created users and will be used for users that haven\'t yet set a time zone. This is the time zone being used as default to convert date and time between the CareOnCloud ESM time zone and the user\'s time zone.' =>
             '',
         'Sets the timeout (in seconds) for http/ftp downloads.' => 'Menetapkan batas waktu (dalam detik) untuk download http / ftp.',
         'Sets the timeout (in seconds) for package downloads. Overwrites "WebUserAgent::Timeout".' =>
             'Menetapkan batas waktu (dalam detik) untuk download paket. Menimpa "Web UserAgent :: Timeout".',
+        'Settings for Similar Ticket Search in ES.' => '',
         'Settings for the customer login screen.' => '',
         'Shared Secret' => 'Berbagi rahasia',
         'Show a responsible selection in phone and email tickets in the agent interface.' =>
@@ -8949,9 +9905,11 @@ Helpdesk Team Anda
         'Show article as rich text even if rich text writing is disabled.' =>
             'Tampilkan artikel sebagai teks kaya bahkan jika menulis teks kaya dinonaktifkan.',
         'Show command line output.' => '',
+        'Show optional parameters in parameter list, too. If disabled, the optional parameters are only shown in an extra table.' =>
+            '',
+        'Show or Hide Deleted Articles' => '',
+        'Show or Hide deleted articles.' => '',
         'Show queues even when only locked tickets are in.' => 'Tampilkan antrian bahkan ketika tiket hanya terkunci dalam.',
-        'Show the current owner in the customer interface.' => 'Tampilkan pemilik saat ini di antarmuka pelanggan.',
-        'Show the current queue in the customer interface.' => 'Tampilkan antrian saat ini di antarmuka pelanggan.',
         'Show the history for this ticket' => 'Tampilkan sejarah untuk tiket ini',
         'Show the ticket history' => 'Tunjukan riwayat tiket',
         'Show various content.' => '',
@@ -9019,6 +9977,8 @@ Helpdesk Team Anda
             'Menunjukkan link dalam menu untuk mengatur tiket sebagai tertunda dalam tampilan zoom tiket dari antarmuka agen. kontrol akses tambahan untuk menampilkan atau tidak menampilkan link ini dapat dilakukan dengan menggunakan Key "Group" dan konten seperti "rw:group1;move_into:group2". Cluster item menu digunakan untuk Key "ClusterName" dan untuk Konten nama apapun yang ingin Anda lihat di UI. Menggunakan "ClusterPriority" untuk mengkonfigurasi urutan cluster tertentu dalam toolbar.',
         'Shows a link in the menu to set the priority of a ticket in every ticket overview of the agent interface.' =>
             'Menunjukkan link dalam menu untuk mengatur prioritas tiket di setiap gambaran tiket dari antarmuka agen.',
+        'Shows a link in the menu to show/hide deleted articles in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2". To cluster menu items use for Key "ClusterName" and for the Content any name you want to see in the UI. Use "ClusterPriority" to configure the order of a certain cluster within the toolbar.' =>
+            '',
         'Shows a link in the menu to zoom a ticket in the ticket overviews of the agent interface.' =>
             'Menunjukkan link dalam menu untuk tampilannya tiket di ikhtisar tiket dari antarmuka agen.',
         'Shows a link to access article attachments via a html online viewer in the zoom view of the article in the agent interface.' =>
@@ -9070,13 +10030,15 @@ Helpdesk Team Anda
             '',
         'Shows an owner selection in phone and email tickets in the agent interface.' =>
             'Menunjukkan pilihan pemilik di telepon dan email tiket di antarmuka agen.',
+        'Shows creation date instead of age in the customer interface if ticket is older than configured value (days).' =>
+            '',
         'Shows customer history tickets in AgentTicketPhone, AgentTicketEmail and AgentTicketCustomer.' =>
             'Menunjukkan tiket sejarah pelanggan di AgentTicketPhone, AgentTicketEmail dan Pelanggan Agen Tiket.',
         'Shows either the last customer article\'s subject or the ticket title in the small format overview.' =>
             'Menunjukkan baik subjek pelanggan artikel terakhir atau judul tiket di gambaran format kecil.',
         'Shows existing parent/child queue lists in the system in the form of a tree or a list.' =>
             'Menunjukkan daftar antrian orang tua / anak yang ada dalam sistem dalam bentuk pohon atau daftar.',
-        'Shows information on how to start OTOBO Daemon' => 'Menunjukkan informasi tentang cara untuk memulai OTOBO Daemon',
+        'Shows information on how to start CareOnCloud ESM Daemon' => 'Menunjukkan informasi tentang cara untuk memulai CareOnCloud ESM Daemon',
         'Shows link to external page in the ticket zoom view of the agent interface. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             '',
         'Shows the article head information in the agent zoom view.' => '',
@@ -9128,6 +10090,8 @@ Helpdesk Team Anda
             '',
         'Shows time use complete description (days, hours, minutes), if enabled; or just first letter (d, h, m), if not enabled.' =>
             '',
+        'Shows time with localization indicator (01.01.1970 00:01 (Europe/Berlin)), if enabled; or without (01.01.1970 00:01), if not enabled.' =>
+            '',
         'Signature data.' => '',
         'Signatures' => 'Tanda tangan',
         'Simple' => 'Sederhana',
@@ -9162,16 +10126,16 @@ Helpdesk Team Anda
         'Specifies the directory where SSL certificates are stored.' => 'Menentukan direktori dimana sertifikat SSL disimpan.',
         'Specifies the directory where private SSL certificates are stored.' =>
             'Menentukan direktori dimana sertifikat SSL pribadi disimpan.',
-        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com). You can use the OTOBO_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
-            'Menentukan alamat email yang harus digunakan oleh aplikasi saat mengirim pemberitahuan. Alamat email digunakan untuk membangun nama lengkap tampilan untuk master pemberitahuan (yaitu "OTOBO Pemberitahuan" otobo@your.example.com). Anda dapat menggunakan variabel OTOBO_CONFIG_FQDN sebagai set di configuation Anda, atau memilih alamat email lain.',
+        'Specifies the email address that should be used by the application when sending notifications. The email address is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com). You can use the CareOnCloud_CONFIG_FQDN variable as set in your configuation, or choose another email address.' =>
+            'Menentukan alamat email yang harus digunakan oleh aplikasi saat mengirim pemberitahuan. Alamat email digunakan untuk membangun nama lengkap tampilan untuk master pemberitahuan (yaitu "CareOnCloud ESM Pemberitahuan" careoncloud@your.example.com). Anda dapat menggunakan variabel CareOnCloud_CONFIG_FQDN sebagai set di configuation Anda, atau memilih alamat email lain.',
         'Specifies the email addresses to get notification messages from scheduler tasks.' =>
             'Menentukan alamat email untuk mendapatkan pesan pemberitahuan dari tugas scheduler.',
         'Specifies the group where the user needs rw permissions so that he can access the "SwitchToCustomer" feature.' =>
             'Menentukan kelompok mana kebutuhan pengguna izin rw sehingga ia dapat mengakses "Beralih Pelanggan" fitur.',
         'Specifies the group where the user needs rw permissions so that they can edit other users preferences.' =>
             '',
-        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "OTOBO Notifications" otobo@your.example.com).' =>
-            'Menentukan nama yang harus digunakan oleh aplikasi saat mengirim pemberitahuan. Nama pengirim digunakan untuk membangun nama lengkap tampilan untuk master pemberitahuan (yaitu "OTOBO Pemberitahuan" otobo@your.example.com).',
+        'Specifies the name that should be used by the application when sending notifications. The sender name is used to build the complete display name for the notification master (i.e. "CareOnCloud ESM Notifications" careoncloud@your.example.com).' =>
+            'Menentukan nama yang harus digunakan oleh aplikasi saat mengirim pemberitahuan. Nama pengirim digunakan untuk membangun nama lengkap tampilan untuk master pemberitahuan (yaitu "CareOnCloud ESM Pemberitahuan" careoncloud@your.example.com).',
         'Specifies the order in which the firstname and the lastname of agents will be displayed.' =>
             'Menentukan urutan nama depan dan nama belakang dari agen akan ditampilkan.',
         'Specifies the path of the file for the logo in the page header (gif|jpg|png, 700 x 100 pixel).' =>
@@ -9216,6 +10180,7 @@ Helpdesk Team Anda
         'Stopped solution time escalation.' => '',
         'Stopped update time escalation.' => '',
         'Stores cookies after the browser has been closed.' => 'Toko kue setelah browser telah ditutup.',
+        'Strict' => '',
         'Strips empty lines on the ticket preview in the queue view.' => 'Strip garis kosong di preview tiket dalam tampilan antrian.',
         'Strips empty lines on the ticket preview in the service view.' =>
             'Strip garis kosong di preview tiket di tampilan layanan.',
@@ -9223,6 +10188,8 @@ Helpdesk Team Anda
         'Suspend already escalated tickets.' => '',
         'Swahili' => 'Swahili',
         'Swedish' => 'Swedia',
+        'Switch deleted article status view' => '',
+        'Switch deleted article status view.' => '',
         'System Address Display Name' => 'Sistem Alamat Nama Tampilan',
         'System Configuration Deployment' => '',
         'System Configuration Group' => '',
@@ -9241,6 +10208,8 @@ Helpdesk Team Anda
         'The PGP signature with the keyid is good.' => '',
         'The agent skin\'s InternalName which should be used in the agent interface. Please check the available skins in Frontend::Agent::Skins.' =>
             'agen menguliti Nama internal yang harus digunakan dalam antarmuka agen. Silakan periksa kulit yang tersedia di  Frontend::Agent::Skins.',
+        'The authentication method to use for SMTP Authentication, defaults to \'Basic Auth\'. If \'XOAUTH2\' or \'OAUTHBEARER\' is selected, then the \'"SendmailModule \'"SendmailModule::OAuth2FunctionalAccount\' setting needs to be enabled and set to a valid OIDC Functional Account.  OIDC Accounts can be configured in the Admin UI  \'OAuth Functional Accounts\' Module.' =>
+            '',
         'The customer skin\'s InternalName which should be used in the customer interface. Please check the available skins in Frontend::Customer::Skins.' =>
             'Kulit pelanggan Nama internal yang harus digunakan dalam antarmuka pelanggan. Silakan periksa kulit yang tersedia di Frontend::Customer::Skins.',
         'The daemon registration for sync with S3.' => '',
@@ -9284,6 +10253,8 @@ Helpdesk Team Anda
             'Teks pada awal subjek ketika email diteruskan, misalnya FW, Fwd, atau WG.',
         'The value of the From field' => '',
         'Theme' => 'Tema',
+        'These attributes are passed when connecting to the database. A common use case is a connection which is secured by TLS.' =>
+            '',
         'This configuration defines all possible screens to enable or disable default columns.' =>
             '',
         'This configuration defines all possible screens to enable or disable dynamic fields.' =>
@@ -9291,6 +10262,8 @@ Helpdesk Team Anda
         'This configuration defines if only valids or all (invalids) dynamic fields should be shown.' =>
             '',
         'This configuration defines the number of iterations that should be performed at max for calculating the WorkingTime for a Ticket. Attention: Setting this configuration to high can lead to performance issues.' =>
+            '',
+        'This configuration registers a bulk module to mark tickets as seen or unseen via bulk action.' =>
             '',
         'This configuration registers an OutputFilter module that injects the javascript functionality to remove PendingTime.' =>
             '',
@@ -9305,7 +10278,7 @@ Helpdesk Team Anda
         'This module and its PreRun() function will be executed, if defined, for every request. This module is useful to check some user options or to display news about new applications.' =>
             'Modul ini dan fungsinya Pre Run () akan dieksekusi, jika ditetapkan, untuk setiap permintaan. Modul ini berguna untuk memeriksa beberapa pilihan pengguna atau untuk menampilkan berita tentang aplikasi baru.',
         'This module is being used to extend the password policy.' => '',
-        'This module is part of the admin area of OTOBO.' => 'Modul ini merupakan bagian admin dari OTOBO.',
+        'This module is part of the admin area of CareOnCloud ESM.' => 'Modul ini merupakan bagian admin dari CareOnCloud ESM.',
         'This option defines the dynamic field in which a Process Management activity entity id is stored.' =>
             'Opsi ini mendefinisikan bidang yang dinamis di mana Proses Manajemen aktivitas entitas id disimpan.',
         'This option defines the dynamic field in which a Process Management process entity id is stored.' =>
@@ -9314,11 +10287,13 @@ Helpdesk Team Anda
         'This option defines the process tickets default priority.' => 'Opsi ini mendefinisikan prioritas default tiket proses.',
         'This option defines the process tickets default queue.' => 'Opsi ini mendefinisikan proses default queue tiket',
         'This option defines the process tickets default state.' => 'Opsi ini mendefinisikan tiket proses keadaan default.',
-        'This option will deny the access to customer company tickets, which are not created by the customer user.' =>
-            'Opsi ini akan menyangkal akses ke tiket perusahaan pelanggan, yang tidak dibuat oleh pengguna pelanggan.',
+        'This option sets additional quick date buttons to pending dates. For ordering purposes one hash entry per array segment has to be set. The key is the button name, value is the value, where a single number n sets the date to n days from now, +n adds n days to the currently set date, and -n subtracts them.' =>
+            '',
+        'This option will deny the access to customer company tickets, which are not created by the customer user. Please also deactivate "CustomerFrontend::Navigation###CustomerTicketOverview###002-Ticket" so that the button is no longer visible.' =>
+            '',
         'This setting allows you to override the built-in country list with your own list of countries. This is particularly handy if you just want to use a small select group of countries.' =>
             'Pengaturan ini memungkinkan Anda untuk menimpa daftar statebuilt-in dengan daftar negara Anda sendiri. Hal ini terutama berguna jika Anda hanya ingin menggunakan kelompok memilih kecil negara.',
-        'This setting is deprecated. Set OTOBOTimeZone instead.' => '',
+        'This setting is deprecated. Set CareOnCloudTimeZone instead.' => '',
         'This setting shows the sorting attributes in all overview screen, not only in queue view.' =>
             '',
         'Ticket Close' => '',
@@ -9330,6 +10305,7 @@ Helpdesk Team Anda
         'Ticket FreeText.' => 'Tiket bebas teks',
         'Ticket History.' => 'Riwayat tiket ',
         'Ticket Lock.' => 'Kunci tiket',
+        'Ticket Masks' => '',
         'Ticket Merge.' => 'Tiket digabungkan',
         'Ticket Move.' => 'Tiket telah dipindahkan',
         'Ticket Note.' => 'Nota tiket ',
@@ -9344,6 +10320,10 @@ Helpdesk Team Anda
         'Ticket Priority.' => 'Prioritas tiket',
         'Ticket Queue Overview' => 'Antrian tiket keseluruhan',
         'Ticket Responsible.' => 'Penanggung jawab tiket',
+        'Ticket Search.' => '',
+        'Ticket States' => '',
+        'Ticket Title' => '',
+        'Ticket Types' => '',
         'Ticket Watcher' => 'Watcher tiket',
         'Ticket Zoom' => '',
         'Ticket Zoom.' => 'Tiket Zoom.',
@@ -9365,17 +10345,23 @@ Helpdesk Team Anda
         'Tickets in the following queues will not be stored on the Elasticsearch server. To apply this to existing tickets, the ticket migration has to be run via console, after changing this option.' =>
             '',
         'Tickets.' => 'Tiket',
-        'Tile registration for the CustomerDashboard. Module is required.' =>
+        'Tile registration for the customer dashboard. Module is required.' =>
             '',
-        'Time in seconds that gets added to the actual time if setting a pending-state (default: 86400 = 1 day).' =>
-            'Waktu dalam detik yang akan ditambahkan ke waktu yang sebenarnya dari pengaturan tertunda-negara (default: 86400 = 1 hari).',
+        'Tile registration for the customer dashboard. Module is required. Optionally, an order for items can be set. The order must have the name of the item as key and the desired position as integer value.' =>
+            '',
+        'Time in seconds that gets added to the actual time if setting a pending-state. Examples: 86400 = 1 day or 604800 = 1 week.' =>
+            '',
         'To accept login information, such as an EULA or license.' => 'Untuk menerima masuk nya informasi, seperti EULA atau surat izin.',
         'To download attachments.' => 'Untuk unduh lampiran',
         'To view HTML attachments.' => '',
-        'Toggles display of OTOBO FeatureAddons list in PackageManager.' =>
-            'Matikan tampilan Fitur OTOBO Add ons daftar di Package Manager.',
+        'Toggles display of CareOnCloud ESM FeatureAddons list in PackageManager.' =>
+            'Matikan tampilan Fitur CareOnCloud ESM Add ons daftar di Package Manager.',
         'Toolbar Item for a shortcut. Additional access control to show or not show this link can be done by using Key "Group" and Content like "rw:group1;move_into:group2".' =>
             'Toolbar Barang untuk jalan pintas. kontrol akses tambahan untuk menampilkan atau tidak menampilkan link ini dapat dilakukan dengan menggunakan Key "Group" dan konten seperti "rw:group1;move_into:group2".',
+        'Translate the country names in the country selection. The CLDR country codes will be stored in the database. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
+        'Translate the language names in the language selection. Requires that Locale::CLDR and the relevant language packs are installed.' =>
+            '',
         'Transport selection for appointment notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
             '',
         'Transport selection for ticket notifications. Please note: setting \'Active\' to 0 will only prevent agents from editing settings of this group in their personal preferences, but will still allow administrators to edit the settings of another user\'s behalf. Use \'PreferenceGroup\' to control in which area these settings should be shown in the user interface.' =>
@@ -9392,14 +10378,13 @@ Helpdesk Team Anda
         'Turns on the remote ip address check. It should not be enabled if the application is used, for example, via a proxy farm or a dialup connection, because the remote ip address is mostly different for the requests.' =>
             '',
         'Tweak the system as you wish.' => '',
-        'Type of daemon log rotation to use: Choose \'OTOBO\' to let OTOBO system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
+        'Type of daemon log rotation to use: Choose \'CareOnCloud ESM\' to let CareOnCloud ESM system to handle the file rotation, or choose \'External\' to use a 3rd party rotation mechanism (i.e. logrotate). Note: External rotation mechanism requires its own and independent configuration.' =>
             '',
         'Ukrainian' => 'Ukraina',
         'Unlock tickets that are past their unlock timeout.' => 'Membuka tiket yang terakhir batas waktu membuka mereka.',
         'Unlock tickets whenever a note is added and the owner is out of office.' =>
             'Membuka tiket setiap kali catatan yang ditambahkan dan pemilik keluar dari kantor.',
         'Unlocked ticket.' => 'tiket dibuka.',
-        'Up' => 'Atas',
         'Upcoming Events' => 'Event mendatang',
         'Update Ticket "Seen" flag if every article got seen or a new Article got created.' =>
             'Update Ticket "Terlihat" bendera jika setiap artikel mendapat dilihat atau Pasal baru mendapat dibuat.',
@@ -9420,8 +10405,13 @@ Helpdesk Team Anda
         'Uses richtext for viewing and editing ticket notification.' => 'Menggunakan richtext untuk pemberitahuan melihat dan mengedit tiket.',
         'Uses richtext for viewing and editing: articles, salutations, signatures, standard templates, auto responses and notifications.' =>
             'Menggunakan teks kaya untuk melihat dan mengedit: artikel, salam, tanda tangan, template standar, tanggapan otomatis dan pemberitahuan.',
+        'Value map. Define a key and a value map from import file to CareOnCloud ESM.' =>
+            '',
+        'Verify mailserver when securely fetching mails from POP3S/POP3TLS/IMAPS/IMAPTLS mail accounts.' =>
+            '',
         'Vietnam' => 'Vietnam',
         'View performance benchmark results.' => 'Lihat hasil kinerja benchmark.',
+        'View stored article version.' => '',
         'Watch this ticket' => 'Amati tiket ini',
         'Watched Tickets' => 'Tiket yang diamati',
         'Watched Tickets.' => 'Tiket yang telah di amati',
@@ -9430,13 +10420,16 @@ Helpdesk Team Anda
             'Kami sedang melakukan pemeliharaan yang telah terjadwal. Untuk sementara ini Login tidak tersedia.',
         'We are performing scheduled maintenance. We should be back online shortly.' =>
             'Kami sedang melakukan pemeliharaan yang telah terjadwal. Kami akan kembali Online sesaat lagi.',
-        'We have changed the default ticket unlock behaviour in OTOBO 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behaviour is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behaviour of OTRS version 2-6 and OTOBO 10..' =>
+        'We have changed the default ticket unlock behavior in CareOnCloud ESM 10.1. Now, the ticket is not only unlocked, but also handed over to the system user again. Thus, the behavior is clearer, but it is no longer possible to read out who last edited the ticket. Please deactivate this option to restore the behavior of OTRS versions 2 to 6 and CareOnCloud ESM version 10.0.' =>
             '',
         'Web Service' => '',
         'Web Services' => 'Web servis',
+        'Welcome %s, to your CareOnCloud ESM.' => '',
         'Welcome text for the dashboard header. Name will be inserted to %s of the WelcomeText. "UserTitle", "UserFirstname", "UserLastname", "UserEmail" and "UserLogin" will be substituted.' =>
             '',
         'When agent creates a ticket, whether or not the ticket is automatically locked to the agent.' =>
+            '',
+        'When support data is collected via SupportDataCollector, certain SysConfig values marked with ValueType="Password" are automatically masked. This prevents passwords from appearing in plain text in the support data. This setting defines the settings that contain complex configuration hashes that should not be masked when generating the support data.' =>
             '',
         'When tickets are merged, a note will be added automatically to the ticket which is no longer active. Here you can define the body of this note (this text cannot be changed by the agent).' =>
             'Ketika tiket digabung, catatan akan ditambahkan secara otomatis ke tiket yang tidak lagi aktif. Di sini Anda dapat menentukan isi catatan ini (teks ini tidak dapat diubah oleh agen).',
@@ -9446,24 +10439,29 @@ Helpdesk Team Anda
             'Ketika tiket digabung, pelanggan dapat diinformasikan per email dengan menetapkan kotak centang "Informasikan Sender". Di area teks ini, Anda dapat menentukan teks berformat pra yang nantinya dapat dimodifikasi oleh agen.',
         'Whether extended customer information is shown in the ticket print screen of the customer interface.' =>
             '',
-        'Whether fields should be automatically filled (1), and in that case also be hidden from ticket formulars (2).' =>
-            '',
         'Whether or not to collect meta information from articles using filters configured in Ticket::Frontend::ZoomCollectMetaFilters.' =>
             'Apakah atau tidak untuk mengumpulkan informasi meta dari artikel menggunakan filter dikonfigurasi di Ticket::Frontend::ZoomMetaFiltersCollect.',
         'Whether the execution of TicketACL can be avoided by checking cached field dependencies. This can improve loading times of ticket formulars, but has to be disabled, if ACLModules are to be used for Ticket- and Form-ReturnTypes.' =>
             '',
         'Whether to force redirect all requests from http to https protocol. Please check that your web server is configured correctly for https protocol before enable this option.' =>
             '',
+        'Which units are used and shown in the overview for timeunits?' =>
+            '',
+        'XOAUTH2' => '',
         'Yes, but hide archived tickets' => 'Ya, tapi sembunyikan tiket yang telah di arsipkan.',
-        'Your email with ticket number "<OTOBO_TICKET>" is bounced to "<OTOBO_BOUNCE_TO>". Contact this address for further information.' =>
-            'Email anda dengan nomor tiket "<OTOBO_TICKET>" telah di gabung menjadi "<OTOBO_BOUNCE_TO>". Hubungi alamat ini untuk informasi libel lanjut.',
-        'Your email with ticket number "<OTOBO_TICKET>" is merged to "<OTOBO_MERGE_TO_TICKET>".' =>
-            'Email anda dengan nomor tiket "<OTOBO_TICKET>" telah di gabung menjadi "<OTOBO_MERGE_TO_TICKET>".',
+        'Your Tickets. Your CareOnCloud ESM.' => '',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is bounced to "<CareOnCloud_BOUNCE_TO>". Contact this address for further information.' =>
+            'Email anda dengan nomor tiket "<CareOnCloud_TICKET>" telah di gabung menjadi "<CareOnCloud_BOUNCE_TO>". Hubungi alamat ini untuk informasi libel lanjut.',
+        'Your email with ticket number "<CareOnCloud_TICKET>" is merged to "<CareOnCloud_MERGE_TO_TICKET>".' =>
+            'Email anda dengan nomor tiket "<CareOnCloud_TICKET>" telah di gabung menjadi "<CareOnCloud_MERGE_TO_TICKET>".',
+        'Your external tools' => '',
+        'Your last tickets' => '',
         'Your queue selection of your preferred queues. You also get notified about those queues via email if enabled.' =>
             '',
         'Your service selection of your preferred services. You also get notified about those services via email if enabled.' =>
             '',
         'Zoom' => 'Zoom',
+        'always' => '',
         'attachment' => 'Lampiran',
         'bounce' => 'memantul',
         'compose' => 'buat',
@@ -9505,6 +10503,7 @@ Helpdesk Team Anda
         'Add to favourites',
         'Agent',
         'All occurrences',
+        'All translations must be filled!',
         'All-day',
         'An error occurred during communication.',
         'An error occurred! Please check the browser error log for more details!',
@@ -9517,13 +10516,22 @@ Helpdesk Team Anda
         'Apr',
         'April',
         'Are you sure you want to delete this appointment? This operation cannot be undone.',
+        'Are you sure you want to delete this article?',
         'Are you sure you want to remove all user values?',
+        'Are you sure you want to restore this article?',
         'Are you sure you want to update all installed packages?',
         'Are you using a browser plugin like AdBlock or AdBlockPlus? This can cause several issues and we highly recommend you to add an exception for this domain.',
+        'Article Delete',
+        'Article Restore',
+        'Article already marked as deleted.',
+        'Article deleted successfully!',
         'Article display',
         'Article filter',
+        'Article not available for restoring.',
+        'Article restored successfully!',
         'As soon as you use this button or link, you will leave this screen and its current state will be saved automatically. Do you want to continue?',
         'Ascending sort applied, ',
+        'At least one translation must be filled!',
         'Attachment was deleted successfully.',
         'Attachments',
         'Aug',
@@ -9573,8 +10581,10 @@ Helpdesk Team Anda
         'Delete this Operation',
         'Delete this PostMasterFilter',
         'Delete this Template',
+        'Delete this template',
         'Delete web service',
         'Deleting attachment...',
+        'Deleting template...',
         'Deleting the field and its data. This may take a while...',
         'Deleting the mail account and its data. This may take a while...',
         'Deleting the postmaster filter and its data. This may take a while...',
@@ -9591,6 +10601,7 @@ Helpdesk Team Anda
         'Do you really want to continue?',
         'Do you really want to delete "%s"?',
         'Do you really want to delete this certificate?',
+        'Do you really want to delete this customer dashboard info tile entry?',
         'Do you really want to delete this dynamic field? ALL associated data will be LOST!',
         'Do you really want to delete this generic agent job?',
         'Do you really want to delete this key?',
@@ -9615,6 +10626,7 @@ Helpdesk Team Anda
         'Error during AJAX communication',
         'Error during AJAX communication. Status: %s, Error: %s',
         'Error in the mail settings. Please correct and try again.',
+        'Error trying to create CodeMirror instance, please check configuration!',
         'Error: Browser Check failed!',
         'Event Type Filter',
         'Expanded',
@@ -9635,7 +10647,8 @@ Helpdesk Team Anda
         'If you now leave this page, all open popup windows will be closed, too!',
         'Ignore',
         'Import web service',
-        'Information about the OTOBO Daemon',
+        'Information',
+        'Information about the CareOnCloud ESM Daemon',
         'Invalid date (need a future date)!',
         'Invalid date (need a past date)!',
         'Invalid date!',
@@ -9666,6 +10679,7 @@ Helpdesk Team Anda
         'May',
         'May_long',
         'Migrate',
+        'Missing Translations',
         'Mo',
         'Mon',
         'Monday',
@@ -9685,6 +10699,7 @@ Helpdesk Team Anda
         'No response from package upgrade all.',
         'No sort applied, ',
         'No space left for the following files: %s',
+        'Non-global ActivityDialogs may not be assigned to global Activities!',
         'Not available',
         'Notice',
         'Notification',
@@ -9790,6 +10805,7 @@ Helpdesk Team Anda
         'Switch to mobile mode',
         'System Registration',
         'Team',
+        'Template was deleted successfully.',
         'Th',
         'The browser you are using is too old.',
         'The deployment is already running.',
@@ -9803,6 +10819,7 @@ Helpdesk Team Anda
         'There are no more drafts available.',
         'There is a package upgrade process running, click here to see status information about the upgrade progress.',
         'There was an error deleting the attachment. Please check the logs for more information.',
+        'There was an error deleting the template. Please check the logs for more information.',
         'There was an error. Please save all settings you are editing and check the logs for more information.',
         'This Activity cannot be deleted because it is the Start Activity.',
         'This Activity is already used in the Process. You cannot add it twice!',
@@ -9818,7 +10835,7 @@ Helpdesk Team Anda
         'This is a repeating appointment',
         'This is currently disabled because of an ongoing package upgrade.',
         'This item still contains sub items. Are you sure you want to remove this item including its sub items?',
-        'This option is currently disabled because the OTOBO Daemon is not running.',
+        'This option is currently disabled because the CareOnCloud ESM Daemon is not running.',
         'This software runs with a huge lists of browsers, please upgrade to one of these.',
         'This window must be called from compose window.',
         'Thu',
@@ -9835,7 +10852,7 @@ Helpdesk Team Anda
         'Tue',
         'Tuesday',
         'Unfortunately deploying is currently not possible, maybe because another agent is already deploying. Please try again later.',
-        'Uninstall from OTOBO',
+        'Uninstall from CareOnCloud ESM',
         'Unknown',
         'Unlock setting.',
         'Update All Packages',

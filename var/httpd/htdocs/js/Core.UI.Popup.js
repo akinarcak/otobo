@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -14,7 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 // --
 
-/*eslint-disable no-window*/
+/*eslint-disable careoncloud/no-window*/
 
 "use strict";
 
@@ -163,12 +163,12 @@ Core.UI.Popup = (function (TargetNS) {
      * @function
      * @returns {String} Returns the type of popup if one, undefined otherwise.
      * @description
-     *      Checks if current window is an OTOBO popup.
+     *      Checks if current window is a CareOnCloud ESM popup.
      */
     function CurrentIsPopupWindow() {
         var PopupType;
 
-        if (window.name.match(/OTOBOPopup_([^_]+)_.+/)) {
+        if (window.name.match(/CareOnCloudPopup_([^_]+)_.+/)) {
             PopupType = RegExp.$1;
         }
 
@@ -181,7 +181,7 @@ Core.UI.Popup = (function (TargetNS) {
      * @function
      * @returns {String} Returns the type of popup if one, undefined otherwise.
      * @description
-     *      Checks if current window is an OTOBO popup.
+     *      Checks if current window is a CareOnCloud ESM popup.
      */
     TargetNS.CurrentIsPopupWindow = function () {
         return CurrentIsPopupWindow();
@@ -268,10 +268,10 @@ Core.UI.Popup = (function (TargetNS) {
         CheckOpenPopups();
         $.each(OpenPopups, function (Key, Value) {
             // IE(7) treats windows in new tabs (opened with right-click) also as popups
-            // Therefore we check if the popup is a real OTOBO popup.
+            // Therefore we check if the popup is a real CareOnCloud ESM popup.
             // IE9 can't read the WindowType property from the window object,
             // so we check for the correct popup window name now.
-            if (Value.name.match(/OTOBOPopup_.+/)) {
+            if (Value.name.match(/CareOnCloudPopup_.+/)) {
                 Size++;
             }
         });
@@ -291,10 +291,10 @@ Core.UI.Popup = (function (TargetNS) {
         CheckOpenPopups();
         $.each(OpenPopups, function (Key, Value) {
             // IE(7) treats windows in new tabs (opened with right-click) also as popups
-            // Therefore we check if the popup is a real OTOBO popup.
+            // Therefore we check if the popup is a real CareOnCloud ESM popup.
             // IE9 can't read the WindowType property from the window object,
             // so we check for the correct popup window name now.
-            if (Value.name.match(/OTOBOPopup_.+/)) {
+            if (Value.name.match(/CareOnCloudPopup_.+/)) {
                 TargetNS.ClosePopup(Value);
             }
         });
@@ -312,7 +312,7 @@ Core.UI.Popup = (function (TargetNS) {
     TargetNS.RegisterPopupAtParentWindow = function (WindowObject) {
         var Type;
 
-        /OTOBOPopup_([^_]+)_.*/.exec(WindowObject.name);
+        /CareOnCloudPopup_([^_]+)_.*/.exec(WindowObject.name);
         Type = RegExp.$1;
 
         if (typeof OpenPopups[Type] === 'undefined') {
@@ -490,10 +490,10 @@ Core.UI.Popup = (function (TargetNS) {
                  * it will ensure that popup is nor linked with the parent window
                  */
                 if (Unlinked && Unlinked === 1) {
-                    WindowName = 'PopupOTOBO_' + Type + '_' + Date.parse(new Date());
+                    WindowName = 'PopupCareOnCloud_' + Type + '_' + Date.parse(new Date());
                 }
                 else {
-                    WindowName = 'OTOBOPopup_' + Type + '_' + Date.parse(new Date());
+                    WindowName = 'CareOnCloudPopup_' + Type + '_' + Date.parse(new Date());
                 }
 
                 if (WindowMode === 'Popup') {
@@ -619,7 +619,7 @@ Core.UI.Popup = (function (TargetNS) {
                 PopupObject = PopupType;
 
                 // we can now find out the type of the popup based on the popup object
-                if (PopupObject && typeof PopupObject.name !== 'undefined' && PopupObject.name.match(/OTOBOPopup_([^_]+)_.+/)) {
+                if (PopupObject && typeof PopupObject.name !== 'undefined' && PopupObject.name.match(/CareOnCloudPopup_([^_]+)_.+/)) {
                     PopupType = RegExp.$1;
                 }
 
@@ -747,4 +747,4 @@ Core.UI.Popup = (function (TargetNS) {
     return TargetNS;
 }(Core.UI.Popup || {}));
 
-/*eslint-enable no-window*/
+/*eslint-enable careoncloud/no-window*/

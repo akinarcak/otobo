@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,10 +16,26 @@
 
 package Kernel::System::MailAccount::POP3;
 
+use v5.24;
 use strict;
 use warnings;
+use utf8;
 
-use Net::POP3;
+# core modules
+use Net::POP3 3.08 ();
+
+# CPAN modules
+use IO::Socket::SSL ();
+
+# CareOnCloud ESM modules
+use Kernel::System::OpenIDConnect::OAuth2MailExtensions;
+
+no warnings('once');    ## no critic qw(TestingAndDebugging::ProhibitNoWarnings)
+
+# monkey patch support for XOAUTH2/OAUTHBEARER into Net::Cmd
+*Net::Cmd::CareOnCloud_OAuth2 = \&Kernel::System::OpenIDConnect::OAuth2MailExtensions::NetCmdOAuth2;
+
+use warnings('once');
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -27,14 +43,100 @@ our @ObjectDependencies = (
     'Kernel::System::Log',
     'Kernel::System::Main',
     'Kernel::System::PostMaster',
+    'Kernel::System::OpenIDConnect::TokenProvider',
 );
 
+# these private subs will be overriden in child classes
+
+sub _Type {
+    return 'POP3';
+}
+
+sub _ExtraNetPOP3Args {
+
+    # no extra args
+    return;
+}
+
+sub _StartTLS {
+
+    # nothing to do
+    return;
+}
+
+sub _Authenticate {
+
+    my ( $Self, %Param ) = @_;
+
+    my $Type        = $Param{Type};
+    my $PopObject   = $Param{PopObject};
+    my $Port        = $Param{Port};
+    my $Auth        = $Param{Auth};
+    my $AccountName = $Param{AccountName};
+
+    if ( $Auth ne 'Basic' ) {
+
+        my $TokenProviderObject = $Kernel::OM->Get('Kernel::System::OpenIDConnect::TokenProvider');
+
+        my $Token = $TokenProviderObject->Fetch(
+            AccountName => $AccountName,
+        );
+
+        if ( !$Token->{Success} ) {
+            $PopObject->quit();
+            return (
+                Successful => 0,
+                Message    => "$Type: $Auth Auth for account $AccountName failed invalid Token!",
+            );
+        }
+
+        my $NOM = $PopObject->CareOnCloud_OAuth2(
+            $Auth,
+            $Param{Login},
+            $Token->{Token},
+            $Param{Host},
+            $Port
+        );
+        if ( !defined $NOM ) {
+            $PopObject->quit();
+            return (
+                Successful => 0,
+                Message    => "$Type: $Auth Auth for account $AccountName failed "
+            );
+        }
+
+        return (
+            Successful => 1,
+            PopObject  => $PopObject,
+            NOM        => $NOM,
+            Type       => $Type,
+        );
+    }
+    else {
+
+        my $NOM = $PopObject->login( $Param{Login}, $Param{Password} );
+        if ( !defined $NOM ) {
+            $PopObject->quit();
+            return (
+                Successful => 0,
+                Message    => "$Type: Auth for user $Param{Login}/$Param{Host} failed!"
+            );
+        }
+
+        return (
+            Successful => 1,
+            PopObject  => $PopObject,
+            NOM        => $NOM,
+            Type       => $Type,
+        );
+    }
+}
+
 sub new {
-    my ( $Type, %Param ) = @_;
+    my ( $Class, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {%Param};
-    bless( $Self, $Type );
+    my $Self = bless {%Param}, $Class;
 
     # reset limit
     $Self->{Limit} = 0;
@@ -46,7 +148,7 @@ sub Connect {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(Login Password Host Timeout Debug)) {
+    for (qw(Login Host Timeout Debug Auth)) {
         if ( !defined $Param{$_} ) {
             return (
                 Successful => 0,
@@ -55,48 +157,51 @@ sub Connect {
         }
     }
 
+    if ( $Param{Auth} ne 'Basic' ) {
+
+        if ( !defined $Param{AccountName} ) {
+            return (
+                Successful => 0,
+                Message    => "Need AccountName!",
+            );
+        }
+    }
+    else {
+
+        if ( !defined $Param{Password} ) {
+            return (
+                Successful => 0,
+                Message    => "Need Password!",
+            );
+        }
+    }
+
+    my $Type = $Self->_Type;
+
     # connect to host
     my $PopObject = Net::POP3->new(
         $Param{Host},
         Timeout => $Param{Timeout},
         Debug   => $Param{Debug},
+        $Self->_ExtraNetPOP3Args(),
     );
 
     if ( !$PopObject ) {
         return (
             Successful => 0,
-            Message    => "POP3: Can't connect to $Param{Host}"
+            Message    => "$Type: Can't connect to $Param{Host}"
         );
     }
+
+    $Self->_StartTLS($PopObject);    # only important in IMAPTLS.pm
 
     # authentication
-    my $NOM = $PopObject->login( $Param{Login}, $Param{Password} );
-    if ( !defined $NOM ) {
-        $PopObject->quit();
-        return (
-            Successful => 0,
-            Message    => "POP3: Auth for user $Param{Login}/$Param{Host} failed!"
-        );
-    }
-
-    return (
-        Successful => 1,
-        PopObject  => $PopObject,
-        NOM        => $NOM,
-        Type       => 'POP3',
+    return $Self->_Authenticate(
+        Type      => $Type,
+        PopObject => $PopObject,
+        Port      => 110,
+        %Param,
     );
-}
-
-sub _Fetch {
-    my ( $Self, %Param ) = @_;
-
-    # fetch again if still messages on the account
-    MESSAGE:
-    while (1) {
-        return       if !$Self->_Fetch(%Param);
-        last MESSAGE if $Self->{Reconnect};
-    }
-    return 1;
 }
 
 sub Fetch {
@@ -118,7 +223,7 @@ sub Fetch {
     );
 
     # check needed stuff
-    for (qw(Login Password Host Trusted QueueID)) {
+    for (qw(Login Host Trusted QueueID)) {
         if ( !defined $Param{$_} ) {
             $CommunicationLogObject->ObjectLog(
                 ObjectLogType => 'Connection',
@@ -138,7 +243,7 @@ sub Fetch {
         }
     }
 
-    for (qw(Login Password Host)) {
+    for (qw(Login Host)) {
         if ( !$Param{$_} ) {
             $CommunicationLogObject->ObjectLog(
                 ObjectLogType => 'Connection',
@@ -182,15 +287,18 @@ sub Fetch {
         Value         => "Open connection to '$Param{Host}' ($Param{Login}).",
     );
 
-    my %Connect = ();
+    my %Connect;
     eval {
         %Connect = $Self->Connect(
-            Host     => $Param{Host},
-            Login    => $Param{Login},
-            Password => $Param{Password},
-            Timeout  => 15,
-            Debug    => $Debug
+            Host        => $Param{Host},
+            Login       => $Param{Login},
+            Password    => $Param{Password},
+            Auth        => $Param{Auth},
+            AccountName => $Param{AccountName},
+            Timeout     => 15,
+            Debug       => $Debug
         );
+
         return 1;
     } || do {
         my $Error = $@;

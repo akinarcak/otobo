@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,7 +18,7 @@ package Kernel::Modules::Installer;
 
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::Print)
 
-use v5.24;
+use v5.26;
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -28,10 +28,10 @@ use utf8;
 use Net::Domain qw(hostfqdn);
 
 # CPAN modules
-use DBI;
-use DBI::Const::GetInfoType qw();    # set up %DBI::Const::GetInfoType::GetInfoType
+use DBI                     ();
+use DBI::Const::GetInfoType ();    # set up %DBI::Const::GetInfoType::GetInfoType
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::Language qw(Translatable);
 
 our $ObjectManagerDisabled = 1;
@@ -39,7 +39,7 @@ our $ObjectManagerDisabled = 1;
 sub new {
     my ( $Type, %Param ) = @_;
 
-    # Allocate new hash for object and initialize with the passed params
+    # Allocate a new hash for the instance and initialize it with the passed parameters.
     return bless {%Param}, $Type;
 }
 
@@ -111,6 +111,7 @@ sub Run {
     my $StepCounter;
 
     # Build header - but only if we're not in AJAX mode.
+    # 'CheckRequirements' is the only subaction that is called from JS and returns JSON
     if ( $Self->{Subaction} ne 'CheckRequirements' ) {
         $LayoutObject->Block(
             Name => 'Steps',
@@ -165,7 +166,7 @@ sub Run {
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     # Print intro form.
-    my $Title = $LayoutObject->{LanguageObject}->Translate('Install OTOBO');
+    my $Title = $LayoutObject->{LanguageObject}->Translate('Install CareOnCloud ESM');
     if ( $Self->{Subaction} eq 'Intro' ) {
 
         # activate the Intro block
@@ -270,7 +271,7 @@ sub Run {
         if ( $CheckMode eq 'DB' ) {
             my %DBCredentials;
             for my $Param (
-                qw(DBUser DBPassword DBHost DBType DBPort DBSID DBName InstallType OTOBODBUser OTOBODBPassword)
+                qw(DBUser DBPassword DBHost DBType DBPort DBSID DBName InstallType CareOnCloudDBUser CareOnCloudDBPassword)
                 )
             {
                 $DBCredentials{$Param} = $ParamObject->GetParam( Param => $Param ) || '';
@@ -291,7 +292,7 @@ sub Run {
             %Result = (
                 Successful => 0,
                 Message    => Translatable('Unknown Check!'),
-                Comment    => $LayoutObject->{LanguageObject}->Translate( 'The check "%s" doesn\'t exist!', $CheckMode ),
+                Comment    => $LayoutObject->{LanguageObject}->Translate( 'The check "%s" doesn\'t exist!', $CheckMode )
             );
         }
 
@@ -311,7 +312,7 @@ sub Run {
         my $DBType        = $ParamObject->GetParam( Param => 'DBType' );
         my $DBInstallType = $ParamObject->GetParam( Param => 'DBInstallType' );
 
-        # generate a random password for OTOBODBUser
+        # generate a random password for CareOnCloudDBUser
         my $GeneratedPassword = $MainObject->GenerateRandomString;
 
         if ( $DBType eq 'mysql' ) {
@@ -326,15 +327,30 @@ sub Run {
                     Item                => Translatable('Configure MySQL'),
                     Step                => $StepCounter,
                     InstallType         => $DBInstallType,
-                    DefaultDBUser       => $DBInstallType eq 'CreateDB' ? 'root' : 'otobo',
+                    DefaultDBUser       => $DBInstallType eq 'CreateDB' ? 'root' : 'careoncloud',
                     PasswordExplanation => $PasswordExplanation,
                 },
             );
             if ( $DBInstallType eq 'CreateDB' ) {
+
+                # this selection list will be updated later by JS
+                my %AuthPlugins = (
+                    'mysql_native_password' => 'mysql_native_password (default)',
+                );
+                my $DefaultAuthPlugin = 'mysql_native_password';
+
+                my $AuthPluginsList = $LayoutObject->BuildSelection(
+                    Data       => \%AuthPlugins,
+                    Name       => 'AuthPlugin',
+                    Class      => 'Modernize',
+                    SelectedID => $DefaultAuthPlugin
+                );
+
                 $LayoutObject->Block(
                     Name => 'DatabaseMySQLCreate',
                     Data => {
-                        Password => $GeneratedPassword,
+                        AuthPlugin => $AuthPluginsList,
+                        Password   => $GeneratedPassword,
                     },
                 );
             }
@@ -367,7 +383,7 @@ sub Run {
                     Item          => Translatable('Database'),
                     Step          => $StepCounter,
                     InstallType   => $DBInstallType,
-                    DefaultDBUser => $DBInstallType eq 'CreateDB' ? 'postgres' : 'otobo',
+                    DefaultDBUser => $DBInstallType eq 'CreateDB' ? 'postgres' : 'careoncloud',
                 },
             );
             if ( $DBInstallType eq 'CreateDB' ) {
@@ -434,7 +450,7 @@ sub Run {
 
         my %DBCredentials;
         for my $Param (
-            qw(DBUser DBPassword DBHost DBType DBName DBSID DBPort InstallType OTOBODBUser OTOBODBPassword)
+            qw(DBUser DBPassword DBHost DBType DBName DBSID DBPort InstallType CareOnCloudDBUser CareOnCloudDBPassword)
             )
         {
             $DBCredentials{$Param} = $ParamObject->GetParam( Param => $Param ) || '';
@@ -467,6 +483,7 @@ sub Run {
             },
         );
 
+        # SQL statements for creating the careoncloud database and the careoncloud user
         my @Statements;
 
         # Create database, add user.
@@ -476,7 +493,7 @@ sub Run {
 
                 # Determine current host for MySQL account.
                 my $Host;
-                if ( $ENV{OTOBO_RUNS_UNDER_DOCKER} ) {
+                if ( $ENV{CareOnCloud_RUNS_UNDER_DOCKER} ) {
 
                     # When running under Docker we assume that the database also runs in the subnet provided by Docker.
                     # This is the case when the standard docker-compose.yml is used.
@@ -505,43 +522,70 @@ sub Run {
                     $Host =~ s{:\d*\z}{}xms;
                 }
 
-                # SQL for creating the OTOBO user.
+                # SQL for creating the CareOnCloud ESM user.
+                #
                 # An explicit statement for user creation is needed because MySQL 8 no longer
                 # supports implicit user creation via the 'GRANT PRIVILEGES' statement.
-                # Also note that there are multiple authentication plugins for MySQL/MariaDB.
-                # 'mysql_native_password' works without an encrypted DB connection and is used here.
-                # The advantage is that no encryption keys have to be set up.
-                # The syntax for CREATE USER is not completely the same between MySQL and MariaDB. Therfore
-                # a case switch must be used here.
-                my $CreateUserSQL;
-                {
-                    if ( $DBH->{mysql_serverinfo} =~ m/mariadb/i ) {
-                        $CreateUserSQL
-                            .= "CREATE USER `$DB{OTOBODBUser}`\@`$Host` IDENTIFIED BY '$DB{OTOBODBPassword}'";
+                # Also note that there are multiple authentication plugins for MariaDB and MySQLB.
+                #
+                # The syntax for CREATE USER is mostly the same between MySQL and MariaDB.
+                #
+                # Different authentication plugins are supported for different database systems.
+                my $CareOnCloudDBUser     = $ParamObject->GetParam( Param => 'CareOnCloudDBUser' );
+                my $CareOnCloudDBPassword = $ParamObject->GetParam( Param => 'CareOnCloudDBPassword' );
+                my $AuthPlugin      = $ParamObject->GetParam( Param => 'AuthPlugin' );
+                my @CreateUserSQLs;
+                if ( !$AuthPlugin || $AuthPlugin eq 'default' ) {
+
+                    # Use the default authentication plugin, works for MariaDB and MySQL
+                    push @CreateUserSQLs,
+                        "CREATE USER `$CareOnCloudDBUser`\@`$Host` IDENTIFIED BY '$CareOnCloudDBPassword'";
+                }
+                else {
+
+                    # Use portable way of getting the name of the database system.
+                    # Previously this was done using attributes of the database handle,
+                    # but the prefixes of the attributes differ with different database driver modules.
+                    #
+                    # Quite sensibly, the name 'MariaDB' is returned for a MariaDB database
+                    my $DbmsName = $DBH->get_info( $DBI::Const::GetInfoType::GetInfoType{SQL_DBMS_NAME} );
+
+                    if ( $DbmsName =~ m/mariadb/i ) {
+
+                        # This is the CREATE USER statement where the authenication plugin is specified.
+                        # This SQL statement works for 'ed25519' since MariaDB 10.4. 'mysql_native_password' and 'PARSEC'
+                        # are also covered.
+                        # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-ed25519
+                        # See https://mariadb.com/docs/server/reference/plugins/authentication-plugins/authentication-plugin-parsec
+                        push @CreateUserSQLs,
+                            "CREATE USER `$CareOnCloudDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin USING PASSWORD('$CareOnCloudDBPassword')";
                     }
                     else {
-                        $CreateUserSQL
-                            .= "CREATE USER `$DB{OTOBODBUser}`\@`$Host` IDENTIFIED WITH mysql_native_password BY '$DB{OTOBODBPassword}'";
+
+                        # The MySQL case.
+                        # "USING PASSWORD('...')" is not supported
+                        push @CreateUserSQLs,
+                            "CREATE USER `$CareOnCloudDBUser`\@`$Host` IDENTIFIED WITH $AuthPlugin BY '$CareOnCloudDBPassword'";
                     }
                 }
 
                 @Statements = (
                     "CREATE DATABASE `$DB{DBName}` charset utf8mb4 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci",
-                    $CreateUserSQL,
-                    "GRANT ALL PRIVILEGES ON `$DB{DBName}`.* TO `$DB{OTOBODBUser}`\@`$Host` WITH GRANT OPTION",
+                    @CreateUserSQLs,
+                    "GRANT ALL PRIVILEGES ON `$DB{DBName}`.* TO `$DB{CareOnCloudDBUser}`\@`$Host` WITH GRANT OPTION",
                 );
             }
 
             # Set DSN for Config.pm.
-            $DB{ConfigDSN} = 'DBI:mysql:database=$Self->{Database};host=$Self->{DatabaseHost}';
-            $DB{DSN}       = "DBI:mysql:database=$DB{DBName};host=$DB{DBHost}";
+            $DB{ConfigDSN} = 'DBI:MariaDB:database=$Self->{Database};host=$Self->{DatabaseHost}';
+            $DB{DSN}       = "DBI:MariaDB:database=$DB{DBName};host=$DB{DBHost}";
         }
         elsif ( $DB{DBType} eq 'postgresql' ) {
 
             if ( $DB{InstallType} eq 'CreateDB' ) {
                 @Statements = (
-                    "CREATE ROLE \"$DB{OTOBODBUser}\" WITH LOGIN PASSWORD '$DB{OTOBODBPassword}'",
-                    "CREATE DATABASE \"$DB{DBName}\" OWNER=\"$DB{OTOBODBUser}\" ENCODING 'utf-8'",
+                    "CREATE ROLE \"$DB{CareOnCloudDBUser}\" WITH LOGIN PASSWORD '$DB{CareOnCloudDBPassword}'",
+                    "CREATE DATABASE \"$DB{DBName}\" OWNER=\"$DB{CareOnCloudDBUser}\" ENCODING 'utf-8'",
                 );
             }
 
@@ -611,30 +655,33 @@ sub Run {
         }
 
         # ReConfigure Config.pm.
-        my $ReConfigure;
+        my $ReconfigureFailed;
         if ( $DB{DBType} eq 'oracle' ) {
-            $ReConfigure = $Self->ReConfigure(
+            $ReconfigureFailed = $Self->ReConfigure(
                 DatabaseDSN  => $DB{ConfigDSN},
                 DatabaseHost => $DB{DBHost},
                 Database     => $DB{DBSID},
-                DatabaseUser => $DB{OTOBODBUser},
-                DatabasePw   => $DB{OTOBODBPassword},
+                DatabaseUser => $DB{CareOnCloudDBUser},
+                DatabasePw   => $DB{CareOnCloudDBPassword},
             );
         }
         else {
-            $ReConfigure = $Self->ReConfigure(
+            $ReconfigureFailed = $Self->ReConfigure(
                 DatabaseDSN  => $DB{ConfigDSN},
                 DatabaseHost => $DB{DBHost},
                 Database     => $DB{DBName},
-                DatabaseUser => $DB{OTOBODBUser},
-                DatabasePw   => $DB{OTOBODBPassword},
+                DatabaseUser => $DB{CareOnCloudDBUser},
+                DatabasePw   => $DB{CareOnCloudDBPassword},
             );
         }
 
-        if ($ReConfigure) {
+        if ($ReconfigureFailed) {
+
+            # This is expected to never happen as ReConfigure() throws an exception
+            # when the config file can't be written.
             return join '',
                 $LayoutObject->Header(
-                    Title => Translatable('Install OTOBO - Error')
+                    Title => Translatable('Install CareOnCloud ESM - Error')
                 ),
                 $LayoutObject->Warning(
                     Message => Translatable('Kernel/Config.pm isn\'t writable!'),
@@ -645,7 +692,7 @@ sub Run {
                 $LayoutObject->Footer;
         }
 
-        # We need a database connection as the user 'otobo' for handling the XML files.
+        # We need a database connection as the user 'careoncloud' for handling the XML files.
         # Not relying on Kernel/Config.pm as that file was recently changed.
         $Kernel::OM->ObjectsDiscard(
             Objects => ['Kernel::System::DB']
@@ -653,8 +700,8 @@ sub Run {
         $Kernel::OM->ObjectParamAdd(
             'Kernel::System::DB' => {
                 DatabaseDSN  => $DB{DSN},
-                DatabaseUser => $DB{OTOBODBUser},
-                DatabasePw   => $DB{OTOBODBPassword},
+                DatabaseUser => $DB{CareOnCloudDBUser},
+                DatabasePw   => $DB{CareOnCloudDBPassword},
                 Type         => $DB{DBType},
             },
         );
@@ -662,7 +709,7 @@ sub Run {
 
         # Create database tables and insert initial values.
         my @SQLPost;
-        for my $SchemaFile (qw(otobo-schema otobo-initial_insert)) {
+        for my $SchemaFile (qw(careoncloud-schema careoncloud-initial_insert)) {
 
             if ( !-f "$DirOfSQLFiles/$SchemaFile.xml" ) {
                 $LayoutObject->FatalError(
@@ -689,7 +736,7 @@ sub Run {
             );
 
             # If we parsed the schema, catch post instructions.
-            @SQLPost = $DBObject->SQLProcessorPost if $SchemaFile eq 'otobo-schema';
+            @SQLPost = $DBObject->SQLProcessorPost if $SchemaFile eq 'careoncloud-schema';
 
             SQL:
             for my $SQL (@SQL) {
@@ -800,7 +847,7 @@ sub Run {
             },
             Name       => 'CheckMXRecord',
             Class      => 'Modernize',
-            SelectedID => '1',
+            SelectedID => '0',
         );
 
         # Read FQDN using Net::Domain and pre-populate the field.
@@ -1034,8 +1081,8 @@ sub Run {
 
         # webserver restart is never necessary
 
-        my $OTOBOHandle = $ParamObject->ScriptName;
-        $OTOBOHandle =~ s/\/(.*)\/installer\.pl/$1/;
+        my $CareOnCloudHandle = $ParamObject->ScriptName;
+        $CareOnCloudHandle =~ s/\/(.*)\/installer\.pl/$1/;
 
         # Under Docker the scheme is correctly recognised as there are only two relevant cases:
         #   a) HTTP should actually be used
@@ -1059,7 +1106,7 @@ sub Run {
                 Step        => $StepCounter,
                 Host        => $Host,
                 Scheme      => $Scheme,
-                OTOBOHandle => $OTOBOHandle,
+                CareOnCloudHandle => $CareOnCloudHandle,
                 Password    => $Password,
             },
         );
@@ -1102,14 +1149,14 @@ sub ReConfigure {
     open( my $In, '<', $ConfigFile )                                                ## no critic qw(InputOutput::RequireBriefOpen OTOBO::ProhibitOpen)
         or $LayoutObject->FatalError( Message => "Can't open $ConfigFile: $!" );    ## no critic qw(OTOBO::ProhibitLowPrecedenceOps)
     my $Config = '';
-    while (<$In>) {
+    while ( my $s = <$In> ) {
 
-        # Skip empty lines or comments.
-        if ( !$_ || $_ =~ /^\s*#/ || $_ =~ /^\s*$/ ) {
-            $Config .= $_;
+        # no need to adapt empty lines or comments.
+        if ( !$s || $s =~ /^\s*#/ || $s =~ /^\s*$/ ) {
+            $Config .= $s;
         }
         else {
-            my $NewConfig = $_;
+            my $NewConfig = $s;
 
             # Replace config with %Param.
             for my $Key ( sort keys %Param ) {
@@ -1117,12 +1164,10 @@ sub ReConfigure {
                 # Database passwords can contain characters like '@' or '$' and should be single-quoted
                 #   same goes for database hosts which can be like 'myserver\instance name' for MS SQL.
                 if ( $Key eq 'DatabasePw' || $Key eq 'DatabaseHost' ) {
-                    $NewConfig =~
-                        s/(\$Self->\{("|'|)$Key("|'|)} =.+?('|"));/\$Self->{'$Key'} = '$Param{$Key}';/g;
+                    $NewConfig =~ s/(\$Self->\{("|'|)$Key("|'|)} =.+?('|"));/\$Self->{'$Key'} = '$Param{$Key}';/g;
                 }
                 else {
-                    $NewConfig =~
-                        s/(\$Self->\{("|'|)$Key("|'|)} =.+?('|"));/\$Self->{'$Key'} = "$Param{$Key}";/g;
+                    $NewConfig =~ s/(\$Self->\{("|'|)$Key("|'|)} =.+?('|"));/\$Self->{'$Key'} = "$Param{$Key}";/g;
                 }
             }
             $Config .= $NewConfig;
@@ -1146,7 +1191,7 @@ sub ConnectToDB {
     my @NeededKeys = qw(DBType DBHost DBUser DBPassword);
 
     if ( $Param{InstallType} eq 'CreateDB' ) {
-        push @NeededKeys, qw(OTOBODBUser OTOBODBPassword);
+        push @NeededKeys, qw(CareOnCloudDBUser CareOnCloudDBPassword);
     }
 
     # For Oracle we require DBSID and DBPort.
@@ -1170,18 +1215,18 @@ sub ConnectToDB {
         }
     }
 
-    # If we do not need to create a database for OTOBO OTOBODBuser equals DBUser.
+    # If we do not need to create a database for CareOnCloud ESM CareOnCloudDBuser equals DBUser.
     if ( $Param{InstallType} ne 'CreateDB' ) {
-        $Param{OTOBODBUser}     = $Param{DBUser};
-        $Param{OTOBODBPassword} = $Param{DBPassword};
+        $Param{CareOnCloudDBUser}     = $Param{DBUser};
+        $Param{CareOnCloudDBPassword} = $Param{DBPassword};
     }
 
     # Create DSN string for backend.
     if ( $Param{DBType} eq 'mysql' && $Param{InstallType} eq 'CreateDB' ) {
-        $Param{DSN} = "DBI:mysql:database=;host=$Param{DBHost};";
+        $Param{DSN} = "DBI:MariaDB:database=;host=$Param{DBHost};";
     }
     elsif ( $Param{DBType} eq 'mysql' && $Param{InstallType} eq 'UseDB' ) {
-        $Param{DSN} = "DBI:mysql:database=;host=$Param{DBHost};database=$Param{DBName}";
+        $Param{DSN} = "DBI:MariaDB:database=;host=$Param{DBHost};database=$Param{DBName}";
     }
     elsif ( $Param{DBType} eq 'postgresql' && $Param{InstallType} eq 'CreateDB' ) {
         $Param{DSN} = "DBI:Pg:host=$Param{DBHost};";
@@ -1251,18 +1296,20 @@ sub CheckDBRequirements {
     my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
     # Version checks are only active for some database systems.
-    # See https://doc.otobo.org/manual/installation/10.1/en/content/requirements.html#software-requirements
+    # See https://doc.otobo.org/manual/installation/11.1/en/content/requirements.html#software-requirements
     my %RequiredVersion = (
-        mysql   => '5.6',
-        mariadb => '10.0',
+        mysql   => '8.4',
+        mariadb => '10.11',
 
-        # postgresql => '9.2',   version check not implemented and tested yet
-        # oracle     => '10g',   version check not implemented and tested yet
+        # postgresql => '13.0',   version check not implemented and tested yet
+        # oracle     => '19c',   version check not implemented and tested yet
     );
+
+    # Both MariaDB and MySQL have $Param{DBType} set to 'mysql'
     if ( $RequiredVersion{ $Param{DBType} } ) {
 
         # Compare versions with version.pm as this module is always available. It is a core module.
-        # MariaDB reports version like 10.5.20-MariaDB-1:10.5.20+maria~ubu2004. That string needs to be normlized.
+        # MariaDB reports version like 10.5.20-MariaDB-1:10.5.20+maria~ubu2004. That string needs to be normalized.
         my $ReportedVersion = $Result{DBH}->get_info( $DBI::Const::GetInfoType::GetInfoType{SQL_DBMS_VER} );
         my $DBType          = $Param{DBType};
         if ( $ReportedVersion =~ m/MariaDB/ ) {
@@ -1288,7 +1335,7 @@ sub CheckDBRequirements {
     }
 
     # Check max_allowed_packet for MySQL
-    if ( $Param{DBType} eq 'mysql' && $Result{Successful} == 1 ) {
+    if ( $Param{DBType} eq 'mysql' && $Result{Successful} ) {
 
         # max_allowed_packet should be at least 64 MB
         my $MySQLMaxAllowedPacketRecommended = 64;
@@ -1304,7 +1351,7 @@ sub CheckDBRequirements {
     }
 
     # Check innodb_log_file_size.
-    if ( $Param{DBType} eq 'mysql' && $Result{Successful} == 1 ) {
+    if ( $Param{DBType} eq 'mysql' && $Result{Successful} ) {
 
         my $MySQLInnoDBLogFileSize            = 0;
         my $MySQLInnoDBLogFileSizeMinimum     = 256;
@@ -1336,7 +1383,24 @@ sub CheckDBRequirements {
         }
     }
 
-    # Delete not necessary key/value pairs.
+    # not really used by the recipient, but useful information when inspecting the traffic
+    $Result{DbmsName} = $Result{DBH}->get_info( $DBI::Const::GetInfoType::GetInfoType{SQL_DBMS_NAME} );
+
+    if ( $Param{DBType} eq 'mysql' && $Result{Successful} ) {
+
+        # The list of supported authentication plugins differs between MariaDB and MySQL.
+        my $PluginList = $Result{DbmsName} eq 'MariaDB' ? q{'ed25519', 'parsec'} : q{'caching_sha2_password'};
+
+        $Result{AvailablePlugins} = $Result{DBH}->selectall_arrayref(<<~"END_SQL");
+            SELECT plugin_name
+              FROM information_schema.plugins
+              WHERE plugin_type = 'AUTHENTICATION'
+                AND plugin_status = 'ACTIVE'
+                AND plugin_name IN ($PluginList)
+            END_SQL
+    }
+
+    # Delete key/value pairs which should not be included in the sent json
     delete $Result{DB};
     delete $Result{DBH};
 
@@ -1419,16 +1483,11 @@ sub CheckMailConfiguration {
 
         # Check outbound mail configuration.
         my $SendObject = $Kernel::OM->Get('Kernel::System::Email');
-
-        my $Status = 'Successful';
-
         %Result = $SendObject->Check(
             CommunicationLogObject => $CommunicationLogObject,
         );
 
-        if ( !$Result{Successful} ) {
-            $Status = 'Failed';
-        }
+        my $Status = $Result{Successful} ? 'Successful' : 'Failed';
 
         my $CommunicationLogSuccess = $CommunicationLogObject->CommunicationStop(
             Status => $Status,

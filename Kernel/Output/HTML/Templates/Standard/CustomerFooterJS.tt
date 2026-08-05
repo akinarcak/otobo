@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,11 +15,23 @@
 # --
 ## nofilter(TidyAll::Plugin::OTOBO::TT::ScriptUsage)
 
-<script type="text/javascript">//<![CDATA[
-    "use strict";
-
-    var CKEDITOR_BASEPATH = [% Config("Frontend::RichTextPath") | JSON %];
-//]]></script>
+[% RenderBlockStart("RichTextJS") %]
+<script type="importmap">
+            {
+                "imports": {
+                    "ckeditor5": "[% Config("Frontend::RichTextPath") | html %]/ckeditor5.js",
+                    "ckeditor5/": "[% Config("Frontend::RichTextPath") | html %]"
+                }
+            }
+</script>
+# the language.js path needs to be a string constant, but it depends on the UserLanguage,
+# so we load it here instead of Core.UI.RichTextEditor or Core.UI.CKEditor5Wrapper
+<script type="module">
+import coreTranslations from "[% Config("Frontend::RichTextPath") | html %][% Data.TranslationFilename | html %]";
+window.CKEditor5CoreTranslations = coreTranslations;
+</script>
+<script type="module" src="[% Data.JSDirectory | html %][% Data.WrapperFileName | html %]"></script>
+[% RenderBlockEnd("RichTextJS") %]
 [% RenderBlockStart("CommonJS") %]
 <script type="text/javascript" src="[% Config("Frontend::JavaScriptPath") | html %][% Data.JSDirectory | html %][% Data.Filename | html %]"></script>
 [% RenderBlockEnd("CommonJS") %]

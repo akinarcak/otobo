@@ -3,7 +3,7 @@
     * This file is for testing development purpose only!
     * It will be deleted before merging to the master
 -->
-<otobo_config version="2.0" init="Application">
+<careoncloud_config version="2.0" init="Application">
     <Setting Name="ExampleAoA" Required="1" Valid="1">
         <Description Translatable="1">Test AoA.</Description>
         <Navigation>SampleComplex</Navigation>
@@ -486,4 +486,4 @@
                     Test10: Test10<br />]]></Item>
             </Value>
     </Setting>
-</otobo_config>
+</careoncloud_config>

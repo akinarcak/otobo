@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -64,7 +64,7 @@ sub new {
         );
 
     # set URL for calling cloud services
-    $Self->{CloudServiceURL} = 'https://portal.rother-oss.com/otobo/public.pl';
+    $Self->{CloudServiceURL} = 'https://portal.rother-oss.com/careoncloud/public.pl';
 
     return $Self;
 }
@@ -74,8 +74,8 @@ sub new {
 perform a cloud service communication and return result data
 
     my $RequestResult = $CloudServiceObject->Request(
-        OTOBOIDAuth => { #  will be send encoded as JSON
-            OTOBOID => '',
+        CareOnCloudIDAuth => { #  will be send encoded as JSON
+            CareOnCloudID => '',
             Password => '',
         },
         UniqueIDAuth => { #  will send encoded as JSON
@@ -301,13 +301,13 @@ sub Request {
         }
     }
 
-    # get OTOBOIDAuth structure if needed
-    my $OTOBOIDAuth = '';
-    if ( $Param{OTOBOID} && $Param{Password} ) {
+    # get CareOnCloudIDAuth structure if needed
+    my $CareOnCloudIDAuth = '';
+    if ( $Param{CareOnCloudID} && $Param{Password} ) {
 
-        $OTOBOIDAuth = $JSONObject->Encode(
+        $CareOnCloudIDAuth = $JSONObject->Encode(
             Data => {
-                OTOBOID  => $Param{OTOBOID},
+                CareOnCloudID  => $Param{CareOnCloudID},
                 Password => $Param{Password},
             },
         );
@@ -346,7 +346,7 @@ sub Request {
                 Action       => 'PublicCloudService',
                 RequestData  => $RequestData,
                 UniqueIDAuth => $UniqueIDAuth,
-                OTOBOIDAuth  => $OTOBOIDAuth,
+                CareOnCloudIDAuth  => $CareOnCloudIDAuth,
             },
         );
 

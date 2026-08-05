@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -22,17 +22,25 @@ use utf8;
 
 # CPAN modules
 use Test2::V0;
-use Test2::Tools::HTTP;
-use HTTP::Request::Common;
+use Test2::Tools::HTTP qw(
+    http_code
+    http_content
+    http_content_type
+    http_is_error
+    http_is_success
+    http_request
+    http_response
+);
+use HTTP::Request::Common qw(GET);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 
 # This test checks whether the URLs / and /index.html work
 
 # For now test only when running under Docker,
 # even though this route could also be available outside Docker.
-skip_all 'not running under Docker' unless $ENV{OTOBO_RUNS_UNDER_DOCKER};
+skip_all 'not running under Docker' unless $ENV{CareOnCloud_RUNS_UNDER_DOCKER};
 
 plan(3);
 
@@ -50,7 +58,7 @@ http_request(
     http_response {
         http_is_success();
         http_content_type('text/html');
-        http_content( match(qr/OTOBO Redirect/) );
+        http_content( match(qr/CareOnCloud ESM Redirect/) );
     },
     "testing $ExactRootURL",
 );
@@ -63,7 +71,7 @@ http_request(
     http_response {
         http_is_success();
         http_content_type('text/html');
-        http_content( match(qr/OTOBO Redirect/) );
+        http_content( match(qr/CareOnCloud ESM Redirect/) );
     },
     "testing $IndexHtmlURL",
 );

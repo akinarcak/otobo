@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -16,10 +16,17 @@
 
 package Kernel::System::VirtualFS::DB;
 
+use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
 
-use MIME::Base64;
+# core modules
+use MIME::Base64 qw(decode_base64 encode_base64);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::System::DB',
@@ -31,8 +38,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # config (not used right now)
     $Self->{Compress} = 0;
@@ -122,6 +128,7 @@ sub Write {
 
     # check if already exists
     my $Exists = $Self->_FileLookup( $Param{Filename} );
+
     return if $Exists;
 
     # compress (in case)
@@ -140,27 +147,29 @@ sub Write {
     my $DBObject = $Kernel::OM->Get('Kernel::System::DB');
 
     # encode attachment if it's a postgresql backend!!!
-    if ( !$DBObject->GetDatabaseFunction('DirectBlob') ) {
+    my %ExtraDoParams;
+    if ( $DBObject->GetDatabaseFunction('DirectBlob') ) {
 
+        # Make sure that the content is passed as a byte array and is bound as binary
         $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( $Param{Content} );
-
+        $ExtraDoParams{BindAsBinary} = [ 0, 1 ];
+    }
+    else {
+        $Kernel::OM->Get('Kernel::System::Encode')->EncodeOutput( $Param{Content} );
         my $Content = encode_base64( ${ $Param{Content} } );
         $Param{Content} = \$Content;
     }
 
-    my $Encode = 1;
-    if ( lc $Param{Mode} eq 'binary' ) {
-        $Encode = 0;
-    }
-
-    return if !$DBObject->Do(
+    return unless $DBObject->Do(
         SQL => 'INSERT INTO virtual_fs_db (filename, content, create_time) '
             . 'VALUES ( ?, ?, current_timestamp )',
         Bind => [ \$Param{Filename}, $Param{Content} ],
+        %ExtraDoParams,
     );
 
     my $FileID = $Self->_FileLookup( $Param{Filename} );
-    return if !$FileID;
+
+    return unless $FileID;
 
     my $BackendKey = $Self->_BackendKeyGenerate(
         FileID   => $FileID,

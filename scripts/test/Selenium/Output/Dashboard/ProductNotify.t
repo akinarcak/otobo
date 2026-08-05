@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
@@ -92,19 +92,19 @@ $Selenium->RunTest(
                             CacheTTL => 4320,
                             Release  => [
                                 {
-                                    Name     => 'OTOBO',
+                                    Name     => 'CareOnCloud ESM',
                                     Severity => 'Security',
                                     Version  => $ProductFeeds[2]->{Version},
                                     Link     => $ProductFeeds[2]->{Link},
                                 },
                                 {
-                                    Name     => 'OTOBO',
+                                    Name     => 'CareOnCloud ESM',
                                     Severity => 'Minor',
                                     Version  => $ProductFeeds[1]->{Version},
                                     Link     => $ProductFeeds[1]->{Link},
                                 },
                                 {
-                                    Name     => 'OTOBO',
+                                    Name     => 'CareOnCloud ESM',
                                     Severity => 'Major',
                                     Version  => $ProductFeeds[0]->{Version},
                                     Link     => $ProductFeeds[0]->{Link},

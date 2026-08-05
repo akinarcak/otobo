@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,8 +24,8 @@ use utf8;
 # CPAN modules
 use Test2::V0;
 
-# OTOBO modules
-use Kernel::System::UnitTest::RegisterDriver;    # set up $Self (unused) and $Kernel::OM
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
 use Kernel::System::UnitTest::Selenium;
 
 # get selenium object
@@ -196,13 +196,13 @@ $Selenium->RunTest(
             'Process Information widget is enabled',
         );
 
-        # verify there are process informations in 'Process Information' widget
+        # verify there are process information in 'Process Information' widget
         $Selenium->find_element_by_xpath_ok(
-            q{//p[contains(@title, 'TestProcess')]},
+            q{//span[contains(@title, 'TestProcess')]},
             'Process name found in Process Information widget'
         );
         $Selenium->find_element_by_xpath_ok(
-            q{//p[contains(@title, 'Shipping')]},
+            q{//span[contains(@title, 'Shipping')]},
             'Process activity found in Ticket Information widget'
         );
 
@@ -236,7 +236,7 @@ $Selenium->RunTest(
 
         # verify there is new activity in 'Process Information' widget
         $Selenium->find_element_by_xpath_ok(
-            q{//p[contains(@title, 'Ordering complete')]},
+            q{//span[contains(@title, 'Ordering complete')]},
             "Process activity found in Process Information widget"
         );
 

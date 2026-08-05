@@ -1,8 +1,8 @@
 // --
-// OTOBO is a web-based ticketing system for service organisations.
+// CareOnCloud ESM is a web-based ticketing system for service organisations.
 // --
 // Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-// Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+// Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 // --
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -58,6 +58,8 @@ Core.UI.Elasticsearch = (function (TargetNS) {
             if ( typeof FulltextESValue == 'undefined' ){
                 FulltextESValue = '';
             }
+            FulltextESValue = FulltextESValue.trim();
+
             var LengthFulltext = FulltextESValue.length;
 
             // close an existing dialog, if the search string is less than MinSearch characters long
@@ -87,6 +89,46 @@ Core.UI.Elasticsearch = (function (TargetNS) {
             }
         });
 
+        $('#FulltextES').keydown(function(e) {
+            if(e.which === 13 ) {
+
+                e.preventDefault();
+                $(this).closest("form").submit();
+                return;
+            }
+            if(e.key === "Escape") {
+
+                e.preventDefault();
+                let el = $(this);
+                if(el.attr("expanded") === undefined ) {
+                    el.css("width",'50vw');
+                    el.attr("expanded","true");
+                }
+                else {
+                    el.css("width",'auto');
+                    el.removeAttr("expanded");
+                }
+                return;
+            }
+        });
+
+        $('#ESQUickHelp').click( function() {
+
+            var isVisible = $('#ESQuickHelpPopup').css('display') == 'block';
+
+            if(!isVisible) {
+                $('#ESQuickHelpPopup').css('display','block');
+            }
+            else {
+                $('#ESQuickHelpPopup').css('display','none');
+            }
+        });
+
+        $('#closeESQuickHelp').click( function() {
+
+            $('#ESQuickHelpPopup').css('display','none');
+        });
+
     };
 
     /**
@@ -107,6 +149,7 @@ Core.UI.Elasticsearch = (function (TargetNS) {
                 Action: Action,
                 Subaction: 'SearchUpdate',
                 FulltextES: FulltextESValue,
+                URL: window.location.href,
             };
 
         // initiate the AJAX call
@@ -150,15 +193,17 @@ Core.UI.Elasticsearch = (function (TargetNS) {
     function OpenDialog( Response ) {
 
         var CustomerInterface = Core.Config.Get('SessionName') === Core.Config.Get('CustomerPanelSessionName');
+        var HTML;
+        var DialogOptions;
 
         // define and open the dialog for the customer interface
         if ( CustomerInterface ) {
             var MinWidth      = $(window).width() > 767 ? '400px' : '320px';
             var Fullsize      = $(window).width() > 767 ? '' : 'width: 100vw;';
-            var HTML          = "<div id='oooESOuter' style='" + Fullsize + "min-width: " + MinWidth + "'>" + Response + "</div>";
+            HTML              = "<div id='oooESOuter' style='" + Fullsize + "min-width: " + MinWidth + "'>" + Response + "</div>";
             var PosRight      = $(window).width() > 767 ? '120px' : '0px';
             var PosTop        = $(window).width() > 767 ? '120px' : '192px';
-            var DialogOptions = {
+            DialogOptions = {
                 HTML: HTML,
                 Title: Core.Language.Translate('Results'),
                 PositionTop: PosTop,
@@ -180,8 +225,8 @@ Core.UI.Elasticsearch = (function (TargetNS) {
 
         // define and open the dialog for the agent interface
         else {
-            var HTML          = "<div id='oooESOuter' style='min-width: 500px'>" + Response + "</div>";
-            var DialogOptions = {
+            HTML          = "<div id='oooESOuter' style='min-width: 500px'>" + Response + "</div>";
+            DialogOptions = {
                 HTML: HTML,
                 Title: Core.Language.Translate('Results'),
                 PositionTop: '100px',

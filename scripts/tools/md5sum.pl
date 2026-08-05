@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,15 +15,22 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
 
-use Digest::MD5;
-use Pod::Usage;
+# core modules
+use Digest::MD5 ();
+use Pod::Usage  qw(pod2usage);
+
+# CPAN modules
+
+# CareOnCloud ESM modules
 
 if ( !$ARGV[0] ) {
     pod2usage();
 }
+
 my $Filename = $ARGV[0];
 
 if ( open my $FH, '<', $Filename ) {    ## no critic qw(OTOBO::ProhibitOpen)
@@ -57,5 +64,3 @@ builtin on many systems, not all platforms (Windows!) have this.
 In that case using this script is a nice alternative.
 
 =cut
-
-=end

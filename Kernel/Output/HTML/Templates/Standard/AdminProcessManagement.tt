@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -27,6 +27,15 @@
     [% INCLUDE "Breadcrumb.tt" Path = BreadcrumbPath %]
 
     <div class="SidebarColumn">
+        <div class="WidgetSimple">
+            <div class="Header">
+                <h2>[% Translate("Filter by valid state") | html %]</h2>
+            </div>
+            <div class="Content">
+                <input type="checkbox" id="IncludeInvalid" name="IncludeInvalid" value="1" title="[% Translate("Include inactive processes") | html %]" [% Data.IncludeInvalidChecked | html %]/>
+                <label for="IncludeInvalid">[% Translate("Include inactive processes") | html %]</label>
+            </div>
+        </div>
         <div class="WidgetSimple">
             <div class="Header">
                 <h2><label for="Filter">[% Translate("Filter for Processes") | html %]</label></h2>
@@ -57,7 +66,7 @@
             </div>
             <div class="Content">
                 <p class="FieldExplanation">
-                    [% Translate("Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by process management module.") | html %]
+                    [% Translate("Here you can upload a configuration file to import a process to your system. The file needs to be in .yml format as exported by the process management module.") | html %]
                 </p>
                 <ul class="ActionList SpacingTop">
                     <li>

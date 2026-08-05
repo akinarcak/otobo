@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,11 +19,13 @@ package Kernel::System::CustomerUser::DB;
 use strict;
 use warnings;
 
-use Kernel::System::VariableCheck qw(:all);
+# core modules
+use Digest::SHA ();
 
-use Crypt::PasswdMD5 qw(unix_md5_crypt apache_md5_crypt);
-use Digest::SHA;
+# CPAN modules
+use Crypt::PasswdMD5 qw(apache_md5_crypt unix_md5_crypt);
 
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -48,16 +50,12 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     # check needed data
     for my $Needed (qw( PreferencesObject CustomerUserMap )) {
         $Self->{$Needed} = $Param{$Needed} || die "Got no $Needed!";
     }
-
-    # get database object
-    $Self->{DBObject} = $Kernel::OM->Get('Kernel::System::DB');
 
     # max shown user per search list
     $Self->{UserSearchListLimit} = $Self->{CustomerUserMap}->{CustomerUserSearchListLimit} || 250;
@@ -106,14 +104,18 @@ sub new {
             DatabaseUser => $Self->{CustomerUserMap}->{Params}->{User},
             DatabasePw   => $Self->{CustomerUserMap}->{Params}->{Password},
             %{ $Self->{CustomerUserMap}->{Params} },
+            DisconnectOnDestruction => 1,
         ) || die('Can\'t connect to database!');
 
         # remember that we have the DBObject not from parent call
         $Self->{NotParentDBObject} = 1;
     }
+    else {
+        $Self->{DBObject} = $Kernel::OM->Get('Kernel::System::DB');
+    }
 
     # this setting specifies if the table has the create_time,
-    # create_by, change_time and change_by fields of OTOBO
+    # create_by, change_time and change_by fields of CareOnCloud ESM
     $Self->{ForeignDB} = $Self->{CustomerUserMap}->{Params}->{ForeignDB} ? 1 : 0;
 
     # defines if the database search will be performend case sensitive (1) or not (0)
@@ -1669,8 +1671,7 @@ sub CustomerUserUpdate {
 sub SetPassword {
     my ( $Self, %Param ) = @_;
 
-    my $Login = $Param{UserLogin};
-    my $Pw    = $Param{PW} || '';
+    # This method is similar to Kernel::System::User::SetPassword()
 
     # check ro/rw
     if ( $Self->{ReadOnly} ) {
@@ -1678,24 +1679,32 @@ sub SetPassword {
             Priority => 'error',
             Message  => 'Customer backend is read only!',
         );
+
         return;
     }
 
+    my $Login = $Param{UserLogin};
+    my $Pw    = $Param{PW} || '';
+
     # check needed stuff
-    if ( !$Param{UserLogin} ) {
+    if ( !$Login ) {
         $Kernel::OM->Get('Kernel::System::Log')->Log(
             Priority => 'error',
             Message  => 'Need UserLogin!',
         );
+
         return;
     }
+
+    # TODO: add check whether the CustomerUser exists
+
     my $CryptedPw = '';
 
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
+    my $ConfigSection = 'Customer::AuthModule::DB';
 
-    my $CryptType = $ConfigObject->Get('Customer::AuthModule::DB::CryptType') || 'sha2';
+    my $CryptType = $ConfigObject->Get("${ConfigSection}::CryptType") || 'sha2';
 
-    # get encode object
     my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
 
     # crypt plain (no crypt at all)
@@ -1703,7 +1712,7 @@ sub SetPassword {
         $CryptedPw = $Pw;
     }
 
-    # crypt with unix crypt
+    # crypt with UNIX crypt
     elsif ( $CryptType eq 'crypt' ) {
 
         # encode output, needed by crypt() only non utf8 signs
@@ -1714,8 +1723,8 @@ sub SetPassword {
         $EncodeObject->EncodeInput( \$CryptedPw );
     }
 
-    # crypt with md5 crypt
-    elsif ( $CryptType eq 'md5' || !$CryptType ) {
+    # crypt with unix_md5_crypt
+    elsif ( $CryptType eq 'md5' ) {
 
         # encode output, needed by unix_md5_crypt() only non utf8 signs
         $EncodeObject->EncodeOutput( \$Pw );
@@ -1725,7 +1734,7 @@ sub SetPassword {
         $EncodeObject->EncodeInput( \$CryptedPw );
     }
 
-    # crypt with md5 crypt (compatible with Apache's .htpasswd files)
+    # crypt with md5 (compatible with Apache's .htpasswd files)
     elsif ( $CryptType eq 'apr1' ) {
 
         # encode output, needed by apache_md5_crypt() only non utf8 signs
@@ -1745,6 +1754,7 @@ sub SetPassword {
         $CryptedPw = $SHAObject->hexdigest();
     }
 
+    # crypt with sha512
     elsif ( $CryptType eq 'sha512' ) {
 
         my $SHAObject = Digest::SHA->new('sha512');
@@ -1756,19 +1766,17 @@ sub SetPassword {
     # bcrypt
     elsif ( $CryptType eq 'bcrypt' ) {
 
-        # get main object
         my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
 
         if ( !$MainObject->Require('Crypt::Eksblowfish::Bcrypt') ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  =>
-                    "CustomerUser: '$Login' tried to store password with bcrypt but 'Crypt::Eksblowfish::Bcrypt' is not installed!",
+                Message  => "CustomerUser: '$Login' tried to store password with bcrypt but 'Crypt::Eksblowfish::Bcrypt' is not installed!",
             );
             return;
         }
 
-        my $Cost = $ConfigObject->Get('Customer::AuthModule::DB::bcryptCost') // 12;
+        my $Cost = $ConfigObject->Get("${ConfigSection}::bcryptCost") // 12;
 
         # Don't allow values smaller than 9 for security.
         $Cost = 9 if $Cost < 9;
@@ -1796,7 +1804,7 @@ sub SetPassword {
         $CryptedPw = "BCRYPT:$Cost:$Salt:" . Crypt::Eksblowfish::Bcrypt::en_base64($Octets);
     }
 
-    # crypt with sha2 as fallback
+    # crypt with sha256 as fallback
     else {
 
         my $SHAObject = Digest::SHA->new('sha256');

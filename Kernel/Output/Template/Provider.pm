@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,6 +15,7 @@
 # --
 
 package Kernel::Output::Template::Provider;
+
 ## no critic(Perl::Critic::Policy::OTOBO::RequireCamelCase)
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::SyntaxCheck)
 
@@ -27,10 +28,10 @@ use parent qw(Template::Provider);
 use Scalar::Util qw(weaken);
 
 # CPAN modules
-use Template::Constants;
+use Template::Constants ();
 
-# OTOBO modules
-use Kernel::Output::Template::Document;
+# CareOnCloud ESM modules
+use Kernel::Output::Template::Document;    ## no perlimports, make sure that this module is available
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -47,10 +48,10 @@ Kernel::Output::Template::Provider - Template Toolkit custom provider
 
 =head1 PUBLIC INTERFACE
 
-=head2 OTOBOInit()
+=head2 CareOnCloudInit()
 
 performs some post-initialization and creates a bridge between Template::Toolkit
-and OTOBO by adding the OTOBO objects to the Provider object. This method must be
+and CareOnCloud ESM by adding the CareOnCloud ESM objects to the Provider object. This method must be
 called after instantiating the Provider object.
 
 Please note that we only store a weak reference to the LayoutObject to avoid ring
@@ -58,7 +59,7 @@ references.
 
 =cut
 
-sub OTOBOInit {
+sub CareOnCloudInit {
     my ( $Self, %Param ) = @_;
 
     # Don't fetch LayoutObject via ObjectManager as there might be several instances involved
@@ -309,7 +310,7 @@ sub store {
 
 this is our template pre processor.
 
-It handles some OTOBO specific tags like [% InsertTemplate("TemplateName.tt") %]
+It handles some CareOnCloud ESM specific tags like [% InsertTemplate("TemplateName.tt") %]
 and also performs compile-time code injection (ChallengeToken element into forms).
 
 Besides that, it also makes sure the template is treated as UTF8.
@@ -358,16 +359,21 @@ sub _PreProcessTemplateContent {
 
     #
     # Insert a BLOCK call into the template.
-    # [% RenderBlock('b1') %]...[% END %]
+    # [% RenderBlockStart('SampleBlock1') %]...[% RenderBlockEnd('SampleBlock1') %]
     # becomes
-    # [% PerformRenderBlock('b1') %][% BLOCK 'b1' %]...[% END %]
+    # [% PerformRenderBlock('SampleBlock1') %][% BLOCK 'SampleBlock1' -%]...[% END -%]
+    #
     # This is what we need: define the block and call it from the RenderBlock macro
     # to render it based on available block data from the frontend modules.
+    # The PerformRenderBlock macro is implemente in Kernel::Output::Template::Provider.pm
+    #
+    # Note that the argument of RenderBlockEnd is not actually used.
+    #
+    # Nesting blocks in the template is possible.
     #
     $Content =~ s{
         \[% -? \s* RenderBlockStart \( \s* ['"]? (.*?) ['"]? \s* \) \s* -? %\]
         }{[% PerformRenderBlock("$1") %][% BLOCK "$1" -%]}smxg;
-
     $Content =~ s{
         \[% -? \s* RenderBlockEnd \( \s* ['"]? (.*?) ['"]? \s* \) \s* -? %\]
         }{[% END -%]}smxg;
@@ -383,7 +389,7 @@ sub _PreProcessTemplateContent {
     #
     $Content =~ s{
             <form[^<>]+action="(?!https?:)[^"]*"[^<>]*>\K
-        }{[% IF Env("UserChallengeToken") %]<input type="hidden" name="ChallengeToken" value="[% Env("UserChallengeToken") | html %]"/>[% END %][% IF Env("SessionID") && !Env("SessionIDCookie") %]<input type="hidden" name="[% Env("SessionName") %]" value="[% Env("SessionID") | html %]"/>[% END %]}smxig;
+        }{[% IF Env("UserChallengeToken") %]<input type="hidden" name="ChallengeToken" value="[% Env("UserChallengeToken") | html %]"/>[% END %]}smxig;
 
     return $Content;
 }

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,13 +15,21 @@
 # --
 
 package Kernel::System::TemplateGenerator;
+
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::LayoutObject)
 
+use v5.24;
 use strict;
 use warnings;
+use utf8;
 
-use Kernel::Language;
+# core modules
 
+# CPAN modules
+use URI::Escape qw(uri_escape_utf8 uri_unescape);    ## no perlimports, methods are used in a substitution
+
+# CareOnCloud ESM modules
+use Kernel::Language              ();
 use Kernel::System::VariableCheck qw(:all);
 
 our @ObjectDependencies = (
@@ -31,6 +39,7 @@ our @ObjectDependencies = (
     'Kernel::System::CustomerUser',
     'Kernel::System::DynamicField',
     'Kernel::System::DynamicField::Backend',
+    'Kernel::System::EmailAddress',
     'Kernel::System::Encode',
     'Kernel::System::HTMLUtils',
     'Kernel::System::Log',
@@ -68,8 +77,7 @@ sub new {
     my ( $Type, %Param ) = @_;
 
     # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
+    my $Self = bless {}, $Type;
 
     $Self->{RichText} = $Kernel::OM->Get('Kernel::Config')->Get('Frontend::RichText');
 
@@ -96,11 +104,11 @@ sub Salutation {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(TicketID Data UserID)) {
-        if ( !$Param{$_} ) {
+    for my $Needed (qw(TicketID Data UserID)) {
+        if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
             return;
         }
@@ -139,7 +147,7 @@ sub Salutation {
     }
 
     # get list unsupported tags for standard template
-    my @ListOfUnSupportedTag = qw(OTOBO_AGENT_SUBJECT OTOBO_AGENT_BODY OTOBO_CUSTOMER_BODY OTOBO_CUSTOMER_SUBJECT);
+    my @ListOfUnSupportedTag = qw(CareOnCloud_AGENT_SUBJECT CareOnCloud_AGENT_BODY CareOnCloud_CUSTOMER_BODY CareOnCloud_CUSTOMER_SUBJECT);
 
     my $SalutationText = $Self->_RemoveUnSupportedTag(
         Text                 => $Salutation{Text} || '',
@@ -193,12 +201,13 @@ sub Signature {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(Data UserID)) {
-        if ( !$Param{$_} ) {
+    for my $Needed (qw(Data UserID)) {
+        if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -248,7 +257,7 @@ sub Signature {
     }
 
     # get list unsupported tags for standard template
-    my @ListOfUnSupportedTag = qw(OTOBO_AGENT_SUBJECT OTOBO_AGENT_BODY OTOBO_CUSTOMER_BODY OTOBO_CUSTOMER_SUBJECT);
+    my @ListOfUnSupportedTag = qw(CareOnCloud_AGENT_SUBJECT CareOnCloud_AGENT_BODY CareOnCloud_CUSTOMER_BODY CareOnCloud_CUSTOMER_SUBJECT);
 
     my $SignatureText = $Self->_RemoveUnSupportedTag(
         Text                 => $Signature{Text} || '',
@@ -280,8 +289,8 @@ sub Signature {
 generate sender address (FROM string) for emails
 
     my $Sender = $TemplateGeneratorObject->Sender(
-        QueueID    => 123,
-        UserID     => 123,
+        QueueID => 123,
+        UserID  => 123,
     );
 
 returns:
@@ -298,12 +307,13 @@ sub Sender {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw( UserID QueueID)) {
-        if ( !$Param{$_} ) {
+    for my $Needed (qw( UserID QueueID)) {
+        if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -315,6 +325,9 @@ sub Sender {
 
     # get config object
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    # This is the not quoted real name
+    my $Phrase = $Address{Phrase};
 
     # check config for agent real name
     my $UseAgentRealName = $ConfigObject->Get('Ticket::DefineEmailFrom');
@@ -332,8 +345,8 @@ sub Sender {
             # check for user data
             if ( $UserData{UserFullname} ) {
 
-                # rewrite RealName
-                $Address{RealName} = "$UserData{UserFullname}";
+                # rewrite the phrase, no need to care about quoting
+                $Phrase = $UserData{UserFullname};
             }
         }
 
@@ -343,17 +356,21 @@ sub Sender {
             # check for user data
             if ( $UserData{UserFullname} ) {
 
-                # rewrite RealName
-                my $Separator = ' ' . $ConfigObject->Get('Ticket::DefineEmailFromSeparator')
-                    || '';
-                $Address{RealName} = $UserData{UserFullname} . $Separator . ' ' . $Address{RealName};
+                # prepend the user name and the separator, e.g. 'via', to the real name
+                my $Separator = $ConfigObject->Get('Ticket::DefineEmailFromSeparator');
+                $Phrase = "$UserData{UserFullname} $Separator $Phrase";
             }
         }
     }
 
-    # Format sender realname and address conformant to RFC 5322. This is relevant when the real name contain commas
+    # Format sender real name and address compliant to RFC 5322. This is relevant when the real name contain commas
     # or other special symbols.
-    return Mail::Address->new( $Address{RealName}, $Address{Email} )->format();
+    my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+
+    return $EmailAddressObject->Format(
+        RealName => $Phrase,
+        Address  => $Address{Email},
+    );
 }
 
 =head2 Template()
@@ -361,7 +378,7 @@ sub Sender {
 generate template
 
     my $Template = $TemplateGeneratorObject->Template(
-        TemplateID => 123
+        TemplateID => 123,
         TicketID   => 123,                  # Optional
         Data       => $ArticleHashRef,      # Optional
         UserID     => 123,
@@ -369,7 +386,7 @@ generate template
 
 Returns:
 
-    $Template =>  'Some text';
+    $Template = 'Some text';
 
 =cut
 
@@ -377,17 +394,20 @@ sub Template {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(TemplateID UserID)) {
-        if ( !$Param{$_} ) {
+    for my $Needed (qw(TemplateID UserID)) {
+        if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
 
-    my %Template = $Kernel::OM->Get('Kernel::System::StandardTemplate')->StandardTemplateGet(
+    my $StandardTemplateObject = $Kernel::OM->Get('Kernel::System::StandardTemplate');
+
+    my %Template = $StandardTemplateObject->StandardTemplateGet(
         ID => $Param{TemplateID},
     );
 
@@ -445,7 +465,7 @@ sub Template {
     $Language //= $Kernel::OM->Get('Kernel::Config')->Get('DefaultLanguage') || 'en';
 
     # get list unsupported tags for standard template
-    my @ListOfUnSupportedTag = qw(OTOBO_AGENT_SUBJECT OTOBO_AGENT_BODY OTOBO_CUSTOMER_BODY OTOBO_CUSTOMER_SUBJECT);
+    my @ListOfUnSupportedTag = qw(CareOnCloud_AGENT_SUBJECT CareOnCloud_AGENT_BODY CareOnCloud_CUSTOMER_BODY CareOnCloud_CUSTOMER_SUBJECT);
 
     my %SupportedTypes = (
         Answer  => 1,
@@ -494,10 +514,10 @@ sub Template {
 generate internal or external notes
 
     my $GenericAgentArticle = $TemplateGeneratorObject->GenericAgentArticle(
-        Notification    => $NotificationDataHashRef,
-        TicketID        => 123,
-        UserID          => 123,
-        Data            => $ArticleHashRef,             # Optional
+        Notification => $NotificationDataHashRef,
+        TicketID     => 123,
+        UserID       => 123,
+        Data         => $ArticleHashRef,             # Optional
     );
 
 =cut
@@ -506,11 +526,11 @@ sub GenericAgentArticle {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(TicketID Notification UserID)) {
-        if ( !$Param{$_} ) {
+    for my $Needed (qw(TicketID Notification UserID)) {
+        if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
             return;
         }
@@ -590,20 +610,29 @@ sub GenericAgentArticle {
 
 =head2 Attributes()
 
-generate attributes
+modifies inplace the passed in C<Data> hash reference and returns the enriched data.
 
-    my %Attributes = $TemplateGeneratorObject->Attributes(
-        TicketID   => 123,
-        ArticleID  => 123,
-        ResponseID => 123
-        UserID     => 123,
-        Action     => 'Forward', # Possible values are Reply and Forward, Reply is default.
+    my %Data = (
+        Subject => 'What do you want to talk about?'
     );
 
-returns
-    StandardResponse
-    Salutation
-    Signature
+    my %EnrichedData = $TemplateGeneratoObject->Attributes(
+        TicketID   => 123,
+        Data       => \%Data,    # $Data{Subject} is used as input for finding the new subject
+        UserID     => 123,
+        Action     => 'Forward', # Relevant for the subject.
+                                 # Possible values are 'Reply' and 'Forward', 'Reply' is eventually the default.
+    );
+
+Returns the modified hash reference as key value pairs. The potentially added or changed item are:
+
+=over 4
+
+=item Subject
+
+=item From
+
+=back
 
 =cut
 
@@ -611,12 +640,13 @@ sub Attributes {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(TicketID Data UserID)) {
-        if ( !$Param{$_} ) {
+    for my $Needed (qw(TicketID Data UserID)) {
+        if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -624,7 +654,7 @@ sub Attributes {
     # get ticket object
     my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 
-    # get queue
+    # get ticket data, including the queue id
     my %Ticket = $TicketObject->TicketGet(
         TicketID      => $Param{TicketID},
         DynamicFields => 0,
@@ -634,7 +664,7 @@ sub Attributes {
     $Param{Data}->{Subject} = $TicketObject->TicketSubjectBuild(
         TicketNumber => $Ticket{TicketNumber},
         Subject      => $Param{Data}->{Subject} || '',
-        Action       => $Param{Action}          || '',
+        Action       => $Param{Action}          || '',    # TicketSubjectBuild() falls back to the default 'Reply'
     );
 
     # get sender address
@@ -643,7 +673,7 @@ sub Attributes {
         UserID  => $Param{UserID},
     );
 
-    return %{ $Param{Data} };
+    return $Param{Data}->%*;
 }
 
 =head2 AutoResponse()
@@ -680,12 +710,13 @@ sub AutoResponse {
     my ( $Self, %Param ) = @_;
 
     # check needed stuff
-    for (qw(TicketID AutoResponseType OrigHeader UserID)) {
-        if ( !$Param{$_} ) {
+    for my $Needed (qw(TicketID AutoResponseType OrigHeader UserID)) {
+        if ( !$Param{$Needed} ) {
             $Kernel::OM->Get('Kernel::System::Log')->Log(
                 Priority => 'error',
-                Message  => "Need $_!"
+                Message  => "Need $Needed!"
             );
+
             return;
         }
     }
@@ -726,11 +757,11 @@ sub AutoResponse {
     if (@ArticleList) {
         my %Article = $ArticleObject->BackendForArticle( %{ $ArticleList[0] } )->ArticleGet( %{ $ArticleList[0] } );
 
-        for (qw(From To Cc Subject Body)) {
-            if ( !$Param{OrigHeader}->{$_} ) {
-                $Param{OrigHeader}->{$_} = $Article{$_} || '';
+        for my $Key (qw(From To Cc Subject Body)) {
+            if ( !$Param{OrigHeader}->{$Key} ) {
+                $Param{OrigHeader}->{$Key} = $Article{$Key} || '';
             }
-            chomp $Param{OrigHeader}->{$_};
+            chomp $Param{OrigHeader}->{$Key};
         }
     }
 
@@ -755,9 +786,9 @@ sub AutoResponse {
     }
 
     # fill up required attributes
-    for (qw(Subject Body)) {
-        if ( !$Param{OrigHeader}->{$_} ) {
-            $Param{OrigHeader}->{$_} = "No $_";
+    for my $Key (qw(Subject Body)) {
+        if ( !$Param{OrigHeader}->{$Key} ) {
+            $Param{OrigHeader}->{$Key} = "No $Key";
         }
     }
 
@@ -832,7 +863,7 @@ sub AutoResponse {
         );
 
         $AutoResponse{SenderAddress}  = $Address{Name};
-        $AutoResponse{SenderRealname} = $Address{Realname};
+        $AutoResponse{SenderRealname} = $Address{Realname};    # note that SystemAddress() does not capitalize the 'n'
     }
 
     # get sender attributes based on queue
@@ -843,7 +874,7 @@ sub AutoResponse {
         );
 
         $AutoResponse{SenderAddress}  = $Address{Email};
-        $AutoResponse{SenderRealname} = $Address{RealName};
+        $AutoResponse{SenderRealname} = $Address{Phrase};
     }
 
     # add urls and verify to be full html document
@@ -854,8 +885,7 @@ sub AutoResponse {
         );
 
         $AutoResponse{Text} = $Kernel::OM->Get('Kernel::System::HTMLUtils')->DocumentComplete(
-            Charset => 'utf-8',
-            String  => $AutoResponse{Text},
+            String => $AutoResponse{Text},
         );
     }
 
@@ -864,7 +894,7 @@ sub AutoResponse {
 
 =head2 NotificationEvent()
 
-replace all OTOBO smart tags in the notification body and subject
+replace all CareOnCloud ESM smart tags in the notification body and subject
 
     my %NotificationEvent = $TemplateGeneratorObject->NotificationEvent(
         TicketData            => $TicketDataHashRef,
@@ -1076,15 +1106,15 @@ sub NotificationEvent {
         $End   = '&gt;';
     }
 
-    # replace <OTOBO_CUSTOMER_DATA_*> tags early from CustomerMessageParams, the rests will be replaced
+    # replace <CareOnCloud_CUSTOMER_DATA_*> tags early from CustomerMessageParams, the rests will be replaced
     # by ticket customer user
     KEY:
     for my $Key ( sort keys %{ $Param{CustomerMessageParams} || {} } ) {
 
         next KEY if !$Param{CustomerMessageParams}->{$Key};
 
-        $Notification{Body}    =~ s/${Start}OTOBO_CUSTOMER_DATA_$Key${End}/$Param{CustomerMessageParams}->{$Key}/gi;
-        $Notification{Subject} =~ s/<OTOBO_CUSTOMER_DATA_$Key>/$Param{CustomerMessageParams}->{$Key}{$Key}/gi;
+        $Notification{Body}    =~ s/${Start}CareOnCloud_CUSTOMER_DATA_$Key${End}/$Param{CustomerMessageParams}->{$Key}/gi;
+        $Notification{Subject} =~ s/<CareOnCloud_CUSTOMER_DATA_$Key>/$Param{CustomerMessageParams}->{$Key}{$Key}/gi;
     }
 
     # do text/plain to text/html convert
@@ -1162,33 +1192,39 @@ sub NotificationEvent {
 
 =begin Internal:
 
+Private functions used by this package (not part of the documented public API).
+
+=head2 _FixMailto()
+
+A helper method which is used by the internal method C<_Replace()>.
+The complete set of parameters of C<_Replace()> is needed here as C<_Replace()>
+is called recursively.
+
+The goal is to support parameter expansion in mailto links. So
+
+  <a href="mailto:user@timezoneinfo.org?subject=CareOnCloud ESM%20UserDefaultTimeZone&amp;body=%3CCareOnCloud_CONFIG_UserDefaultTimeZone%3E">mail to timezoneinfo</a>.
+
+would be expanded to:
+
+  <a href="mailto:user@timezoneinfo.org?subject=CareOnCloud ESM%20UserDefaultTimeZone&amp;body=UTC">mail to timezoneinfo</a>.
+
 =cut
 
-sub _Replace {
-    my ( $Self, %Param ) = @_;
-
-    # check needed stuff
-    for (qw(Text RichText Data UserID)) {
-        if ( !defined $Param{$_} ) {
-            $Kernel::OM->Get('Kernel::System::Log')->Log(
-                Priority => 'error',
-                Message  => "Need $_!"
-            );
-            return;
-        }
-    }
+sub _FixMailto {
+    my ( $Self, $Param ) = @_;
 
     # check for mailto links
     # since the subject and body of those mailto links are
     # uri escaped we have to uri unescape them, replace
     # possible placeholders and then re-uri escape them
-    $Param{Text} =~ s{
+    $Param->{Text} =~ s{
         (href="mailto:[^\?]+\?)([^"]+")
     }
     {
         my $MailToHref        = $1;
         my $MailToHrefContent = $2;
 
+        # Nested s///egx!
         $MailToHrefContent =~ s{
             ((?:subject|body)=)(.+?)("|&)
         }
@@ -1197,15 +1233,16 @@ sub _Replace {
             my $SubjectOrBodyContent = $2;
             my $SubjectOrBodySuffix  = $3;
 
-            my $SubjectOrBodyContentUnescaped = URI::Escape::uri_unescape $SubjectOrBodyContent;
+            my $SubjectOrBodyContentUnescaped = uri_unescape($SubjectOrBodyContent);
 
+            # TODO: beware of recursion
             my $SubjectOrBodyContentReplaced = $Self->_Replace(
-                %Param,
+                $Param->%*,
                 Text     => $SubjectOrBodyContentUnescaped,
                 RichText => 0,
             );
 
-            my $SubjectOrBodyContentEscaped = URI::Escape::uri_escape_utf8 $SubjectOrBodyContentReplaced;
+            my $SubjectOrBodyContentEscaped = uri_escape_utf8($SubjectOrBodyContentReplaced);
 
             $SubjectOrBodyPrefix . $SubjectOrBodyContentEscaped . $SubjectOrBodySuffix;
         }egx;
@@ -1213,63 +1250,97 @@ sub _Replace {
         $MailToHref . $MailToHrefContent;
     }egx;
 
-    my $Start = '<';
-    my $End   = '>';
+    # no return value needed as $RefToText is modified
+    return;
+}
+
+=head2 _FindRecipientTimeZone()
+
+A helper method which is used by the internal method C<_Replace()>.
+
+=cut
+
+sub _FindRecipientTimeZone {
+    my ( $Self, $AddTimezoneInfo, $Ticket, $Recipient ) = @_;
+
+    my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
+
+    my %CustomerUser;
+    if ( IsHashRefWithData($Ticket) && $Ticket->{CustomerUserID} ) {
+        %CustomerUser = $CustomerUserObject->CustomerUserDataGet( User => $Ticket->{CustomerUserID} );
+    }
+
+    my %UserPreferences;
+
+    if ( $AddTimezoneInfo->{NotificationEvent} ) {
+        if ( $Recipient->{Type} eq 'Agent' ) {
+            %UserPreferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
+                UserID => $Recipient->{UserID},
+            );
+        }
+        elsif ( $Recipient->{Type} eq 'Customer' && $Recipient->{UserID} ) {
+            %UserPreferences = $CustomerUserObject->GetPreferences(
+                UserID => $Recipient->{UserID},
+            );
+        }
+    }
+    elsif (
+        $AddTimezoneInfo->{AutoResponse}
+        && $Ticket->{CustomerUserID}
+        && IsHashRefWithData( \%CustomerUser )
+        )
+    {
+        %UserPreferences = $CustomerUserObject->GetPreferences(
+            UserID => $Ticket->{CustomerUserID},
+        );
+    }
+
+    # fall back to the CareOnCloud ESM time zone
+    return $UserPreferences{UserTimeZone} if $UserPreferences{UserTimeZone};
+    return $Kernel::OM->Create('Kernel::System::DateTime')->CareOnCloudTimeZoneGet();
+}
+
+=head2 _Replace()
+
+replace the placeholders in the text
+
+=cut
+
+sub _Replace {
+    my ( $Self, %Param ) = @_;
+
+    for my $Needed (qw(Text RichText Data UserID)) {
+        if ( !defined $Param{$Needed} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Needed!"
+            );
+            return;
+        }
+    }
+
+    # handle mailto, $Param{Text} will be modified
+    $Self->_FixMailto( \%Param );
+
+    # Tags look different depending on what kind of text we're working with
+    my ( $Start, $End ) = ( '<', '>' );
     if ( $Param{RichText} ) {
-        $Start = '&lt;';
-        $End   = '&gt;';
-        $Param{Text} =~ s/(\n|\r)//g;
+        ( $Start, $End ) = ( '&lt;', '&gt;' );
+        $Param{Text} =~ s/[\n\r]//g;
     }
 
     my %Ticket;
     if ( $Param{TicketData} ) {
-        %Ticket = %{ $Param{TicketData} };
+        %Ticket = $Param{TicketData}->%*;
     }
-
-    my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
 
     # Determine recipient's timezone if needed.
     my $RecipientTimeZone;
     if ( $Param{AddTimezoneInfo} ) {
-        $RecipientTimeZone = $Kernel::OM->Create('Kernel::System::DateTime')->OTOBOTimeZoneGet();
-
-        my %CustomerUser;
-        if ( IsHashRefWithData( \%Ticket ) && $Ticket{CustomerUserID} ) {
-            %CustomerUser = $CustomerUserObject->CustomerUserDataGet( User => $Ticket{CustomerUserID} );
-        }
-
-        my %UserPreferences;
-
-        if ( $Param{AddTimezoneInfo}->{NotificationEvent} && $Param{Recipient}->{Type} eq 'Agent' ) {
-            %UserPreferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences(
-                UserID => $Param{Recipient}->{UserID},
-            );
-        }
-        elsif (
-            $Param{AddTimezoneInfo}->{NotificationEvent}
-            && $Param{Recipient}->{Type} eq 'Customer'
-            && $Param{Recipient}->{UserID}
-            )
-        {
-            %UserPreferences = $CustomerUserObject->GetPreferences(
-                UserID => $Param{Recipient}->{UserID},
-            );
-        }
-        elsif (
-            $Param{AddTimezoneInfo}->{AutoResponse}
-            && $Ticket{CustomerUserID}
-            && IsHashRefWithData( \%CustomerUser )
-            )
-        {
-            %UserPreferences = $CustomerUserObject->GetPreferences(
-                UserID => $Ticket{CustomerUserID},
-            );
-        }
-
-        if ( $UserPreferences{UserTimeZone} ) {
-            $RecipientTimeZone = $UserPreferences{UserTimeZone};
-        }
+        $RecipientTimeZone = $Self->_FindRecipientTimeZone( $Param{AddTimezoneInfo}, \%Ticket, $Param{Recipient} );
     }
+
+    my $CustomerUserObject = $Kernel::OM->Get('Kernel::System::CustomerUser');
 
     # Replace Unix time format tags.
     # If language is defined, they will be converted into a correct format in below IF statement.
@@ -1365,9 +1436,15 @@ sub _Replace {
     my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
 
     # Replace config options.
-    my $Tag = $Start . 'OTOBO_CONFIG_';
-    $Param{Text} =~ s{$Tag(.+?)$End}{
-        my $Key   = $1;
+    my $Tag = $Start . 'CareOnCloud_CONFIG_';
+    $Param{Text} =~ s{
+        $Tag
+            # the key for the config
+            (?<key>.+?)
+        $End
+    }
+    {
+        my $Key   = $+{key};
         my $Value = $ConfigObject->Get($Key) // '';
 
         # Mask sensitive config options.
@@ -1396,6 +1473,7 @@ sub _Replace {
         );
     }
 
+    # modify $Param{Text}
     my $HashGlobalReplace = sub {
         my ( $Tag, %H ) = @_;
 
@@ -1403,7 +1481,7 @@ sub _Replace {
         my $Keys = join '|', map {quotemeta} grep { defined $H{$_} } keys %H;
 
         # Set all keys as lowercase to be able to match case insensitive,
-        #   e. g. <OTOBO_CUSTOMER_From> and <OTOBO_CUSTOMER_FROM>.
+        #   e. g. <CareOnCloud_CUSTOMER_From> and <CareOnCloud_CUSTOMER_FROM>.
         #   Also mask any values containing sensitive data.
         %H = map {
             lc $_ => $Self->_MaskSensitiveValue(
@@ -1412,11 +1490,12 @@ sub _Replace {
             )
         } sort keys %H;
 
-        # If tag is 'OTOBO_CUSTOMER_' add the body alias 'email/note' to be replaced.
-        if ( $Tag =~ m/OTOBO_(CUSTOMER|AGENT)_/ ) {
+        # If tag is 'CareOnCloud_CUSTOMER_' add the body alias 'email/note' to be replaced.
+        if ( $Tag =~ m/CareOnCloud_(CUSTOMER|AGENT)_/ ) {
             KEY:
             for my $Key (qw( email note )) {
                 my $Value = $H{$Key};
+
                 next KEY if defined($Value);
 
                 $H{$Key} = $H{'body'};
@@ -1424,14 +1503,24 @@ sub _Replace {
             }
         }
 
-        $Param{Text} =~ s/(?:$Tag)($Keys)$End/$H{ lc $1 }/ieg;
+        $Param{Text} =~ s{
+            # grouping required here, as we might have alternations
+            (?:$Tag)
+                # case insensitiv keys
+                (?<key>$Keys)
+            $End
+        }
+        {
+            my $Key = $+{key};
+            $H{ lc $Key }
+        }xieg;
     };
 
-    # get recipient data and replace it with <OTOBO_...
-    $Tag = $Start . 'OTOBO_';
+    # get recipient data and replace it with <CareOnCloud_...
+    $Tag = $Start . 'CareOnCloud_';
 
-    # include more readable tag <OTOBO_NOTIFICATION_RECIPIENT
-    my $RecipientTag = $Start . 'OTOBO_NOTIFICATION_RECIPIENT_';
+    # include more readable tag <CareOnCloud_NOTIFICATION_RECIPIENT
+    my $RecipientTag = $Start . 'CareOnCloud_NOTIFICATION_RECIPIENT_';
 
     if (%Recipient) {
 
@@ -1452,11 +1541,11 @@ sub _Replace {
     # cleanup
     $Param{Text} =~ s/$RecipientTag.+?$End/-/gi;
 
-    # get owner data and replace it with <OTOBO_OWNER_...
-    $Tag = $Start . 'OTOBO_OWNER_';
+    # get owner data and replace it with <CareOnCloud_OWNER_...
+    $Tag = $Start . 'CareOnCloud_OWNER_';
 
-    # include more readable version <OTOBO_TICKET_OWNER
-    my $OwnerTag = $Start . 'OTOBO_TICKET_OWNER_';
+    # include more readable version <CareOnCloud_TICKET_OWNER
+    my $OwnerTag = $Start . 'CareOnCloud_TICKET_OWNER_';
 
     if ( $Ticket{OwnerID} ) {
 
@@ -1484,11 +1573,11 @@ sub _Replace {
     $Param{Text} =~ s/$Tag.+?$End/-/gi;
     $Param{Text} =~ s/$OwnerTag.+?$End/-/gi;
 
-    # get owner data and replace it with <OTOBO_RESPONSIBLE_...
-    $Tag = $Start . 'OTOBO_RESPONSIBLE_';
+    # get owner data and replace it with <CareOnCloud_RESPONSIBLE_...
+    $Tag = $Start . 'CareOnCloud_RESPONSIBLE_';
 
-    # include more readable version <OTOBO_TICKET_RESPONSIBLE
-    my $ResponsibleTag = $Start . 'OTOBO_TICKET_RESPONSIBLE_';
+    # include more readable version <CareOnCloud_TICKET_RESPONSIBLE
+    my $ResponsibleTag = $Start . 'CareOnCloud_TICKET_RESPONSIBLE_';
 
     if ( $Ticket{ResponsibleID} ) {
         my %Responsible = $UserObject->GetUserData(
@@ -1515,8 +1604,8 @@ sub _Replace {
     $Param{Text} =~ s/$Tag.+?$End/-/gi;
     $Param{Text} =~ s/$ResponsibleTag.+?$End/-/gi;
 
-    $Tag = $Start . 'OTOBO_Agent_';
-    my $Tag2        = $Start . 'OTOBO_CURRENT_';
+    $Tag = $Start . 'CareOnCloud_Agent_';
+    my $Tag2        = $Start . 'CareOnCloud_CURRENT_';
     my %CurrentUser = $UserObject->GetUserData(
         UserID        => $Param{UserID},
         NoOutOfOffice => 1,
@@ -1537,14 +1626,14 @@ sub _Replace {
     $HashGlobalReplace->( "$Tag|$Tag2", %CurrentUser );
 
     # replace other needed stuff
-    $Param{Text} =~ s/$Start OTOBO_FIRST_NAME $End/$CurrentUser{UserFirstname}/gxms;
-    $Param{Text} =~ s/$Start OTOBO_LAST_NAME $End/$CurrentUser{UserLastname}/gxms;
+    $Param{Text} =~ s/$Start CareOnCloud_FIRST_NAME $End/$CurrentUser{UserFirstname}/gxms;
+    $Param{Text} =~ s/$Start CareOnCloud_LAST_NAME $End/$CurrentUser{UserLastname}/gxms;
 
     # cleanup
     $Param{Text} =~ s/$Tag2.+?$End/-/gi;
 
     # ticket data
-    $Tag = $Start . 'OTOBO_TICKET_';
+    $Tag = $Start . 'CareOnCloud_TICKET_';
 
     # html quoting of content
     if ( $Param{RichText} ) {
@@ -1558,10 +1647,10 @@ sub _Replace {
         }
     }
 
-    # Dropdown, Checkbox and MultipleSelect DynamicFields, can store values (keys) that are
-    # different from the the values to display
-    # <OTOBO_TICKET_DynamicField_NameX> returns the stored key
-    # <OTOBO_TICKET_DynamicField_NameX_Value> returns the display value
+    # Dropdown, Checkbox and MultiSelect DynamicFields, can store values (keys) that are
+    # different from the values to display
+    # <CareOnCloud_TICKET_DynamicField_NameX> returns the stored key
+    # <CareOnCloud_TICKET_DynamicField_NameX_Value> returns the display value
 
     my %DynamicFields;
 
@@ -1634,7 +1723,7 @@ sub _Replace {
             Value              => $DisplayValue,
         );
 
-        # fill the DynamicFielsDisplayValues
+        # fill the DynamicFieldDisplayValues
         if ($DisplayValueStrg) {
             $DynamicFieldDisplayValues{ 'DynamicField_' . $DynamicFieldConfig->{Name} . '_Value' } = $DisplayValueStrg->{Value};
 
@@ -1678,13 +1767,13 @@ sub _Replace {
     $HashGlobalReplace->( $Tag, %Ticket, %DynamicFieldDisplayValues );
 
     # COMPAT
-    $Param{Text} =~ s/$Start OTOBO_TICKET_ID $End/$Ticket{TicketID}/gixms;
-    $Param{Text} =~ s/$Start OTOBO_TICKET_NUMBER $End/$Ticket{TicketNumber}/gixms;
+    $Param{Text} =~ s/$Start CareOnCloud_TICKET_ID $End/$Ticket{TicketID}/gixms;
+    $Param{Text} =~ s/$Start CareOnCloud_TICKET_NUMBER $End/$Ticket{TicketNumber}/gixms;
     if ( $Ticket{TicketID} ) {
-        $Param{Text} =~ s/$Start OTOBO_QUEUE $End/$Ticket{Queue}/gixms;
+        $Param{Text} =~ s/$Start CareOnCloud_QUEUE $End/$Ticket{Queue}/gixms;
     }
     if ( $Param{QueueID} ) {
-        $Param{Text} =~ s/$Start OTOBO_TICKET_QUEUE $End/$Queue{Name}/gixms;
+        $Param{Text} =~ s/$Start CareOnCloud_TICKET_QUEUE $End/$Queue{Name}/gixms;
     }
 
     # cleanup
@@ -1692,12 +1781,12 @@ sub _Replace {
 
     # Follow-up for bug#10825.
     # Set data for replacing of specific tags in Templates:
-    # - OTOBO_AGENT_SUBJECT, OTOBO_AGENT_BODY - subject/body of the CURRENT/LATEST agent article
-    # - OTOBO_CUSTOMER_SUBJECT, OTOBO_CUSTOMER_BODY - subject/body of the CURRENT/LATEST customer article
-    # - OTOBO_AGENT_SUBJECT[n]    - first n characters of the subject of the CURRENT/LATEST agent article
-    # - OTOBO_AGENT_BODY[n]       - first n lines of the body of the CURRENT/LATEST agent article
-    # - OTOBO_CUSTOMER_SUBJECT[n] - first n characters of the subject of the CURRENT/LATEST customer article
-    # - OTOBO_CUSTOMER_BODY[n]    - first n lines of the body of the CURRENT/LATEST customer article
+    # - CareOnCloud_AGENT_SUBJECT, CareOnCloud_AGENT_BODY - subject/body of the CURRENT/LATEST agent article
+    # - CareOnCloud_CUSTOMER_SUBJECT, CareOnCloud_CUSTOMER_BODY - subject/body of the CURRENT/LATEST customer article
+    # - CareOnCloud_AGENT_SUBJECT[n]    - first n characters of the subject of the CURRENT/LATEST agent article
+    # - CareOnCloud_AGENT_BODY[n]       - first n lines of the body of the CURRENT/LATEST agent article
+    # - CareOnCloud_CUSTOMER_SUBJECT[n] - first n characters of the subject of the CURRENT/LATEST customer article
+    # - CareOnCloud_CUSTOMER_BODY[n]    - first n lines of the body of the CURRENT/LATEST customer article
     #
     # For Note template we need the last article.
     # For Answer, $Param{Data} has selected or last article data, depends whether ArticleID is sent or not.
@@ -1716,10 +1805,15 @@ sub _Replace {
                 OnlyLast   => 1,
             );
 
-            my %AgentArticle = $ArticleObject->BackendForArticle( %{ $AgentArticles[0] } )->ArticleGet(
-                %{ $AgentArticles[0] },
-                DynamicFields => 0,
-            );
+            if (@AgentArticles) {
+                my %AgentArticle = $ArticleObject->BackendForArticle( %{ $AgentArticles[0] } )->ArticleGet(
+                    %{ $AgentArticles[0] },
+                    DynamicFields => 0,
+                );
+
+                $Param{DataAgent}->{Subject} = $AgentArticle{Subject};
+                $Param{DataAgent}->{Body}    = $AgentArticle{Body};
+            }
 
             # Get last article from customer.
             my @CustomerArticles = $ArticleObject->ArticleList(
@@ -1728,20 +1822,20 @@ sub _Replace {
                 OnlyLast   => 1,
             );
 
-            my %CustomerArticle = $ArticleObject->BackendForArticle( %{ $CustomerArticles[0] } )->ArticleGet(
-                %{ $CustomerArticles[0] },
-                DynamicFields => 0,
-            );
+            if (@CustomerArticles) {
+                my %CustomerArticle = $ArticleObject->BackendForArticle( %{ $CustomerArticles[0] } )->ArticleGet(
+                    %{ $CustomerArticles[0] },
+                    DynamicFields => 0,
+                );
 
-            $Param{DataAgent}->{Subject} = $AgentArticle{Subject};
-            $Param{DataAgent}->{Body}    = $AgentArticle{Body};
-            $Param{Data}->{Subject}      = $CustomerArticle{Subject};
-            $Param{Data}->{Body}         = $CustomerArticle{Body};
+                $Param{Data}->{Subject} = $CustomerArticle{Subject};
+                $Param{Data}->{Body}    = $CustomerArticle{Body};
+            }
         }
         elsif ( $Param{Template} eq 'Answer' || $Param{Template} eq 'Forward' ) {
 
             # If $Param{Data} has agent article data, we will set subject and body in $Param{DataAgent}
-            # to values from $Param{Data} in order to right replacing of OTOBO_AGENT_SUBJECT/BODY tags.
+            # to values from $Param{Data} in order to right replacing of CareOnCloud_AGENT_SUBJECT/BODY tags.
             if ( $Param{Data}->{SenderType} && $Param{Data}->{SenderType} eq 'agent' ) {
                 $Param{DataAgent}->{Subject} = $Param{Data}->{Subject};
                 $Param{DataAgent}->{Body}    = $Param{Data}->{Body};
@@ -1749,14 +1843,14 @@ sub _Replace {
         }
     }
 
-    # get customer and agent params and replace it with <OTOBO_CUSTOMER_... or <OTOBO_AGENT_...
+    # get customer and agent params and replace it with <CareOnCloud_CUSTOMER_... or <CareOnCloud_AGENT_...
     my %ArticleData = (
-        'OTOBO_CUSTOMER_' => $Param{Data}      || {},
-        'OTOBO_AGENT_'    => $Param{DataAgent} || {},
+        'CareOnCloud_CUSTOMER_' => $Param{Data}      || {},
+        'CareOnCloud_AGENT_'    => $Param{DataAgent} || {},
     );
 
     # use a list to get customer first
-    for my $DataType (qw(OTOBO_CUSTOMER_ OTOBO_AGENT_)) {
+    for my $DataType (qw(CareOnCloud_CUSTOMER_ CareOnCloud_AGENT_)) {
         my %Data = %{ $ArticleData{$DataType} };
 
         # HTML quoting of content
@@ -1764,7 +1858,7 @@ sub _Replace {
 
             ATTRIBUTE:
             for my $Attribute ( sort keys %Data ) {
-                next ATTRIBUTE if !$Data{$Attribute};
+                next ATTRIBUTE unless $Data{$Attribute};
 
                 $Data{$Attribute} = $Kernel::OM->Get('Kernel::System::HTMLUtils')->ToHTML(
                     String => $Data{$Attribute},
@@ -1774,47 +1868,66 @@ sub _Replace {
 
         if (%Data) {
 
-            # replace <OTOBO_CUSTOMER_*> and <OTOBO_AGENT_*> tags
+            # replace <CareOnCloud_CUSTOMER_*> and <CareOnCloud_AGENT_*> tags
             $Tag = $Start . $DataType;
             $HashGlobalReplace->( $Tag, %Data );
 
-            # prepare body (insert old email) <OTOBO_CUSTOMER_EMAIL[n]>, <OTOBO_CUSTOMER_NOTE[n]>
-            #   <OTOBO_CUSTOMER_BODY[n]>, <OTOBO_AGENT_EMAIL[n]>..., <OTOBO_COMMENT>
+            # prepare body (insert old email) <CareOnCloud_CUSTOMER_EMAIL[n]>, <CareOnCloud_CUSTOMER_NOTE[n]>
+            #   <CareOnCloud_CUSTOMER_BODY[n]>, <CareOnCloud_AGENT_EMAIL[n]>..., <CareOnCloud_COMMENT>
 
-            # Changed this to a 'while' to allow the same key/tag multiple times and different number of lines.
-            while (
-                $Param{Text} =~ /$Start(?:$DataType(EMAIL|NOTE|BODY)\[(.+?)\])$End/
-                ||
-                $Param{Text} =~ /$Start(?:OTOBO_COMMENT(\[(.+?)\])?)$End/
-                )
+            # Handle the case where the number of included lines can be specified.
+            # The same key can occur multiple times, possibly with a different number of lines.
+            # The last customer mail is used for <CareOnCloud_COMMENT> or <CareOnCloud_COMMENT[123]>
+            # as the loop replaces the customer mail first.
+            $Param{Text} =~ s{
+                $Start
+                    (?:
+                        # e.g. CareOnCloud_COMMENT[13], CareOnCloud_AGENT_BODY[3], CareOnCloud_CUSTOMER_BODY[0]
+                        (?:
+                            (?:
+                                CareOnCloud_COMMENT
+                                |
+                                ${DataType}(?:EMAIL|NOTE|BODY)
+                            )
+                            \[(?<cnt>.+?)\]
+                        )
+                        |
+                        # a special case as CareOnCloud_COMMENT without quantifier is handled nowhere else
+                        CareOnCloud_COMMENT
+                    )
+                $End
+            }
             {
+                # for <CareOnCloud_COMMENT> truncate per default a long mail at 2500
+                # <CareOnCloud_CUSTOMER_BODY[0] would also yield 2500 lines
+                my $NumHeadLines = $+{cnt} || 2500;
 
-                my $Line       = $2 || 2500;
-                my $NewOldBody = '';
-                my @Body       = split( /\n/, $Data{Body} );
+                my $NewOldBody   = '';
+                my @Body         = split /\n/, $Data{Body};
+                my $NumBodyLines = scalar @Body;
 
-                for my $Counter ( 0 .. $Line - 1 ) {
+                COUNTER:
+                for my $Counter ( 0 .. $NumHeadLines - 1 ) {
 
-                    # 2002-06-14 patch of Pablo Ruiz Garcia
-                    # http://lists.otobo.org/pipermail/dev/2002-June/000012.html
-                    if ( $#Body >= $Counter ) {
+                    # do not go beyond the complete body
+                    last COUNTER if $Counter >= $NumBodyLines;
 
-                        # add no quote char, do it later by using DocumentCleanup()
-                        if ( $Param{RichText} ) {
-                            $NewOldBody .= $Body[$Counter];
-                        }
-
-                        # add "> " as quote char
-                        else {
-                            $NewOldBody .= "> $Body[$Counter]";
-                        }
-
-                        # add new line
-                        if ( $Counter < ( $Line - 1 ) ) {
-                            $NewOldBody .= "\n";
-                        }
+                    # add no quote char, do it later by using DocumentCleanup()
+                    if ( $Param{RichText} ) {
+                        $NewOldBody .= $Body[$Counter];
                     }
-                    $Counter++;
+
+                    # add "> " as quote char
+                    else {
+                        $NewOldBody .= "> $Body[$Counter]";
+                    }
+
+                    # add new line, unless we are at the last included line
+                    # not sure why the last line has a newline when the
+                    # the body has less lines than the specified line count
+                    if ( $Counter < ( $NumHeadLines - 1 ) ) {
+                        $NewOldBody .= "\n";
+                    }
                 }
 
                 chomp $NewOldBody;
@@ -1834,12 +1947,11 @@ sub _Replace {
                     );
                 }
 
-                # replace tag
-                $Param{Text}
-                    =~ s/$Start(?:(?:$DataType(EMAIL|NOTE|BODY)\[(.+?)\]|(?:OTOBO_COMMENT(\[(.+?)\])?)))$End/$NewOldBody/;
-            }
+                # the replacement
+                $NewOldBody
+            }xeg;    # a single pass over the macros in $Param{Text}
 
-            # replace <OTOBO_CUSTOMER_SUBJECT[]>  and  <OTOBO_AGENT_SUBJECT[]> tags
+            # replace <CareOnCloud_CUSTOMER_SUBJECT[]>  and  <CareOnCloud_AGENT_SUBJECT[]> tags
             $Tag = "$Start$DataType" . 'SUBJECT';
             if ( $Param{Text} =~ /$Tag\[(.+?)\]$End/g ) {
 
@@ -1853,48 +1965,63 @@ sub _Replace {
                 $Param{Text} =~ s/$Tag\[.+?\]$End/$Subject/g;
             }
 
-            if ( $DataType eq 'OTOBO_CUSTOMER_' ) {
+            if ( $DataType eq 'CareOnCloud_CUSTOMER_' ) {
 
-                # Get <OTOBO_EMAIL_DATE[]> from body and replace with received date.
-                # This tag will be able to use with supported OTOBO time zones
-                #   ( e.g. <OTOBO_EMAIL_DATE[Europe/Berlin]>, <OTOBO_EMAIL_DATE[Asia/Tokyo]>,
-                #   <OTOBO_EMAIL_DATE[America/Denver]> , ...).
-                # If you use tag without time in simple format as <OTOBO_EMAIL_DATE>,
-                #  time will be transformed into OTOBO SystemTimeZone.
-                $Tag = $Start . 'OTOBO_EMAIL_DATE';
+                # Get <CareOnCloud_EMAIL_DATE[]> from body and replace with received date.
+                # TODO: Clarify, as it rather looks like the current date is used.
+                # This tag will be able to use with supported CareOnCloud ESM time zones
+                #   ( e.g. <CareOnCloud_EMAIL_DATE[Europe/Berlin]>, <CareOnCloud_EMAIL_DATE[Asia/Tokyo]>,
+                #   <CareOnCloud_EMAIL_DATE[America/Denver]> , ...).
+                # If you use tag without time in simple format as <CareOnCloud_EMAIL_DATE>,
+                #  time will be transformed into CareOnCloud ESM SystemTimeZone.
+                $Tag = $Start . 'CareOnCloud_EMAIL_DATE';
 
                 my $DateTimeObject = $Kernel::OM->Create('Kernel::System::DateTime');
-                my $SystemTimeZone = $DateTimeObject->OTOBOTimeZoneGet();
-                while ( $Param{Text} =~ /$Tag\[(.+?)\]$End/g ) {
-                    my $TimeZone      = $1;
-                    my $TimeZoneValid = $DateTimeObject->IsTimeZoneValid( TimeZone => $TimeZone );
-                    if ($TimeZoneValid) {
-                        $DateTimeObject->ToTimeZone( TimeZone => $TimeZone );
+                my $SystemTimeZone = $DateTimeObject->CareOnCloudTimeZoneGet();
+
+                $Param{Text} =~ s{
+                    $Start
+                        CareOnCloud_EMAIL_DATE
+                        # the time zone is optional
+                        (?:
+                            \[(?<tz>.+?)\]
+                        )?
+                    $End
+                }
+                {
+                    my $TimeZone = $+{tz};
+
+                    if ( $TimeZone ) {
+                        my $TimeZoneValid = $DateTimeObject->IsTimeZoneValid( TimeZone => $TimeZone );
+                        if ($TimeZoneValid) {
+                            $DateTimeObject->ToTimeZone( TimeZone => $TimeZone );
+                        }
+                        else {
+
+                            # stay at the system time zone
+                            $TimeZone = $SystemTimeZone;
+                        }
+
                     }
                     else {
                         $TimeZone = $SystemTimeZone;
+                        $DateTimeObject->ToTimeZone( TimeZone => $TimeZone );
                     }
 
+                    # construct the replacement
                     my $EmailDate = $DateTimeObject->Format( Format => '%A, %B %e, %Y at %T ' );
                     $EmailDate .= "($TimeZone)";
-                    $Param{Text} =~ s/$Tag\[$1\]$End/$EmailDate/g;
-                }
 
-                if ( $Param{Text} =~ /$Tag$End/g ) {
-                    my $TimeZone = $SystemTimeZone;
-                    $DateTimeObject->ToTimeZone( TimeZone => $TimeZone );
-
-                    my $EmailDate = $DateTimeObject->Format( Format => '%A, %B %e, %Y at %T ' );
-                    $EmailDate .= "($TimeZone)";
-                    $Param{Text} =~ s/$Tag$End/$EmailDate/g;
-                }
+                    # the replacement
+                    $EmailDate;
+                }xeg;    # a single pass over the macros in $Param{Text}
             }
         }
 
-        if ( $DataType eq 'OTOBO_CUSTOMER_' ) {
+        if ( $DataType eq 'CareOnCloud_CUSTOMER_' ) {
 
-            # get and prepare realname
-            $Tag = $Start . 'OTOBO_CUSTOMER_REALNAME';
+            # get and prepare real name
+            $Tag = $Start . 'CareOnCloud_CUSTOMER_REALNAME';
             if ( $Param{Text} =~ /$Tag$End/i ) {
 
                 my $From;
@@ -1934,15 +2061,15 @@ sub _Replace {
                     $From =~ s/\s+$//g;
                 }
 
-                # replace <OTOBO_CUSTOMER_REALNAME> with from
+                # replace <CareOnCloud_CUSTOMER_REALNAME> with from
                 $Param{Text} =~ s/$Tag$End/$From/g;
             }
         }
     }
 
-    # get customer data and replace it with <OTOBO_CUSTOMER_DATA_...
-    $Tag  = $Start . 'OTOBO_CUSTOMER_';
-    $Tag2 = $Start . 'OTOBO_CUSTOMER_DATA_';
+    # get customer data and replace it with <CareOnCloud_CUSTOMER_DATA_...
+    $Tag  = $Start . 'CareOnCloud_CUSTOMER_';
+    $Tag2 = $Start . 'CareOnCloud_CUSTOMER_DATA_';
 
     if ( $Ticket{CustomerUserID} || $Param{Data}->{CustomerUserID} ) {
 
@@ -1968,11 +2095,13 @@ sub _Replace {
         $HashGlobalReplace->( "$Tag|$Tag2", %CustomerUser );
     }
 
-    # cleanup all not needed <OTOBO_CUSTOMER_DATA_ tags
+    # Clean up all not needed '<CareOnCloud_CUSTOMER_' and '<CareOnCloud_CUSTOMER_DATA_' tags.
+    # Note that this includes the tags which became part of the replace text
+    # because they were present in the macro values.
     $Param{Text} =~ s/(?:$Tag|$Tag2).+?$End/-/gi;
 
-    # cleanup all not needed <OTOBO_AGENT_ tags
-    $Tag = $Start . 'OTOBO_AGENT_';
+    # cleanup all not needed <CareOnCloud_AGENT_ tags
+    $Tag = $Start . 'CareOnCloud_AGENT_';
     $Param{Text} =~ s/$Tag.+?$End/-/gi;
 
     return $Param{Text};
@@ -1980,10 +2109,11 @@ sub _Replace {
 
 =head2 _RemoveUnSupportedTag()
 
-cleanup all not supported tags
+clean up all not supported tags. The not supported tags are replaced
+with the minus character '-'.
 
     my $Text = $TemplateGeneratorObject->_RemoveUnSupportedTag(
-        Text => $SomeTextWithTags,
+        Text                 => $SomeTextWithTags,
         ListOfUnSupportedTag => \@ListOfUnSupportedTag,
     );
 
@@ -2012,13 +2142,12 @@ sub _RemoveUnSupportedTag {
         $Param{Text} =~ s/(\n|\r)//g;
     }
 
-    # Cleanup all not supported tags with and without number, e.g. OTOBO_CUSTOMER_BODY and OTOBO_CUSTOMER_BODY[n].
+    # Cleanup all not supported tags with and without number, e.g. CareOnCloud_CUSTOMER_BODY and CareOnCloud_CUSTOMER_BODY[n].
     # See https://bugs.otrs.org/show_bug.cgi?id=14369 and https://bugs.otrs.org/show_bug.cgi?id=10825.
     my $NotSupportedTag = $Start . "(?:" . join( "|", @{ $Param{ListOfUnSupportedTag} } ) . ")(\\[.*?\\])?" . $End;
     $Param{Text} =~ s/$NotSupportedTag/-/gi;
 
     return $Param{Text};
-
 }
 
 =head2 _MaskSensitiveValue()
@@ -2031,7 +2160,7 @@ Mask sensitive value, i.e. a password, a security token, etc.
         IsConfig => 1,                  # (optional) Whether the value is a config option, default: 0.
     );
 
-Returns masked value, in case the key is matched:
+Returns masked value in case the key is matched:
 
    $MaskedValue = 'xxx';
 

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -23,10 +23,10 @@ use warnings;
 # core modules
 
 # CPAN modules
-use Text::CSV;
+use Text::CSV ();
 use Excel::Writer::XLSX;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 our @ObjectDependencies = (
     'Kernel::System::Log',
@@ -154,7 +154,7 @@ sub Array2CSV {
                     $Worksheet->write( $Row, $Col, "$DataRaw->[$Col]", $HeaderFormat );
                 }
                 else {
-                    # There are major problems with data recognition in Excel. OTOBO
+                    # There are major problems with data recognition in Excel. CareOnCloud ESM
                     #   ticket numbers will be recognized as numbers, but they are so big that
                     #   Excel will (incorrectly) round them. Prevent this by using write_string()
                     #   to protect the data. This might trigger formatting notifications in Excel,

@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,19 +20,15 @@ use strict;
 use warnings;
 
 our @ObjectDependencies = (
-    'Kernel::System::Log',
     'Kernel::System::PostMaster::Filter',
+    'Kernel::System::Valid',
+    'Kernel::System::EmailAddress',
 );
 
 sub new {
     my ( $Type, %Param ) = @_;
 
-    # allocate new hash for object
-    my $Self = {};
-    bless( $Self, $Type );
-
-    # get parser object
-    $Self->{ParserObject} = $Param{ParserObject} || die "Got no ParserObject!";
+    my $Self = bless {}, $Type;
 
     # Get communication log object.
     $Self->{CommunicationLogObject} = $Param{CommunicationLogObject} || die "Got no CommunicationLogObject!";
@@ -60,7 +56,9 @@ sub Run {
     my $PostMasterFilter = $Kernel::OM->Get('Kernel::System::PostMaster::Filter');
 
     # get all db filters
-    my %JobList = $PostMasterFilter->FilterList();
+    my %JobList = $PostMasterFilter->FilterList(
+        ValidIDs => [ $Kernel::OM->Get('Kernel::System::Valid')->ValidLookup( Valid => 'valid' ) ],
+    );
 
     for ( sort keys %JobList ) {
 
@@ -84,9 +82,11 @@ sub Run {
         }
 
         # match 'Match => ???' stuff
-        my $Matched       = 0;    # Numbers are required because of the bitwise or in the negation.
-        my $MatchedNot    = 0;
-        my $MatchedResult = '';
+        my $Matched            = 0;                                                  # Numbers are required because of the bitwise or in the negation.
+        my $MatchedNot         = 0;
+        my $MatchedResult      = '';
+        my $EmailAddressObject = $Kernel::OM->Get('Kernel::System::EmailAddress');
+        INDEX:
         for my $Index ( 0 .. ( scalar @Match ) - 1 ) {
             my $Key   = $Match[$Index]->{Key};
             my $Value = $Match[$Index]->{Value};
@@ -94,16 +94,16 @@ sub Run {
             # match only email addresses
             if ( defined $Param{GetParam}->{$Key} && $Value =~ /^EMAILADDRESS:(.*)$/ ) {
                 my $SearchEmail    = $1;
-                my @EmailAddresses = $Self->{ParserObject}->SplitAddressLine(
+                my @EmailAddresses = $EmailAddressObject->ParseAddressLine(
                     Line => $Param{GetParam}->{$Key},
                 );
                 my $LocalMatched = 0;
                 RECIPIENT:
                 for my $Recipients (@EmailAddresses) {
 
-                    my $Email = $Self->{ParserObject}->GetEmailAddress( Email => $Recipients );
+                    my $Email = $EmailAddressObject->GetAddress( AddressObject => $Recipients );
 
-                    next RECIPIENT if !$Email;
+                    next RECIPIENT unless $Email;
 
                     if ( $Email =~ /^$SearchEmail$/i ) {
 
@@ -132,6 +132,19 @@ sub Run {
 
                 if ( !$LocalMatched ) {
                     $MatchedNot = 1;
+
+                    # abort processing if
+                    #   1. should match but does not
+                    #   2. should not match but does
+                    my $Op = $Config{Not}->[$Index]->{Value} ? '!' : "=";
+                    $Self->{CommunicationLogObject}->ObjectLog(
+                        ObjectLogType => 'Message',
+                        Priority      => 'Debug',
+                        Key           => 'Kernel::System::PostMaster::Filter::MatchDBSource',
+                        Value         => "failed $Prefix'$Param{GetParam}->{$Key}' $Op~ /$Value/i - aborting!",
+                    );
+
+                    last INDEX;
                 }
                 else {
                     $Matched = 1;
@@ -183,6 +196,10 @@ sub Run {
                     Value         => "$Prefix'$Param{GetParam}->{$Key}' =~ /$Value/i matched NOT!",
                 );
 
+                # abort processing if
+                #   1. should match but does not
+                #   2. should not match but does
+                last INDEX;
             }
         }
 

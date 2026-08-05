@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -18,13 +18,15 @@ use strict;
 use warnings;
 use utf8;
 
-# Set up the test driver $Self when we are running as a standalone script.
-use Kernel::System::UnitTest::MockTime qw(:all);
-use Kernel::System::UnitTest::RegisterDriver;
+# core modules
 
-our $Self;
+# CPAN modules
+use Test2::V0;
 
-use Kernel::System::PostMaster;
+# CareOnCloud ESM modules
+use Kernel::System::UnitTest::MockTime qw(FixedTimeSet);
+use Kernel::System::UnitTest::RegisterOM;    # Set up $Kernel::OM
+use Kernel::System::PostMaster ();
 
 # get needed objects
 my $ConfigObject   = $Kernel::OM->Get('Kernel::Config');
@@ -42,8 +44,8 @@ my $Helper = $Kernel::OM->Get('Kernel::System::UnitTest::Helper');
 FixedTimeSet();
 
 my %NeededXHeaders = (
-    'X-OTOBO-PendingTime'          => 1,
-    'X-OTOBO-FollowUp-PendingTime' => 1,
+    'X-CareOnCloud-PendingTime'          => 1,
+    'X-CareOnCloud-FollowUp-PendingTime' => 1,
 );
 
 my $XHeaders          = $ConfigObject->Get('PostmasterX-Header');
@@ -70,19 +72,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '2021-01-01 00:00:00',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '2022-01-01 00:00:00',
             },
         ],
@@ -113,19 +115,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '2022-01- 00:00:00',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '2022-01- 00:00:00',
             },
         ],
@@ -146,19 +148,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+60s',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30s',
             },
         ],
@@ -179,19 +181,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+60s',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30s',
             },
         ],
@@ -212,19 +214,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '60',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '30',
             },
         ],
@@ -245,19 +247,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+60m',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30m',
             },
         ],
@@ -278,19 +280,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+60h',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30h',
             },
         ],
@@ -311,19 +313,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+60d',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30d',
             },
         ],
@@ -344,19 +346,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+60y',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30y',
             },
         ],
@@ -377,19 +379,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+30y',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30y',
             },
         ],
@@ -410,19 +412,19 @@ my @Tests = (
         ],
         Set => [
             {
-                Key   => 'X-OTOBO-State',
+                Key   => 'X-CareOnCloud-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-State-PendingTime',
+                Key   => 'X-CareOnCloud-State-PendingTime',
                 Value => '+30s +30m',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State',
+                Key   => 'X-CareOnCloud-FollowUp-State',
                 Value => 'pending reminder',
             },
             {
-                Key   => 'X-OTOBO-FollowUp-State-PendingTime',
+                Key   => 'X-CareOnCloud-FollowUp-State-PendingTime',
                 Value => '+30s +30m',
             },
         ],
@@ -470,13 +472,13 @@ Some Content in Body
 
         @Return = $PostMasterObject->Run();
     }
-    $Self->Is(
+    is(
         $Return[0] || 0,
         1,
         "$Test->{Name} - Create new ticket",
     );
 
-    $Self->True(
+    ok(
         $Return[1] || 0,
         "$Test->{Name} - Create new ticket (TicketID)",
     );
@@ -489,7 +491,7 @@ Some Content in Body
     );
 
     for my $Key ( sort keys %{ $Test->{CheckNewTicket} } ) {
-        $Self->Is(
+        is(
             $Ticket{$Key},
             $Test->{CheckNewTicket}->{$Key},
             "$Test->{Name} - NewTicket - Check result value $Key",
@@ -517,16 +519,16 @@ Some Content in Body
         @Return = $PostMasterObject->Run();
     }
 
-    $Self->Is(
+    is(
         $Return[0] || 0,
         2,
         "$Test->{Name} - Create follow up ticket",
     );
-    $Self->True(
+    ok(
         $Return[1] || 0,
         "$Test->{Name} - Create follow up ticket (TicketID)",
     );
-    $Self->Is(
+    is(
         $Return[1],
         $TicketID,
         "$Test->{Name} - Create follow up ticket (TicketID of original ticket)",
@@ -538,7 +540,7 @@ Some Content in Body
     );
 
     for my $Key ( sort keys %{ $Test->{CheckFollowUp} } ) {
-        $Self->Is(
+        is(
             $Ticket{$Key},
             $Test->{CheckFollowUp}->{$Key},
             "$Test->{Name} - FollowUp - Check result value $Key",
@@ -559,6 +561,4 @@ $CommunicationLogObject->CommunicationStop(
     Status => 'Successful',
 );
 
-# cleanup is done by RestoreDatabase.
-
-$Self->DoneTesting();
+done_testing;

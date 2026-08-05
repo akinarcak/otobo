@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,13 +20,13 @@ use warnings;
 use utf8;
 
 # core modules
-use File::Path;
+use File::Path qw(rmtree);
+use JSON::PP   ();
 
 # CPAN modules
-use JSON::PP;
 use Test2::V0;
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::UnitTest::RegisterDriver;    # Set up $Self and $Kernel::OM
 
 our $Self;
@@ -459,7 +459,7 @@ $Self->True(
     like(
         $ReleaseInfoByFilename,
         {
-            Product => 'OTOBO',
+            Product => 'CareOnCloud ESM',
             Version => qr/^11\./,
         },
         'release info via file name'
@@ -471,7 +471,7 @@ $Self->True(
     like(
         $ReleaseInfoByLocation,
         {
-            Product => 'OTOBO',
+            Product => 'CareOnCloud ESM',
             Version => qr/^11\./,
         },
         'release info via location'
@@ -741,7 +741,7 @@ for my $Test (@DirectoryReadTests) {
 
 # delete needed test directories
 for my $Directory ( $DirectoryWithFiles, $DirectoryWithoutFiles ) {
-    if ( !File::Path::rmtree( [$Directory] ) ) {
+    if ( !rmtree( [$Directory] ) ) {
         $Self->True(
             0,
             "DirectoryRead() - delete '$Directory'",

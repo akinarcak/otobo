@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -19,24 +19,31 @@ package Kernel::Output::HTML::Layout::Template;
 use v5.24;
 use strict;
 use warnings;
+use namespace::autoclean;
 
 # core modules
 use Scalar::Util qw(weaken);
 
 # CPAN modules
-use Template;
-use Template::Stash::XS;
-use Template::Context;
-use Template::Plugins;
+use Template            ();
+use Template::Stash::XS ();
+use Template::Context   ();
+use Template::Plugins   ();
 
-# OTOBO modules
-use Kernel::Output::Template::Provider;
+# CareOnCloud ESM modules
+use Kernel::Output::Template::Provider ();
 
 our $ObjectManagerDisabled = 1;
 
 =head1 NAME
 
 Kernel::Output::HTML::Layout::Template - template rendering engine based on Template::Toolkit
+
+=head1 SYNOPSIS
+
+    # No instances of this class should be created directly.
+    # Instead the module is loaded implicitly by Kernel::Output::HTML::Layout
+    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
 
 =head1 PUBLIC INTERFACE
 
@@ -112,7 +119,7 @@ sub Output {
         undef $Self->{EnvNewRef};
     }
 
-    # otobo.psgi seemingly does not set REQUEST_SCHEME
+    # careoncloud.psgi seemingly does not set REQUEST_SCHEME
     if ( !$Self->{EnvRef}{REQUEST_SCHEME} && $Self->{EnvRef}{HTTPS} ) {
         $Self->{EnvRef}{REQUEST_SCHEME} = lc( $Self->{EnvRef}{HTTPS} ) eq 'on' ? 'https' : 'http';
     }
@@ -159,7 +166,7 @@ sub Output {
                 COMPILE_EXT  => '.ttc',
             }
         );
-        $Self->{TemplateProviderObject}->OTOBOInit(
+        $Self->{TemplateProviderObject}->CareOnCloudInit(
             LayoutObject => $Self,
         );
 
@@ -221,48 +228,6 @@ sub Output {
         $Self->FatalError();
     }
 
-    # If the browser does not send the session cookie, we need to append it to all links and image urls.
-    #   We cannot do this in the template preprocessor because links are often dynamically generated.
-    if ( $Self->{SessionID} && !$Self->{SessionIDCookie} ) {
-
-        # rewrite a hrefs
-        $Output =~ s{
-            (<a.+?href=")(.+?)(\#.+?|)(".+?>)
-        }
-        {
-            my $AHref   = $1;
-            my $Target  = $2;
-            my $End     = $3;
-            my $RealEnd = $4;
-            if ( lc($Target) =~ /^(http:|https:|#|ftp:)/ ||
-                $Target !~ /\.(pl|php|cgi|fcg|fcgi|fpl)(\?|$)/ ||
-                $Target =~ /(\?|&|;)\Q$Self->{SessionName}\E=/) {
-                $AHref.$Target.$End.$RealEnd;
-            }
-            else {
-                $AHref.$Target.';'.$Self->{SessionName}.'='.$Self->{SessionID}.$End.$RealEnd;
-            }
-        }iegxs;
-
-        # rewrite img and iframe src
-        $Output =~ s{
-            (<(?:img|iframe).+?src=")(.+?)(".+?>)
-        }
-        {
-            my $AHref = $1;
-            my $Target = $2;
-            my $End = $3;
-            if (lc($Target) =~ m{^http s? :}smx || !$Self->{SessionID} ||
-                $Target !~ /\.(pl|php|cgi|fcg|fcgi|fpl)(\?|$)/ ||
-                $Target =~ /\Q$Self->{SessionName}\E=/) {
-                $AHref.$Target.$End;
-            }
-            else {
-                $AHref.$Target.'&'.$Self->{SessionName}.'='.$Self->{SessionID}.$End;
-            }
-        }iegxs;
-    }
-
     #
     # "Post" Output filter handling
     #
@@ -285,7 +250,7 @@ sub Output {
             next FILTER if !$Param{TemplateFile};
             next FILTER if !$TemplateList{ $Param{TemplateFile} };
 
-            next FILTER if !$Kernel::OM->Get('Kernel::System::Main')->Require( $FilterConfig->{Module} );
+            next FILTER if !$MainObject->Require( $FilterConfig->{Module} );
 
             # create new instance
             my $Object = $FilterConfig->{Module}->new(
@@ -309,10 +274,14 @@ sub Output {
         my %Data = %{ $Self->{_JSData} // {} };
         if (%Data) {
             my $JSONString = $Kernel::OM->Get('Kernel::System::JSON')->Encode(
-                Data          => \%Data,
-                SortKeys      => 1,
-                TypeAllString => 1,
+                Data             => \%Data,
+                SortKeys         => 1,
+                StringifyScalars => 1,
             );
+
+            # remove script tags to avoid code injection (CVE-2025-59490).
+            $JSONString =~ s/</\\u003C/gmsi;
+
             $Output .= <<"END_HTML";
 
 <script type="text/javascript">//<![CDATA[
@@ -347,6 +316,62 @@ sub AddJSOnDocumentComplete {
     return;
 }
 
+=head2 AddJSOnDocumentCompleteIfNotExists()
+
+this functions adds JavaScript by the function C<AddJSOnDocumentComplete()> only if it does not exist yet.
+
+    my $Success = $LayoutObject->AddJSOnDocumentCompleteIfNotExists(
+        Key  => 'identifier_key_of_your_js',
+        Code => $JSBlock,
+    );
+
+Returns:
+
+    my $Success = 1;
+
+=cut
+
+sub AddJSOnDocumentCompleteIfNotExists {
+    my ( $Self, %Param ) = @_;
+
+    my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
+
+    # check needed stuff
+    NEEDED:
+    for my $Needed (qw(Key Code)) {
+
+        next NEEDED if defined $Param{$Needed};
+
+        $LogObject->Log(
+            Priority => 'error',
+            Message  => "Parameter '$Needed' is needed!",
+        );
+
+        return;
+    }
+
+    my $Exists = 0;
+    CODEJS:
+    for my $CodeJS ( @{ $Self->{_JSOnDocumentComplete} || [] } ) {
+
+        next CODEJS if $CodeJS !~ m{ Key: \s $Param{Key}}xms;
+
+        $Exists = 1;
+
+        last CODEJS;
+    }
+
+    return 1 if $Exists;
+
+    my $AddCode = "// Key: $Param{Key}\n" . $Param{Code};
+
+    $Self->AddJSOnDocumentComplete(
+        Code => $AddCode,
+    );
+
+    return 1;
+}
+
 =head2 AddJSData()
 
 dynamically add JavaScript data that should be handed over to
@@ -360,6 +385,8 @@ As a workaround, use C<"1"> for true and C<''> for false.
         Key   => 'Key1',  # the key to store this data
         Value => { ... }  # simple or complex data
     );
+
+Use C<AddJSBoolean()> for really passing boolean values.
 
 =cut
 

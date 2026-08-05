@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -15,24 +15,24 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 # --
 
+use v5.24;
 use strict;
 use warnings;
-use v5.24;
 use utf8;
 
 # core modules
 use File::Basename qw(dirname);
 
 # CPAN modules
-use Plack::Builder;
-use Plack::Handler::CGI qw();
-use Plack::Util qw();
+use Plack::Builder      qw(builder);
+use Plack::Handler::CGI ();
+use Plack::Util         ();
 
-# OTOBO modules
+# CareOnCloud ESM modules
 
 #local $ENV{PLACK_URLMAP_DEBUG} = 1; # enable when the URL mapping does not work
 
-# otobo.psgi looks primarily in $ENV{PATH_INFO}
+# careoncloud.psgi looks primarily in $ENV{PATH_INFO}
 local $ENV{PATH_INFO}   = join '/', grep { defined $_ && $_ ne '' } @ENV{qw(SCRIPT_NAME PATH_INFO)};
 local $ENV{SCRIPT_NAME} = '';
 
@@ -45,7 +45,7 @@ state $App = builder {
     #        response => 1,
     #        request  => 1;
 
-    Plack::Util::load_psgi("$CgiBinDir/../psgi-bin/otobo.psgi");
+    Plack::Util::load_psgi("$CgiBinDir/../psgi-bin/careoncloud.psgi");
 };
 
 #$Plack::Middleware::DebugLogging::module_map->{'text/xml; charset=utf-8'} = 'XML::Simple';

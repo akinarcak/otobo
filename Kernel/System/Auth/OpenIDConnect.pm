@@ -1,7 +1,7 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -17,6 +17,7 @@ package Kernel::System::Auth::OpenIDConnect;
 
 ## nofilter(TidyAll::Plugin::OTOBO::Perl::ParamObject)
 
+use v5.24;
 use strict;
 use warnings;
 
@@ -24,11 +25,11 @@ use warnings;
 use List::Util qw(none);
 
 # CPAN modules
-use URI::Escape;
+use URI::Escape qw(uri_unescape);
 
-# OTOBO modules
+# CareOnCloud ESM modules
 use Kernel::System::VariableCheck qw(:all);
-use Kernel::Language qw(Translatable);
+use Kernel::Language              qw(Translatable);
 
 our @ObjectDependencies = (
     'Kernel::Config',
@@ -155,7 +156,7 @@ sub Auth {
     # check the state
     my $RandLength = $OpenIDConfig->{Misc}{RandLength} // $Self->{DefaultRandLength};
     my $StateCSRF  = substr $GetParam{State}, 0, $RandLength;
-    my $CookieCSRF = $ParamObject->GetCookie( Key => 'OIDCCSRF' );
+    my $CookieCSRF = $ParamObject->GetCookie( Key => 'OIDCCSRF-' . $StateCSRF );
     my %StateCache = (
         Type => 'OpenIDConnect_State',
         Key  => $StateCSRF,
@@ -370,18 +371,16 @@ sub PreAuth {
         TTL           => $TTL,
         CacheInMemory => 0,                       # important for distributed systems
     );
+
     my %Data = (
-        State => $RandomString . $LayoutObject->LinkEncode( $Param{RequestedURL} // '' ),
+        State => $RandomString . ( $Param{RequestedURL} // '' ),
     );
 
     # store the RandomString as a CSRF cookie
     $LayoutObject->SetCookie(
-        Key      => 'OIDCCSRF',
-        Value    => $RandomString,
-        Path     => $ConfigObject->Get('ScriptAlias'),
-        Secure   => $ConfigObject->Get('HttpType') eq 'https' ? 1 : undef,
-        HTTPOnly => 1,
-        Expires  => '+' . $TTL . 's',
+        Key     => 'OIDCCSRF-' . $RandomString,
+        Value   => $RandomString,
+        Expires => '+' . $TTL . 's',
     );
 
     # add a nonce if configured
@@ -445,9 +444,9 @@ sub _ExtractMap {
     my %Return = ();
 
     KEY:
-    for my $Key ( %{ $Param{Map} } ) {
+    for my $Key ( keys %{ $Param{Map} } ) {
         if ( IsHashRefWithData( $Param{Map}{$Key} ) ) {
-            next KEY if !defined $Param{Data}{$Key};
+            next KEY unless defined $Param{Data}{$Key};
 
             %Return = (
                 %Return,
@@ -464,10 +463,10 @@ sub _ExtractMap {
             !ref $Param{Data} ? ( $Param{Data} ) : ();
 
         for my $OpenIDAttribute (@Data) {
-            my $OTOBOAttribute = $Param{Map}{$OpenIDAttribute};
+            my $CareOnCloudAttribute = $Param{Map}{$OpenIDAttribute};
 
-            if ($OTOBOAttribute) {
-                $Return{$OTOBOAttribute} = 1;
+            if ($CareOnCloudAttribute) {
+                $Return{$CareOnCloudAttribute} = 1;
             }
         }
     }

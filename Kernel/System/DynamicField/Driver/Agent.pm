@@ -1,8 +1,8 @@
 # --
-# OTOBO is a web-based ticketing system for service organisations.
+# CareOnCloud ESM is a web-based ticketing system for service organisations.
 # --
 # Copyright (C) 2001-2020 OTRS AG, https://otrs.com/
-# Copyright (C) 2019-2023 Rother OSS GmbH, https://otobo.de/
+# Copyright (C) 2019-2026 Rother OSS GmbH, https://otobo.io/
 # --
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -24,42 +24,41 @@ use warnings;
 use namespace::autoclean;
 use utf8;
 
-use parent qw(Kernel::System::DynamicField::Driver::BaseEntity);
+use parent qw(Kernel::System::DynamicField::Driver::BaseReference);
 
 # core modules
+use List::Util qw(any);
 
 # CPAN modules
 
-# OTOBO modules
-use Kernel::Language qw(Translatable);
-use Kernel::System::VariableCheck qw(:all);
+# CareOnCloud ESM modules
+use Kernel::Language              qw(Translatable);
+use Kernel::System::VariableCheck qw(IsArrayRefWithData IsHashRefWithData);
 
 our @ObjectDependencies = (
     'Kernel::Config',
-    'Kernel::System::DynamicFieldValue',
+    'Kernel::System::DynamicField',
+    'Kernel::System::DynamicField::Backend',
     'Kernel::System::Group',
     'Kernel::System::Log',
-    'Kernel::System::Main',
     'Kernel::System::User',
 );
 
 =head1 NAME
 
-Kernel::System::DynamicField::Driver::Agent - driver for the Agent dynamic field
+Kernel::System::DynamicField::Driver::Agent - backend for the Reference dynamic field
 
 =head1 DESCRIPTION
 
-DynamicFields Agent Driver delegate.
+Agent plugin for the Reference dynamic field.
 
 =head1 PUBLIC INTERFACE
 
-This module implements the public interface of L<Kernel::System::DynamicField::Backend>.
-Please look there for a detailed reference of the functions.
-
 =head2 new()
 
-usually, you want to create an instance of this
-by using Kernel::System::DynamicField::Backend->new();
+it is usually not necessary to explicitly create instances of dynamic field drivers.
+Instances of the drivers are created in the constructor of the
+dynamic field backend object C<Kernel::System::DynamicField::Backend>.
 
 =cut
 
@@ -69,232 +68,434 @@ sub new {
     # allocate new hash for object
     my $Self = bless {}, $Type;
 
+    # Some reference dynamic fields are stored in the database table attribute dynamic_field_value.value_int.
+    $Self->{ValueType}      = 'Integer';
+    $Self->{ValueKey}       = 'ValueInt';
+    $Self->{TableAttribute} = 'value_int';
+
+    # Used for declaring CSS classes
+    $Self->{FieldCSSClass} = 'DynamicFieldReference';
+
     # set field behaviors
     $Self->{Behaviors} = {
-        'IsACLReducible'               => 1,
+        'IsACLReducible'               => 0,
         'IsNotificationEventCondition' => 0,
-        'IsSortable'                   => 0,
-        'IsFiltrable'                  => 0,
+        'IsSortable'                   => 1,
+        'IsFiltrable'                  => 1,
         'IsStatsCondition'             => 0,
         'IsCustomerInterfaceCapable'   => 1,
-        'IsLikeOperatorCapable'        => 1,
+        'IsHiddenInTicketInformation'  => 0,
+        'IsReferenceField'             => 1,
         'IsSetCapable'                 => 1,
+        'SetsDynamicContent'           => 1,
     };
 
-    # get the Dynamic Field Backend custom extensions
-    my $DynamicFieldDriverExtensions = $Kernel::OM->Get('Kernel::Config')->Get('DynamicFields::Extension::Driver::Agent');
-
-    EXTENSION:
-    for my $ExtensionKey ( sort keys %{$DynamicFieldDriverExtensions} ) {
-
-        # skip invalid extensions
-        next EXTENSION if !IsHashRefWithData( $DynamicFieldDriverExtensions->{$ExtensionKey} );
-
-        # create a extension config shortcut
-        my $Extension = $DynamicFieldDriverExtensions->{$ExtensionKey};
-
-        # check if extension has a new module
-        if ( $Extension->{Module} ) {
-
-            # check if module can be loaded
-            if (
-                !$Kernel::OM->Get('Kernel::System::Main')->RequireBaseClass( $Extension->{Module} )
-                )
-            {
-                die "Can't load dynamic fields backend module"
-                    . " $Extension->{Module}! $@";
-            }
-        }
-
-        # check if extension contains more behaviors
-        if ( IsHashRefWithData( $Extension->{Behaviors} ) ) {
-
-            %{ $Self->{Behaviors} } = (
-                %{ $Self->{Behaviors} },
-                %{ $Extension->{Behaviors} }
-            );
-        }
-    }
+    $Self->{ReferencedObjectType} = 'Agent';
 
     return $Self;
 }
 
-sub DisplayValueRender {
+=head2 GetFieldTypeSettings()
+
+Get field type settings that are specific to the referenced object type Agent.
+
+=cut
+
+sub GetFieldTypeSettings {
     my ( $Self, %Param ) = @_;
 
-    # activate HTMLOutput when it wasn't specified
-    my $HTMLOutput = $Param{HTMLOutput} // 1;
-
-    # get raw Value strings from field value
-    my @Values = !ref $Param{Value}
-        ? ( $Param{Value} )
-        : scalar $Param{Value}->@* ? $Param{Value}->@*
-        :                            ('');
-
-    $Param{ValueMaxChars} ||= '';
-
-    my @ReadableValues;
-    my @ReadableTitles;
-    for my $ValueItem (@Values) {
-        $ValueItem //= '';
-
-        # replace agent login with full name
-        if ($ValueItem) {
-            $ValueItem = $Kernel::OM->Get('Kernel::System::User')->UserName(
-                UserID => $ValueItem,
-            );
-        }
-
-        # set title as value after update and before limit
-        push @ReadableTitles, $ValueItem;
-
-        # HTML Output transformation
-        if ($HTMLOutput) {
-            $ValueItem = $Param{LayoutObject}->Ascii2Html(
-                Text => $ValueItem,
-                Max  => $Param{ValueMaxChars},
-            );
-        }
-        else {
-            if ( $Param{ValueMaxChars} && length($ValueItem) > $Param{ValueMaxChars} ) {
-                $ValueItem = substr( $ValueItem, 0, $Param{ValueMaxChars} ) . '...';
-            }
-        }
-
-        push @ReadableValues, $ValueItem;
-    }
-
-    my $ValueSeparator;
-    my $Title = join( ', ', @ReadableTitles );
-
-    # HTMLOutput transformations
-    if ($HTMLOutput) {
-        $Title = $Param{LayoutObject}->Ascii2Html(
-            Text => $Title,
-            Max  => $Param{TitleMaxChars} || '',
-        );
-        $ValueSeparator = '<br/>';
-    }
-    else {
-        if ( $Param{TitleMaxChars} && length($Title) > $Param{TitleMaxChars} ) {
-            $Title = substr( $Title, 0, $Param{TitleMaxChars} ) . '...';
-        }
-        $ValueSeparator = "\n";
-    }
-
-    # this field type does not support the Link Feature
-    my $Link;
-
-    # return a data structure
-    return {
-        Value => '' . join( $ValueSeparator, @ReadableValues ),
-        Title => '' . $Title,
-        Link  => $Link,
-    };
-}
-
-sub ReadableValueRender {
-    my ( $Self, %Param ) = @_;
-
-    # set Value and Title variables
-    my $Value = '';
-    my $Title = '';
-
-    # check value
-    my @Values;
-    if ( ref $Param{Value} eq 'ARRAY' ) {
-        @Values = @{ $Param{Value} };
-    }
-    else {
-        @Values = ( $Param{Value} );
-    }
-
-    my @ReadableValues;
-
-    for my $Item (@Values) {
-        $Item //= '';
-
-        # replace agent login with full name
-        if ($Item) {
-            $Item = $Kernel::OM->Get('Kernel::System::User')->UserName(
-                UserID => $Item,
-            );
-        }
-
-        push @ReadableValues, $Item || '';
-    }
-
-    # set new line separator
-    my $ItemSeparator = ', ';
-
-    # Output transformations
-    $Value = join( $ItemSeparator, @ReadableValues );
-    $Title = $Value;
-
-    # prepare title
-    $Title = $Value;
-
-    if ( $Param{TitleMaxChars} && length $Title > $Param{TitleMaxChars} ) {
-        $Title = substr( $Title, 0, $Param{TitleMaxChars} ) . '...';
-    }
-
-    # return a data structure
-    return {
-        Value => $Value,
-        Title => $Title,
-    };
-}
-
-sub PossibleValuesGet {
-    my ( $Self, %Param ) = @_;
-
-    my $GroupObject = $Kernel::OM->Get('Kernel::System::Group');
-    my $UserObject  = $Kernel::OM->Get('Kernel::System::User');
-
-    # to store the possible values
-    my %PossibleValues;
-
-    my %AgentList;
-    my $GroupFilter = $Param{DynamicFieldConfig}{Config}{GroupFilter};
-    if ( IsArrayRefWithData($GroupFilter) ) {
-        %AgentList = $GroupObject->PermissionGroupGet(
-            GroupID => $GroupFilter,
-            Type    => 'ro',
-        );
-    }
-    else {
-        %AgentList = $UserObject->UserSearch(
-            Search => '*',
-            Valid  => 1,
-        );
-    }
-
-    %PossibleValues = (
-        %PossibleValues,
-        %AgentList,
+    my @FieldTypeSettings = $Self->SUPER::GetFieldTypeSettings(
+        %Param,
     );
 
-    %PossibleValues = map { $_ => $UserObject->UserName( UserID => $_ ) } keys %PossibleValues;
+    my %GroupList = $Kernel::OM->Get('Kernel::System::Group')->GroupList(
+        Valid => 1,
+    );
 
-    # set PossibleNone attribute
-    my $FieldPossibleNone;
-    if ( defined $Param{OverridePossibleNone} ) {
-        $FieldPossibleNone = $Param{OverridePossibleNone};
+    push @FieldTypeSettings,
+        {
+            ConfigParamName => 'Group',
+            Label           => Translatable('Group of the agents'),
+            Explanation     => Translatable('Select the group of the agents.'),
+            InputType       => 'Selection',
+            SelectionData   => \%GroupList,
+            PossibleNone    => 1,
+            Multiple        => 1,
+        };
+
+    # Support configurable import search attribute
+    push @FieldTypeSettings,
+        {
+            ConfigParamName => 'ImportSearchAttribute',
+            Label           => Translatable('External source key'),
+            Explanation     => Translatable('When set via an external source (e.g. web service or import / export), the value will be interpreted as this attribute.'),
+            InputType       => 'Selection',
+            SelectionData   => {
+                'UserLogin'        => 'Login',
+                'PostMasterSearch' => 'E-Mail',
+            },
+            PossibleNone => 1,
+            Multiple     => 0,
+        };
+
+    return @FieldTypeSettings;
+}
+
+=head2 ObjectPermission()
+
+checks read permission for a given object and UserID.
+
+    $Permission = $BackendObject->ObjectPermission(
+        Key     => 123,
+        UserID  => 1,
+    );
+
+=cut
+
+sub ObjectPermission {
+    my ( $Self, %Param ) = @_;
+
+    # check needed stuff
+    for my $Argument (qw(Key UserID)) {
+        if ( !$Param{$Argument} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Argument!",
+            );
+
+            return;
+        }
+    }
+
+    # TODO how should agent permissions be checked?
+    return 1;
+}
+
+=head2 ObjectDescriptionGet()
+
+return a hash of object descriptions.
+
+    my %Description = $BackendObject->ObjectDescriptionGet(
+        ObjectID => 123,
+        UserID   => 1,
+    );
+
+Return
+
+    %Description = (
+        Normal => "UserFirstName UserLastName",
+        Long   => "UserFirstName UserLastName",
+    );
+
+=cut
+
+sub ObjectDescriptionGet {
+    my ( $Self, %Param ) = @_;
+
+    # check needed stuff
+    for my $Argument (qw(ObjectID)) {
+        if ( !$Param{$Argument} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Argument!",
+            );
+
+            return;
+        }
+    }
+
+    my $UserName = $Kernel::OM->Get('Kernel::System::User')->UserName(
+        UserID => $Param{ObjectID},
+    );
+
+    return unless $UserName;
+
+    # get preferences
+    my %Preferences = $Kernel::OM->Get('Kernel::System::User')->GetPreferences( UserID => $Param{ObjectID} );
+
+    if ( $Preferences{UserEmail} ) {
+        $UserName = qq{"$UserName" <$Preferences{UserEmail}>};
+    }
+
+    my $Link;
+
+    # Add Link to CustomerUser
+    if ( $Param{LayoutObject}{SessionSource} && $Param{LayoutObject}{SessionSource} eq 'AgentInterface' ) {
+
+        # TODO: Why is the UserID not transferred here? I think UserID should be mandatory.
+        # TODO: Does it make sense to get the UserID from the LayoutObject if it is not passed in $Param?
+        # TODO where to link to for agents?
+        my $FrontendModule = 'AdminUser';
+        my $UserID         = $Param{LayoutObject}{UserID} || 1;
+
+        $Link = $Self->_GetHTTPLink(
+            FrontendModule => $FrontendModule,
+            ObjectID       => $Param{LayoutObject}->LinkEncode( $Param{ObjectID} ),
+            UserID         => $UserID,
+        );
+
+    }
+
+    # create description
+    return (
+        Normal => $UserName,
+        Long   => $UserName,
+        Link   => $Link,
+    );
+}
+
+=head2 SearchObjects()
+
+This is used in auto completion when searching for possible object IDs.
+
+    my @ObjectIDs = $BackendObject->SearchObjects(
+        DynamicFieldConfig => $DynamicFieldConfig,
+        ObjectID           => $ObjectID,                # (optional) if given, takes precedence over Term
+        Term               => $Term,                    # (optional) defaults to wildcard search with empty string
+        MaxResults         => $MaxResults,
+        UserID             => 1,
+        Object             => {
+            %Data,
+        },
+        ParamObject        => $ParamObject,
+    );
+
+=cut
+
+# TODO reference filter restrictions currently do not work with this field type
+sub SearchObjects {
+    my ( $Self, %Param ) = @_;
+
+    $Param{Term} //= '*';
+
+    my $DynamicFieldConfig = $Param{DynamicFieldConfig};
+    my %SearchParams;
+
+    if ( $Param{ObjectID} ) {
+        my $UserLogin = $Kernel::OM->Get('Kernel::System::User')->UserLookup(
+            UserID => $Param{ObjectID},
+        );
+        $SearchParams{UserLogin} = $UserLogin;
+    }
+    elsif ( $Param{ExternalSource} ) {
+        my $SearchAttribute = $DynamicFieldConfig->{Config}{ImportSearchAttribute} || 'Search';
+        $SearchParams{$SearchAttribute} = "$Param{Term}";
     }
     else {
-        $FieldPossibleNone = $Param{DynamicFieldConfig}{Config}{PossibleNone} || 0;
+        $SearchParams{Search} = "*$Param{Term}*";
     }
 
-    # set none value if defined on field config
-    if ($FieldPossibleNone) {
-        %PossibleValues = (
-            %PossibleValues,
-            '' => '-',
-        );
+    # incorporate referencefilterlist into search params
+    if ( $DynamicFieldConfig->{Config}{ReferenceFilterList} && !$Param{ExternalSource} ) {
+
+        FILTERITEM:
+        for my $FilterItem ( $DynamicFieldConfig->{Config}{ReferenceFilterList}->@* ) {
+
+            # check filter config
+            next FILTERITEM unless $FilterItem->{ReferenceObjectAttribute};
+            next FILTERITEM unless ( $FilterItem->{EqualsObjectAttribute} || $FilterItem->{EqualsString} );
+
+            if ( $FilterItem->{EqualsObjectAttribute} ) {
+
+                # don't perform search if object attribute to search for is empty
+                my $EqualsObjectAttribute;
+                if ( IsHashRefWithData( $Param{Object} ) ) {
+                    $EqualsObjectAttribute = $Param{Object}{DynamicField}{ $FilterItem->{EqualsObjectAttribute} } // $Param{Object}{ $FilterItem->{EqualsObjectAttribute} };
+                }
+                elsif ( defined $Param{ParamObject} ) {
+                    if ( $FilterItem->{EqualsObjectAttribute} =~ /^DynamicField_(?<DFName>\S+)/ ) {
+                        my $DFName             = $+{DFName};
+                        my $FilterItemDFConfig = $Kernel::OM->Get('Kernel::System::DynamicField')->DynamicFieldGet(
+                            Name => $DFName,
+                        );
+
+                        next FILTERITEM unless IsHashRefWithData($FilterItemDFConfig);
+
+                        $EqualsObjectAttribute = $Kernel::OM->Get('Kernel::System::DynamicField::Backend')->EditFieldValueGet(
+                            ParamObject        => $Param{ParamObject},
+                            DynamicFieldConfig => $FilterItemDFConfig,
+                            TransformDates     => 0,
+                        );
+                    }
+                    else {
+                        $EqualsObjectAttribute = $Param{ParamObject}->GetParam( Param => $FilterItem->{EqualsObjectAttribute} );
+                    }
+                }
+                return () unless $EqualsObjectAttribute;
+                return () if ( ref $EqualsObjectAttribute eq 'ARRAY' && !$EqualsObjectAttribute->@* );
+
+                # config item attribute
+                if ( $FilterItem->{ReferenceObjectAttribute} =~ m{^Con}i ) {
+                    $SearchParams{ $FilterItem->{ReferenceObjectAttribute} } = $EqualsObjectAttribute;
+                }
+
+                # dynamic field attribute
+                elsif ( $FilterItem->{ReferenceObjectAttribute} =~ m{^Dyn}i ) {
+                    $SearchParams{ $FilterItem->{ReferenceObjectAttribute} } = {
+                        Equals => $EqualsObjectAttribute,
+                    };
+                }
+
+                # array attribute
+                else {
+                    $SearchParams{ $FilterItem->{ReferenceObjectAttribute} } = [$EqualsObjectAttribute];
+                }
+            }
+            elsif ( $FilterItem->{EqualsString} ) {
+
+                # config item attribute
+                # TODO check if this has to be adapted for ticket search
+                if ( $FilterItem->{ReferenceObjectAttribute} =~ m{^Con}i ) {
+                    $SearchParams{ $FilterItem->{ReferenceObjectAttribute} } = $FilterItem->{EqualsString};
+                }
+
+                # dynamic field attribute
+                elsif ( $FilterItem->{ReferenceObjectAttribute} =~ m{^Dyn}i ) {
+                    $SearchParams{ $FilterItem->{ReferenceObjectAttribute} } = {
+                        Equals => $FilterItem->{EqualsString},
+                    };
+                }
+
+                # array attribute
+                else {
+                    $SearchParams{ $FilterItem->{ReferenceObjectAttribute} } = [ $FilterItem->{EqualsString} ];
+                }
+            }
+        }
     }
 
-    # return the possible values hash as a reference
-    return \%PossibleValues;
+    my @Result;
+
+    # NOTE: UserSearch() ignores every parameter besides UserLogin, Search, PostMasterSearch, Limit and Valid
+    my %AgentSearchResult = $Kernel::OM->Get('Kernel::System::User')->UserSearch(
+        %SearchParams,
+        Valid => 1,
+    );
+
+    my $GroupFilter = $Param{DynamicFieldConfig}{Config}{Group};
+    if ( IsArrayRefWithData($GroupFilter) && !$Param{ExternalSource} ) {
+        for my $GroupID ( $GroupFilter->@* ) {
+            my %GroupAgents = $Kernel::OM->Get('Kernel::System::Group')->PermissionGroupGet(
+                GroupID => $GroupID,
+                Type    => 'ro',
+            );
+
+            for my $UserID ( keys %AgentSearchResult ) {
+                if ( $GroupAgents{$UserID} && !( any { $_ eq $UserID } @Result ) ) {
+                    push @Result, $UserID;
+                }
+            }
+        }
+    }
+    else {
+        @Result = keys %AgentSearchResult;
+    }
+
+    # return a list of user IDs
+    return @Result;
+}
+
+=head2 _GetHTTPLink()
+
+Returns a HTTP link to the agent edit mask, if permission is given.
+
+    my $Link = $BackendObject->_GetHTTPLink(
+        FrontendModule => $FrontendModule,
+        ObjectID       => $EncodedUserLogin,
+        UserID         => $UserID,
+    );
+
+Return
+
+    $Link = "https://fqdn.otobo.de/otobo/index.pl?Action=AdminUser;Subaction=Change;ID=$UserID
+
+=cut
+
+sub _GetHTTPLink {
+    my ( $Self, %Param ) = @_;
+
+    # check needed stuff
+    for my $Argument (qw(UserID FrontendModule ObjectID)) {
+        if ( !$Param{$Argument} ) {
+            $Kernel::OM->Get('Kernel::System::Log')->Log(
+                Priority => 'error',
+                Message  => "Need $Argument!",
+            );
+
+            return;
+        }
+    }
+
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+
+    my $ModuleReg = $ConfigObject->Get('Frontend::Module')->{ $Param{FrontendModule} };
+    my $Link;
+
+    # module permission check for action
+    my $AccessRo;
+    my $AccessRw;
+    if (
+        ref $ModuleReg->{GroupRo} eq 'ARRAY'
+        && !scalar @{ $ModuleReg->{GroupRo} }
+        && ref $ModuleReg->{Group} eq 'ARRAY'
+        && !scalar @{ $ModuleReg->{Group} }
+        )
+    {
+        $AccessRo = 1;
+        $AccessRw = 1;
+    }
+    else {
+        my $GroupObject = $Kernel::OM->Get('Kernel::System::Group');
+
+        PERMISSION:
+        for my $Permission (qw(GroupRo Group)) {
+            my $AccessOk = 0;
+            my $Group    = $ModuleReg->{$Permission};
+            next PERMISSION if !$Group;
+            if ( ref $Group eq 'ARRAY' ) {
+                INNER:
+                for my $GroupName ( @{$Group} ) {
+                    next INNER if !$GroupName;
+                    next INNER if !$GroupObject->PermissionCheck(
+                        UserID    => $Param{UserID},
+                        GroupName => $GroupName,
+                        Type      => $Permission eq 'GroupRo' ? 'ro' : 'rw',
+
+                    );
+                    $AccessOk = 1;
+                    last INNER;
+                }
+            }
+            else {
+                my $HasPermission = $GroupObject->PermissionCheck(
+                    UserID    => $Param{UserID},
+                    GroupName => $Group,
+                    Type      => $Permission eq 'GroupRo' ? 'ro' : 'rw',
+
+                );
+                if ($HasPermission) {
+                    $AccessOk = 1;
+                }
+            }
+            if ( $Permission eq 'Group' && $AccessOk ) {
+                $AccessRo = 1;
+                $AccessRw = 1;
+            }
+            elsif ( $Permission eq 'GroupRo' && $AccessOk ) {
+                $AccessRo = 1;
+            }
+        }
+    }
+
+    if ( $AccessRo || $AccessRw ) {
+
+        $Link = 'index.pl?Action=' . $Param{FrontendModule} . ';Subaction=Change;';
+        $Link .= 'ID=' . $Param{ObjectID};
+        return $Link;
+    }
+
+    # both GroupRo nor Group are empty arrayrefs
+    return;
 }
 
 1;
